@@ -129,7 +129,7 @@ class Date_Span
      * @access   private
      * @since    Property available since Release 1.0
      */
-    var $day;
+    public $day;
 
     /**
      * The no of hours (0 to 23)
@@ -138,7 +138,7 @@ class Date_Span
      * @access   private
      * @since    Property available since Release 1.0
      */
-    var $hour;
+    public $hour;
 
     /**
      * The no of minutes (0 to 59)
@@ -147,7 +147,7 @@ class Date_Span
      * @access   private
      * @since    Property available since Release 1.0
      */
-    var $minute;
+    public $minute;
 
     /**
      * The no of seconds (0 to 59)
@@ -156,7 +156,7 @@ class Date_Span
      * @access   private
      * @since    Property available since Release 1.0
      */
-    var $second;
+    public $second;
 
 
     // }}}
@@ -174,9 +174,17 @@ class Date_Span
      * @access   public
      * @see      set()
      */
-    function Date_Span($time = 0, $format = null)
+    function __construct($time = 0, $format = null)
     {
         $this->set($time, $format);
+    }
+
+    /**
+     * PHP 4.x compatible constructor
+     */
+    function Date_Span($time = 0, $format = null)
+    {
+        self::__construct($time, $format);
     }
 
 
@@ -340,9 +348,9 @@ class Date_Span
             $pm   = 'am';
             $day  = $hour = $minute = $second = 0;
             for ($i = 0; $i < strlen($format); $i++) {
-                $char = $format{$i};
+                $char = $format[$i];
                 if ($char == '%') {
-                    $nextchar = $format{++$i};
+                    $nextchar = $format[++$i];
                     switch ($nextchar) {
                     case 'c':
                         $str .= '%d, %d:%d:%d';
@@ -711,9 +719,9 @@ class Date_Span
         }
         $output = '';
         for ($i = 0; $i < strlen($format); $i++) {
-            $char = $format{$i};
+            $char = $format[$i];
             if ($char == '%') {
-                $nextchar = $format{++$i};
+                $nextchar = $format[++$i];
                 switch ($nextchar) {
                 case 'C':
                     $output .= sprintf('%d, %02d:%02d:%02d',

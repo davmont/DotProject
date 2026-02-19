@@ -74,9 +74,17 @@ class Contact_Vcard_Parse {
     *
     */
     
-    function Contact_Vcard_Parse()
+    function __construct()
     {
         //$this->PEAR();
+    }
+
+    /**
+     * PHP 4.x compatible constructor
+     */
+    function Contact_Vcard_Parse()
+    {
+        self::__construct();
     }
     
 

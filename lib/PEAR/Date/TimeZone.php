@@ -85,7 +85,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.0
      */
-    var $id;
+    public $id;
 
     /**
      * Offset, in milliseconds, of this timezone
@@ -94,7 +94,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.0
      */
-    var $offset;
+    public $offset;
 
     /**
      * Short name of this time zone (e.g. "CST")
@@ -103,7 +103,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.0
      */
-    var $shortname;
+    public $shortname;
 
     /**
      * DST short name of this timezone (e.g. 'BST')
@@ -112,7 +112,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.0
      */
-    var $dstshortname;
+    public $dstshortname;
 
     /**
      * Long name of this time zone (e.g. "Central Standard Time")
@@ -123,7 +123,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.0
      */
-    var $longname;
+    public $longname;
 
     /**
      * DST long name of this time zone (e.g. 'British Summer Time')
@@ -132,7 +132,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.0
      */
-    var $dstlongname;
+    public $dstlongname;
 
     /**
      * Whether this time zone observes daylight savings time
@@ -141,7 +141,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.0
      */
-    var $hasdst;
+    public $hasdst;
 
     /**
      * Additional offset of Summer time from the standard time of the
@@ -153,7 +153,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.5.0
      */
-    var $on_summertimeoffset;
+    public $on_summertimeoffset;
 
     /**
      * Month no (1-12) in which Summer time starts (the clocks go forward)
@@ -162,7 +162,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.5.0
      */
-    var $on_summertimestartmonth;
+    public $on_summertimestartmonth;
 
     /**
      * Definition of when Summer time starts in the specified month
@@ -179,7 +179,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.5.0
      */
-    var $os_summertimestartday;
+    public $os_summertimestartday;
 
     /**
      * Time in milli-seconds relative to midnight UTC when
@@ -189,7 +189,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.5.0
      */
-    var $on_summertimestarttime;
+    public $on_summertimestarttime;
 
     /**
      * Month no (1-12) in which Summer time ends (the clocks go back)
@@ -198,7 +198,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.5.0
      */
-    var $on_summertimeendmonth;
+    public $on_summertimeendmonth;
 
     /**
      * Definition of when Summer time ends in the specified month
@@ -208,7 +208,7 @@ class Date_TimeZone
      * @see      Date_TimeZone::$os_summertimestartday
      * @since    Property available since Release 1.5.0
      */
-    var $os_summertimeendday;
+    public $os_summertimeendday;
 
     /**
      * Time in milli-seconds relative to midnight UTC when
@@ -218,7 +218,7 @@ class Date_TimeZone
      * @access   private
      * @since    Property available since Release 1.5.0
      */
-    var $on_summertimeendtime;
+    public $on_summertimeendtime;
 
 
     // }}}
@@ -315,7 +315,7 @@ class Date_TimeZone
      * @access   public
      * @see      Date::setTZ(), Date::setTZByID(), Date_TimeZone::isValidID()
      */
-    function Date_TimeZone($ps_id)
+    function __construct($ps_id)
     {
         $_DATE_TIMEZONE_DATA =& $GLOBALS['_DATE_TIMEZONE_DATA'];
 
@@ -401,6 +401,14 @@ class Date_TimeZone
         }
     }
 
+    /**
+     * PHP 4.x compatible constructor
+     */
+    function Date_TimeZone($ps_id)
+    {
+        self::__construct($ps_id);
+    }
+
 
     // }}}
     // {{{ getDefault()
@@ -414,7 +422,7 @@ class Date_TimeZone
      * @return   object     Date_TimeZone object of the default time zone
      * @access   public
      */
-    function getDefault()
+    public static function getDefault()
     {
         return new Date_TimeZone($GLOBALS['_DATE_TIMEZONE_DEFAULT']);
     }
@@ -431,7 +439,7 @@ class Date_TimeZone
      * @return   void
      * @access   public
      */
-    function setDefault($id)
+    public static function setDefault($id)
     {
         if (Date_TimeZone::isValidID($id)) {
             $GLOBALS['_DATE_TIMEZONE_DEFAULT'] = $id;
@@ -495,7 +503,7 @@ class Date_TimeZone
      * @access   public
      * @see      Date::setTZByID(), Date_TimeZone::Date_TimeZone()
      */
-    function isValidID($ps_id)
+    public static function isValidID($ps_id)
     {
         if (isset($GLOBALS['_DATE_TIMEZONE_DATA'][$ps_id])) {
             return true;
@@ -1030,7 +1038,7 @@ class Date_TimeZone
      * @return   array      an array of strings with the valid time zone IDs
      * @access   public
      */
-    function getAvailableIDs()
+    public static function getAvailableIDs()
     {
         return array_keys($GLOBALS['_DATE_TIMEZONE_DATA']);
     }
