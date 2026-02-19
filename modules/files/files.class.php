@@ -284,14 +284,18 @@ class CFile extends CDpObject {
 			unset($wordarr[$w]);
 		}
 		// insert the strings into the table
-		while (list($key, $val) = each($wordarr)) {
-			$this->_query->clear();
-			$this->_query->addTable('files_index');
-			$this->_query->addReplace('file_id', $this->file_id);
-			$this->_query->addReplace('word', $wordarr[$key]['word']);
-			$this->_query->addReplace('word_placement', $wordarr[$key]['wordplace']);
-			$this->_query->exec();
-			$this->_query->clear();
+		if (count($wordarr) > 0) {
+			$chunkSize = 1000;
+			$chunks = array_chunk($wordarr, $chunkSize);
+			foreach ($chunks as $chunk) {
+				$sql = 'REPLACE INTO ' . dPgetConfig('dbprefix', '') . 'files_index (file_id, word, word_placement) VALUES ';
+				$values = array();
+				foreach ($chunk as $item) {
+					$values[] = '(' . intval($this->file_id) . ',' . $this->_query->quote($item['word']) . ',' . intval($item['wordplace']) . ')';
+				}
+				$sql .= implode(',', $values);
+				db_exec($sql);
+			}
 		}
 		
 		db_exec('UNLOCK TABLES;');	//TODO: use DBQuery?  What about other sql engines?
