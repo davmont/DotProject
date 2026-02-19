@@ -30,6 +30,7 @@ $field_event_map = array(
         15=>"item_application",     //Application
         16=>"item_summary",         //Summary
       //17=>Deleted
+        18=>"item_public",          //Public
   );
   
 // Help Desk class
@@ -50,6 +51,7 @@ class CHelpDeskItem extends CDpObject {
 
   var $item_assigned_to = NULL;
   var $item_notify = 0;
+  var $item_public = 0;
   var $item_requestor = NULL;
   var $item_requestor_id = NULL;
   var $item_requestor_email = NULL;
@@ -305,6 +307,10 @@ class CHelpDeskItem extends CDpObject {
             case 'item_notify':
               $old = $hditem->$value ? "on" : "off";
               $new = $this->$value ? "on" : "off";
+              break;
+            case 'item_public':
+              $old = $hditem->$value ? "Public" : "Private";
+              $new = $this->$value ? "Public" : "Private";
               break;
             default:
               $old = $hditem->$value;

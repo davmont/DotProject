@@ -20,13 +20,13 @@ db_loadHash( $sql, $hditem );
 
   //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
   $canReadCompany = !getDenyRead( "companies", $hditem['item_company_id'] );
-  if($canReadCompany || $hditem['item_created_by']==$AppUI->user_id){
+  if($canReadCompany || $hditem['item_created_by']==$AppUI->user_id || !empty($hditem['item_public'])){
   	$canRead = 1;
   }
 
   //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
   $canEditCompany = !getDenyEdit( "companies", $hditem['item_company_id'] );
-  if($canEditCompany || $hditem['item_created_by']==$AppUI->user_id || !$item_id){
+  if($canEditCompany || $hditem['item_created_by']==$AppUI->user_id || !$item_id || !empty($hditem['item_public'])){
   	$canEdit = 1;
   }
   
@@ -299,7 +299,16 @@ function selectList( listName, target ) {
           }
         ?>
         />
-        <label for="in"><?=$AppUI->_( 'Notify by e-mail' );?></label></td>
+        <label for="in"><?=$AppUI->_( 'Notify by e-mail' );?></label>
+        <input type="checkbox" name="item_public" value="1" id="ip"
+        <?php
+          if (@$hditem["item_public"]) {
+            print "checked";
+          }
+        ?>
+        />
+        <label for="ip"><?=$AppUI->_( 'Public' );?></label>
+        </td>
     </tr>
 
     <tr>

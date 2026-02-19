@@ -3,7 +3,7 @@
 /* Help Desk module definitions */
 $config = array();
 $config['mod_name'] = 'HelpDesk';
-$config['mod_version'] = '0.2';
+$config['mod_version'] = '0.3';
 $config['mod_directory'] = 'helpdesk';
 $config['mod_setup_class'] = 'CSetupHelpDesk';
 $config['mod_type'] = 'user';
@@ -37,6 +37,7 @@ class CSetupHelpDesk {
 			  `item_assigned_to` int(11) NOT NULL default '0',
 			  `item_created_by` int(11) NOT NULL default '0',
 			  `item_notify` int(1) DEFAULT '1' NOT NULL ,
+			  `item_public` tinyint(1) DEFAULT '0' NOT NULL ,
 			  `item_requestor` varchar(48) NOT NULL default '',
 			  `item_requestor_id` int(11) NOT NULL default '0',
 			  `item_requestor_email` varchar(128) NOT NULL default '',
@@ -190,6 +191,9 @@ class CSetupHelpDesk {
 			LIMIT 1";
 
 		db_exec($sql);
+		break;
+	      case "0.2":
+		$bulk_sql[] = "ALTER TABLE helpdesk_items ADD item_public tinyint(1) NOT NULL default '0' AFTER item_notify";
 		break;
 	      default:
 		$success = 0;
