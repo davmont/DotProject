@@ -914,12 +914,6 @@
 		*/
 		function parseRequest($data, $req_encoding='')
 		{
-			// 2005/05/07 commented and moved into caller function code
-			//if($data=='')
-			//{
-			//	$data=$GLOBALS['HTTP_RAW_POST_DATA'];
-			//}
-
 			// G. Giunta 2005/02/13: we do NOT expect to receive html entities
 			// so we do not try to convert them into xml character entities
 			//$data = xmlrpc_html_entity_xlate($data);
