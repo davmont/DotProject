@@ -90,12 +90,15 @@ class CProject extends CDpObject {
                 return $result;
         }
 // overload canDelete
-	function canDelete( &$msg, $oid=null ) {
-		// TODO: check if user permissions are considered when deleting a project
+	function canDelete( &$msg, $oid=null, $joins=null ) {
 		global $AppUI;
 		$perms =& $AppUI->acl();
 
-		return $perms->checkModuleItem('projects', 'delete', $oid);
+		if (!$perms->checkModuleItem('projects', 'delete', $oid)) {
+			$msg = $AppUI->_('noDeletePermission');
+			return false;
+		}
+		return true;
 		
 		// NOTE: I uncommented the dependencies check since it is
 		// very anoying having to delete all tasks before being able
@@ -108,7 +111,16 @@ class CProject extends CDpObject {
 		*/
 	}
 
-	function delete() {
+	function delete($oid=null, $history_desc = '',  $history_proj = 0) {
+		if ($oid) {
+			$this->project_id = intval($oid);
+		}
+
+		$msg = '';
+		if (!$this->canDelete($msg, $this->project_id)) {
+			return $msg;
+		}
+
                 $this->load($this->project_id);
 		addHistory('projects', $this->project_id, 'delete', $this->project_name, $this->project_id);
 		$q = new DBQuery;
@@ -261,7 +273,7 @@ class CProject extends CDpObject {
 				
 	}
 	
-	function getAllowedSQL($uid, $index = null) {
+	function getAllowedSQL($uid, $index = null, $alt_mod = null) {
 		$oCpy = new CCompany ();
 		
 		$where = $oCpy->getAllowedSQL ($uid, "project_company");
@@ -269,7 +281,7 @@ class CProject extends CDpObject {
 		return array_merge($where, $project_where);
 	}
 
-	function setAllowedSQL($uid, &$query, $index = null) {
+	function setAllowedSQL($uid, &$query, $index = null, $key = null, $alt_mod = null) {
 		$oCpy = new CCompany;
 		parent::setAllowedSQL($uid, $query, $index);
 		$oCpy->setAllowedSQL($uid, $query, "project_company");
@@ -318,7 +330,7 @@ class CProject extends CDpObject {
                 return $q->loadList();
         }
 
-	function store() {
+	function store($updateNulls = false) {
 
 		$msg = $this->check();
 		if( $msg ) {
@@ -326,7 +338,7 @@ class CProject extends CDpObject {
 		}
 
 		if( $this->project_id ) {
-			$ret = db_updateObject( 'projects', $this, 'project_id', false );
+			$ret = db_updateObject( 'projects', $this, 'project_id', $updateNulls );
         		addHistory('projects', $this->project_id, 'update', $this->project_name, $this->project_id);
 		} else {
 			$ret = db_insertObject( 'projects', $this, 'project_id' );
