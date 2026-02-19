@@ -695,7 +695,7 @@ class CAppUI {
 		}
 		$auth =& getauth($auth_method);
 		
-		$username = trim(db_escape($username));
+		$username = trim($username);
 		$password = trim($password);
 
 		if (!$auth->authenticate($username, $password)) {
@@ -723,7 +723,7 @@ class CAppUI {
 		             . 'contact_department as user_department, contact_email as user_email, ' 
 		             . 'user_type');
 		$q->addJoin('contacts', 'con', 'contact_id = user_contact');
-		$q->addWhere("user_id = $user_id AND user_username = '$username'");
+		$q->addWhere("user_id = $user_id AND user_username = " . $q->quote($username));
 		$sql = $q->prepare();
 		$q->clear();
 		dprint(__FILE__, __LINE__, 7, ('Login SQL: ' . $sql));
@@ -926,7 +926,7 @@ class CAppUI {
 			}
 		}
 		asort($js_files);
-		while (list(,$js_file_name) = each($js_files)) {
+		foreach ($js_files as $js_file_name) {
 			echo ('<script type="text/javascript" src="' . $base . 'js/' 
 				  . $this->___($js_file_name) . '"></script>'."\n");
 		}
@@ -990,7 +990,7 @@ class CTabBox_core {
 	 * @param string Optional javascript method to be used to execute tabs.
 	 *	Must support 2 arguments, currently active tab, new tab to activate.
 	 */
-	function CTabBox_core($baseHRef='', $baseInc='', $active=0, $javascript = null) {
+	function __construct($baseHRef='', $baseInc='', $active=0, $javascript = null) {
 		$baseHRef = str_replace('&amp;', '&', $baseHRef);
 		$baseHRef = htmlspecialchars($baseHRef);
 		
@@ -1197,7 +1197,7 @@ class CTitleBlock_core {
 	 * have permission to view the help module, then the context help icon is
 	 * not displayed.
 	 */
-	function CTitleBlock_core($title, $icon='', $module='', $helpref='') {
+	function __construct($title, $icon='', $module='', $helpref='') {
 		$this->title = $title;
 		$this->icon = $icon;
 		$this->module = $module;

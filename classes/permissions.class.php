@@ -67,12 +67,10 @@ class dPacl extends gacl_api {
 		if (dPgetConfig('debug', 0) > 10) {
 			$this->_debug = true;
 		}
-		parent::gacl_api($opts);
+		parent::__construct($opts);
 	}
 	
 	function checkLogin($login) {
-		//Simple ARO<->ACO check, no AXO's required.
-		//return $this->acl_check('system', 'login', 'user', $login);
     // For dotproject, this is equivalent to check if the user belongs to a group.
     // checkLogin will be done in that way, instead checking for the "login" aco in the "system" section,
     // because that should involve to check for nested ACOs when building the dotpermissions table, which
@@ -105,12 +103,6 @@ class dPacl extends gacl_api {
 	    //echo $result;
 	    dprint(__FILE__, __LINE__, 2, "checkModule( $module, $op, $userid) returned $result");
 	    return $result;
-	/*
-		$module = (($module == 'sysvals') ? 'system' : $module);
-		$result = $this->acl_check('application', $op, 'user', $userid, 'app', $module);
-		dprint(__FILE__, __LINE__, 2, "checkModule($module, $op, $userid) returned $result");
-		return $result;
-	*/
 	}
 	
 	function checkModuleItem($module, $op, $item = null, $userid = null) {
@@ -125,7 +117,7 @@ class dPacl extends gacl_api {
 		$q = new DBQuery;
 		$q->addQuery('allow');
 		$q->addTable('dotpermissions');
-		$q->addWhere("permission='$op' AND axo='$item' AND user_id='$userid' and section='$module'");
+		$q->addWhere("permission='$op' AND axo=" . $q->quote($item) . " AND user_id='$userid' and section='$module'");
 		$q->addOrder('priority ASC,acl_id DESC');
 		$q->setLimit(1);
 		$arr = $q->loadHash();
@@ -139,11 +131,11 @@ class dPacl extends gacl_api {
 	  $IsProjectModifier = false;
       // Id of tasks and project
       if ($module == 'projects') {                                                   
-        $project_id = $item;
+        $project_id = (int) $item;
       } elseif ($module == 'macroprojects') {
-		$macroproject_id = $item;
+		$macroproject_id = (int) $item;
 	  } elseif ($module == 'tasks' || $module == 'task_log') {                          
-          $task_id = $item;
+          $task_id = (int) $item;
           // Grab $projet_id
   		    $sql = ('SELECT task_project FROM '.$dbprefix.'tasks WHERE task_id =' . $task_id); 
     	    $project_id = db_loadResult($sql);

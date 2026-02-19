@@ -11,7 +11,7 @@ $store = (int)dPgetParam($_POST, 'store', 0);
 $chUTP = (int)dPgetParam($_POST, 'chUTP', 0);
 $percentage_assignment = dPgetCleanParam($_POST, 'percentage_assignment');
 $user_task_priority = dPgetCleanParam($_POST, 'user_task_priority');
-$user_id = @$_POST['user_id'];
+$user_id = (int) @$_POST['user_id'];
 
 // prepare the percentage of assignment per user as required by CTask::updateAssigned()
 $hperc_assign_ar = array();
