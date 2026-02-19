@@ -341,26 +341,49 @@ else {
 }
 
 //pull the tasks into an array
+$all_task_ids = array();
 for ($x=0; $x < $nums; $x++) {
 	$row = db_fetch_assoc($ptrc);
+	$all_task_ids[] = $row['task_id'];
+	//pull the final task row into array
+	$projects[$row['task_project']]['tasks'][] = $row;
+}
+
+if (!empty($all_task_ids)) {
+	$task_id_list = implode(',', $all_task_ids);
 	
 	//add information about assigned users into the page output
-	$ausql = ('SELECT ut.user_id, u.user_username, contact_email, ut.perc_assignment, ' 
+	$ausql = ('SELECT ut.task_id, ut.user_id, u.user_username, contact_email, ut.perc_assignment, '
 			  . 'SUM(ut.perc_assignment) AS assign_extent, contact_first_name, contact_last_name ' 
 			  . 'FROM '.$dbprefix.'user_tasks ut LEFT JOIN '.$dbprefix.'users u ON u.user_id = ut.user_id ' 
 			  . 'LEFT JOIN '.$dbprefix.'contacts ON u.user_contact = contact_id ' 
-			  . 'WHERE ut.task_id=' . $row['task_id'] . ' GROUP BY ut.user_id ' 
+			  . 'WHERE ut.task_id IN (' . $task_id_list . ') GROUP BY ut.task_id, ut.user_id '
 			  . 'ORDER BY ut.perc_assignment desc, u.user_username');
 	
-	$assigned_users = array ();
 	$paurc = db_exec($ausql);
 	$nnums = db_num_rows($paurc);
 	echo db_error();
+
+	$task_users_map = array();
 	for ($xx=0; $xx < $nnums; $xx++) {
-		$row['task_assigned_users'][] = db_fetch_assoc($paurc);
+		$u_row = db_fetch_assoc($paurc);
+		$task_users_map[$u_row['task_id']][] = $u_row;
 	}
-	//pull the final task row into array
-	$projects[$row['task_project']]['tasks'][] = $row;
+
+	// Assign users to tasks
+	foreach ($projects as $k => &$p) {
+		if (isset($p['tasks']) && is_array($p['tasks'])) {
+			foreach ($p['tasks'] as $i => &$t) {
+				if (isset($task_users_map[$t['task_id']])) {
+					$t['task_assigned_users'] = $task_users_map[$t['task_id']];
+				} else {
+					$t['task_assigned_users'] = array();
+				}
+			}
+			unset($t);
+		}
+	}
+	unset($p);
 }
 
 ?>
