@@ -79,9 +79,6 @@ function db_exec($sql) {
 }
 
 function db_free_result($cur) {
-	// TODO
-	// mysql_free_result($cur);
-	// Maybe it's done my Adodb
 	if (!(is_object($cur))) {
 		dprint(__FILE__, __LINE__, 0, 'Invalid object passed to db_free_result.');
 	}
