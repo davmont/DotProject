@@ -202,7 +202,7 @@ function Receipt() {
  */
 function To($to, $reset=FALSE) {
 	if (is_array($to)) {
-		$to = array_map(create_function('$s', 'return strtr($s, "\x0B\0\t\r\n\f", "      ");'), $to);
+		$to = array_map(function($s) { return strtr($s, "\x0B\0\t\r\n\f", "      "); }, $to);
 		$this->ato = $to;
 	} else {
 		$to = strtr($to, "\x0B\0\t\r\n\f", '      ');
@@ -230,7 +230,7 @@ function To($to, $reset=FALSE) {
  */
 function Cc($cc) {
 	if (is_array($cc)) {
-		$cc = array_map(create_function('$s', 'return strtr($s, "\x0B\0\t\r\n\f", "      ");'), $cc);
+		$cc = array_map(function($s) { return strtr($s, "\x0B\0\t\r\n\f", "      "); }, $cc);
 		$this->acc = $cc;
 	} else {
 		$cc = strtr($cc, "\x0B\0\t\r\n\f", '      ');
@@ -248,7 +248,7 @@ function Cc($cc) {
  */
 function Bcc($bcc) {
 	if (is_array($bcc)) {
-		$bcc = array_map(create_function('$s', 'return strtr($s, "\x0B\0\t\r\n\f", "      ");'), $bcc);
+		$bcc = array_map(function($s) { return strtr($s, "\x0B\0\t\r\n\f", "      "); }, $bcc);
 		$this->abcc = $bcc;
 	} else {
 		$bcc = strtr($bcc, "\x0B\0\t\r\n\f", '      ');

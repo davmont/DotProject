@@ -90,8 +90,7 @@ class CDpTreeNode
 		if ($this->id == $id) {
 			return $this;
 		} else {
-			reset ($this->children);
-			while (list($newid, $node) = each($this->children)) {
+			foreach ($this->children as $newid => $node) {
 				if ($result =& $node->find($id)) {
 					return $result;
 				}
@@ -101,8 +100,7 @@ class CDpTreeNode
 	}
 
 	function display($method) {
-		reset($this->children);
-		while (list($id, $node) = each($this->children)) {
+		foreach ($this->children as $id => $node) {
 			call_user_func($method, $node->depth, $node->data);
 			$node->display($method);
 		}
