@@ -32,7 +32,7 @@ if ($_POST['mode'] == 'upgrade') {
 }
 ?>
 <form name="instFrm" action="do_install_db.php" method="post">
-<input type="hidden" name="mode" value="<?php echo $_POST['mode']; ?>" />
+<input type="hidden" name="mode" value="<?php echo htmlspecialchars($_POST['mode'], ENT_QUOTES); ?>" />
 <table cellspacing="0" cellpadding="3" border="0" class="tbl" width="100%" align="center">
 	<tr>
 		<td class="title" colspan="2">Database Settings</td>
@@ -70,23 +70,23 @@ endif;
 	</tr>
 	<tr>
 		<td class="item">Database Host Name</td>
-		<td align="left"><input class="button" type="text" name="dbhost" value="<?php echo $dPconfig['dbhost']; ?>" title="The Name of the Host the Database Server is installed on" /></td>
+		<td align="left"><input class="button" type="text" name="dbhost" value="<?php echo htmlspecialchars($dPconfig['dbhost'], ENT_QUOTES); ?>" title="The Name of the Host the Database Server is installed on" /></td>
 	</tr>
 	<tr>
 		<td class="item">Database Name</td>
-		<td align="left"><input class="button" type="text" name="dbname" value="<?php echo  $dPconfig['dbname']; ?>" title="The Name of the Database dotProject will use and/or install" /></td>
+		<td align="left"><input class="button" type="text" name="dbname" value="<?php echo htmlspecialchars($dPconfig['dbname'], ENT_QUOTES); ?>" title="The Name of the Database dotProject will use and/or install" /></td>
 	</tr>
 	<tr>
 		<td class="item">Database Prefix</td>
-		<td align="left"><input class="button" type="text" name="dbprefix" value="<?php echo  $dPconfig['dbprefix']; ?>" title="The Prefix for the tables dotProject will use and/or install" /></td>
+		<td align="left"><input class="button" type="text" name="dbprefix" value="<?php echo htmlspecialchars($dPconfig['dbprefix'], ENT_QUOTES); ?>" title="The Prefix for the tables dotProject will use and/or install" /></td>
 	</tr>
 	<tr>
 		<td class="item">Database User Name</td>
-		<td align="left"><input class="button" type="text" name="dbuser" value="<?php echo $dPconfig['dbuser']; ?>" title="The Database User that dotProject uses for Database Connection" /></td>
+		<td align="left"><input class="button" type="text" name="dbuser" value="<?php echo htmlspecialchars($dPconfig['dbuser'], ENT_QUOTES); ?>" title="The Database User that dotProject uses for Database Connection" /></td>
 	</tr>
 	<tr>
 		<td class="item">Database User Password</td>
-		<td align="left"><input class="button" type="password" name="dbpass" value="<?php echo $dPconfig['dbpass']; ?>" title="The Password according to the above User." /></td>
+		<td align="left"><input class="button" type="password" name="dbpass" value="<?php echo htmlspecialchars($dPconfig['dbpass'], ENT_QUOTES); ?>" title="The Password according to the above User." /></td>
 	</tr>
 	<tr>
 		<td class="item">Use Persistent Connection?</td>
@@ -115,9 +115,9 @@ endif;
 		<td align="left"><input class="button" type="submit" name="dobackup" value="Download XML" title="Click here to retrieve a XML file containing your data that can be stored on your local system." /></td>
 	</tr>
 	<tr>
-		<td align="left"><br /><input class="button" type="submit" name="do_db" value="<?php echo $_POST['mode']; ?> db only" title="Try to set up the database with the given information." />
+		<td align="left"><br /><input class="button" type="submit" name="do_db" value="<?php echo htmlspecialchars($_POST['mode'], ENT_QUOTES); ?> db only" title="Try to set up the database with the given information." />
 		&nbsp;<input class="button" type="submit" name="do_cfg" value="write config file only" title="Write a config file with the details only." /></td>
-		<td align="right" class="item"><br />(Recommended) &nbsp;<input class="button" type="submit" name="do_db_cfg" value="<?php echo $_POST['mode']; ?> db & write cfg" title="Write config file and setup the database with the given information." /></td>
+		<td align="right" class="item"><br />(Recommended) &nbsp;<input class="button" type="submit" name="do_db_cfg" value="<?php echo htmlspecialchars($_POST['mode'], ENT_QUOTES); ?> db & write cfg" title="Write config file and setup the database with the given information." /></td>
 	</tr>
 </table>
 </form>
