@@ -125,7 +125,7 @@ class dPacl extends gacl_api {
 		$q = new DBQuery;
 		$q->addQuery('allow');
 		$q->addTable('dotpermissions');
-		$q->addWhere("permission='$op' AND axo='$item' AND user_id='$userid' and section='$module'");
+		$q->addWhere("permission='$op' AND axo=" . $q->quote($item) . " AND user_id='$userid' and section='$module'");
 		$q->addOrder('priority ASC,acl_id DESC');
 		$q->setLimit(1);
 		$arr = $q->loadHash();
@@ -139,11 +139,11 @@ class dPacl extends gacl_api {
 	  $IsProjectModifier = false;
       // Id of tasks and project
       if ($module == 'projects') {                                                   
-        $project_id = $item;
+        $project_id = (int) $item;
       } elseif ($module == 'macroprojects') {
-		$macroproject_id = $item;
+		$macroproject_id = (int) $item;
 	  } elseif ($module == 'tasks' || $module == 'task_log') {                          
-          $task_id = $item;
+          $task_id = (int) $item;
           // Grab $projet_id
   		    $sql = ('SELECT task_project FROM '.$dbprefix.'tasks WHERE task_id =' . $task_id); 
     	    $project_id = db_loadResult($sql);
