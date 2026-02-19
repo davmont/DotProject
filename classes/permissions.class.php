@@ -71,8 +71,6 @@ class dPacl extends gacl_api {
 	}
 	
 	function checkLogin($login) {
-		//Simple ARO<->ACO check, no AXO's required.
-		//return $this->acl_check('system', 'login', 'user', $login);
     // For dotproject, this is equivalent to check if the user belongs to a group.
     // checkLogin will be done in that way, instead checking for the "login" aco in the "system" section,
     // because that should involve to check for nested ACOs when building the dotpermissions table, which
@@ -105,12 +103,6 @@ class dPacl extends gacl_api {
 	    //echo $result;
 	    dprint(__FILE__, __LINE__, 2, "checkModule( $module, $op, $userid) returned $result");
 	    return $result;
-	/*
-		$module = (($module == 'sysvals') ? 'system' : $module);
-		$result = $this->acl_check('application', $op, 'user', $userid, 'app', $module);
-		dprint(__FILE__, __LINE__, 2, "checkModule($module, $op, $userid) returned $result");
-		return $result;
-	*/
 	}
 	
 	function checkModuleItem($module, $op, $item = null, $userid = null) {
