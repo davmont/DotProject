@@ -52,9 +52,6 @@ foreach ($modules as $row) {
 	$query_string = '?m='.$m.'&amp;a=domodsql&amp;mod_id='.$row['mod_id'];
 	$s = '';
 	// arrows
-	// TODO: sweep this block of code and add line returns to improve View Source readability 
-	// [kobudo 14 Feb 2003]
-	// Line returns after </td> tags would be a good start [as well as <tr> and </tr> tags]
 	$s .= '<td>';
 	$s .= ('<img src="./images/icons/updown.gif" width="10" height="15" border="0" usemap="#arrow' 
 	       . $row['mod_id'] . '" alt="" />');
@@ -68,7 +65,7 @@ foreach ($modules as $row) {
 	}
 	$s .= '</td>'."\n";
 
-	$s .= '<td width="1%" nowrap="nowrap">' . $AppUI->_($row['mod_name']) . '</td>';
+	$s .= '<td width="1%" nowrap="nowrap">' . $AppUI->_($row['mod_name']) . '</td>' . "\n";
 	$s .= '<td>';
 	$s .= ('<img src="./images/obj/dot' . ($row['mod_active'] ? 'green' : 'yellowanim') 
 	       . '.gif" width="12" height="12" alt="" />&nbsp;');
@@ -109,11 +106,11 @@ foreach ($modules as $row) {
 		$s .= ' | <a href="' . $query_string . '&amp;cmd=configure">' . $AppUI->_('configure') . '</a>';
 	}	
 	
-	$s .= '</td>';
-	$s .= '<td>' . $row['mod_type'] . '</td>';
-	$s .= '<td>' . $row['mod_version'] . '</td>';
-	$s .= '<td>' . $AppUI->_($row['mod_ui_name']) . '</td>';
-	$s .= '<td>' . $row['mod_ui_icon'] . '</td>';
+	$s .= '</td>' . "\n";
+	$s .= '<td>' . $row['mod_type'] . '</td>' . "\n";
+	$s .= '<td>' . $row['mod_version'] . '</td>' . "\n";
+	$s .= '<td>' . $AppUI->_($row['mod_ui_name']) . '</td>' . "\n";
+	$s .= '<td>' . $row['mod_ui_icon'] . '</td>' . "\n";
 	
 	$s .= '<td>';
 	$s .= ('<img src="./images/obj/' . ($row['mod_ui_active'] ? 'dotgreen.gif' : 'dotredanim.gif') 
@@ -127,19 +124,19 @@ foreach ($modules as $row) {
 	if ($canEdit) {
 		$s .= '</a>';
 	}
-	$s .= '</td>';
+	$s .= '</td>' . "\n";
 
-	$s .= '<td>' . $row['mod_ui_order'] . '</td>';
+	$s .= '<td>' . $row['mod_ui_order'] . '</td>' . "\n";
 
-	echo "<tr>$s</tr>\n";
+	echo "<tr>\n$s</tr>\n";
 }
 
 foreach ($modFiles as $v) {
 	// clear the file system entry
 	if ($v && ! in_array($v, $hidden_modules)) {
 		$s = '';
-		$s .= '<td></td>';
-		$s .= '<td>' . $v . '</td>';
+		$s .= '<td></td>' . "\n";
+		$s .= '<td>' . $v . '</td>' . "\n";
 		$s .= '<td>';
 		$s .= '<img src="./images/obj/dotgrey.gif" width="12" height="12" alt="" />&nbsp;';
 		if ($canEdit) {
@@ -149,8 +146,8 @@ foreach ($modFiles as $v) {
 		if ($canEdit) {
 			$s .= '</a>';
 		}
-		$s .= '</td>';
-		echo "<tr>$s</tr>\n";
+		$s .= '</td>' . "\n";
+		echo "<tr>\n$s</tr>\n";
 	}
 
 }
