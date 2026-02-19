@@ -91,10 +91,12 @@ class CProject extends CDpObject {
 
 	// overload canDelete
 	function canDelete(&$msg, $oid=null,$joins = NULL) {
-		// TODO: check if user permissions are considered when deleting a project
 		global $AppUI;
 
-		return getPermission('projects', 'delete', $oid);
+		if (!getPermission('projects', 'delete', $oid)) {
+			$msg = $AppUI->_('noDeletePermission');
+			return false;
+		}
 
 		// NOTE: I uncommented the dependencies check since it is
 		// very anoying having to delete all tasks before being able
@@ -106,9 +108,19 @@ class CProject extends CDpObject {
 		// call the parent class method to assign the oid
 		return CDpObject::canDelete($msg, $oid, $tables);
 		*/
+		return true;
 	}
 
 	function delete($oid = NULL, $history_desc = '', $history_proj = 0) {
+		if ($oid) {
+			$this->project_id = $oid;
+		}
+
+		$msg = '';
+		if (!$this->canDelete($msg, $this->project_id)) {
+			return $msg;
+		}
+
 		$this->load($this->project_id);
 		addHistory('projects', $this->project_id, 'delete', $this->project_name,
 		           $this->project_id);
