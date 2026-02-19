@@ -13,24 +13,24 @@ require_once ($AppUI->getModuleClass('files'));
 
 class CustomField
 {
-	var $field_id;
+	public $field_id;
 	// TODO - Implement Field Order - some people like to change the order of fields
-	var $field_order;
-	var $field_name;
-	var $field_description;
-	var $field_htmltype;
+	public $field_order;
+	public $field_name;
+	public $field_description;
+	public $field_htmltype;
 	// TODO - data type, meant for validation if you just want numeric data in a text input
 	// but not yet implemented
-	var $field_datatype;
+	public $field_datatype;
 	
-	var $field_extratags;
+	public $field_extratags;
 	
-	var $object_id = NULL;
+	public $object_id = NULL;
 	
-	var $value_id = 0;
+	public $value_id = 0;
 	
-	var $value_charvalue;
-	var $value_intvalue;
+	public $value_charvalue;
+	public $value_intvalue;
 	
 	function __construct($field_id, $field_name, $field_order, $field_description, 
 	                     $field_extratags) {
@@ -288,7 +288,7 @@ class CustomFieldSeparator extends CustomField
 // CustomFieldSelect - Produces a SELECT list, extends the load method so that the option list can be loaded from a seperate table
 class CustomFieldSelect extends CustomField
 {
-	var $options;
+	public $options;
 	
 	function CustomFieldSelect($field_id, $field_name, $field_order, $field_description, 
 	                           $field_extratags) {
@@ -480,12 +480,12 @@ class CustomFieldFilelink extends CustomField {
 // eg. company_id for companies module
 class CustomFields
 {
-	var $m;
-	var $a;
-	var $mode;
-	var $obj_id;
+	public $m;
+	public $a;
+	public $mode;
+	public $obj_id;
 	
-	var $fields;
+	public $fields;
 	
 	function CustomFields($m, $a, $obj_id = NULL, $mode = 'edit') {
 		$this->m = $m;
@@ -681,8 +681,8 @@ class CustomFields
 
 class CustomOptionList
 {
-	var $field_id;
-	var $options;
+	public $field_id;
+	public $options;
 	
 	function CustomOptionList($field_id) {
 		$this->field_id = $field_id;
