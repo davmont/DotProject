@@ -58,6 +58,9 @@ class DBQuery {
 	var $_table_prefix;
 	var $_query_id = null;
 	var $_old_style = null;
+	var $params = array();
+	var $w_params = array();
+	var $v_params = array();
 
 	function __construct($prefix = null) {
 		$this->_table_prefix = ((isset($prefix)) ? $prefix : dPgetConfig('dbprefix', ''));
@@ -85,6 +88,9 @@ class DBQuery {
 		$this->update_list = null;
 		$this->create_table = null;
 		$this->create_definition = null;
+		$this->params = array();
+		$this->w_params = array();
+		$this->v_params = array();
 		if ($this->_query_id) {
 			$this->_query_id->Close();
 		}
@@ -168,10 +174,16 @@ class DBQuery {
 			$values = ((is_array($value)) ? $value : explode(',', $value));
 
 			for ($i = 0, $fc=count($fields); $i < $fc; $i++) {
-				$this->addMap('value_list', $this->quote($values[$i]), $fields[$i]);
+				if ($func) {
+					$this->addMap('value_list', $values[$i], $fields[$i]);
+				} else {
+					$this->addMap('value_list', '?', $fields[$i]);
+					$this->v_params[] = $values[$i];
+				}
 			}
 		} else if (!$func) {
-    		$this->addMap('value_list', $this->quote($value), $field);
+		$this->addMap('value_list', '?', $field);
+			$this->v_params[] = $value;
 		} else {
     		$this->addMap('value_list', $value, $field);
 		}
@@ -296,9 +308,15 @@ class DBQuery {
 	 *
 	 * @param	string 	$query	Where subclause to use
 	 */
-	function addWhere($query) {
+	function addWhere($query, $params = array()) {
 		if (isset($query)) {
 			$this->addClause('where', $query);
+			if (!is_array($params)) {
+				$params = array($params);
+			}
+			foreach ($params as $p) {
+				$this->w_params[] = $p;
+			}
 		}
 	}
 
@@ -365,6 +383,11 @@ class DBQuery {
 	 * @param	integer	$start	First row to start extraction.
 	 */
 	function setLimit($limit, $start = -1) {
+		$this->limit = $limit;
+		$this->offset = $start;
+	}
+
+	function addLimit($limit, $start = 0) {
 		$this->limit = $limit;
 		$this->offset = $start;
 	}
@@ -475,6 +498,7 @@ class DBQuery {
 		$q .= $this->make_where_clause($this->where);
 		$q .= $this->make_group_clause($this->group_by);
 		$q .= $this->make_order_clause($this->order_by);
+		$this->params = $this->w_params;
 		return $q;
 	}
 
@@ -483,9 +507,8 @@ class DBQuery {
 		$q = 'UPDATE ';
 		if (isset($this->table_list)) {
 			if (is_array($this->table_list)) {
-				reset($this->table_list);
-				// Grab the first record
-				list($key, $table) = each ($this->table_list);
+				$table = reset($this->table_list);
+				$key = key($this->table_list);
 			} else {
 				$table = $this->table_list;
 			}
@@ -496,11 +519,14 @@ class DBQuery {
 
 		$q .= ' SET ';
 		$sets = '';
+		$this->v_params = array();
 		foreach ($this->update_list as $field => $value) {
-		  $sets .= (($sets) ? ', ' : '') . "`$field` = " . $this->quote($value);
+			$sets .= (($sets) ? ', ' : '') . "`$field` = ?";
+			$this->v_params[] = $value;
 		}
 		$q .= $sets;
 		$q .= $this->make_where_clause($this->where);
+		$this->params = array_merge($this->v_params, $this->w_params);
 		return $q;
 	}
 
@@ -508,9 +534,8 @@ class DBQuery {
 		$q = 'INSERT INTO ';
 		if (isset($this->table_list)) {
 			if (is_array($this->table_list)) {
-				reset($this->table_list);
-				// Grab the first record
-				list($key, $table) = each ($this->table_list);
+				$table = reset($this->table_list);
+				$key = key($this->table_list);
 			} else {
 				$table = $this->table_list;
 			}
@@ -526,6 +551,7 @@ class DBQuery {
 			$valuelist .= (($valuelist) ? ',' : '') . $value;
 		}
 		$q .= "($fieldlist) values ($valuelist)";
+		$this->params = $this->v_params;
 		return $q;
 	}
 
@@ -533,9 +559,8 @@ class DBQuery {
 		$q = 'REPLACE INTO ';
 		if (isset($this->table_list)) {
 			if (is_array($this->table_list)) {
-				reset($this->table_list);
-				// Grab the first record
-				list($key, $table) = each ($this->table_list);
+				$table = reset($this->table_list);
+				$key = key($this->table_list);
 			} else {
 				$table = $this->table_list;
 			}
@@ -552,6 +577,7 @@ class DBQuery {
 			$valuelist .= (($valuelist) ? ',' : '') . $value;
 		}
 		$q .= "($fieldlist) values ($valuelist)";
+		$this->params = $this->v_params;
 		return $q;
 	}
 
@@ -560,7 +586,8 @@ class DBQuery {
 		if (isset($this->table_list)) {
 			if (is_array($this->table_list)) {
 				// Grab the first record
-				list($key, $table) = each ($this->table_list);
+				$table = reset($this->table_list);
+				$key = key($this->table_list);
 			} else {
 				$table = $this->table_list;
 			}
@@ -569,6 +596,7 @@ class DBQuery {
 		}
 		$q .= '`' . $this->_table_prefix . $table . '`';
 		$q .= $this->make_where_clause($this->where);
+		$this->params = $this->w_params;
 		return $q;
 	}
 
@@ -595,7 +623,7 @@ class DBQuery {
 	/**
 	 * Execute the query and return a handle.  Supplants the db_exec query
 	 */
-	function &exec($style = ADODB_FETCH_BOTH, $debug = false) {
+	function &exec($style = ADODB_FETCH_BOTH, $debug = false, $cache_secs = 0) {
 		global $db;
 		global $ADODB_FETCH_MODE;
 
@@ -609,7 +637,7 @@ class DBQuery {
         	dprint(__FILE__, __LINE__, 7, "executing query($q)");
 			if ($debug) {
 				// Before running the query, explain the query and return the details.
-				$qid = $db->Execute('EXPLAIN ' . $q);
+				$qid = $db->Execute('EXPLAIN ' . $q, $this->params);
 				if ($qid) {
 					$res = array();
 					while ($row = $this->fetchRow()) {
@@ -619,9 +647,19 @@ class DBQuery {
 					$qid->Close();
 				}
 			}
-			$this->_query_id = ((isset($this->limit))
-			                    ? $db->SelectLimit($q, $this->limit, $this->offset)
-			                    : $db->Execute($q));
+			if ($cache_secs > 0) {
+				if (isset($this->limit)) {
+					$this->_query_id = $db->SelectLimit($q, $this->limit, $this->offset, $this->params, $cache_secs);
+				} else {
+					$this->_query_id = $db->CacheExecute($cache_secs, $q, $this->params);
+				}
+			} else {
+				if (isset($this->limit)) {
+					$this->_query_id = $db->SelectLimit($q, $this->limit, $this->offset, $this->params);
+				} else {
+					$this->_query_id = $db->Execute($q, $this->params);
+				}
+			}
 
 			if (! $this->_query_id) {
 				$error = $db->ErrorMsg();
@@ -643,11 +681,11 @@ class DBQuery {
 	/**
 	 * loadList - replaces dbLoadList on
 	 */
-	function loadList($maxrows = null) {
+	function loadList($maxrows = null, $cache_secs = 0) {
 		global $db;
 		global $AppUI;
 
-		if (! $this->exec(ADODB_FETCH_ASSOC)) {
+		if (! $this->exec(ADODB_FETCH_ASSOC, false, $cache_secs)) {
 			$AppUI->setMsg($db->ErrorMsg(), UI_MSG_ERROR);
 			$this->clear();
 			return false;
@@ -888,7 +926,7 @@ class DBQuery {
 
 	function quote($string) {
 		global $db;
-		return $db->qstr($string);
+		return $db->qstr($string, (function_exists('get_magic_quotes_runtime') ? get_magic_quotes_runtime() : false));
 	}
 
 	/**
