@@ -177,6 +177,7 @@ class CSetupHelpDesk {
 	}
 
 	function upgrade($old_version) {
+		global $db;
 		$dbprefix = dPgetConfig('dbprefix', '');
 		$success = 1;
 		if (!file_exists($CONFIG_FILE)) {
@@ -342,6 +343,13 @@ class CSetupHelpDesk {
 		// modified helpdesk with files support was already installed.
 		// TODO: Detection of table existance before blind creation with
 		// no error return
+		$tables = $db->MetaTables('TABLES');
+		if (!in_array("{$dbprefix}helpdesk_items", $tables)) {
+			$q = new DBQuery;
+			$q->createTable('helpdesk_items');
+			$q->createDefinition('( item_id int(11) NOT NULL auto_increment, item_title varchar(255) default NULL, item_date datetime default NULL, item_parent int(11) default NULL, item_status int(11) default NULL, item_priority int(11) default NULL, item_calltype int(11) default NULL, item_assigned_to int(11) default NULL, item_created_by int(11) default NULL, item_updated datetime default NULL, item_updated_by int(11) default NULL, item_company_id int(11) default NULL, item_project_id int(11) default NULL, item_deadline datetime default NULL, item_source int(11) default NULL, item_os int(11) default NULL, item_application int(11) default NULL, item_description text, PRIMARY KEY  (item_id)) ENGINE=MyISAM');
+			$q->exec();
+		}
 	        $bulk_sql[] = "
 			ALTER TABLE `{$dbprefix}files`
 			ADD `file_helpdesk_item` int(11) NOT NULL default '0' AFTER `file_task`";
