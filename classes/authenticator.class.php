@@ -91,7 +91,7 @@ if (!defined('DP_BASE_DIR')) {
 			$q  = new DBQuery;
 			$q->addTable('users');
 			$q->addQuery('user_id, user_password, user_contact');
-			$q->addWhere("user_username = '$username'");
+			$q->addWhere("user_username = " . $q->quote($username));
 			if (! $rs = $q->exec()) {
 				die($AppUI->_('Failed to get user details') . ' - error was ' . $db->ErrorMsg());
 			}
@@ -172,7 +172,7 @@ if (!defined('DP_BASE_DIR')) {
 			$q  = new DBQuery;
 			$q->addTable('users');
 			$q->addQuery('user_id, user_password');
-			$q->addWhere("user_username = '$username'");
+			$q->addWhere("user_username = " . $q->quote($username));
 			if (!$rs = $q->exec()) {
 				$q->clear();
 				return false;
@@ -188,7 +188,7 @@ if (!defined('DP_BASE_DIR')) {
 			return false;
 		}
 
-		function userId()
+		function userId($username = NULL)
 		{
 			return $this->user_id;
 		}
@@ -296,7 +296,7 @@ if (!defined('DP_BASE_DIR')) {
 			$q  = new DBQuery;
 			$result = false;
 			$q->addTable('users');
-			$q->addWhere("user_username = '$username'");
+			$q->addWhere("user_username = " . $q->quote($username));
 			$rs = $q->exec();
 			if ($rs->RecordCount() > 0) 
 			  $result = true;
@@ -304,16 +304,19 @@ if (!defined('DP_BASE_DIR')) {
 			return $result;
 		}
 
-		function userId($username)
+		function userId($username = NULL)
 		{
 			GLOBAL $db;
-			$q  = new DBQuery;
-			$q->addTable('users');
-			$q->addWhere("user_username = '$username'");
-			$rs = $q->exec();
-			$row = $rs->FetchRow();
-			$q->clear();
-			return $row["user_id"];	
+			if ($username) {
+				$q  = new DBQuery;
+				$q->addTable('users');
+				$q->addWhere("user_username = " . $q->quote($username));
+				$rs = $q->exec();
+				$row = $rs->FetchRow();
+				$q->clear();
+				return $row["user_id"];
+			}
+			return $this->user_id;
 		}
 
 		function createsqluser($username, $password, $ldap_attribs = Array())

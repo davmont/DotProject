@@ -695,7 +695,7 @@ class CAppUI {
 		}
 		$auth =& getauth($auth_method);
 		
-		$username = trim(db_escape($username));
+		$username = trim($username);
 		$password = trim($password);
 
 		if (!$auth->authenticate($username, $password)) {
@@ -723,7 +723,7 @@ class CAppUI {
 		             . 'contact_department as user_department, contact_email as user_email, ' 
 		             . 'user_type');
 		$q->addJoin('contacts', 'con', 'contact_id = user_contact');
-		$q->addWhere("user_id = $user_id AND user_username = '$username'");
+		$q->addWhere("user_id = $user_id AND user_username = " . $q->quote($username));
 		$sql = $q->prepare();
 		$q->clear();
 		dprint(__FILE__, __LINE__, 7, ('Login SQL: ' . $sql));
