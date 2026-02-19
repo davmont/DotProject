@@ -888,7 +888,7 @@ class DBQuery {
 
 	function quote($string) {
 		global $db;
-		return $db->qstr($string, get_magic_quotes_runtime());
+		return $db->qstr($string);
 	}
 
 	/**

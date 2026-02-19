@@ -67,7 +67,7 @@ class dPacl extends gacl_api {
 		if (dPgetConfig('debug', 0) > 10) {
 			$this->_debug = true;
 		}
-		parent::gacl_api($opts);
+		parent::__construct($opts);
 	}
 	
 	function checkLogin($login) {
