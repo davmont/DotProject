@@ -1686,7 +1686,7 @@ class CTask extends CDpObject
 		$q = new DBQuery;
 		// delete all current entries
 		$q->setDelete('user_tasks');
-		$q->addWhere('task_id = ' . $this->task_id . ' AND user_id = ' . $user_id);
+		$q->addWhere('task_id = ' . $this->task_id . ' AND user_id = ' . (int)$user_id);
 		$q->exec();
 		$q->clear();
 	}
