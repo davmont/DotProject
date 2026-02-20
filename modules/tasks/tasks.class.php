@@ -1896,8 +1896,58 @@ class CTask extends CDpObject
 	function updateSubTasksStatus($new_status, $task_id = null) {
 		$q = new DBQuery;
 		
+		$root_update = false;
 		if (is_null($task_id)) {
 			$task_id = $this->task_id;
+			$root_update = true;
+		}
+
+		// Optimization: If we are at the root call (task_id is null) and we have a project ID,
+		// we can fetch the entire project task tree to avoid N+1 queries.
+		if ($root_update && $this->task_project) {
+			// Fetch all tasks in the project to build the tree in memory
+			$q->addTable('tasks');
+			$q->addQuery('task_id, task_parent');
+			$q->addWhere('task_project = ' . $this->task_project);
+			$project_tasks = $q->loadList();
+			$q->clear();
+
+			// Build parent -> children map
+			$children_map = array();
+			if ($project_tasks) {
+				foreach ($project_tasks as $t) {
+					if ($t['task_id'] != $t['task_parent']) {
+						$children_map[$t['task_parent']][] = $t['task_id'];
+					}
+				}
+
+				// Find all descendants of the current task
+				$descendants = array();
+				$queue = array($task_id);
+				while (!empty($queue)) {
+					$current = array_shift($queue);
+					if (isset($children_map[$current])) {
+						foreach ($children_map[$current] as $child_id) {
+							$descendants[] = $child_id;
+							$queue[] = $child_id;
+						}
+					}
+				}
+
+				if (!empty($descendants)) {
+					// Update all descendants in chunks to avoid query length limits
+					$chunks = array_chunk($descendants, 1000);
+					foreach ($chunks as $chunk) {
+						$q->addTable('tasks');
+						$q->addUpdate('task_status', $new_status);
+						$q->addWhere('task_id IN (' . implode(',', $chunk) . ')');
+						$q->exec();
+						$q->clear();
+					}
+					return true;
+				}
+				return true;
+			}
 		}
 		
 		// get children
