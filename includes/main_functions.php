@@ -584,7 +584,7 @@ function formatCurrency($number, $format)
 	// If the requested locale doesn't work, don't fail,
 	// revert to the system default.
 	if (
-		($locale_char_set != 'utf-8' || !setlocale(LC_MONETARY, $format . '.UTF8'))
+		($locale_char_set != 'utf-8' || !setlocale(LC_MONETARY, (is_array($format) ? implode(',', $format) : $format) . '.UTF8'))
 		&& !(setlocale(LC_MONETARY, $format))
 	) {
 		setlocale(LC_MONETARY, '');
@@ -647,12 +647,12 @@ function formatCurrency($number, $format)
 				break;
 		}
 	}
-	$currency .= $currency_prefix . $mondat['int_curr_symbol'] . $currency_suffix;
+	$currency = $currency_prefix . $mondat['int_curr_symbol'] . $currency_suffix;
 	$space = "";
-	if ($mondat[$letter . '_sep_by_space']) {
+	if (isset($mondat[$letter . '_sep_by_space']) && $mondat[$letter . '_sep_by_space']) {
 		$space = " ";
 	}
-	if ($mondat[$letter . '_cs_precedes']) {
+	if (isset($mondat[$letter . '_cs_precedes']) && $mondat[$letter . '_cs_precedes']) {
 		$result = "$currency$space$numeric_portion";
 	} else {
 		$result = "$numeric_portion$space$currency";
