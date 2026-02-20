@@ -53,7 +53,7 @@ if (!db_loadHash( $sql, $hditem )) {
 
   //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
   $canReadCompany = !getDenyRead( "companies", $hditem['item_company_id'] );
-  if($canReadCompany || $hditem['item_created_by']==$AppUI->user_id){
+  if($canReadCompany || $hditem['item_created_by']==$AppUI->user_id || @$hditem['item_public'] == 1){
   	$canRead = 1;
   }
 

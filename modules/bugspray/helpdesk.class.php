@@ -50,6 +50,7 @@ class CHelpDeskItem extends CDpObject {
 
   var $item_assigned_to = NULL;
   var $item_notify = 0;
+  var $item_public = 0;
   var $item_requestor = NULL;
   var $item_requestor_id = NULL;
   var $item_requestor_email = NULL;
@@ -428,6 +429,6 @@ function getPermsWhereClause($mod, $mod_id_field, $created_by_id_field="item_cre
 
 	$list = array_unique($list);
 
-	return " ($mod_id_field in (".implode(",",$list).") OR $created_by_id_field=".$AppUI->user_id.") ";
+	return " ($mod_id_field in (".implode(",",$list).") OR $created_by_id_field=".$AppUI->user_id." OR item_public=1) ";
 }
 ?>
