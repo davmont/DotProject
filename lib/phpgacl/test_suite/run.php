@@ -62,8 +62,8 @@
 		
 		var $gacl_api;
 		
-		function gacl_test_case($name) {
-			$this->TestCase($name);
+		function __construct($name) {
+			parent::__construct($name);
 			$this->gacl_api = &$GLOBALS['gacl_api'];
 		}
 		
