@@ -901,7 +901,50 @@ class CTask extends CDpObject
 	} // end of staticGetDependencies ()
 	
 	
-	function notifyOwner() {
+	function restoreUserContext($user_id) {
+		global $AppUI;
+		if ($user_id && $user_id > 0) {
+			$AppUI->user_id = $user_id;
+			// Load user data
+			require_once $AppUI->getModuleClass('admin');
+			$user = new CUser();
+			if ($user->load($user_id)) {
+				 $AppUI->user_first_name = $user->user_first_name;
+				 $AppUI->user_last_name = $user->user_last_name;
+				 $AppUI->user_email = $user->user_email;
+				 $AppUI->loadPrefs($user_id);
+				 $AppUI->setUserLocale();
+			}
+		}
+	}
+
+	function processNotifyOwner($module, $type, $id, $owner, &$args) {
+		if ($this->load($id)) {
+			$this->restoreUserContext($owner);
+			$comment = isset($args['comment']) ? $args['comment'] : '';
+			$this->_action = isset($args['action']) ? $args['action'] : 'updated';
+			return $this->sendNotifyOwnerEmail($comment);
+		}
+		return false;
+	}
+
+	function notifyOwner($comment = '') {
+		if (empty($comment)) {
+			// Fallback for legacy calls that relied on POST
+			$comment = dPgetCleanParam($_POST, 'task_log_description', '');
+		}
+
+		$args = array(
+			'comment' => $comment,
+			'action' => $this->_action
+		);
+		$eq = new EventQueue();
+		$eq->add(array($this, 'processNotifyOwner'), $args, 'tasks', false, $this->task_id, 'notifyOwner');
+
+		return '';
+	}
+
+	function sendNotifyOwnerEmail($comment = '') {
 		$q = new DBQuery;
 		GLOBAL $AppUI, $locale_char_set;
 		
@@ -952,7 +995,7 @@ class CTask extends CDpObject
 					 . $AppUI->user_last_name . "\n\n" 
 					 . $AppUI->_('Progress', UI_OUTPUT_RAW) . ': '  
 					 . $this->task_percent_complete . '%' . "\n\n" 
-					 . dPgetCleanParam($_POST, 'task_log_description'));
+					 . $comment);
 			
 			
 			$mail->Body($body, isset($GLOBALS['locale_char_set']) 
@@ -964,14 +1007,35 @@ class CTask extends CDpObject
 		
 		if ($mail->ValidEmail($users[0]['owner_email'])) {
 			$mail->To($users[0]['owner_email'], true);
-			$mail->Send();
+			return $mail->Send();
 		}
 		
-		return '';
+		return true;
 	}
-	
+
+	function processNotify($module, $type, $id, $owner, &$args) {
+		if ($this->load($id)) {
+			$this->restoreUserContext($owner);
+			$comment = isset($args['comment']) ? $args['comment'] : '';
+			$this->_action = isset($args['action']) ? $args['action'] : 'updated';
+			return $this->sendNotifyEmail($comment);
+		}
+		return false;
+	}
+
 	//additional comment will be included in email body
 	function notify($comment = '') {
+		$args = array(
+			'comment' => $comment,
+			'action' => $this->_action
+		);
+		$eq = new EventQueue();
+		$eq->add(array($this, 'processNotify'), $args, 'tasks', false, $this->task_id, 'notify');
+
+		return '';
+	}
+
+	function sendNotifyEmail($comment = '') {
 		$q = new DBQuery;
 		GLOBAL $AppUI, $locale_char_set;
 		$df = $AppUI->getPref('SHDATEFORMAT');
@@ -1065,7 +1129,7 @@ class CTask extends CDpObject
 			}
 		}
 		
-		return '';
+		return true;
 	}
 	
 	/**
