@@ -52,11 +52,11 @@ if (phpversion() >= '4') {
     }
 }
 
-class Exception {
+class PHPUnit_Exception {
     /* Emulate a Java exception, sort of... */
   var $message;
   var $type;
-  function Exception($message, $type = 'FAILURE') {
+  function __construct($message, $type = 'FAILURE') {
     $this->message = $message;
     $this->type = $type;
   }
@@ -118,8 +118,8 @@ class Assert {
 
   function assertEqualsMultilineStrings($string0, $string1,
   $message="") {
-    $lines0 = split("\n",$string0);
-    $lines1 = split("\n",$string1);
+    $lines0 = explode("\n",$string0);
+    $lines1 = explode("\n",$string1);
     if (sizeof($lines0) != sizeof($lines1)) {
       $this->failNotEquals(sizeof($lines0)." line(s)",
                            sizeof($lines1)." line(s)", "expected", $message);
@@ -186,7 +186,7 @@ class TestCase extends Assert /* implements Test */ {
   var $fResult;
   var $fExceptions = array();
 
-  function TestCase($name) {
+  function __construct($name) {
     $this->fName = $name;
   }
 
@@ -201,7 +201,7 @@ class TestCase extends Assert /* implements Test */ {
     if (! $testResult)
       $testResult = $this->_createResult();
     $this->fResult = $testResult;
-    $testResult->run(&$this);
+    $testResult->run($this);
     $this->fResult = 0;
     return $testResult;
   }
@@ -264,27 +264,25 @@ class TestCase extends Assert /* implements Test */ {
     //printf("TestCase::fail(%s)<br>\n", ($message) ? $message : '');
     /* JUnit throws AssertionFailedError here.  We just record the
        failure and carry on */
-    $this->fExceptions[] = new Exception(&$message, 'FAILURE');
+    $this->fExceptions[] = new PHPUnit_Exception($message, 'FAILURE');
   }
 
   function error($message) {
     /* report error that requires correction in the test script
        itself, or (heaven forbid) in this testing infrastructure */
-    $this->fExceptions[] = new Exception(&$message, 'ERROR');
+    $this->fExceptions[] = new PHPUnit_Exception($message, 'ERROR');
     $this->fResult->stop();	// [does not work]
   }
 
   function failed() {
-      reset($this->fExceptions);
-      while (list($key, $exception) = each($this->fExceptions)) {
+      foreach ($this->fExceptions as $key => $exception) {
 	  if ($exception->type == 'FAILURE')
 	      return true;
       }
       return false;
   }
   function errored() {
-      reset($this->fExceptions);
-      while (list($key, $exception) = each($this->fExceptions)) {
+      foreach ($this->fExceptions as $key => $exception) {
 	  if ($exception->type == 'ERROR')
 	      return true;
       }
@@ -313,7 +311,7 @@ class TestSuite /* implements Test */ {
   var $fTests = array();
   var $fClassname;
 
-  function TestSuite($classname=false) {
+  function __construct($classname=false) {
     // Find all methods of the given class whose name starts with
     // "test" and add them to the test suite.
 
@@ -333,20 +331,15 @@ class TestSuite /* implements Test */ {
       return;
     $this->fClassname = $classname;
 
-    if (floor(phpversion()) >= 4) {
+    if (true) {
       // PHP4 introspection, submitted by Dylan Kuhn
 
       $names = get_class_methods($classname);
-      while (list($key, $method) = @each($names)) {
+      foreach ($names as $key => $method) {
         if (preg_match('/^test/', $method)) {
           $test = new $classname($method);
           if (strcasecmp($method, $classname) == 0 || is_subclass_of($test, $method)) {
-            // Ignore the given method name since it is a constructor:
-            // it's the name of our test class or it is the name of a
-            // superclass of our test class.  (This code smells funny.
-            // Anyone got a better way?)
-
-            //print "skipping $method<br>";
+             // Constructor check
           }
           else {
             $this->addTest($test);
@@ -357,7 +350,7 @@ class TestSuite /* implements Test */ {
     else {  // PHP3
       $dummy = new $classname("dummy");
       $names = (array) $dummy;
-      while (list($key, $value) = each($names)) {
+      foreach ($names as $key => $value) {
         $type = gettype($value);
         if ($type == "user function" && preg_match('/^test/', $key)
         && $key != "testcase") {  
@@ -375,11 +368,10 @@ class TestSuite /* implements Test */ {
   function run(&$testResult) {
     /* Run all TestCases and TestSuites comprising this TestSuite,
        accumulating results in the given TestResult object. */
-    reset($this->fTests);
-    while (list($na, $test) = each($this->fTests)) {
+    foreach ($this->fTests as $na => $test) {
       if ($testResult->shouldStop())
 	break;
-      $test->run(&$testResult);
+      $test->run($testResult);
     }
   }
 
@@ -387,9 +379,10 @@ class TestSuite /* implements Test */ {
     /* Number of TestCases comprising this TestSuite (including those
        in any constituent TestSuites) */
     $count = 0;
-    reset($fTests);
-    while (list($na, $test_case) = each($this->fTests)) {
-      $count += $test_case->countTestCases();
+    if(isset($this->fTests)) {
+        foreach ($this->fTests as $na => $test_case) {
+          $count += $test_case->countTestCases();
+        }
     }
     return $count;
   }
@@ -402,7 +395,7 @@ class TestFailure {
   var $fFailedTestName;
   var $fException;
 
-  function TestFailure(&$test, &$exception) {
+  function __construct($test, $exception) {
     $this->fFailedTestName = $test->name();
     $this->fException = $exception;
   }
@@ -428,7 +421,7 @@ class TestResult {
   var $fRunTests = 0;
   var $fStop = false;
 
-  function TestResult() { }
+  function __construct() { }
 
   function _endTest($test) /* protected */ {
       /* specialize this for end-of-test action, such as progress
@@ -436,11 +429,11 @@ class TestResult {
   }
 
   function addError($test, $exception) {
-      $this->fErrors[] = new TestFailure(&$test, &$exception);
+      $this->fErrors[] = new TestFailure($test, $exception);
   }
 
   function addFailure($test, $exception) {
-      $this->fFailures[] = new TestFailure(&$test, &$exception);
+      $this->fFailures[] = new TestFailure($test, $exception);
   }
 
   function getFailures() {
@@ -456,8 +449,7 @@ class TestResult {
 
     /* this is where JUnit would catch AssertionFailedError */
     $exceptions = $test->getExceptions();
-    reset($exceptions);
-    while (list($key, $exception) = each($exceptions)) {
+    foreach ($exceptions as $key => $exception) {
 	if ($exception->type == 'ERROR')
 	    $this->addError($test, $exception);
 	else if ($exception->type == 'FAILURE')
@@ -500,8 +492,8 @@ class TestResult {
 
 class TextTestResult extends TestResult {
   /* Specialize TestResult to produce text/html report */
-  function TextTestResult() {
-    $this->TestResult();  // call superclass constructor
+  function __construct() {
+    parent::__construct();  // call superclass constructor
   }
   
   function report() {
@@ -517,13 +509,13 @@ class TextTestResult extends TestResult {
 	print("<h2>Failures</h2>");
 	print("<ol>\n");
 	$failures = $this->getFailures();
-	while (list($i, $failure) = each($failures)) {
+	foreach ($failures as $i => $failure) {
 	    $failedTestName = $failure->getTestName();
 	    printf("<li>%s\n", $failedTestName);
 
 	    $exceptions = $failure->getExceptions();
 	    print("<ul>");
-	    while (list($na, $exception) = each($exceptions))
+	    foreach ($exceptions as $na => $exception)
 		printf("<li>%s\n", $exception->getMessage());
 	    print("</ul>");
 	}
@@ -533,8 +525,7 @@ class TextTestResult extends TestResult {
     if ($nErrors > 0) {
 	print("<h2>Errors</h2>");
 	print("<ol>\n");
-	reset($this->fErrors);
-	while (list($i, $error) = each($this->fErrors)) {
+	foreach ($this->fErrors as $i => $error) {
 	    $erroredTestName = $error->getTestName();
 	    printf("<li>%s\n", $failedTestName);
 
@@ -571,8 +562,8 @@ class TextTestResult extends TestResult {
 // rubbish.
 class PrettyTestResult extends TestResult {
   /* Specialize TestResult to produce text/html report */
-  function PrettyTestResult() {
-    $this->TestResult();  // call superclass constructor
+  function __construct() {
+    parent::__construct();  // call superclass constructor
 	echo "<h2>Tests</h2>";
 	
 	echo "<TABLE CELLSPACING=\"1\" CELLPADDING=\"1\" BORDER=\"0\" WIDTH=\"90%\" ALIGN=\"CENTER\" class=\"details\">";
@@ -594,13 +585,13 @@ class PrettyTestResult extends TestResult {
 	echo "<h2>Failure Details</h2>";
     print("<ol>\n");
     $failures = $this->getFailures();
-    while (list($i, $failure) = each($failures)) {
+    foreach ($failures as $i => $failure) {
       $failedTestName = $failure->getTestName();
       printf("<li>%s\n", $failedTestName);
 
       $exceptions = $failure->getExceptions();
       print("<ul>");
-      while (list($na, $exception) = each($exceptions))
+      foreach ($exceptions as $na => $exception)
 	printf("<li>%s\n", $exception->getMessage());
       print("</ul>");
     }
