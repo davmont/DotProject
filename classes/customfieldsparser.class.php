@@ -82,6 +82,8 @@ class CustomFieldsParser{
 	}
 	
 	function _getLabelHTML($field_config) {
+		$colspan = '';
+		$separator = '';
 		if ($field_config['type'] == 'label') {
 			$colspan   = ' colspan="2"';
 			$field_config['name'] = '<b>' . dPformSafe($field_config['name']) . '</b>';
