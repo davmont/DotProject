@@ -104,7 +104,7 @@ function column2array($query)
 /* create read-only output of list values */
 function chooseSelectedValue($name, $options, $selected)
 {
-    while (list($key, $val) = each($options)) {
+    foreach ($options as $key => $val) {
         if ($key == $selected) {
             $output = "$val\n";
         }
@@ -120,7 +120,7 @@ function create_selectbox($name, $options, $selected)
     $output = "";
     $output .= '<select name="' . $name . '" onchange="javascript:document.ticketform.submit()" class="text">' . "\n";
 
-    while (list($key, $val) = each($options)) {
+    foreach ($options as $key => $val) {
         $output .= "<option value=\"$key\"";
 
         if ($key == $selected) {
@@ -259,7 +259,7 @@ function word_wrap($string, $cols = 78, $quote_old = false, $prefix = ">", $nice
     $leftover = "";
 
     // Loop through each line of message
-    while (list(, $thisline) = each($t_lines)) {
+    foreach ($t_lines as $thisline) {
         // Process Leftover
         if (mb_strlen($leftover) > 0) {
             $counter = 0;
@@ -288,7 +288,7 @@ function word_wrap($string, $cols = 78, $quote_old = false, $prefix = ">", $nice
             $newline = '';
             $t_l_lines = mb_split(' ', $thisline);
             // This line is too big.  Break it up into words and add them one by one.
-            while (list(, $thisword) = each($t_l_lines)) {
+            foreach ($t_l_lines as $thisword) {
                 // Process words that are longer than $cols
                 while ((mb_strlen($thisword) + mb_strlen($nice_prefix)) > $cols) {
                     $cur_pos = 0;
