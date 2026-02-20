@@ -197,6 +197,7 @@ class dPacl extends gacl_api
 				}
 			}
 			// Rules
+			$itemowner = false;
 			if ($module == 'projects' && $IsProjectOwner) {
 				$itemowner = true;
 			}
