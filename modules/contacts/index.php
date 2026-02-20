@@ -68,6 +68,7 @@ $q->addQuery('contact_id, contact_order_by');
 $q->addQuery('contact_first_name, contact_last_name, contact_phone, contact_owner');
 $q->addQuery($showfields);
 $q->addQuery('user_id');
+$where_filter = '';
 foreach ($search_map as $search_name) {
 	$where_filter .= (' OR ' . $search_name . " LIKE $where");
 }
@@ -184,7 +185,7 @@ $titleBlock->show();
 			?>
 			<td valign="top" align="left" bgcolor="#f4efe3" width="<?php echo $tdw; ?>%">
 				<?php
-				for ($x = 0; $x < @count($carr[$z]); $x++) {
+				for ($x = 0; $x < (isset($carr[$z]) ? count($carr[$z]) : 0); $x++) {
 					?>
 					<table width="100%" cellspacing="1" cellpadding="1" summary="contact info">
 						<tr>
@@ -247,10 +248,10 @@ $titleBlock->show();
 						</tr>
 					</table>
 					<br />&nbsp;<br />
-				<?php
+					<?php
 				} ?>
 			</td>
-		<?php
+			<?php
 		} ?>
 	</tr>
 </table>

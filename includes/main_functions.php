@@ -438,11 +438,15 @@ function dPuserHasRole($name)
 	global $AppUI;
 	$uid = (int) $AppUI->user_id;
 
+	// user_roles table was superseded by phpGACL.
+	// A user "has" a role when their ARO appears in the named ARO group.
 	$q = new DBQuery;
-	$q->addTable('roles', 'r');
-	$q->innerJoin('user_roles', 'ur', 'ur.role_id=r.role_id');
-	$q->addQuery('r.role_id');
-	$q->addWhere("ur.user_id=$uid AND r.role_name='$name'");
+	$q->addTable('gacl_aro_groups', 'g');
+	$q->innerJoin('gacl_groups_aro_map', 'm', 'm.group_id = g.id');
+	$q->innerJoin('gacl_aro', 'a', 'a.id = m.aro_id');
+	$q->addQuery('g.id');
+	$q->addWhere("g.value = '" . addslashes($name) . "' AND a.value = '$uid'");
+	$q->setLimit(1);
 	return $q->loadResult();
 }
 
