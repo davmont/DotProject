@@ -550,36 +550,6 @@ CREATE TABLE %dbprefix%roles (
   PRIMARY KEY  (role_id)
 );
 
-#
-# Table structure for table 'user_roles'
-#
-
-CREATE TABLE %dbprefix%user_roles (
-  user_id int(10) unsigned NOT NULL default '0',
-  role_id int(10) unsigned NOT NULL default '0'
-);
-
-# Host: localhost
-# Database: dotproject
-# Table: 'common_notes'
-# 
-CREATE TABLE %dbprefix%common_notes (
-  note_id int(10) unsigned NOT NULL auto_increment,
-  note_author int(10) unsigned NOT NULL default '0',
-  note_module int(10) unsigned NOT NULL default '0',
-  note_record_id int(10) unsigned NOT NULL default '0',
-  note_category int(3) unsigned NOT NULL default '0',
-  note_title varchar(100) NOT NULL default '',
-  note_body text NOT NULL,
-  note_date datetime NOT NULL default '0000-00-00 00:00:00',
-  note_hours float NOT NULL default '0',
-  note_code varchar(8) NOT NULL default '',
-  note_created datetime NOT NULL default '0000-00-00 00:00:00',
-  note_modified timestamp,
-  note_modified_by int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (note_id)
-) ; 
-
 
 
 #20040823
@@ -822,26 +792,8 @@ CREATE TABLE %dbprefix%gacl_acl (
 ) ;
 # --------------------------------------------------------
 
-#
-# Table structure for table gacl_acl_sections
-#
-# Creation: Jul 22, 2004 at 01:00 PM
-# Last update: Jul 22, 2004 at 01:04 PM
-# Last check: Jul 22, 2004 at 01:00 PM
-#
-
-DROP TABLE IF EXISTS %dbprefix%gacl_acl_sections;
-CREATE TABLE %dbprefix%gacl_acl_sections (
-  id int(11) NOT NULL default '0',
-  value varchar(80) NOT NULL default '',
-  order_value int(11) NOT NULL default '0',
-  name varchar(230) NOT NULL default '',
-  hidden int(11) NOT NULL default '0',
-  PRIMARY KEY  (id),
-  UNIQUE KEY gacl_value_acl_sections (value),
-  KEY gacl_hidden_acl_sections (hidden)
-) ;
 # --------------------------------------------------------
+# NOTE: gacl_acl_sections removed — zero references in codebase.
 
 #
 # Table structure for table gacl_aco
@@ -1270,22 +1222,6 @@ CREATE TABLE IF NOT EXISTS %dbprefix%tasks_ical (
 
 # 20121019
 # Create budget table
-<<<<<<< HEAD
-CREATE TABLE IF NOT EXISTS %dbprefix%budget (
-	budget_id int(11) NOT NULL AUTO_INCREMENT,
-	task_id int(11) NOT NULL DEFAULT '0',
-	Tax decimal(4,2) NOT NULL DEFAULT '0',
-	display_tax tinyint(1) NOT NULL DEFAULT '0',
-	only_financial tinyint(1) NOT NULL DEFAULT '0',
-	equipment_investment decimal(15,2) DEFAULT '0',
-	intangible_investment decimal(15,2) DEFAULT '0',
-	service_investment decimal(15,2) DEFAULT '0',
-	equipment_operation decimal(15,2) DEFAULT '0',
-	intangible_operation decimal(15,2) DEFAULT '0',
-	service_operation decimal(15,2) DEFAULT '0',
-	PRIMARY KEY (budget_id)
-);
-=======
 CREATE TABLE IF NOT EXISTS `%dbprefix%budget` (
 	`budget_id` int(11) NOT NULL AUTO_INCREMENT,
 	`task_id` int(11) NOT NULL DEFAULT '0',
@@ -1299,5 +1235,4 @@ CREATE TABLE IF NOT EXISTS `%dbprefix%budget` (
 	`intangible_operation` decimal(15,2) DEFAULT '0',
 	`service_operation` decimal(15,2) DEFAULT '0',
 	PRIMARY KEY (`budget_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
->>>>>>> 601893621ba4750a134f66868dbabe2aa5834596
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
