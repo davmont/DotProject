@@ -74,3 +74,6 @@
 "submit"=>"enviar",
 "test"=>"prueba",
 "view this company"=>"ver esta empresa",
+
+"1LBLMONITORAMENTO"=>"Monitorización",
+"1LBLORGONOGRAM"=>"Organigrama",

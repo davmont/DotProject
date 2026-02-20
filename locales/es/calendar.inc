@@ -100,4 +100,4 @@
 "today"=>"hoy",
 "update task"=>"modificar tarea",
 "view this event"=>"ver este evento",
-"week view"=>"vista semanal",
+"week view"=>"vista semanal"

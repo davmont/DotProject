@@ -124,3 +124,5 @@
 "year"=>"año",
 "years"=>"años",
 "911"=>"112",
+
+"$type Ticket Report"=>"Informe de Ticket $type",
