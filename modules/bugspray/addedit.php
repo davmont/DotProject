@@ -300,15 +300,10 @@ function selectList( listName, target ) {
         ?>
         />
         <label for="in"><?=$AppUI->_( 'Notify by e-mail' );?></label>
+        &nbsp;&nbsp;
         <input type="checkbox" name="item_public" value="1" id="ip"
-        <?php
-          if (@$hditem["item_public"]) {
-            print "checked";
-          }
-        ?>
-        />
-        <label for="ip"><?=$AppUI->_( 'Public' );?></label>
-        </td>
+        <?php echo @$hditem['item_public'] ? 'checked' : ''; ?> />
+        <label for="ip"><?=$AppUI->_( 'Public' );?></label></td>
     </tr>
 
     <tr>

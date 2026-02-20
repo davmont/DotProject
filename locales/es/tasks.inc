@@ -351,3 +351,7 @@
 "view this task"=>"ver esta tarea",
 "with tax"=>"con impuestos",
 "without tax"=>"sin impuestos",
+
+"1LBLESTIMATIONS"=>"Estimaciones",
+"3LBLACAOCORRETIVA"=>"Solicitud de Cambio",
+"7LBLQUALIDADE"=>"Calidad",

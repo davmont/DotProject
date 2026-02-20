@@ -434,6 +434,6 @@ function getPermsWhereClause($mod, $mod_id_field, $created_by_id_field="item_cre
 
 	$list = array_unique($list);
 
-	return " ($mod_id_field in (".implode(",",$list).") OR $created_by_id_field=".$AppUI->user_id.") ";
+	return " ($mod_id_field in (".implode(",",$list).") OR $created_by_id_field=".$AppUI->user_id." OR item_public=1) ";
 }
 ?>

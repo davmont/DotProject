@@ -290,3 +290,5 @@
 "test"=>"prueba",
 "updated"=>"modificado",
 "writeProjectName"=>"Escribir nombre de proyecto :",
+
+"Clients & Companies"=>"Clientes y Empresas",

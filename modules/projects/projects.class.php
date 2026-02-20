@@ -7,18 +7,19 @@ if (!defined('DP_BASE_DIR')) {
  *	@package dotProject
  *	@subpackage modules
  *	@version $Revision: 6191 $
-*/
+ */
 
-require_once ($AppUI->getSystemClass ('dp'));
-require_once ($AppUI->getLibraryClass('PEAR/Date'));
-require_once ($AppUI->getModuleClass('tasks'));
-require_once ($AppUI->getModuleClass('companies'));
-require_once ($AppUI->getModuleClass('departments'));
+require_once($AppUI->getSystemClass('dp'));
+require_once($AppUI->getLibraryClass('PEAR/Date'));
+require_once($AppUI->getModuleClass('tasks'));
+require_once($AppUI->getModuleClass('companies'));
+require_once($AppUI->getModuleClass('departments'));
 
 /**
  * The Project Class
  */
-class CProject extends CDpObject {
+class CProject extends CDpObject
+{
 	var $project_id = NULL;
 	var $project_company = NULL;
 	var $project_company_internal = NULL;
@@ -39,16 +40,18 @@ class CProject extends CDpObject {
 	var $project_actual_budget = NULL;
 	var $project_creator = NULL;
 	var $project_private = NULL;
-	var $project_departments= NULL;
+	var $project_departments = NULL;
 	var $project_contacts = NULL;
 	var $project_priority = NULL;
 	var $project_type = NULL;
 
-	function __construct() {
+	function __construct()
+	{
 		parent::__construct('projects', 'project_id');
- 	}
+	}
 
-	function check() {
+	function check()
+	{
 		if (empty($this->project_name)) {
 			return 'project name cannot be blank';
 		}
@@ -69,19 +72,20 @@ class CProject extends CDpObject {
 		return null; // object is ok
 	}
 
-	function load($oid=null, $strip=true) {
+	function load($oid = null, $strip = true)
+	{
 		$result = parent::load($oid, $strip);
 		if ($result && $oid) {
 			$working_hours = ((dPgetConfig('daily_working_hours'))
-			                  ? dPgetConfig('daily_working_hours'):8);
+				? dPgetConfig('daily_working_hours') : 8);
 
 			$q = new DBQuery;
-			$q->addTable('projects','p');
+			$q->addTable('projects', 'p');
 			$q->addQuery(' SUM(t1.task_duration * t1.task_percent_complete'
-						 . ' * IF(t1.task_duration_type = 24, ' . $working_hours
-						 . ', t1.task_duration_type)) / SUM(t1.task_duration'
-						 . ' * IF(t1.task_duration_type = 24, ' . $working_hours
-						 . ', t1.task_duration_type)) AS project_percent_complete');
+				. ' * IF(t1.task_duration_type = 24, ' . $working_hours
+				. ', t1.task_duration_type)) / SUM(t1.task_duration'
+				. ' * IF(t1.task_duration_type = 24, ' . $working_hours
+				. ', t1.task_duration_type)) AS project_percent_complete');
 			$q->addJoin('tasks', 't1', 'p.project_id = t1.task_project');
 			$q->addWhere('project_id = ' . $oid);// . ' AND t1.task_id = t1.task_parent'); ==>on veut le calculer en prenant en compte toutes les t�ches
 			$this->project_percent_complete = $q->loadResult();
@@ -90,7 +94,8 @@ class CProject extends CDpObject {
 	}
 
 	// overload canDelete
-	function canDelete(&$msg, $oid=null,$joins = NULL) {
+	function canDelete(&$msg, $oid = null, $joins = NULL)
+	{
 		global $AppUI;
 
 		if (!getPermission('projects', 'delete', $oid)) {
@@ -104,14 +109,15 @@ class CProject extends CDpObject {
 
 		/*
 		$tables[] = array('label' => 'Tasks', 'name' => 'tasks', 'idfield' => 'task_id',
-		                  'joinfield' => 'task_project');
+						  'joinfield' => 'task_project');
 		// call the parent class method to assign the oid
 		return CDpObject::canDelete($msg, $oid, $tables);
 		*/
 		return true;
 	}
 
-	function delete($oid = NULL, $history_desc = '', $history_proj = 0) {
+	function delete($oid = NULL, $history_desc = '', $history_proj = 0)
+	{
 		if ($oid) {
 			$this->project_id = $oid;
 		}
@@ -122,15 +128,20 @@ class CProject extends CDpObject {
 		}
 
 		$this->load($this->project_id);
-		addHistory('projects', $this->project_id, 'delete', $this->project_name,
-		           $this->project_id);
+		addHistory(
+			'projects',
+			$this->project_id,
+			'delete',
+			$this->project_name,
+			$this->project_id
+		);
 		$q = new DBQuery;
 		$q->addTable('tasks');
 		$q->addQuery('task_id');
 		$q->addWhere('task_project = ' . $this->project_id);
 		$sql = $q->prepare();
 		$q->clear();
-		$tasks_to_delete = db_loadColumn ($sql);
+		$tasks_to_delete = db_loadColumn($sql);
 		foreach ($tasks_to_delete as $task_id) {
 			$q->setDelete('user_tasks');
 			$q->addWhere('task_id =' . $task_id);
@@ -164,11 +175,12 @@ class CProject extends CDpObject {
 	}
 
 	/**	Import tasks from another project
-	*
-	*	@param	int		Project ID of the tasks come from.
-	*	@return	bool
-	**/
-	function importTasks($from_project_id, $scale_project=false) {
+	 *
+	 *	@param	int		Project ID of the tasks come from.
+	 *	@return	bool
+	 **/
+	function importTasks($from_project_id, $scale_project = false)
+	{
 
 		// Load the original
 		$origProject = new CProject();
@@ -179,31 +191,33 @@ class CProject extends CDpObject {
 		$q->addWhere('task_project =' . $from_project_id);
 		$sql = $q->prepare();
 		$q->clear();
-		$tasks = array_flip(db_loadColumn ($sql));
+		$tasks = array_flip(db_loadColumn($sql));
 
 		//Pristine Start and End Dates of Source and Destination Projects
 		$origStartDate = new CDate($origProject->project_start_date);
 		$origEndDate = new CDate($origProject->project_end_date);
-		$destStartDate = new CDate ($this->project_start_date);
-		$destEndDate = new CDate ($this->project_end_date);
+		$destStartDate = new CDate($this->project_start_date);
+		$destEndDate = new CDate($this->project_end_date);
 
 		$dateOffset = $destStartDate->dateDiff($origStartDate);
 
 		//Check that we have enough information to scale properly
 		//(i.e. no information is missing or "zero")
-		if (empty($origProject->project_start_date)  || empty($origProject->project_end_date)
-		    || empty($this->project_start_date) || empty($this->project_end_date)
-		    || $origProject->project_start_date == '0000-00-00 00:00:00'
-		    || $origProject->project_end_date == '0000-00-00 00:00:00'
-		    || $this->project_start_date == '0000-00-00 00:00:00'
-		    || $this->project_end_date == '0000-00-00 00:00:00') {
+		if (
+			empty($origProject->project_start_date) || empty($origProject->project_end_date)
+			|| empty($this->project_start_date) || empty($this->project_end_date)
+			|| $origProject->project_start_date == '0000-00-00 00:00:00'
+			|| $origProject->project_end_date == '0000-00-00 00:00:00'
+			|| $this->project_start_date == '0000-00-00 00:00:00'
+			|| $this->project_end_date == '0000-00-00 00:00:00'
+		) {
 			$scale_project = false;
 		}
 
 		if ($scale_project) {
 			//get ratio for scaling, protect from division by 0
 			$ratio = ((abs($destEndDate->dateDiff($destStartDate)) + 1)
-			          / (abs($origEndDate->dateDiff($origStartDate)) + 1));
+				/ (abs($origEndDate->dateDiff($origStartDate)) + 1));
 		}
 
 		// Old dependencies array from imported tasks
@@ -227,7 +241,7 @@ class CProject extends CDpObject {
 			$destTask = $objTask->copy($this->project_id, 0);
 			$nid2op[$destTask->task_id] = $oldParent;
 			$tasks[$orig] = $destTask;
-			$taskXref[$orig] = (integer)$destTask->task_id;
+			$taskXref[$orig] = (integer) $destTask->task_id;
 		}
 
 		// Build new dependencies array
@@ -249,18 +263,20 @@ class CProject extends CDpObject {
 
 		// Update dates based on new project's start date.
 		$origDate = new CDate($origProject->project_start_date);
-		$origStartHour = new CDate ($this->project_start_date);
-		$destDate = new CDate ($this->project_start_date);
+		$origStartHour = new CDate($this->project_start_date);
+		$destDate = new CDate($this->project_start_date);
 		foreach ($tasks as $task_id) {
 			$newTask = new CTask();
 			$newTask->load($task_id);
 			if (in_array($task_id, $taskXref)) {
-				$task_date_vars = array('task_start_date' , 'task_end_date');
+				$task_date_vars = array('task_start_date', 'task_end_date');
 
 				//Adjust task dates based on calculated offsets
 				foreach ($task_date_vars as $my_date) {
-					if (!empty($newTask->$my_date)
-					    && $newTask->$my_date != '0000-00-00 00:00:00') {
+					if (
+						!empty($newTask->$my_date)
+						&& $newTask->$my_date != '0000-00-00 00:00:00'
+					) {
 						$origDate->setDate($newTask->$my_date);
 						$origStartHour->setDate($newTask->$my_date);
 						$origStartHour->setTime(intval(dPgetConfig('cal_day_start')));
@@ -268,7 +284,7 @@ class CProject extends CDpObject {
 						$destDate->addDays($dateOffset);
 						if ($scale_project) {
 							$offsetAdd = (round(($origDate->dateDiff($origStartDate)) * $ratio)
-							              - $origDate->dateDiff($origStartDate));
+								- $origDate->dateDiff($origStartDate));
 							$destDate->addDays($offsetAdd);
 
 							$hours_in = $origStartHour->calcDuration($origDate);
@@ -285,7 +301,7 @@ class CProject extends CDpObject {
 
 				//Adjust durration to scale
 				if ($scale_project) {
-					$newTask->task_duration = round(($newTask->task_duration  * $ratio), 2);
+					$newTask->task_duration = round(($newTask->task_duration * $ratio), 2);
 				}
 				$newTask->task_parent = $taskXref[$nid2op[$newTask->task_id]];
 
@@ -298,41 +314,46 @@ class CProject extends CDpObject {
 	} // end of importTasks
 
 	/**
-	**	Overload of the dpObject::getAllowedRecords
-	**	to ensure that the allowed projects are owned by allowed companies.
-	**
-	**	@author	handco <handco@sourceforge.net>
-	**	@see	dpObject::getAllowedRecords
-	**/
+	 **	Overload of the dpObject::getAllowedRecords
+	 **	to ensure that the allowed projects are owned by allowed companies.
+	 **
+	 **	@author	handco <handco@sourceforge.net>
+	 **	@see	dpObject::getAllowedRecords
+	 **/
 
-	function getAllowedRecords($uid, $fields='*', $orderby='', $index=null, $extra=null) {
-		$oCpy = new CCompany ();
+	function getAllowedRecords($uid, $fields = '*', $orderby = '', $index = null, $extra = null)
+	{
+		$oCpy = new CCompany();
 
-		$aCpies = $oCpy->getAllowedRecords ($uid, 'company_id, company_name');
+		$aCpies = $oCpy->getAllowedRecords($uid, 'company_id, company_name');
 
 		$buffer = ((count($aCpies))
-		           ? ('(project_company IN (' . implode(',', array_keys($aCpies)) . '))')
-		           : '1 = 0');
-		$extra=array();
-		$extra['where'] = ((($extra['where'] != '') ? ($extra['where'] . ' AND ') : '')
-		                   . $buffer);
+			? ('(project_company IN (' . implode(',', array_keys($aCpies)) . '))')
+			: '1 = 0');
+		if (!is_array($extra)) {
+			$extra = array();
+		}
+		$extra['where'] = ((!empty($extra['where']) ? ($extra['where'] . ' AND ') : '')
+			. $buffer);
 
-		return parent::getAllowedRecords ($uid, $fields, $orderby, $index, $extra);
+		return parent::getAllowedRecords($uid, $fields, $orderby, $index, $extra);
 
 	}
 
-	function getAllowedSQL($uid, $index=null,$joins = NULL ) {
-		$oCpy = new CCompany ();
+	function getAllowedSQL($uid, $index = null, $joins = NULL)
+	{
+		$oCpy = new CCompany();
 
-		$where = $oCpy->getAllowedSQL ($uid, 'project_company');
+		$where = $oCpy->getAllowedSQL($uid, 'project_company');
 		$project_where = parent::getAllowedSQL($uid, $index);
 		return array_merge($where, $project_where);
 	}
 
-	function setAllowedSQL($uid, &$query, $index=null, $key=null,$alt_mod = NULL) {
+	function setAllowedSQL($uid, &$query, $index = null, $key = null, $alt_mod = NULL)
+	{
 		$oCpy = new CCompany;
 		parent::setAllowedSQL($uid, $query, $index, $key);
-		$oCpy->setAllowedSQL($uid, $query, ((($key) ? ($key . '.') : '') .'project_company'));
+		$oCpy->setAllowedSQL($uid, $query, ((($key) ? ($key . '.') : '') . 'project_company'));
 	}
 
 	/**
@@ -342,32 +363,34 @@ class CProject extends CDpObject {
 	 *	@author	handco <handco@sourceforge.net>
 	 *	@see	dpObject::getAllowedRecords
 	 */
-	function getDeniedRecords($uid) {
-		$aBuf1 = parent::getDeniedRecords ($uid);
+	function getDeniedRecords($uid)
+	{
+		$aBuf1 = parent::getDeniedRecords($uid);
 
-		$oCpy = new CCompany ();
+		$oCpy = new CCompany();
 		// Retrieve which projects are allowed due to the company rules
-		$aCpiesAllowed = $oCpy->getAllowedRecords ($uid, 'company_id,company_name');
+		$aCpiesAllowed = $oCpy->getAllowedRecords($uid, 'company_id,company_name');
 
 		$q = new DBQuery;
 		$q->addTable('projects');
 		$q->addQuery('project_id');
 		if (count($aCpiesAllowed)) {
-			$q->addWhere('NOT (project_company IN (' . implode (',', array_keys($aCpiesAllowed))
-			             . '))');
+			$q->addWhere('NOT (project_company IN (' . implode(',', array_keys($aCpiesAllowed))
+				. '))');
 		}
 		$sql = $q->prepare();
 		$q->clear();
-		$aBuf2 = db_loadColumn ($sql);
+		$aBuf2 = db_loadColumn($sql);
 
-		return array_merge ($aBuf1, $aBuf2);
+		return array_merge($aBuf1, $aBuf2);
 
 	}
 
-	function getAllowedProjectsInRows($userId) {
+	function getAllowedProjectsInRows($userId)
+	{
 		$q = new DBQuery;
 		$q->addQuery('project_id, project_status, project_name, project_description'
-		             . ', project_short_name');
+			. ', project_short_name');
 		$q->addTable('projects');
 		$q->addOrder('project_short_name');
 		$this->setAllowedSQL($userId, $q);
@@ -376,10 +399,11 @@ class CProject extends CDpObject {
 		return $allowedProjectRows;
 	}
 
-	function getAssignedProjectsInRows($userId) {
+	function getAssignedProjectsInRows($userId)
+	{
 		$q = new DBQuery;
 		$q->addQuery('project_id, project_status, project_name, project_description'
-		             . ', project_short_name');
+			. ', project_short_name');
 		$q->addTable('projects');
 		$q->addJoin('tasks', 't', 't.task_project = project_id');
 		$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
@@ -397,7 +421,8 @@ class CProject extends CDpObject {
 	 * @param int SQL-limit to limit the number of returned tasks
 	 * @return array List of criticalTasks
 	 */
-	function getCriticalTasks($project_id=NULL, $limit=1) {
+	function getCriticalTasks($project_id = NULL, $limit = 1)
+	{
 		$project_id = !empty($project_id) ? $project_id : $this->project_id;
 		$q = new DBQuery;
 		$q->addTable('tasks');
@@ -411,7 +436,8 @@ class CProject extends CDpObject {
 		return $q->loadList();
 	}
 
-	function store($updateNulls = false) {
+	function store($updateNulls = false)
+	{
 		$this->dPTrimAll();
 
 		$msg = $this->check();
@@ -421,12 +447,22 @@ class CProject extends CDpObject {
 
 		if ($this->project_id) {
 			$ret = db_updateObject('projects', $this, 'project_id', $updateNulls);
-			addHistory('projects', $this->project_id, 'update', $this->project_name,
-			           $this->project_id);
+			addHistory(
+				'projects',
+				$this->project_id,
+				'update',
+				$this->project_name,
+				$this->project_id
+			);
 		} else {
 			$ret = db_insertObject('projects', $this, 'project_id');
-			addHistory('projects', $this->project_id, 'add', $this->project_name,
-			           $this->project_id);
+			addHistory(
+				'projects',
+				$this->project_id,
+				'add',
+				$this->project_name,
+				$this->project_id
+			);
 		}
 
 		//split out related departments and store them seperatly.
@@ -436,7 +472,7 @@ class CProject extends CDpObject {
 		$q->exec();
 		$q->clear();
 		if ($this->project_departments) {
-			$departments = explode(',',$this->project_departments);
+			$departments = explode(',', $this->project_departments);
 			foreach ($departments as $department) {
 				$q->addTable('project_departments');
 				$q->addInsert('project_id', $this->project_id);
@@ -452,7 +488,7 @@ class CProject extends CDpObject {
 		$q->exec();
 		$q->clear();
 		if ($this->project_contacts) {
-			$contacts = explode(',',$this->project_contacts);
+			$contacts = explode(',', $this->project_contacts);
 			foreach ($contacts as $contact) {
 				if ($contact) {
 					$q->addTable('project_contacts');
@@ -481,20 +517,21 @@ class CProject extends CDpObject {
 			current viewing user $AppUI->user_id is used.
 */
 
-function projects_list_data($user_id=false) {
+function projects_list_data($user_id = false)
+{
 	global $AppUI, $addPwOiD, $cBuffer, $company, $company_id, $company_prefix, $deny, $department;
 	global $dept_ids, $dPconfig, $orderby, $orderdir, $projects, $tasks_critical, $tasks_problems;
 	global $tasks_sum, $tasks_summy, $tasks_total, $owner, $projectTypeId, $project_status;
 	global $currentTabId;
 	$addProjectsWithAssignedTasks = (($AppUI->getState('addProjWithTasks'))
-	                                 ? $AppUI->getState('addProjWithTasks') : 0);
+		? $AppUI->getState('addProjWithTasks') : 0);
 
 	//for getting permissions on project records
 	$obj_project = new CProject();
 
 	// Let's delete temproary tables
 	$q = new DBQuery;
-	$table_list = array('tasks_sum','tasks_total','tasks_summy','tasks_critical','tasks_problems','tasks_users');
+	$table_list = array('tasks_sum', 'tasks_total', 'tasks_summy', 'tasks_critical', 'tasks_problems', 'tasks_users');
 	$q->dropTemp($table_list);
 	$q->exec();
 	$q->clear();
@@ -503,19 +540,19 @@ function projects_list_data($user_id=false) {
 	// by Pablo Roca (pabloroca@mvps.org)
 	// 16 August 2003
 
-	$working_hours = ($dPconfig['daily_working_hours']?$dPconfig['daily_working_hours']:8);
+	$working_hours = ($dPconfig['daily_working_hours'] ? $dPconfig['daily_working_hours'] : 8);
 
 	// GJB: Note that we have to special case duration type 24
 	// and this refers to the hours in a day, NOT 24 hours
 	$q->createTemp('tasks_sum');
 	$q->addTable('tasks', 't');
 	$q->addQuery('t.task_project, SUM(t.task_duration * t.task_percent_complete'
-	             . ' * IF(t.task_duration_type = 24, ' . $working_hours
-	             . ', t.task_duration_type)) / SUM(t.task_duration'
-	             . ' * IF(t.task_duration_type = 24, ' . $working_hours
-	             . ', t.task_duration_type)) AS project_percent_complete, SUM(t.task_duration'
-	             . ' * IF(t.task_duration_type = 24, ' . $working_hours
-	             . ', t.task_duration_type)) AS project_duration');
+		. ' * IF(t.task_duration_type = 24, ' . $working_hours
+		. ', t.task_duration_type)) / SUM(t.task_duration'
+		. ' * IF(t.task_duration_type = 24, ' . $working_hours
+		. ', t.task_duration_type)) AS project_percent_complete, SUM(t.task_duration'
+		. ' * IF(t.task_duration_type = 24, ' . $working_hours
+		. ', t.task_duration_type)) AS project_duration');
 	if ($user_id) {
 		$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
 		$q->addWhere('ut.user_id = ' . $user_id);
@@ -559,7 +596,7 @@ function projects_list_data($user_id=false) {
 	$q->createTemp('tasks_critical');
 	$q->addTable('tasks', 't');
 	$q->addQuery('t.task_project, t.task_id AS critical_task'
-	             . ', MAX(t.task_end_date) AS project_actual_end_date');
+		. ', MAX(t.task_end_date) AS project_actual_end_date');
 	// MerlinYoda: we don't join tables if we don't get anything out of the process
 	// $q->addJoin('projects', 'p', 'p.project_id = t.task_project');
 	$q->addOrder('t.task_end_date DESC');
@@ -628,13 +665,13 @@ function projects_list_data($user_id=false) {
 
 	$q->addTable('projects', 'p');
 	$q->addQuery('p.project_id, p.project_status, p.project_color_identifier, p.project_type'
-	             . ', p.project_name, p.project_description, p.project_start_date'
-	             . ', p.project_end_date, p.project_color_identifier, p.project_company'
-	             . ', p.project_status, p.project_priority, com.company_name'
-	             . ', com.company_description, tc.critical_task, tc.project_actual_end_date'
-	             . ', if (tp.task_log_problem IS NULL, 0, tp.task_log_problem) AS task_log_problem'
-				 . ', tt.total_tasks, tsy.my_tasks, ts.project_percent_complete'
-				 . ', ts.project_duration, u.user_username');
+		. ', p.project_name, p.project_description, p.project_start_date'
+		. ', p.project_end_date, p.project_color_identifier, p.project_company'
+		. ', p.project_status, p.project_priority, com.company_name'
+		. ', com.company_description, tc.critical_task, tc.project_actual_end_date'
+		. ', if (tp.task_log_problem IS NULL, 0, tp.task_log_problem) AS task_log_problem'
+		. ', tt.total_tasks, tsy.my_tasks, ts.project_percent_complete'
+		. ', ts.project_duration, u.user_username');
 	$q->addJoin('companies', 'com', 'p.project_company = com.company_id');
 	$q->addJoin('users', 'u', 'p.project_owner = u.user_id');
 	$q->addJoin('tasks_critical', 'tc', 'p.project_id = tc.task_project');
@@ -646,18 +683,18 @@ function projects_list_data($user_id=false) {
 		$q->addJoin('tasks_users', 'tu', 'p.project_id = tu.task_project');
 	}
 	if (isset($project_status) && $currentTabId != 500) {
-		$q->addWhere('p.project_status = '.$project_status);
+		$q->addWhere('p.project_status = ' . $project_status);
 	}
 	if (isset($department)) {
 		$q->addJoin('project_departments', 'pd', 'pd.project_id = p.project_id');
 		if (!$addPwOiD) {
-			$q->addWhere('pd.department_id in (' . implode(',',$dept_ids) . ')');
+			$q->addWhere('pd.department_id in (' . implode(',', $dept_ids) . ')');
 		} else {
 			// Show Projects where the Project Owner is in the given department
 			$q->addWhere('p.project_owner IN ('
-			             . ((!empty($owner_ids)) ? implode(',', $owner_ids) : 0) . ')');
+				. ((!empty($owner_ids)) ? implode(',', $owner_ids) : 0) . ')');
 		}
-	} else if ($company_id &&!$addPwOiD) {
+	} else if ($company_id && !$addPwOiD) {
 		$q->addWhere('p.project_company = ' . $company_id);
 	}
 
@@ -688,8 +725,11 @@ function projects_list_data($user_id=false) {
 	// 16 August 2003
 	// get the list of permitted companies
 	$obj_company = new CCompany();
-	$companies = $obj_company->getAllowedRecords($AppUI->user_id, 'company_id,company_name',
-	                                             'company_name');
+	$companies = $obj_company->getAllowedRecords(
+		$AppUI->user_id,
+		'company_id,company_name',
+		'company_name'
+	);
 	if (count($companies) == 0) {
 		$companies = array(0);
 	}
@@ -705,19 +745,19 @@ function projects_list_data($user_id=false) {
 	$q->addOrder('c.company_name, dep.dept_parent, dep.dept_name');
 	$obj_company->setAllowedSQL($AppUI->user_id, $q);
 	$rows = $q->loadList();
-	
+
 	//display the select list
 	$cBuffer = '<select name="department" onchange="javascript:document.pickCompany.submit()" class="text">';
 	$cBuffer .= ('<option value="company_0" style="font-weight:bold;">' . $AppUI->_('All')
-	             . '</option>'."\n");
+		. '</option>' . "\n");
 	$company = '';
 	foreach ($rows as $row) {
 		if ($row['dept_parent'] == 0) {
 			if ($company != $row['company_id']) {
 				$cBuffer .= ('<option value="' . $AppUI->___($company_prefix . $row['company_id'])
-				             . '" style="font-weight:bold;"'
-				             . (($company_id == $row['company_id']) ? 'selected="selected"' : '')
-				             . '>' . $AppUI->___($row['company_name']) . '</option>' . "\n");
+					. '" style="font-weight:bold;"'
+					. (($company_id == $row['company_id']) ? 'selected="selected"' : '')
+					. '>' . $AppUI->___($row['company_name']) . '</option>' . "\n");
 				$company = $row['company_id'];
 			}
 
@@ -732,17 +772,18 @@ function projects_list_data($user_id=false) {
 
 // Update project_percent_complete in database
 // Author : Henri Saulm�
-function smartUpdateProjectPercentComplete($project){
- 	$q = new DBQuery();
+function smartUpdateProjectPercentComplete($project)
+{
+	$q = new DBQuery();
 	// R�cup�re l'avancement stock� en base
 	$q->addTable('projects', 'pr');
 	$q->addQuery('pr.project_percent_complete');
-	$q->addWhere('pr.project_id = '. $project);
+	$q->addWhere('pr.project_id = ' . $project);
 	$oldProject = $q->loadResult();
 	$q->exec();
 	$q->clear();
 
-    // Calcule le nouvel avancement
+	// Calcule le nouvel avancement
 	$q->addQuery('SUM(task_duration * task_duration_type * task_percent_complete) 
 				/ SUM(task_duration * task_duration_type) AS project_percent_complete');
 	$q->addTable('tasks', 't');
@@ -752,7 +793,7 @@ function smartUpdateProjectPercentComplete($project){
 	$q->clear();
 
 	$q->addTable('projects', 'p');
-	if($oldProject != intval($newProject))//si on a une nouvelle valeur de project_percent_complete
+	if ($oldProject != intval($newProject))//si on a une nouvelle valeur de project_percent_complete
 	{
 		$q->addWhere('project_id = ' . $project);//on veut s'occuper uniquement de la ligne concern�e
 		$q->addUpdate('project_percent_complete', $newProject);//on update le project_percent_complete de la ligne
@@ -764,7 +805,8 @@ function smartUpdateProjectPercentComplete($project){
 //Update project_percent_complete of every projets
 //in database 
 //Auteur : Henri Saulm�
-function updateProjectPercentComplete(){ 
+function updateProjectPercentComplete()
+{
 	$q = new DBQuery();
 	$q->dropTemp(array('tasks_sum'));
 	$q->exec();
@@ -785,13 +827,12 @@ function updateProjectPercentComplete(){
 	$q->exec();
 	$q->clear();
 
-	foreach($projects as $row)
-	{
+	foreach ($projects as $row) {
 		$q->addTable('projects', 'p');
 		$q->addWhere('project_id = ' . $row['project_id']);//on veut s'occuper uniquement de la ligne concern�e
 		$q->addUpdate('project_percent_complete', $row['project_percent_complete']);//on update le project_percent_complete de la ligne
 		$q->exec();
-		$q->clear(); 
+		$q->clear();
 	}
 }
 ?>

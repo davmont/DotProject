@@ -1,6 +1,6 @@
 <?php /* ROLES $Id: roles.class.php 5872 2009-04-25 00:09:56Z merlinyoda $ */
 if (!defined('DP_BASE_DIR')) {
-  die('You should not access this file directly.');
+	die('You should not access this file directly.');
 }
 
 /**
@@ -23,36 +23,41 @@ if (!defined('DP_BASE_DIR')) {
  * be deleted, and then the user id mappings.  Note that the user ARO is _never_
  * deleted, unless the user is.
  */
-class CRole {
+class CRole
+{
 	var $role_id = NULL;
 	var $role_name = NULL;
 	var $role_description = NULL;
 	var $perms = null;
 
-	function CRole($name='', $description='') {
+	function CRole($name = '', $description = '')
+	{
 		$this->role_name = $name;
 		$this->role_description = $description;
-		$this->perms =& $GLOBALS['AppUI']->acl();
+		$this->perms = isset($GLOBALS['acl']) ? $GLOBALS['acl'] : null;
 	}
 
-	function bind($hash) {
+	function bind($hash)
+	{
 		if (!is_array($hash)) {
-			return get_class($this)."::bind failed";
+			return get_class($this) . "::bind failed";
 		} else {
 			bindHashToObject($hash, $this);
 			return NULL;
 		}
 	}
 
-	function check() {
+	function check()
+	{
 		// Not really much to check, just return OK for this iteration.
 		return NULL; // object is ok
 	}
 
-	function store() {
+	function store()
+	{
 		$msg = $this->check();
 		if ($msg) {
-			return get_class($this)."::store-check failed<br />$msg";
+			return get_class($this) . "::store-check failed<br />$msg";
 		}
 		if ($this->role_id) {
 			$ret = $this->perms->updateRole($this->role_id, $this->role_name, $this->role_description);
@@ -60,13 +65,14 @@ class CRole {
 			$ret = $this->perms->insertRole($this->role_name, $this->role_description);
 		}
 		if (!$ret) {
-			return get_class($this)."::store failed";
+			return get_class($this) . "::store failed";
 		} else {
 			return NULL;
 		}
 	}
 
-	function delete() {
+	function delete()
+	{
 		// Delete a role requires deleting all of the ACLs associated
 		// with this role, and all of the group data for the role.
 		if ($this->perms->checkModuleItem('roles', "delete", $this->role_id)) {
@@ -74,7 +80,7 @@ class CRole {
 			$this->perms->deleteRole($this->role_id);
 			return null;
 		} else {
-			return get_class($this)."::delete failed <br/>You do not have permission to delete this role";
+			return get_class($this) . "::delete failed <br/>You do not have permission to delete this role";
 		}
 	}
 
@@ -85,7 +91,7 @@ class CRole {
 
 	function __wakeup()
 	{
-		$this->perms =& $GLOBALS['AppUI']->acl();
+		$this->perms = isset($GLOBALS['acl']) ? $GLOBALS['acl'] : null;
 	}
 
 	/**
@@ -93,13 +99,17 @@ class CRole {
 	 */
 	function getRoles()
 	{
+		if (!$this->perms) {
+			return array();
+		}
 		$role_parent = $this->perms->get_group_id("role");
 		$roles = $this->perms->getChildren($role_parent);
 		return $roles;
 	}
-	
 
-	function rename_array(&$roles, $from, $to) {
+
+	function rename_array(&$roles, $from, $to)
+	{
 		if (count($from) != count($to)) {
 			return false;
 		}

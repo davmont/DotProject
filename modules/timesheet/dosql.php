@@ -5,7 +5,7 @@ $punchOut = isset($_POST['punchout']) ? 1 : 0;
 $break = isset($_POST['break']) ? 1 : 0;
 $update = isset($_POST['update']) ? 1 : 0;
 
-$this_post = Array();
+$this_post = array();
 $timesheet_id = $_POST['timesheet_id'];
 $timesheet_date = $_POST['timesheet_date'];
 $timesheet_time_in = $_POST['timesheet_time_in'];
@@ -14,42 +14,42 @@ $timesheet_time_break = $_POST['timesheet_time_break'];
 $q = new DBQuery();
 if ($punchIn) {
 	$timesheet = new Timesheet();
-	$q -> addTable('timesheet');
-	$q -> addQuery('*');
-	$q -> addWhere("user_id = $AppUI->user_id and timesheet_date = '" . $_POST['timesheet_date'] . "'");	
-	
-	if (!$q -> loadObject($timesheet)) { // timesheet doesn't exist yet.  Create it.
+	$q->addTable('timesheet');
+	$q->addQuery('*');
+	$q->addWhere("user_id = $AppUI->user_id and timesheet_date = '" . $_POST['timesheet_date'] . "'");
+
+	if (!$q->loadObject($timesheet)) { // timesheet doesn't exist yet.  Create it.
 		$timesheet->timesheet_id = "";
 		$timesheet->user_id = $AppUI->user_id;
 		$timesheet->timesheet_date = $_POST['timesheet_date'];
-		
+
 		if (($msg = $timesheet->store())) {
-			$AppUI->setMsg( $msg, UI_MSG_ERROR );
+			$AppUI->setMsg($msg, UI_MSG_ERROR);
 			$AppUI->redirect();
 		}
 	}
-	
+
 	// set time_in
 	$curTime = new CDate();
 	$timesheet->timesheet_time_in = $curTime->format("%H:%M");
 	if (($msg = $timesheet->store())) {
-		$AppUI->setMsg( $msg, UI_MSG_ERROR );
+		$AppUI->setMsg($msg, UI_MSG_ERROR);
 	} else {
-		$AppUI->setMsg( "Punched in at " . $curTime->format("%H:%M"), UI_MSG_OK );
+		$AppUI->setMsg("Punched in at " . $curTime->format("%H:%M"), UI_MSG_OK);
 	}
 } else if ($punchOut) {
 	$timesheet = new Timesheet();
-	$q -> addTable('timesheet');
-	$q -> addQuery('*');
-	$q -> addWhere("user_id = $AppUI->user_id and timesheet_date = '" . $_POST['timesheet_date'] . "'");	
-	
-	if (!$q -> loadObject($timesheet)) { // timesheet doesn't exist yet.  Create it.
+	$q->addTable('timesheet');
+	$q->addQuery('*');
+	$q->addWhere("user_id = $AppUI->user_id and timesheet_date = '" . $_POST['timesheet_date'] . "'");
+
+	if (!$q->loadObject($timesheet)) { // timesheet doesn't exist yet.  Create it.
 		$timesheet->timesheet_id = "";
 		$timesheet->user_id = $AppUI->user_id;
 		$timesheet->timesheet_date = $_POST['timesheet_date'];
-		
+
 		if (($msg = $timesheet->store())) {
-			$AppUI->setMsg( $msg, UI_MSG_ERROR );
+			$AppUI->setMsg($msg, UI_MSG_ERROR);
 			$AppUI->redirect();
 		}
 	}
@@ -58,34 +58,34 @@ if ($punchIn) {
 	$curTime = new CDate();
 	$timesheet->timesheet_time_out = $curTime->format("%H:%M");
 	if (($msg = $timesheet->store())) {
-		$AppUI->setMsg( $msg, UI_MSG_ERROR );
+		$AppUI->setMsg($msg, UI_MSG_ERROR);
 	} else {
-		$AppUI->setMsg( "Punched out at " . $curTime->format("%H:%M"), UI_MSG_OK );
+		$AppUI->setMsg("Punched out at " . $curTime->format("%H:%M"), UI_MSG_OK);
 	}
 } else if ($break) {
 	$timesheet = new Timesheet();
-	$q -> addTable('timesheet');
-	$q -> addQuery('*');
-	$q -> addWhere("user_id = $AppUI->user_id and timesheet_date = '" . $_POST['timesheet_date'] . "'");
+	$q->addTable('timesheet');
+	$q->addQuery('*');
+	$q->addWhere("user_id = $AppUI->user_id and timesheet_date = '" . $_POST['timesheet_date'] . "'");
 
-	if (!$q -> loadObject($timesheet)) { // timesheet doesn't exist yet.  Create it.
+	if (!$q->loadObject($timesheet)) { // timesheet doesn't exist yet.  Create it.
 		$timesheet->timesheet_id = "";
 		$timesheet->user_id = $AppUI->user_id;
 		$timesheet->timesheet_date = $_POST['timesheet_date'];
-		
+
 		if (($msg = $timesheet->store())) {
-			$AppUI->setMsg( $msg, UI_MSG_ERROR );
+			$AppUI->setMsg($msg, UI_MSG_ERROR);
 			$AppUI->redirect();
 		}
 	}
-	
+
 	// set current time
 	$curTime = new CDate();
 
 	if ($_POST['break'] == 'Back for more Fun') {
 
 		$myMsg = "Break ended on " . $curTime->format("%H:%M");
-		
+
 		// calculate break time
 		$prevBreak = new CDate('0000-00-00 ' . $timesheet->timesheet_time_break);
 		$startTime = new CDate('0000-00-00 ' . $timesheet->timesheet_time_break_start);
@@ -93,47 +93,47 @@ if ($punchIn) {
 		$curTime->subtractSeconds($startTime->hour * 60 * 60 + $startTime->minute * 60);
 		// set time_break_start
 		$timesheet->timesheet_time_break = $curTime->format("%H:%M");
-		
+
 		// reset time_break_start
 		$timesheet->timesheet_time_break_start = '00:00:00';
 	} else {
 		// set time_break_start
 		$timesheet->timesheet_time_break_start = $curTime->format("%H:%M");
 	}
-	
+
 	if (($msg = $timesheet->store())) {
-		$AppUI->setMsg( $msg, UI_MSG_ERROR );
+		$AppUI->setMsg($msg, UI_MSG_ERROR);
 	} else {
-		$AppUI->setMsg( ($myMsg ? $myMsg : "Break started on " . $curTime->format("%H:%M")), UI_MSG_OK );
+		$AppUI->setMsg(($myMsg ? $myMsg : "Break started on " . $curTime->format("%H:%M")), UI_MSG_OK);
 	}
 } else if ($update) {
 	for ($i = 0; $i < count($_POST['timesheet_id']); $i++) {
-		
+
 		$timesheet = new Timesheet();
-		
-		list(, $this_post['timesheet_id'])		= each($timesheet_id);
-		list(, $this_post['timesheet_date'])		= each($timesheet_date);
-		list(, $this_post['timesheet_time_in'])		= each($timesheet_time_in);
-		list(, $this_post['timesheet_time_out'])	= each($timesheet_time_out);
-		list(, $this_post['timesheet_time_break'])	= each($timesheet_time_break);
+
+		$this_post['timesheet_id'] = $timesheet_id[$i];
+		$this_post['timesheet_date'] = $timesheet_date[$i];
+		$this_post['timesheet_time_in'] = $timesheet_time_in[$i];
+		$this_post['timesheet_time_out'] = $timesheet_time_out[$i];
+		$this_post['timesheet_time_break'] = $timesheet_time_break[$i];
 		$this_post['user_id'] = $AppUI->user_id;
-		
-		
-		if (($this_post['timesheet_id']) or ($this_post['timesheet_time_in'] or $this_post['timesheet_time_out'] or $this_post['timesheet_time_break'])) {			
-			
-			if (($msg = $timesheet->bind( $this_post ))) {
-				$AppUI->setMsg( $msg, UI_MSG_ERROR );
+
+
+		if (($this_post['timesheet_id']) or ($this_post['timesheet_time_in'] or $this_post['timesheet_time_out'] or $this_post['timesheet_time_break'])) {
+
+			if (($msg = $timesheet->bind($this_post))) {
+				$AppUI->setMsg($msg, UI_MSG_ERROR);
 				$AppUI->redirect();
 			}
-			
+
 			// $isNotNew = @$this_post['timesheet_id'];
 			if (($msg = $timesheet->store())) {
-				$AppUI->setMsg( $msg, UI_MSG_ERROR );
+				$AppUI->setMsg($msg, UI_MSG_ERROR);
 				$AppUI->redirect();
 			}
 		}
 	}
-	$AppUI->setMsg( "Timesheet entries updated", UI_MSG_OK );
+	$AppUI->setMsg("Timesheet entries updated", UI_MSG_OK);
 }
 $AppUI->redirect();
 ?>

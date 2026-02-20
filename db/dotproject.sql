@@ -550,36 +550,6 @@ CREATE TABLE %dbprefix%roles (
   PRIMARY KEY  (role_id)
 );
 
-#
-# Table structure for table 'user_roles'
-#
-
-CREATE TABLE %dbprefix%user_roles (
-  user_id int(10) unsigned NOT NULL default '0',
-  role_id int(10) unsigned NOT NULL default '0'
-);
-
-# Host: localhost
-# Database: dotproject
-# Table: 'common_notes'
-# 
-CREATE TABLE %dbprefix%common_notes (
-  note_id int(10) unsigned NOT NULL auto_increment,
-  note_author int(10) unsigned NOT NULL default '0',
-  note_module int(10) unsigned NOT NULL default '0',
-  note_record_id int(10) unsigned NOT NULL default '0',
-  note_category int(3) unsigned NOT NULL default '0',
-  note_title varchar(100) NOT NULL default '',
-  note_body text NOT NULL,
-  note_date datetime NOT NULL default '0000-00-00 00:00:00',
-  note_hours float NOT NULL default '0',
-  note_code varchar(8) NOT NULL default '',
-  note_created datetime NOT NULL default '0000-00-00 00:00:00',
-  note_modified timestamp,
-  note_modified_by int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (note_id)
-) ; 
-
 
 
 #20040823
@@ -822,26 +792,8 @@ CREATE TABLE %dbprefix%gacl_acl (
 ) ;
 # --------------------------------------------------------
 
-#
-# Table structure for table gacl_acl_sections
-#
-# Creation: Jul 22, 2004 at 01:00 PM
-# Last update: Jul 22, 2004 at 01:04 PM
-# Last check: Jul 22, 2004 at 01:00 PM
-#
-
-DROP TABLE IF EXISTS %dbprefix%gacl_acl_sections;
-CREATE TABLE %dbprefix%gacl_acl_sections (
-  id int(11) NOT NULL default '0',
-  value varchar(80) NOT NULL default '',
-  order_value int(11) NOT NULL default '0',
-  name varchar(230) NOT NULL default '',
-  hidden int(11) NOT NULL default '0',
-  PRIMARY KEY  (id),
-  UNIQUE KEY gacl_value_acl_sections (value),
-  KEY gacl_hidden_acl_sections (hidden)
-) ;
 # --------------------------------------------------------
+# NOTE: gacl_acl_sections removed — zero references in codebase.
 
 #
 # Table structure for table gacl_aco
@@ -1270,22 +1222,6 @@ CREATE TABLE IF NOT EXISTS %dbprefix%tasks_ical (
 
 # 20121019
 # Create budget table
-<<<<<<< HEAD
-CREATE TABLE IF NOT EXISTS %dbprefix%budget (
-	budget_id int(11) NOT NULL AUTO_INCREMENT,
-	task_id int(11) NOT NULL DEFAULT '0',
-	Tax decimal(4,2) NOT NULL DEFAULT '0',
-	display_tax tinyint(1) NOT NULL DEFAULT '0',
-	only_financial tinyint(1) NOT NULL DEFAULT '0',
-	equipment_investment decimal(15,2) DEFAULT '0',
-	intangible_investment decimal(15,2) DEFAULT '0',
-	service_investment decimal(15,2) DEFAULT '0',
-	equipment_operation decimal(15,2) DEFAULT '0',
-	intangible_operation decimal(15,2) DEFAULT '0',
-	service_operation decimal(15,2) DEFAULT '0',
-	PRIMARY KEY (budget_id)
-);
-=======
 CREATE TABLE IF NOT EXISTS `%dbprefix%budget` (
 	`budget_id` int(11) NOT NULL AUTO_INCREMENT,
 	`task_id` int(11) NOT NULL DEFAULT '0',
@@ -1299,5 +1235,197 @@ CREATE TABLE IF NOT EXISTS `%dbprefix%budget` (
 	`intangible_operation` decimal(15,2) DEFAULT '0',
 	`service_operation` decimal(15,2) DEFAULT '0',
 	PRIMARY KEY (`budget_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
->>>>>>> 601893621ba4750a134f66868dbabe2aa5834596
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+# =============================================================
+# phpGACL permissions seed data
+# Initialises the ACL system so the admin user has full access.
+# =============================================================
+
+SET foreign_key_checks = 0;
+
+# 1. ACO Sections
+INSERT INTO `%dbprefix%gacl_aco_sections` (`id`, `value`, `order_value`, `name`, `hidden`) VALUES
+    (1, 'system',      1, 'System',      0),
+    (2, 'application', 2, 'Application', 0);
+
+# 2. ACO Objects (permission types)
+INSERT INTO `%dbprefix%gacl_aco` (`id`, `section_value`, `value`, `order_value`, `name`, `hidden`) VALUES
+    (1, 'system',      'login',  1, 'Login',  0),
+    (2, 'application', 'access', 1, 'Access', 0),
+    (3, 'application', 'view',   2, 'View',   0),
+    (4, 'application', 'add',    3, 'Add',    0),
+    (5, 'application', 'edit',   4, 'Edit',   0),
+    (6, 'application', 'delete', 5, 'Delete', 0);
+
+# 3. ARO Sections (who)
+INSERT INTO `%dbprefix%gacl_aro_sections` (`id`, `value`, `order_value`, `name`, `hidden`) VALUES
+    (1, 'user', 1, 'Users', 0);
+
+# 4. AXO Sections (what)
+INSERT INTO `%dbprefix%gacl_axo_sections` (`id`, `value`, `order_value`, `name`, `hidden`) VALUES
+    (1, 'sys', 1, 'System',      0),
+    (2, 'app', 2, 'Application', 0);
+
+# 5. AXO Objects (modules/resources)
+INSERT INTO `%dbprefix%gacl_axo` (`id`, `section_value`, `value`, `order_value`, `name`, `hidden`) VALUES
+    (1,  'sys', 'acl',          1,  'ACL Administration',    0),
+    (2,  'app', 'admin',        1,  'User Administration',   0),
+    (3,  'app', 'calendar',     2,  'Calendar',              0),
+    (4,  'app', 'events',       2,  'Events',                0),
+    (5,  'app', 'companies',    3,  'Companies',             0),
+    (6,  'app', 'contacts',     4,  'Contacts',              0),
+    (7,  'app', 'departments',  5,  'Departments',           0),
+    (8,  'app', 'files',        6,  'Files',                 0),
+    (9,  'app', 'file_folders', 6,  'File Folders',          0),
+    (10, 'app', 'forums',       7,  'Forums',                0),
+    (11, 'app', 'help',         8,  'Help',                  0),
+    (12, 'app', 'projects',     9,  'Projects',              0),
+    (13, 'app', 'system',       10, 'System Administration', 0),
+    (14, 'app', 'tasks',        11, 'Tasks',                 0),
+    (15, 'app', 'task_log',     11, 'Task Logs',             0),
+    (16, 'app', 'ticketsmith',  12, 'Tickets',               0),
+    (17, 'app', 'public',       13, 'Public',                0),
+    (18, 'app', 'roles',        14, 'Roles Administration',  0),
+    (19, 'app', 'users',        15, 'User Table',            0);
+
+# 6. ARO Groups (role tree)
+INSERT INTO `%dbprefix%gacl_aro_groups` (`id`, `parent_id`, `lft`, `rgt`, `name`, `value`) VALUES
+    (1, 0, 1,  12, 'Roles',          'role'),
+    (2, 1, 2,  3,  'Administrator',  'admin'),
+    (3, 1, 4,  5,  'Anonymous',      'anon'),
+    (4, 1, 6,  7,  'Guest',          'guest'),
+    (5, 1, 8,  9,  'Project worker', 'normal');
+
+# 7. AXO Groups (module groups tree)
+INSERT INTO `%dbprefix%gacl_axo_groups` (`id`, `parent_id`, `lft`, `rgt`, `name`, `value`) VALUES
+    (1, 0, 1,  10, 'Modules',           'mod'),
+    (2, 1, 2,  3,  'All Modules',       'all'),
+    (3, 1, 4,  5,  'Admin Modules',     'admin'),
+    (4, 1, 6,  7,  'Non-Admin Modules', 'non_admin');
+
+# 8. Group to AXO memberships
+INSERT INTO `%dbprefix%gacl_groups_axo_map` (`group_id`, `axo_id`)
+SELECT 2, id FROM `%dbprefix%gacl_axo` WHERE `section_value` = 'app';
+
+INSERT INTO `%dbprefix%gacl_groups_axo_map` (`group_id`, `axo_id`)
+SELECT 3, id FROM `%dbprefix%gacl_axo`
+WHERE `section_value` = 'app' AND `value` IN ('admin','system','roles','users');
+
+INSERT INTO `%dbprefix%gacl_groups_axo_map` (`group_id`, `axo_id`)
+SELECT 4, id FROM `%dbprefix%gacl_axo`
+WHERE `section_value` = 'app' AND `value` NOT IN ('admin','system','roles','users');
+
+# 9. ACLs
+INSERT INTO `%dbprefix%gacl_acl` (`id`, `section_value`, `allow`, `enabled`, `return_value`, `note`, `updated_date`) VALUES
+    (1, 'system', 1, 1, 'user', 'All roles: Login',                           UNIX_TIMESTAMP()),
+    (2, 'system', 1, 1, 'user', 'Administrator: ALL permissions ALL modules',  UNIX_TIMESTAMP()),
+    (3, 'system', 1, 1, 'user', 'Administrator: access on ACL object',         UNIX_TIMESTAMP()),
+    (4, 'system', 1, 1, 'user', 'Guest: access+view on non-admin modules',     UNIX_TIMESTAMP()),
+    (5, 'system', 1, 1, 'user', 'Anonymous: access on non-admin modules',      UNIX_TIMESTAMP()),
+    (6, 'system', 1, 1, 'user', 'Worker: ALL permissions on non-admin modules',UNIX_TIMESTAMP()),
+    (7, 'system', 1, 1, 'user', 'Worker+Guest: access+view on users',          UNIX_TIMESTAMP());
+
+INSERT INTO `%dbprefix%gacl_aco_map` (`acl_id`, `section_value`, `value`) VALUES
+    (1, 'system',      'login'),
+    (2, 'application', 'access'), (2, 'application', 'add'),
+    (2, 'application', 'edit'),   (2, 'application', 'view'),
+    (2, 'application', 'delete'),
+    (3, 'application', 'access'),
+    (4, 'application', 'access'), (4, 'application', 'view'),
+    (5, 'application', 'access'),
+    (6, 'application', 'access'), (6, 'application', 'add'),
+    (6, 'application', 'edit'),   (6, 'application', 'view'),
+    (6, 'application', 'delete'),
+    (7, 'application', 'access'), (7, 'application', 'view');
+
+INSERT INTO `%dbprefix%gacl_aro_groups_map` (`acl_id`, `group_id`) VALUES
+    (1, 1), (2, 2), (3, 2), (4, 4), (5, 3), (6, 5), (7, 5), (7, 4);
+
+INSERT INTO `%dbprefix%gacl_axo_groups_map` (`acl_id`, `group_id`) VALUES
+    (2, 2), (4, 4), (5, 4), (6, 4);
+
+INSERT INTO `%dbprefix%gacl_axo_map` (`acl_id`, `section_value`, `value`) VALUES
+    (3, 'sys', 'acl'),
+    (7, 'app', 'users');
+
+# 10. Admin user ARO entry + assign to Administrator group (user_id=1)
+INSERT INTO `%dbprefix%gacl_aro` (`id`, `section_value`, `value`, `order_value`, `name`, `hidden`)
+SELECT u.user_id, 'user', u.user_id, 1, u.user_username, 0
+FROM `%dbprefix%users` u WHERE u.user_id = 1
+ON DUPLICATE KEY UPDATE `name` = u.user_username;
+
+INSERT IGNORE INTO `%dbprefix%gacl_groups_aro_map` (`group_id`, `aro_id`)
+SELECT 2, id FROM `%dbprefix%gacl_aro` WHERE `section_value` = 'user' AND `value` = '1';
+
+# 11. phpGACL metadata
+INSERT IGNORE INTO `%dbprefix%gacl_phpgacl` (`name`, `value`) VALUES
+    ('version', '3.3.2'), ('schema_version', '2.1');
+
+# 12. Build dotpermissions lookup table
+
+# Pass 1: Direct user to specific module object
+INSERT INTO `%dbprefix%dotpermissions` (acl_id,user_id,section,axo,permission,allow,priority,enabled)
+SELECT acl.id,aro.value,axo_m.section_value,axo_m.value,aco_m.value,acl.allow,1,acl.enabled
+FROM `%dbprefix%gacl_acl` acl
+LEFT JOIN `%dbprefix%gacl_aco_map` aco_m ON acl.id=aco_m.acl_id
+LEFT JOIN `%dbprefix%gacl_aro_map` aro_m ON acl.id=aro_m.acl_id
+LEFT JOIN `%dbprefix%gacl_aro`     aro   ON aro_m.value=aro.value
+LEFT JOIN `%dbprefix%gacl_axo_map` axo_m ON axo_m.acl_id=acl.id
+WHERE aro.name IS NOT NULL AND axo_m.value IS NOT NULL;
+
+# Pass 2: Direct user to module group
+INSERT INTO `%dbprefix%dotpermissions` (acl_id,user_id,section,axo,permission,allow,priority,enabled)
+SELECT acl.id,aro.value,axo.section_value,axo.value,aco_m.value,acl.allow,2,acl.enabled
+FROM `%dbprefix%gacl_acl` acl
+LEFT JOIN `%dbprefix%gacl_aco_map`        aco_m   ON acl.id=aco_m.acl_id
+LEFT JOIN `%dbprefix%gacl_aro_map`        aro_m   ON acl.id=aro_m.acl_id
+LEFT JOIN `%dbprefix%gacl_aro`            aro     ON aro_m.value=aro.value
+LEFT JOIN `%dbprefix%gacl_axo_groups_map` axo_gm  ON axo_gm.acl_id=acl.id
+LEFT JOIN `%dbprefix%gacl_axo_groups`     axo_g   ON axo_gm.group_id=axo_g.id
+LEFT JOIN `%dbprefix%gacl_groups_axo_map` g_axo_m ON axo_g.id=g_axo_m.group_id
+LEFT JOIN `%dbprefix%gacl_axo`            axo     ON g_axo_m.axo_id=axo.id
+WHERE aro.value IS NOT NULL AND axo_g.value IS NOT NULL;
+
+# Pass 3: Role group to specific module object
+INSERT INTO `%dbprefix%dotpermissions` (acl_id,user_id,section,axo,permission,allow,priority,enabled)
+SELECT acl.id,aro.value,axo_m.section_value,axo_m.value,aco_m.value,acl.allow,3,acl.enabled
+FROM `%dbprefix%gacl_acl` acl
+LEFT JOIN `%dbprefix%gacl_aco_map`        aco_m   ON acl.id=aco_m.acl_id
+LEFT JOIN `%dbprefix%gacl_aro_groups_map` aro_gm  ON acl.id=aro_gm.acl_id
+LEFT JOIN `%dbprefix%gacl_aro_groups`     aro_g   ON aro_gm.group_id=aro_g.id
+LEFT JOIN `%dbprefix%gacl_axo_map`        axo_m   ON axo_m.acl_id=acl.id
+LEFT JOIN `%dbprefix%gacl_groups_aro_map` g_aro_m ON aro_g.id=g_aro_m.group_id
+LEFT JOIN `%dbprefix%gacl_aro`            aro     ON g_aro_m.aro_id=aro.id
+WHERE axo_m.value IS NOT NULL AND aro.name IS NOT NULL;
+
+# Pass 4: Role group to module group (main admin grant path)
+INSERT INTO `%dbprefix%dotpermissions` (acl_id,user_id,section,axo,permission,allow,priority,enabled)
+SELECT acl.id,aro.value,axo.section_value,axo.value,aco_m.value,acl.allow,4,acl.enabled
+FROM `%dbprefix%gacl_acl` acl
+LEFT JOIN `%dbprefix%gacl_aco_map`        aco_m   ON acl.id=aco_m.acl_id
+LEFT JOIN `%dbprefix%gacl_aro_map`        aro_m   ON acl.id=aro_m.acl_id
+LEFT JOIN `%dbprefix%gacl_aro_groups_map` aro_gm  ON acl.id=aro_gm.acl_id
+LEFT JOIN `%dbprefix%gacl_aro_groups`     aro_g   ON aro_gm.group_id=aro_g.id
+LEFT JOIN `%dbprefix%gacl_axo_groups_map` axo_gm  ON axo_gm.acl_id=acl.id
+LEFT JOIN `%dbprefix%gacl_axo_groups`     axo_g   ON axo_gm.group_id=axo_g.id
+LEFT JOIN `%dbprefix%gacl_groups_aro_map` g_aro_m ON aro_g.id=g_aro_m.group_id
+LEFT JOIN `%dbprefix%gacl_aro`            aro     ON g_aro_m.aro_id=aro.id
+LEFT JOIN `%dbprefix%gacl_groups_axo_map` g_axo_m ON axo_g.id=g_axo_m.group_id
+LEFT JOIN `%dbprefix%gacl_axo`            axo     ON g_axo_m.axo_id=axo.id
+WHERE axo_g.value IS NOT NULL AND aro.value IS NOT NULL;
+
+SET foreign_key_checks = 1;
+
+# 20260220
+# Journal Module structure
+DROP TABLE IF EXISTS %dbprefix%journal;
+CREATE TABLE %dbprefix%journal (
+  journal_id int(10) unsigned NOT NULL auto_increment,
+  journal_user int(10) NOT NULL default '0',
+  journal_module int(10) NOT NULL default '0',
+  journal_project int(10) NOT NULL default '0',
+  journal_date datetime NOT NULL default '0000-00-00 00:00:00',
+  journal_description text,
+  PRIMARY KEY (journal_id),
+  UNIQUE KEY (journal_id)
+);

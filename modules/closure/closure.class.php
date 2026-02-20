@@ -75,16 +75,25 @@ class CClosure extends CDpObject {
 		return $perms->checkModuleItem('closure', 'delete', $oid);
 	}
 
-	function delete() {
-		$this->load($this->project_id);
-		$details['name'] = $this->project_name;
-		addHistory('post_mortem_analysis', $this->project_name, 'delete', $details);
+	function delete($oid = NULL) {
+		$k = $this->_tbl_key;
+		if ($oid) {
+			$this->$k = intval($oid);
+		}
+		$oid = $this->$k;
 
-    $q = new DBQuery;
+		if (!$this->canDelete($msg, $oid)) {
+			return $msg;
+		}
+
+		$this->load($oid);
+		addHistory('post_mortem_analysis', $this->pma_id, 'delete', $this->project_name);
+
+		$q = new DBQuery;
 		$q->setDelete('post_mortem_analysis');
 		$q->addWhere('pma_id ='.$this->pma_id);
 
-    $result = ((!$q->exec())?db_error():NULL);
+		$result = ((!$q->exec())?db_error():NULL);
 		$q->clear();
 		return $result;
 	}
