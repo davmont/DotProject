@@ -66,7 +66,10 @@ foreach ($rs as $c) {
 			if (!($value)) {
 				$value = $c['config_value'];
 			}
-			$entry = '<input class="button" type="' . $c['config_type'] . '" name="dPcfg[' . $c['config_name'] . ']" value="' . $value . '" ' . $tooltip . ' ' . $extra . '/>';
+			$input_class = in_array($c['config_type'], array('text', 'password')) ? 'text' : 'button';
+			if ($c['config_type'] == 'checkbox')
+				$input_class = '';
+			$entry = '<input class="' . $input_class . '" type="' . $c['config_type'] . '" name="dPcfg[' . $c['config_name'] . ']" value="' . $value . '" ' . $tooltip . ' ' . $extra . '/>';
 			break;
 	}
 
