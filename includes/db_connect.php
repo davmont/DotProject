@@ -243,32 +243,32 @@ function db_loadObjectList($sql, $object, $maxrows = NULL)
  */
 function db_insertArray($table, &$hash, $verbose = false)
 {
-	//TODO: if DBQuery class available, use it
 	$dbprefix = dPgetConfig('dbprefix', '');
-	if (($dbprefix != '') && (strstr($table, $dbprefix) === false)) {
-		//have prefix and table does not have it prepended
-		$fmtsql = "INSERT INTO `$dbprefix$table` (%s) VALUES (%s) ";
+	if ($dbprefix != '' && strstr($table, $dbprefix) !== false) {
+		$q = new DBQuery('');
 	} else {
-		// table has prefix already prepended (or no prefix)
-		$fmtsql = "INSERT INTO `$table` (%s) VALUES (%s) ";
+		$q = new DBQuery();
 	}
+
+	$q->addTable($table);
+
 	foreach ($hash as $k => $v) {
 		if (is_array($v) || is_object($v) || $v == NULL) {
 			continue;
 		}
-		$fields[] = $k;
-		$values[] = "'" . db_escape($v) . "'";
+		$q->addInsert($k, $v);
 	}
-	$sql = sprintf($fmtsql, implode(',', $fields), implode(',', $values));
 
 	if ($verbose) {
-		print "$sql<br />\n";
+		print $q->prepare() . "<br />\n";
 	}
 
-	if (!(db_exec($sql))) {
+	if (!$q->exec()) {
+		$q->clear();
 		return false;
 	}
 	$id = db_insert_id();
+	$q->clear();
 	return true;
 }
 
