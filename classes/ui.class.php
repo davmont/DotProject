@@ -375,7 +375,7 @@ class CAppUI
 
 		$LANGUAGES = $this->loadLanguages();
 
-		list($locale, $en_name, $local_name, $win_locale, $lcs) = $LANGUAGES['en_AU'];
+		list($locale, $en_name, $local_name, $win_locale, $lcs) = array_pad($LANGUAGES['en_AU'], 5, null);
 		$real_locale = 'en_AU';
 		if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
 			$real_locale = $win_locale;

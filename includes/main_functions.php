@@ -324,7 +324,7 @@ function dPgetCleanParam(&$arr, $name, $def = null)
 		}
 		return $val;
 	}
-	$val = defVal($arr[$name], $def);
+	$val = $arr[$name] ?? $def;
 	if (empty($val)) {
 		return $val;
 	}
