@@ -4,3 +4,5 @@
 "classic"=>"Klasi&#269;ni DotProject stil",
 "default"=>"Privzeti &#269;isti stil",
 "demo1"=>"Demo stil",
+"dp-grey-theme"=>"Grey Slimline style",
+

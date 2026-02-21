@@ -4,3 +4,5 @@
 "classic"=>"Tema Padrao",
 "default"=>"Tema  Clean",
 "demo1"=>"Tema Demonstrativo",
+"dp-grey-theme"=>"Grey Slimline style",
+

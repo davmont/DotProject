@@ -1,8 +1,26 @@
 ##
 ## DO NOT MODIFY THIS FILE BY HAND!
 ##
+"[none]"=>"[none]",
 "Access Denied"=>"Pøístup odepøen",
-"Color Selector"=>"Volba barev",
-"Preset"=>"Pøedvolba",
 "accessDeniedMsg"=>"<p>Sna¾íte se pøistupovat k polo¾ce v systému, ke kterém nemáte dostateèná pøístupová práva. </p><p>Prosím kontaktujte  administrátora systému</p>",
+"Allowed Companies"=>"Allowed Companies",
+"chgpwLogin"=>"chgpwLogin",
+"chgpwUpdated"=>"chgpwUpdated",
+"chgpwWrongPW"=>"chgpwWrongPW",
+"Color Selector"=>"Volba barev",
 "colorLegend"=>"Prosím vyberte barvu, která bude reprezentovat vá¹ projekt a zavøete toto okno.",
+"companies"=>"companies",
+"Contacts for"=>"Contacts for",
+"Continue"=>"Continue",
+"Current Password"=>"Current Password",
+"New Password"=>"New Password",
+"no departments"=>"no departments",
+"nodepartments"=>"No Departments available",
+"notasks"=>"No Tasks available",
+"permissions"=>"permissions",
+"Preset"=>"Pøedvolba",
+"Repeat New Password"=>"Repeat New Password",
+"submit"=>"submit",
+"View all allowed companies"=>"View all allowed companies",
+

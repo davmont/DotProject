@@ -10,8 +10,10 @@
 "Context Help"=>"Aiuto Contestuale",
 "General Concepts"=>"Concetti Generali",
 "Getting Started"=>"Per Iniziare",
+"helpIntro"=>"Qui sono alcuni collegamenti rapidi agli argomenti principali nel file di aiuto che non sono direttamente accessibili dall\"aiuto contestuale.",
+"index"=>"index",
 "Left Navigation"=>"Navigazione Di sinistra",
 "Saving Your Place"=>"Conservare Il Vostro Posto",
 "Tabbed Property Boxes"=>"Proprietà della vista Tabbed",
 "Top Menu"=>"Menu Superiore",
-"helpIntro"=>"Qui sono alcuni collegamenti rapidi agli argomenti principali nel file di aiuto che non sono direttamente accessibili dall\"aiuto contestuale.",
+

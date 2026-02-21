@@ -10,9 +10,10 @@
 "Context Help"=>"문맥 도움",
 "General Concepts"=>"일반적인 개념",
 "Getting Started"=>"얻으며 시작됨",
+"helpIntro"=>"",
+"index"=>"목록",
 "Left Navigation"=>"왼쪽 항법",
 "Saving Your Place"=>"저장중",
 "Tabbed Property Boxes"=>"특성 상자 달음",
 "Top Menu"=>"윗 부분 메뉴",
-"helpIntro"=>"",
-"index"=>"목록",
+

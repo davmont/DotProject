@@ -10,9 +10,10 @@
 "Context Help"=>"Ajuda contextual",
 "General Concepts"=>"Conceitos Gerais",
 "Getting Started"=>"Iniciando",
+"helpIntro"=>"Atalhos para topicos internos da Ajuda",
+"index"=>"index",
 "Left Navigation"=>"Navegacao a esquerda",
 "Saving Your Place"=>"Salvando Caminho",
 "Tabbed Property Boxes"=>"Abas de propriedades",
 "Top Menu"=>"Menu principal",
-"helpIntro"=>"Atalhos para topicos internos da Ajuda",
-"index"=>"index",
+

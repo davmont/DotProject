@@ -10,9 +10,10 @@
 "Context Help"=>"Помощ по Контекст",
 "General Concepts"=>"Обща Концепция",
 "Getting Started"=>"Начало",
+"helpIntro"=>"Други",
+"index"=>"индекс",
 "Left Navigation"=>"Лява Навигация",
 "Saving Your Place"=>"Запишете си Своето Място",
 "Tabbed Property Boxes"=>"Табулирани Кутии за настройки",
 "Top Menu"=>"Главно Меню",
-"helpIntro"=>"Други",
-"index"=>"индекс",
+

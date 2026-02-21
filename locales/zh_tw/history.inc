@@ -1,0 +1,27 @@
+##
+## DO NOT MODIFY THIS FILE BY HAND!
+##
+"Add history"=>"Add history",
+"Added new"=>"Added new",
+"any"=>"any",
+"cancel"=>"cancel",
+"Date"=>"Date",
+"delete history"=>"delete history",
+"Deleted"=>"Deleted",
+"Description"=>"Description",
+"Edit history"=>"Edit history",
+"Files"=>"Files",
+"Forums"=>"Forums",
+"History added"=>"History added",
+"History deleted"=>"History deleted",
+"History updated"=>"History updated",
+"item"=>"item",
+"Login/Logouts"=>"Login/Logouts",
+"Modified"=>"Modified",
+"New history"=>"New history",
+"Projects"=>"Projects",
+"save"=>"save",
+"Show all"=>"Show all",
+"Tasks"=>"Tasks",
+"User"=>"User",
+
