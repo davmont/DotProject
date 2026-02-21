@@ -64,6 +64,11 @@ class CMonthCalendar {
 	/** @var boolean Show highlighting in the calendar boxes */
 	var $showHighlightedDays;
 
+	/** @var array */
+	var $birthdays = null;
+	/** @var int */
+	var $birthdays_month = null;
+
 	/**
 	 * @param Date $date
 	 */
@@ -299,6 +304,24 @@ class CMonthCalendar {
 		setlocale(LC_ALL, $AppUI->user_lang);
 		
 		$df = $AppUI->getPref('SHDATEFORMAT');
+
+		if ($this->showWeek) {
+			$this->birthdays_month = $this_month;
+			$this->birthdays = array();
+			$q = new DBQuery;
+			$q->addTable('contacts', 'con');
+			$q->addQuery('contact_birthday, contact_last_name, contact_first_name, contact_id');
+			$m = str_pad($this_month, 2, '0', STR_PAD_LEFT);
+			$q->addWhere("contact_birthday LIKE '%-$m-%'");
+			$rows = $q->loadList();
+			if ($rows) {
+				foreach ($rows as $row) {
+					$day = intval(substr($row['contact_birthday'], -2));
+					$this->birthdays[$day][] = $row;
+				}
+			}
+			$q->clear();
+		}
 		
 		$html = '';
 		foreach ($cal as $week) {
@@ -416,18 +439,22 @@ class CMonthCalendar {
 		$m = intval(mb_substr($day, 4, 2));
 		$d = intval(mb_substr($day, 6, 2));
 		$y = intval(substr($day, 0, 4));
-		
-		$q = new DBQuery;
-		$q->addTable('contacts', 'con');
-		$q->addQuery('contact_birthday, contact_last_name, contact_first_name, contact_id');
-		if (strlen($d) == 1) {
-			$d = '0'.$d;
+
+		if ($this->birthdays !== null && $m == $this->birthdays_month) {
+			$rows = isset($this->birthdays[$d]) ? $this->birthdays[$d] : null;
+		} else {
+			$q = new DBQuery;
+			$q->addTable('contacts', 'con');
+			$q->addQuery('contact_birthday, contact_last_name, contact_first_name, contact_id');
+			if (strlen($d) == 1) {
+				$d = '0'.$d;
+			}
+			if (strlen($m) == 1) {
+				$m = '0'.$m;
+			}
+			$q->addWhere("contact_birthday LIKE '%$m-$d'");
+			$rows = $q->loadList();
 		}
-		if (strlen($m) == 1) {
-			$m = '0'.$m;
-		}
-		$q->addWhere("contact_birthday LIKE '%$m-$d'");
-		$rows = $q->loadList();
 		
 		if ($rows) {
 			$html .= '<div class="event">';
