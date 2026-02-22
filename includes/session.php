@@ -225,7 +225,7 @@ function dpSessionStart($start_vars = 'AppUI')
 		$max_time = 0; // Browser session only.
 	}
 	// Try and get the correct path to the base URL.
-	preg_match('_^(https?://)([^/]+)(:0-9]+)?(/.*)?$_i', dPgetConfig('base_url'), $url_parts);
+	preg_match('_^(https?://)([^/:]+)(:[0-9]+)?(/.*)?$_i', dPgetConfig('base_url'), $url_parts);
 	$cookie_dir = $url_parts[4];
 	if (mb_substr($cookie_dir, 0, 1) != '/') {
 		$cookie_dir = '/' . $cookie_dir;
