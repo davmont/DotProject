@@ -99,20 +99,7 @@ if (!($res = db_exec($sql))) {
 	}
 }
 
-$carrWidth = 4;
-$t = floor($rn / $carrWidth); //total "height"
-$r = ($rn % $carrWidth); // remainder column height
-$t += (($r == 0 && $t > 0) ? 0 : 1);
 
-$carr[] = array();
-$x = 0;
-foreach ($disp_arr as $row) {
-	$y = floor($x / $t);
-	$carr[$y][] = $row;
-	$x++;
-}
-
-$tdw = floor(100 / $carrWidth);
 
 /**
  * Contact search form
@@ -177,81 +164,67 @@ $titleBlock->show();
 	<input type='hidden' name='a' value='view' />
 	<input type='hidden' name='project_id' />
 </form>
-<table width="100%" border="0" cellpadding="1" cellspacing="1" style="height:400px;" class="contacts"
-	summary="Contacts">
+<table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl" summary="Contacts">
 	<tr>
-		<?php
-		for ($z = 0; $z < $carrWidth; $z++) {
-			?>
-			<td valign="top" align="left" bgcolor="#f4efe3" width="<?php echo $tdw; ?>%">
-				<?php
-				for ($x = 0; $x < (isset($carr[$z]) ? count($carr[$z]) : 0); $x++) {
-					?>
-					<table width="100%" cellspacing="1" cellpadding="1" summary="contact info">
-						<tr>
-							<td width="100%">
-								<?php $contactid = $carr[$z][$x]['contact_id']; ?>
-								<a href="?m=contacts&amp;a=view&amp;contact_id=<?php
-								echo $contactid;
-								?>"><strong>
-										<?php
-										echo $AppUI->___(($carr[$z][$x]['contact_order_by'])
-											? $carr[$z][$x]['contact_order_by']
-											: ($carr[$z][$x]['contact_first_name'] . ' ' . $carr[$z][$x]['contact_last_name']));
-										?>
-									</strong></a>&nbsp;
-								&nbsp;<a title="<?php
-								echo $AppUI->___($AppUI->_('Export vCard for') . ' ' . $carr[$z][$x]['contact_first_name'] . ' '
-									. $carr[$z][$x]['contact_last_name']);
-								?>" href="?m=contacts&amp;a=vcardexport&amp;suppressHeaders=true&amp;contact_id=<?php
-								echo $contactid; ?>">(vCard)</a>
-								&nbsp;<a title="<?php
-								echo $AppUI->_('Edit'); ?>" href="?m=contacts&amp;a=addedit&amp;contact_id=<?php
-								  echo $contactid; ?>"><?php echo $AppUI->_('Edit'); ?></a>
-								<?php
-								$q = new DBQuery;
-								$q->addTable('projects');
-								$q->addQuery('count(*)');
-								$q->addWhere('project_contacts LIKE "' . $carr[$z][$x]['contact_id']
-									. ',%" OR project_contacts LIKE "%,' . $carr[$z][$x]['contact_id']
-									. ',%" OR project_contacts LIKE "%,' . $carr[$z][$x]['contact_id']
-									. '" OR project_contacts LIKE "' . $carr[$z][$x]['contact_id'] . '"');
-
-								$res = $q->exec();
-								$projects_contact = db_fetch_row($res);
-								$q->clear();
-								if ($projects_contact[0] > 0) {
-									echo ('&nbsp;<a href="" onclick="javascript:window.open('
-										. "'?m=public&amp;a=selector&amp;dialog=1&amp;callback=goProject&amp;table=projects"
-										. '&user_id=' . $carr[$z][$x]['contact_id']
-										. "', 'selector', 'left=50,top=50,height=250,width=400,resizable');"
-										. 'return false;">' . $AppUI->_('Projects') . '</a>');
-								}
-								?>
-							</td>
-						</tr>
-						<tr>
-							<td class="hilite">
-								<?php
-								reset($showfields);
-								foreach ($showfields as $key => $val) {
-									if (mb_strlen($carr[$z][$x][$key]) > 0) {
-										if ($val == "contact_email") {
-											echo ('<a href="mailto:' . $carr[$z][$x][$key] . '" class="mailto">'
-												. $carr[$z][$x][$key] . "</a>\n");
-										} else if (!($val == "contact_company" && is_numeric($carr[$z][$x][$key]))) {
-											echo $carr[$z][$x][$key] . "<br />";
-										}
-									}
-								} ?>
-							</td>
-						</tr>
-					</table>
-					<br />&nbsp;<br />
-					<?php
-				} ?>
-			</td>
-			<?php
-		} ?>
+		<th><?php echo $AppUI->_('Name'); ?></th>
+		<th><?php echo $AppUI->_('Company'); ?></th>
+		<th><?php echo $AppUI->_('Email'); ?></th>
+		<th><?php echo $AppUI->_('Phone'); ?></th>
+		<th><?php echo $AppUI->_('Projects'); ?></th>
+		<th><?php echo $AppUI->_('Action'); ?></th>
 	</tr>
+	<?php
+	foreach ($disp_arr as $row) {
+		$contactid = $row['contact_id'];
+		$contact_name = $AppUI->___(($row['contact_order_by'])
+			? $row['contact_order_by']
+			: ($row['contact_first_name'] . ' ' . $row['contact_last_name']));
+		?>
+		<tr>
+			<td>
+				<a
+					href="?m=contacts&amp;a=view&amp;contact_id=<?php echo $contactid; ?>"><strong><?php echo $contact_name; ?></strong></a>
+			</td>
+			<td>
+				<?php echo (!is_numeric($row['contact_company']) ? $row['contact_company'] : $row['company_name']); ?>
+			</td>
+			<td>
+				<?php if ($row['contact_email']) { ?>
+					<a href="mailto:<?php echo $row['contact_email']; ?>"
+						class="mailto"><?php echo $row['contact_email']; ?></a>
+				<?php } ?>
+			</td>
+			<td>
+				<?php echo $row['contact_phone']; ?>
+			</td>
+			<td>
+				<?php
+				$q = new DBQuery;
+				$q->addTable('projects');
+				$q->addQuery('count(*)');
+				$q->addWhere('project_contacts LIKE "' . $contactid
+					. ',%" OR project_contacts LIKE "%,' . $contactid
+					. ',%" OR project_contacts LIKE "%,' . $contactid
+					. '" OR project_contacts LIKE "' . $contactid . '"');
+
+				$res = $q->exec();
+				$projects_contact = db_fetch_row($res);
+				$q->clear();
+				if ($projects_contact[0] > 0) {
+					echo ('<a href="" onclick="javascript:window.open('
+						. "'?m=public&amp;a=selector&amp;dialog=1&amp;callback=goProject&amp;table=projects"
+						. '&user_id=' . $contactid
+						. "', 'selector', 'left=50,top=50,height=250,width=400,resizable');"
+						. 'return false;">' . $AppUI->_('Projects') . '</a>');
+				}
+				?>
+			</td>
+			<td>
+				<a title="<?php echo $AppUI->___($AppUI->_('Export vCard for') . ' ' . $contact_name); ?>"
+					href="?m=contacts&amp;a=vcardexport&amp;suppressHeaders=true&amp;contact_id=<?php echo $contactid; ?>">(vCard)</a>&nbsp;
+				<a title="<?php echo $AppUI->_('Edit'); ?>"
+					href="?m=contacts&amp;a=addedit&amp;contact_id=<?php echo $contactid; ?>"><?php echo $AppUI->_('Edit'); ?></a>
+			</td>
+		</tr>
+	<?php } ?>
 </table>
