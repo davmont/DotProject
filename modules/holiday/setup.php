@@ -57,11 +57,15 @@ class CSetupHoliday {
 		$ok = $ok & $q -> exec();
 		
 		// Set default settings
+		$holiday_manual = 1;
+		$holiday_auto = 0;
+		$holiday_driver = 0;
+
 		$q = new DBQuery();
 		$q -> addTable('holiday_settings');
-		$q -> addInsert('holiday_manual', $holiday_manual+0); // TODO: Check these values, as they don't look right
-		$q -> addInsert('holiday_auto',$holiday_auto+0);
-		$q -> addInsert('holiday_driver',$holiday_driver+0);        	
+		$q -> addInsert('holiday_manual', $holiday_manual);
+		$q -> addInsert('holiday_auto', $holiday_auto);
+		$q -> addInsert('holiday_driver', $holiday_driver);
 		$ok = $ok & $q->exec();
 		if($ok){
 			return null;
