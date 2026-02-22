@@ -19,6 +19,7 @@ if (!defined('DP_BASE_DIR')) {
 		$field_htmltype = dpGetParam($_POST, "field_htmltype", NULL);
 		$field_datatype = dpGetParam($_POST, "field_datatype", "alpha");
 		$field_extratags = db_escape(dpGetParam($_POST, "field_extratags", NULL));
+		$field_order = dpGetParam($_POST, "field_order", 0);
 
 		$list_select_items = dpGetParam($_POST, "select_items", NULL);
 
@@ -27,11 +28,11 @@ if (!defined('DP_BASE_DIR')) {
 
 		if ($edit_field_id == 0)
 		{
-			$fid = $custom_fields->add($field_name, $field_description, $field_htmltype, $field_datatype, $field_extratags, $msg);
+			$fid = $custom_fields->add($field_name, $field_description, $field_htmltype, $field_datatype, $field_extratags, $msg, $field_order);
 		}
 		else
 		{
-			$fid = $custom_fields->update($edit_field_id, $field_name, $field_description, $field_htmltype, $field_datatype, $field_extratags, $msg);
+			$fid = $custom_fields->update($edit_field_id, $field_name, $field_description, $field_htmltype, $field_datatype, $field_extratags, $msg, $field_order);
 		}
 	
 		// Add or Update a Custom Field
