@@ -579,6 +579,8 @@ class CAppUI
 			$params .= (($params) ? '&' : '') . $session_id;
 		}
 		ob_implicit_flush(); // Ensure any buffering is disabled.
+		// Fix for issue #222: URL parameters containing &amp; cause redirect failures
+		$params = str_replace('&amp;', '&', $params);
 		header('Location: index.php?' . $params);
 		exit();	// stop the PHP execution
 	}
