@@ -508,7 +508,7 @@ class DBQuery
 	function prepareSelect()
 	{
 		$q = 'SELECT ';
-		if ($this->include_count) {
+		if ($this->include_count && strpos(dPgetConfig('dbtype'), 'mysql') !== false) {
 			$q .= 'SQL_CALC_FOUND_ROWS ';
 		}
 		if (isset($this->query)) {
@@ -532,7 +532,7 @@ class DBQuery
 					} else {
 						$intable = true;
 					}
-					$q .= '`' . $this->_table_prefix . $table . '`';
+					$q .= '' . $this->_table_prefix . $table . '';
 					if (!is_numeric($table_id)) {
 						$q .= " as $table_id";
 					}
@@ -566,13 +566,13 @@ class DBQuery
 		} else {
 			return false;
 		}
-		$q .= '`' . $this->_table_prefix . $table . '`';
+		$q .= '' . $this->_table_prefix . $table . '';
 
 		$q .= ' SET ';
 		$sets = '';
 		$this->v_params = array();
 		foreach ($this->update_list as $field => $value) {
-			$sets .= (($sets) ? ', ' : '') . "`$field` = ?";
+			$sets .= (($sets) ? ', ' : '') . "$field = ?";
 			$this->v_params[] = $value;
 		}
 		$q .= $sets;
@@ -594,12 +594,12 @@ class DBQuery
 		} else {
 			return false;
 		}
-		$q .= '`' . $this->_table_prefix . $table . '`';
+		$q .= '' . $this->_table_prefix . $table . '';
 
 		$fieldlist = '';
 		$valuelist = '';
 		foreach ($this->value_list as $field => $value) {
-			$fieldlist .= (($fieldlist) ? ',' : '') . '`' . trim($field) . '`';
+			$fieldlist .= (($fieldlist) ? ',' : '') . '' . trim($field) . '';
 			$valuelist .= (($valuelist) ? ',' : '') . $value;
 		}
 		$q .= "($fieldlist) values ($valuelist)";
@@ -620,13 +620,13 @@ class DBQuery
 		} else {
 			return false;
 		}
-		$q .= '`' . $this->_table_prefix . $table . '`';
+		$q .= '' . $this->_table_prefix . $table . '';
 
 		$fieldlist = '';
 		$valuelist = '';
 
 		foreach ($this->value_list as $field => $value) {
-			$fieldlist .= (($fieldlist) ? ',' : '') . '`' . trim($field) . '`';
+			$fieldlist .= (($fieldlist) ? ',' : '') . '' . trim($field) . '';
 			$valuelist .= (($valuelist) ? ',' : '') . $value;
 		}
 		$q .= "($fieldlist) values ($valuelist)";
@@ -648,7 +648,7 @@ class DBQuery
 		} else {
 			return false;
 		}
-		$q .= '`' . $this->_table_prefix . $table . '`';
+		$q .= '' . $this->_table_prefix . $table . '';
 		$q .= $this->make_where_clause($this->where);
 		$this->params = $this->w_params;
 		return $q;
@@ -658,7 +658,7 @@ class DBQuery
 	//definitions: http://dev.mysql.com/doc/mysql/en/alter-table.html
 	function prepareAlter()
 	{
-		$q = 'ALTER TABLE `' . $this->_table_prefix . $this->create_table . '` ';
+		$q = 'ALTER TABLE ' . $this->_table_prefix . $this->create_table . ' ';
 		if (isset($this->create_definition)) {
 			$alters = '';
 			if (is_array($this->create_definition)) {
@@ -839,7 +839,7 @@ class DBQuery
 			if (!$hash) {
 				return false;
 			}
-			$this->bindHashToObject($hash, $object, null, $strip, $bindAll);
+			bindHashToObject($hash, $object, null, $strip, $bindAll);
 			return true;
 		} else if ($object = $this->_query_id->FetchNextObject(false)) {
 			$this->clear();
@@ -965,8 +965,8 @@ class DBQuery
 		}
 		if (is_array($join_clause)) {
 			foreach ($join_clause as $join) {
-				$result .= (' ' . mb_strtoupper($join['type']) . ' JOIN `'
-					. $this->_table_prefix . $join['table'] . '`');
+				$result .= (' ' . mb_strtoupper($join['type']) . ' JOIN '
+					. $this->_table_prefix . $join['table'] . '');
 				if ($join['alias']) {
 					$result .= ' AS ' . $join['alias'];
 				}
@@ -975,7 +975,7 @@ class DBQuery
 					: ' ON ' . $join['condition']);
 			}
 		} else {
-			$result .= ' LEFT JOIN `' . $this->_table_prefix . $join_clause . '`';
+			$result .= ' LEFT JOIN ' . $this->_table_prefix . $join_clause . '';
 		}
 		return $result;
 	}
@@ -986,9 +986,22 @@ class DBQuery
 		global $db;
 		$result = false;
 		if ($this->include_count) {
-			if ($qid = $db->Execute('SELECT FOUND_ROWS() as rc')) {
-				$data = $qid->FetchRow();
-				$result = isset($data['rc']) ? $data['rc'] : $data[0];
+			if (strpos(dPgetConfig('dbtype'), 'mysql') !== false) {
+				if ($qid = $db->Execute('SELECT FOUND_ROWS() as rc')) {
+					$data = $qid->FetchRow();
+					$result = isset($data['rc']) ? $data['rc'] : $data[0];
+				}
+			} else {
+				$saved_limit = $this->limit;
+				$saved_offset = $this->offset;
+				$this->limit = null;
+				$this->offset = -1;
+				$q = $this->prepareSelect();
+				if ($qid = $db->Execute($q, $this->params)) {
+					$result = $qid->RecordCount();
+				}
+				$this->limit = $saved_limit;
+				$this->offset = $saved_offset;
 			}
 		}
 		return $result;

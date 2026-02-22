@@ -25,7 +25,9 @@ db_connect(
 
 
 // Quick hack to ensure MySQL behaves itself (#2323)
-$db->Execute("SET sql_mode := ''");
+if (strpos(dPgetConfig('dbtype'), 'mysql') !== false) {
+	$db->Execute("SET sql_mode := ''");
+}
 
 /*
  * Having successfully established the database connection now,
@@ -284,9 +286,9 @@ function db_updateArray($table, &$hash, $keyName, $verbose = false)
 	//TODO: If DBQuery available, use it
 	$dbprefix = dPgetConfig('dbprefix', '');
 	if (($dbprefix != '') && (strstr($table, $dbprefix) === false)) {
-		$fmtsql = "UPDATE `$dbprefix$table` SET %s WHERE %s ";
+		$fmtsql = "UPDATE $dbprefix$table SET %s WHERE %s ";
 	} else {
-		$fmtsql = "UPDATE `$table` SET %s WHERE %s ";
+		$fmtsql = "UPDATE $table SET %s WHERE %s ";
 	}
 	foreach ($hash as $k => $v) {
 		if (is_array($v) || is_object($v) || $k[0] == '_') { // internal or NA field
@@ -343,9 +345,9 @@ function db_insertObject($table, &$object, $keyName = NULL, $verbose = false)
 	//TODO: If DBQuery available, use it
 	$dbprefix = dPgetConfig('dbprefix', '');
 	if (($dbprefix != '') && (strstr($table, $dbprefix) === false)) {
-		$fmtsql = "INSERT INTO `$dbprefix$table` (%s) VALUES (%s) ";
+		$fmtsql = "INSERT INTO $dbprefix$table (%s) VALUES (%s) ";
 	} else {
-		$fmtsql = "INSERT INTO `$table` (%s) VALUES (%s) ";
+		$fmtsql = "INSERT INTO $table (%s) VALUES (%s) ";
 	}
 	foreach (get_object_vars($object) as $k => $v) {
 		if (is_array($v) || is_object($v) || $v == NULL) {
@@ -389,9 +391,9 @@ function db_updateObject($table, &$object, $keyName, $updateNulls = true, $descr
 	//TODO: If DBQuery exists use it
 	$dbprefix = dPgetConfig('dbprefix', '');
 	if (($dbprefix != '') && (strstr($table, $dbprefix) === false)) {
-		$fmtsql = "UPDATE `$dbprefix$table` SET %s WHERE %s";
+		$fmtsql = "UPDATE $dbprefix$table SET %s WHERE %s";
 	} else {
-		$fmtsql = "UPDATE `$table` SET %s WHERE %s";
+		$fmtsql = "UPDATE $table SET %s WHERE %s";
 	}
 	$obj_vars_arr = get_object_vars($object);
 	foreach ($obj_vars_arr as $k => $v) {
