@@ -55,6 +55,8 @@ if (dpGetParam($_GET, 'field_id', NULL) != NULL) {
 		$field_description = $cf->fieldDescription();
 		$field_htmltype = $cf->fieldHtmlType();
 		$field_extratags = $cf->fieldExtraTags();
+		$field_order = $cf->field_order;
+		$field_datatype = $cf->field_datatype;
 		
 		if ($field_htmltype == 'select') {
 			$select_options = New CustomOptionList($field_id);
@@ -74,6 +76,8 @@ if (dpGetParam($_GET, 'field_id', NULL) != NULL) {
 	$field_description = dpGetParam($_POST, 'field_description', NULL);
 	$field_htmltype = dpGetParam($_POST, 'field_htmltype', 'textinput');
 	$field_extratags = dpGetParam($_POST, 'field_extratags', NULL);
+	$field_order = dpGetParam($_POST, 'field_order', 1);
+	$field_datatype = dpGetParam($_POST, 'field_datatype', 'alpha');
 }
 
 $html_types = Array('file' => $AppUI->_('File'),
@@ -154,6 +158,19 @@ echo htmlspecialchars($field_name)?>" onblur="this.value=this.value.replace(/[^a
 		</td><td>
 		<input type="text" name="field_description" size="40" maxlength="250" value="<?php 
 echo htmlspecialchars($field_description)?>" />
+	</td></tr>
+	<tr><td>
+		<?php echo $AppUI->_('Field Order')?>:
+		</td><td>
+		<input type="text" name="field_order" size="4" maxlength="4" value="<?php
+echo intval($field_order)?>" />
+	</td></tr>
+	<tr><td>
+		<?php echo $AppUI->_('Field Data Type')?>:
+		</td><td>
+		<?php
+echo arraySelect(array('alpha' => $AppUI->_('Text'), 'numeric' => $AppUI->_('Numeric')), 'field_datatype',
+                 'id="field_datatype"', $field_datatype); ?>
 	</td></tr>
 	<tr><td>
 		<?php echo $AppUI->_('Field Display Type')?>:

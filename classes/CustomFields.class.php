@@ -14,13 +14,10 @@ require_once($AppUI->getModuleClass('files'));
 class CustomField
 {
 	public $field_id;
-	// TODO - Implement Field Order - some people like to change the order of fields
 	public $field_order;
 	public $field_name;
 	public $field_description;
 	public $field_htmltype;
-	// TODO - data type, meant for validation if you just want numeric data in a text input
-	// but not yet implemented
 	public $field_datatype;
 
 	public $field_extratags;
@@ -37,13 +34,25 @@ class CustomField
 		$field_name,
 		$field_order,
 		$field_description,
-		$field_extratags
+		$field_extratags,
+		$field_datatype = 'alpha'
 	) {
 		$this->field_id = $field_id;
 		$this->field_name = $field_name;
 		$this->field_order = $field_order;
 		$this->field_description = stripslashes($field_description);
 		$this->field_extratags = stripslashes($field_extratags);
+		$this->field_datatype = $field_datatype;
+	}
+
+	function validate()
+	{
+		if ($this->field_datatype == 'numeric' && $this->value_charvalue != '') {
+			if (!is_numeric($this->value_charvalue)) {
+				return 'Field ' . $this->field_name . ' must be numeric';
+			}
+		}
+		return true;
 	}
 
 	function load($object_id)
@@ -185,14 +194,16 @@ class CustomFieldCheckBox extends CustomField
 		$field_name,
 		$field_order,
 		$field_description,
-		$field_extratags
+		$field_extratags,
+		$field_datatype = 'alpha'
 	) {
 		parent::__construct(
 			$field_id,
 			$field_name,
 			$field_order,
 			$field_description,
-			$field_extratags
+			$field_extratags,
+			$field_datatype
 		);
 		$this->field_htmltype = 'checkbox';
 	}
@@ -230,14 +241,16 @@ class CustomFieldText extends CustomField
 		$field_name,
 		$field_order,
 		$field_description,
-		$field_extratags
+		$field_extratags,
+		$field_datatype = 'alpha'
 	) {
 		parent::__construct(
 			$field_id,
 			$field_name,
 			$field_order,
 			$field_description,
-			$field_extratags
+			$field_extratags,
+			$field_datatype
 		);
 		$this->field_htmltype = 'textinput';
 	}
@@ -269,14 +282,16 @@ class CustomFieldTextArea extends CustomField
 		$field_name,
 		$field_order,
 		$field_description,
-		$field_extratags
+		$field_extratags,
+		$field_datatype = 'alpha'
 	) {
 		parent::__construct(
 			$field_id,
 			$field_name,
 			$field_order,
 			$field_description,
-			$field_extratags
+			$field_extratags,
+			$field_datatype
 		);
 		$this->field_htmltype = 'textarea';
 	}
@@ -308,14 +323,16 @@ class CustomFieldLabel extends CustomField
 		$field_name,
 		$field_order,
 		$field_description,
-		$field_extratags
+		$field_extratags,
+		$field_datatype = 'alpha'
 	) {
 		parent::__construct(
 			$field_id,
 			$field_name,
 			$field_order,
 			$field_description,
-			$field_extratags
+			$field_extratags,
+			$field_datatype
 		);
 		$this->field_htmltype = 'label';
 	}
@@ -340,14 +357,16 @@ class CustomFieldSeparator extends CustomField
 		$field_name,
 		$field_order,
 		$field_description,
-		$field_extratags
+		$field_extratags,
+		$field_datatype = 'alpha'
 	) {
 		parent::__construct(
 			$field_id,
 			$field_name,
 			$field_order,
 			$field_description,
-			$field_extratags
+			$field_extratags,
+			$field_datatype
 		);
 		$this->field_htmltype = 'separator';
 	}
@@ -372,14 +391,16 @@ class CustomFieldSelect extends CustomField
 		$field_name,
 		$field_order,
 		$field_description,
-		$field_extratags
+		$field_extratags,
+		$field_datatype = 'alpha'
 	) {
 		parent::__construct(
 			$field_id,
 			$field_name,
 			$field_order,
 			$field_description,
-			$field_extratags
+			$field_extratags,
+			$field_datatype
 		);
 		$this->field_htmltype = 'select';
 		$this->options = new CustomOptionList($field_id);
@@ -426,14 +447,16 @@ class CustomFieldWeblink extends CustomField
 		$field_name,
 		$field_order,
 		$field_description,
-		$field_extratags
+		$field_extratags,
+		$field_datatype = 'alpha'
 	) {
 		parent::__construct(
 			$field_id,
 			$field_name,
 			$field_order,
 			$field_description,
-			$field_extratags
+			$field_extratags,
+			$field_datatype
 		);
 		$this->field_htmltype = 'href';
 	}
@@ -471,9 +494,22 @@ class CustomFieldWeblink extends CustomField
 class CustomFieldFilelink extends CustomField
 {
 
-	function CustomFieldFilelink($field_id, $field_name, $field_order, $field_description, $field_extratags)
-	{
-		parent::__construct($field_id, $field_name, $field_order, $field_description, $field_extratags);
+	function CustomFieldFilelink(
+		$field_id,
+		$field_name,
+		$field_order,
+		$field_description,
+		$field_extratags,
+		$field_datatype = 'alpha'
+	) {
+		parent::__construct(
+			$field_id,
+			$field_name,
+			$field_order,
+			$field_description,
+			$field_extratags,
+			$field_datatype
+		);
 		$this->field_htmltype = 'file';
 	}
 
@@ -603,7 +639,7 @@ class CustomFields
 		$q = new DBQuery;
 		$q->addTable('custom_fields_struct');
 		$q->addWhere("field_module = '" . $this->m . "' AND field_page = '" . $this->a . "'");
-		//$q->addOrder('field_order DESC');
+		$q->addOrder('field_order ASC');
 		$q->addOrder('field_name ASC');//to display by name and not by entry in database
 		$rows = $q->loadList();
 		if ($rows != NULL) {
@@ -640,7 +676,8 @@ class CustomFields
 					$field_name,
 					$row['field_order'],
 					stripslashes($row['field_description']),
-					stripslashes($row['field_extratags'])
+					stripslashes($row['field_extratags']),
+					$row['field_datatype']
 				);
 			}
 
@@ -659,12 +696,12 @@ class CustomFields
 		$field_htmltype,
 		$field_datatype,
 		$field_extratags,
-		&$error_msg
+		&$error_msg,
+		$field_order = 1
 	) {
 		global $db;
 		$next_id = $db->GenID('custom_fields_struct_id', 1);
 
-		$field_order = 1;
 		$field_a = 'addedit';
 
 		// TODO - module pages other than addedit
@@ -698,7 +735,8 @@ class CustomFields
 		$field_htmltype,
 		$field_datatype,
 		$field_extratags,
-		&$error_msg
+		&$error_msg,
+		$field_order = 1
 	) {
 		global $db;
 
@@ -709,6 +747,7 @@ class CustomFields
 		$q->addUpdate('field_htmltype', $field_htmltype);
 		$q->addUpdate('field_datatype', $field_datatype);
 		$q->addUpdate('field_extratags', $field_extratags);
+		$q->addUpdate('field_order', $field_order);
 		$q->addWhere('field_id = ' . $field_id);
 		if (!$q->exec()) {
 			$error_msg = $db->ErrorMsg();
@@ -743,6 +782,11 @@ class CustomFields
 		if ($this->count() > 0) {
 			$store_errors = '';
 			foreach ($this->fields as $k => $cf) {
+				$validation = $this->fields[$k]->validate();
+				if ($validation !== true) {
+					$store_errors .= $validation . '<br />';
+					continue;
+				}
 				$result = $this->fields[$k]->store($object_id);
 				if ($result) {
 					$store_errors .= 'Error storing custom field ' . $k . ':' . $result;
