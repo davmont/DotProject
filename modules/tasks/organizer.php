@@ -238,12 +238,18 @@ function get_last_children($task)
 	return $arr;
 }
 
-function process_dependencies($i)
+function process_dependencies($i, $visited = array())
 {
 	global $tasks, $option_advance_if_possible;
 
 	if ($tasks[$i]["fixed"])
 		return;
+
+	if (in_array($tasks[$i]["task_id"], $visited)) {
+		log_error("Circular dependency detected: Task " . $tasks[$i]["task_name"] . " depends on itself indirectly.");
+		return;
+	}
+	$visited[] = $tasks[$i]["task_id"];
 
 	log_info("<div style='padding-left: 1em'>Dependecies for '" . $tasks[$i]["task_name"] . "':<br />");
 
@@ -294,7 +300,7 @@ function process_dependencies($i)
 
 			// TODO: Detect dependencies loops (A->B, B->C, C->A)
 
-			process_dependencies($index);
+			process_dependencies($index, $visited);
 
 			if (!$tasks[$index]["fixed"]) {
 				$all_fixed = false;
@@ -311,8 +317,8 @@ function process_dependencies($i)
 				} else {
 					log_info("this task is complete => don't check dependency");
 				}
-				$d++;
 			}
+			$d++;
 		}
 
 		if ($all_fixed) {
