@@ -10,22 +10,28 @@
 	{
 		$ok = true;
 		$evconfig = New CEventumConfig();
-		// TODO: if the directory changes, check that it exists and that a valid config file
-		// exists in that directory.  For the moment just save the value
 		$current_dir = $evconfig->getValue('eventum_directory');
 		$evdir = dPgetParam($_POST, 'eventum_directory', '');
 		if (substr($evdir, -1) == DIRECTORY_SEPARATOR)
-		  $evdir = substr($evdir, 0, -1);
+			$evdir = substr($evdir, 0, -1);
 		if ($evdir && $evdir != $current_dir) {
-		  $evcfile = $evdir . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.inc.php';
-		  if ( ! file_exists($evcfile)) {
-		  	// Error!
-			$AppUI->setMsg('Eventum directory invalid, no changes saved', UI_MSG_ALERT);
-			$ok = false;
-		  } else {
-		    $GLOBALS['evDirChanged'] = true;
-		    $GLOBALS['evDir'] = $evdir;
-		  }
+			if (!is_dir($evdir)) {
+				$AppUI->setMsg('Eventum directory invalid (not a directory)', UI_MSG_ALERT);
+				$ok = false;
+			} else {
+				$evcfile = $evdir . DIRECTORY_SEPARATOR . 'config.inc.php';
+				if (!file_exists($evcfile)) {
+					$evcfile = $evdir . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.inc.php';
+				}
+
+				if (!file_exists($evcfile) || !is_readable($evcfile)) {
+					$AppUI->setMsg('Eventum config file not found or not readable', UI_MSG_ALERT);
+					$ok = false;
+				} else {
+					$GLOBALS['evDirChanged'] = true;
+					$GLOBALS['evDir'] = $evdir;
+				}
+			}
 		}
 		if ($ok) {
 		  $evconfig->setValue('eventum_directory', dPgetParam($_POST, 'eventum_directory', ''));

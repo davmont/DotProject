@@ -65,9 +65,17 @@ require_once $AppUI->getSystemClass('libmail');
 		function loadEventumConfig()
 		{
 			$evdir = $this->getValue('eventum_directory');
-			$evcfg = $evdir . DIRECTORY_SEPARATOR . 'config.inc.php';
-			if (! $evdir || ! is_readable($evcfg))
+			if (!$evdir) {
 				return false;
+			}
+			$evcfg = $evdir . DIRECTORY_SEPARATOR . 'config.inc.php';
+			if (!is_readable($evcfg)) {
+				$evcfg = $evdir . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.inc.php';
+			}
+
+			if (!is_readable($evcfg)) {
+				return false;
+			}
 			$ev = file($evcfg);
 			// Find those records that set defines that we are interested in
 			$defines = preg_grep('/^\s*@?\s*define\s*\([\'"]?APP_/', $ev);
