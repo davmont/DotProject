@@ -171,7 +171,7 @@ if ($do_report) {
 		$sql .= "\n	AND task_log_creator = $log_userfilter";
 	}
 
-	$proj =& new CProject;
+	$proj = new CProject;
 	$allowedProjects = $proj->getAllowedSQL($AppUI->user_id, 'task_project');
 	if (count($allowedProjects)) {
 		$sql .= "\n     AND " . implode(" AND ", $allowedProjects);
@@ -291,7 +291,7 @@ if ($do_report) {
 		$base_url  = dPgetConfig( 'base_url' );
 		require( $AppUI->getLibraryClass( 'ezpdf/class.ezpdf' ) );
 
-		$pdf =& new Cezpdf();
+		$pdf = new Cezpdf();
 		$pdf->ezSetCmMargins( 1, 2, 1.5, 1.5 );
 		$pdf->selectFont( "$font_dir/Helvetica.afm" );
 

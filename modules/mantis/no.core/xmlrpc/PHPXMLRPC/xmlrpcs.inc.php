@@ -48,16 +48,16 @@
 		$outAr=array();
 		foreach($server->dmap as $key => $val)
 		{
-			$outAr[]=&new xmlrpcval($key, 'string');
+			$outAr[]= new xmlrpcval($key, 'string');
 		}
 		if($server->allow_system_funcs)
 		{
 			foreach($GLOBALS['_xmlrpcs_dmap'] as $key => $val)
 			{
-				$outAr[]=&new xmlrpcval($key, 'string');
+				$outAr[]= new xmlrpcval($key, 'string');
 			}
 		}
-		$v=&new xmlrpcval($outAr, 'array');
+		$v= new xmlrpcval($outAr, 'array');
 		return new xmlrpcresp($v);
 	}
 
@@ -94,22 +94,22 @@
 					$cursig=array();
 					foreach($inSig as $sig)
 					{
-						$cursig[]=&new xmlrpcval($sig, 'string');
+						$cursig[]= new xmlrpcval($sig, 'string');
 					}
-					$sigs[]=&new xmlrpcval($cursig, 'array');
+					$sigs[]= new xmlrpcval($cursig, 'array');
 				}
-				$r=&new xmlrpcresp(new xmlrpcval($sigs, 'array'));
+				$r= new xmlrpcresp(new xmlrpcval($sigs, 'array'));
 			}
 			else
 			{
 				// NB: according to the official docs, we should be returning a
 				// "none-array" here, which means not-an-array
-				$r=&new xmlrpcresp(new xmlrpcval('undef', 'string'));
+				$r= new xmlrpcresp(new xmlrpcval('undef', 'string'));
 			}
 		}
 		else
 		{
-			$r=&new xmlrpcresp(0,$GLOBALS['xmlrpcerr']['introspect_unknown'], $GLOBALS['xmlrpcstr']['introspect_unknown']);
+			$r= new xmlrpcresp(0,$GLOBALS['xmlrpcerr']['introspect_unknown'], $GLOBALS['xmlrpcstr']['introspect_unknown']);
 		}
 		return $r;
 	}
@@ -141,16 +141,16 @@
 		{
 			if(isset($dmap[$methName]['docstring']))
 			{
-				$r=&new xmlrpcresp(new xmlrpcval($dmap[$methName]['docstring']), 'string');
+				$r= new xmlrpcresp(new xmlrpcval($dmap[$methName]['docstring']), 'string');
 			}
 			else
 			{
-				$r=&new xmlrpcresp(new xmlrpcval('', 'string'));
+				$r= new xmlrpcresp(new xmlrpcval('', 'string'));
 			}
 		}
 		else
 		{
-			$r=&new xmlrpcresp(0, $GLOBALS['xmlrpcerr']['introspect_unknown'], $GLOBALS['xmlrpcstr']['introspect_unknown']);
+			$r= new xmlrpcresp(0, $GLOBALS['xmlrpcerr']['introspect_unknown'], $GLOBALS['xmlrpcstr']['introspect_unknown']);
 		}
 		return $r;
 	}
@@ -171,8 +171,8 @@
 			$str = $err->faultString();
 		}
 		$struct = array();
-		$struct['faultCode'] =& new xmlrpcval($code, 'int');
-		$struct['faultString'] =& new xmlrpcval($str, 'string');
+		$struct['faultCode'] = new xmlrpcval($code, 'int');
+		$struct['faultString'] = new xmlrpcval($str, 'string');
 		return new xmlrpcval($struct, 'struct');
 	}
 
@@ -207,7 +207,7 @@
 		}
 		$numParams = $params->arraysize();
 
-		$msg =& new xmlrpcmsg($methName->scalarval());
+		$msg = new xmlrpcmsg($methName->scalarval());
 		for($i = 0; $i < $numParams; $i++)
 		{
 			if(!$msg->addParam($params->arraymem($i)))
@@ -734,14 +734,14 @@
 						}
 						else
 						{
-							$r =& new xmlrpcresp(0, $GLOBALS['xmlrpcerr']['server_decompress_fail'], $GLOBALS['xmlrpcstr']['server_decompress_fail']);
+							$r = new xmlrpcresp(0, $GLOBALS['xmlrpcerr']['server_decompress_fail'], $GLOBALS['xmlrpcstr']['server_decompress_fail']);
 							return $r;
 						}
 					}
 					else
 					{
 						//error_log('The server sent deflated data. Your php install must have the Zlib extension compiled in to support this.');
-						$r =& new xmlrpcresp(0, $GLOBALS['xmlrpcerr']['server_cannot_decompress'], $GLOBALS['xmlrpcstr']['server_cannot_decompress']);
+						$r = new xmlrpcresp(0, $GLOBALS['xmlrpcerr']['server_cannot_decompress'], $GLOBALS['xmlrpcstr']['server_cannot_decompress']);
 						return $r;
 					}
 				}
@@ -859,7 +859,7 @@
 			if(!xml_parse($parser, $data, 1))
 			{
 				// return XML error as a faultCode
-				$r=&new xmlrpcresp(0,
+				$r= new xmlrpcresp(0,
 				$GLOBALS['xmlrpcerrxml']+xml_get_error_code($parser),
 				sprintf('XML error: %s at line %d, column %d',
 					xml_error_string(xml_get_error_code($parser)),
@@ -869,7 +869,7 @@
 			elseif ($GLOBALS['_xh']['isf'])
 			{
 				xml_parser_free($parser);
-				$r=&new xmlrpcresp(0,
+				$r= new xmlrpcresp(0,
 					$GLOBALS['xmlrpcerr']['invalid_request'],
 					$GLOBALS['xmlrpcstr']['invalid_request'] . ' ' . $GLOBALS['_xh']['isf_reason']);
 			}
@@ -887,7 +887,7 @@
 				else
 				{
 					// build an xmlrpcmsg object with data parsed from xml
-					$m=&new xmlrpcmsg($GLOBALS['_xh']['method']);
+					$m= new xmlrpcmsg($GLOBALS['_xh']['method']);
 					// now add parameters in
 					for($i=0; $i<sizeof($GLOBALS['_xh']['params']); $i++)
 					{
@@ -994,11 +994,11 @@
 					error_log("XML-RPC: xmlrpc_server::execute: function $func registered as method handler does not return an xmlrpcresp object");
 					if (is_a($r, 'xmlrpcval'))
 					{
-						$r =& new xmlrpcresp($r);
+						$r = new xmlrpcresp($r);
 					}
 					else
 					{
-						$r =& new xmlrpcresp(
+						$r = new xmlrpcresp(
 							0,
 							$GLOBALS['xmlrpcerr']['server_error'],
 							$GLOBALS['xmlrpcstr']['server_error'] . ": function does not return xmlrpcresp object"
@@ -1023,7 +1023,7 @@
 				{
 					// what should we assume here about automatic encoding of datetimes
 					// and php classes instances???
-					$r =& new xmlrpcresp(php_xmlrpc_encode($r, array('auto_dates')));
+					$r = new xmlrpcresp(php_xmlrpc_encode($r, array('auto_dates')));
 				}
 			}
 			if($this->debug > 2)
@@ -1070,7 +1070,7 @@
 		*/
 		function echoInput()
 		{
-			$r=&new xmlrpcresp(new xmlrpcval( "'Aha said I: '" . $GLOBALS['HTTP_RAW_POST_DATA'], 'string'));
+			$r= new xmlrpcresp(new xmlrpcval( "'Aha said I: '" . $GLOBALS['HTTP_RAW_POST_DATA'], 'string'));
 			print $r->serialize();
 		}
 	}

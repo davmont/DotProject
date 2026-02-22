@@ -128,7 +128,7 @@ function setCalendar( idate, fdate ) {
 <?php
 if ($do_report) {
 
-	$obj =& new CTask;
+	$obj = new CTask;
 	$allowedTasks = $obj->getAllowedSQL($AppUI->user_id);
 
 	$q = new DBQuery;
@@ -290,7 +290,7 @@ if ($log_pdf) {
 		$base_url  = dPgetConfig( 'base_url' );
 		require( $AppUI->getLibraryClass( 'ezpdf/class.ezpdf' ) );
 
-		$pdf =& new Cezpdf();
+		$pdf = new Cezpdf();
 		$pdf->ezSetCmMargins( 1, 2, 1.5, 1.5 );
 		$pdf->selectFont( "$font_dir/Helvetica.afm" );
 

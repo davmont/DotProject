@@ -211,7 +211,7 @@ if ( is_null($obj->task_dynamic) ) $obj->task_dynamic = 0 ;
 $can_edit_time_information = $obj->canUserEditTimeInformation();
 //get list of projects, for task move drop down list.
 //require_once $AppUI->getModuleClass('projects');
-//$project =& new CProject;
+//$project = new CProject;
 $pq = new DBQuery;
 $pq->addQuery('project_id, project_name');
 $pq->addTable('projects');
@@ -325,7 +325,7 @@ var daily_working_hours = <?php echo intval(dPgetConfig('daily_working_hours'));
 	if (isset($_GET['tab']))
 	  $AppUI->setState('TaskAeTabIdx', dPgetParam($_GET, 'tab', 0));
 	$tab = $AppUI->getState('TaskAeTabIdx', 0);
-	$tabBox =& new CTabBox("?m=tasks&a=addedit&task_id=$task_id", "", $tab, "");
+	$tabBox = new CTabBox("?m=tasks&a=addedit&task_id=$task_id", "", $tab, "");
 	$tabBox->add("{$dPconfig['root_dir']}/modules/tasks/ae_desc", "Details");
         $tabBox->add("{$dPconfig['root_dir']}/modules/tasks/ae_dates", "Dates");
 	$tabBox->add("{$dPconfig['root_dir']}/modules/tasks/ae_depend", "Dependencies");

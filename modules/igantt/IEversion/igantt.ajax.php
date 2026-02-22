@@ -66,7 +66,7 @@ if ( !$project->load($project_id) ) {
 	}
 
 // pull tasks
-$task =& new CTask();
+$task = new CTask();
 $q = new DBQuery();
 $q->clear();
 $q->addTable('tasks', 't');
