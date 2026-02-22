@@ -101,7 +101,7 @@ if ($AppUI->doLogin()) {
 
 // check is the user needs a new password
 if (dPgetParam($_POST, 'lostpass', 0)) {
-	$uistyle = dPgetConfig('host_style');
+	$uistyle = (($AppUI->getPref('UISTYLE')) ? $AppUI->getPref('UISTYLE') : dPgetConfig('host_style'));
 	$AppUI->setUserLocale();
 	@include_once(DP_BASE_DIR . '/locales/' . $AppUI->user_locale . '/locales.php');
 	@include_once(DP_BASE_DIR . '/locales/core.php');
