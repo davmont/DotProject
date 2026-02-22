@@ -241,6 +241,7 @@ echo $AppUI->_('Add history'); ?>" onclick="window.location='?m=history&amp;a=ad
 	<th nowrap="nowrap"><?php echo $AppUI->_('User'); ?>&nbsp;&nbsp;</th>
   </tr>
 <?php
+$perms =& $AppUI->acl();
 foreach ($history as $row) {
 	$mod_table = $row['history_table'];
 	$module = (($mod_table == 'task_log') ? 'tasks' : $filter_module_tables[$mod_table]);
@@ -249,10 +250,9 @@ foreach ($history as $row) {
 	$tf = $AppUI->getPref('TIMEFORMAT');
 	$hd = new Date($row['history_date']);
 	// Checking permissions.
-	// TODO: Enable the lines below to activate new permissions.
 	if ($mod_table == 'login' || $mod_table == 'history' 
 		|| !(in_array($mod_table, $filter_module_tables))
-	    || getPermission($module, 'access', $row['history_item'])) {
+	    || $perms->checkModuleItem($module, 'view', $row['history_item'])) {
 ?>
   <tr>	
 	<td><a href="?m=history&amp;a=addedit&amp;history_id=<?php echo ($row['history_id']); ?>">
