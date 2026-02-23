@@ -1,0 +1,83 @@
+body {
+    background-color: #f5f5f6;
+    font-family: 'Roboto', "Helvetica Neue", Arial, sans-serif;
+    color: #333333;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+}
+
+.install-box {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 32px;
+    width: 90%;
+    max-width: 900px;
+    margin: 50px auto;
+}
+
+h1 {
+    color: #1976d2;
+    text-align: center;
+    margin-bottom: 24px;
+    font-weight: 400;
+}
+
+h1 img {
+    vertical-align: middle;
+    margin-right: 12px;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+/* Material overrides for tables */
+table.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    box-shadow: none; /* Remove table shadow inside card */
+}
+
+table.tbl td, table.tbl th {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+table.tbl tr:last-child td {
+    border-bottom: none;
+}
+
+/* Make inputs full width on small screens if needed, but table layout handles it mostly */
+input.text, select.text {
+    width: 100%;
+    max-width: 400px;
+}
+
+.button {
+    margin-top: 16px;
+}
+
+.error {
+    color: #d32f2f;
+    font-weight: 500;
+}
+
+.ok {
+    color: #388e3c; /* darker green for better contrast */
+    font-weight: 500;
+}
+
+.warning {
+    color: #f57c00;
+    font-weight: 500;
+}
+
+/* Center align content in TD if needed */
+td[align="center"] {
+    text-align: center;
+}

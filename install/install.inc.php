@@ -163,6 +163,7 @@ if(version_compare(PHP_VERSION, '5.3.0', '<')){
    if (!$result = $db->Execute($pieces[$i])) {
     $errors++;
     $dbErr = true;
+    $dbMsg .= 'Query failed: ' . htmlspecialchars($pieces[$i]) . '<br />';
     $dbMsg .= $db->ErrorMsg().'<br />';
    }
   }

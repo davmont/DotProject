@@ -92,15 +92,20 @@ if ($dobackup) {
 }
 
 ?>
+<!DOCTYPE html>
 <html>
 <head>
  <title>dotProject Installer</title>
  <meta name="Description" content="dotProject Installer">
-  <link rel="stylesheet" type="text/css" href="../style/default/main.css">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="../style/material/main.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
+<div class="install-box">
 <h1><img src="dp.png" align="middle" alt="dotProject Logo"/>&nbsp;dotProject Installer</h1>
-<table cellspacing="0" cellpadding="3" border="0" class="tbl" width="100%" align="left">
+<div class="table-responsive">
+<table cellspacing="0" cellpadding="3" border="0" class="tbl">
 <tr class='title'><td>Progress:</td></tr>
 <tr><td><pre>
 <?php
@@ -251,8 +256,11 @@ if ($do_cfg || $do_db_cfg) {
 //echo $msg;
 ?>
 </pre></td></tr>
-</table><br/>
-<table cellspacing="0" cellpadding="3" border="0" class="tbl" width="100%" align="left">
+</table>
+</div>
+<br/>
+<div class="table-responsive">
+<table cellspacing="0" cellpadding="3" border="0" class="tbl">
         <tr>
             <td class="title" valign="top">Database Installation Feedback:</td>
      <td class="item"><b style="color:<?php echo $dbErr ? 'red' : 'green'; ?>"><?php echo $dbMsg; ?></b><?php if ($dbErr) { ?> <br />
@@ -281,5 +289,7 @@ if ($do_cfg || $do_db_cfg) {
 	</tr>
 <?php } ?>
         </table>
+</div>
+</div>
 </body>
 </html>

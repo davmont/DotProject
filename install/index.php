@@ -30,15 +30,20 @@ The full text of the GPL is in the COPYING file.
 require_once 'check_upgrade.php';
 $mode = dPcheckUpgrade();
 ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<title>dotProject Installer</title>
 	<meta name="Description" content="dotProject Installer">
- 	<link rel="stylesheet" type="text/css" href="../style/default/main.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="../style/material/main.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
+<div class="install-box">
 <h1><img src="dp.png" align="middle" alt="dotProject Logo"/>&nbsp;dotProject Installer</h1>
-<table cellspacing="0" cellpadding="3" border="0" class="tbl" width="90%" align="center">
+<div class="table-responsive">
+<table cellspacing="0" cellpadding="3" border="0" class="tbl">
 <tr>
         <td class="item" colspan="2">Welcome to the dotProject Installer! It will setup the database for dotProject and create an appropriate config file.
 	In some cases a manual installation cannot be avoided.
@@ -65,18 +70,24 @@ $mode = dPcheckUpgrade();
 	<input type="hidden" name="mode" value="<?php echo $mode; ?>" /></form></td>
 </tr>
 </table>
+</div>
 <br />
 <?php
 // define some necessary variables for check inclusion
 $failedImg = '<img src="../images/icons/stock_cancel-16.png" width="16" height="16" align="middle" alt="Failed"/>';
 $okImg = '<img src="../images/icons/stock_ok-16.png" width="16" height="16" align="middle" alt="OK"/>';
-$tblwidth = '90%';
+$tblwidth = '100%';
 $cfgDir = '../includes';
 $cfgFile = '../includes/config.php';
 $filesDir = '../files';
 $locEnDir = '../locales/en';
 $tmpDir = '../files/temp';
+?>
+<div class="table-responsive">
+<?php
 include_once('vw_idx_check.php');
 ?>
+</div>
+</div>
 </body>
 </html>
