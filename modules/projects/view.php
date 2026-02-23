@@ -511,8 +511,8 @@ $canAccessTaskLog = getPermission('task_log', 'access');
 $showEditCheckbox = false;
 
 $tabBox->add(DP_BASE_DIR . '/modules/journal/index', $AppUI->_('Journal'));
-if (getPermission('initiating', 'access')) {
-	$tabBox->add(DP_BASE_DIR . '/modules/initiating/index', $AppUI->_('Initiating'));
+if (isset($AppUI->getActiveModules()['initiating'])) {
+	$tabBox->add(DP_BASE_DIR . '/modules/initiating/index_table', $AppUI->_('Initiating'));
 }
 
 if ($canAccessTask) {
@@ -532,10 +532,8 @@ $f = 'all';
 $min_view = true;
 
 if (isset($AppUI->getActiveModules()['dotproject_plus'])) {
-	$tabBox->add(DP_BASE_DIR . "/modules/timeplanning/projects_tab.1initiation", $AppUI->_("1initiation", UI_OUTPUT_HTML));
-	$tabBox->add(DP_BASE_DIR . "/modules/timeplanning/projects_tab.2integratedmodules", $AppUI->_("Planning and monitoring", UI_OUTPUT_HTML));
-	$tabBox->add(DP_BASE_DIR . "/modules/dotproject_plus/projects_tab.planning_and_monitoring", $AppUI->_("3execution", UI_OUTPUT_HTML));
-	$tabBox->add(DP_BASE_DIR . "/modules/timeplanning/projects_tab.5closing", $AppUI->_("5closing", UI_OUTPUT_HTML));
+	$tabBox->add(DP_BASE_DIR . "/modules/dotproject_plus/projects_tab.planning_and_monitoring", $AppUI->_("Planning and monitoring", UI_OUTPUT_HTML));
+	$tabBox->add(DP_BASE_DIR . "/modules/dotproject_plus/projects_tab.execution", $AppUI->_("Execution", UI_OUTPUT_HTML));
 }
 
 $tabBox->show();
