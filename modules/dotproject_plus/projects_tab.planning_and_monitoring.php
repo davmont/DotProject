@@ -81,7 +81,9 @@
 
 
 <?php
+require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 $project_id = dPgetParam($_GET, "project_id", 0);
+$project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
 ?>
 
 
@@ -942,13 +944,13 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
             <span style="color:#000000"><?php echo $AppUI->_("LBL_FILTER"); ?>:</span>
             <select id="project_resources_filter" name="project_resources_filter" onchange="filterActivitiesByUser()">
                 <!-- Filter to select activities for just a resource -->
-                <option <?php echo $_POST["project_resources_filter"] == "" ? "selected" : "" ?> value="">
+                <option <?php echo $project_resources_filter == "" ? "selected" : "" ?> value="">
                     <?php echo $AppUI->_("All"); ?>
                 </option>
                 <?php
                 foreach ($records as $record) {
                     ?>
-                    <option <?php echo $_POST["project_resources_filter"] == $record[1] ? "selected" : "" ?>
+                    <option <?php echo $project_resources_filter == $record[1] ? "selected" : "" ?>
                         value="<?php echo $record[1] ?>">
                         <?php echo $record[3] ?>
                     </option>
@@ -1284,7 +1286,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                         $rolesNonGrouped = $projectTaskEstimation->getRolesNonGrouped($task_id);
                                         $totalRoles = count($rolesNonGrouped);
                                         $i = 1; //It avoid the inclusion of a comma in the text to display the human resources
-                                        if ($_POST["project_resources_filter"] == "") {
+                                        if ($project_resources_filter == "") {
                                             $hasFilteredRH = true; //control if will be some filter in based on human resource
                                         } else {
                                             $hasFilteredRH = false;
@@ -1311,7 +1313,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                                 $estimatedRolesTxt .= ", ";
                                             }
                                             $i++;
-                                            if (!$hasFilteredRH && $_POST["project_resources_filter"] == $allocated_hr_id) {
+                                            if (!$hasFilteredRH && $project_resources_filter == $allocated_hr_id) {
                                                 $hasFilteredRH = true;
                                             }
                                         }
