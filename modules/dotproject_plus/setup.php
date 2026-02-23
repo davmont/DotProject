@@ -20,17 +20,26 @@ if (@$a == 'setup') {
     echo dPshowModuleConfig($config);
 }
 
-class CSetup_dotProjectPlus {
+class CSetup_dotProjectPlus
+{
 
-    function install() {
+    function install()
+    {
 
     }
 
-    function upgrade($version = 'all') {
+    function upgrade($version = 'all')
+    {
         return true;
     }
 
-    function configure() {
+    function configure()
+    {
+        return true;
+    }
+
+    function remove()
+    {
         return true;
     }
 
