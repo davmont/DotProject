@@ -4,6 +4,7 @@ if (!defined('DP_BASE_DIR')) {
 }
 require_once DP_BASE_DIR . "/modules/costs/costs_functions.php";
 
+global $m, $a;
 $projectSelected = intval(dPgetParam($_GET, 'project_id'));
 
 // setup the title block
@@ -18,25 +19,27 @@ if ($projectSelected != null) {
 
 
 // Get humans estimatives
-$humanCost = getResources("Human",$whereProject);
+$humanCost = getResources("Human", $whereProject);
 
 // Get not humans estimatives
-$notHumanCost = getResources("Non-Human",$whereProject);
+$notHumanCost = getResources("Non-Human", $whereProject);
 
 $df = $AppUI->getPref('SHDATEFORMAT');
 
-if($humanCost == null && $notHumanCost == null){
+if ($humanCost == null && $notHumanCost == null) {
     ?>
-<div align="right">
-    <input class="button" type="button" name="new cost estimative" value="new cost estimative" onclick="location.href = '?m=costs&amp;a=view_costs&amp;project_id=<?php echo $projectSelected ?>';" />
-</div>
-<?php
-}else{
+    <div align="right">
+        <input class="button" type="button" name="new cost estimative" value="new cost estimative"
+            onclick="location.href = '?m=costs&amp;a=view_costs&amp;project_id=<?php echo $projectSelected ?>';" />
+    </div>
+    <?php
+} else {
     ?>
-<div align="right">
-    <input class="button" type="button" name="edit cost estimative" value="edit cost estimative" onclick="location.href = '?m=costs&amp;a=view_costs&amp;project_id=<?php echo $projectSelected ?>';" />
-</div>
-<?php
+    <div align="right">
+        <input class="button" type="button" name="edit cost estimative" value="edit cost estimative"
+            onclick="location.href = '?m=costs&amp;a=view_costs&amp;project_id=<?php echo $projectSelected ?>';" />
+    </div>
+    <?php
 }
 ?>
 
@@ -51,14 +54,15 @@ if($humanCost == null && $notHumanCost == null){
         </th>
     </tr>
     <tr>
-        <th nowrap="nowrap" width="20%"><?php echo $AppUI->_('Name'); ?></a></th>
-        <th nowrap="nowrap"><?php echo $AppUI->_('Date Begin'); ?></a></th>
-        <th nowrap="nowrap"><?php echo $AppUI->_('Date End'); ?></a></th>
-        <th nowrap="nowrap" width="10%"><?php echo $AppUI->_('Hours/Month'); ?></a></th>
-        <th nowrap="nowrap" width="15%"><?php echo $AppUI->_('Hour Cost'); ?></a></th>
-        <th nowrap="nowrap"><?php echo $AppUI->_('Total Cost'); ?></a></th>
+        <th nowrap="nowrap" width="20%"><?php echo $AppUI->_('Name'); ?></th>
+        <th nowrap="nowrap"><?php echo $AppUI->_('Date Begin'); ?></th>
+        <th nowrap="nowrap"><?php echo $AppUI->_('Date End'); ?></th>
+        <th nowrap="nowrap" width="10%"><?php echo $AppUI->_('Hours/Month'); ?></th>
+        <th nowrap="nowrap" width="15%"><?php echo $AppUI->_('Hour Cost'); ?></th>
+        <th nowrap="nowrap"><?php echo $AppUI->_('Total Cost'); ?></th>
     </tr>
     <?php
+    $sumH = 0;
     foreach ($humanCost as $row) {
         /* transform date to dd/mm/yyyy */
         $date_begin = intval($row['cost_date_begin']) ? new CDate($row['cost_date_begin']) : null;
@@ -89,14 +93,15 @@ if($humanCost == null && $notHumanCost == null){
         </th>
     </tr>
     <tr>
-        <th nowrap="nowrap" width="20%"><?php echo $AppUI->_('Description'); ?></a></th>
-        <th nowrap="nowrap"><?php echo $AppUI->_('Date Begin'); ?></a></th>
-        <th nowrap="nowrap"><?php echo $AppUI->_('Date End'); ?></a></th>
-        <th nowrap="nowrap" width="10%"><?php echo $AppUI->_('Quantity'); ?></a></th>
-        <th nowrap="nowrap" width="15%"><?php echo $AppUI->_('Unitary Cost'); ?></a></th>
-        <th nowrap="nowrap"><?php echo $AppUI->_('Total Cost'); ?></a></th>
+        <th nowrap="nowrap" width="20%"><?php echo $AppUI->_('Description'); ?></th>
+        <th nowrap="nowrap"><?php echo $AppUI->_('Date Begin'); ?></th>
+        <th nowrap="nowrap"><?php echo $AppUI->_('Date End'); ?></th>
+        <th nowrap="nowrap" width="10%"><?php echo $AppUI->_('Quantity'); ?></th>
+        <th nowrap="nowrap" width="15%"><?php echo $AppUI->_('Unitary Cost'); ?></th>
+        <th nowrap="nowrap"><?php echo $AppUI->_('Total Cost'); ?></th>
     </tr>
     <?php
+    $sumNH = 0;
     foreach ($notHumanCost as $row) {
         /* transform date to dd/mm/yyyy */
         $date_begin = intval($row['cost_date_begin']) ? new CDate($row['cost_date_begin']) : null;
@@ -121,6 +126,3 @@ if($humanCost == null && $notHumanCost == null){
     </tr>
 
 </table>
-
-
-
