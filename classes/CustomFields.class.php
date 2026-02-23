@@ -569,6 +569,12 @@ class CustomFieldFilelink extends CustomField
 			$obj->file_project = $_POST['project_id'];
 		}
 		// todo: implement task affiliation here, too
+		if ($m == 'tasks' && $object_id) {
+			$obj->file_task = $object_id;
+			$task = new CTask();
+			$task->load($object_id);
+			$obj->file_project = $task->task_project;
+		}
 
 		$upload = null;
 		if (isset($_FILES[$this->field_name])) {
