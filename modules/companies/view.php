@@ -201,9 +201,10 @@ $titleBlock->show();
 
 <br />
 <hr />
-<div id="rh_div" style="display:<?php echo (isset($_GET["rh_config"]) && $_GET["rh_config"] == "1") ? "block" : "none" ?>">
+<div id="rh_div"
+	style="display:<?php echo (isset($_GET["rh_config"]) && $_GET["rh_config"] == "1") ? "block" : "none" ?>">
 	<?php require_once(DP_BASE_DIR . "/modules/human_resources/view_company_users.php"); ?>
-	<?php require_once(DP_BASE_DIR . "/modules/timeplanning/companies_organizational_diagram.php"); ?>
+	<?php require_once(DP_BASE_DIR . "/modules/timeplanning/companies_tab.1LBLORGONOGRAM.php"); ?>
 	<?php require_once(DP_BASE_DIR . "/modules/human_resources/view_company_roles.php"); ?>
 </div>
 <br />
