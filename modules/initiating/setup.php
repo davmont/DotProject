@@ -29,60 +29,67 @@ $config['permissions_item_label'] = 'initiating_text'; // identify "title" field
 */
 
 if (@$a == 'setup') {
-	echo dPshowModuleConfig($config);
+  echo dPshowModuleConfig($config);
 }
 
 // TODO: To be completed later as needed.
-class CSetupInitiating {
+class CSetupInitiating
+{
 
-  function configure() { return true; }
-
-  function remove() { 
-  	$q = new DBQuery();
-  	$q->dropTable('initiating');
-  	$q->exec();
- }
-  
-  function upgrade($old_version) {
-	// Place to put upgrade logic, based on the previously installed version.
-	// Usually handled via a switch statement. 
-	// Since this is the first version of this module, we have nothing to update.
-	return true;
+  function configure()
+  {
+    return true;
   }
 
-  function install() {
-  	$q = new DBQuery();
-  	$q->createTable('initiating');
-  	$q->createDefinition("(
+  function remove()
+  {
+    $q = new DBQuery();
+    $q->dropTable('initiating');
+    $q->exec();
+  }
+
+  function upgrade($old_version)
+  {
+    // Place to put upgrade logic, based on the previously installed version.
+    // Usually handled via a switch statement. 
+    // Since this is the first version of this module, we have nothing to update.
+    return true;
+  }
+
+  function install()
+  {
+    $q = new DBQuery();
+    $q->createTable('initiating');
+    $q->createDefinition("(
   `initiating_id` int(11) NOT NULL AUTO_INCREMENT ,
   `initiating_title` varchar(255) NOT NULL,
   `initiating_manager` int(11) NOT NULL,
   `initiating_create_by` int(11) NOT NULL,
   `initiating_date_create` datetime NOT NULL,
-  `initiating_justification` varchar(2000) DEFAULT NULL,
-  `initiating_objective` varchar(2000) DEFAULT NULL,
-  `initiating_expected_result` varchar(2000) DEFAULT NULL,
-  `initiating_premise` varchar(2000) DEFAULT NULL,
-  `initiating_restrictions` varchar(2000) DEFAULT NULL,
-  `initiating_budget` varchar(2000) DEFAULT NULL,
+  `initiating_justification` text DEFAULT NULL,
+  `initiating_objective` text DEFAULT NULL,
+  `initiating_expected_result` text DEFAULT NULL,
+  `initiating_premise` text DEFAULT NULL,
+  `initiating_restrictions` text DEFAULT NULL,
+  `initiating_budget` text DEFAULT NULL,
   `initiating_start_date` date DEFAULT NULL,
   `initiating_end_date` date DEFAULT NULL,
-  `initiating_milestone` varchar(2000) DEFAULT NULL,
-  `initiating_success` varchar(2000) DEFAULT NULL,
+  `initiating_milestone` text DEFAULT NULL,
+  `initiating_success` text DEFAULT NULL,
   `initiating_approved` int(1) DEFAULT '0',
   `initiating_authorized` int(1) DEFAULT '0',
   `initiating_completed` int(1) NOT NULL DEFAULT '0',
-  `initiating_approved_comments` varchar(2000) DEFAULT NULL,
-  `initiating_authorized_comments` varchar(2000) DEFAULT NULL,
+  `initiating_approved_comments` text DEFAULT NULL,
+  `initiating_authorized_comments` text DEFAULT NULL,
 PRIMARY KEY (`initiating_id`) 
 ) ");
 
-	$q->exec($sql);
-	
-	$q->clear();
-	$q = new DBQuery();
-  	$q->createTable('initiating_stakeholder');
-  	$q->createDefinition("(
+    $q->exec();
+
+    $q->clear();
+    $q = new DBQuery();
+    $q->createTable('initiating_stakeholder');
+    $q->createDefinition("(
   `initiating_stakeholder_id` int(11) NOT NULL AUTO_INCREMENT,
   `initiating_id` int(11) NOT NULL,
   `contact_id` int(11) NOT NULL,
@@ -93,8 +100,8 @@ PRIMARY KEY (`initiating_id`)
   PRIMARY KEY (`initiating_stakeholder_id`) 
 ) ");
 
-	$q->exec($sql);
-	
-	return NULL;
- }
+    $q->exec();
+
+    return NULL;
+  }
 }
