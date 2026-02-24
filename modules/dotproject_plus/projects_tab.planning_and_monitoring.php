@@ -1,3 +1,6 @@
+<?php
+require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
+?>
 <script src="./modules/timeplanning/js/estimations.js"></script>
 <script src="./modules/timeplanning/js/eap.js"></script>
 <script src="./modules/timeplanning/js/ajax_service_activator.js"></script>
@@ -5,6 +8,9 @@
 <!-- include libraries for right click menu -->
 <script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/milonic_src.js"></script>
 <script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/mmenudom.js"></script>
+<?php
+require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
+?>
 <script type="text/javascript"
     src="./modules/dotproject_plus/milonic_right_click_menu/contextmenu_activities_wbs.js"></script>
 <script type="text/javascript"
@@ -81,7 +87,7 @@
 
 
 <?php
-require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
+
 $project_id = dPgetParam($_GET, "project_id", 0);
 $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
 ?>
@@ -1460,7 +1466,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                                             </option>
                                                         </select>
                                                         &nbsp;
-                                                        <input class="button" type="button" value="Salvar"
+                                                        <input class="button" type="button" value="<?php echo $AppUI->_("LBL_SAVE"); ?>"
                                                             onclick="saveActivity(<?php echo $task_id ?>, <?php echo $id ?>)" />
                                                         <?php
                                                     }

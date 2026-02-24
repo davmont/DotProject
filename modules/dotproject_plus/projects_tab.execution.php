@@ -1,3 +1,6 @@
+<?php
+require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
+?>
 <!-- include libraries for right click menu -->
 <script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/milonic_src.js"></script>
 <script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/mmenudom.js"></script>
@@ -106,7 +109,6 @@
 </script>
 
 <?php
-require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 require_once(DP_BASE_DIR . "/modules/timeplanning/model/project_task_estimation.class.php");
 require_once(DP_BASE_DIR . "/modules/dotproject_plus/model/ActivityLog.php");
 require_once(DP_BASE_DIR . "/modules/timeplanning/model/wbs_item_estimation.class.php");

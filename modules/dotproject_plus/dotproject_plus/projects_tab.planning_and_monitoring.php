@@ -1,3 +1,6 @@
+<?php
+require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
+?>
 <script src="./modules/timeplanning/js/estimations.js"></script>
 <script src="./modules/timeplanning/js/eap.js"></script>
 <script src="./modules/timeplanning/js/ajax_service_activator.js"></script>
@@ -934,7 +937,8 @@ if ($_GET["show_external_page"] != "") {
             <select id="project_resources_filter" name="project_resources_filter" onchange="filterActivitiesByUser()">
                 <!-- Filter to select activities for just a resource -->
                 <option <?php echo $project_resources_filter == "" ? "selected" : "" ?> value="">
-                    <?php echo $AppUI->_("All"); ?></option>
+                    <?php echo $AppUI->_("All"); ?>
+                </option>
                 <?php
                 foreach ($records as $record) {
                     ?>
@@ -1439,14 +1443,16 @@ if ($_GET["show_external_page"] != "") {
                                                         ?>
                                                         <select name="task_percent_complete">
                                                             <option <?php echo $obj->task_percent_complete == 0 ? "selected" : ""; ?> value="0">
-                                                                <?php echo $AppUI->_("LBL_ACTIVITY_STATUS_NOT_INITIATED"); ?></option>
+                                                                <?php echo $AppUI->_("LBL_ACTIVITY_STATUS_NOT_INITIATED"); ?>
+                                                            </option>
                                                             <option <?php echo $obj->task_percent_complete > 0 && $obj->task_percent_complete < 100 ? "selected" : ""; ?> value="50"><?php echo $AppUI->_("LBL_ACTIVITY_STATUS_WORKING_ON_IT"); ?>
                                                             </option>
                                                             <option <?php echo $obj->task_percent_complete == 100 ? "selected" : ""; ?> value="100">
-                                                                <?php echo $AppUI->_("LBL_ACTIVITY_STATUS_CONCLUDED"); ?></option>
+                                                                <?php echo $AppUI->_("LBL_ACTIVITY_STATUS_CONCLUDED"); ?>
+                                                            </option>
                                                         </select>
                                                         &nbsp;
-                                                        <input class="button" type="button" value="Salvar"
+                                                        <input class="button" type="button" value="<?php echo $AppUI->_("LBL_SAVE"); ?>"
                                                             onclick="saveActivity(<?php echo $task_id ?>, <?php echo $id ?>)" />
                                                         <?php
                                                     }
