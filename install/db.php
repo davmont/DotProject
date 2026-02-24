@@ -10,13 +10,17 @@
 $baseDir = dirname(dirname(__FILE__));
 define('DP_BASE_DIR', $baseDir);
 ?>
+<!DOCTYPE html>
 <html>
 <head>
 	<title>dotProject Installer</title>
 	<meta name="Description" content="dotProject Installer" />
- 	<link rel="stylesheet" type="text/css" href="../style/default/main.css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="../style/material/main.css" />
+	<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
+<div class="install-box">
 <h1><img src="dp.png" align="middle" alt="dotProject Logo" />&nbsp;dotProject Installer</h1>
 <?php
 if ($_POST['mode'] == 'upgrade') {
@@ -33,7 +37,8 @@ if ($_POST['mode'] == 'upgrade') {
 ?>
 <form name="instFrm" action="do_install_db.php" method="post">
 <input type="hidden" name="mode" value="<?php echo htmlspecialchars($_POST['mode'], ENT_QUOTES); ?>" />
-<table cellspacing="0" cellpadding="3" border="0" class="tbl" width="100%" align="center">
+<div class="table-responsive">
+<table cellspacing="0" cellpadding="3" border="0" class="tbl">
 	<tr>
 		<td class="title" colspan="2">Database Settings</td>
 	</tr>
@@ -120,6 +125,8 @@ endif;
 		<td align="right" class="item"><br />(Recommended) &nbsp;<input class="button" type="submit" name="do_db_cfg" value="<?php echo htmlspecialchars($_POST['mode'], ENT_QUOTES); ?> db & write cfg" title="Write config file and setup the database with the given information." /></td>
 	</tr>
 </table>
+</div>
 </form>
+</div>
 </body>
 </html>
