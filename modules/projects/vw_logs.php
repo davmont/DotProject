@@ -9,7 +9,7 @@ $q = new DBQuery;
 // Lets check which cost codes have been used before
 $q->addQuery('project_company');
 $q->addTable('projects');
-$q->addWhere('project_id = ' . $project_id);
+$q->addWhere('project_id = ?', $project_id);
 $company_id = $q->loadResult();
 $q->clear();
 
@@ -17,7 +17,7 @@ $q->addTable('billingcode');
 $q->addQuery('billingcode_id, billingcode_name');
 $q->addOrder('billingcode_name');
 $q->addWhere('billingcode_status = 0');
-$q->addWhere('(company_id = 0 OR company_id = ' . $company_id . ')');
+$q->addWhere('(company_id = 0 OR company_id = ?)', $company_id);
 $task_log_costcodes = array(0 => '') + $q->loadHashList();
 $q->clear();
 
@@ -27,7 +27,7 @@ $q->addTable('billingcode');
 $q->addQuery('billingcode_id, billingcode_name');
 $q->addOrder('billingcode_name');
 $q->addWhere('billingcode_status = 1');
-$q->addWhere('(company_id = 0 OR company_id = ' . $company_id . ')');
+$q->addWhere('(company_id = 0 OR company_id = ?)', $company_id);
 $task_log_costcodes = $task_log_costcodes + $q->loadHashList();
 $q->clear();
 
@@ -109,16 +109,16 @@ $project = new CProject;
 // Pull the task comments
 $q  = new DBQuery;
 $q->addTable('task_log','tl');
-$q->addQuery('tl.*, user_username, task_id');
+$q->addQuery('tl.task_log_id, tl.task_log_name, tl.task_log_description, tl.task_log_creator, tl.task_log_hours, tl.task_log_date, tl.task_log_task, user_username, task_id');
 $q->addQuery('billingcode_name as task_log_costcode');
 $q->addJoin('users', 'u', 'user_id = task_log_creator');
 $q->addJoin('tasks', 't', 'task_log_task = t.task_id');
 $q->addJoin('billingcode', 'b', 'tl.task_log_costcode = billingcode_id');
 //already included bY the setAllowedSQL function
 //$q->addJoin('projects', 'p', 'task_project = p.project_id');
-$q->addWhere("task_project = $project_id ");
+$q->addWhere("task_project = ?", $project_id);
 if ($user_id > 0) {
-	$q->addWhere("task_log_creator=$user_id");
+	$q->addWhere("task_log_creator = ?", $user_id);
 }
 if ($hide_inactive) {
 	$q->addWhere('task_status >= 0');
@@ -127,12 +127,13 @@ if ($hide_complete) {
 	$q->addWhere('task_percent_complete < 100');
 }
 if ($cost_code != 0) {
-	$q->addWhere("task_log_costcode = '$cost_code'");
+	$q->addWhere("task_log_costcode = ?", $cost_code);
 }
 
 $q->addOrder('task_log_date');
+$q->setLimit(500);
 $project->setAllowedSQL($AppUI->user_id, $q, 'task_project');
-$logs = $q->loadList();
+$logs = $q->loadList(null, 60);
 
 $s = '';
 $hrs = 0;
