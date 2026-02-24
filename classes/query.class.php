@@ -474,7 +474,11 @@ class DBQuery
 				$s = $this->prepareSelect();
 				$q = 'CREATE TEMPORARY TABLE ' . $this->_table_prefix . $this->create_table;
 				if (!empty($this->create_definition)) {
-					$q .= ' ' . $this->create_definition;
+					$def = $this->create_definition;
+					if (strpos(dPgetConfig('dbtype'), 'mysql') === false) {
+						$def = $this->_translateDDL($def);
+					}
+					$q .= ' ' . $def;
 				}
 				$q .= ' ' . $s;
 				break;
@@ -485,7 +489,11 @@ class DBQuery
 				$s = $this->prepareSelect();
 				$q = 'CREATE TABLE ' . $this->_table_prefix . $this->create_table;
 				if (!empty($this->create_definition)) {
-					$q .= ' ' . $this->create_definition;
+					$def = $this->create_definition;
+					if (strpos(dPgetConfig('dbtype'), 'mysql') === false) {
+						$def = $this->_translateDDL($def);
+					}
+					$q .= ' ' . $def;
 				}
 				$q .= ' ' . $s;
 				break;
@@ -563,6 +571,7 @@ class DBQuery
 			} else {
 				$table = $this->table_list;
 			}
+			$GLOBALS['last_insert_table'] = $this->_table_prefix . $table;
 		} else {
 			return false;
 		}
@@ -663,16 +672,101 @@ class DBQuery
 			$alters = '';
 			if (is_array($this->create_definition)) {
 				foreach ($this->create_definition as $def) {
+					if (strpos(dPgetConfig('dbtype'), 'mysql') === false) {
+						$def['spec'] = $this->_translateDDL($def['spec']);
+					}
 					$alters .= ((($alters) ? ', ' : ' ') . $def['action'] . ' ' . $def['type']
 						. ' ' . $def['spec']);
 				}
 			} else {
-				$alters .= ' ADD ' . $this->create_definition;
+				$def = $this->create_definition;
+				if (strpos(dPgetConfig('dbtype'), 'mysql') === false) {
+					$def = $this->_translateDDL($def);
+				}
+				$alters .= ' ADD ' . $def;
 			}
 			$q .= $alters;
 		}
 
 		return $q;
+	}
+
+	function _translateDDL($sql)
+	{
+		// Simple regex based translation
+		$sql = str_replace('`', '', $sql); // Remove backticks
+		$sql = preg_replace('/int\(\d+\) unsigned/', 'INTEGER', $sql);
+		$sql = preg_replace('/int\(\d+\)/', 'INTEGER', $sql);
+		$sql = preg_replace('/tinyint/', 'SMALLINT', $sql);
+		$sql = preg_replace('/datetime/', 'TIMESTAMP', $sql);
+		$sql = preg_replace('/ text/', ' TEXT', $sql); // ensure space
+
+		// Auto increment
+		// MySQL: id int unsigned not null auto_increment
+		// Postgres: id SERIAL
+		$sql = preg_replace('/(\w+)\s+INTEGER\s+NOT\s+NULL\s+auto_increment/i', '$1 SERIAL', $sql);
+		$sql = preg_replace('/(\w+)\s+INTEGER\s+auto_increment/i', '$1 SERIAL', $sql);
+
+		// Remove 'default '0000-00-00 00:00:00''
+		$sql = str_replace("default '0000-00-00 00:00:00'", "default NULL", $sql);
+
+		return $sql;
+	}
+
+	function _execReplace($style, $debug, $cache_secs)
+	{
+		global $db;
+		$table = $this->_table_prefix . (is_array($this->table_list) ? reset($this->table_list) : $this->table_list);
+
+		// 1. Get Primary Keys
+		$pks = $db->MetaPrimaryKeys($table);
+		if (!$pks) {
+			// Fallback to Insert if no PK
+			$q = $this->prepareInsert();
+			return $db->Execute($q, $this->params);
+		}
+
+		// 2. Build Where clause for Delete
+		$fields = array_keys($this->value_list);
+
+		$pk_values = array();
+		$param_idx = 0;
+		$record = array();
+
+		foreach ($this->value_list as $field => $val) {
+			if ($val === '?') {
+				$real_val = $this->v_params[$param_idx++];
+			} else {
+				$real_val = $val;
+			}
+			$record[$field] = $real_val;
+		}
+
+		// Now check if we have all PKs
+		$where = array();
+		$delete_params = array();
+		foreach ($pks as $pk) {
+			if (!isset($record[$pk])) {
+				// PK missing in Replace? Treat as Insert
+				$q = $this->prepareInsert();
+				return $db->Execute($q, $this->params);
+			}
+			$where[] = "$pk = ?";
+			$delete_params[] = $record[$pk];
+		}
+
+		// 3. Delete
+		$sql_del = "DELETE FROM $table WHERE " . implode(' AND ', $where);
+
+		// 4. Insert
+		$sql_ins = $this->prepareInsert();
+
+		$db->StartTrans();
+		$db->Execute($sql_del, $delete_params);
+		$ret = $db->Execute($sql_ins, $this->params);
+		$db->CompleteTrans();
+
+		return $ret;
 	}
 
 	/**
@@ -685,6 +779,12 @@ class DBQuery
 
 		if (!isset($this->_old_style)) {
 			$this->_old_style = $ADODB_FETCH_MODE;
+		}
+
+		if ($this->type == 'replace' && strpos(dPgetConfig('dbtype'), 'mysql') === false) {
+			$ret = $this->_execReplace($style, $debug, $cache_secs);
+			$this->clearQuery();
+			return $ret;
 		}
 
 		$ADODB_FETCH_MODE = $style;

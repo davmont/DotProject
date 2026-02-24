@@ -46,12 +46,15 @@ function db_errno() {
 	return $db->ErrorNo();
 }
 
-function db_insert_id() {
+function db_insert_id($table = null, $field = null) {
 	global $db;
 	if (!(is_object($db))) {
 		dprint(__FILE__,__LINE__, 0, 'Database object does not exist.');
 	}
-	return $db->Insert_ID();
+	if (!$table && isset($GLOBALS['last_insert_table'])) {
+		$table = $GLOBALS['last_insert_table'];
+	}
+	return $db->Insert_ID($table, $field);
 }
 
 function db_exec($sql) {
@@ -60,6 +63,11 @@ function db_exec($sql) {
 	if (!(is_object($db))) {
 		dprint(__FILE__,__LINE__, 0, 'Database object does not exist.');
 	}
+
+	if (preg_match('/^INSERT\s+INTO\s+([^\s\(]+)/i', trim($sql), $matches)) {
+		$GLOBALS['last_insert_table'] = str_replace(array('"', "'", '`'), '', $matches[1]);
+	}
+
 	$qid = $db->Execute($sql);
 	dprint(__FILE__, __LINE__, 10, $sql);
 	if ($msg = db_error()) {
