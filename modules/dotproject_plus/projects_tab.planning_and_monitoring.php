@@ -94,7 +94,7 @@ $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
 
 
 <script>
-    //Definition of messages as global variables  
+    //Definition of messages as global variables
     var mensagem_1 = "<?php echo $AppUI->_("LBL_CREATE_ACTIVITIES_BEFORE_SEQUENCING", UI_OUTPUT_JS); ?>";
     var mensagem_2 = "<?php echo $AppUI->_("LBL_CONFIRM_WBS_ITEM_EXCLUSION", UI_OUTPUT_JS); ?>";
     var mensagem_2_activity = "<?php echo $AppUI->_("LBL_CONFIRM_ACTIVITY_EXCLUSION", UI_OUTPUT_JS); ?>";
@@ -110,7 +110,7 @@ $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
 
     function saveWBSItem(wbsItemId) {
         //window.alert(mensagem_4);
-        //document.getElementById("save_wbs_" + wbsItemId).submit();  
+        //document.getElementById("save_wbs_" + wbsItemId).submit();
         var form = $("#save_wbs_" + wbsItemId);
         $.ajax(
             {
@@ -704,7 +704,7 @@ $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
     /**
      * This function is called after the user select a option of an estimated role (onchange, onselect events).
      * It receive as parameter the index of the role in the select options list, and then get the list of names available for this role.
-     * A new set of options is built based on this list. 
+     * A new set of options is built based on this list.
      */
     function updateHROptionsBasedOnRole(roleSelectFieldId, hrSelectFieldId) {
         var roleSelectField = document.getElementById(roleSelectFieldId);
@@ -762,7 +762,7 @@ $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
     /**
      * Function to assist the filling of activity dates.
      * When the user select the start date, if it is after the current end date, or if it is empty, the it is filled with the same value as the start date.
-     
+
      * @returns {void}     */
     function updateActivityDateOnChange(activityId, dateSeparator) {
         try {
@@ -893,7 +893,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
             hrPerRole[<?php echo $i ?>] = new Array();
             <?php
             //start: build human resources list per role
-    
+
             $q = new DBQuery();
             $q->addTable('contacts', 'c');
             $q->addQuery('user_id, h.human_resource_id, contact_id,u.user_username, contact_last_name, contact_first_name');
@@ -938,7 +938,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
         }
         //end: build hr list
 //start: buld hr list per role
-//end: buld hr list per role 
+//end: buld hr list per role
         ?>
     </script>
     <?php
@@ -1021,7 +1021,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
             $project = new CProject();
             $project->load($project_id);
             $company_id = $project->project_company;
-            $showFirstActivityCreation = false; //this variable make the controlling to showing of the message to create the first activity 
+            $showFirstActivityCreation = false; //this variable make the controlling to showing of the message to create the first activity
             $items = $controllerWBSItem->getWBSItems($project_id);
 
             if (count($items) == 0) {
@@ -1299,7 +1299,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                         }
                                         foreach ($rolesNonGrouped as $role) {
                                             $role_estimated_id = $role->getQuantity(); // the quantity field is been used to store the estimated role id
-                                            $allocated_hr_id = ""; //Get the allocated HR  (maybe there is just the role without allocation, in this case write the role name)          
+                                            $allocated_hr_id = ""; //Get the allocated HR  (maybe there is just the role without allocation, in this case write the role name)
                                             //Get id of a possible old allocation to delete it
                                             $q = new DBQuery();
                                             $q->addTable("human_resource_allocation");
@@ -1433,27 +1433,36 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                                 </td>
                                                 <td style="text-align: center;width:100px">
                                                     <?php
-                                                    if (!isset($_GET["execution_mode"]) && $_GET["tab"] != 2) { //tab equals 3 is the parameter 
+                                                    if (!isset($_GET["execution_mode"]) && $_GET["tab"] != 2) { //tab equals 3 is the parameter
                                                         ?>
                                                         <input type="hidden" name="task_percent_complete"
                                                             value="<?php echo $obj->task_percent_complete ?>" />
 
                                                         <?php
                                                         $activity_status = "";
-                                                        switch ($obj->task_percent_complete) {
-                                                            case 0:
-                                                                $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_NOT_INITIATED");
-                                                                break;
-                                                            case 100:
-                                                                $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_CONCLUDED");
-                                                                break;
-                                                            default:
-                                                                $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_WORKING_ON_IT");
-                                                                ;
-                                                                break;
+                                                        $task_status_options = dPgetSysVal('TaskStatus');
+                                                        if (isset($task_status_options) && isset($task_status_options[$obj->task_status]) && $obj->task_status > -1) {
+                                                            $activity_status = $task_status_options[$obj->task_status];
+                                                        } else {
+                                                            switch ($obj->task_percent_complete) {
+                                                                case 0:
+                                                                    $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_NOT_INITIATED");
+                                                                    break;
+                                                                case 100:
+                                                                    $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_CONCLUDED");
+                                                                    break;
+                                                                default:
+                                                                    $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_WORKING_ON_IT");
+                                                                    break;
+                                                            }
                                                         }
                                                         echo $activity_status;
                                                     } else {
+                                                        $task_status_options = dPgetSysVal('TaskStatus');
+                                                        if (isset($task_status_options) && count($task_status_options) > 0) {
+                                                            echo arraySelect($task_status_options, 'task_status', 'class="text"', $obj->task_status, true);
+                                                            echo "&nbsp;";
+                                                        }
                                                         ?>
                                                         <select name="task_percent_complete">
                                                             <option <?php echo $obj->task_percent_complete == 0 ? "selected" : ""; ?> value="0">
@@ -1592,7 +1601,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                                                         $activity_has_estimated_resource = false; //to inclue an resource estimation entry, when none was created yet.
                                                                         foreach ($rolesNonGrouped as $role) {
                                                                             $role_estimated_id = $role->getQuantity(); // the quantity field is been used to store the estimated role id
-                                                                            $allocated_hr_id = ""; //Get the allocated HR            
+                                                                            $allocated_hr_id = ""; //Get the allocated HR
 //Get id of a possible old allocation to delete it
                                                                             $q = new DBQuery();
                                                                             $q->addTable("human_resource_allocation");
