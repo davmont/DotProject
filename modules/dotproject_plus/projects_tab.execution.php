@@ -190,7 +190,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
     }
     //end: build hr list
 //start: buld hr list per role
-//end: buld hr list per role 
+//end: buld hr list per role
     ?>
     </script>
     <?php
@@ -262,7 +262,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
         $project = new CProject();
         $project->load($project_id);
         $company_id = $project->project_company;
-        $showFirstActivityCreation = false; //this variable make the controlling to showing of the message to create the first activity 
+        $showFirstActivityCreation = false; //this variable make the controlling to showing of the message to create the first activity
         $items = $controllerWBSItem->getWBSItems($project_id);
 
         if (count($items) > 0) {
@@ -409,7 +409,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                     }
                                     foreach ($rolesNonGrouped as $role) {
                                         $role_estimated_id = $role->getQuantity(); // the quantity field is been used to store the estimated role id
-                                        $allocated_hr_id = ""; //Get the allocated HR  (maybe there is just the role without allocation, in this case write the role name)          
+                                        $allocated_hr_id = ""; //Get the allocated HR  (maybe there is just the role without allocation, in this case write the role name)
                                         //Get id of a possible old allocation to delete it
                                         $q = new DBQuery();
                                         $q->addTable("human_resource_allocation");
@@ -631,17 +631,21 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
 
                                             <?php
                                             $activity_status = "";
-                                            switch ($obj->task_percent_complete) {
-                                                case 0:
-                                                    $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_NOT_INITIATED");
-                                                    break;
-                                                case 100:
-                                                    $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_CONCLUDED");
-                                                    break;
-                                                default:
-                                                    $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_WORKING_ON_IT");
-                                                    ;
-                                                    break;
+                                            $task_status_options = dPgetSysVal('TaskStatus');
+                                            if (isset($task_status_options) && isset($task_status_options[$obj->task_status]) && $obj->task_status > -1) {
+                                                $activity_status = $task_status_options[$obj->task_status];
+                                            } else {
+                                                switch ($obj->task_percent_complete) {
+                                                    case 0:
+                                                        $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_NOT_INITIATED");
+                                                        break;
+                                                    case 100:
+                                                        $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_CONCLUDED");
+                                                        break;
+                                                    default:
+                                                        $activity_status = $AppUI->_("LBL_ACTIVITY_STATUS_WORKING_ON_IT");
+                                                        break;
+                                                }
                                             }
                                             echo $activity_status;
 

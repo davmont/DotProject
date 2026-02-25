@@ -19,9 +19,10 @@ $effortUnit = $_POST["planned_effort_unit_$task_id"];
 $startDate = $_POST["planned_start_date_activity_$task_id"];
 $endDate = $_POST["planned_end_date_activity_$task_id"];
 $task_percent_complete=$_POST["task_percent_complete"];
+$task_status = isset($_POST["task_status"]) ? $_POST["task_status"] : -1;
 $tab=$_POST["tab"];
 //update duration and dates
-$duration = updateActivity($startDate, $endDate, $task_id,$owner_id,$description,$task_percent_complete);
+$duration = updateActivity($startDate, $endDate, $task_id,$owner_id,$description,$task_percent_complete, $task_status);
 
 $rolesIds = array();
 $rolesHRs = array();
@@ -104,13 +105,16 @@ $AppUI->redirect('m=projects&a=view&project_id=' . $project_id);
  * Inputs are informed using dd/mm/yyyy style
  * This method stores the start and end dates and calculates activity duration
  */
-function updateActivity($startDateTxt, $endDateTxt, $taskId,$owner,$description, $task_percent_complete) {
+function updateActivity($startDateTxt, $endDateTxt, $taskId,$owner,$description, $task_percent_complete, $task_status = -1) {
     $obj = new CTask();
     $obj->load($taskId);
     $dateStart = null;
     $dateEnd = null;
     $duration = 0;
     $obj->task_percent_complete=$task_percent_complete;
+    if ($task_status > -1) {
+        $obj->task_status = $task_status;
+    }
     $calculateDuratation = true;
     if ($startDateTxt != "") {
         $dateStart = new DateTime();
@@ -151,6 +155,9 @@ function updateActivity($startDateTxt, $endDateTxt, $taskId,$owner,$description,
     $q->addUpdate("task_owner", $owner);
     $q->addUpdate("task_start_date", $obj->task_start_date);
     $q->addUpdate("task_end_date", $obj->task_end_date);
+    if ($task_status > -1) {
+        $q->addUpdate("task_status", $task_status);
+    }
     $q->addWhere("task_id = " . $taskId);
     $q->exec();
     return $duration;

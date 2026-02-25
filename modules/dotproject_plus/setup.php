@@ -25,11 +25,31 @@ class CSetup_dotProjectPlus
 
     function install()
     {
+        global $db;
+        $sql = "CREATE TABLE IF NOT EXISTS project_pmbok_principles (
+            project_id INTEGER NOT NULL,
+            principle_id INTEGER NOT NULL,
+            rating INTEGER DEFAULT 0,
+            notes TEXT,
+            PRIMARY KEY (project_id, principle_id)
+        )";
+        db_exec($sql);
 
+        $sql = "CREATE TABLE IF NOT EXISTS project_pmbok_domains (
+            project_id INTEGER NOT NULL,
+            domain_id INTEGER NOT NULL,
+            status INTEGER DEFAULT 0,
+            notes TEXT,
+            PRIMARY KEY (project_id, domain_id)
+        )";
+        db_exec($sql);
+        return true;
     }
 
     function upgrade($version = 'all')
     {
+        // For existing installations, ensure tables exist
+        $this->install();
         return true;
     }
 
@@ -40,6 +60,10 @@ class CSetup_dotProjectPlus
 
     function remove()
     {
+        $sql = "DROP TABLE IF EXISTS project_pmbok_principles";
+        db_exec($sql);
+        $sql = "DROP TABLE IF EXISTS project_pmbok_domains";
+        db_exec($sql);
         return true;
     }
 
