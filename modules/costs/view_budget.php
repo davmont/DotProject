@@ -31,7 +31,7 @@ if ((!db_loadObject($q->prepare(), $bud)) && ($budget_id > 0)) {
 insertReserveBudget($projectSelected);
 
 // setup the title block
-$titleBlock = new CTitleBlock("Budgets", 'costs.png', $m, "$m.$a");
+$titleBlock = new CTitleBlock("Budget", '../modules/costs/images/costs.png', $m, "$m.$a");
 $titleBlock->addCrumb('?m=costs', 'projects budgets');
 
 
@@ -66,7 +66,7 @@ $notHumanCost = $q->loadList();
     function delIt() {
         if (confirm("<?php echo $AppUI->_('Delete this registry?', UI_OUTPUT_JS); ?>")) {
             var f = document.uploadFrm;
-            f.del.value='1';
+            f.del.value = '1';
             f.submit();
         }
     }
@@ -74,54 +74,61 @@ $notHumanCost = $q->loadList();
 
 <!-- ############################## ESTIMATIVAS CUSTOS HUMANOS ############################################ -->
 
-<table width="100%" border="0" cellpadding="3" cellspacing="3" class="tbl">
+<table width="100%" border="0" cellpadding="3" cellspacing="3" class="std" style="border-radius:10px">
 
     <?php
     $q->clear();
     $q->addQuery('project_start_date,project_end_date');
     $q->addTable('projects');
     $q->addWhere("project_id = '$projectSelected'");
-    $datesProject = & $q->exec();
+    $datesProject = &$q->exec();
 
     $meses = diferencaMeses(substr($datesProject->fields['project_start_date'], 0, -9), substr($datesProject->fields['project_end_date'], 0, -9));
-    $monthStartProject = substr($datesProject->fields['project_start_date'], 5, -12);
-    $monthEndProject = substr($datesProject->fields['project_end_date'], 5, -12);
-    $monthSProject = substr($datesProject->fields['project_start_date'], 5, -12);
-    $yearStartProject = substr($datesProject->fields['project_start_date'], 0, -15);
-    $yearEndProject = substr($datesProject->fields['project_end_date'], 0, -15);
+    $monthStartProject = (int) substr($datesProject->fields['project_start_date'], 5, -12);
+    $monthEndProject = (int) substr($datesProject->fields['project_end_date'], 5, -12);
+    $monthSProject = (int) substr($datesProject->fields['project_start_date'], 5, -12);
+    $yearStartProject = (int) substr($datesProject->fields['project_start_date'], 0, -15);
+    $yearEndProject = (int) substr($datesProject->fields['project_end_date'], 0, -15);
 
     $years = $yearEndProject - $yearStartProject;
     $tempYear = $yearStartProject;
-    $tempMeses = (12 - $monthStartProject) +1;
-    
-    
-    $sumColumns;
+    $tempMeses = (12 - $monthStartProject) + 1;
+
+
+    $sumColumns = array();
+    $mtz = array();
+    $mtzNH = array();
+    $mtzC = array();
+    $sumH = 0;
+    $sumNH = 0;
+    $sumC = 0;
     $c = 0;
     $counter = 1;
     ?>
 
     <tr>
         <th nowrap='nowrap'><?php echo $AppUI->_('Year'); ?></th>
-        <?php 
-            for($i=0; $i <= $years; $i++){
-                echo '<th nowrap="nowrap" colspan="'. $tempMeses .'">';
-                echo $tempYear;
-                echo"</th>";
-                $tempMeses = ($meses - $tempMeses)+1;
-                $ns = $tempMeses - 12;
-                if($ns > 0)
-                    $tempMeses = 12;
-                $tempYear++;
-            } 
-         ?>
+        <?php
+        for ($i = 0; $i <= $years; $i++) {
+            echo '<th nowrap="nowrap" colspan="' . $tempMeses . '">';
+            echo $tempYear;
+            echo "</th>";
+            $tempMeses = ($meses - $tempMeses) + 1;
+            $ns = $tempMeses - 12;
+            if ($ns > 0)
+                $tempMeses = 12;
+            $tempYear++;
+        }
+        ?>
     </tr>
     <tr>
-        <th nowrap="nowrap" width="15%"><?php echo $AppUI->_('Item'); ?></a></th>
+        <th nowrap="nowrap" width="15%"><?php echo $AppUI->_('Item'); ?></th>
         <?php
         for ($i = 0; $i <= $meses; $i++) {
             $mes = $monthStartProject;
             $monthStartProject++;
-            if($mes == 12) $monthStartProject = 1;
+            if ($mes == 12)
+                $monthStartProject = 1;
             ?>
             <th nowrap='nowrap'>
                 <?php echo $AppUI->_('Month ' . $mes); ?>
@@ -130,8 +137,8 @@ $notHumanCost = $q->loadList();
             $counter++;
         }
         ?>
-        <th nowrap="nowrap" width="10%"><?php echo $AppUI->_('Total Cost'); ?></a></th>
-    </tr>    
+        <th nowrap="nowrap" width="10%"><?php echo $AppUI->_('Total Cost'); ?></th>
+    </tr>
     <tr>
         <td nowrap='nowrap' align="center" colspan="<?php echo $meses + 2 ?>">
             <b><?php echo $AppUI->_('HUMAN RESOURCE ESTIMATIVE'); ?></b>
@@ -154,7 +161,7 @@ $notHumanCost = $q->loadList();
     }
     ?>
     <tr>
-        <td nowrap="nowrap" align="center" width="15%"cellpadding="3"> <b>Subtotal Human Estimatives </b> </td>
+        <td nowrap="nowrap" align="center" width="15%" cellpadding="3"> <b>Subtotal Human Estimatives </b> </td>
         <?php
         $sumColumns = subTotalBudget($meses, $c, $mtz, 0, $sumColumns);
         ?>
@@ -202,7 +209,7 @@ $notHumanCost = $q->loadList();
     </tr>
 
 
-    <!-- ############################## CONTINGENCY RESERVE  ############################################ -->  
+    <!-- ############################## CONTINGENCY RESERVE  ############################################ -->
 
     <?php
     $q->clear();
@@ -226,10 +233,11 @@ $notHumanCost = $q->loadList();
     foreach ($risks as $row) {
         ?>
         <tr>
-            <td nowrap="nowrap"> <a href="index.php?m=costs&a=addedit_budget_reserve&budget_reserve_id=<?php echo $row['budget_reserve_id']; ?>&project_id=<?php echo $projectSelected ?>">
+            <td nowrap="nowrap"> <a
+                    href="index.php?m=costs&a=addedit_budget_reserve&budget_reserve_id=<?php echo $row['budget_reserve_id']; ?>&project_id=<?php echo $projectSelected ?>">
                     <img src="./modules/costs/images/stock_edit-16.png" border="0" width="12" height="12">
                 </a>&nbsp;
-    <?php echo $row['budget_reserve_description'] ?>
+                <?php echo $row['budget_reserve_description'] ?>
             </td>
 
             <?php
@@ -260,12 +268,12 @@ $notHumanCost = $q->loadList();
     </tr>
 
     <tr>
-        <td nowrap='nowrap'  align="center" colspan="<?php echo $meses + 2 ?>"></td>
+        <td nowrap='nowrap' align="center" colspan="<?php echo $meses + 2 ?>"></td>
     </tr>
 
     <tr>
 
-        <td nowrap='nowrap'  align="center">
+        <td nowrap='nowrap' align="center">
             <b><?php echo $AppUI->_('TOTAL'); ?></b>
         </td>
         <?php
@@ -296,17 +304,17 @@ $q->addOrder('budget_id');
 $v = $q->exec();
 ?>
 
-<table width="100%" border="0" cellpadding="3" cellspacing="3" class="tbl">
+<table width="100%" border="0" cellpadding="3" cellspacing="3" class="std" style="border-radius:10px">
     <tr>
         <th nowrap='nowrap' width='100%' colspan="6">
-<?php echo $AppUI->_('Budget'); ?>
+            <?php echo $AppUI->_('Budget'); ?>
         </th>
     </tr>
     <tr>
-        <th nowrap="nowrap"width="25"></th>
-        <th nowrap="nowrap"><?php echo $AppUI->_('Managememt Reserve(%)'); ?></a></th>
-        <th nowrap="nowrap"><?php echo $AppUI->_('Subtotal Budget'); ?></a></th>
-        <th nowrap="nowrap"><?php echo $AppUI->_('Total Value'); ?></a></th>
+        <th nowrap="nowrap" width="25"></th>
+        <th nowrap="nowrap"><?php echo $AppUI->_('Managememt Reserve(%)'); ?></th>
+        <th nowrap="nowrap"><?php echo $AppUI->_('Subtotal Budget'); ?></th>
+        <th nowrap="nowrap"><?php echo $AppUI->_('Total Value'); ?></th>
     </tr>
     <tr>
         <td nowrap="nowrap" align="center">
@@ -315,14 +323,20 @@ $v = $q->exec();
             </a>
         </td>
 
-        <td nowrap="nowrap"><?php echo $bud->budget_reserve_management ?></td>
-        <td nowrap="nowrap"><?php echo number_format($subTotal, 2, ',', '.'); ?>
-          <!--  <input type="hidden" name="budget_sub_total"  value="<?php echo $subTotal; ?>" /> -->
+        <td nowrap="nowrap">
+            <?php
+            $budget_reserve_management = $bud ? $bud->budget_reserve_management : 0;
+            echo $budget_reserve_management;
+            ?>
         </td>
-        <td nowrap="nowrap"><?php
-$budget = ($subTotal + ($subTotal * ($bud->budget_reserve_management / 100)));
-echo number_format($budget, 2, ',', '.');
-?>
+        <td nowrap="nowrap"><?php echo number_format($subTotal, 2, ',', '.'); ?>
+            <!--  <input type="hidden" name="budget_sub_total"  value="<?php echo $subTotal; ?>" /> -->
+        </td>
+        <td nowrap="nowrap">
+            <?php
+            $budget = ($subTotal + ($subTotal * ($budget_reserve_management / 100)));
+            echo number_format($budget, 2, ',', '.');
+            ?>
             <!-- <input type="hidden" name="budget_total"  value="<?php echo $budget; ?>" /> -->
         </td>
     </tr>
@@ -330,12 +344,12 @@ echo number_format($budget, 2, ',', '.');
         <td nowrap="nowrap" align="center"><b> Total Budget: <?php echo number_format($budget, 2, ',', '.'); ?></b></td>
     </tr>
 </table>
-<tr>
-    <td>
-        <input type="button" value="<?php echo $AppUI->_('back'); ?>"
-               class="button" onclick="javascript:history.back(-1);" />
-    </td>
 
-</tr>
-
-
+<table width="100%" border="0" cellpadding="3" cellspacing="3">
+    <tr>
+        <td>
+            <input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button"
+                onclick="javascript:history.back(-1);" />
+        </td>
+    </tr>
+</table>

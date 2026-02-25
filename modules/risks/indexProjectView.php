@@ -23,28 +23,39 @@ $project = new CProject();
 $projects = $project->getAllowedRecords($AppUI->user_id, 'project_id,project_name', 'project_name', null, $extra);
 $projects = arrayMerge(array('0' => $AppUI->_('LBL_ALL', UI_OUTPUT_JS)), $projects);
 
+global $m, $a;
 // setup the title block
 $titleBlock = new CTitleBlock('LBL_RISKS', "../modules/risks/images/risks.png", $m, "$m.$a");
-    $titleBlock->addCell(
-        '<input type="submit" class="button" value="' . $AppUI->_('LBL_WATCHLIST') . '">', '', 
-        '<form action="?m=risks&a=vw_watchlist&project_id=' . $project_id . '&tab='. $tab.'" method="post">', '</form>'
-    ); 
-    $titleBlock->addCell(
-        '<input type="submit" class="button" value="' . $AppUI->_('LBL_NEARTERM') . '">', '', 
-        '<form action="?m=risks&a=vw_near_term_responses_list&project_id=' . $project_id . '&tab='. $tab.'" method="post">', '</form>'
-    );  
-    $titleBlock->addCell(
-        '<input type="submit" class="button" value="' . $AppUI->_('LBL_LESSONS_LIST') . '">', '', 
-        '<form action="?m=risks&a=vw_lessons_learned_list&project_id=' . $project_id . '&tab='. $tab.'" method="post">', '</form>'
-    ); 
-    $titleBlock->addCell(
-        '<input type="submit" class="button" value="' . $AppUI->_('LBL_STRATEGYS_LIST') . '">', '', 
-        '<form action="?m=risks&a=vw_strategys_list&project_id=' . $project_id . '&tab='. $tab.'" method="post">', '</form>'
-    ); 
-    $titleBlock->addCell(
-        '<input type="submit" class="button" value="' . $AppUI->_('LBL_NEW') . '">', '', 
-        '<form action="?m=risks&a=addedit&project_id=' . $project_id . '&tab='. $tab.'" method="post">', '</form>'
-    );   
+$titleBlock->addCell(
+    '<input type="submit" class="button" value="' . $AppUI->_('LBL_WATCHLIST') . '">',
+    '',
+    '<form action="?m=risks&a=vw_watchlist&project_id=' . $project_id . '&tab=' . $tab . '" method="post">',
+    '</form>'
+);
+$titleBlock->addCell(
+    '<input type="submit" class="button" value="' . $AppUI->_('LBL_NEARTERM') . '">',
+    '',
+    '<form action="?m=risks&a=vw_near_term_responses_list&project_id=' . $project_id . '&tab=' . $tab . '" method="post">',
+    '</form>'
+);
+$titleBlock->addCell(
+    '<input type="submit" class="button" value="' . $AppUI->_('LBL_LESSONS_LIST') . '">',
+    '',
+    '<form action="?m=risks&a=vw_lessons_learned_list&project_id=' . $project_id . '&tab=' . $tab . '" method="post">',
+    '</form>'
+);
+$titleBlock->addCell(
+    '<input type="submit" class="button" value="' . $AppUI->_('LBL_STRATEGYS_LIST') . '">',
+    '',
+    '<form action="?m=risks&a=vw_strategys_list&project_id=' . $project_id . '&tab=' . $tab . '" method="post">',
+    '</form>'
+);
+$titleBlock->addCell(
+    '<input type="submit" class="button" value="' . $AppUI->_('LBL_NEW') . '">',
+    '',
+    '<form action="?m=risks&a=addedit&project_id=' . $project_id . '&tab=' . $tab . '" method="post">',
+    '</form>'
+);
 $titleBlock->show();
-include("index_table.php");
+include(DP_BASE_DIR . "/modules/risks/index_table.php");
 ?>
