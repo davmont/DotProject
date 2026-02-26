@@ -107,7 +107,7 @@ function dPgetIniSize($val)
 			$sspath = ini_get('session.save_path');
 			if (!$sspath) {
 				echo "<b class='error'>$failedImg Warning:</b> <span class='item'>session.save_path</span> <b class='error'> is not set. This can be ignored if you use \"App-Level\" session handling.</b>";
-			} elseif (is_dir($sspath) && is_writable($sspath)) {
+			} elseif (@is_dir($sspath) && @is_writable($sspath)) {
 				echo "<b class='ok'>$okImg</b> <span class='item'>($sspath)</span>";
 			} else {
 				echo "<b class='error'>$failedImg Warning:</b> <span class='item'>$sspath</span><b class='error'> not existing or not writable. This can be ignored if you use \"App-Level\" session handling (using the database).</b>";

@@ -1,7 +1,7 @@
 <?php /* $Id: config-dist.php 6048 2010-10-06 10:01:39Z ajdonnison $ */
 
 if (!defined('DP_BASE_DIR')) {
-	die('You should not access this file directly.');
+  die('You should not access this file directly.');
 }
 /*
 Copyright (c) 2003-2005 The dotProject Development Team <core-developers@dotproject.net>
@@ -26,11 +26,11 @@ The full text of the GPL is in the COPYING file.
 */
 
 /*
-	* * * INSTALLATION INSTRUCTIONS * * *
+  * * * INSTALLATION INSTRUCTIONS * * *
 
   Point your browser to install/index.php and follow the prompts.
-	It is no longer necessary to manually create this file unless
-	the web server cannot write to the includes directory.
+  It is no longer necessary to manually create this file unless
+  the web server cannot write to the includes directory.
 
 */
 
@@ -52,11 +52,6 @@ $dPconfig['dbpersist'] = false;
 // getting it wrong. It is also deprecated as $baseDir
 // is now set in top-level files index.php and fileviewer.php.
 // All code should start to use $baseDir instead of root_dir.
-$dPconfig['root_dir'] = $baseDir;
-
-// Base Url is now automatically set to avoid
-// getting it wrong. It is also deprecated as $baseUrl
-// is now set in top-level files index.php and fileviewer.php.
-// All code should start to use $baseUrl instead of base_url.
-$dPconfig['base_url'] = $baseUrl;
+$dPconfig['root_dir'] = DP_BASE_DIR;
+$dPconfig['base_url'] = DP_BASE_URL;
 ?>
