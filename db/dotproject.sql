@@ -793,7 +793,23 @@ CREATE TABLE %dbprefix%gacl_acl (
 # --------------------------------------------------------
 
 # --------------------------------------------------------
-# NOTE: gacl_acl_sections removed — zero references in codebase.
+
+#
+# Table structure for table gacl_acl_sections
+#
+
+DROP TABLE IF EXISTS %dbprefix%gacl_acl_sections;
+CREATE TABLE %dbprefix%gacl_acl_sections (
+  id int(11) NOT NULL default '0',
+  value varchar(80) NOT NULL default '',
+  order_value int(11) NOT NULL default '0',
+  name varchar(230) NOT NULL default '',
+  hidden int(11) NOT NULL default '0',
+  PRIMARY KEY  (id),
+  UNIQUE KEY gacl_value_acl_sections (value),
+  KEY gacl_hidden_acl_sections (hidden)
+) ;
+# --------------------------------------------------------
 
 #
 # Table structure for table gacl_aco
@@ -1136,10 +1152,7 @@ CREATE TABLE %dbprefix%dpversion (
 	last_code_update date not null default '0000-00-00'
 );
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 601893621ba4750a134f66868dbabe2aa5834596
 INSERT INTO %dbprefix%dpversion VALUES ('2.2.1', 2, '2012-11-19', '2012-09-06');
 
 # 20050307
