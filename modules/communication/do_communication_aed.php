@@ -61,24 +61,28 @@ if (($msg = $obj->store())) {
     $AppUI->setMsg($msg, UI_MSG_ERROR);
 } else {    
     if (isset($_SESSION['receptors'])) {
+        $dbprefix = dPgetConfig('dbprefix', '');
+        $receptors_values = array();
         foreach($_SESSION['receptors'] as $value){
-            $q = new DBQuery();
-            $q->addInsert('communication_id', $obj->communication_id);
-            $q->addInsert('communication_stakeholder_id', $value);
-            $q->addTable('communication_receptor');
-            $q->exec();
-        }        
+            $receptors_values[] = '(' . (int)$obj->communication_id . ', ' . (int)$value . ')';
+        }
+        if (count($receptors_values) > 0) {
+            $sql = "INSERT INTO {$dbprefix}communication_receptor (communication_id, communication_stakeholder_id) VALUES " . implode(', ', $receptors_values);
+            $db->Execute($sql);
+        }
         unset($_SESSION['receptors']);
     }
     
     if (isset($_SESSION['emitters'])) {
+        $dbprefix = dPgetConfig('dbprefix', '');
+        $emitters_values = array();
         foreach($_SESSION['emitters'] as $value){
-            $q = new DBQuery();
-            $q->addInsert('communication_id', $obj->communication_id);
-            $q->addInsert('communication_stakeholder_id', $value);
-            $q->addTable('communication_issuing');
-            $q->exec();
-        }        
+            $emitters_values[] = '(' . (int)$obj->communication_id . ', ' . (int)$value . ')';
+        }
+        if (count($emitters_values) > 0) {
+            $sql = "INSERT INTO {$dbprefix}communication_issuing (communication_id, communication_stakeholder_id) VALUES " . implode(', ', $emitters_values);
+            $db->Execute($sql);
+        }
         unset($_SESSION['emitters']);
     }
     
