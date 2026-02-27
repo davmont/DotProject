@@ -67,41 +67,30 @@ class CSetupHelpDesk {
 		    PRIMARY KEY (`status_id`)
 		  )";
 
-    foreach ($bulk_sql as $s) {
-      db_exec($s);
-
-      if (db_error()) {
-	$success = 0;
-      }
-    }
-
 		$sk = new CSysKey( 'HelpDeskList', 'Enter values for list', '0', "\n", '|' );
 		$sk->store();
 
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskPriority', "0|Not Specified\n1|Low\n2|Medium\n3|High" );
-		$sv->store();
+		$dbprefix = dPgetConfig('dbprefix', '');
+		$sysvals = array(
+			"({$sk->syskey_id}, 'HelpDeskPriority', '0|Not Specified\n1|Low\n2|Medium\n3|High')",
+			"({$sk->syskey_id}, 'HelpDeskSeverity', '0|Not Specified\n1|No Impact\n2|Low\n3|Medium\n4|High\n5|Critical')",
+			"({$sk->syskey_id}, 'HelpDeskCallType', '0|Not Specified\n1|Bug\n2|Feature Request\n3|Complaint\n4|Suggestion')",
+			"({$sk->syskey_id}, 'HelpDeskSource', '0|Not Specified\n1|E-Mail\n2|Phone\n3|Fax\n4|In Person\n5|E-Lodged\n6|WWW')",
+			"({$sk->syskey_id}, 'HelpDeskOS', 'Not Applicable\nLinux\nUnix\nSolaris 8\nSolaris 9\nRed Hat 6\nRed Hat 7\nRed Hat 8\nWindows 95\nWindow 98\nWindows 2000\nWindow 2000 Server\nWindows XP')",
+			"({$sk->syskey_id}, 'HelpDeskApplic', 'Not Applicable\nWord\nExcel')",
+			"({$sk->syskey_id}, 'HelpDeskStatus', '0|Unassigned\n1|Open\n2|Closed\n3|On Hold\n4|Testing')",
+			"({$sk->syskey_id}, 'HelpDeskAuditTrail', '0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted')"
+		);
+		$bulk_sql[] = "INSERT INTO {$dbprefix}sysvals (sysval_key_id, sysval_title, sysval_value) VALUES " . implode(", ", $sysvals);
 
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskSeverity', "0|Not Specified\n1|No Impact\n2|Low\n3|Medium\n4|High\n5|Critical" );
-		$sv->store();
+		foreach ($bulk_sql as $s) {
+			db_exec($s);
 
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskCallType', "0|Not Specified\n1|Bug\n2|Feature Request\n3|Complaint\n4|Suggestion" );
-		$sv->store();
+			if (db_error()) {
+				$success = 0;
+			}
+		}
 
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskSource', "0|Not Specified\n1|E-Mail\n2|Phone\n3|Fax\n4|In Person\n5|E-Lodged\n6|WWW" );
-		$sv->store();
-
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskOS', "Not Applicable\nLinux\nUnix\nSolaris 8\nSolaris 9\nRed Hat 6\nRed Hat 7\nRed Hat 8\nWindows 95\nWindow 98\nWindows 2000\nWindow 2000 Server\nWindows XP" );
-		$sv->store();
-
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskApplic', "Not Applicable\nWord\nExcel" );
-		$sv->store();
-
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskStatus', "0|Unassigned\n1|Open\n2|Closed\n3|On Hold\n4|Testing" );
-		$sv->store();
-
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted" );
-		$sv->store();
-		
 	        return $success;
 	}
 
