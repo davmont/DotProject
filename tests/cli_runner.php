@@ -9,6 +9,9 @@ if (php_sapi_name() !== 'cli') {
 require_once dirname(__FILE__) . '/bootstrap.php';
 require_once dirname(__FILE__) . '/../lib/phpgacl/test_suite/phpunit/phpunit.php';
 
+// Set include path for PEAR
+set_include_path(get_include_path() . PATH_SEPARATOR . DP_BASE_DIR . '/lib' . PATH_SEPARATOR . DP_BASE_DIR . '/lib/PEAR');
+
 // Include test files
 // We will look for *Test.php in the tests directory
 $testDir = dirname(__FILE__);
