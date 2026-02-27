@@ -65,7 +65,7 @@ case 'departments':
 		$select = "dept_id,CONCAT_WS(': ',company_name,dept_name) AS dept_name";
 	}
 	if ($company_id) {
-		$where .= "\nAND dept_company = $company_id";
+		$where .= "\nAND dept_company = " . (int)$company_id;
 		$order = 'dept_name';
 	} else {
 		$order = 'company_name,dept_name';
@@ -83,7 +83,7 @@ case 'projects':
 	$select = 'project_id,project_name';
 	$order = 'project_name';
 	$where = selPermWhere( 'projects', 'project_id' );
-	$where .= $project_company ? "\nAND project_company = $project_company" : '';
+	$where .= $project_company ? "\nAND project_company = " . (int)$project_company : '';
 	$table .= ", permissions";
 	break;
 case 'tasks':
@@ -92,7 +92,7 @@ case 'tasks':
 	$title = 'Task';
 	$select = 'task_id,task_name';
 	$order = 'task_name';
-	$where = $task_project ? "task_project = $task_project" : '';
+	$where = $task_project ? "task_project = " . (int)$task_project : '';
 	break;
 case 'users':
 	$title = 'User';
@@ -106,7 +106,7 @@ case 'contacts':
 	$select = "contact_id,CONCAT_WS(' ',contact_first_name,contact_last_name)";
 	$order = "CONCAT_WS(' ',contact_first_name,contact_last_name)";
 	if ($comp) {
-		$where = "contact_company = ".$comp;
+		$where = "contact_company = " . (int)$comp;
 	}
 //	$templist = getAllowedUsers();
 //	foreach($templist as $key=>$value){
