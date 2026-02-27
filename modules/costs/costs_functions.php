@@ -119,19 +119,21 @@ function insertCostValues($project) {
 
     $date1 = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
     $date2 = mktime(0, 0, 0, date("m") + 1, date("d"), date("Y"));
-    if ($humanCost == null) {
-        foreach ($res as $row) {
+    global $db;
+    $dbprefix = dPgetConfig('dbprefix', '');
 
-            $q->addTable('costs');
-            $q->addInsert('cost_type_id', 0);
-            $q->addInsert('cost_project_id', $project);
-            $q->addInsert('cost_description', $row['contact_first_name'] . ' ' . $row['contact_last_name'] . ' - ' . $row['human_resources_role_name']);
-            $q->addInsert('cost_date_begin', date('Y-m-d H:i:s', $date1));
-            $q->addInsert('cost_date_end', date('Y-m-d H:i:s', $date2));
-            $q->addInsert('cost_quantity', 1);
-            $q->addInsert('cost_value_unitary', $row['cost_value']);
-            $q->addInsert('cost_value_total', $row['cost_value']);
-            $q->exec();
+    if ($humanCost == null) {
+        $bulk_sql = array();
+        foreach ($res as $row) {
+            $desc = db_escape($row['contact_first_name'] . ' ' . $row['contact_last_name'] . ' - ' . $row['human_resources_role_name']);
+            $d1 = date('Y-m-d H:i:s', $date1);
+            $d2 = date('Y-m-d H:i:s', $date2);
+            $val = (float)$row['cost_value'];
+            $bulk_sql[] = "(0, " . (int)$project . ", '" . $desc . "', 1, '" . $d1 . "', '" . $d2 . "', " . $val . ", " . $val . ")";
+        }
+        if (!empty($bulk_sql)) {
+            $sql = "INSERT INTO " . $dbprefix . "costs (cost_type_id, cost_project_id, cost_description, cost_quantity, cost_date_begin, cost_date_end, cost_value_unitary, cost_value_total) VALUES " . implode(',', $bulk_sql);
+            db_exec($sql);
         }
     } else {
         /* ################### UPDATE VALORES DOS CUSTOS HUMANOS #################### */
@@ -156,6 +158,7 @@ function insertCostValues($project) {
             $q->exec();
             $j++;
         }
+        $bulk_sql = array();
         foreach ($res as $row) {
             $name = $row['contact_first_name'] . ' ' . $row['contact_last_name'] . ' - ' . $row['human_resources_role_name'];
             $bool = true;
@@ -165,18 +168,16 @@ function insertCostValues($project) {
                 }
             }
             if ($bool == true) {
-                $q->clear();
-                $q->addTable('costs');
-                $q->addInsert('cost_type_id', 0);
-                $q->addInsert('cost_project_id', $project);
-                $q->addInsert('cost_description', $name);
-                $q->addInsert('cost_quantity', 1);
-                $q->addInsert('cost_date_begin', date('Y-m-d H:i:s'));
-                $q->addInsert('cost_date_end', date('Y-m-d H:i:s', $date2));
-                $q->addInsert('cost_value_unitary', $row['cost_value']);
-                $q->addInsert('cost_value_total', $row['cost_value']);
-                $q->exec();
+                $desc = db_escape($name);
+                $d1 = date('Y-m-d H:i:s');
+                $d2 = date('Y-m-d H:i:s', $date2);
+                $val = (float)$row['cost_value'];
+                $bulk_sql[] = "(0, " . (int)$project . ", '" . $desc . "', 1, '" . $d1 . "', '" . $d2 . "', " . $val . ", " . $val . ")";
             }
+        }
+        if (!empty($bulk_sql)) {
+            $sql = "INSERT INTO " . $dbprefix . "costs (cost_type_id, cost_project_id, cost_description, cost_quantity, cost_date_begin, cost_date_end, cost_value_unitary, cost_value_total) VALUES " . implode(',', $bulk_sql);
+            db_exec($sql);
         }
     }
 
@@ -195,18 +196,17 @@ function insertCostValues($project) {
 
 
     if ($notHumanCost == null) {
+        $bulk_sql = array();
         foreach ($resNH as $row) {
-
-            $q->addTable('costs');
-            $q->addInsert('cost_type_id', 1);
-            $q->addInsert('cost_project_id', $project);
-            $q->addInsert('cost_description', $row['resource_name']);
-            $q->addInsert('cost_quantity', $row['qntd']);
-            $q->addInsert('cost_date_begin', date('Y-m-d H:i:s'));
-            $q->addInsert('cost_date_end', date('Y-m-d H:i:s', $date2));
-            $q->addInsert('cost_value_unitary', 0);
-            $q->addInsert('cost_value_total', 0);
-            $q->exec();
+            $desc = db_escape($row['resource_name']);
+            $qty = (int)$row['qntd'];
+            $d1 = date('Y-m-d H:i:s');
+            $d2 = date('Y-m-d H:i:s', $date2);
+            $bulk_sql[] = "(1, " . (int)$project . ", '" . $desc . "', " . $qty . ", '" . $d1 . "', '" . $d2 . "', 0, 0)";
+        }
+        if (!empty($bulk_sql)) {
+            $sql = "INSERT INTO " . $dbprefix . "costs (cost_type_id, cost_project_id, cost_description, cost_quantity, cost_date_begin, cost_date_end, cost_value_unitary, cost_value_total) VALUES " . implode(',', $bulk_sql);
+            db_exec($sql);
         }
     } else {
         /* ################### UPDATE OR INSERTE NON-HUMAN RESOURCES ######################## */
@@ -234,6 +234,7 @@ function insertCostValues($project) {
             $j++;
         }
 
+        $bulk_sql = array();
         foreach ($resNH as $row) {
             $bool = true;
             foreach ($notHumanCost as $column) {
@@ -242,18 +243,16 @@ function insertCostValues($project) {
                 }
             }
             if ($bool == true) {
-                $q->clear();
-                $q->addTable('costs');
-                $q->addInsert('cost_type_id', 1);
-                $q->addInsert('cost_project_id', $project);
-                $q->addInsert('cost_description', $row['resource_name']);
-                $q->addInsert('cost_quantity', $row['qntd']);
-                $q->addInsert('cost_date_begin', date('Y-m-d H:i:s'));
-                $q->addInsert('cost_date_end', date('Y-m-d H:i:s', $date2));
-                $q->addInsert('cost_value_unitary', 0);
-                $q->addInsert('cost_value_total', 0);
-                $q->exec();
+                $desc = db_escape($row['resource_name']);
+                $qty = (int)$row['qntd'];
+                $d1 = date('Y-m-d H:i:s');
+                $d2 = date('Y-m-d H:i:s', $date2);
+                $bulk_sql[] = "(1, " . (int)$project . ", '" . $desc . "', " . $qty . ", '" . $d1 . "', '" . $d2 . "', 0, 0)";
             }
+        }
+        if (!empty($bulk_sql)) {
+            $sql = "INSERT INTO " . $dbprefix . "costs (cost_type_id, cost_project_id, cost_description, cost_quantity, cost_date_begin, cost_date_end, cost_value_unitary, cost_value_total) VALUES " . implode(',', $bulk_sql);
+            db_exec($sql);
         }
     }
 }
@@ -278,18 +277,20 @@ function insertReserveBudget($project) {
     $budgets = $q->loadList();
 
 
-    if ($budgets == null) {
-        foreach ($risk as $row) {
+    global $db;
+    $dbprefix = dPgetConfig('dbprefix', '');
 
-            $q->addTable('budget_reserve');
-            $q->addInsert('budget_reserve_project_id', $project);
-            $q->addInsert('budget_reserve_risk_id', $row['risk_id']);
-            $q->addInsert('budget_reserve_description', $row['risk_name']);
-            $q->addInsert('budget_reserve_financial_impact', 0);
-            $q->addInsert('budget_reserve_inicial_month', date('Y-m-d H:i:s'));
-            $q->addInsert('budget_reserve_final_month', date('Y-m-d H:i:s'));
-            $q->addInsert('budget_reserve_value_total', 0);
-            $q->exec();
+    if ($budgets == null) {
+        $bulk_sql = array();
+        foreach ($risk as $row) {
+            $risk_id = (int)$row['risk_id'];
+            $desc = db_escape($row['risk_name']);
+            $d = date('Y-m-d H:i:s');
+            $bulk_sql[] = "(" . (int)$project . ", " . $risk_id . ", '" . $desc . "', 0, '" . $d . "', '" . $d . "', 0)";
+        }
+        if (!empty($bulk_sql)) {
+            $sql = "INSERT INTO " . $dbprefix . "budget_reserve (budget_reserve_project_id, budget_reserve_risk_id, budget_reserve_description, budget_reserve_financial_impact, budget_reserve_inicial_month, budget_reserve_final_month, budget_reserve_value_total) VALUES " . implode(',', $bulk_sql);
+            db_exec($sql);
         }
     } else {
         foreach ($risk as $row) {
@@ -298,6 +299,7 @@ function insertReserveBudget($project) {
             $q->addWhere('budget_reserve_project_id=' . $project . ' and budget_reserve_risk_id=' . $row[risk_id]);
             $q->exec();
         }
+        $bulk_sql = array();
         foreach ($risk as $row) {
             $bool = true;
             foreach ($budgets as $column) {
@@ -306,17 +308,15 @@ function insertReserveBudget($project) {
                 }
             }
             if ($bool == true) {
-                $q->clear();
-                $q->addTable('budget_reserve');
-                $q->addInsert('budget_reserve_project_id', $project);
-                $q->addInsert('budget_reserve_risk_id', $row['risk_id']);
-                $q->addInsert('budget_reserve_description', $row['risk_name']);
-                $q->addInsert('budget_reserve_financial_impact', 0);
-                $q->addInsert('budget_reserve_inicial_month', date('Y-m-d H:i:s'));
-                $q->addInsert('budget_reserve_final_month', date('Y-m-d H:i:s'));
-                $q->addInsert('budget_reserve_value_total', 0);
-                $q->exec();
+                $risk_id = (int)$row['risk_id'];
+                $desc = db_escape($row['risk_name']);
+                $d = date('Y-m-d H:i:s');
+                $bulk_sql[] = "(" . (int)$project . ", " . $risk_id . ", '" . $desc . "', 0, '" . $d . "', '" . $d . "', 0)";
             }
+        }
+        if (!empty($bulk_sql)) {
+            $sql = "INSERT INTO " . $dbprefix . "budget_reserve (budget_reserve_project_id, budget_reserve_risk_id, budget_reserve_description, budget_reserve_financial_impact, budget_reserve_inicial_month, budget_reserve_final_month, budget_reserve_value_total) VALUES " . implode(',', $bulk_sql);
+            db_exec($sql);
         }
     }
 }
