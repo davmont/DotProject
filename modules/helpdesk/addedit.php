@@ -5,7 +5,7 @@ if (!defined('DP_BASE_DIR')){
 
 global $HELPDESK_CONFIG;
 
-$item_id = dPgetParam($_GET, 'item_id', 0);
+$item_id = (int) dPgetParam($_GET, 'item_id', 0);
 
 $allowedCompanies = arrayMerge( array( 0 => '' ), getAllowedCompanies() );
 
@@ -43,7 +43,7 @@ if ($item_id) {
 	$q = new DBQuery;
 	$q->addQuery('*');
 	$q->addTable('helpdesk_items');
-	$q->addWhere('item_id = \''.$item_id."'");
+	$q->addWhere('item_id = ' . $item_id);
 	$hditem = $q->loadHash();
 	$q->clear();
 }
@@ -202,7 +202,7 @@ $q->clear();
 	$q->addTable('helpdesk_item_watchers','hiw');
 	$q->addJoin('users', 'u', 'hiw.user_id = u.user_id');
 	$q->addJoin('contacts', 'c', 'u.user_contact = c.contact_id');
-	$q->addWhere('item_id = \''.$item_id."'");
+	$q->addWhere('item_id = ' . $item_id);
 	$watchers = $q->loadHashList();
 	$q->clear();
 
