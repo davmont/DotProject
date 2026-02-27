@@ -30,7 +30,7 @@ function selPermWhere( $table, $idfld ) {
 $debug = false;
 $callback = dPgetParam( $_GET, 'callback', 0 );
 $table = dPgetParam( $_GET, 'table', 0 );
-$comp=dPgetParam($_GET, 'comp', 0);
+$comp = (int) dPgetParam($_GET, 'comp', 0);
 
 $ok = $callback & $table;
 
@@ -51,21 +51,21 @@ case 'companies':
 case 'departments':
 // known issue: does not filter out denied companies
 	$title = 'Department';
-	$company_id = dPgetParam( $_GET, 'company_id', 0 );
+	$company_id = (int) dPgetParam( $_GET, 'company_id', 0 );
 	//$ok &= $company_id;  // Is it safe to delete this line ??? [kobudo 13 Feb 2003]
 	//$where = selPermWhere( 'companies', 'company_id' );
 	$where = "dept_company = company_id ";
 	$where .= "\nAND ".selPermWhere( 'departments', 'dept_id' );
 
 	$table .= ", companies, permissions";
-	$hide_company = dPgetParam( $_GET, 'hide_company', 0 );
+	$hide_company = (int) dPgetParam( $_GET, 'hide_company', 0 );
 	if ( $hide_company == 1 ){
 		$select = "dept_id, dept_name";
 	}else{
 		$select = "dept_id,CONCAT_WS(': ',company_name,dept_name) AS dept_name";
 	}
 	if ($company_id) {
-		$where .= "\nAND dept_company = $company_id";
+		$where .= "\nAND dept_company = " . (int)$company_id;
 		$order = 'dept_name';
 	} else {
 		$order = 'company_name,dept_name';
@@ -77,22 +77,22 @@ case 'forums':
 	$order = 'forum_name';
 	break;
 case 'projects':
-	$project_company = dPgetParam( $_GET, 'project_company', 0 );
+	$project_company = (int) dPgetParam( $_GET, 'project_company', 0 );
 
 	$title = 'Project';
 	$select = 'project_id,project_name';
 	$order = 'project_name';
 	$where = selPermWhere( 'projects', 'project_id' );
-	$where .= $project_company ? "\nAND project_company = $project_company" : '';
+	$where .= $project_company ? "\nAND project_company = " . (int)$project_company : '';
 	$table .= ", permissions";
 	break;
 case 'tasks':
-	$task_project = dPgetParam( $_GET, 'task_project', 0 );
+	$task_project = (int) dPgetParam( $_GET, 'task_project', 0 );
 
 	$title = 'Task';
 	$select = 'task_id,task_name';
 	$order = 'task_name';
-	$where = $task_project ? "task_project = $task_project" : '';
+	$where = $task_project ? "task_project = " . (int)$task_project : '';
 	break;
 case 'users':
 	$title = 'User';
@@ -106,7 +106,7 @@ case 'contacts':
 	$select = "contact_id,CONCAT_WS(' ',contact_first_name,contact_last_name)";
 	$order = "CONCAT_WS(' ',contact_first_name,contact_last_name)";
 	if ($comp) {
-		$where = "contact_company = ".$comp;
+		$where = "contact_company = " . (int)$comp;
 	}
 //	$templist = getAllowedUsers();
 //	foreach($templist as $key=>$value){

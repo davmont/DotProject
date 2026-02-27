@@ -1,6 +1,6 @@
 <?php /* HELPDESK $Id: vw_logs.php,v 1.9 2011/08/02 06:22:55 hatax Exp $ */
 global $AppUI, $df, $m;
-$item_id = dPgetParam( $_GET, 'item_id', 0 );
+$item_id = (int) dPgetParam( $_GET, 'item_id', 0 );
 
 /* ANDY blocked 'cost code'
 // Lets check cost codes
