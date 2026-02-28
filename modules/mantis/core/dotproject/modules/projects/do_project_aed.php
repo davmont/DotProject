@@ -60,7 +60,7 @@ else {
 					$sql= new DBQuery();
 					$sql -> addTable('projects');
 					$sql -> addQuery('project_name');
-					$sql -> addWhere('project_id=' . (int)$mantis_pid);
+					$sql -> addWhere('project_id="'.$mantis_pid.'"');
 					$sql -> exec();
 					$mantis_old_pname = $sql -> fetchRow();
 					$mantis_old_pname = $mantis_old_pname[0];

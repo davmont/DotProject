@@ -98,6 +98,7 @@ class CSetupHelpDesk {
 		$sql .= implode(',', $inserts);
 
 		db_exec($sql);
+		$db->CompleteTrans();
 
 	        return $success;
 	}
@@ -109,11 +110,14 @@ class CSetupHelpDesk {
 		$bulk_sql[] = "DROP TABLE helpdesk_item_status";
 		$bulk_sql[] = "ALTER TABLE `task_log` DROP COLUMN `task_log_help_desk_id`";
 
+		global $db;
+		$db->StartTrans();
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
 			if (db_error())
 				$success = 0;
 		}
+		$db->CompleteTrans();
 
 		$sql = "
 			SELECT syskey_id
@@ -126,11 +130,14 @@ class CSetupHelpDesk {
 		$bulk_sql[] = "DELETE FROM syskeys WHERE syskey_id = $id";
 		$bulk_sql[] = "DELETE FROM sysvals WHERE sysval_key_id = $id";
 
+		global $db;
+		$db->StartTrans();
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
 			if (db_error())
 				$success = 0;
 		}
+		$db->CompleteTrans();
 
 		return $success;
 	}
@@ -196,11 +203,14 @@ class CSetupHelpDesk {
 		$success = 0;
 	    }
 
+		global $db;
+		$db->StartTrans();
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
 			if (db_error())
 				$success = 0;
 		}
+		$db->CompleteTrans();
   
 		// NOTE: Need to return true, not null, if all is good
 		return $success;
