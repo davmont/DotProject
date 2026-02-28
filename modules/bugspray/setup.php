@@ -88,6 +88,12 @@ class CSetupHelpDesk {
 			'HelpDeskStatus' => "0|Unassigned\n1|Open\n2|Closed\n3|On Hold\n4|Testing",
 			'HelpDeskAuditTrail' => "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted"
 		);
+		$bulk_sql[] = "INSERT INTO {$dbprefix}sysvals (sysval_key_id, sysval_title, sysval_value) VALUES " . implode(", ", $sysvals);
+
+		global $db;
+		$db->StartTrans();
+		foreach ($bulk_sql as $s) {
+			db_exec($s);
 
 		$dbprefix = dPgetConfig('dbprefix', '');
 		$sql = "INSERT INTO " . $dbprefix . "sysvals (sysval_key_id, sysval_title, sysval_value) VALUES ";
@@ -95,9 +101,7 @@ class CSetupHelpDesk {
 		foreach ($values as $title => $value) {
 			$inserts[] = "(" . $sk->syskey_id . ", '" . db_escape($title) . "', '" . db_escape($value) . "')";
 		}
-		$sql .= implode(',', $inserts);
-
-		db_exec($sql);
+		$db->CompleteTrans();
 
 	        return $success;
 	}
@@ -109,11 +113,14 @@ class CSetupHelpDesk {
 		$bulk_sql[] = "DROP TABLE helpdesk_item_status";
 		$bulk_sql[] = "ALTER TABLE `task_log` DROP COLUMN `task_log_help_desk_id`";
 
+		global $db;
+		$db->StartTrans();
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
 			if (db_error())
 				$success = 0;
 		}
+		$db->CompleteTrans();
 
 		$sql = "
 			SELECT syskey_id
@@ -126,11 +133,14 @@ class CSetupHelpDesk {
 		$bulk_sql[] = "DELETE FROM syskeys WHERE syskey_id = $id";
 		$bulk_sql[] = "DELETE FROM sysvals WHERE sysval_key_id = $id";
 
+		global $db;
+		$db->StartTrans();
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
 			if (db_error())
 				$success = 0;
 		}
+		$db->CompleteTrans();
 
 		return $success;
 	}
@@ -196,11 +206,14 @@ class CSetupHelpDesk {
 		$success = 0;
 	    }
 
+		global $db;
+		$db->StartTrans();
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
 			if (db_error())
 				$success = 0;
 		}
+		$db->CompleteTrans();
   
 		// NOTE: Need to return true, not null, if all is good
 		return $success;
