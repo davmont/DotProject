@@ -59,19 +59,26 @@ if (isset( $_POST['inv_dosql'] ) ) {
 
 	// Update Rate Changes On Items
 	if ($_POST['inv_dosql'] == "updrates") {
-		// Remove earning Item(s) From earning
+		$cases = array();
+		$ids = array();
 		foreach ($_POST as $key => $value) {
-			list($item_action,$item_rec) = split(":",$key);
+			$parts = explode(":", $key);
+			if (count($parts) < 2) continue;
+			$item_action = $parts[0];
+			$item_rec = $parts[1];
+
 			if ( $item_action == "rate" ) {
-				$sql = "";
-				$sql = "UPDATE earnings_items SET earning_item_rate = ";
-				$sql .= $value;
-				$sql .= " WHERE earning_items_id = ";
-				$sql .= $item_rec . ";";
-				//echo $sql . "\n";
-				if (!db_exec( $sql )) {
-					echo db_error();
-				}
+				$cases[] = "WHEN " . (int)$item_rec . " THEN " . (float)$value;
+				$ids[] = (int)$item_rec;
+			}
+		}
+
+		if (count($ids) > 0) {
+			$sql = "UPDATE earnings_items SET earning_item_rate = CASE earning_items_id ";
+			$sql .= implode(" ", $cases);
+			$sql .= " END WHERE earning_items_id IN (" . implode(",", $ids) . ")";
+			if (!db_exec( $sql )) {
+				echo db_error();
 			}
 		}
 		$AppUI->redirect();
