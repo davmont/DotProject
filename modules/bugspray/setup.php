@@ -98,7 +98,6 @@ class CSetupHelpDesk {
 		$sql .= implode(',', $inserts);
 
 		db_exec($sql);
-		$db->CompleteTrans();
 
 	        return $success;
 	}
