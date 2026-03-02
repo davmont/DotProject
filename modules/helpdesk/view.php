@@ -38,7 +38,7 @@ $q->addJoin('users','u','u.user_id = hi.item_assigned_to');
 $q->addJoin('contacts','co','u.user_contact = co.contact_id');
 $q->addJoin('projects','p','p.project_id = hi.item_project_id');
 $q->addJoin('companies','c','c.company_id = hi.item_company_id');
-$q->addWhere('item_id = ' . $item_id);
+$q->addWhere('item_id = ' . (int)$item_id);
 
 $hditem = $q->loadHash();
 if (!$hditem ) {
@@ -75,7 +75,7 @@ if (!$hditem ) {
   $q->addTable('helpdesk_item_watchers');
   $q->addJoin('users','','helpdesk_item_watchers.user_id = users.user_id');
   $q->addJoin('contacts','','user_contact = contact_id');
-  $q->addWhere('item_id = ' . $item_id);
+  $q->addWhere('item_id = ' . (int)$item_id);
   $q->addOrder('contact_last_name, contact_first_name');
   $watchers = $q->loadList();
 

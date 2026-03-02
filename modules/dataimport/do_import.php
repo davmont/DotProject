@@ -71,6 +71,11 @@ $classList = array(
 $row_count = count($file_contents);
 $q = new DBQuery;
 $rows_done = 0;
+
+$batch_size = 500;
+$batches = array();
+$dbprefix = dPgetConfig('dbprefix', '');
+
 for ($i = 1; $i < $row_count; $i++) {
   $data = explode($obj->diconfig_field_sep, $file_contents[$i]);
   foreach ($tables as $table => $keys) {
@@ -87,18 +92,53 @@ for ($i = 1; $i < $row_count; $i++) {
 	$AppUI->redirect();
       }
     } else {
-      $q->addTable($table);
+      if (!isset($batches[$table])) {
+        $batches[$table] = array(
+          'fields' => array(),
+          'placeholders' => '(',
+          'params' => array(),
+          'count' => 0
+        );
+        $fields = array();
+        $placeholders = array();
+        foreach ($keys as $key) {
+          $fields[] = $datamap[$key]['dimap_target_field'];
+          $placeholders[] = '?';
+        }
+        $batches[$table]['fields'] = $fields;
+        $batches[$table]['placeholders'] = '(' . implode(',', $placeholders) . ')';
+      }
+
       foreach ($keys as $key) {
-	$q->addInsert($datamap[$key]['dimap_target_field'], clean_import_data($data[$head_offsets[$key]], $obj));
+        $batches[$table]['params'][] = clean_import_data($data[$head_offsets[$key]], $obj);
       }
-      if (! $q->exec()) {
-	$AppUI->setMsg(array('Error in import: ', $GLOBALS['db']->ErrorMsg()), UI_MSG_ERROR);
-	$AppUI->redirect();
+      $batches[$table]['count']++;
+
+      if ($batches[$table]['count'] >= $batch_size) {
+        $sql = "INSERT INTO " . $dbprefix . $table . " (" . implode(',', $batches[$table]['fields']) . ") VALUES ";
+        $sql .= implode(',', array_fill(0, $batches[$table]['count'], $batches[$table]['placeholders']));
+        if (!$GLOBALS['db']->Execute($sql, $batches[$table]['params'])) {
+          $AppUI->setMsg(array('Error in import: ', $GLOBALS['db']->ErrorMsg()), UI_MSG_ERROR);
+          $AppUI->redirect();
+        }
+        $batches[$table]['params'] = array();
+        $batches[$table]['count'] = 0;
       }
-      $q->clear();
     }
   }
   $rows_done++;
+}
+
+// flush remaining
+foreach ($batches as $table => $batch) {
+  if ($batch['count'] > 0) {
+    $sql = "INSERT INTO " . $dbprefix . $table . " (" . implode(',', $batch['fields']) . ") VALUES ";
+    $sql .= implode(',', array_fill(0, $batch['count'], $batch['placeholders']));
+    if (!$GLOBALS['db']->Execute($sql, $batch['params'])) {
+      $AppUI->setMsg(array('Error in import: ', $GLOBALS['db']->ErrorMsg()), UI_MSG_ERROR);
+      $AppUI->redirect();
+    }
+  }
 }
 $row_count--;
 $AppUI->setMsg("$rows_done of $row_count imported", UI_MSG_OK);

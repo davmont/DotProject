@@ -119,9 +119,12 @@ function insertCostValues($project) {
 
     $date1 = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
     $date2 = mktime(0, 0, 0, date("m") + 1, date("d"), date("Y"));
+    global $db;
     if ($humanCost == null) {
+        $db->StartTrans();
         foreach ($res as $row) {
 
+            $q->clear();
             $q->addTable('costs');
             $q->addInsert('cost_type_id', 0);
             $q->addInsert('cost_project_id', $project);
@@ -133,6 +136,7 @@ function insertCostValues($project) {
             $q->addInsert('cost_value_total', $row['cost_value']);
             $q->exec();
         }
+        $db->CompleteTrans();
     } else {
         /* ################### UPDATE VALORES DOS CUSTOS HUMANOS #################### */
         $i = 0;
@@ -144,6 +148,7 @@ function insertCostValues($project) {
             $i++;
         }
         $j = 0;
+        $db->StartTrans();
         foreach ($humanCost as $row) {
             $l = 0;
             $value = ($array[$j][$l] * $row['cost_quantity']) * diferencaMeses(substr($row['cost_date_begin'], 0, -9), substr($row['cost_date_end'], 0, -9));
@@ -156,6 +161,8 @@ function insertCostValues($project) {
             $q->exec();
             $j++;
         }
+        $db->CompleteTrans();
+        $db->StartTrans();
         foreach ($res as $row) {
             $name = $row['contact_first_name'] . ' ' . $row['contact_last_name'] . ' - ' . $row['human_resources_role_name'];
             $bool = true;
@@ -178,6 +185,7 @@ function insertCostValues($project) {
                 $q->exec();
             }
         }
+        $db->CompleteTrans();
     }
 
     $notHumanCost = getResources("Non-Human", $whereProject);
@@ -195,8 +203,10 @@ function insertCostValues($project) {
 
 
     if ($notHumanCost == null) {
+        $db->StartTrans();
         foreach ($resNH as $row) {
 
+            $q->clear();
             $q->addTable('costs');
             $q->addInsert('cost_type_id', 1);
             $q->addInsert('cost_project_id', $project);
@@ -208,6 +218,7 @@ function insertCostValues($project) {
             $q->addInsert('cost_value_total', 0);
             $q->exec();
         }
+        $db->CompleteTrans();
     } else {
         /* ################### UPDATE OR INSERTE NON-HUMAN RESOURCES ######################## */
         $i = 0;
@@ -221,6 +232,7 @@ function insertCostValues($project) {
 
         $j = 0;
 
+        $db->StartTrans();
         foreach ($notHumanCost as $row) {
             $l = 0;
             $value = $array[$j][$l] * $row['cost_value_unitary'];
@@ -233,7 +245,9 @@ function insertCostValues($project) {
             $q->exec();
             $j++;
         }
+        $db->CompleteTrans();
 
+        $db->StartTrans();
         foreach ($resNH as $row) {
             $bool = true;
             foreach ($notHumanCost as $column) {
@@ -255,6 +269,7 @@ function insertCostValues($project) {
                 $q->exec();
             }
         }
+        $db->CompleteTrans();
     }
 }
 
@@ -278,9 +293,12 @@ function insertReserveBudget($project) {
     $budgets = $q->loadList();
 
 
+    global $db;
     if ($budgets == null) {
+        $db->StartTrans();
         foreach ($risk as $row) {
 
+            $q->clear();
             $q->addTable('budget_reserve');
             $q->addInsert('budget_reserve_project_id', $project);
             $q->addInsert('budget_reserve_risk_id', $row['risk_id']);
@@ -291,13 +309,18 @@ function insertReserveBudget($project) {
             $q->addInsert('budget_reserve_value_total', 0);
             $q->exec();
         }
+        $db->CompleteTrans();
     } else {
+        $db->StartTrans();
         foreach ($risk as $row) {
+            $q->clear();
             $q->addTable('budget_reserve');
             $q->addUpdate('budget_reserve_description', $row['risk_name']);
-            $q->addWhere('budget_reserve_project_id=' . $project . ' and budget_reserve_risk_id=' . $row[risk_id]);
+            $q->addWhere('budget_reserve_project_id=' . $project . ' and budget_reserve_risk_id=' . $row['risk_id']);
             $q->exec();
         }
+        $db->CompleteTrans();
+        $db->StartTrans();
         foreach ($risk as $row) {
             $bool = true;
             foreach ($budgets as $column) {
@@ -318,6 +341,7 @@ function insertReserveBudget($project) {
                 $q->exec();
             }
         }
+        $db->CompleteTrans();
     }
 }
 
