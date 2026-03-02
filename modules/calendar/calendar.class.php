@@ -455,20 +455,29 @@ class CMonthCalendar
 		$d = intval(mb_substr($day, 6, 2));
 		$y = intval(substr($day, 0, 4));
 
+		static $birthdays_cache = array();
+
 		if ($this->birthdays !== null && $m == $this->birthdays_month) {
 			$rows = isset($this->birthdays[$d]) ? $this->birthdays[$d] : null;
+		} elseif (isset($birthdays_cache[$m])) {
+			$rows = isset($birthdays_cache[$m][$d]) ? $birthdays_cache[$m][$d] : null;
 		} else {
+			$birthdays_cache[$m] = array();
 			$q = new DBQuery;
 			$q->addTable('contacts', 'con');
 			$q->addQuery('contact_birthday, contact_last_name, contact_first_name, contact_id');
-			if (strlen($d) == 1) {
-				$d = '0' . $d;
+			$m_str = str_pad((string)$m, 2, '0', STR_PAD_LEFT);
+			$q->addWhere("contact_birthday LIKE '%-$m_str-%'");
+			$month_rows = $q->loadList();
+			if ($month_rows) {
+				foreach ($month_rows as $row) {
+					$day_val = intval(substr($row['contact_birthday'], -2));
+					$birthdays_cache[$m][$day_val][] = $row;
+				}
 			}
-			if (strlen($m) == 1) {
-				$m = '0' . $m;
-			}
-			$q->addWhere("contact_birthday LIKE '%$m-$d'");
-			$rows = $q->loadList();
+			$q->clear();
+
+			$rows = isset($birthdays_cache[$m][$d]) ? $birthdays_cache[$m][$d] : null;
 		}
 
 		if ($rows) {
