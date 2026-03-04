@@ -59,6 +59,10 @@ if (!class_exists('CAppUI')) {
     class CAppUI {
         function setMsg($msg) {}
         function _($txt) { return $txt; }
+        function getLibraryClass($class) {
+            return DP_BASE_DIR . '/lib/' . $class . '.php';
+        }
+        function setBaseLocale() {}
     }
 }
 if (!isset($GLOBALS['AppUI'])) {
