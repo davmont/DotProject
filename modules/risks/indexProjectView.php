@@ -4,7 +4,6 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 $AppUI->savePlace();
-//require_once (DP_BASE_DIR . "/modules/risks/translations.php");
 // retrieve any state parameters
 if (isset($_REQUEST['project_id'])) {
     $AppUI->setState('RisksIdxProject', intval($_REQUEST['project_id']));

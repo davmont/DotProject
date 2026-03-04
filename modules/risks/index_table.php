@@ -5,7 +5,6 @@ $q->addTable('risks');
 $q->addOrder('risk_id');
 $q->setLimit(100);
 $list1 = $q->loadList();
-//require_once (DP_BASE_DIR . "/modules/risks/translations.php");
 foreach ($list1 as $line) {     
     $risk_id = $line['risk_id'];
     $Priority;
