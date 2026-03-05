@@ -59,9 +59,11 @@ function checkFlag($flag, $perm_type, $old_flag)
  * a given module and optionally an item_id.
  *
  * $perm_type can be PERM_READ or PERM_EDIT
+ * @deprecated
  */
 function isAllowed($perm_type, $mod, $item_id = 0)
 {
+	trigger_error('isAllowed() has been deprecated.', E_USER_DEPRECATED);
 	$invert = false;
 	switch ($perm_type) {
 		case PERM_READ:
