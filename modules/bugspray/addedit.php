@@ -20,13 +20,13 @@ db_loadHash( $sql, $hditem );
 
   //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
   $canReadCompany = !getDenyRead( "companies", $hditem['item_company_id'] );
-  if($canReadCompany || $hditem['item_created_by']==$AppUI->user_id || !empty($hditem['item_public'])){
+  if($canReadCompany || $hditem['item_created_by']==$AppUI->user_id || (int)@$hditem['item_public'] == 1){
   	$canRead = 1;
   }
 
   //Check to make sure that either this user created this record, or it belongs to that user company TODO:or it's a public item.
   $canEditCompany = !getDenyEdit( "companies", $hditem['item_company_id'] );
-  if($canEditCompany || $hditem['item_created_by']==$AppUI->user_id || !$item_id || !empty($hditem['item_public'])){
+  if($canEditCompany || $hditem['item_created_by']==$AppUI->user_id || !$item_id || (int)@$hditem['item_public'] == 1){
   	$canEdit = 1;
   }
   
