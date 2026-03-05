@@ -33,14 +33,14 @@ if( empty($_GET['clickedon']) ) {
    echo '<b style="color:darkred;">Clicked on bar: &lt;none></b>';
 }
 else {
-   echo '<b style="color:darkred;">Clicked on bar: '.$_GET['clickedon'].'</b>';
+   echo '<b style="color:darkred;">Clicked on bar: '.htmlspecialchars($_GET['clickedon'], ENT_QUOTES).'</b>';
 }
 echo '<p />';
 if( empty($_GET['pie_clickedon']) ) {
    echo '<b style="color:darkred;">Clicked on pie slice: &lt;none></b>';
 }
 else {
-   echo '<b style="color:darkred;">Clicked on pie slice: '.$_GET['pie_clickedon'].'</b>';
+   echo '<b style="color:darkred;">Clicked on pie slice: '.htmlspecialchars($_GET['pie_clickedon'], ENT_QUOTES).'</b>';
 }
 echo '<p />';
 ?>
