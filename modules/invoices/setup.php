@@ -70,8 +70,12 @@ class CSetupInvoices
 		$q->dropTable('invoices');
 		$q->exec();
 		$q->clear();
-		// TODO Fix this delete query
-		//db_exec( "delete from permissions where permission_grant_on like 'invoices'");
+
+		$q->setDelete('permissions');
+		$q->addWhere("permission_grant_on = 'invoices'");
+		$q->exec();
+		$q->clear();
+
 		return null;
 	}
 
