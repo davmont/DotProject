@@ -918,20 +918,22 @@ class CustomOptionList
 		$newoptions = array();
 		$newoptions = array_diff($this->options, $dboptions);
 		$deleteoptions = array_diff($dboptions, $this->options);
+
+		$insert_error = '';
+		$delete_error = '';
+
 		//insert the new options
-		foreach ($newoptions as $opt) {
-			$optid = $db->GenID('custom_fields_option_id', 1);
-
-			$q = new DBQuery;
-			$q->addTable('custom_fields_lists');
-			$q->addInsert('field_id', $this->field_id);
-			$q->addInsert('list_option_id', $optid);
-			$q->addInsert('list_value', db_escape($opt));
-
-			if (!$q->exec()) {
+		if (count($newoptions) > 0) {
+			$sql = 'INSERT INTO ' . dPgetConfig('dbprefix', '') . 'custom_fields_lists (field_id, list_option_id, list_value) VALUES ';
+			$values = array();
+			foreach ($newoptions as $opt) {
+				$optid = $db->GenID('custom_fields_option_id', 1);
+				$values[] = '(' . (int)$this->field_id . ', ' . (int)$optid . ', \'' . db_escape($opt) . '\')';
+			}
+			$sql .= implode(',', $values);
+			if (!$db->Execute($sql)) {
 				$insert_error = $db->ErrorMsg();
 			}
-			$q->clear();
 		}
 		//delete the deleted options
 		foreach ($deleteoptions as $opt => $value) {
