@@ -116,7 +116,7 @@ $task_log_costcodes = array(""); // Let's add a blank default option
 $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 */
 
-$proj = &new CProject();
+$proj = new CProject();
 $proj->load($obj->task_project);
 $sql = "SELECT billingcode_id, billingcode_name
 FROM billingcode
@@ -281,7 +281,7 @@ function delIt() {
 	else
 	{
 		//***MOD 20050525 pedroa echo "<input type='hidden' name='task_log_creator' value=".$AppUI->user_id."/>";
-		echo "<input type='hidden' name='task_log_creator' value=".$_GET['userid']."/>";
+		echo "<input type='hidden' name='task_log_creator' value=".(int)$_GET['userid']."/>";
 	}
 ?>
  
