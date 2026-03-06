@@ -26,7 +26,7 @@ if( empty($_GET['clickedon']) ) {
    echo '<b style="color:darkred;">Clicked on bar: &lt;none></b>';
 }
 else {
-   echo '<b style="color:darkred;">Clicked on bar: '.$_GET['clickedon'].'</b>';
+   echo '<b style="color:darkred;">Clicked on bar: '.htmlspecialchars($_GET['clickedon'], ENT_QUOTES).'</b>';
 }
 echo '<p />';
 ?>
