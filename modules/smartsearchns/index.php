@@ -106,7 +106,7 @@ else {
 				<tr>
 					<td align="left">
 					<div id="div_advancedsearch1" name="div_advancedsearch1"  style="<?php  echo ($ssearch['advanced_search']=="on" ? 'visibility:visible':'visibility:hidden'); ?> "> 1. </div></td>
-					<td align="left"><INPUT class="text" size="18" type="text" id="keyword" name="keyword" value="<?php echo dPformSafe(@$_POST['keyword']); ?>"></td>
+					<td align="left"><INPUT class="text" size="18" type="text" id="keyword" name="keyword" value="<?php echo dPformSafe(@stripslashes($_POST['keyword'])); ?>"></td>
 					<td align="left"><input class="button" type="submit" value="<?php echo $AppUI->_('Search');?>"></td>
 					<td align="left"><input  name="allwords" id="allwords" type="checkbox"  <?php  echo ($ssearch['all_words']=="on" ? 'checked="checked"':""); ?>  > <?php echo $AppUI->_('All words');?></td>
 					<td align="left"><input  name="modselection" id="modselection" type="checkbox"  <?php  echo ($ssearch['mod_selection']=="on" ? 'checked="checked"':""); ?> onclick="toggleModules(this)" > <?php echo $AppUI->_('Modules selection');?></td>
@@ -117,9 +117,9 @@ else {
 				<table cellspacing="5" cellpadding="0" border="0">
 					<tr>
 						<td align="left"> 2. </td>
-						<td align="left"><INPUT class="text" size="18" type="text" id="keyword2" name="keyword2" value="<?php echo dPformSafe(@$_POST['keyword2']); ?>"></td>
-						<td align="left"> 3. <INPUT class="text" size="18" type="text" id="keyword3" name="keyword3" value="<?php echo dPformSafe(@$_POST['keyword3']); ?>"></td>
-						<td align="left"> 4. <INPUT class="text" size="18" type="text" id="keyword4" name="keyword4" value="<?php echo dPformSafe(@$_POST['keyword4']); ?>"></td>
+						<td align="left"><INPUT class="text" size="18" type="text" id="keyword2" name="keyword2" value="<?php echo dPformSafe(@stripslashes($_POST['keyword2'])); ?>"></td>
+						<td align="left"> 3. <INPUT class="text" size="18" type="text" id="keyword3" name="keyword3" value="<?php echo dPformSafe(@stripslashes($_POST['keyword3'])); ?>"></td>
+						<td align="left"> 4. <INPUT class="text" size="18" type="text" id="keyword4" name="keyword4" value="<?php echo dPformSafe(@stripslashes($_POST['keyword4'])); ?>"></td>
 						<td align="left"><input  name="ignorespecchar" id="ignorespecchar" type="checkbox"  <?php  echo ($ssearch['ignore_specchar']=="on" ? 'checked="checked"':""); ?>  > <?php echo $AppUI->_('Ignore special chars');?></td>
 						<td align="left"><input  name="ignorecase" id="ignorecase" type="checkbox"  <?php  echo ($ssearch['ignore_case']=="on" ? 'checked="checked"':""); ?>  > <?php echo $AppUI->_('Ignore case');?></td>
 						<td align="left"><input  name="displayallflds" id="displayallflds" type="checkbox"  <?php  echo ($ssearch['display_all_flds']=="on" ? 'checked="checked"':""); ?>  > <?php echo $AppUI->_('Display all fields');?></td>
