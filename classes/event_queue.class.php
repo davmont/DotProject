@@ -197,6 +197,7 @@ class EventQueue {
 		$this->delete_list = array();
 
 		if (count($this->update_list)) {
+			global $db;
 			$prefix = dPgetConfig('dbprefix', '');
 			$cases_repeat_count = 'queue_repeat_count = CASE queue_id';
 			$cases_start = 'queue_start = CASE queue_id';
@@ -213,7 +214,7 @@ class EventQueue {
 			$cases_start .= " END";
 
 			$sql = "UPDATE " . $prefix . $this->table . " SET " . $cases_repeat_count . ", " . $cases_start . " WHERE queue_id IN (" . implode(',', $ids) . ")";
-			db_exec($sql);
+			$db->Execute($sql);
 		}
 		$this->update_list = array();
 	}
