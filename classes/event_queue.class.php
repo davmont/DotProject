@@ -198,23 +198,16 @@ class EventQueue {
 
 		if (count($this->update_list)) {
 			global $db;
-			$prefix = dPgetConfig('dbprefix', '');
-			$cases_repeat_count = 'queue_repeat_count = CASE queue_id';
-			$cases_start = 'queue_start = CASE queue_id';
-			$ids = array();
+			$db->StartTrans();
 			foreach ($this->update_list as $fields) {
-				$id = (int)$fields['queue_id'];
-				$repeat = (int)$fields['queue_repeat_count'];
-				$start = (int)$fields['queue_start'];
-				$cases_repeat_count .= " WHEN $id THEN $repeat";
-				$cases_start .= " WHEN $id THEN $start";
-				$ids[] = $id;
+				$q->addTable($this->table);
+				$q->addUpdate('queue_repeat_count', $fields['queue_repeat_count']);
+				$q->addUpdate('queue_start', $fields['queue_start']);
+				$q->addWhere('queue_id = ' . $fields['queue_id']);
+				$q->exec();
+				$q->clear();
 			}
-			$cases_repeat_count .= " END";
-			$cases_start .= " END";
-
-			$sql = "UPDATE " . $prefix . $this->table . " SET " . $cases_repeat_count . ", " . $cases_start . " WHERE queue_id IN (" . implode(',', $ids) . ")";
-			$db->Execute($sql);
+			$db->CompleteTrans();
 		}
 		$this->update_list = array();
 	}
