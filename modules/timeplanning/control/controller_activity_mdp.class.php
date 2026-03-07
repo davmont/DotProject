@@ -17,43 +17,59 @@ class ControllerActivityMDP {
 	
 	function getProjectActivities($projectId){
 		$list=array();
+
+		// Fetch all dependencies for tasks in this project
 		$q = new DBQuery();
-		$q->addQuery('t.task_id, t.task_name');
-		$q->addTable('tasks', 't');
-		$q->addWhere("t.task_project = $projectId and t.task_milestone<>1");
+		$q->addQuery('td.dependencies_task_id, td.dependencies_req_task_id');
+		$q->addTable('task_dependencies', 'td');
+		$q->addJoin('tasks', 't', 't.task_id = td.dependencies_task_id');
+		$q->addJoin('tasks', 'treq', 'treq.task_id = td.dependencies_req_task_id');
+		$q->addWhere("t.task_project = " . (int)$projectId . " AND t.task_milestone <> 1");
 		$sql = $q->prepare();
-		$tasks = db_loadList($sql);
-		foreach($tasks as $task){
-			$q = new DBQuery();
-			$q->addQuery('t.pos_x, t.pos_y');
-			$q->addTable('tasks_mdp', 't');
-			$q->addWhere('task_id = '.$task[0]);
-			$sql = $q->prepare();
-			$posXY = db_loadList($sql);
-			$x=-1;
-			$y=-1;
-			foreach ($posXY as $xy) {
-				$x=$xy[0];
-				$y=$xy[1];
-			}
-			$dependencies=array();
-			$q = new DBQuery();
-			$q->addQuery('t.task_id');
-			$q->addTable('tasks', 't');
-			$q->addTable('task_dependencies','td');
-			$q->addWhere('td.dependencies_task_id = '.$task[0].' AND t.task_id = td.dependencies_req_task_id');
-			$sql = $q->prepare();
-			$taskDep = db_loadList($sql);
-			foreach ($taskDep  as $dep_ids) {
-				foreach($dep_ids as $dep_id){
-					if(trim($dep_id)!=""){
-						$dependencies[$dep_id]=$dep_id;
-					}
+		$allDependencies = db_loadList($sql);
+
+		$groupedDependencies = array();
+		if (is_array($allDependencies)) {
+			foreach ($allDependencies as $dep) {
+				$taskId = isset($dep['dependencies_task_id']) ? $dep['dependencies_task_id'] : $dep[0];
+				$reqId = isset($dep['dependencies_req_task_id']) ? $dep['dependencies_req_task_id'] : $dep[1];
+				if (!isset($groupedDependencies[$taskId])) {
+					$groupedDependencies[$taskId] = array();
+				}
+				if (trim($reqId) != "") {
+					$groupedDependencies[$taskId][$reqId] = $reqId;
 				}
 			}
+		}
+
+		$q = new DBQuery();
+		$q->addQuery('t.task_id, t.task_name, tm.pos_x, tm.pos_y');
+		$q->addTable('tasks', 't');
+		$q->leftJoin('tasks_mdp', 'tm', 't.task_id = tm.task_id');
+		$q->addWhere("t.task_project = " . (int)$projectId . " and t.task_milestone<>1");
+		$sql = $q->prepare();
+		$tasks = db_loadList($sql);
+
+		foreach($tasks as $task){
+			$taskId = $task['task_id'] ?? $task[0];
+			$taskName = $task['task_name'] ?? $task[1];
+
+			$x=-1;
+			$y=-1;
+			// pos_x and pos_y could be at indices 2 and 3 if it's a numeric array
+			if (isset($task['pos_x'])) {
+				if ($task['pos_x'] !== null) $x = $task['pos_x'];
+				if ($task['pos_y'] !== null) $y = $task['pos_y'];
+			} else if (isset($task[2]) && isset($task[3])) {
+				if ($task[2] !== null) $x = $task[2];
+				if ($task[3] !== null) $y = $task[3];
+			}
+
+			$dependencies = isset($groupedDependencies[$taskId]) ? $groupedDependencies[$taskId] : array();
+
 			$activityMDP= new ActivityMDP();
-			$activityMDP->load($task[0],$task[1],$x,$y,$dependencies);
-			$list[$task[0]]=$activityMDP;
+			$activityMDP->load($taskId,$taskName,$x,$y,$dependencies);
+			$list[$taskId]=$activityMDP;
 		}
 		return $list;
 	}

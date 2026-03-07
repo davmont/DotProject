@@ -67,6 +67,8 @@ class CSetupHelpDesk {
 		    PRIMARY KEY (`status_id`)
 		  )";
 
+    global $db;
+    $db->StartTrans();
     foreach ($bulk_sql as $s) {
       db_exec($s);
 
@@ -74,6 +76,7 @@ class CSetupHelpDesk {
 	$success = 0;
       }
     }
+    $db->CompleteTrans();
 
 		$sk = new CSysKey( 'HelpDeskList', 'Enter values for list', '0', "\n", '|' );
 		$sk->store();
