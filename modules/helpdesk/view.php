@@ -163,36 +163,36 @@ if (!$hditem ) {
 
       <tr>
         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Title')?>:</td>
-        <td class="hilite" width="100%"><?php echo $hditem["item_title"]?></td>
+        <td class="hilite" width="100%"><?php echo dPformSafe($hditem["item_title"])?></td>
       </tr>
 
       <tr>
         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Requestor')?>:</td>
         <td class="hilite" width="100%"><?php
           print $hditem["item_requestor_email"] ? 
-            "<a href=\"mailto:".$hditem["item_requestor_email"]."\">".$hditem['item_requestor']."</a>" :
-            $hditem['item_requestor'];?></td>
+            "<a href=\"mailto:".dPformSafe($hditem["item_requestor_email"])."\">".dPformSafe($hditem['item_requestor'])."</a>" :
+            dPformSafe($hditem['item_requestor']);?></td>
       </tr>
 
       <tr>
         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Requestor Phone')?>:</td>
-        <td class="hilite" width="100%"><?php echo $hditem["item_requestor_phone"]?></td>
+        <td class="hilite" width="100%"><?php echo dPformSafe($hditem["item_requestor_phone"])?></td>
       </tr>
       <tr>
         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Assigned To')?>:</td>
         <td class="hilite" width="100%"><?php
           print $assigned_email ?
-            "<a href=\"mailto:$assigned_email\">$assigned_to_name</a>" :
-            $assigned_to_name;?></td>
+            "<a href=\"mailto:".dPformSafe($assigned_email)."\">".dPformSafe($assigned_to_name)."</a>" :
+            dPformSafe($assigned_to_name);?></td>
       </tr>
       <tr>
         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Company')?>:</td>
-        <td class="hilite" width="100%"><?php echo $hditem["company_name"]?></td>
+        <td class="hilite" width="100%"><?php echo dPformSafe($hditem["company_name"])?></td>
       </tr>
 
       <tr>
         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project')?>:</td>
-        <td class="hilite" width="100%" style="background-color: #<?php echo $hditem['project_color_identifier']?>;"><a href="./index.php?m=projects&a=view&project_id=<?php echo $hditem["project_id"]?>"; style="color: <?php echo  bestColor( $hditem['project_color_identifier'] ) ?>;"><?php echo $hditem["project_name"]?></a></td>
+        <td class="hilite" width="100%" style="background-color: #<?php echo dPformSafe($hditem['project_color_identifier'])?>;"><a href="./index.php?m=projects&a=view&project_id=<?php echo $hditem["project_id"]?>"; style="color: <?php echo  bestColor( $hditem['project_color_identifier'] ) ?>;"><?php echo dPformSafe($hditem["project_name"])?></a></td>
       </tr>
     </table>
     </td><td valign="top">
