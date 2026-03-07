@@ -182,7 +182,7 @@ function popChgPwd() {
 		</tr>
 		<tr>
 			<td class="hilite" width="100%" colspan="2">
-				<?php echo str_replace(chr(10), '<br />', $user['user_signature']);?>&nbsp;
+				<?php echo str_replace(chr(10), '<br />', htmlspecialchars($user['user_signature'], ENT_QUOTES));?>&nbsp;
 			</td>
 		</tr>
 		</table>
