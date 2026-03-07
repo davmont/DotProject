@@ -918,7 +918,12 @@ class CustomOptionList
 		$newoptions = array();
 		$newoptions = array_diff($this->options, $dboptions);
 		$deleteoptions = array_diff($dboptions, $this->options);
+
+		$insert_error = '';
+		$delete_error = '';
+
 		//insert the new options
+		$db->StartTrans();
 		foreach ($newoptions as $opt) {
 			$optid = $db->GenID('custom_fields_option_id', 1);
 
@@ -933,7 +938,10 @@ class CustomOptionList
 			}
 			$q->clear();
 		}
+		$db->CompleteTrans();
+
 		//delete the deleted options
+		$db->StartTrans();
 		foreach ($deleteoptions as $opt => $value) {
 			$q = new DBQuery;
 			$q->setDelete('custom_fields_lists');
@@ -944,6 +952,7 @@ class CustomOptionList
 			}
 			$q->clear();
 		}
+		$db->CompleteTrans();
 
 		return $insert_error . ' ' . $delete_error;
 	}
