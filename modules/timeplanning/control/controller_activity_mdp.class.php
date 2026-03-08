@@ -50,22 +50,53 @@ class ControllerActivityMDP {
 		$sql = $q->prepare();
 		$tasks = db_loadList($sql);
 
-		foreach($tasks as $task){
-			$taskId = $task['task_id'] ?? $task[0];
-			$taskName = $task['task_name'] ?? $task[1];
+		$taskIds = array();
+		foreach ($tasks as $task) {
+			$taskIds[] = (int)$task[0];
+		}
 
-			$x=-1;
-			$y=-1;
-			// pos_x and pos_y could be at indices 2 and 3 if it's a numeric array
-			if (isset($task['pos_x'])) {
-				if ($task['pos_x'] !== null) $x = $task['pos_x'];
-				if ($task['pos_y'] !== null) $y = $task['pos_y'];
-			} else if (isset($task[2]) && isset($task[3])) {
-				if ($task[2] !== null) $x = $task[2];
-				if ($task[3] !== null) $y = $task[3];
+		$posMap = array();
+		$depMap = array();
+
+		if (count($taskIds) > 0) {
+			$idList = implode(',', $taskIds);
+
+			$q = new DBQuery();
+			$q->addQuery('task_id, pos_x, pos_y');
+			$q->addTable('tasks_mdp');
+			$q->addWhere('task_id IN (' . $idList . ')');
+			$posXY = db_loadList($q->prepare());
+			foreach ($posXY as $xy) {
+				$posMap[$xy[0]] = array($xy[1], $xy[2]);
 			}
 
-			$dependencies = isset($groupedDependencies[$taskId]) ? $groupedDependencies[$taskId] : array();
+			$q = new DBQuery();
+			$q->addQuery('td.dependencies_task_id, t.task_id');
+			$q->addTable('tasks', 't');
+			$q->addTable('task_dependencies', 'td');
+			$q->addWhere('td.dependencies_task_id IN (' . $idList . ') AND t.task_id = td.dependencies_req_task_id');
+			$deps = db_loadList($q->prepare());
+			foreach ($deps as $dep) {
+				$tId = $dep[0];
+				$depId = $dep[1];
+				if (!isset($depMap[$tId])) {
+					$depMap[$tId] = array();
+				}
+				if (trim($depId) !== "") {
+					$depMap[$tId][$depId] = $depId;
+				}
+			}
+		}
+
+		foreach($tasks as $task){
+			$taskId = $task[0];
+			$x = -1;
+			$y = -1;
+			if (isset($posMap[$taskId])) {
+				$x = $posMap[$taskId][0];
+				$y = $posMap[$taskId][1];
+			}
+			$dependencies = isset($depMap[$taskId]) ? $depMap[$taskId] : array();
 
 			$activityMDP= new ActivityMDP();
 			$activityMDP->load($taskId,$taskName,$x,$y,$dependencies);
