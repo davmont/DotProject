@@ -189,6 +189,7 @@ class CSetupHelpDesk {
 		global $db;
 		$dbprefix = dPgetConfig('dbprefix', '');
 		$success = 1;
+		$tables = $db->MetaTables('TABLES');
 		if (!file_exists($CONFIG_FILE)) {
 			if (!(file_put_contents('./modules/helpdesk/config.php', 'CONFIGURE_ME')))
 				$success = 0;
@@ -225,6 +226,7 @@ class CSetupHelpDesk {
 	          ADD `file_helpdesk_item` int(11) NOT NULL default '0' AFTER `file_task`";
 
 		// Add help desk item status log table
+		if (!in_array("{$dbprefix}helpdesk_item_status", $tables)) {
 	        $bulk_sql[] = "
 	          CREATE TABLE `{$dbprefix}helpdesk_item_status` (
 	            `status_id` INT NOT NULL AUTO_INCREMENT,
@@ -235,6 +237,7 @@ class CSetupHelpDesk {
 	            `status_comment` TEXT DEFAULT '',
 	            PRIMARY KEY (`status_id`)
 	          )";
+		}
 
 	        // Execute the above SQL
 	        foreach ($bulk_sql as $s) {
@@ -312,6 +315,7 @@ class CSetupHelpDesk {
 	        break;
 	      case 0.3:
 	        // Version 0.31 includes new watchers functionality
+		if (!in_array("{$dbprefix}helpdesk_item_watchers", $tables)) {
 			$sql = "
 			CREATE TABLE {$dbprefix}helpdesk_item_watchers (
 			  `item_id` int(11) NOT NULL default '0',
@@ -319,6 +323,7 @@ class CSetupHelpDesk {
 			  `notify` char(1) NOT NULL default ''
 			);";
 			db_exec($sql);
+		}
 		  case 0.31:
 		    $sql = "
 	          ALTER TABLE `{$dbprefix}helpdesk_items`
@@ -350,9 +355,6 @@ class CSetupHelpDesk {
 		// These changes are to help bridge people from the "old" helpdesk
 		// to the newer helpdesk module.  Errors are ignored in case the 
 		// modified helpdesk with files support was already installed.
-		// TODO: Detection of table existance before blind creation with
-		// no error return
-		$tables = $db->MetaTables('TABLES');
 		if (!in_array("{$dbprefix}helpdesk_items", $tables)) {
 			$q = new DBQuery;
 			$q->createTable('helpdesk_items');

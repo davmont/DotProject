@@ -26,6 +26,7 @@
 	}
 
 	// check for command line vs web page input params
+	$allowed_args = array('DEBUG', 'LOCALSERVER', 'URI', 'HTTPSSERVER', 'HTTPSURI', 'PROXY', 'only');
 	if(!isset($_SERVER['REQUEST_METHOD']))
 	{
 		if(isset($argv))
@@ -33,9 +34,9 @@
 			foreach($argv as $param)
 			{
 				$param = explode('=', $param);
-				if(count($param) > 1)
+				if(count($param) > 1 && in_array($param[0], $allowed_args))
 				{
-					$$param[0]=$param[1];
+					${$param[0]}=$param[1];
 				}
 			}
 		}
@@ -44,8 +45,14 @@
 	{
 		// play nice to 'safe' PHP installations with register globals OFF
 		// NB: we might as well consider using $_GET stuff later on...
-		extract($_GET);
-		extract($_POST);
+		foreach ($allowed_args as $arg) {
+			if (isset($_GET[$arg])) {
+				${$arg} = $_GET[$arg];
+			}
+			if (isset($_POST[$arg])) {
+				${$arg} = $_POST[$arg];
+			}
+		}
 	}
 
 	if(!isset($DEBUG))
