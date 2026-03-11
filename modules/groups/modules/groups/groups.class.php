@@ -34,13 +34,21 @@ class CGroup extends CDpObject {
 		db_exec( $sql );
 
 	// process dependencies
-		if(isset($cslist)) {
-		  foreach ($cslist as $contact_id) {
-		    if (intval( $contact_id ) > 0) {
-		      $sql = "INSERT into groups_contacts (group_id, contact_id) VALUES ($this->group_id, $contact_id)";
-		      db_exec($sql);
-		    }
-		  }
+		if(isset($cslist) && is_array($cslist)) {
+			global $db;
+			$q = new DBQuery;
+			$db->StartTrans();
+			foreach ($cslist as $contact_id) {
+				$contact_id = intval($contact_id);
+				if ($contact_id > 0) {
+					$q->addTable('groups_contacts');
+					$q->addInsert('group_id', $this->group_id);
+					$q->addInsert('contact_id', $contact_id);
+					$q->exec();
+					$q->clear();
+				}
+			}
+			$db->CompleteTrans();
 		}
 	}
 
