@@ -5,24 +5,15 @@ $q->addTable('risks');
 $q->addOrder('risk_id');
 $q->setLimit(100);
 $list1 = $q->loadList();
-foreach ($list1 as $line) {     
-    $risk_id = $line['risk_id'];
-    $Priority;
-    $risk_probability = intval($line['risk_probability']);
-    $risk_impact = intval($line['risk_impact']);
-    if (($risk_impact==0) || ($risk_probability==2 && $risk_impact==1) || ($risk_probability==1 && $risk_impact==1) || ($risk_probability==0 && $risk_impact<4)) {
-        $Priority = 0;
-    } else {
-        if (($risk_probability==4 && $risk_impact==1) || ($risk_probability==3 && $risk_impact==1) || ($risk_probability==3 && $risk_impact==2) || ($risk_probability==2 && $risk_impact==2) || ($risk_probability==1 && $risk_impact==2) || ($risk_probability==1 && $risk_impact==3) || ($risk_probability==0 && $risk_impact==4)) {
-            $Priority = 1;
-        } else {
-            if (($risk_impact==4 && $risk_probability>0) || ($risk_impact==3 && $risk_probability>1) || ($risk_probability==4 && $risk_impact==2)) {
-                $Priority = 2;
-            }
-        }
-    }
+if (count($list1) > 0) {
     $dbprefix = dPgetConfig('dbprefix', '');
-    $consulta = "UPDATE {$dbprefix}risks SET risk_priority = " . (int)$Priority . " WHERE risk_id = " . (int)$risk_id;
+    $in_clause = implode(',', array_map('intval', array_column($list1, 'risk_id')));
+    $consulta = "UPDATE {$dbprefix}risks SET risk_priority = CASE
+        WHEN (risk_impact=0) OR (risk_probability=2 AND risk_impact=1) OR (risk_probability=1 AND risk_impact=1) OR (risk_probability=0 AND risk_impact<4) THEN 0
+        WHEN (risk_probability=4 AND risk_impact=1) OR (risk_probability=3 AND risk_impact=1) OR (risk_probability=3 AND risk_impact=2) OR (risk_probability=2 AND risk_impact=2) OR (risk_probability=1 AND risk_impact=2) OR (risk_probability=1 AND risk_impact=3) OR (risk_probability=0 AND risk_impact=4) THEN 1
+        WHEN (risk_impact=4 AND risk_probability>0) OR (risk_impact=3 AND risk_probability>1) OR (risk_probability=4 AND risk_impact=2) THEN 2
+        ELSE risk_priority
+    END WHERE risk_id IN ($in_clause)";
     $resultado = db_exec($consulta) or die($AppUI->_("LBL_QUERY_FAIL"));
 }
 
