@@ -99,14 +99,17 @@ if ($report_type) {
 			
 		} else {
 			$desc_file_en = $type . '.en.txt';
-			//FIXME : need to handle description file non existence
-			$desc = file(DP_BASE_DIR.'/modules/projects/reports/'.$desc_file_en);
+			if (file_exists(DP_BASE_DIR.'/modules/projects/reports/'.$desc_file_en)) {
+				$desc = file(DP_BASE_DIR.'/modules/projects/reports/'.$desc_file_en);
+			} else {
+				$desc = array();
+			}
 		}
 		
 		echo ("<tr>\n");
 		echo ('<td><a href="index.php?m=projects&a=reports&project_id=' . $project_id 
 		      . '&report_type=' . $type . ((isset($desc[2])) ? ('&' . $desc[2]) : '') . '">');
-		echo (($desc[0]) ? $desc[0] : $v);
+		echo ((!empty($desc[0])) ? $desc[0] : $v);
 		echo ('</a></td>' . "\n");
 		echo '<td>' . (@$desc[1] ? '- ' . $desc[1] : '') . "</td>\n";
 		echo "</tr>\n";
