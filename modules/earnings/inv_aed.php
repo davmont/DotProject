@@ -172,7 +172,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		if ( strcmp($_POST["earning_submit_address1"], "") == 0 ) {
 			// The earning address override hasn't been used so let's fill it in automatically
 			// Gather Company Details
-			$sql2="SELECT companies.* FROM companies WHERE company_id='" . $_POST["earning_submit_company_id"] . "';";
+			$sql2="SELECT companies.* FROM companies WHERE company_id='" . (int)$_POST["earning_submit_company_id"] . "';";
 			$crc= db_exec( $sql2 );
 			echo db_error();
 			while ($row = db_fetch_assoc($crc)) {
@@ -223,7 +223,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		if ( strcmp($_POST["earning_submit_address1"], "") == 0 ) {
 			// The earning address override hasn't been used so let's fill it in automatically
 			// Gather Company Details
-			$sql2="SELECT companies.* FROM companies WHERE company_id='" . $_POST["earning_submit_company_id"] . "';";
+			$sql2="SELECT companies.* FROM companies WHERE company_id='" . (int)$_POST["earning_submit_company_id"] . "';";
 			$crc= db_exec( $sql2 );
 			echo db_error();
 			while ($row = db_fetch_assoc($crc)) {
