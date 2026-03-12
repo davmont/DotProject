@@ -192,6 +192,42 @@ function setCalendar( uts, fdate ) {
 	
 	$result = db_loadList($sql);
 //print '<pre>'.sizeof($result).'<pre>';
+
+	$log_ids = array();
+	foreach ($result as $log) {
+		$log_ids[] = (int)$log['mileage_log_id'];
+	}
+
+	$all_purposes = array();
+	$helpdesk_ids = array();
+	$task_ids = array();
+
+	if (count($log_ids) > 0) {
+		$purposes_sql = 'SELECT * FROM mileage_log_purpose WHERE mileage_log_id IN (' . implode(',', $log_ids) . ')';
+		$all_purposes_list = db_loadList($purposes_sql);
+		if (!is_array($all_purposes_list)) $all_purposes_list = array();
+		foreach ($all_purposes_list as $purpose) {
+			$all_purposes[$purpose['mileage_log_id']][] = $purpose;
+			if ($purpose['mileage_log_purpose_relation_type'] == 2) {
+				$helpdesk_ids[] = (int)$purpose['mileage_log_purpose_relation_id'];
+			} elseif ($purpose['mileage_log_purpose_relation_type'] == 1) {
+				$task_ids[] = (int)$purpose['mileage_log_purpose_relation_id'];
+			}
+		}
+	}
+
+	$helpdesk_desc = array();
+	if (count($helpdesk_ids) > 0) {
+		$helpdesk_sql = "SELECT item_id, CONCAT_WS(' :: ', item_title, item_summary) FROM helpdesk_items WHERE item_id IN (" . implode(',', array_unique($helpdesk_ids)) . ")";
+		$helpdesk_desc = db_loadHashList($helpdesk_sql);
+	}
+
+	$task_desc = array();
+	if (count($task_ids) > 0) {
+		$task_sql = "SELECT task_id, CONCAT_WS(' :: ', task_name, task_description) FROM tasks WHERE task_id IN (" . implode(',', array_unique($task_ids)) . ")";
+		$task_desc = db_loadHashList($task_sql);
+	}
+
 	$date = $start_day->format("%Y-%m-%d")." 12:00:00";
 	$start_day -> setDate($date, DATE_FORMAT_ISO);
 
@@ -218,7 +254,7 @@ function setCalendar( uts, fdate ) {
 				else
 					$total_miles_daily += $log["mileage_log_od_end"] - $log["mileage_log_od_start"];
 					
-				$mileage_log_purposes = db_loadList('select * from mileage_log_purpose where mileage_log_id=' . $log['mileage_log_id']);
+				$mileage_log_purposes = isset($all_purposes[$log['mileage_log_id']]) ? $all_purposes[$log['mileage_log_id']] : array();
 ?>
 				<tr>
 					<td nowrap="nowrap" valign="top">
@@ -233,12 +269,12 @@ function setCalendar( uts, fdate ) {
 						switch ($mileage_log_purpose['mileage_log_purpose_relation_type']) {
 						case 2:	// helpdesk item
 							if ($MILEAGELOG_CONFIG['show_purpose_helpdesk']) {
-								$desc = db_loadResult("select CONCAT_WS(' :: ', item_title, item_summary) from helpdesk_items where item_id=" . $mileage_log_purpose['mileage_log_purpose_relation_id']);
+								$desc = isset($helpdesk_desc[$mileage_log_purpose['mileage_log_purpose_relation_id']]) ? $helpdesk_desc[$mileage_log_purpose['mileage_log_purpose_relation_id']] : '';
 							}
 						break;
 						case 1: // task
 							if ($MILEAGELOG_CONFIG['show_purpose_task']) {
-								$desc = db_loadResult("select CONCAT_WS(' :: ', task_name, task_description) from tasks where task_id=" . $mileage_log_purpose['mileage_log_purpose_relation_id']);
+								$desc = isset($task_desc[$mileage_log_purpose['mileage_log_purpose_relation_id']]) ? $task_desc[$mileage_log_purpose['mileage_log_purpose_relation_id']] : '';
 							}
 						break;
 						default: // note
