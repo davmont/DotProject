@@ -1299,11 +1299,10 @@ $show_gantt = 1;
 			<?php 
 
 		} else {
-			//TODO: create error handler for permission problems
-			
-			echo "Could not open file to save PDF.  ";
-			if (!is_writable( $temp_dir ))
-				echo "The files/temp directory is not writable.  Check your file system permissions.";
+			$AppUI->setMsg("Could not open file to save PDF.", UI_MSG_ERROR);
+			if (!is_writable( $temp_dir )) {
+				$AppUI->setMsg("The files/temp directory is not writable.  Check your file system permissions.", UI_MSG_ERROR, true);
+			}
 		}
 
 		$_POST['printpdf'] = '0';
