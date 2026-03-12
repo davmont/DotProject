@@ -28,9 +28,9 @@
 	if (isset( $_GET['user_id'] )) {
 	//if (isset( $AppUI->user_id )) {
 	
-		$sql = "SELECT user_contact FROM users WHERE user_id = ".$_GET['user_id'];
+		$sql = "SELECT user_contact FROM users WHERE user_id = " . (int)$_GET['user_id'];
 		$contact_id = db_loadResult( $sql );
-		$sql = "SELECT contact_company FROM contacts WHERE contact_id = ".$contact_id;
+		$sql = "SELECT contact_company FROM contacts WHERE contact_id = " . (int)$contact_id;
 		//print $sql;
 		$company_id = db_loadResult( $sql );
 		//print $company_id.":".getDenyRead( "companies", $company_id );
