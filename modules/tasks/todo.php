@@ -74,24 +74,32 @@ $selected = dPgetCleanParam($_POST, 'selected_task', 0);
 
 $q = new DBQuery;
 if (is_array($selected) && count($selected)) {
-	foreach ($selected as $key => $val) {
-		if ($task_priority == 'c') {
-			// mark task as completed
-			$q->addTable('tasks');
-			$q->addUpdate('task_percent_complete', "'100'");
-			$q->addWhere('task_id='.$val);
-		} else if ($task_priority == 'd') {
-			// delete task
-			$q->setDelete('tasks');
-			$q->addWhere('task_id='.$val);
-		} else if ($task_priority > -2 && $task_priority < 2) {
-			// set priority
-			$q->addTable('tasks');
-			$q->addUpdate('task_priority', $task_priority);
-			$q->addWhere('task_id='.$val);
-		}
+	$safe_selected = array();
+	foreach ($selected as $val) {
+		$safe_selected[] = (int)$val;
+	}
+	$in_clause = implode(',', $safe_selected);
+
+	if ($task_priority == 'c') {
+		// mark task as completed
+		$q->addTable('tasks');
+		$q->addUpdate('task_percent_complete', "'100'");
+		$q->addWhere('task_id IN (' . $in_clause . ')');
 		db_exec($q->prepare(true));
-		echo db_error();		
+		echo db_error();
+	} else if ($task_priority == 'd') {
+		// delete task
+		$q->setDelete('tasks');
+		$q->addWhere('task_id IN (' . $in_clause . ')');
+		db_exec($q->prepare(true));
+		echo db_error();
+	} else if ($task_priority > -2 && $task_priority < 2) {
+		// set priority
+		$q->addTable('tasks');
+		$q->addUpdate('task_priority', $task_priority);
+		$q->addWhere('task_id IN (' . $in_clause . ')');
+		db_exec($q->prepare(true));
+		echo db_error();
 	}
 }
 
