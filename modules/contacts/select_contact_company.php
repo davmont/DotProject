@@ -7,6 +7,7 @@ if (!defined('DP_BASE_DIR')) {
 
 	switch($table_name) {
 		case "companies":
+			$company_id        = 0;
 			$id_field          = "company_id";
 			$name_field        = "company_name";
 			$selection_string  = "Company";
@@ -14,11 +15,12 @@ if (!defined('DP_BASE_DIR')) {
 			$additional_get_information = "";
 			break;
 		case "departments":
+			$company_id        = (int) dPgetCleanParam($_GET, 'company_id', 0);
 			$id_field          = "dept_id";
 			$name_field        = "dept_name";
 			$selection_string  = "Department";
-			$filter            = "dept_company = ".$_GET["company_id"];
-			$additional_get_information = "company_id=".$_GET["company_id"];
+			$filter            = "dept_company = " . $company_id;
+			$additional_get_information = "company_id=" . $company_id;
 			break;
 	}
 	
@@ -32,11 +34,12 @@ if (!defined('DP_BASE_DIR')) {
 ?>
 
 <?php
-	if (dPgetCleanParam($_POST, $id_field, 0) != 0) {
+	$posted_id = (int) dPgetCleanParam($_POST, $id_field, 0);
+	if ($posted_id != 0) {
 		$q  = new DBQuery;
 		$q->addTable($table_name);
 		$q->addQuery('*');
-		$q->addWhere("$id_field=".$_POST[$id_field]);
+		$q->addWhere("$id_field=" . $posted_id);
 		$sql = $q->prepare();
 		$q->clear();
 		db_loadHash($sql, $r_data);
@@ -55,7 +58,7 @@ if (!defined('DP_BASE_DIR')) {
 				                       "company_phone2"   => "contact_phone2",
 				                       "company_fax"   => "contact_fax");
 			}
-			$data_update_script = "opener.setCompany('".$_POST[$id_field]."', '" . db_escape($r_data[$name_field]) . "');\n";
+			$data_update_script = "opener.setCompany('" . $posted_id . "', '" . db_escape($r_data[$name_field]) . "');\n";
 		} else if ($table_name == "departments") {
 			$update_fields = array("dept_id"     => "contact_department");
 			if ($update_address) {
@@ -67,7 +70,7 @@ if (!defined('DP_BASE_DIR')) {
 				                       "dept_phone"   => "contact_phone",
 				                       "dept_fax"   => "contact_fax");
 			}
-			$data_update_script = "opener.setDepartment('" . $_POST[$id_field] . "', '" . db_escape($r_data[$name_field]) . "');\n";
+			$data_update_script = "opener.setDepartment('" . $posted_id . "', '" . db_escape($r_data[$name_field]) . "');\n";
 		}
 	
 		// Let's figure out which fields are going to
