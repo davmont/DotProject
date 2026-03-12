@@ -11,11 +11,11 @@
 		$q -> addWhere("t.task_status = '-1'");
 	}
 	else if ($show_sent_messages){
-		$q -> addWhere("t.task_owner = '".$AppUI->user_id."'");	
+		$q -> addWhere("t.task_owner = '" . (int)$AppUI->user_id . "'");
 	}
 	else{
 		$q -> addWhere("t.task_status = '0'");
-		$q -> addWhere("ut.user_id     = '".$AppUI->user_id."' ");
+		$q -> addWhere("ut.user_id     = '" . (int)$AppUI->user_id . "' ");
 	}
 	$q -> addOrder('task_priority, task_start_date');
 	
@@ -79,10 +79,10 @@
 					$q = new DBQuery();
 					$q -> addTable('user_tasks');
 					$q -> addQuery('user_id');
-					$q -> addWhere("task_id = '".$view_message->task_id."'");
+					$q -> addWhere("task_id = '" . (int)$view_message->task_id . "'");
 					
 					$recipient_list = "";
-					foreach(db_loadColumn($sql) as $user_id){
+					foreach($q->loadColumn() as $user_id){
 						$recipient_list .= $user_hash[$user_id].", ";
 					}
 					$recipient_list = substr($recipient_list, 0, strlen($recipient_list)-2);
