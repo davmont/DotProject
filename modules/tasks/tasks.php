@@ -294,11 +294,6 @@ if ($search_text = $AppUI->getState('searchtext')) {
 }
 
 // filter tasks considering task and project permissions
-$projects_filter = '';
-$tasks_filter = '';
-
-// TODO: Enable tasks filtering
-
 $allowedProjects = $project->getAllowedSQL($AppUI->user_id, 'task_project');
 if (count($allowedProjects)) {
 	$where .= ' AND ' . implode(' AND ', $allowedProjects);
