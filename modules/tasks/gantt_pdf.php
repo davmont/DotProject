@@ -1147,91 +1147,16 @@ $show_gantt = 1;
 			$xpos = round( $pwidth - $pdf->getTextWidth( 10, $date->format($df)) - $pdf->ez['rightMargin'] , 2);
 			$doc_date = strEzPdf($date->format( $df ));
 			$pdf->addText( $xpos, $ypos, 10, $doc_date );
-//			$xpos = $pdf->ez['leftMargin'];
-//			$pdf-> addText($xpos, $ypos, 10, $AppUI->_($AppUI->user_first_name.' '.$AppUI->user_last_name, UI_OUTPUT_RAW));
-
-			//TODO: Add the legend to the Gantt on the bottom of each page
-//			print "<pre> AppUI "; print_r($AppUI); print "</pre>"; //die;
-//			$ypos -= round ( 1.5*$pdf->getFontHeight(12) , 2 ) ;
-//			$pdf->ezSetY( $ypos );
-
-//			
-//			$pdf->addText($xpos, $ypos, 10, $AppUI->_('Dynamic Task', UI_OUTPUT_RAW));
-//			$pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/task_dynamic.png', 0, 58, 'none', 'center');
-//			$pdf->addText($xpos, $ypos, 10, $AppUI->_('Task (planned)', UI_OUTPUT_RAW));
-//			$pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/task_planned.png', 0, 58, 'none', 'center');
-//			$pdf->addText($xpos, $ypos, 10, $AppUI->_('Task (in progress)', UI_OUTPUT_RAW));
-//			$pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/task_in_progress.png', 0, 58, 'none', 'center');
-//			$pdf->addText($xpos, $ypos, 10, $AppUI->_('Task (completed)', UI_OUTPUT_RAW));
-//			$pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/task_completed.png', 0, 58, 'none', 'center');
 			
 			$pdf->closeObject($page_header);
 			$pdf->addObject($page_header, 'all');
 			$gpdfkey=DP_BASE_DIR. '/modules/tasks/images/ganttpdf_key.png';
 			$gpdfkeyNM=DP_BASE_DIR. '/modules/tasks/images/ganttpdf_keyNM.png';
 
-//			$gantt_key = array (
-//				'1' => 1,
-//			'2' => 2,
-//			'3' => 3,
-//			'4' => 4,
-//			'5' => 5,
-//			'6' => 6,
-//			'7' => 7,
-//			'8'  => 8,
-//
-//				'1' => 'Task (planned): ',
-//				'2' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_completed.png', 0, 12, 'none', 'center'),
-//				'3' => 'Task (in progress) : ',
-//				'4' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
-//				'5' => 'Task (completed)',
-//				'6' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
-//				'7' => 'Dynamic Task',
-//				'8' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
-//			);
-//			
-//			$gantt_key_milestone = array (
-//				'1' => 'Task (planned): ',
-//				'1' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_completed.png', 0, 12, 'none', 'center'),
-//				'1' => 'Task (in progress) : ',
-//				'1' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
-//				'1' => 'Task (completed)',
-//				'1' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
-//				'1' => 'Dynamic Task',
-//				'1' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
-//			
-//				'1' => 'Milestone(planned): ',
-//				'2' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_completed.png', 0, 12, 'none', 'center'),
-//				'3' => 'Milestone (completed) : ',
-//				'4' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
-//				'5' => 'Milestone (in progress)',
-//				'6' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
-//				'7' => 'Milestone (overdue)',
-//				'8' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
-//									
-//			);
-//			$gantt_key_options = array (
-//				'showLines' => 1, // 1 show borders, 0: no borders, 2: show borders and lines between rows 
-//				'showHeadings' => 0, // 1: show, 0: hide
-//				'shaded' => 0, // 0: no shading, 1: alternate line shading, 2: both sets are shaded
-////				'shadeCol' => (0.8,0.8,0.8), //(r,g,b) define the color of shading
-////				'shadeCol2' => (0.7,0.7,0.7), //(r,g,b) define the color of shading of the second set (used when shaded = 2)
-//				'fontsize' => 10,
-////				'textCol' => (r,g,b), // font colour
-//				'titleFontSize' => 12,
-//				'rowGap' => 2, //the space between the text and the lines at each row
-//				'colGap' => 5 //the space between the text and the column lines in each column
-////				'lineCol' => (r,g,b), //colour of the lines, default black
-////				'xPos' => 
-//				
-//			);
 			
 			$pdf->ezStartPageNumbers( 802 , 30 , 10 ,'left','Page {PAGENUM} of {TOTALPAGENUM}') ;
 			for ($i=0; $i < count($ganttfile); $i++) {
 					$gf = $ganttfile[$i];
-//					print "<pre>" . $gpdfkey . "</pre>";
-//					print "<pre>" . $gf . "</pre>";
-//					die;
 					$pdf->ezColumnsStart(array('num' =>1, 'gap' =>0));
 					$pdf->ezImage( $gf, 0, 765, 'width', 'left'); // No pad, width = 800px, resize = 'none' (will go to next page if image height > remaining page space)
 					if ($showNoMilestones == '1') {
@@ -1240,40 +1165,7 @@ $show_gantt = 1;
 					$pdf->ezImage( $gpdfkey, 0, 765, 'width', 'left');
 					}
 					$pdf->ezColumnsStop();
-//					$pdf->ezSetY(10);
-//					$pdf->selectFont( "$font_dir/Helvetica.afm" );
-//					$pdf->ezTable($gantt_key, $gantt_key_milestone, 'Gantt Chart Key');
-			}
-			
-//			Might bring some of this functionality back
-
-			// Create project_header for the current project
-//			$project_header=$pdf->openObject();
-//				$pdf->selectFont( "$font_dir/Helvetica-Bold.afm" );
-//				$xpos = round(( $pwidth - $pdf->getTextWidth(15, $pname) )/2);
-//				$pdf->addText( $xpos, $ypos, 15, strEzPdf( $pname ));
-//				$pdf->ezSetY( $ypos - 2*$pdf->getFontHeight(15) );
-//				$pdf->closeObject($project_header);
-//				$pdf->addObject($project_header, 'all');
-				
-//				$pdf->selectFont( "$font_dir/Helvetica.afm" );
-//				$pdf->ezText( "" );
-//				$xpos=round( $pdf->ez['leftMargin'], 2 );
-				
-//				print $gf;
-//				die;
-				//$pdf->ezImage( $gf, 0, 757, 'width'); // No pad, width = 750, resize = 'width' (will go to next page if image height > remaining page space)
-//				$gpdfkey=DP_BASE_DIR. '/modules/tasks/images/gantt_pdf_key.png';
-//				print "<pre>" . $gpdfkey . "</pre>";
-//				print "<pre>" . $gf . "</pre>";
-				
-//				die;
-//				$pdf->ezImage( $gpdfkey, 0, 853, 'none', 'center');
-//				foreach ( $ganttfile as $gf )
-
-			
-// End of project display
-//			$pdf->stopObject($project_header);
+				}
 		// Create document body and pdf temp file
 		$pdf->stopObject($page_header);
 		$gpdffile = $temp_dir . '/GanttChart_' . $AppUI->user_first_name . '_' . $AppUI->user_last_name . '.pdf';
