@@ -224,14 +224,12 @@ echo $obj->file_description; ?></textarea>
 		<tr>
 			<td colspan="2">
 			<?php
-				// TODO - Add custom fields to files, doesnt make sense without a detail view.
-				/*
 				require_once($AppUI->getSystemClass('CustomFields'));
 				$custom_fields = New CustomFields($m, $a, $obj->file_id, "edit");
 				$custom_fields->printHTML();
-				*/
 			?>
 			</td>
+		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Upload File'); ?>:</td>
 			<td align="left"><input type="File" class="button" name="formfile" style="width:270px" /></td>
