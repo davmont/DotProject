@@ -17,7 +17,7 @@
 	$q = new DBQuery();
 	$q -> addTable('users');
 	$q -> addQuery('user_signature');
-	$q -> addWhere("user_id = '" . (int)$AppUI->user_id . "'");
+	$q -> addWhere("user_id = '".$AppUI->user_id."'");
 	$signature = $q -> loadResult();
 	
 	if($signature != ""){
