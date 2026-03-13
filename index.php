@@ -242,17 +242,9 @@ if ($u && file_exists(DP_BASE_DIR . '/modules/' . $m . '/' . $u . '/' . $u . '.c
 // do some db work if dosql is set
 // TODO - MUST MOVE THESE INTO THE MODULE DIRECTORY
 if (isset($_REQUEST['dosql'])) {
-	$dosql = $_REQUEST['dosql'];
-	if (preg_match('/^[a-zA-Z0-9_-]+$/', $dosql)) {
-		$dosql_file = DP_BASE_DIR . '/modules/' . $m . '/' . ($u ? ($u . '/') : '') . $dosql . '.php';
-		if (file_exists($dosql_file)) {
-			require($dosql_file);
-		} else {
-			$AppUI->setMsg('dosql file not found', UI_MSG_ERROR);
-		}
-	} else {
-		$AppUI->setMsg('Invalid dosql payload', UI_MSG_ERROR);
-	}
+	//require('./dosql/' . $_REQUEST['dosql'] . '.php');
+	require(DP_BASE_DIR . '/modules/' . $m . '/' . ($u ? ($u . '/') : '')
+		. $AppUI->checkFileName($_REQUEST['dosql']) . '.php');
 }
 
 // start output proper

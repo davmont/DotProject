@@ -28,11 +28,17 @@
 	if (isset( $_GET['user_id'] )) {
 	//if (isset( $AppUI->user_id )) {
 	
-		$sql = "SELECT user_contact FROM users WHERE user_id = " . (int)$_GET['user_id'];
-		$contact_id = db_loadResult( $sql );
-		$sql = "SELECT contact_company FROM contacts WHERE contact_id = " . (int)$contact_id;
-		//print $sql;
-		$company_id = db_loadResult( $sql );
+		$q = new DBQuery;
+		$q->addTable('users');
+		$q->addQuery('user_contact');
+		$q->addWhere("user_id = " . (int)$_GET['user_id']);
+		$contact_id = $q->loadResult();
+
+		$q = new DBQuery;
+		$q->addTable('contacts');
+		$q->addQuery('contact_company');
+		$q->addWhere("contact_id = " . (int)$contact_id);
+		$company_id = $q->loadResult();
 		//print $company_id.":".getDenyRead( "companies", $company_id );
 		//Comment out the 3 lines below to skip the company check
     if(getDenyRead( "companies", $company_id )){

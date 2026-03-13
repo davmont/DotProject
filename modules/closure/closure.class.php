@@ -39,7 +39,7 @@ class CClosure extends CDpObject {
 		return $result;
 	}
 	
-		function store($updateNulls = false) {
+		function store() {
 		$this->dPTrimAll();
 
 		$msg = $this->check();
@@ -67,33 +67,15 @@ class CClosure extends CDpObject {
 		}
 	}
 	
-	function canDelete( &$msg, $oid=null, $joins=null ) {
+	function canDelete( &$msg, $oid=null ) {
+		// TODO: check if user permissions are considered when deleting a project
 		global $AppUI;
 		$perms =& $AppUI->acl();
 
-		$id = $oid ? (int)$oid : (int)$this->pma_id;
-
-		if (!$perms->checkModuleItem('closure', 'delete', $id)) {
-			$msg = $AppUI->_('noDeletePermission');
-			return false;
-		}
-
-		$q = new DBQuery;
-		$q->addTable('post_mortem_analysis', 'pma');
-		$q->addQuery('p1.project_id');
-		$q->addJoin('projects', 'p1', 'p1.project_name = pma.project_name');
-		$q->addWhere("pma.pma_id = " . $id);
-		$project_id = $q->loadResult();
-
-		if ($project_id && !$perms->checkModuleItem('projects', 'edit', $project_id)) {
-			$msg = $AppUI->_('noDeletePermission');
-			return false;
-		}
-
-		return true;
+		return $perms->checkModuleItem('closure', 'delete', $oid);
 	}
 
-	function delete($oid = null, $history_desc = '', $history_proj = 0) {
+	function delete($oid = NULL) {
 		$k = $this->_tbl_key;
 		if ($oid) {
 			$this->$k = intval($oid);
@@ -105,11 +87,11 @@ class CClosure extends CDpObject {
 		}
 
 		$this->load($oid);
-		addHistory('post_mortem_analysis', $this->pma_id, 'delete', $this->project_name, $history_proj);
+		addHistory('post_mortem_analysis', $this->pma_id, 'delete', $this->project_name);
 
 		$q = new DBQuery;
 		$q->setDelete('post_mortem_analysis');
-		$q->addWhere('pma_id =' . (int)$this->pma_id);
+		$q->addWhere('pma_id ='.$this->pma_id);
 
 		$result = ((!$q->exec())?db_error():NULL);
 		$q->clear();

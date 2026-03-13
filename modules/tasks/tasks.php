@@ -2,6 +2,7 @@
 if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
+//TODO: Convert Static Queries
 
 global $m, $a, $project_id, $macroproject_id, $f, $min_view, $query_string, $durnTypes;
 global $task_sort_item1, $task_sort_type1, $task_sort_order1;
@@ -350,26 +351,22 @@ if (!empty($all_task_ids)) {
 	$task_id_list = implode(',', $all_task_ids);
 
 	//add information about assigned users into the page output
-	$q = new DBQuery;
-	$q->addQuery('ut.task_id, ut.user_id, u.user_username, contact_email, ut.perc_assignment, '
-		. 'SUM(ut.perc_assignment) AS assign_extent, contact_first_name, contact_last_name');
-	$q->addTable('user_tasks', 'ut');
-	$q->leftJoin('users', 'u', 'u.user_id = ut.user_id');
-	$q->leftJoin('contacts', '', 'u.user_contact = contact_id');
-	$q->addWhere('ut.task_id IN (' . $task_id_list . ')');
-	$q->addGroup('ut.task_id, ut.user_id');
-	$q->addOrder('ut.perc_assignment desc, u.user_username');
+	$ausql = ('SELECT ut.task_id, ut.user_id, u.user_username, contact_email, ut.perc_assignment, '
+		. 'SUM(ut.perc_assignment) AS assign_extent, contact_first_name, contact_last_name '
+		. 'FROM ' . $dbprefix . 'user_tasks ut LEFT JOIN ' . $dbprefix . 'users u ON u.user_id = ut.user_id '
+		. 'LEFT JOIN ' . $dbprefix . 'contacts ON u.user_contact = contact_id '
+		. 'WHERE ut.task_id IN (' . $task_id_list . ') GROUP BY ut.task_id, ut.user_id '
+		. 'ORDER BY ut.perc_assignment desc, u.user_username');
 
-	$paurc = $q->exec();
+	$paurc = db_exec($ausql);
+	$nnums = db_num_rows($paurc);
 	echo db_error();
 
 	$task_users_map = array();
-	if ($paurc) {
-		while ($u_row = db_fetch_assoc($paurc)) {
-			$task_users_map[$u_row['task_id']][] = $u_row;
-		}
+	for ($xx = 0; $xx < $nnums; $xx++) {
+		$u_row = db_fetch_assoc($paurc);
+		$task_users_map[$u_row['task_id']][] = $u_row;
 	}
-	$q->clear();
 
 	// Assign users to tasks
 	foreach ($projects as $k => &$p) {
