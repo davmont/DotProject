@@ -164,7 +164,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		$sql .= " earning_date='" . $_POST["earning_date"] . "',";
 		$sql .= " earning_num='" . $_POST["earning_num"] . "',";
 		$sql .= " earning_submit_contact='" . $_POST["earning_submit_contact"] . "',";
-		$sql .= " earning_submit_company_id='" . $_POST["earning_submit_company_id"] . "',";
+		$sql .= " earning_submit_company_id='" . (int)$_POST["earning_submit_company_id"] . "',";
 		$sql .= " earning_submit_email='" . $_POST["earning_submit_email"] . "',";
 		$sql .= " earning_terms='" . $_POST["earning_terms"] . "',";
 		$sql .= " earning_comments='" . addslashes($_POST["earning_comments"]) . "',";
@@ -172,12 +172,11 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		if ( strcmp($_POST["earning_submit_address1"], "") == 0 ) {
 			// The earning address override hasn't been used so let's fill it in automatically
 			// Gather Company Details
-			$sql2="SELECT companies.* FROM companies WHERE company_id='" . (int)$_POST["earning_submit_company_id"] . "';";
-			$crc= db_exec( $sql2 );
-			echo db_error();
-			while ($row = db_fetch_assoc($crc)) {
-				$company_records[$row["task_log_id"]] = $row;
-			}
+			$q = new DBQuery();
+			$q->addTable('companies');
+			$q->addQuery('companies.*');
+			$q->addWhere("company_id = " . (int)$_POST["earning_submit_company_id"]);
+			$company_records = array("" => $q->loadHash());
 			$sql .= " earning_submit_address1='" . $company_records[""]["company_address1"] . "',";
 			$sql .= " earning_submit_address2='" . $company_records[""]["company_address2"] . "',";
 			$sql .= " earning_submit_city='" . $company_records[""]["company_city"] . "',";
@@ -215,7 +214,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		$sql .= "'" .$_POST["earning_date"] . "',";
 		$sql .= "'" . $_POST["earning_num"] . "',";
 		$sql .= "'" . $_POST["earning_submit_contact"] . "',";
-		$sql .= "'" . $_POST["earning_submit_company_id"] . "',";
+		$sql .= "'" . (int)$_POST["earning_submit_company_id"] . "',";
 		$sql .= "'" . $_POST["earning_submit_email"] . "',";
 		$sql .= "'" . $_POST["earning_terms"] . "',";
 		$sql .= "'" . addslashes($_POST["earning_comments"]) . "',";
@@ -223,12 +222,11 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		if ( strcmp($_POST["earning_submit_address1"], "") == 0 ) {
 			// The earning address override hasn't been used so let's fill it in automatically
 			// Gather Company Details
-			$sql2="SELECT companies.* FROM companies WHERE company_id='" . (int)$_POST["earning_submit_company_id"] . "';";
-			$crc= db_exec( $sql2 );
-			echo db_error();
-			while ($row = db_fetch_assoc($crc)) {
-				$company_records[$row["task_log_id"]] = $row;
-			}
+			$q = new DBQuery();
+			$q->addTable('companies');
+			$q->addQuery('companies.*');
+			$q->addWhere("company_id = " . (int)$_POST["earning_submit_company_id"]);
+			$company_records = array("" => $q->loadHash());
 			$sql .= "'" . $company_records[""]["company_address1"] . "',";
 			$sql .= "'" . $company_records[""]["company_address2"] . "',";
 			$sql .= "'" . $company_records[""]["company_city"] . "',";
