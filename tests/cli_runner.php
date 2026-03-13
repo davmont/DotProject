@@ -27,6 +27,7 @@ foreach ($testFiles as $file) {
     }
 }
 
+echo "Running all tests...\n";
 $result = new TextTestResult();
 $suite->run($result);
 $result->report();
