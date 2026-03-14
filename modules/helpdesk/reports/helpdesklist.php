@@ -166,31 +166,10 @@ if ($do_report) {
 	}
 	echo "</tr>";
 
-	$q2 = new DBQuery;
-	$q2->addTable('sysvals');
-	$q2->addQuery('sysval_value');
-	$q2->addWhere("sysval_title = 'HelpDeskStatus'");
-	$status_raw = $q2->loadResult();
-	$sysval_status = array();
-	foreach (explode("\n", $status_raw) as $line) {
-		$parts = explode('|', $line);
-		if (count($parts) >= 2) {
-			$sysval_status[trim($parts[0])] = trim($parts[1]);
-		}
-	}
-
-	$q3 = new DBQuery;
-	$q3->addTable('sysvals');
-	$q3->addQuery('sysval_value');
-	$q3->addWhere("sysval_title = 'HelpDeskPriority'");
-	$priority_raw = $q3->loadResult();
-	$sysval_priority = array();
-	foreach (explode("\n", $priority_raw) as $line) {
-		$parts = explode('|', $line);
-		if (count($parts) >= 2) {
-			$sysval_priority[trim($parts[0])] = trim($parts[1]);
-		}
-	}
+	$sysval_status = dPgetSysVal('HelpDeskStatus');
+	$sysval_priority = dPgetSysVal('HelpDeskPriority');
+	$q2 = null;
+	$q3 = null;
 
 	while ($Tasks = db_fetch_assoc($Task_List)){
 		if ($project_id>0) {
