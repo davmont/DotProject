@@ -203,8 +203,13 @@ function setCalendar( uts, fdate ) {
 	$task_ids = array();
 
 	if (count($log_ids) > 0) {
-		$purposes_sql = 'SELECT * FROM mileage_log_purpose WHERE mileage_log_id IN (' . implode(',', $log_ids) . ')';
-		$all_purposes_list = db_loadList($purposes_sql);
+		$q = new DBQuery;
+		$q->addTable('mileage_log_purpose');
+		$q->addQuery('*');
+		$q->addWhere('mileage_log_id IN (' . implode(',', $log_ids) . ')');
+		$all_purposes_list = $q->loadList();
+		$q->clear();
+
 		if (!is_array($all_purposes_list)) $all_purposes_list = array();
 		foreach ($all_purposes_list as $purpose) {
 			$all_purposes[$purpose['mileage_log_id']][] = $purpose;
@@ -218,14 +223,22 @@ function setCalendar( uts, fdate ) {
 
 	$helpdesk_desc = array();
 	if (count($helpdesk_ids) > 0) {
-		$helpdesk_sql = "SELECT item_id, CONCAT_WS(' :: ', item_title, item_summary) FROM helpdesk_items WHERE item_id IN (" . implode(',', array_unique($helpdesk_ids)) . ")";
-		$helpdesk_desc = db_loadHashList($helpdesk_sql);
+		$q = new DBQuery;
+		$q->addTable('helpdesk_items');
+		$q->addQuery("item_id, CONCAT_WS(' :: ', item_title, item_summary)");
+		$q->addWhere('item_id IN (' . implode(',', array_unique($helpdesk_ids)) . ')');
+		$helpdesk_desc = $q->loadHashList();
+		$q->clear();
 	}
 
 	$task_desc = array();
 	if (count($task_ids) > 0) {
-		$task_sql = "SELECT task_id, CONCAT_WS(' :: ', task_name, task_description) FROM tasks WHERE task_id IN (" . implode(',', array_unique($task_ids)) . ")";
-		$task_desc = db_loadHashList($task_sql);
+		$q = new DBQuery;
+		$q->addTable('tasks');
+		$q->addQuery("task_id, CONCAT_WS(' :: ', task_name, task_description)");
+		$q->addWhere('task_id IN (' . implode(',', array_unique($task_ids)) . ')');
+		$task_desc = $q->loadHashList();
+		$q->clear();
 	}
 
 	$date = $start_day->format("%Y-%m-%d")." 12:00:00";
