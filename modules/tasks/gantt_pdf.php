@@ -1155,7 +1155,7 @@ $show_gantt = 1;
 //			$ypos -= round ( 1.5*$pdf->getFontHeight(12) , 2 ) ;
 //			$pdf->ezSetY( $ypos );
 
-//			
+//
 //			$pdf->addText($xpos, $ypos, 10, $AppUI->_('Dynamic Task', UI_OUTPUT_RAW));
 //			$pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/task_dynamic.png', 0, 58, 'none', 'center');
 //			$pdf->addText($xpos, $ypos, 10, $AppUI->_('Task (planned)', UI_OUTPUT_RAW));
@@ -1189,7 +1189,7 @@ $show_gantt = 1;
 //				'7' => 'Dynamic Task',
 //				'8' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
 //			);
-//			
+//
 //			$gantt_key_milestone = array (
 //				'1' => 'Task (planned): ',
 //				'1' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_completed.png', 0, 12, 'none', 'center'),
@@ -1199,7 +1199,7 @@ $show_gantt = 1;
 //				'1' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
 //				'1' => 'Dynamic Task',
 //				'1' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
-//			
+//
 //				'1' => 'Milestone(planned): ',
 //				'2' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_completed.png', 0, 12, 'none', 'center'),
 //				'3' => 'Milestone (completed) : ',
@@ -1208,10 +1208,10 @@ $show_gantt = 1;
 //				'6' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
 //				'7' => 'Milestone (overdue)',
 //				'8' => $pdf->ezImage(DP_BASE_DIR . '/modules/tasks/images/milestone_in_progress.png', 0, 12, 'none', 'center'),
-//									
+//
 //			);
 //			$gantt_key_options = array (
-//				'showLines' => 1, // 1 show borders, 0: no borders, 2: show borders and lines between rows 
+//				'showLines' => 1, // 1 show borders, 0: no borders, 2: show borders and lines between rows
 //				'showHeadings' => 0, // 1: show, 0: hide
 //				'shaded' => 0, // 0: no shading, 1: alternate line shading, 2: both sets are shaded
 ////				'shadeCol' => (0.8,0.8,0.8), //(r,g,b) define the color of shading
@@ -1222,8 +1222,8 @@ $show_gantt = 1;
 //				'rowGap' => 2, //the space between the text and the lines at each row
 //				'colGap' => 5 //the space between the text and the column lines in each column
 ////				'lineCol' => (r,g,b), //colour of the lines, default black
-////				'xPos' => 
-//				
+////				'xPos' =>
+//
 //			);
 			
 			$pdf->ezStartPageNumbers( 802 , 30 , 10 ,'left','Page {PAGENUM} of {TOTALPAGENUM}') ;
@@ -1244,7 +1244,7 @@ $show_gantt = 1;
 //					$pdf->selectFont( "$font_dir/Helvetica.afm" );
 //					$pdf->ezTable($gantt_key, $gantt_key_milestone, 'Gantt Chart Key');
 			}
-			
+
 //			Might bring some of this functionality back
 
 			// Create project_header for the current project
@@ -1255,23 +1255,23 @@ $show_gantt = 1;
 //				$pdf->ezSetY( $ypos - 2*$pdf->getFontHeight(15) );
 //				$pdf->closeObject($project_header);
 //				$pdf->addObject($project_header, 'all');
-				
+
 //				$pdf->selectFont( "$font_dir/Helvetica.afm" );
 //				$pdf->ezText( "" );
 //				$xpos=round( $pdf->ez['leftMargin'], 2 );
-				
+
 //				print $gf;
 //				die;
 				//$pdf->ezImage( $gf, 0, 757, 'width'); // No pad, width = 750, resize = 'width' (will go to next page if image height > remaining page space)
 //				$gpdfkey=DP_BASE_DIR. '/modules/tasks/images/gantt_pdf_key.png';
 //				print "<pre>" . $gpdfkey . "</pre>";
 //				print "<pre>" . $gf . "</pre>";
-				
+
 //				die;
 //				$pdf->ezImage( $gpdfkey, 0, 853, 'none', 'center');
 //				foreach ( $ganttfile as $gf )
 
-			
+
 // End of project display
 //			$pdf->stopObject($project_header);
 		// Create document body and pdf temp file
@@ -1299,11 +1299,10 @@ $show_gantt = 1;
 			<?php 
 
 		} else {
-			//TODO: create error handler for permission problems
-			
-			echo "Could not open file to save PDF.  ";
-			if (!is_writable( $temp_dir ))
-				echo "The files/temp directory is not writable.  Check your file system permissions.";
+			$AppUI->setMsg("Could not open file to save PDF.", UI_MSG_ERROR);
+			if (!is_writable( $temp_dir )) {
+				$AppUI->setMsg("The files/temp directory is not writable.  Check your file system permissions.", UI_MSG_ERROR, true);
+			}
 		}
 
 		$_POST['printpdf'] = '0';

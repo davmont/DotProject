@@ -91,22 +91,15 @@ class CMacroProject extends CDpObject {
 	}
 	
 	// overload canDelete
-	function canDelete(&$msg, $oid=null) {
-		// TODO: check if user permissions are considered when deleting a project
+	function canDelete(&$msg, $oid = null, $joins = null) {
 		global $AppUI;
 		
-		return getPermission('macroprojects', 'delete', $oid); //modification effectu�e dans include/permission et classes/permissions
+		if (!getPermission('macroprojects', 'delete', $oid)) {
+			$msg = $AppUI->_('noDeletePermission');
+			return false;
+		}
 		
-		// NOTE: I uncommented the dependencies check since it is
-		// very anoying having to delete all tasks before being able
-		// to delete a project.
-		
-		/*
-		$tables[] = array('label' => 'Tasks', 'name' => 'tasks', 'idfield' => 'task_id', 
-		                  'joinfield' => 'task_project');
-		// call the parent class method to assign the oid
-		return CDpObject::canDelete($msg, $oid, $tables);
-		*/
+		return true;
 	}
 	
 	function delete() {

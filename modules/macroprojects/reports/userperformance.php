@@ -95,7 +95,7 @@ if ($do_report) {
 	$working_hours = $dPconfig['daily_working_hours'];
 
 	$sql = ('SELECT t.task_id, round(t.task_duration * IF(t.task_duration_type = 24, ' 
-			. $working_hours . ', t.task_duration_type)/count(ut.task_id),2) as hours_allocated' 
+			. $working_hours . ', t.task_duration_type),2) as hours_allocated'
 			. ' FROM tasks as t, user_tasks as ut' 
 			. " WHERE t.task_id = ut.task_id AND t.task_milestone = '0'");
 	
@@ -103,7 +103,7 @@ if ($do_report) {
 	$q->addTable('tasks', 't');
 	$q->addTable('user_tasks', 'ut');
 	$q->addQuery('t.task_id, round(t.task_duration * IF(t.task_duration_type = 24, ' 
-			. $working_hours . ', t.task_duration_type)/count(ut.task_id),2) as hours_allocated' );
+			. $working_hours . ', t.task_duration_type),2) as hours_allocated' );
 	$q->addWhere("t.task_id = ut.task_id AND t.task_milestone = '0'");
 	if ($macroproject_id != 0) {
 		$q->addWhere(makeWhereClauseEachProjectOfAMacroProject($macroproject_id, 'task_project ='));
@@ -134,20 +134,22 @@ if ($do_report) {
 		$sum_total_hours_allocated = $sum_total_hours_worked = 0;
 		$sum_hours_allocated_complete = $sum_hours_worked_complete = 0;
 	
-//TODO: Split times for which more than one users were working...	
 		$q = new DBQuery;
 		foreach ($user_list as $user_id => $user) {
 			$q->clear();
 			$q->addTable('user_tasks');
-			$q->addQuery('task_id');
+			$q->addQuery('task_id, perc_assignment');
 			$q->addWhere('user_id = ' . (int)$user_id);
-			$tasks_id = $q->loadColumn();
+			$tasks_id = $q->loadHashList();
 
 			$total_hours_allocated = $total_hours_worked = 0;
 			$hours_allocated_complete = $hours_worked_complete = 0;
 			
-			foreach ($tasks_id as $task_id) {
+			foreach ($tasks_id as $task_id => $perc_assignment) {
 				if (isset($task_list[$task_id])) {
+					// Calculate proportional allocation based on assignment percentage
+					$hours_allocated = $task_list[$task_id]['hours_allocated'] * ($perc_assignment / 100);
+
 					// Now let's figure out how many time did the user spent in this task
 					$q->clear();
 					$q->addTable('task_log');
@@ -166,11 +168,11 @@ if ($do_report) {
 					$complete = ($percent[0] == 100);
                     
 					if ($complete) {
-						$hours_allocated_complete += $task_list[$task_id]['hours_allocated'];
+						$hours_allocated_complete += $hours_allocated;
 						$hours_worked_complete += $hours_worked;
 					}
 					
-					$total_hours_allocated += $task_list[$task_id]['hours_allocated'];
+					$total_hours_allocated += $hours_allocated;
 					$total_hours_worked    += $hours_worked;
 				}
 			}

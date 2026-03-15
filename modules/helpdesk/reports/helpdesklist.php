@@ -200,22 +200,12 @@ if ($do_report) {
 	foreach ($filtered_task_list as $Tasks) {
 		$start_date = new CDate( $Tasks['item_created'] );
 		$end_date = new CDate( $Tasks['item_created'] );
-		$q2 = new DBQuery;
-		$q2->addQuery("TRIM(SUBSTRING_INDEX(SUBSTRING(sysval_value, LOCATE('".$Tasks['item_status']
-						 . "|', sysval_value) + 2), '\\n', 1)) item_status_desc");
-		$q2->addTable('sysvals');
-		$q2->addWhere("sysval_title = 'HelpDeskStatus'");
-		$Log_Status_Query = $q2->exec();
-		$Log_Status = db_fetch_assoc($Log_Status_Query);
 
-		if ( (substr($Log_Status['item_status_desc'], 0, 6) != 'Closed') || ($show_closed_items) ) {
-			$q3 = new DBQuery;
-			$q3->addQuery("TRIM(SUBSTRING_INDEX(SUBSTRING(sysval_value, LOCATE('".$Tasks['item_status']
-							 . "|', sysval_value) + 2), '\\n', 1)) item_priority_desc");
-			$q3->addTable('sysvals');
-			$q3->addWhere("sysval_title = 'HelpDeskPriority'");
-			$Log_Priority_Query = $q3->exec();
-			$Log_Priority = db_fetch_assoc($Log_Priority_Query);
+		$Log_Status_desc = isset($sysval_status[$Tasks['item_status']]) ? $sysval_status[$Tasks['item_status']] : '';
+
+		if ( (substr($Log_Status_desc, 0, 6) != 'Closed') || ($show_closed_items) ) {
+
+			$Log_Priority_desc = isset($sysval_priority[$Tasks['item_status']]) ? $sysval_priority[$Tasks['item_status']] : '';
 
 			$str =  "<tr valign=\"top\">";
 			$str .= "<td align=\"right\">".$Tasks['item_id']."</td>";
@@ -225,8 +215,8 @@ if ($do_report) {
 			$str .= "<td align=\"center\">".$Tasks['item_title']."</td>";
 			$str .= "<td align=\"center\">".$Tasks['item_summary']."</td>";
 			$str .= "<td align=\"center\">".$Tasks['assigned_to']."</td>";
-			$str .= "<td align=\"center\">".$Log_Status['item_status_desc']."</td>";
-			$str .= "<td align=\"center\">".$Log_Priority['item_priority_desc']."</td>";
+			$str .= "<td align=\"center\">".$Log_Status_desc."</td>";
+			$str .= "<td align=\"center\">".$Log_Priority_desc."</td>";
 			$str .= "</tr>";
 			echo $str;
 
@@ -237,8 +227,8 @@ if ($do_report) {
 				$Tasks['item_title'],
 				$Tasks['item_summary'],
 				$Tasks['assigned_to'],
-				$Log_Status['item_status_desc'],
-				$Log_Priority['item_priority_desc'],
+				$Log_Status_desc,
+				$Log_Priority_desc,
 			);
 
 			$Row_Count = 1;
