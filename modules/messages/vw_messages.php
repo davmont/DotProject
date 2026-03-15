@@ -11,7 +11,7 @@
 		$q -> addWhere("t.task_status = '-1'");
 	}
 	else if ($show_sent_messages){
-		$q -> addWhere("t.task_owner = '".$AppUI->user_id."'");	
+		$q -> addWhere("t.task_owner = '".$AppUI->user_id."'");
 	}
 	else{
 		$q -> addWhere("t.task_status = '0'");
