@@ -153,9 +153,10 @@ foreach ($role_acls as $acl) {
 	$buf = '';
 	$permission = $perms->get_acl($acl);
 
+	$style = $permission['allow'] ? ' style="background-color:#ccffcc;"' : ' style="background-color:#ffcccc;"';
 	// Module information.
 	if (is_array($permission)) {
-		$buf .= "<td>";
+		$buf .= "<td $style>";
 		$modlist = array();
 		$itemlist = array();
 		if (is_array($permission['axo_groups'])) {
