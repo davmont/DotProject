@@ -94,6 +94,23 @@ $sql = $q->prepareSelect();
 // pass the query to the database, please consider always using the (still poor) database abstraction layer
 $opps = db_loadList( $sql );		// retrieve a list (in form of an indexed array) of opportunities quotes via an abstract db method
 
+// pre-fetch project counts to avoid N+1 queries
+$opp_ids = array();
+foreach ($opps as $row) {
+	if ($row['opportunity_status'] == "2") {
+		$opp_ids[] = (int)$row['opportunity_id'];
+	}
+}
+$project_counts = array();
+if (count($opp_ids) > 0) {
+	$q = new DBQuery();
+	$q->addTable('opportunities_projects');
+	$q->addQuery('opportunity_project_opportunities, COUNT(opportunity_project_id) AS project_count');
+	$q->addWhere('opportunity_project_opportunities IN (' . implode(',', $opp_ids) . ')');
+	$q->addGroup('opportunity_project_opportunities');
+	$project_counts = $q->loadHashList('opportunity_project_opportunities');
+}
+
 // add/show now gradually the opportunities quotes
 
 foreach ($opps as $row) {		//parse the array of opportunities quotes
@@ -138,7 +155,7 @@ if ( $row['opportunity_status'] != "2" ) continue;  // Status == 2 == Analysis
 
 	<td><center>
 	<?php
-	echo $r = db_loadResult('SELECT count(opportunity_project_opportunities) FROM '.dPgetConfig('dbprefix', '').'opportunities_projects WHERE opportunity_project_opportunities='.$row["opportunity_id"]);		// finally show the opportunities quote stored in the indexed array
+	echo (int)@$project_counts[$row["opportunity_id"]]['project_count'];
 	?>
 	</center></td>
 	<td >
