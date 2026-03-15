@@ -17,14 +17,14 @@
 	$tf = $AppUI->getPref('TIMEFORMAT');
 
 	if (isset( $_GET['user_id'] )) {
-		$sql = "SELECT user_company FROM users WHERE user_id = ".$_GET['user_id'] ;
+		$sql = "SELECT user_company FROM users WHERE user_id = " . (int)$_GET['user_id'];
 		$company_id = db_loadResult( $sql );
 		if(getDenyRead( "companies", $company_id )){
 			$AppUI->redirect( "m=public&a=access_denied" );
 		}
-		$AppUI->setState( 'MileageLogSelectedUser', $_GET['user_id'] );
+		$AppUI->setState( 'MileageLogSelectedUser', (int)$_GET['user_id'] );
 	}
-	$user_id = $AppUI->getState( 'MileageLogSelectedUser' ) ? $AppUI->getState( 'MileageLogSelectedUser' ) : $AppUI->user_id;
+	$user_id = $AppUI->getState( 'MileageLogSelectedUser' ) ? (int)$AppUI->getState( 'MileageLogSelectedUser' ) : $AppUI->user_id;
 
 	if (isset( $_GET['interval'] )) {
 		$AppUI->setState( 'MileageLogInterval', $_GET['interval'] );
