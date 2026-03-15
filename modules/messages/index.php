@@ -60,7 +60,7 @@
 		if(is_null($error_message)){
 			$q = new DBQuery();
 			$q -> setDelete('user_tasks');
-			$q -> addWhere("task_id ='$new_message->task_id'");
+			$q -> addWhere("task_id ='" . (int)$new_message->task_id . "'");
 			$q -> exec();			
 			
 			$q -> clear();
@@ -74,7 +74,7 @@
 			$q -> addTable('users','u');
 			$q -> addQuery('c.contact_email');
 			$q -> addWhere('u.user_contact = c.contact_id');
-			$q -> addWhere("u.user_id = '".$_POST["recipient_user_id"]."'");
+			$q -> addWhere("u.user_id = '" . (int)$_POST["recipient_user_id"] . "'");
 			$recipient_email = $q -> loadResult();
 			
 			if(dPgetParam($_POST, "send_email", "") != "" && $recipient_email != ""){
@@ -116,8 +116,8 @@
 		$q = new DBQuery();
 		$q -> addTable('user_tasks');
 		$q -> addQuery('count(user_id)');
-		$q -> addWhere("task_id = '".$view_message->task_id."'");
-		$q -> addWhere("user_id = '".$AppUI->user_id."'");
+		$q -> addWhere("task_id = '" . (int)$view_message->task_id . "'");
+		$q -> addWhere("user_id = '" . (int)$AppUI->user_id . "'");
 		
 		$user_present_in_recipients = $q -> loadResult();
 	
@@ -183,8 +183,8 @@
 		$q = new DBQuery();
 		$q -> addTable('user_tasks');
 		$q -> addQuery('count(user_id)');
-		$q -> addWhere("task_id = '".$_GET["reply_to_message_id"]."'");
-		$q -> addWhere("user_id = '".$AppUI->user_id."'");
+		$q -> addWhere("task_id = '" . (int)$_GET["reply_to_message_id"] . "'");
+		$q -> addWhere("user_id = '" . (int)$AppUI->user_id . "'");
 		$user_present_in_recipients = $q -> loadResult();
 		if($user_present_in_recipients){
 			$message_tab = COMPOSE_MESSAGE_TAB;
