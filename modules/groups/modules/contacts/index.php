@@ -13,7 +13,7 @@ $group_id = $AppUI->getState('ContactIdxGroup') !== NULL ? $AppUI->getState('Con
 if ($group_id == NULL) {
 	$sql = "
 SELECT group_id from groups 
-WHERE group_company = $AppUI->user_company
+WHERE group_company = " . (int)$AppUI->user_company . "
 LIMIT 1
 ";
 	$group_id = db_loadResult($sql);
@@ -28,13 +28,14 @@ if (isset($_GET['where'])) {
 if (isset($_GET["search_string"])) {
 	$AppUI->setState('ContIdxWhere', "%" . $_GET['search_string']);
 	// Added the first % in order to find instrings also
-	$additional_filter = "OR contact_first_name like '%{$_GET['search_string']}%'
-	                      OR contact_last_name  like '%{$_GET['search_string']}%'
-						  OR contact_company    like '%{$_GET['search_string']}%'
-						  OR contact_notes      like '%{$_GET['search_string']}%'
-						  OR contact_email      like '%{$_GET['search_string']}%'";
+	$search_string = db_escape($_GET['search_string']);
+	$additional_filter = "OR contact_first_name like '%$search_string%'
+	                      OR contact_last_name  like '%$search_string%'
+						  OR contact_company    like '%$search_string%'
+						  OR contact_notes      like '%$search_string%'
+						  OR contact_email      like '%$search_string%'";
 }
-$where = $AppUI->getState('ContIdxWhere') ? $AppUI->getState('ContIdxWhere') : '%';
+$where = $AppUI->getState('ContIdxWhere') ? db_escape($AppUI->getState('ContIdxWhere')) : '%';
 
 $orderby = 'contact_order_by';
 
@@ -44,7 +45,7 @@ $sql = "
 SELECT DISTINCT UPPER(SUBSTRING($orderby,1,1)) as L
 FROM contacts
 WHERE contact_private=0
-	OR (contact_private=1 AND contact_owner=$AppUI->user_id)
+	OR (contact_private=1 AND contact_owner=" . (int)$AppUI->user_id . ")
 	OR contact_owner IS NULL OR contact_owner = 0
 ";
 $arr = db_loadList($sql);
@@ -70,10 +71,10 @@ FROM contacts
 LEFT JOIN groups_contacts ON groups_contacts.contact_id = contacts.contact_id
 WHERE (contact_order_by LIKE '$where%' $additional_filter)
 	AND (contact_private=0
-		OR (contact_private=1 AND contact_owner=$AppUI->user_id)
+		OR (contact_private=1 AND contact_owner=" . (int)$AppUI->user_id . ")
 		OR contact_owner IS NULL OR contact_owner = 0
 	)
-        AND groups_contacts.group_id = $group_id
+        AND groups_contacts.group_id = " . (int)$group_id . "
 GROUP BY contacts.contact_id
 ORDER BY $orderby
 ";
@@ -118,7 +119,7 @@ $tdw = floor(100 / $carrWidth);
 $default_search_string = substr($AppUI->getState('ContIdxWhere'), 1, strlen($AppUI->getState('ContIdxWhere')));
 
 $form = "<form action='./index.php' method='get'>" . $AppUI->_('Search for') . "
-           <input type='text' name='search_string' value='$default_search_string' />
+           <input type='text' name='search_string' value='" . dPformSafe($default_search_string) . "' />
 		   <input type='hidden' name='m' value='contacts' />
 		   <input type='submit' value='>' />
 		   <a href='./index.php?m=contacts&amp;search_string='>" . $AppUI->_('Reset search') . "</a>
