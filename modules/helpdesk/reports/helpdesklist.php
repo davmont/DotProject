@@ -146,7 +146,38 @@ if ($do_report) {
 		$q->addWhere('implode(" AND ", $allowedTasks)');
 	}
 	$q->addOrder('hi.item_id');
-	$Task_List = $q->exec();
+	$Task_List = $q->loadList();
+
+	$task_ids = array();
+	$filtered_task_list = array();
+	foreach ($Task_List as $Tasks) {
+		if ($project_id > 0) {
+			if ($Tasks['item_project_id'] != $project_id) {
+				continue;
+			}
+		}
+		$task_ids[] = $Tasks['item_id'];
+		$filtered_task_list[] = $Tasks;
+	}
+
+	// Pre-fetch task logs to eliminate N+1 query
+	$Task_Logs_Grouped = array();
+	if (count($task_ids) > 0) {
+		$q4 = new DBQuery;
+		$q4->addQuery("tl.task_log_help_desk_id, tl.task_log_date, tl.task_log_name, tl.task_log_description, CONCAT(rc.contact_first_name, ' ', rc.contact_last_name) created_by");
+		$q4->addTable('task_log','tl');
+		$q4->addTable('users','ru');
+		$q4->addTable('contacts','rc');
+		$q4->addWhere('tl.task_log_help_desk_id IN (' . implode(',', $task_ids) . ')');
+		$q4->addWhere('ru.user_id = tl.task_log_creator');
+		$q4->addWhere('rc.contact_id = ru.user_contact');
+		$q4->addOrder('tl.task_log_help_desk_id, tl.task_log_id');
+		$logs_result = $q4->loadList();
+		foreach ($logs_result as $log) {
+			$Task_Logs_Grouped[$log['task_log_help_desk_id']][] = $log;
+		}
+		$q4->clear();
+	}
 
 	$pdfdata = array();
 	$columns = array(
@@ -166,17 +197,7 @@ if ($do_report) {
 	}
 	echo "</tr>";
 
-	$sysval_status = dPgetSysVal('HelpDeskStatus');
-	$sysval_priority = dPgetSysVal('HelpDeskPriority');
-	$q2 = null;
-	$q3 = null;
-
-	while ($Tasks = db_fetch_assoc($Task_List)){
-		if ($project_id>0) {
-			if ($Tasks['item_project_id'] != $project_id) {
-				continue;
-			}
-		}
+	foreach ($filtered_task_list as $Tasks) {
 		$start_date = new CDate( $Tasks['item_created'] );
 		$end_date = new CDate( $Tasks['item_created'] );
 
@@ -210,19 +231,9 @@ if ($do_report) {
 				$Log_Priority_desc,
 			);
 
-			$q4 = new DBQuery;
-			$q4->addQuery("tl.task_log_date, tl.task_log_name, tl.task_log_description, CONCAT(rc.contact_first_name, ' ', rc.contact_last_name) created_by");
-			$q4->addTable('task_log','tl');
-			$q4->addTable('users','ru');
-			$q4->addTable('contacts','rc');
-			$q4->addWhere('tl.task_log_help_desk_id = '.$Tasks['item_id']);
-			$q4->addWhere('ru.user_id = tl.task_log_creator');
-			$q4->addWhere('rc.contact_id = ru.user_contact');
-			$q4->addOrder('tl.task_log_id');
-			$Task_Log_Query = $q4->exec();
-
 			$Row_Count = 1;
-	                while ($Task_Log = db_fetch_assoc($Task_Log_Query)){
+			if (isset($Task_Logs_Grouped[$Tasks['item_id']])) {
+				foreach ($Task_Logs_Grouped[$Tasks['item_id']] as $Task_Log) {
 
 				$log_date = new CDate( $Task_Log['task_log_date'] );
 
@@ -253,6 +264,7 @@ if ($do_report) {
 					"^",
 				);
 				$Row_Count++;
+				}
 			}
 		}
 } // end if do_report
