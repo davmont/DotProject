@@ -94,6 +94,24 @@ $opps = db_loadList( $sql );		// retrieve a list (in form of an indexed array) o
 
 // add/show now gradually the opportunities quotes
 
+// Pre-fetch opportunity project counts to avoid N+1 queries
+$project_counts = array();
+$opp_ids = array();
+foreach ($opps as $row) {
+	if ( $row['opportunity_status'] == "1" ) {
+		$opp_ids[] = (int)$row['opportunity_id'];
+	}
+}
+if (count($opp_ids) > 0) {
+	$q_count = new DBQuery;
+	$q_count->addTable('opportunities_projects');
+	$q_count->addQuery('opportunity_project_opportunities, COUNT(opportunity_project_opportunities) AS opp_count');
+	$q_count->addWhere('opportunity_project_opportunities IN (' . implode(',', $opp_ids) . ')');
+	$q_count->addGroup('opportunity_project_opportunities');
+	$project_counts = $q_count->loadHashList();
+	$q_count->clear();
+}
+
 foreach ($opps as $row) {		//parse the array of opportunities quotes
 if ( $row['opportunity_status'] != "1" ) continue;  // Status == 1 == Open
 ?>
@@ -136,7 +154,7 @@ if ( $row['opportunity_status'] != "1" ) continue;  // Status == 1 == Open
 
 	<td><center>
 	<?php
-	echo $r = db_loadResult('SELECT count(opportunity_project_opportunities) FROM '.dPgetConfig('dbprefix', '').'opportunities_projects WHERE opportunity_project_opportunities='.$row["opportunity_id"]);		// finally show the opportunities quote stored in the indexed array
+	echo $r = isset($project_counts[$row["opportunity_id"]]) ? $project_counts[$row["opportunity_id"]] : 0;		// finally show the opportunities quote stored in the indexed array
 	?>
 	</center></td>
 	<td >
