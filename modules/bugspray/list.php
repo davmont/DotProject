@@ -384,7 +384,7 @@ function sort_header($field, $name) {
 
   if ($orderby == $field) {
     $link .= $orderdesc ? "0" : "1";
-    $arrow .= $orderdesc ? ' <img src="./images/arrow-up.gif" width="11" height="11" alt="" />' : ' <img src="./images/arrow-down.gif" width="11" height="11" alt="" />';
+    $arrow .= $orderdesc ? ' <img src="./images/arrow-up.gif" width="11" height="11" alt="up" />' : ' <img src="./images/arrow-down.gif" width="11" height="11" alt="down" />';
   } else {
     $link .= "0";
   }
