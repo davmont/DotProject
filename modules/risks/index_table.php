@@ -6,15 +6,18 @@ $q->addOrder('risk_id');
 $q->setLimit(100);
 $list1 = $q->loadList();
 if (count($list1) > 0) {
-    $dbprefix = dPgetConfig('dbprefix', '');
     $in_clause = implode(',', array_map('intval', array_column($list1, 'risk_id')));
-    $consulta = "UPDATE {$dbprefix}risks SET risk_priority = CASE
+    $case_statement = "CASE
         WHEN (risk_impact=0) OR (risk_probability=2 AND risk_impact=1) OR (risk_probability=1 AND risk_impact=1) OR (risk_probability=0 AND risk_impact<4) THEN 0
         WHEN (risk_probability=4 AND risk_impact=1) OR (risk_probability=3 AND risk_impact=1) OR (risk_probability=3 AND risk_impact=2) OR (risk_probability=2 AND risk_impact=2) OR (risk_probability=1 AND risk_impact=2) OR (risk_probability=1 AND risk_impact=3) OR (risk_probability=0 AND risk_impact=4) THEN 1
         WHEN (risk_impact=4 AND risk_probability>0) OR (risk_impact=3 AND risk_probability>1) OR (risk_probability=4 AND risk_impact=2) THEN 2
         ELSE risk_priority
-    END WHERE risk_id IN ($in_clause)";
-    $resultado = db_exec($consulta) or die($AppUI->_("LBL_QUERY_FAIL"));
+    END";
+    $q->clear();
+    $q->addTable('risks');
+    $q->addUpdate('risk_priority', $case_statement);
+    $q->addWhere("risk_id IN ($in_clause)");
+    $q->exec() or die($AppUI->_("LBL_QUERY_FAIL"));
 }
 
 $q->clear();
