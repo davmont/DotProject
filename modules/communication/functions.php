@@ -209,10 +209,10 @@ if ($communication_id != 0 && $_GET['rdeli'] != 0) {
  $qdate->addQuery('communication_frequency_hasdate');
  $qdate->addTable('communication_frequency');
 if (isset($_GET['date'])) {
-    $qdate->addWhere('communication_frequency_id = ' .$_GET['date']);
+    $qdate->addWhere('communication_frequency_id = ' . (int)$_GET['date']);
 }
 if($communication_id!=0){
-    $qdate->addWhere('communication_frequency_id = ' .@$obj->communication_frequency_id);
+    $qdate->addWhere('communication_frequency_id = ' . (int)@$obj->communication_frequency_id);
 }
   $qdtres = $qdate->loadList();
    $showdate = $qdtres[0]['communication_frequency_hasdate'] == 'Sim';   
