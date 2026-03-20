@@ -1,152 +1,212 @@
-<?php /* STYLE/DEFAULT $Id: login.php 6050 2010-10-14 21:43:56Z ajdonnison $ */
+<?php
 if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly');
 }
+
+// Fetch some config values
+$company_name = dPgetConfig('company_name', 'dotProject');
+$page_title = dPgetConfig('page_title', 'dotProject');
 ?>
-<!DOCTYPE html
-	PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-	<title><?php echo $dPconfig['page_title']; ?></title>
-	<meta http-equiv="Content-Type"
-		content="text/html;charset=<?php echo isset($locale_char_set) ? $locale_char_set : 'UTF-8'; ?>" />
-	<title><?php echo $dPconfig['company_name']; ?> :: dotProject Login</title>
-	<meta http-equiv="Pragma" content="no-cache" />
-	<meta name="Version" content="<?php echo @$AppUI->getVersion(); ?>" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>
+		<?php echo $page_title; ?> :: Login
+	</title>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
 	<link rel="stylesheet" type="text/css" href="./style/<?php echo $uistyle; ?>/main.css" media="all" />
-	<style type="text/css" media="all">
-		@import "./style/<?php echo $uistyle; ?>/main.css";
-	</style>
 	<link rel="shortcut icon" href="./style/<?php echo $uistyle; ?>/images/favicon.ico" type="image/ico" />
-</head>
-<style type="text/css">
-	body {
-		background-color: #f0f2f5 !important;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		height: 100vh;
-		margin: 0;
-		font-family: Arial, sans-serif;
-	}
+	<style type="text/css">
+		:root {
+			--primary-color: #1976d2;
+			--primary-dark: #115293;
+			--bg-color: #f0f2f5;
+			--card-bg: #ffffff;
+			--text-main: #333333;
+			--text-muted: #666666;
+			--border-color: #dddddd;
+		}
 
-	.login-container {
-		background: #ffffff;
-		padding: 30px 40px;
-		border-radius: 8px;
-		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-		width: 55%;
-		max-width: 600px;
-		min-width: 300px;
-	}
+		body {
+			background-color: var(--bg-color);
+			margin: 0;
+			padding: 0;
+			font-family: 'Roboto', sans-serif;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+		}
 
-	.login-container table {
-		width: 100%;
-	}
+		.login-card {
+			background: var(--card-bg);
+			width: 100%;
+			max-width: 400px;
+			padding: 40px;
+			border-radius: 12px;
+			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+			text-align: center;
+		}
 
-	.login-container th {
-		font-size: 1.25em;
-		padding-bottom: 20px;
-		text-align: center;
-		color: #333;
-	}
+		.login-header h1 {
+			font-size: 24px;
+			font-weight: 500;
+			color: var(--text-main);
+			margin-bottom: 8px;
+		}
 
-	.login-container td {
-		padding: 5px 0;
-		text-align: left;
-	}
+		.login-header p {
+			font-size: 14px;
+			color: var(--text-muted);
+			margin-bottom: 32px;
+		}
 
-	.login-container input.text {
-		width: 100%;
-		padding: 10px;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		box-sizing: border-box;
-		margin-bottom: 10px;
-	}
+		.form-group {
+			margin-bottom: 20px;
+			text-align: left;
+		}
 
-	.login-container .button {
-		background-color: #1976d2;
-		color: #fff;
-		border: none;
-		padding: 10px;
-		border-radius: 4px;
-		cursor: pointer;
-		width: 100%;
-		font-size: 1em;
-		font-weight: bold;
-	}
+		.form-group label {
+			display: block;
+			font-size: 13px;
+			font-weight: 500;
+			color: var(--text-muted);
+			margin-bottom: 6px;
+		}
 
-	.login-container .button:hover {
-		background-color: #115293;
-	}
+		.form-group input {
+			width: 100%;
+			padding: 12px 16px;
+			border: 1px solid var(--border-color);
+			border-radius: 6px;
+			font-size: 15px;
+			font-family: inherit;
+			box-sizing: border-box;
+			transition: border-color 0.2s, box-shadow 0.2s;
+		}
 
-	.login-footer {
-		margin-top: 15px;
-		text-align: center;
-		font-size: 0.9em;
-	}
+		.form-group input:focus {
+			outline: none;
+			border-color: var(--primary-color);
+			box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+		}
 
-	.login-footer a {
-		text-decoration: none;
-		color: #08245b;
-	}
+		.login-btn {
+			width: 100%;
+			padding: 12px;
+			background-color: var(--primary-color);
+			color: white;
+			border: none;
+			border-radius: 6px;
+			font-size: 16px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: background-color 0.2s, transform 0.1s;
+			margin-top: 10px;
+		}
 
-	.login-footer a:hover {
-		text-decoration: underline;
-	}
+		.login-btn:hover {
+			background-color: var(--primary-dark);
+		}
 
-	.system-messages {
-		margin-top: 20px;
-		font-size: 0.85em;
-		color: #666;
-	}
-</style>
+		.login-btn:active {
+			transform: scale(0.98);
+		}
+
+		.login-footer {
+			margin-top: 24px;
+			font-size: 14px;
+		}
+
+		.login-footer a {
+			color: var(--primary-color);
+			text-decoration: none;
+			font-weight: 500;
+		}
+
+		.login-footer a:hover {
+			text-decoration: underline;
+		}
+
+		.system-info {
+			margin-top: 40px;
+			font-size: 12px;
+			color: var(--text-muted);
+		}
+
+		.logo-area {
+			margin-bottom: 24px;
+		}
+
+		.logo-area img {
+			max-height: 50px;
+		}
+	</style>
 </head>
 
 <body onload="document.loginform.username.focus();">
-	<div class="login-container">
+
+	<div class="login-card">
+		<div class="logo-area">
+			<a href="http://www.dotproject.net/">
+				<img src="./style/default/images/dp_icon.gif" alt="dotProject Logo">
+			</a>
+		</div>
+
+		<div class="login-header">
+			<h1>
+				<?php echo $company_name; ?>
+			</h1>
+			<p>Sign in to your account</p>
+		</div>
+
 		<form method="post" action="<?php echo $loginFromPage; ?>" name="loginform">
-			<input type="hidden" name="login" value="<?php echo time(); ?>" />
+			<input type="hidden" name="login" value="login" />
 			<input type="hidden" name="lostpass" value="0" />
 			<input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />
 
-			<table border="0" cellpadding="0" cellspacing="0">
-				<tr>
-					<th colspan="2"><em><?php echo dPgetConfig('company_name'); ?></em></th>
-				</tr>
-				<tr>
-					<td colspan="2"><input type="text" maxlength="255" name="username" class="text"
-							placeholder="<?php echo $AppUI->_('Username'); ?>" /></td>
-				</tr>
-				<tr>
-					<td colspan="2"><input type="password" maxlength="32" name="password" class="text"
-							placeholder="<?php echo $AppUI->_('Password'); ?>" /></td>
-				</tr>
-				<tr>
-					<td align="left" valign="middle" width="50%"><a href="http://www.dotproject.net/"><img
-								src="./style/default/images/dp_icon.gif" border="0" alt="dotProject logo" /></a></td>
-					<td align="right" valign="middle" width="50%"><input type="submit" name="login"
-							value="<?php echo $AppUI->_('login'); ?>" class="button" /></td>
-				</tr>
-			</table>
+			<div class="form-group">
+				<label for="username">
+					<?php echo $AppUI->_('Username'); ?>
+				</label>
+				<input type="text" id="username" name="username" maxlength="255" required>
+			</div>
+
+			<div class="form-group">
+				<label for="password">
+					<?php echo $AppUI->_('Password'); ?>
+				</label>
+				<input type="password" id="password" name="password" maxlength="32" required>
+			</div>
+
+			<button type="submit" name="login" value="login" class="login-btn">
+				<?php echo $AppUI->_('login'); ?>
+			</button>
 		</form>
 
 		<div class="login-footer">
-			<a href="#"
-				onclick="f=document.loginform;f.lostpass.value=1;f.submit();"><?php echo $AppUI->_('forgotPassword'); ?></a>
+			<a href="javascript:void(0);" onclick="document.loginform.lostpass.value=1;document.loginform.submit();">
+				<?php echo $AppUI->_('forgotPassword'); ?>
+			</a>
 		</div>
-	</div>
 
-	<div class="system-messages" align="center">
-		<?php if (@$AppUI->getVersion()) { ?>
-			Version <?php echo @$AppUI->getVersion(); ?><br />
-		<?php } ?>
-		<?php echo dPcheckLoginSystem(); ?>
-		<br />
-		<?php echo "* " . $AppUI->_("You must have cookies enabled in your browser"); ?>
+		<div class="system-info">
+			<?php if (@$AppUI->getVersion()) { ?>
+			Version
+			<?php echo @$AppUI->getVersion(); ?><br />
+			<?php
+}?>
+			<div style="margin-top: 8px;">
+				<?php echo dPcheckLoginSystem(); ?>
+			</div>
+			<p style="font-size: 11px; margin-top: 12px; opacity: 0.7;">
+				*
+				<?php echo $AppUI->_("You must have cookies enabled in your browser"); ?>
+			</p>
+		</div>
 	</div>
 
 </body>
