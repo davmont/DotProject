@@ -298,7 +298,10 @@ function process_dependencies($i, $visited = array())
 
 			log_info(" - '" . $tasks[$index]["task_name"] . ($tasks[$index]["fixed"] ? " (FIXED)" : "") . "'");
 
-			// TODO: Detect dependencies loops (A->B, B->C, C->A)
+			if (in_array($tasks[$index]["task_id"], $visited)) {
+				log_error("Circular dependency detected: Task " . $tasks[$index]["task_name"] . " depends on itself indirectly.");
+				continue;
+			}
 
 			process_dependencies($index, $visited);
 

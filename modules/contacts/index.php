@@ -172,7 +172,6 @@ if ($canAuthor) {
 		. $AppUI->_('Import vCard') . '</a>');
 }
 $titleBlock->show();
-// TODO: Check to see that the Edit function is separated.
 
 ?>
 <script language="javascript" type="text/javascript">

@@ -93,6 +93,7 @@ if ($report_type) {
 		$type = str_replace('.php', '', $v);
 		$desc_file = $type . '.' . $AppUI->user_locale . '.txt';
 		
+		$desc = array();
 		// Load the description file for the user locale, default to 'en'
 		if (file_exists(DP_BASE_DIR . '/modules/projects/reports/' . $desc_file)) {
 			$desc = file(DP_BASE_DIR . '/modules/projects/reports/' . $desc_file);
@@ -111,7 +112,7 @@ if ($report_type) {
 		      . '&report_type=' . $type . ((isset($desc[2])) ? ('&' . $desc[2]) : '') . '">');
 		echo ((!empty($desc[0])) ? $desc[0] : $v);
 		echo ('</a></td>' . "\n");
-		echo '<td>' . (@$desc[1] ? '- ' . $desc[1] : '') . "</td>\n";
+		echo '<td>' . (!empty($desc[1]) ? '- ' . $desc[1] : '') . "</td>\n";
 		echo "</tr>\n";
 	}
 	echo '</table>';

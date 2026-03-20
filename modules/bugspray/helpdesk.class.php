@@ -75,11 +75,19 @@ class CHelpDeskItem extends CDpObject {
     if ($this->item_id === NULL) {
       return 'Help Desk item id is NULL';
     }
+    if (empty($this->item_title)) {
+      return 'Help Desk item title cannot be blank';
+    }
+    if (empty($this->item_requestor)) {
+      return 'Help Desk item requestor cannot be blank';
+    }
+    if (empty($this->item_summary)) {
+      return 'Help Desk item summary cannot be blank';
+    }
     if (!$this->item_created) { 
       $this->item_created = db_unix2dateTime( time() );
     }
     
-    // TODO More checks
     return NULL;
   }
 
