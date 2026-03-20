@@ -142,13 +142,13 @@ class CProject extends CDpObject
 		$sql = $q->prepare();
 		$q->clear();
 		$tasks_to_delete = db_loadColumn($sql);
-		foreach ($tasks_to_delete as $task_id) {
+		if (count($tasks_to_delete) > 0) {
 			$q->setDelete('user_tasks');
-			$q->addWhere('task_id =' . $task_id);
+			$q->addWhere('task_id IN (' . implode(',', $tasks_to_delete) . ')');
 			$q->exec();
 			$q->clear();
 			$q->setDelete('task_dependencies');
-			$q->addWhere('dependencies_req_task_id =' . $task_id);
+			$q->addWhere('dependencies_req_task_id IN (' . implode(',', $tasks_to_delete) . ')');
 			$q->exec();
 			$q->clear();
 		}
