@@ -87,10 +87,10 @@ $thispage = "?m=$m&amp;a=viewer&amp;forum_id=$forum_id&amp;message_id=$message_i
 		<?php $sort = ($sort == 'asc')?'desc':'asc'; ?>
 		<input type="button" class="button" value="<?php echo $AppUI->_('Sort By Date') . ' (' . $AppUI->_($sort) . ')'; ?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_id=<?php echo $message_id;?>&amp;sort=<?php echo $sort; ?>'" />
 	<?php 
-if ($canEdit && ($AppUI->user_id == $row['forum_moderated'] 
-                 || $AppUI->user_id == $row['message_author'] 
-                 || getPermission('project', 'edit', $forum_info['project_id']) 
-                 || !($forum_info['project_id']))) { 
+if ($canEdit && ($AppUI->user_id == $forum['forum_moderated'] 
+                 || (isset($messages[0]) && $AppUI->user_id == $messages[0]['message_author']) 
+                 || getPermission('project', 'edit', $forum['forum_project']) 
+                 || !($forum['forum_project']))) { 
 ?>
 		<input type="button" class="button" value="<?php echo $AppUI->_('Post Reply');?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_parent=<?php echo $message_id;?>&amp;post_message=1';" />
 		<input type="button" class="button" value="<?php echo $AppUI->_('New Topic');?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_id=0&amp;post_message=1';" />
@@ -278,10 +278,10 @@ if ($viewtype == 'single') {
 	<td align="right">
 		<input type="button" class="button" value="<?php echo $AppUI->_('Sort By Date') . ' (' . $AppUI->_($sort) . ')'; ?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_id=<?php echo $message_id;?>&amp;sort=<?php echo $sort; ?>'" />
 		<?php 
-if ($canEdit && ($AppUI->user_id == $row['forum_moderated'] 
-                 || $AppUI->user_id == $row['message_author'] 
-                 || getPermission('project', 'edit', $forum_info['project_id']) 
-                 || !($forum_info['project_id']))) { 
+if ($canEdit && ($AppUI->user_id == $forum['forum_moderated'] 
+                 || (isset($messages[0]) && $AppUI->user_id == $messages[0]['message_author']) 
+                 || getPermission('project', 'edit', $forum['forum_project']) 
+                 || !($forum['forum_project']))) { 
 ?>
 		<input type="button" class="button" value="<?php echo $AppUI->_('Post Reply');?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_parent=<?php echo $message_id;?>&amp;post_message=1';" />
 		<input type="button" class="button" value="<?php echo $AppUI->_('New Topic');?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_id=0&amp;post_message=1';" />
