@@ -100,8 +100,10 @@ if ($report_type) {
 			
 		} else {
 			$desc_file_en = $type . '.en.txt';
-			if (file_exists(DP_BASE_DIR . '/modules/projects/reports/' . $desc_file_en)) {
+			if (file_exists(DP_BASE_DIR.'/modules/projects/reports/'.$desc_file_en)) {
 				$desc = file(DP_BASE_DIR.'/modules/projects/reports/'.$desc_file_en);
+			} else {
+				$desc = array();
 			}
 		}
 		
