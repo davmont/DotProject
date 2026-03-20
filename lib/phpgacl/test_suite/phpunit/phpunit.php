@@ -29,8 +29,8 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE |
-		E_CORE_ERROR | E_CORE_WARNING);
+// error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE |
+//		E_CORE_ERROR | E_CORE_WARNING);
 
 /*
 interface Test {
@@ -52,7 +52,7 @@ if (phpversion() >= '4') {
     }
 }
 
-class TestException {
+class PHPUnitException {
     /* Emulate a Java exception, sort of... */
   var $message;
   var $type;
@@ -147,7 +147,7 @@ class Assert {
 	  }
       }
       $htmlValue = "<code class=\"$class\">"
-	   . htmlspecialchars($translateValue) . "</code>";
+	   . htmlspecialchars((string)$translateValue) . "</code>";
       if (phpversion() >= '4.0.0') {
 	  if (is_bool($value)) {
 	      $htmlValue = $value ? "<i>true</i>" : "<i>false</i>";
@@ -221,7 +221,8 @@ class TestCase extends Assert /* implements Test */ {
   function runTest() {
     if (phpversion() >= '4') {
 	global $PHPUnit_testRunning;
-	eval('$PHPUnit_testRunning[0] = & $this;');
+	// eval('$PHPUnit_testRunning[0] = & $this;');
+    $PHPUnit_testRunning[0] = $this;
 	// Saved ref to current TestCase, so that the error handler
 	// can access it.  This code won't even parse in PHP3, so we
 	// hide it in an eval.
@@ -264,25 +265,29 @@ class TestCase extends Assert /* implements Test */ {
     //printf("TestCase::fail(%s)<br>\n", ($message) ? $message : '');
     /* JUnit throws AssertionFailedError here.  We just record the
        failure and carry on */
-    $this->fExceptions[] = new TestException($message, 'FAILURE');
+    $this->fExceptions[] = new PHPUnitException($message, 'FAILURE');
   }
 
   function error($message) {
     /* report error that requires correction in the test script
        itself, or (heaven forbid) in this testing infrastructure */
-    $this->fExceptions[] = new TestException($message, 'ERROR');
+    $this->fExceptions[] = new PHPUnitException($message, 'ERROR');
     $this->fResult->stop();	// [does not work]
   }
 
   function failed() {
-      foreach($this->fExceptions as $key => $exception) {
+      // reset($this->fExceptions);
+      // while (list($key, $exception) = each($this->fExceptions)) {
+      foreach ($this->fExceptions as $key => $exception) {
 	  if ($exception->type == 'FAILURE')
 	      return true;
       }
       return false;
   }
   function errored() {
-      foreach($this->fExceptions as $key => $exception) {
+      // reset($this->fExceptions);
+      // while (list($key, $exception) = each($this->fExceptions)) {
+      foreach ($this->fExceptions as $key => $exception) {
 	  if ($exception->type == 'ERROR')
 	      return true;
       }
@@ -298,7 +303,7 @@ class TestCase extends Assert /* implements Test */ {
   }
 
   function runBare() {
-    $this->setup();
+    $this->setUp();
     $this->runTest();
     $this->tearDown();
   }
@@ -331,10 +336,12 @@ class TestSuite /* implements Test */ {
       return;
     $this->fClassname = $classname;
 
-    if (version_compare(phpversion(), '4.0.0', '>=')) {
+    if (floor((float)phpversion()) >= 4) {
       // PHP4 introspection, submitted by Dylan Kuhn
 
       $names = get_class_methods($classname);
+      // while (list($key, $method) = @each($names)) {
+      if (is_array($names)) {
       foreach ($names as $key => $method) {
         if (preg_match('/^test/', $method)) {
           $test = new $classname($method);
@@ -350,6 +357,7 @@ class TestSuite /* implements Test */ {
             $this->addTest($test);
           }
         }
+      }
       }
     }
     else {  // PHP3
@@ -398,7 +406,7 @@ class TestFailure {
   var $fFailedTestName;
   var $fException;
 
-  function __construct($test, $exception) {
+  function __construct(&$test, &$exception) {
     $this->fFailedTestName = $test->name();
     $this->fException = $exception;
   }
@@ -520,6 +528,7 @@ class TextTestResult extends TestResult {
 	    print("<ul>");
 	    foreach ($exceptions as $na => $exception)
 		printf("<li>%s\n", $exception->getMessage());
+        }
 	    print("</ul>");
 	}
 	print("</ol>\n");
@@ -596,6 +605,7 @@ class PrettyTestResult extends TestResult {
       print("<ul>");
       foreach ($exceptions as $na => $exception)
 	printf("<li>%s\n", $exception->getMessage());
+      }
       print("</ul>");
     }
     print("</ol>\n");
