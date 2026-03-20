@@ -17,13 +17,13 @@ $del = dPgetParam( $_POST, 'del', 0 );
 
 // prepare (and translate) the module name ready for the suffix
 if ($del) {
-	$project_id = dPgetParam($_POST, 'pma_id', 0);
+	$pma_id = dPgetParam($_POST, 'pma_id', 0);
 	$canDelete = $obj->canDelete($msg, $pma_id);
 	if (!$canDelete) {
 		$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		$AppUI->redirect();
 	}
-	if (($msg = $obj->delete())) {
+	if (($msg = $obj->delete($pma_id))) {
 		$AppUI->setMsg( $msg, UI_MSG_ERROR );
 		$AppUI->redirect();
 	} else {

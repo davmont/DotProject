@@ -1594,15 +1594,6 @@ if (!defined('_ADODB_LAYER')) {
 	}
 
 	function _Execute($sql,$inputarr=false) {
-		// ExecuteCursor() may send non-string queries (such as arrays),
-		// so we need to ignore those.
-		if( is_string($sql) ) {
-			// Strips keyword used to help generate SELECT COUNT(*) queries
-			// from SQL if it exists.
-			// TODO: obsoleted by #715 - kept for backwards-compatibility
-			$sql = str_replace( '_ADODB_COUNT', '', $sql );
-		}
-
 		if ($this->debug) {
 			global $ADODB_INCLUDED_LIB;
 			if (empty($ADODB_INCLUDED_LIB)) {

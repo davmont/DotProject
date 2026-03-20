@@ -15,4 +15,5 @@
 "Select all"=>"Sélectionner tous",
 "Show empty"=>"Afficher vide",
 "Task Log"=>"Connexion tâche",
-"Total records found"=>"Total d\'enregistrements trouvés",
+"Total records found"=>"Total d\\'enregistrements trouvés",
+

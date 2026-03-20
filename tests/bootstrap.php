@@ -1,19 +1,71 @@
 <?php
 if (!defined('DP_BASE_DIR')) {
-	define('DP_BASE_DIR', realpath(dirname(__FILE__) . '/../'));
+    define('DP_BASE_DIR', realpath(dirname(__FILE__) . '/../'));
 }
 
-if (!function_exists('dprint')) {
-	function dprint($file, $line, $level, $msg) {
-		// No-op for testing
-	}
+// Mock global functions
+$GLOBALS['mock_sysvals'] = array();
+
+function dPgetSysVal($title) {
+    global $mock_sysvals;
+    return isset($mock_sysvals[$title]) ? $mock_sysvals[$title] : array();
 }
 
-if (!function_exists('dPgetConfig')) {
-	function dPgetConfig($name, $default = null) {
-		return $default;
-	}
+function dPformSafe($txt) {
+    if (is_array($txt)) {
+        foreach ($txt as $k => $v) {
+            $txt[$k] = dPformSafe($v);
+        }
+        return $txt;
+    }
+    // Simple mock for testing, real one does more
+    return htmlspecialchars($txt);
 }
 
-require_once DP_BASE_DIR . '/lib/phpgacl/test_suite/phpunit/phpunit.php';
+function arraySelect($arr, $name, $attribs, $selected) {
+    // Basic mock implementation of arraySelect matching main_functions.php logic
+    // keys are values, values are labels
+    $out = "\n" . '<select name="' . $name . '" ' . $attribs . '>';
+    $did_selected = 0;
+    foreach ($arr as $k => $v) {
+        $sel = '';
+        if ($k == $selected && !$did_selected) {
+            $sel = ' selected="selected"';
+            $did_selected = 1;
+        }
+        $out .= "\n\t" . '<option value="' . htmlspecialchars($k) . '"' . $sel . '>' . htmlspecialchars($v) . '</option>';
+    }
+    $out .= "\n</select>\n";
+    return $out;
+}
+
+// Mock DBQuery
+if (!class_exists('DBQuery')) {
+    class DBQuery {
+        var $tables = array();
+        var $query = array();
+        var $where = array();
+
+        function addTable($table) { $this->tables[] = $table; }
+        function addQuery($field) { $this->query[] = $field; }
+        function addWhere($where) { $this->where[] = $where; }
+        function loadResult() { return ''; } // Return empty for now
+        function quote($str) { return "'" . addslashes($str) . "'"; }
+    }
+}
+
+// Mock AppUI
+if (!class_exists('CAppUI')) {
+    class CAppUI {
+        function setMsg($msg) {}
+        function _($txt) { return $txt; }
+        function getLibraryClass($class) {
+            return DP_BASE_DIR . '/lib/' . $class . '.php';
+        }
+        function setBaseLocale() {}
+    }
+}
+if (!isset($GLOBALS['AppUI'])) {
+    $GLOBALS['AppUI'] = new CAppUI();
+}
 ?>

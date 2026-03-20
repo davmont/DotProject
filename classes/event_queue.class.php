@@ -196,13 +196,18 @@ class EventQueue {
 		}
 		$this->delete_list = array();
 
-		foreach ($this->update_list as $fields) {
-			$q->addTable($this->table);
-			$q->addUpdate('queue_repeat_count', $fields['queue_repeat_count']);
-			$q->addUpdate('queue_start', $fields['queue_start']);
-			$q->addWhere('queue_id = ' . $fields['queue_id']);
-			$q->exec();
-			$q->clear();
+		if (count($this->update_list)) {
+			global $db;
+			$db->StartTrans();
+			foreach ($this->update_list as $fields) {
+				$q->addTable($this->table);
+				$q->addUpdate('queue_repeat_count', $fields['queue_repeat_count']);
+				$q->addUpdate('queue_start', $fields['queue_start']);
+				$q->addWhere('queue_id = ' . $fields['queue_id']);
+				$q->exec();
+				$q->clear();
+			}
+			$db->CompleteTrans();
 		}
 		$this->update_list = array();
 	}

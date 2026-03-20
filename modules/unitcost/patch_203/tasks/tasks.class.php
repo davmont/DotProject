@@ -804,7 +804,7 @@ class CTask extends CDpObject {
                 global $AppUI, $locale_char_set, $dPconfig;
 
                 $mail_recipients = array();
-                $q =& new DBQuery;
+                $q = new DBQuery;
                 if (isset($assignees) && $assignees == 'on') {
                         $q->clear();
                         $q->addTable('user_tasks', 'ut');
@@ -956,7 +956,7 @@ class CTask extends CDpObject {
 
                 // filter tasks for not allowed projects
                 $tasks_filter = '';
-                $proj =& new CProject;
+                $proj = new CProject;
                 $task_filter_where = $proj->getAllowedSQL($AppUI->user_id, 'task_project');
                 if (count($task_filter_where))
                   $tasks_filter = ' AND (' . implode(' AND ', $task_filter_where) . ")";

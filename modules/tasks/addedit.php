@@ -257,6 +257,14 @@ var working_days = new Array(<?php echo dPgetConfig('cal_working_days'); ?>);
 var cal_day_start = <?php echo intval(dPgetConfig('cal_day_start')); ?>;
 var cal_day_end = <?php echo intval(dPgetConfig('cal_day_end')); ?>;
 var daily_working_hours = <?php echo intval(dPgetConfig('daily_working_hours')); ?>;
+var projTasksWithEndDates = new Array();
+<?php
+foreach ($projTasksWithEndDates as $key => $val) {
+	if (is_array($val)) {
+		echo "projTasksWithEndDates[$key] = new Array(\"{$val[1]}\", \"{$val[2]}\", \"{$val[3]}\");\n";
+	}
+}
+?>
 function delIt() {
 	if (confirm("<?php echo $AppUI->_('doDelete', UI_OUTPUT_JS).' '.$AppUI->_('Task', UI_OUTPUT_JS).'?';?>")) {
 		document.frmDelete.submit();

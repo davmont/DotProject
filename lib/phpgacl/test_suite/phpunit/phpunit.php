@@ -363,7 +363,6 @@ class TestSuite /* implements Test */ {
     else {  // PHP3
       $dummy = new $classname("dummy");
       $names = (array) $dummy;
-      // while (list($key, $value) = each($names)) {
       foreach ($names as $key => $value) {
         $type = gettype($value);
         if ($type == "user function" && preg_match('/^test/', $key)
@@ -382,8 +381,6 @@ class TestSuite /* implements Test */ {
   function run(&$testResult) {
     /* Run all TestCases and TestSuites comprising this TestSuite,
        accumulating results in the given TestResult object. */
-    // reset($this->fTests);
-    // while (list($na, $test) = each($this->fTests)) {
     foreach ($this->fTests as $na => $test) {
       if ($testResult->shouldStop())
 	break;
@@ -395,8 +392,6 @@ class TestSuite /* implements Test */ {
     /* Number of TestCases comprising this TestSuite (including those
        in any constituent TestSuites) */
     $count = 0;
-    // reset($fTests);
-    // while (list($na, $test_case) = each($this->fTests)) {
     foreach ($this->fTests as $na => $test_case) {
       $count += $test_case->countTestCases();
     }
@@ -465,8 +460,6 @@ class TestResult {
 
     /* this is where JUnit would catch AssertionFailedError */
     $exceptions = $test->getExceptions();
-    // reset($exceptions);
-    // while (list($key, $exception) = each($exceptions)) {
     foreach ($exceptions as $key => $exception) {
 	if ($exception->type == 'ERROR')
 	    $this->addError($test, $exception);
@@ -527,15 +520,13 @@ class TextTestResult extends TestResult {
 	print("<h2>Failures</h2>");
 	print("<ol>\n");
 	$failures = $this->getFailures();
-	// while (list($i, $failure) = each($failures)) {
-    foreach ($failures as $i => $failure) {
+	foreach ($failures as $i => $failure) {
 	    $failedTestName = $failure->getTestName();
 	    printf("<li>%s\n", $failedTestName);
 
 	    $exceptions = $failure->getExceptions();
 	    print("<ul>");
-	    // while (list($na, $exception) = each($exceptions))
-        foreach ($exceptions as $na => $exception) {
+	    foreach ($exceptions as $na => $exception)
 		printf("<li>%s\n", $exception->getMessage());
         }
 	    print("</ul>");
@@ -546,9 +537,7 @@ class TextTestResult extends TestResult {
     if ($nErrors > 0) {
 	print("<h2>Errors</h2>");
 	print("<ol>\n");
-	// reset($this->fErrors);
-	// while (list($i, $error) = each($this->fErrors)) {
-    foreach ($this->fErrors as $i => $error) {
+	foreach ($this->fErrors as $i => $error) {
 	    $erroredTestName = $error->getTestName();
 	    printf("<li>%s\n", $failedTestName);
 
@@ -608,15 +597,13 @@ class PrettyTestResult extends TestResult {
 	echo "<h2>Failure Details</h2>";
     print("<ol>\n");
     $failures = $this->getFailures();
-    // while (list($i, $failure) = each($failures)) {
     foreach ($failures as $i => $failure) {
       $failedTestName = $failure->getTestName();
       printf("<li>%s\n", $failedTestName);
 
       $exceptions = $failure->getExceptions();
       print("<ul>");
-      // while (list($na, $exception) = each($exceptions))
-      foreach ($exceptions as $na => $exception) {
+      foreach ($exceptions as $na => $exception)
 	printf("<li>%s\n", $exception->getMessage());
       }
       print("</ul>");

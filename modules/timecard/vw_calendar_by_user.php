@@ -207,7 +207,7 @@ if ($do_report) {
 		$base_url  = $dPconfig['base_url'];
 		require( $AppUI->getLibraryClass( 'ezpdf/class.ezpdf' ) );
 
-		$pdf =& new Cezpdf();
+		$pdf = new Cezpdf();
 		$pdf->ezSetCmMargins( 1, 1.5, 1.0, 1.0 );
 		$pdf->selectFont( "$font_dir/Helvetica.afm" );
 

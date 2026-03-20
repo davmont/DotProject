@@ -10,9 +10,10 @@
 "Context Help"=>"Trợ giúp ngữ cảnh",
 "General Concepts"=>"Các khái niệm chung",
 "Getting Started"=>"Bắt đầu",
+"helpIntro"=>"Here are some quick links to topics in the help file that not directly accessible directly from the context help.",
+"index"=>"mục lục",
 "Left Navigation"=>"Điều khiển bên trái",
 "Saving Your Place"=>"Lưu thông tin của bạn",
 "Tabbed Property Boxes"=>"Phân trang các hộp chọn thuộc tính",
 "Top Menu"=>"Thực đơn chủ",
-"helpIntro"=>"Here are some quick links to topics in the help file that not directly accessible directly from the context help.",
-"index"=>"mục lục",
+

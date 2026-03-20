@@ -4,3 +4,5 @@
 "classic"=>"The Classic dotProject style",
 "default"=>"Default clean style",
 "demo1"=>"A demo style",
+"dp-grey-theme"=>"Grey Slimline style",
+
