@@ -39,7 +39,7 @@ class CClosure extends CDpObject {
 		return $result;
 	}
 	
-		function store() {
+		function store($updateNulls = false) {
 		$this->dPTrimAll();
 
 		$msg = $this->check();
@@ -103,7 +103,7 @@ class CClosure extends CDpObject {
 		return true;
 	}
 
-	function delete($oid = NULL) {
+	function delete($oid = NULL, $history_desc = '', $history_proj = 0) {
 		$k = $this->_tbl_key;
 		if ($oid) {
 			$this->$k = intval($oid);
