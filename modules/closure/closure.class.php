@@ -22,9 +22,9 @@ class CClosure extends CDpObject {
 		var $improvement_suggestions = null;
 		var $conclusions = null;
 
-  function __construct() {
-    parent::__construct('post_mortem_analysis', 'pma_id');
-  }
+	function __construct() {
+		parent::__construct('post_mortem_analysis', 'pma_id', 'closure');
+	}
   
  	function load($oid=null , $strip = true) {
 		$result = parent::load($oid, $strip);
@@ -67,25 +67,37 @@ class CClosure extends CDpObject {
 		}
 	}
 	
-	function canDelete( &$msg, $oid=null, $joins=null ) {
+	function canDelete(&$msg, $oid = null, $joins = null) {
 		global $AppUI;
-		$perms =& $AppUI->acl();
 
-		if (!$perms->checkModuleItem('closure', 'delete', $oid)) {
-			$msg = $AppUI->_('noDeletePermission');
+		if (!parent::canDelete($msg, $oid, $joins)) {
 			return false;
 		}
 
-		$q = new DBQuery();
-		$q->addTable('post_mortem_analysis', 'pma');
-		$q->addQuery('project_id');
-		$q->addJoin('projects', 'p', 'p.project_name = pma.project_name');
-		$q->addWhere('pma.pma_id = ' . (int)$oid);
-		$project_id = $q->loadResult();
+		if (!$oid) {
+			$oid = $this->pma_id;
+		}
 
-		if ($project_id && !getPermission('projects', 'delete', $project_id)) {
-			$msg = $AppUI->_('noDeletePermission');
-			return false;
+		if ($oid) {
+			$q = new DBQuery();
+			$q->addTable('post_mortem_analysis');
+			$q->addQuery('project_name');
+			$q->addWhere('pma_id = ' . (int)$oid);
+			$project_name = $q->loadResult();
+			$q->clear();
+
+			if ($project_name) {
+				$q->addTable('projects');
+				$q->addQuery('project_id');
+				$q->addWhere('project_name = ?', array($project_name));
+				$project_id = (int)$q->loadResult();
+				$q->clear();
+
+				if ($project_id && !$AppUI->acl()->checkModuleItem('projects', 'edit', $project_id)) {
+					$msg = $AppUI->_('noDeletePermission');
+					return false;
+				}
+			}
 		}
 
 		return true;
