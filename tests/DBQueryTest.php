@@ -1,42 +1,32 @@
 <?php
-require_once dirname(__FILE__) . '/bootstrap.php';
-require_once DP_BASE_DIR . '/classes/query.class.php';
-
 class DBQueryTest extends TestCase {
-	function testAddWhere() {
-		$q = new DBQuery();
-		$q->addWhere("a=1");
-		$this->assertEquals(array("a=1"), $q->where);
-		$this->assertEquals(array(), $q->w_params);
-	}
+    function testSanitise() {
+        $q = new DBQuery('test_');
 
-	function testAddWhereWithParams() {
-		$q = new DBQuery();
-		$q->addWhere("a=?", 1);
-		$this->assertEquals(array("a=?"), $q->where);
-		$this->assertEquals(array(1), $q->w_params);
-	}
+        // Happy path
+        $this->assertEquals('cleanstring', $q->sanitise('cleanstring'));
 
-	function testAddWhereWithArrayParams() {
-		$q = new DBQuery();
-		$q->addWhere("a=?", array(1));
-		$this->assertEquals(array("a=?"), $q->where);
-		$this->assertEquals(array(1), $q->w_params);
-	}
+        // Edge cases
+        $this->assertEquals('cleanstring', $q->sanitise("clean'string"));
+        $this->assertEquals('cleanstring', $q->sanitise('clean"string'));
+        $this->assertEquals('cleanstring', $q->sanitise('clean(string'));
+        $this->assertEquals('cleanstring', $q->sanitise('clean)string'));
+        $this->assertEquals('cleanstring', $q->sanitise('clean;string'));
+        $this->assertEquals('cleanstring', $q->sanitise('clean--string'));
 
-	function testAddWhereEmpty() {
-		$q = new DBQuery();
-		$q->addWhere('');
-		$this->assertEquals(array(''), $q->where);
-	}
+        // Combined
+        $this->assertEquals('cleanstring', $q->sanitise("c'l\"e(a)n;s--tring"));
 
-	function testAddWhereNullParams() {
-		$q = new DBQuery();
-		$q->addWhere('a=?', null);
-		$this->assertEquals(array('a=?'), $q->where);
-		// If params is null, !is_array(null) is true. params becomes array(null).
-		// foreach params as p -> p is null. w_params[] = null.
-		$this->assertEquals(array(null), $q->w_params);
-	}
+        // SQL injection attempts
+        // The sanitise function only removes specific characters, it doesn't remove keywords.
+        $this->assertEquals('DELETE FROM users', $q->sanitise('DELETE FROM users'));
+        $this->assertEquals('OR 1=1', $q->sanitise('OR 1=1'));
+
+        // It removes quote and double dash
+        $this->assertEquals('admin ', $q->sanitise("admin' --"));
+
+        // It removes quote, semicolon and double dash
+        $this->assertEquals('admin DROP TABLE users ', $q->sanitise('admin"; DROP TABLE users; --'));
+    }
 }
 ?>

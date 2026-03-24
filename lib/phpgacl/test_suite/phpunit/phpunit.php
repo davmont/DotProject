@@ -52,7 +52,7 @@ if (phpversion() >= '4') {
     }
 }
 
-class PHPUnitException {
+class PHPUnit_Exception {
     /* Emulate a Java exception, sort of... */
   var $message;
   var $type;
@@ -265,19 +265,17 @@ class TestCase extends Assert /* implements Test */ {
     //printf("TestCase::fail(%s)<br>\n", ($message) ? $message : '');
     /* JUnit throws AssertionFailedError here.  We just record the
        failure and carry on */
-    $this->fExceptions[] = new PHPUnitException($message, 'FAILURE');
+    $this->fExceptions[] = new PHPUnit_Exception($message, 'FAILURE');
   }
 
   function error($message) {
     /* report error that requires correction in the test script
        itself, or (heaven forbid) in this testing infrastructure */
-    $this->fExceptions[] = new PHPUnitException($message, 'ERROR');
+    $this->fExceptions[] = new PHPUnit_Exception($message, 'ERROR');
     $this->fResult->stop();	// [does not work]
   }
 
   function failed() {
-      // reset($this->fExceptions);
-      // while (list($key, $exception) = each($this->fExceptions)) {
       foreach ($this->fExceptions as $key => $exception) {
 	  if ($exception->type == 'FAILURE')
 	      return true;
@@ -285,8 +283,6 @@ class TestCase extends Assert /* implements Test */ {
       return false;
   }
   function errored() {
-      // reset($this->fExceptions);
-      // while (list($key, $exception) = each($this->fExceptions)) {
       foreach ($this->fExceptions as $key => $exception) {
 	  if ($exception->type == 'ERROR')
 	      return true;
@@ -319,6 +315,7 @@ class TestSuite /* implements Test */ {
   function __construct($classname=false) {
     // Find all methods of the given class whose name starts with
     // "test" and add them to the test suite.
+    // print "Looking for tests in $classname\n";
 
     // PHP3: We are just _barely_ able to do this with PHP's limited
     // introspection...  Note that PHP seems to store method names in
@@ -336,13 +333,12 @@ class TestSuite /* implements Test */ {
       return;
     $this->fClassname = $classname;
 
-    if (floor((float)phpversion()) >= 4) {
+    if (version_compare(phpversion(), '4.0.0', '>=')) {
       // PHP4 introspection, submitted by Dylan Kuhn
 
       $names = get_class_methods($classname);
-      // while (list($key, $method) = @each($names)) {
-      if (is_array($names)) {
       foreach ($names as $key => $method) {
+        // print "Checking method: $method\n";
         if (preg_match('/^test/', $method)) {
           $test = new $classname($method);
           if (strcasecmp($method, $classname) == 0 || is_subclass_of($test, $method)) {
@@ -381,7 +377,7 @@ class TestSuite /* implements Test */ {
   function run(&$testResult) {
     /* Run all TestCases and TestSuites comprising this TestSuite,
        accumulating results in the given TestResult object. */
-    foreach ($this->fTests as $na => $test) {
+    foreach ($this->fTests as $test) {
       if ($testResult->shouldStop())
 	break;
       $test->run($testResult);
@@ -392,7 +388,7 @@ class TestSuite /* implements Test */ {
     /* Number of TestCases comprising this TestSuite (including those
        in any constituent TestSuites) */
     $count = 0;
-    foreach ($this->fTests as $na => $test_case) {
+    foreach ($this->fTests as $test_case) {
       $count += $test_case->countTestCases();
     }
     return $count;
@@ -406,7 +402,7 @@ class TestFailure {
   var $fFailedTestName;
   var $fException;
 
-  function __construct(&$test, &$exception) {
+  function __construct($test, $exception) {
     $this->fFailedTestName = $test->name();
     $this->fException = $exception;
   }
