@@ -204,7 +204,7 @@ function doWatchers($list, $hditem) {
 	global $AppUI;
 
 	// Create the watcher list
-	$watcherlist = split(',', $list);
+	$watcherlist = explode(',', $list);
 
 	$q = new DBQuery;
 	$q->addQuery('user_id');

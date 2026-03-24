@@ -93,12 +93,38 @@ class CModule extends CDpObject {
 	
 	function install() {
 		$q = new DBQuery;
-		$q->addQuery('mod_directory');
+		$q->addQuery('mod_directory, mod_id, mod_version, mod_setup_class');
 		$q->addTable('modules');
 		$q->addWhere("mod_directory = '$this->mod_directory'");
-		if ($q->loadHash()) {
+		if ($row = $q->loadHash()) {
 			// the module is already installed
-			// TODO: check for older version - upgrade
+			// check for older version - upgrade
+			if (isset($row['mod_version']) && version_compare($this->mod_version, $row['mod_version'], '>')) {
+				$setup_class = $this->mod_setup_class;
+				if (! $setup_class) {
+					$setup_class = $row['mod_setup_class'];
+				}
+
+				// We need to ensure the setup class is loaded
+				if (! class_exists($setup_class)) {
+					$setup_file = DP_BASE_DIR . '/modules/' . $this->mod_directory . '/setup.php';
+					if (file_exists($setup_file)) {
+						include_once $setup_file;
+					}
+				}
+
+				if (class_exists($setup_class)) {
+					$setup = new $setup_class();
+					if (method_exists($setup, 'upgrade')) {
+						if ($setup->upgrade($row['mod_version'])) {
+							$this->mod_id = $row['mod_id'];
+							$this->store();
+							$GLOBALS['AppUI']->setMsg('Module upgraded', UI_MSG_OK, true);
+							return true;
+						}
+					}
+				}
+			}
 			return false;
 		}
 		$q->clear();

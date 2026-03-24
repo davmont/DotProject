@@ -10,9 +10,10 @@
 "Context Help"=>"Összefüggések súgója",
 "General Concepts"=>"Fõbb fogalmak",
 "Getting Started"=>"Indulás",
+"helpIntro"=>"Itt talál néhány gyors navigációt a súgóhoz.",
+"index"=>"index",
 "Left Navigation"=>"Bal oldali navigázció",
 "Saving Your Place"=>"Helyének elmentése",
 "Tabbed Property Boxes"=>"Fülekre osztott dobozok",
 "Top Menu"=>"Felsõ menü",
-"helpIntro"=>"Itt talál néhány gyors navigációt a súgóhoz.",
-"index"=>"index",
+

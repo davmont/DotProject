@@ -61,6 +61,21 @@ if ($del) {
 	$AppUI->redirect('m=public&a=access_denied');
 }
 
+if (!$isNewUser && $AppUI->user_id == $user_id_aed) {
+	$q = new DBQuery;
+	$q->addTable('users');
+	$q->addQuery('user_password');
+	$q->addWhere("user_id = $user_id_aed");
+	$db_pwd = $q->loadResult();
+	
+	if ($db_pwd != $_POST['user_password']) {
+		if (!isset($_POST['old_password']) || md5($_POST['old_password']) != $db_pwd) {
+			$AppUI->setMsg('Invalid old password', UI_MSG_ERROR, true);
+			$AppUI->redirect();
+		}
+	}
+}
+
 if (($msg = $contact->store())) {
 	$AppUI->setMsg($msg, UI_MSG_ERROR);
 } else {        

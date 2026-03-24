@@ -19,7 +19,7 @@ class Tree {
 	}
 	
 	function &add_child( &$node ) {
-		$new_guy =& new Tree( $node );
+		$new_guy = new Tree( $node );
 			
 		return $this->children[] =& $new_guy;
 	}
@@ -77,7 +77,7 @@ function &make_new_tree() {
 
 function add_task_log( &$tree, &$row, &$hours ) {
 	
-	$leaf =& new TreeLeaf( @$row['task_log_cost_code'], @$row['task_log_summary'], $hours );
+	$leaf = new TreeLeaf( @$row['task_log_cost_code'], @$row['task_log_summary'], $hours );
 	$location_hash = array ( 	COMPANY    => @$row['company_name'],
 								PROJECT    => @$row['project_name'],
 								TASK       => @$row['task_name'],
@@ -115,7 +115,7 @@ function &get_node( &$tree, &$location_hash, &$hours) {
 			}
 		}
 		if ( !$node_exists ) {
-			$new_node =& new TreeNode( 1 + $tree->node->level, $location_hash[1 + $tree->node->level]);
+			$new_node = new TreeNode( 1 + $tree->node->level, $location_hash[1 + $tree->node->level]);
 			
 			$new_node->add_hours( $hours );
 			

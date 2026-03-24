@@ -29,8 +29,8 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE |
-		E_CORE_ERROR | E_CORE_WARNING);
+// error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE |
+//		E_CORE_ERROR | E_CORE_WARNING);
 
 /*
 interface Test {
@@ -118,8 +118,8 @@ class Assert {
 
   function assertEqualsMultilineStrings($string0, $string1,
   $message="") {
-    $lines0 = split("\n",$string0);
-    $lines1 = split("\n",$string1);
+    $lines0 = explode("\n",$string0);
+    $lines1 = explode("\n",$string1);
     if (sizeof($lines0) != sizeof($lines1)) {
       $this->failNotEquals(sizeof($lines0)." line(s)",
                            sizeof($lines1)." line(s)", "expected", $message);
@@ -147,7 +147,7 @@ class Assert {
 	  }
       }
       $htmlValue = "<code class=\"$class\">"
-	   . htmlspecialchars($translateValue) . "</code>";
+	   . htmlspecialchars((string)$translateValue) . "</code>";
       if (phpversion() >= '4.0.0') {
 	  if (is_bool($value)) {
 	      $htmlValue = $value ? "<i>true</i>" : "<i>false</i>";
@@ -221,7 +221,8 @@ class TestCase extends Assert /* implements Test */ {
   function runTest() {
     if (phpversion() >= '4') {
 	global $PHPUnit_testRunning;
-	eval('$PHPUnit_testRunning[0] = & $this;');
+	// eval('$PHPUnit_testRunning[0] = & $this;');
+    $PHPUnit_testRunning[0] = $this;
 	// Saved ref to current TestCase, so that the error handler
 	// can access it.  This code won't even parse in PHP3, so we
 	// hide it in an eval.
@@ -298,7 +299,7 @@ class TestCase extends Assert /* implements Test */ {
   }
 
   function runBare() {
-    $this->setup();
+    $this->setUp();
     $this->runTest();
     $this->tearDown();
   }
@@ -353,11 +354,12 @@ class TestSuite /* implements Test */ {
           }
         }
       }
+      }
     }
     else {  // PHP3
       $dummy = new $classname("dummy");
       $names = (array) $dummy;
-      while (list($key, $value) = each($names)) {
+      foreach ($names as $key => $value) {
         $type = gettype($value);
         if ($type == "user function" && preg_match('/^test/', $key)
         && $key != "testcase") {  
@@ -522,6 +524,7 @@ class TextTestResult extends TestResult {
 	    print("<ul>");
 	    foreach ($exceptions as $na => $exception)
 		printf("<li>%s\n", $exception->getMessage());
+        }
 	    print("</ul>");
 	}
 	print("</ol>\n");
@@ -598,6 +601,7 @@ class PrettyTestResult extends TestResult {
       print("<ul>");
       foreach ($exceptions as $na => $exception)
 	printf("<li>%s\n", $exception->getMessage());
+      }
       print("</ul>");
     }
     print("</ol>\n");
