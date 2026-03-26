@@ -294,11 +294,6 @@ if ($search_text = $AppUI->getState('searchtext')) {
 }
 
 // filter tasks considering task and project permissions
-$projects_filter = '';
-$tasks_filter = '';
-
-// TODO: Enable tasks filtering
-
 $allowedProjects = $project->getAllowedSQL($AppUI->user_id, 'task_project');
 if (count($allowedProjects)) {
 	$where .= ' AND ' . implode(' AND ', $allowedProjects);
@@ -673,7 +668,7 @@ if ($showEditCheckbox) {
 				 ** as it is normally done in array_csort function in order to economise
 				 ** cpu time as we have to go through the array there anyway
 				 */
-				if (is_array($p['tasks'])) {
+				if (isset($p['tasks']) && is_array($p['tasks'])) {
 					foreach ($p['tasks'] as $j => $task_change_end_date) {
 						if ($task_change_end_date['task_end_date'] == '0000-00-00 00:00:00') {
 							$task_change_end_date['task_end_date'] = calcEndByStartAndDuration($task_change_end_date);
@@ -684,7 +679,7 @@ if ($showEditCheckbox) {
 
 			global $tasks_filtered, $children_of;
 			//get list of task ids and set-up array of children
-			if (is_array($p['tasks'])) {
+			if (isset($p['tasks']) && is_array($p['tasks'])) {
 				foreach ($p['tasks'] as $i => $t) {
 					$tasks_filtered[] = $t['task_id'];
 					$children_of[$t['task_parent']] = (($children_of[$t['task_parent']])
@@ -697,8 +692,8 @@ if ($showEditCheckbox) {
 			}
 
 			//start displaying tasks
-			if (is_array($p['tasks'])) {
-				$summaries = array('duration' => 0, 'start_date' => date('Y-m-d'), 'end-date' => '');
+			if (isset($p['tasks']) && is_array($p['tasks'])) {
+				$summaries = array('duration' => 0, 'start_date' => date('Y-m-d'), 'end_date' => '');
 				foreach ($p['tasks'] as $i => $t1) {
 					if ($actualProject != $t1['task_project'] && $macroproject_id) {
 						$actualProject = $t1['task_project'];
@@ -766,6 +761,7 @@ if ($showEditCheckbox) {
 			}
 
 			$df = $AppUI->getPref('SHDATEFORMAT');
+			if (isset($summaries)) {
 			?>
 				<tr>
 					<td colspan="<?php echo $cols - 4 ?>"><?php echo $AppUI->_('Summaries'); ?>: </td>
@@ -777,6 +773,7 @@ if ($showEditCheckbox) {
 					<td></td>
 				</tr>
 				<?php
+			}
 				if ($tnums && $dPconfig['enable_gantt_charts'] && !$min_view) {
 					?>
 					<tr>

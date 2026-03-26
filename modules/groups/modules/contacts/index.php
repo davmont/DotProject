@@ -11,12 +11,12 @@ if (isset($_POST['group_id'])) {
 $group_id = $AppUI->getState('ContactIdxGroup') !== NULL ? $AppUI->getState('ContactIdxGroup') : $AppUI->group_id;
 // selects one group that the user's company is linked to; can be commented out
 if ($group_id == NULL) {
-	$sql = "
-SELECT group_id from groups 
-WHERE group_company = $AppUI->user_company
-LIMIT 1
-";
-	$group_id = db_loadResult($sql);
+	$q = new DBQuery();
+	$q->addTable('groups');
+	$q->addQuery('group_id');
+	$q->addWhere('group_company = ' . (int)$AppUI->user_company);
+	$q->setLimit(1);
+	$group_id = $q->loadResult();
 }
 
 // To configure an aditional filter to use in the search string
@@ -28,26 +28,26 @@ if (isset($_GET['where'])) {
 if (isset($_GET["search_string"])) {
 	$AppUI->setState('ContIdxWhere', "%" . $_GET['search_string']);
 	// Added the first % in order to find instrings also
-	$additional_filter = "OR contact_first_name like '%{$_GET['search_string']}%'
-	                      OR contact_last_name  like '%{$_GET['search_string']}%'
-						  OR contact_company    like '%{$_GET['search_string']}%'
-						  OR contact_notes      like '%{$_GET['search_string']}%'
-						  OR contact_email      like '%{$_GET['search_string']}%'";
+	$search_string = db_escape($_GET['search_string']);
+	$additional_filter = "OR contact_first_name like '%$search_string%'
+	                      OR contact_last_name  like '%$search_string%'
+						  OR contact_company    like '%$search_string%'
+						  OR contact_notes      like '%$search_string%'
+						  OR contact_email      like '%$search_string%'";
 }
-$where = $AppUI->getState('ContIdxWhere') ? $AppUI->getState('ContIdxWhere') : '%';
+$where = $AppUI->getState('ContIdxWhere') ? db_escape($AppUI->getState('ContIdxWhere')) : '%';
 
 $orderby = 'contact_order_by';
 
 // Pull First Letters
 $let = ":";
-$sql = "
-SELECT DISTINCT UPPER(SUBSTRING($orderby,1,1)) as L
-FROM contacts
-WHERE contact_private=0
-	OR (contact_private=1 AND contact_owner=$AppUI->user_id)
-	OR contact_owner IS NULL OR contact_owner = 0
-";
-$arr = db_loadList($sql);
+$q = new DBQuery();
+$q->addTable('contacts');
+$q->addQuery('DISTINCT UPPER(SUBSTRING(' . $orderby . ',1,1)) as L');
+$q->addWhere('contact_private=0
+	OR (contact_private=1 AND contact_owner=' . (int)$AppUI->user_id . ')
+	OR contact_owner IS NULL OR contact_owner = 0');
+$arr = $q->loadList();
 foreach ($arr as $L) {
 	$let .= $L['L'];
 }
@@ -61,28 +61,28 @@ $showfields = array(
 );
 
 // assemble the sql statement
-$sql = "SELECT contacts.contact_id, contact_order_by, ";
+$q = new DBQuery();
+$q->addTable('contacts');
+$q->addQuery('contacts.contact_id, contact_order_by');
 foreach ($showfields as $val) {
-	$sql .= "$val,";
+	$q->addQuery($val);
 }
-$sql .= "contact_first_name, contact_last_name, contact_phone
-FROM contacts
-LEFT JOIN groups_contacts ON groups_contacts.contact_id = contacts.contact_id
-WHERE (contact_order_by LIKE '$where%' $additional_filter)
-	AND (contact_private=0
-		OR (contact_private=1 AND contact_owner=$AppUI->user_id)
+$q->addQuery('contact_first_name, contact_last_name, contact_phone');
+$q->addJoin('groups_contacts', 'gc', 'gc.contact_id = contacts.contact_id');
+$q->addWhere("(contact_order_by LIKE '$where%' $additional_filter)");
+$q->addWhere('(contact_private=0
+		OR (contact_private=1 AND contact_owner=' . (int)$AppUI->user_id . ')
 		OR contact_owner IS NULL OR contact_owner = 0
-	)
-        AND groups_contacts.group_id = $group_id
-GROUP BY contacts.contact_id
-ORDER BY $orderby
-";
+	)');
+$q->addWhere('gc.group_id = ' . (int)$group_id);
+$q->addGroup('contacts.contact_id');
+$q->addOrder($orderby);
 
 $carr[] = array();
 $carrWidth = 4;
 $carrHeight = 4;
 
-$res = db_exec($sql);
+$res = $q->exec();
 $rn = db_num_rows($res);
 
 $t = floor($rn / $carrWidth);
@@ -118,7 +118,7 @@ $tdw = floor(100 / $carrWidth);
 $default_search_string = substr($AppUI->getState('ContIdxWhere'), 1, strlen($AppUI->getState('ContIdxWhere')));
 
 $form = "<form action='./index.php' method='get'>" . $AppUI->_('Search for') . "
-           <input type='text' name='search_string' value='$default_search_string' />
+           <input type='text' name='search_string' value='" . dPformSafe($default_search_string) . "' />
 		   <input type='hidden' name='m' value='contacts' />
 		   <input type='submit' value='>' />
 		   <a href='./index.php?m=contacts&amp;search_string='>" . $AppUI->_('Reset search') . "</a>

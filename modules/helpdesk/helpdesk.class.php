@@ -354,7 +354,7 @@ function notify($type, $log_msg, $email_list=null) {
 	}
 	// Build basic information provided in all notifications
 	if (strcmp($HELPDESK_CONFIG['email_header'],"NONE")<>0) {
-		$body .= $HELPDESK_CONFIG{'email_header'} . "\n";
+		$body .= $HELPDESK_CONFIG['email_header'] . "\n";
 	}
 	$body .= $AppUI->_('Issue')." #{$this->item_id}  -  {$this->item_title} " . "\n";
 	$body .= "-----------------------------------------\n";
@@ -487,7 +487,7 @@ function notify($type, $log_msg, $email_list=null) {
 	$count=0;
 	$status_changes_summary="";
 	foreach($field_event_map as $key => $value){
-	   if (eval("return  (isset(\$this->$value) && (\$hditem->$value != \$this->$value));")) {
+	   if (isset($this->$value) && ($hditem->$value != $this->$value)) {
 		$old = $new = "";
 		$skipnotify = NULL;
 		
@@ -603,7 +603,7 @@ function notify($type, $log_msg, $email_list=null) {
 	              break;
 		}// end of switch
 		// if value has changed, add it to the summary of changes.
-		if(!eval("return \$new == \$old;")){
+		if ($new != $old) {
 			if ($new=='') {$new = ' ';}
 			$last_status_comment = $this->log_status($key, $old, $new);
 			// Added by KP to be able to skip event notifications -

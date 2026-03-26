@@ -8,6 +8,9 @@ $q->addWhere('i.initiating_authorized = 1');
 $q->addOrder('i.initiating_id');
 $q->setLimit(100);
 $list = $q->loadList();
+if (!$list) {
+	$list = array();
+}
 ?>
 
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">

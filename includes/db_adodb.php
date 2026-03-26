@@ -24,6 +24,12 @@ function db_connect($host, $dbname, $user='root', $passwd='', $persist=false) {
 	$ret_val = (($persist) ? $db->PConnect($host, $user, $passwd, $dbname)
 	            : $db->Connect($host, $user, $passwd, $dbname));
 	if (!($ret_val)) {
+		if (defined('DP_INSTALLER')) {
+			if (function_exists('dPmsg')) {
+				dPmsg('FATAL ERROR: Connection to database server failed');
+			}
+			return false;
+		}
 		die('FATAL ERROR: Connection to database server failed');
 	}
 

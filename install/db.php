@@ -14,10 +14,32 @@ define('DP_BASE_DIR', $baseDir);
 <head>
 	<title>dotProject Installer</title>
 	<meta name="Description" content="dotProject Installer" />
- 	<link rel="stylesheet" type="text/css" href="../style/default/main.css" />
+ 	<link rel="stylesheet" type="text/css" href="../style/material/main.css">
+	<style>
+		body { background-color: #f5f5f6; margin: 0; padding: 0; }
+		.installer-header { background-color: #1976d2; color: #fff; padding: 16px 32px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 24px; display: flex; align-items: center; }
+		.installer-header h1 { margin: 0; font-size: 24px; color: #fff; font-weight: 500; display: flex; align-items: center; }
+		.installer-header img { filter: brightness(0) invert(1); margin-right: 16px; height: 32px; }
+		.installer-container { max-width: 1000px; margin: 0 auto; padding: 0 20px 40px 20px; }
+		.card { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 24px; }
+		.card h2 { margin-top: 0; color: #1976d2; font-size: 18px; font-weight: 500; border-bottom: 1px solid #eee; padding-bottom: 12px; margin-bottom: 20px; }
+		table.tbl { margin-top: 0; border: none; box-shadow: none; width: 100%; }
+		table.tbl td { padding: 10px 0; border: none; vertical-align: middle; }
+		table.tbl td.item { width: 30%; color: #555; font-weight: 500; }
+		input.text, select.text { width: 100%; max-width: 400px; }
+		.actions { display: flex; justify-content: space-between; margin-top: 32px; padding-top: 24px; border-top: 1px solid #eee; gap: 10px; flex-wrap: wrap; }
+		.actions-secondary { display: flex; gap: 10px; }
+		.recommendation { font-size: 12px; color: #4caf50; font-weight: 600; margin-bottom: 4px; text-transform: uppercase; }
+	</style>
 </head>
 <body>
-<h1><img src="dp.png" align="middle" alt="dotProject Logo" />&nbsp;dotProject Installer</h1>
+<div class="installer-header">
+	<h1><img src="dp.png" alt="dotProject Logo"/> dotProject Installer</h1>
+</div>
+
+<div class="installer-container">
+	<div class="card">
+		<h2>Database Configuration</h2>
 <?php
 if ($_POST['mode'] == 'upgrade') {
 	@include_once '../includes/config.php';
@@ -25,7 +47,7 @@ if ($_POST['mode'] == 'upgrade') {
 	require_once 'check_upgrade.php';
 	@include_once "../includes/config.php";
 	if (dPcheckExistingDB($dPconfig)) {
-		die('dotProject appears to already be installed, aborting install.');
+		die('<div class="error-box">dotProject appears to already be installed, aborting install.</div>');
 	}
 } else {
 	@include_once "../includes/config-dist.php";
@@ -33,93 +55,71 @@ if ($_POST['mode'] == 'upgrade') {
 ?>
 <form name="instFrm" action="do_install_db.php" method="post">
 <input type="hidden" name="mode" value="<?php echo htmlspecialchars($_POST['mode'], ENT_QUOTES); ?>" />
-<table cellspacing="0" cellpadding="3" border="0" class="tbl" width="100%" align="center">
+<table cellspacing="0" cellpadding="0" border="0" class="tbl">
 	<tr>
-		<td class="title" colspan="2">Database Settings</td>
-	</tr>
-	<tr>
-		<td class="item">Database Server Type <span class="warning">Note - currently only MySQL is known to work correctly</span></td>
+		<td class="item">Database Server Type</td>
 		<td align="left">
-		<select name="dbtype" size="1" style="width:200px;" class="text">
-<?php
-	if (strstr('WIN', strtoupper(PHP_OS)) !== false):
-?>
-			<option value="access" <?php if("access"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>MS Access</option>
-			<option value="ado" <?php if("ado"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>Generic ADO</option>
-			<option value="ado_access" <?php if("ado_access"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>ADO to MS Access Backend</option>
-			<option value="ado_mssql" <?php if("ado_mssql"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>ADO to MS SQL Server</option>
-
-			<option value="vfp" <?php if("vfp"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>MS Visual FoxPro</option>
-			<option value="fbsql" <?php if("fbsql"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>FrontBase</option>
-<?php
-endif;
-?>
-			<option value="mysqli" <?php if("mysql"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>MySQL - Recommended</option>
-						
+		<select name="dbtype" size="1" class="text">
+			<option value="mysqli" <?php if("mysqli"== $dPconfig['dbtype'] || "mysql" == $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>MySQL/MariaDB - Recommended</option>
 			<option value="mysqlt" <?php if("mysqlt"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>MySQL With Transactions</option>
-			<option value="maxsql" <?php if("maxsql"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>MySQL MaxDB</option>
-			
-			<option value="postgres" <?php if("postgres"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>Generic PostgreSQL</option>
-			<option value="postgres64" <?php if("postgres64"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>PostreSQL 6.4 and earlier</option>
-			<option value="postgres7" <?php if("postgres7"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>PostgreSQL 7</option>
-			<option value="postgres8" <?php if("postgres8"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>PostgreSQL 8</option>
-			<option value="postgres9" <?php if("postgres9"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>PostgreSQL 9</option>
-			
-			</select>
+			<option value="postgres" <?php if("postgres"== $dPconfig['dbtype']){ ?>selected="selected"<?php } ?>>PostgreSQL</option>
+		</select>
+		<div style="font-size: 11px; color: #d32f2f; margin-top: 4px;">Note: MariaDB is fully supported via the mysqli driver.</div>
 		</td>
 	</tr>
 	<tr>
 		<td class="item">Database Host Name</td>
-		<td align="left"><input class="button" type="text" name="dbhost" value="<?php echo htmlspecialchars($dPconfig['dbhost'], ENT_QUOTES); ?>" title="The Name of the Host the Database Server is installed on" /></td>
+		<td align="left"><input class="text" type="text" name="dbhost" value="<?php echo htmlspecialchars($dPconfig['dbhost'], ENT_QUOTES); ?>" /></td>
 	</tr>
 	<tr>
 		<td class="item">Database Name</td>
-		<td align="left"><input class="button" type="text" name="dbname" value="<?php echo htmlspecialchars($dPconfig['dbname'], ENT_QUOTES); ?>" title="The Name of the Database dotProject will use and/or install" /></td>
+		<td align="left"><input class="text" type="text" name="dbname" value="<?php echo htmlspecialchars($dPconfig['dbname'], ENT_QUOTES); ?>" /></td>
 	</tr>
 	<tr>
 		<td class="item">Database Prefix</td>
-		<td align="left"><input class="button" type="text" name="dbprefix" value="<?php echo htmlspecialchars($dPconfig['dbprefix'], ENT_QUOTES); ?>" title="The Prefix for the tables dotProject will use and/or install" /></td>
+		<td align="left"><input class="text" type="text" name="dbprefix" value="<?php echo htmlspecialchars($dPconfig['dbprefix'], ENT_QUOTES); ?>" /></td>
 	</tr>
 	<tr>
 		<td class="item">Database User Name</td>
-		<td align="left"><input class="button" type="text" name="dbuser" value="<?php echo htmlspecialchars($dPconfig['dbuser'], ENT_QUOTES); ?>" title="The Database User that dotProject uses for Database Connection" /></td>
+		<td align="left"><input class="text" type="text" name="dbuser" value="<?php echo htmlspecialchars($dPconfig['dbuser'], ENT_QUOTES); ?>" /></td>
 	</tr>
 	<tr>
 		<td class="item">Database User Password</td>
-		<td align="left"><input class="button" type="password" name="dbpass" value="<?php echo htmlspecialchars($dPconfig['dbpass'], ENT_QUOTES); ?>" title="The Password according to the above User." /></td>
+		<td align="left"><input class="text" type="password" name="dbpass" value="<?php echo htmlspecialchars($dPconfig['dbpass'], ENT_QUOTES); ?>" /></td>
 	</tr>
 	<tr>
 		<td class="item">Use Persistent Connection?</td>
-		<td align="left"><input type="checkbox" name="dbpersist" value="1" <?php echo ($dPconfig['dbpersist']==true) ? 'checked="checked"' : ''; ?> title="Use a persistent Connection to your Database Server." /></td>
+		<td align="left"><input type="checkbox" name="dbpersist" value="1" <?php echo ($dPconfig['dbpersist']==true) ? 'checked="checked"' : ''; ?> /> <span class="item" style="font-size: 12px; color: #666;">(Recommended for high-performance setups)</span></td>
 	</tr>
 <?php if ($_POST['mode'] == 'install'): ?>
 	<tr>
 		<td class="item">Drop Existing Database?</td>
-		<td align="left"><input type="checkbox" name="dbdrop" value="1" title="Deletes an existing Database before installing a new one. This deletes all data in the given database. Data cannot be restored." /><span class="item"> If checked, existing Data will be lost!</span></td>
+		<td align="left"><input type="checkbox" name="dbdrop" value="1" /> <span class="warning" style="font-size: 12px;">Caution: If checked, all existing data in this database will be lost!</span></td>
 	</tr>
 <?php endif; ?>
-	</tr>
-	<tr>
-		<td class="title" colspan="2">&nbsp;</td>
-	</tr>
-	<tr>
-		<td class="title" colspan="2">Download existing Data (Recommended)</td>
-	</tr>
-	<tr>
-		<td class="item" colspan="2">Download a XML Schema File containing all Tables for the database entered above
-		by clicking on the Button labeled 'Download XML' below. This file can be used with the Backup module to restore a previous system. Depending on database size and system environment this process can take some time.
-		<br/>PLEASE CHECK THE RECEIVED FILE IMMEDIATELY FOR CONTENT AND CONSISTENCY AS ERROR MESSAGES ARE PRINTED INTO THIS FILE.<br/><br /><b>THIS FILE CAN ONLY BE RESTORED WITH A WORKING DOTPROJECT 2.x SYSTEM WITH THE BACKUP MODULE INSTALLED. DO NOT RELY ON THIS AS YOUR ONLY BACKUP.</b></td>
-	</tr>
-	<tr>
-		<td class="item">Receive XML Backup Schema File</td>
-		<td align="left"><input class="button" type="submit" name="dobackup" value="Download XML" title="Click here to retrieve a XML file containing your data that can be stored on your local system." /></td>
-	</tr>
-	<tr>
-		<td align="left"><br /><input class="button" type="submit" name="do_db" value="<?php echo htmlspecialchars($_POST['mode'], ENT_QUOTES); ?> db only" title="Try to set up the database with the given information." />
-		&nbsp;<input class="button" type="submit" name="do_cfg" value="write config file only" title="Write a config file with the details only." /></td>
-		<td align="right" class="item"><br />(Recommended) &nbsp;<input class="button" type="submit" name="do_db_cfg" value="<?php echo htmlspecialchars($_POST['mode'], ENT_QUOTES); ?> db & write cfg" title="Write config file and setup the database with the given information." /></td>
-	</tr>
 </table>
+</div> <!-- End Database Config Card -->
+
+<div class="card">
+	<h2>Data Backup</h2>
+	<p style="font-size: 13px; color: #666; margin-bottom: 20px;">We recommend downloading an XML Schema of your existing database before performing an upgrade or a clean install over an existing one.</p>
+	<div style="display: flex; align-items: center; gap: 16px;">
+		<input class="button" style="background-color: #607d8b;" type="submit" name="dobackup" value="Download XML Backup" />
+		<span style="font-size: 12px; color: #999;">Only restorable with the dotProject Backup module.</span>
+	</div>
+</div>
+
+<div class="actions">
+	<div class="actions-secondary">
+		<input class="button" style="background-color: #666;" type="submit" name="do_db" value="<?php echo htmlspecialchars($_POST['mode'], ENT_QUOTES); ?> Database Only" />
+		<input class="button" style="background-color: #666;" type="submit" name="do_cfg" value="Write Config Only" />
+	</div>
+	<div style="text-align: right;">
+		<div class="recommendation">Recommended</div>
+		<input class="button" type="submit" name="do_db_cfg" value="<?php echo htmlspecialchars($_POST['mode'], ENT_QUOTES); ?> & Write Config" />
+	</div>
+</div>
+</div> <!-- End Container -->
 </form>
 </body>
 </html>

@@ -167,6 +167,8 @@ if ($task_id > 0) {
 
 if ($canEdit) {
 	//$titleBlock->addCrumb("?m=tasks&amp;a=addedit&amp;task_id=$task_id", 'edit this task');
+	$canDelete = $task_id ? getPermission($m, 'delete', $task_id) : false;
+	$msg = '';
 	if ($canDelete) {
 	$titleBlock->addCrumbDelete('delete task', $canDelete, $msg);
 	}

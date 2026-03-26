@@ -34,43 +34,61 @@ $mode = dPcheckUpgrade();
 <head>
 	<title>dotProject Installer</title>
 	<meta name="Description" content="dotProject Installer">
- 	<link rel="stylesheet" type="text/css" href="../style/default/main.css">
+ 	<link rel="stylesheet" type="text/css" href="../style/material/main.css">
+	<style>
+		body { background-color: #f5f5f6; margin: 0; padding: 0; }
+		.installer-header { background-color: #1976d2; color: #fff; padding: 16px 32px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 24px; display: flex; align-items: center; }
+		.installer-header h1 { margin: 0; font-size: 24px; color: #fff; font-weight: 500; display: flex; align-items: center; }
+		.installer-header img { filter: brightness(0) invert(1); margin-right: 16px; height: 32px; }
+		.installer-container { max-width: 1000px; margin: 0 auto; padding: 0 20px 40px 20px; }
+		.welcome-card { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 24px; }
+		.welcome-card h2 { margin-top: 0; color: #1976d2; font-size: 18px; font-weight: 500; }
+		.welcome-card p { color: #555; line-height: 1.6; }
+		table.tbl { margin-top: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; border: none; }
+		table.tbl td.title { background-color: #f5f5f5; color: #1976d2; font-weight: 600; padding: 16px; border-bottom: 1px solid #e0e0e0; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; }
+		table.tbl td { padding: 12px 16px; border-bottom: 1px solid #e0e0e0; }
+		table.tbl tr:last-child td { border-bottom: none; }
+		.btn-container { text-align: center; margin: 24px 0; }
+		.error-box { background-color: #ffebee; border-left: 4px solid #d32f2f; padding: 16px; color: #c62828; margin-bottom: 20px; border-radius: 4px; }
+		li { list-style: none; position: relative; padding-left: 20px; }
+		li::before { content: '•'; position: absolute; left: 0; color: #1976d2; font-weight: bold; }
+	</style>
 </head>
 <body>
-<h1><img src="dp.png" align="middle" alt="dotProject Logo"/>&nbsp;dotProject Installer</h1>
-<table cellspacing="0" cellpadding="3" border="0" class="tbl" width="90%" align="center">
-<tr>
-        <td class="item" colspan="2">Welcome to the dotProject Installer! It will setup the database for dotProject and create an appropriate config file.
-	In some cases a manual installation cannot be avoided.
-        </td>
-</tr>
-<tr>
-        <td colspan="2">&nbsp;</td>
-</tr>
-<tr>
-        <td class="title" colspan="2">There is an initial Check for (minimal) Requirements appended down below for troubleshooting. At least a database connection
-	must be available and ../includes/config.php must be writable for the webserver!</td>
-</tr>
-<?php
-	if ($mode == 'upgrade') {
-?>
-<tr>
-	<td class='title' colspan='2'><p class='error'>It would appear that you already have a dotProject installation. The installer will attempt to upgrade your system, however it is a good idea to take a full backup first!</p></td>
-<?php
-	}
-?>
-<tr>
-        <td colspan="2" align="center"><br /><form action="db.php" method="post" name="form" id="form">
-	<input class="button" type="submit" name="next" value="Start <?php echo $mode == 'install' ? "Installation" : "Upgrade" ?>" />
-	<input type="hidden" name="mode" value="<?php echo $mode; ?>" /></form></td>
-</tr>
-</table>
-<br />
+<div class="installer-header">
+	<h1><img src="dp.png" alt="dotProject Logo"/> dotProject Installer</h1>
+</div>
+
+<div class="installer-container">
+	<div class="welcome-card">
+		<h2>Welcome</h2>
+		<p>Welcome to the dotProject Installer! This wizard will guide you through setting up the database and creating the appropriate configuration files. In some cases, a manual installation step may be necessary.</p>
+		
+		<div style="background-color: #e3f2fd; border-left: 4px solid #1976d2; padding: 16px; margin: 20px 0; border-radius: 4px;">
+			<p style="margin: 0; font-weight: 500; color: #0d47a1;">Requirements Check</p>
+			<p style="margin: 8px 0 0 0; font-size: 13px; color: #1565c0;">Please review the compatibility checks below. A database connection and a writable <code>./includes/config.php</code> are essential for a successful setup.</p>
+		</div>
+
+		<?php if ($mode == 'upgrade') { ?>
+			<div class="error-box">
+				<strong>Note:</strong> It appears an existing dotProject installation was detected. The installer will attempt to upgrade your system. <em>We strongly recommend taking a full database backup before proceeding!</em>
+			</div>
+		<?php } ?>
+
+		<div class="btn-container">
+			<form action="db.php" method="post" name="form" id="form">
+				<input class="button" type="submit" name="next" value="Start <?php echo $mode == 'install' ? "Installation" : "Upgrade" ?>" />
+				<input type="hidden" name="mode" value="<?php echo $mode; ?>" />
+			</form>
+		</div>
+	</div>
+
+	<div style="margin-top: 32px;">
 <?php
 // define some necessary variables for check inclusion
-$failedImg = '<img src="../images/icons/stock_cancel-16.png" width="16" height="16" align="middle" alt="Failed"/>';
-$okImg = '<img src="../images/icons/stock_ok-16.png" width="16" height="16" align="middle" alt="OK"/>';
-$tblwidth = '90%';
+$failedImg = '<span class="error" style="font-size: 1.3em; margin-right: 4px;">✖</span>';
+$okImg = '<span class="ok" style="font-size: 1.3em; margin-right: 4px;">✔</span>';
+$tblwidth = '100%';
 $cfgDir = '../includes';
 $cfgFile = '../includes/config.php';
 $filesDir = '../files';
@@ -78,5 +96,7 @@ $locEnDir = '../locales/en';
 $tmpDir = '../files/temp';
 include_once('vw_idx_check.php');
 ?>
+	</div>
+</div>
 </body>
 </html>
