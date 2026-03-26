@@ -15,6 +15,7 @@
 	{
 		var $dproot;
 		var $db;
+		var $prefix;
 
 
 		function connect()
@@ -22,6 +23,7 @@
 			global $dPconfig;
 			$this->db = NewADOConnection($dPconfig['dbtype']);
 			$this->db->NConnect($dPconfig['dbhost'], $dPconfig['dbuser'], $dPconfig['dbpass'], $dPconfig['dbname']);
+			$this->prefix = $dPconfig['dbprefix'];
 		}
 		
 		function getName()
@@ -35,7 +37,7 @@
 
 	    	function usesSupportLevels()
 	    	{
-			$rs = $this->db->Execute("SELECT * FROM eventum_integration_config WHERE config_name = 'eventum_supplvl_enabled'");
+			$rs = $this->db->Execute("SELECT * FROM {$this->prefix}eventum_integration_config WHERE config_name = 'eventum_supplvl_enabled'");
 			if ($rs && $row = $rs->FetchRow())
 			  return $row["config_value"];
 			else
@@ -45,7 +47,7 @@
 		function getSupportLevelID($cust_id)
 		{
 			// return support level id of supplied customer
-			$sql = "SELECT * FROM companies_contracts WHERE company_id = '$cust_id'";
+			$sql = "SELECT * FROM {$this->prefix}companies_contracts WHERE company_id = '$cust_id'";
 			$rs = $this->db->Execute($sql);
 	
 			if ($rs && $row = $rs->FetchRow())
@@ -62,7 +64,7 @@
 
 			foreach($support_level_id as $lvl)
 			{
-				$sql = "SELECT * FROM companies_contracts WHERE support_level = '$lvl'";
+				$sql = "SELECT * FROM {$this->prefix}companies_contracts WHERE support_level = '$lvl'";
 				$rs = $this->db->Execute($sql);
 				for ($rs; $row = $rs->FetchRow();)
 				{
@@ -76,7 +78,7 @@
 		{
 			$support_levels = Array();
 
-			$sql = "SELECT * FROM companies_support_levels";
+			$sql = "SELECT * FROM {$this->prefix}companies_support_levels";
 			$rs = $this->db->Execute($sql);
 			for ($rs; $row = $rs->FetchRow();)
 			{
@@ -94,7 +96,7 @@
 
 		function getMinimumResponseTime($customer_id)
 		{
-			$sql = "SELECT support_minresponse_hrs FROM companies_contracts LEFT JOIN companies_support_levels ON companies_contracts.support_level = companies_support_levels.support_level_id WHERE companies_contracts.company_id = '$customer_id'";
+			$sql = "SELECT support_minresponse_hrs FROM {$this->prefix}companies_contracts LEFT JOIN {$this->prefix}companies_support_levels ON {$this->prefix}companies_contracts.support_level = {$this->prefix}companies_support_levels.support_level_id WHERE {$this->prefix}companies_contracts.company_id = '$customer_id'";
 			$rs = $this->db->Execute($sql);
 			$row = $rs->FetchRow();
 			$response_seconds = intval($row["support_minresponse_hrs"]) * 60 * 60;
@@ -103,7 +105,7 @@
 
 		function getMaximumFirstResponseTime($customer_id)
 		{
-			$sql = "SELECT support_maxresponse_hrs FROM companies_contracts LEFT JOIN companies_support_levels ON companies_contracts.support_level = companies_support_levels.support_level_id WHERE companies_contracts.company_id = '$customer_id'";
+			$sql = "SELECT support_maxresponse_hrs FROM {$this->prefix}companies_contracts LEFT JOIN {$this->prefix}companies_support_levels ON {$this->prefix}companies_contracts.support_level = {$this->prefix}companies_support_levels.support_level_id WHERE {$this->prefix}companies_contracts.company_id = '$customer_id'";
 			$rs = $this->db->Execute($sql);
 			//echo $this->db->ErrorMsg();
 			$row = $rs->FetchRow();
@@ -117,7 +119,7 @@
 
 		function getContractStartDate($customer_id)
 		{
-			$sql = "SELECT contract_start_date FROM companies_contracts WHERE company_id = '$customer_id'";
+			$sql = "SELECT contract_start_date FROM {$this->prefix}companies_contracts WHERE company_id = '$customer_id'";
 			$rs = $this->db->Execute($sql);
 			if ($rs && $row = $rs->FetchRow())
 			  return $row["contract_start_date"];	
@@ -127,7 +129,7 @@
 
 		function getContractEndDate($customer_id)
 		{
-			$sql = "SELECT contract_finish_date FROM companies_contracts WHERE company_id = '$customer_id'";
+			$sql = "SELECT contract_finish_date FROM {$this->prefix}companies_contracts WHERE company_id = '$customer_id'";
 			if (!$rs = $this->db->Execute($sql)) echo $this->db->ErrorMsg();
 			$row = $rs->FetchRow();
 			return $row["contract_finish_date"];
@@ -135,7 +137,7 @@
 
 		function getContractStatus($customer_id)
 		{
-			$sql = "SELECT * FROM companies_contracts WHERE company_id = '$customer_id'";
+			$sql = "SELECT * FROM {$this->prefix}companies_contracts WHERE company_id = '$customer_id'";
 			$rs = $this->db->Execute($sql);
 			$row = $rs->FetchRow();
 
@@ -160,12 +162,12 @@
 
     		function getDetails($customer_id)
    		{
-			$sql = 'SELECT * FROM companies LEFT JOIN companies_contracts ON companies.company_id = companies_contracts.company_id WHERE companies.company_id = \''.$customer_id.'\'';
+			$sql = 'SELECT * FROM '.$this->prefix.'companies LEFT JOIN '.$this->prefix.'companies_contracts ON '.$this->prefix.'companies.company_id = '.$this->prefix.'companies_contracts.company_id WHERE '.$this->prefix.'companies.company_id = \''.$customer_id.'\'';
 			$rs = $this->db->Execute($sql);
 
 			$row = $rs->FetchRow();	
 
-			$sql = 'SELECT * FROM contacts WHERE contact_company = \''.$customer_id.'\'';
+			$sql = 'SELECT * FROM '.$this->prefix.'contacts WHERE contact_company = \''.$customer_id.'\'';
 			$c_rs = $this->db->Execute($sql);
 			$contact_array = array();
 			while ($r = $c_rs->FetchRow())
@@ -194,7 +196,7 @@
 			$cust_ids = Array();
 
 			// Example doesnt explain this  method
-			$sql = "SELECT DISTINCT contact_company FROM contacts WHERE contact_email LIKE '%".$email."%'";
+			$sql = "SELECT DISTINCT contact_company FROM {$this->prefix}contacts WHERE contact_email LIKE '%".$email."%'";
 			$rs = $this->db->Execute($sql);
 			for ($rs; $row = $rs->FetchRow();)
 			{
@@ -209,7 +211,7 @@
 		{
 			$assoc = array();
 
-			$sql = 'SELECT * FROM contacts WHERE contact_company = \''.$customer_id . '\'';
+			$sql = 'SELECT * FROM '.$this->prefix.'contacts WHERE contact_company = \''.$customer_id . '\'';
 			$rs = $this->db->Execute($sql);
 			for ($rs; $row = $rs->FetchRow();)
 			{
@@ -221,7 +223,7 @@
 
 		function getAssocList()
 		{
-			$sql = "SELECT company_id, company_name FROM companies";	
+			$sql = "SELECT company_id, company_name FROM {$this->prefix}companies";
 			$rs = $this->db->Execute($sql);
 			$assoclist = Array();
 
@@ -235,7 +237,7 @@
 		
 		function getTitle($customer_id)
 		{
-			$sql = "SELECT company_name FROM companies WHERE company_id = '$customer_id'";
+			$sql = "SELECT company_name FROM {$this->prefix}companies WHERE company_id = '$customer_id'";
 			$rs = $this->db->Execute($sql);
 			$first_row = $rs->FetchRow();
 			return $first_row["company_name"];
@@ -247,7 +249,7 @@
 
 			foreach ($customer_ids as $cid)
 			{
-				$sql = "SELECT * FROM projects LEFT JOIN companies ON projects.project_id = companies.company_id WHERE company_id = '$cid' AND project_id = '$prj_id'";
+				$sql = "SELECT * FROM {$this->prefix}projects LEFT JOIN {$this->prefix}companies ON {$this->prefix}projects.project_id = {$this->prefix}companies.company_id WHERE company_id = '$cid' AND project_id = '$prj_id'";
 				$rs = $this->db->Execute($sql);
 				if ($rs && $rs->RecordCount() > 0)
 				{
@@ -262,7 +264,7 @@
 		{
 			$cont_ar = Array();
 			
-			$sql = "SELECT * FROM contacts WHERE contact_id = '$contact_id'";
+			$sql = "SELECT * FROM {$this->prefix}contacts WHERE contact_id = '$contact_id'";
 
 			$rs = $this->db->Execute($sql);
 			$row = $rs->FetchRow();
@@ -284,7 +286,7 @@
 					if (count($ids) == 0) return array();					
 					break;
 				case "customer_id":
-					$sql = "SELECT company_id FROM companies WHERE company_id = '$value'";
+					$sql = "SELECT company_id FROM {$this->prefix}companies WHERE company_id = '$value'";
 					$rs = $this->db->Execute($sql);
 					if ($rs->RecordCount() > 0) {
 						$ids = Array($value);
@@ -295,7 +297,7 @@
 					}
 					break;
 				case "customer_name":
-					$sql = "SELECT company_id FROM companies WHERE company_name LIKE '%".$value."%'";
+					$sql = "SELECT company_id FROM {$this->prefix}companies WHERE company_name LIKE '%".$value."%'";
 					$rs = $this->db->Execute($sql);
 					if ($rs->RecordCount() > 0) {
 						$ids = Array();
@@ -320,7 +322,7 @@
 
 		function getExpirationOffset()
 		{
-			$sql = "SELECT * FROM eventum_integration_config WHERE config_name = 'eventum_contract_grace'";
+			$sql = "SELECT * FROM {$this->prefix}eventum_integration_config WHERE config_name = 'eventum_contract_grace'";
 			$rs = $this->db->Execute($sql);
 
 			$row = $rs->FetchRow();
@@ -331,12 +333,10 @@
 		{
 		 	// Use the event queue to queue an immediate event for
 			// notifying the user.  The event manager will then handle this
-			// TODO: When dotProject includes table prefixing, this will
-			// need to be modified.
 			// TODO: Extend the data array to include descriptions and
 			// other information about the issue.
 			$data = array('issue_id' => $issue_id, 'contact_id' => $contact_id);
-			$sql = 'INSERT INTO event_queue ( queue_owner, queue_start, 
+			$sql = 'INSERT INTO '.$this->prefix.'event_queue ( queue_owner, queue_start,
 			  queue_callback, queue_data, queue_repeat_interval, queue_repeat_count,
 			  queue_module, queue_type, queue_origin_id, queue_module_type 
 			) VALUES ( \'0\', \'0\', \'ceventum::notifyIssue\', \'' . serialize($data) . '\',
