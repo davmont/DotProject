@@ -68,12 +68,12 @@ if($holiday_white == -1)
 var calendarField = '';
 function popCalendar( field ){
         calendarField = field;
-        idate = eval( 'document.AddEdit.log_' + field + '.value' );
+        idate = document.AddEdit['log_' + field].value;
         window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=250, height=220, scollbars=false' );
 }
 function setCalendar( idate, fdate ) {
-        fld_date = eval( 'document.AddEdit.log_' + calendarField );
-        fld_fdate = eval( 'document.AddEdit.' + calendarField );
+        fld_date = document.AddEdit['log_' + calendarField];
+        fld_fdate = document.AddEdit[calendarField];
         fld_date.value = idate;
         fld_fdate.value = fdate;
 }

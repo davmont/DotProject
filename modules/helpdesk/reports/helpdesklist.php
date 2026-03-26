@@ -146,7 +146,38 @@ if ($do_report) {
 		$q->addWhere('implode(" AND ", $allowedTasks)');
 	}
 	$q->addOrder('hi.item_id');
-	$Task_List = $q->exec();
+	$Task_List = $q->loadList();
+
+	$task_ids = array();
+	$filtered_task_list = array();
+	foreach ($Task_List as $Tasks) {
+		if ($project_id > 0) {
+			if ($Tasks['item_project_id'] != $project_id) {
+				continue;
+			}
+		}
+		$task_ids[] = $Tasks['item_id'];
+		$filtered_task_list[] = $Tasks;
+	}
+
+	// Pre-fetch task logs to eliminate N+1 query
+	$Task_Logs_Grouped = array();
+	if (count($task_ids) > 0) {
+		$q4 = new DBQuery;
+		$q4->addQuery("tl.task_log_help_desk_id, tl.task_log_date, tl.task_log_name, tl.task_log_description, CONCAT(rc.contact_first_name, ' ', rc.contact_last_name) created_by");
+		$q4->addTable('task_log','tl');
+		$q4->addTable('users','ru');
+		$q4->addTable('contacts','rc');
+		$q4->addWhere('tl.task_log_help_desk_id IN (' . implode(',', $task_ids) . ')');
+		$q4->addWhere('ru.user_id = tl.task_log_creator');
+		$q4->addWhere('rc.contact_id = ru.user_contact');
+		$q4->addOrder('tl.task_log_help_desk_id, tl.task_log_id');
+		$logs_result = $q4->loadList();
+		foreach ($logs_result as $log) {
+			$Task_Logs_Grouped[$log['task_log_help_desk_id']][] = $log;
+		}
+		$q4->clear();
+	}
 
 	$pdfdata = array();
 	$columns = array(
@@ -166,30 +197,15 @@ if ($do_report) {
 	}
 	echo "</tr>";
 
-	while ($Tasks = db_fetch_assoc($Task_List)){
-		if ($project_id>0) {
-			if ($Tasks['item_project_id'] != $project_id) {
-				continue;
-			}
-		}
+	foreach ($filtered_task_list as $Tasks) {
 		$start_date = new CDate( $Tasks['item_created'] );
 		$end_date = new CDate( $Tasks['item_created'] );
-		$q2 = new DBQuery;
-		$q2->addQuery("TRIM(SUBSTRING_INDEX(SUBSTRING(sysval_value, LOCATE('".$Tasks['item_status']
-						 . "|', sysval_value) + 2), '\\n', 1)) item_status_desc");
-		$q2->addTable('sysvals');
-		$q2->addWhere("sysval_title = 'HelpDeskStatus'");
-		$Log_Status_Query = $q2->exec();
-		$Log_Status = db_fetch_assoc($Log_Status_Query);
 
-		if ( (substr($Log_Status['item_status_desc'], 0, 6) != 'Closed') || ($show_closed_items) ) {
-			$q3 = new DBQuery;
-			$q3->addQuery("TRIM(SUBSTRING_INDEX(SUBSTRING(sysval_value, LOCATE('".$Tasks['item_status']
-							 . "|', sysval_value) + 2), '\\n', 1)) item_priority_desc");
-			$q3->addTable('sysvals');
-			$q3->addWhere("sysval_title = 'HelpDeskPriority'");
-			$Log_Priority_Query = $q3->exec();
-			$Log_Priority = db_fetch_assoc($Log_Priority_Query);
+		$Log_Status_desc = isset($sysval_status[$Tasks['item_status']]) ? $sysval_status[$Tasks['item_status']] : '';
+
+		if ( (substr($Log_Status_desc, 0, 6) != 'Closed') || ($show_closed_items) ) {
+
+			$Log_Priority_desc = isset($sysval_priority[$Tasks['item_status']]) ? $sysval_priority[$Tasks['item_status']] : '';
 
 			$str =  "<tr valign=\"top\">";
 			$str .= "<td align=\"right\">".$Tasks['item_id']."</td>";
@@ -199,8 +215,8 @@ if ($do_report) {
 			$str .= "<td align=\"center\">".$Tasks['item_title']."</td>";
 			$str .= "<td align=\"center\">".$Tasks['item_summary']."</td>";
 			$str .= "<td align=\"center\">".$Tasks['assigned_to']."</td>";
-			$str .= "<td align=\"center\">".$Log_Status['item_status_desc']."</td>";
-			$str .= "<td align=\"center\">".$Log_Priority['item_priority_desc']."</td>";
+			$str .= "<td align=\"center\">".$Log_Status_desc."</td>";
+			$str .= "<td align=\"center\">".$Log_Priority_desc."</td>";
 			$str .= "</tr>";
 			echo $str;
 
@@ -211,23 +227,13 @@ if ($do_report) {
 				$Tasks['item_title'],
 				$Tasks['item_summary'],
 				$Tasks['assigned_to'],
-				$Log_Status['item_status_desc'],
-				$Log_Priority['item_priority_desc'],
+				$Log_Status_desc,
+				$Log_Priority_desc,
 			);
 
-			$q4 = new DBQuery;
-			$q4->addQuery("tl.task_log_date, tl.task_log_name, tl.task_log_description, CONCAT(rc.contact_first_name, ' ', rc.contact_last_name) created_by");
-			$q4->addTable('task_log','tl');
-			$q4->addTable('users','ru');
-			$q4->addTable('contacts','rc');
-			$q4->addWhere('tl.task_log_help_desk_id = '.$Tasks['item_id']);
-			$q4->addWhere('ru.user_id = tl.task_log_creator');
-			$q4->addWhere('rc.contact_id = ru.user_contact');
-			$q4->addOrder('tl.task_log_id');
-			$Task_Log_Query = $q4->exec();
-
 			$Row_Count = 1;
-	                while ($Task_Log = db_fetch_assoc($Task_Log_Query)){
+			if (isset($Task_Logs_Grouped[$Tasks['item_id']])) {
+				foreach ($Task_Logs_Grouped[$Tasks['item_id']] as $Task_Log) {
 
 				$log_date = new CDate( $Task_Log['task_log_date'] );
 
@@ -258,6 +264,7 @@ if ($do_report) {
 					"^",
 				);
 				$Row_Count++;
+				}
 			}
 		}
 } // end if do_report

@@ -77,7 +77,7 @@ class CSetupInitiating {
 PRIMARY KEY (`initiating_id`) 
 ) ");
 
-	$q->exec($sql);
+	$q->exec();
 	
 	$q->clear();
 	$q = new DBQuery();
@@ -93,7 +93,7 @@ PRIMARY KEY (`initiating_id`)
   PRIMARY KEY (`initiating_stakeholder_id`) 
 ) ");
 
-	$q->exec($sql);
+	$q->exec();
 	
 	return NULL;
  }

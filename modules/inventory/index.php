@@ -37,17 +37,28 @@ $titleBlock = new CTitleBlock( 'Inventory', "../modules/inventory/images/48_my_c
 if ( isset( $_GET[ 'quick_filter' ] ) )
 {
 	$databases = array( "user" => "users", "company" => "companies", "department" => "departments", "project" => "projects" );
-	$sql = new DBQuery();
-	$sql -> addTable($databases[ $_GET[ 'quick_filter' ]]);
-	$sql -> addQuery($_GET[ "quick_filter" ].'_company AS company_id');
-	$sql -> addWhere($_GET[ 'quick_filter' ]."_id=".$_GET[ 'quick_filter_id' ]);
+	$quick_filter = $_GET[ 'quick_filter' ];
 
-	$row = $sql->loadResult();
+	if (array_key_exists($quick_filter, $databases)) {
+		$quick_filter_id = (int) dPgetCleanParam($_GET, 'quick_filter_id', 0);
 
-	$AppUI->setState( 'InventoryIdxFilterCompany', $row[0][ 'company_id' ] );
-	$AppUI->setState( 'InventoryIdxFilterType', $_GET[ 'quick_filter' ] );
-	$AppUI->setState( 'InventoryIdxFilterIndex', $_GET[ 'quick_filter_id' ] );
-	$AppUI->setState( 'InventoryIdxFilterSearch', $_GET[ 'quick_filter_search' ] );
+		$sql = new DBQuery();
+		$sql -> addTable($databases[$quick_filter]);
+		$sql -> addQuery($quick_filter.'_company AS company_id');
+		$sql -> addWhere($quick_filter."_id=".$quick_filter_id);
+
+		$row = $sql->loadList();
+
+		if (!empty($row)) {
+			$AppUI->setState( 'InventoryIdxFilterCompany', $row[0]['company_id'] );
+		} else {
+			$AppUI->setState( 'InventoryIdxFilterCompany', '' );
+		}
+
+		$AppUI->setState( 'InventoryIdxFilterType', $quick_filter );
+		$AppUI->setState( 'InventoryIdxFilterIndex', $quick_filter_id );
+		$AppUI->setState( 'InventoryIdxFilterSearch', dPgetCleanParam($_GET, 'quick_filter_search', '') );
+	}
 }
 
 // retrieve any state parameters

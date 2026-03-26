@@ -71,14 +71,14 @@ if ($canEdit) {
 	);
 }
 $titleBlock->show();
-// TODO Add support for untabbed view
-/*
-if ( $tabBox->isTabbed() ) {
-        $tabBox->add("vw_all", "All");
-}
-*/
+
 // tabbed information boxes
 $tabBox = new CTabBox("?m=invoices&orderby=$orderby", "{$dPconfig['root_dir']}/modules/invoices/", $tab);
+
+if ( $tabBox->isTabbed() ) {
+	$tabBox->add("vw_all", "All");
+}
+
 $tabBox->add('vw_idx_open', 'Open Invoices');
 $tabBox->add('vw_idx_paid', 'Paid Invoices');
 $tabBox->show();

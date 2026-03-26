@@ -38,7 +38,7 @@ function dPgetIniSize($val)
 	</tr>
 	<tr>
 		<td class="item">
-			<li>PHP Version &gt;= 5.0</li>
+			PHP Version &gt;= 5.0
 		</td>
 		<td align="left">
 			<?php echo version_compare(phpversion(), '5.0', '<') ? '<b class="error">' . $failedImg . ' (' . phpversion() . '): dotProject may not work. Please upgrade!</b>' : '<b class="ok">' . $okImg . '</b><span class="item"> (' . phpversion() . ')</span>'; ?>
@@ -169,10 +169,10 @@ function dPgetIniSize($val)
 	</tr>
 	<tr>
 		<td class="item">
-			<li>MySQL Support</li>
+			MySQL/MariaDB Support
 		</td>
 		<td align="left">
-			<?php echo function_exists('mysql_connect') ? '<b class="ok">' . $okImg . '</b><span class="item"> (' . @mysql_get_server_info() . ')</span>' : '<span class="warning">' . $failedImg . ' Not available</span>'; ?>
+			<?php echo (function_exists('mysql_connect') || function_exists('mysqli_connect')) ? '<b class="ok">' . $okImg . '</b><span class="item"> (mysqli available)</span>' : '<span class="warning">' . $failedImg . ' Not available</span>'; ?>
 		</td>
 	</tr>
 	<tr>

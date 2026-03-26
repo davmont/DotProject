@@ -706,7 +706,6 @@ if ($total_results > $items_per_page) {
   print "</small></center>";
 
 // Returns a header link used to sort results
-// TODO Probably need a better up/down arrow
 function sort_header($field, $name) {
   global $orderby, $orderdesc;
 
@@ -724,7 +723,7 @@ function sort_header($field, $name) {
 
   if ($orderby == $field) {
     $link .= $orderdesc ? "0" : "1";
-    $arrow .= $orderdesc ? " &uarr;" : " &darr;";
+    $arrow .= $orderdesc ? ' <img src="./images/arrow-up.gif" width="11" height="11" alt="up" />' : ' <img src="./images/arrow-down.gif" width="11" height="11" alt="down" />';
   } else {
     $link .= "0";
   }

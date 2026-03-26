@@ -8,13 +8,13 @@ define('DP_BASE_DIR', realpath(dirname(__FILE__) . '/../'));
 // Include PHPUnit library
 require_once DP_BASE_DIR . '/tests/phpunit.php';
 
-// Include TestUI
-require_once DP_BASE_DIR . '/tests/TestUI.php';
+// Include UITest
+require_once DP_BASE_DIR . '/tests/UITest.php';
 
 echo "Running tests...\n";
 
 // Create suite and run
-$suite = new TestSuite('TestUI');
+$suite = new TestSuite('UITest');
 $runner = new TestRunner();
 $runner->run($suite);
 ?>

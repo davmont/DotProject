@@ -38,7 +38,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		// Remove earning Item(s) From earning
 		$remove_items = "";
 		foreach ($_POST as $item) {
-			list($item_action,$item_value) = split(":",$item);
+			@list($item_action,$item_value) = explode(":",$item);
 			if ( $item_action = "remove" ) {
 				if ( intval($item_value) > 0 ) {
 					if ( strlen($remove_items) > 0 ) {
@@ -89,7 +89,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 	if ($_POST['inv_dosql'] == "additem") {
 		$add_items = "";
 		foreach ($_POST as $item) {
-			list($item_action,$item_value) = split(":",$item);
+			@list($item_action,$item_value) = explode(":",$item);
 			if ( $item_action = "add" ) {
 				if ( intval($item_value) > 0 ) {
 					if ( strlen($add_items) > 0 ) {
