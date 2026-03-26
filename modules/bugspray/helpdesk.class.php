@@ -1,4 +1,7 @@
 <?php /* HELPDESK $Id: helpdesk.class.php,v 1.1 2004/05/07 22:28:40 uodeltasig Exp $ */
+if (!defined('DP_BASE_DIR')) {
+  die('You should not access this file directly.');
+}
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -35,6 +38,11 @@ $field_event_map = array(
   
 // Help Desk class
 class CHelpDeskItem extends CDpObject {
+
+  public function __construct() {
+    parent::__construct( 'helpdesk_items', 'item_id' );
+  }
+
   var $item_id = NULL;
   var $item_title = NULL;
   var $item_summary = NULL;
@@ -66,24 +74,46 @@ class CHelpDeskItem extends CDpObject {
     $this->CDpObject( 'helpdesk_items', 'item_id' );
   }
 
-  function load( $oid ) {
-    $sql = "SELECT * FROM helpdesk_items WHERE item_id = $oid";
-    return db_loadObject( $sql, $this );
+  function load( $oid = null, $strip = true ) {
+    $sql = "SELECT * FROM helpdesk_items WHERE item_id = " . (int)$oid;
+    return db_loadObject( $sql, $this, false, $strip );
   }
 
   function check() {
-    if ($this->item_id === NULL) {
-      return 'Help Desk item id is NULL';
+    if (trim($this->item_title) == '') {
+      return 'Help Desk item title is required';
     }
+    if (trim($this->item_summary) == '') {
+      return 'Help Desk item summary is required';
+    }
+
+    $this->item_project_id = (int)$this->item_project_id;
+    if ($this->item_project_id <= 0) {
+      return 'Help Desk item project is required';
+    }
+
+    $this->item_company_id = (int)$this->item_company_id;
+    if ($this->item_company_id <= 0) {
+      return 'Help Desk item company is required';
+    }
+
     if (!$this->item_created) { 
       $this->item_created = db_unix2dateTime( time() );
     }
+
+    $this->item_calltype = (int)$this->item_calltype;
+    $this->item_source = (int)$this->item_source;
+    $this->item_priority = (int)$this->item_priority;
+    $this->item_severity = (int)$this->item_severity;
+    $this->item_status = (int)$this->item_status;
+    $this->item_assigned_to = (int)$this->item_assigned_to;
+    $this->item_notify = (int)$this->item_notify;
+    $this->item_public = (int)$this->item_public;
     
-    // TODO More checks
     return NULL;
   }
 
-  function store($status_log_id) {
+  function store($status_log_id = null) {
     global $AppUI;
 
     // Update the last modified time and user
@@ -136,8 +166,8 @@ class CHelpDeskItem extends CDpObject {
     
   }
 
-  function delete() {
-    return parent::delete();
+  function delete($oid = null, $history_desc = '', $history_proj = 0) {
+    return parent::delete($oid, $history_desc, $history_proj);
   }
   
   function notify($status_log_id) {
