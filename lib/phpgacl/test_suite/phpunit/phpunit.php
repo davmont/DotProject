@@ -354,7 +354,6 @@ class TestSuite /* implements Test */ {
           }
         }
       }
-      }
     }
     else {  // PHP3
       $dummy = new $classname("dummy");
@@ -522,7 +521,7 @@ class TextTestResult extends TestResult {
 
 	    $exceptions = $failure->getExceptions();
 	    print("<ul>");
-	    foreach ($exceptions as $na => $exception)
+	    foreach ($exceptions as $na => $exception) {
 		printf("<li>%s\n", $exception->getMessage());
         }
 	    print("</ul>");
@@ -599,7 +598,7 @@ class PrettyTestResult extends TestResult {
 
       $exceptions = $failure->getExceptions();
       print("<ul>");
-      foreach ($exceptions as $na => $exception)
+      foreach ($exceptions as $na => $exception) {
 	printf("<li>%s\n", $exception->getMessage());
       }
       print("</ul>");
