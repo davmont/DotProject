@@ -92,6 +92,15 @@ class CHelpDeskItem extends CDpObject {
       return 'Help Desk item company is required';
     }
 
+    if (empty($this->item_title)) {
+      return 'Help Desk item title cannot be blank';
+    }
+    if (empty($this->item_requestor)) {
+      return 'Help Desk item requestor cannot be blank';
+    }
+    if (empty($this->item_summary)) {
+      return 'Help Desk item summary cannot be blank';
+    }
     if (!$this->item_created) { 
       $this->item_created = db_unix2dateTime( time() );
     }
