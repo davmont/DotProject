@@ -70,10 +70,39 @@ if (!class_exists('DBQuery') && !defined('LOAD_REAL_DBQUERY')) {
         var $query = array();
         var $where = array();
 
+        static $mockResults = array();
+        static $mockExecReturns = true;
+
         function addTable($table) { $this->tables[] = $table; }
         function addQuery($field) { $this->query[] = $field; }
-        function addWhere($where) { $this->where[] = $where; }
-        function loadResult() { return ''; } // Return empty for now
+        function addWhere($where, $params = array()) { $this->where[] = $where; }
+
+        function exec() {
+            return self::$mockExecReturns;
+        }
+
+        function fetchRow() {
+            if (empty(self::$mockResults)) {
+                return false;
+            }
+            return array_shift(self::$mockResults);
+        }
+
+        function clear() {
+            $this->tables = array();
+            $this->query = array();
+            $this->where = array();
+        }
+
+        function loadResult() {
+            $row = $this->fetchRow();
+            $this->clear();
+            if ($row === false) {
+                return '';
+            }
+            return is_array($row) ? reset($row) : $row;
+        }
+
         function quote($str) { return "'" . addslashes($str) . "'"; }
         function clear() {}
         function prepare() { return ''; }
