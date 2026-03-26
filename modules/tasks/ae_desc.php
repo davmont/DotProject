@@ -14,9 +14,8 @@ global $task_parent_options, $dPconfig, $projects, $task_project, $can_edit_time
 <input type="hidden" name="dosql" value="do_task_aed" />
 <input type="hidden" name="sub_form" value="1" />
 <input type="hidden" name="task_id" value="<?php echo $task_id; ?>" />
-<table class="std" width="100%" border="1" cellpadding="4" cellspacing="0">
-<tr>
-	<td width="50%" valign="top">
+<div style="display: flex; flex-wrap: wrap; width: 100%; gap: 16px; background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; padding: 16px; box-sizing: border-box;">
+	<div style="flex: 1 1 350px;">
 		<table border="0">
 			<tr>
 				<td>
@@ -54,7 +53,7 @@ if ($AppUI->isActiveModule('contacts') && getPermission('contacts', 'access')) {
 	$project = new CProject();
 	$project->load($task_project);
 	echo '<input type="button" class="button" value="' . $AppUI->_('Select contacts...') 
-	      . '" onclick="javascript:popContacts();" /><input type="button" class="button" value="'.$AppUI->_('Import contacts from project').'" onClick="selected_contacts_id = \'';
+	      . '" onclick="javascript:popContacts();" />&nbsp;<input type="button" class="button" value="'.$AppUI->_('Import contacts from project').'" onClick="selected_contacts_id = \'';
 	echo (($project->project_contacts != '') ? $obj->task_contacts.$project->project_contacts : $project->project_contacts);
 	echo '\'; this.value = \''.$AppUI->_('Contacts imported').'\';" />';
 }
@@ -106,23 +105,22 @@ echo arraySelect($projects, 'new_task_project',
 } 
 ?>
 		</table>
-	</td>
-	<td valign="top" align="center">
-		<table><tr><td align="left">
+	</div>
+	<div style="flex: 1 1 350px; text-align: center;">
+		<div style="text-align: left; width: 100%; height: 100%; display: flex; flex-direction: column;">
 			<?php echo $AppUI->_('Description');?>:
 			<br />
-			<textarea name="task_description" class="textarea" cols="60" rows="10" wrap="virtual"><?php 
+			<textarea name="task_description" class="textarea" cols="60" rows="10" wrap="virtual" style="width: 100%; flex-grow: 1; box-sizing: border-box; min-height: 200px;"><?php 
 echo @$obj->task_description;?></textarea>
-		</td></tr></table><br />
+		</div><br />
 		<?php
 require_once($AppUI->getSystemClass('CustomFields'));
 GLOBAL $m;
 $custom_fields = New CustomFields($m, 'addedit', $obj->task_id, "edit");
 $custom_fields->printHTML();
 		?>
-	</td>
-</tr>
-</table>
+	</div>
+</div>
 </form>
 <script language="javascript">
  subForm.push(new FormDefinition(<?php echo $currentTabId;?>, document.detailFrm, checkDetail, saveDetail));

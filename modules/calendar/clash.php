@@ -111,7 +111,7 @@ var calendarField = '';
 
 function popCalendar(field) {
 	calendarField = field;
-	idate = eval('document.editFrm.event_' + field + '.value');
+	idate = document.editFrm['event_' + field].value;
 	window.open('?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=250, height=220, scrollbars=no, status=no');
 }
 
@@ -120,8 +120,8 @@ function popCalendar(field) {
  *	@param string Formatted date
  */
 function setCalendar(idate, fdate) {
-	fld_date = eval('document.editFrm.event_' + calendarField);
-	fld_fdate = eval('document.editFrm.' + calendarField);
+	fld_date = document.editFrm['event_' + calendarField];
+	fld_fdate = document.editFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }

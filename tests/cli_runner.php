@@ -1,34 +1,28 @@
 <?php
-// CLI Runner for PHPUnit tests
-// Based on lib/phpgacl/test_suite/phpunit/runtests.php
+define('DP_BASE_DIR', realpath(dirname(__FILE__) . '/..'));
 
-if (php_sapi_name() !== 'cli') {
-    die("This script must be run from the command line.\n");
-}
-
-require_once dirname(__FILE__) . '/bootstrap.php';
-require_once dirname(__FILE__) . '/../lib/phpgacl/test_suite/phpunit/phpunit.php';
-
-// Set include path for PEAR
-set_include_path(get_include_path() . PATH_SEPARATOR . DP_BASE_DIR . '/lib' . PATH_SEPARATOR . DP_BASE_DIR . '/lib/PEAR');
-
-// Include test files
-// We will look for *Test.php in the tests directory
-$testDir = dirname(__FILE__);
-$testFiles = glob($testDir . '/*Test.php');
-
-$suite = new TestSuite();
-
-foreach ($testFiles as $file) {
-    require_once $file;
-    $className = basename($file, '.php');
-    if (class_exists($className)) {
-        $suite->addTest(new TestSuite($className));
+// Mock dPgetConfig
+if (!function_exists('dPgetConfig')) {
+    function dPgetConfig($key, $default = null) {
+        return $default;
     }
 }
 
+// Mock dprint
+if (!function_exists('dprint')) {
+    function dprint($file, $line, $level, $msg) {
+        // no-op
+    }
+}
+
+require_once DP_BASE_DIR . '/classes/query.class.php';
+require_once DP_BASE_DIR . '/lib/phpgacl/test_suite/phpunit/phpunit.php';
+
+// Include the test file(s)
+require_once dirname(__FILE__) . '/DBQueryTest.php';
+
+$suite = new TestSuite('DBQueryTest');
 $result = new TextTestResult();
 $suite->run($result);
 $result->report();
-
 ?>

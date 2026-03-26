@@ -28,25 +28,31 @@
 	if (isset( $_GET['user_id'] )) {
 	//if (isset( $AppUI->user_id )) {
 	
-		$sql = "SELECT user_contact FROM users WHERE user_id = ".$_GET['user_id'];
-		$contact_id = db_loadResult( $sql );
-		$sql = "SELECT contact_company FROM contacts WHERE contact_id = ".$contact_id;
-		//print $sql;
-		$company_id = db_loadResult( $sql );
+		$q = new DBQuery;
+		$q->addTable('users');
+		$q->addQuery('user_contact');
+		$q->addWhere("user_id = " . (int)$_GET['user_id']);
+		$contact_id = $q->loadResult();
+
+		$q = new DBQuery;
+		$q->addTable('contacts');
+		$q->addQuery('contact_company');
+		$q->addWhere("contact_id = " . (int)$contact_id);
+		$company_id = $q->loadResult();
 		//print $company_id.":".getDenyRead( "companies", $company_id );
 		//Comment out the 3 lines below to skip the company check
     if(getDenyRead( "companies", $company_id )){
     $AppUI->redirect( "m=public&a=access_denied" );
     }
     
-		$AppUI->setState( 'TimecardSelectedUser', $_GET['user_id'] );
+		$AppUI->setState( 'TimecardSelectedUser', (int)$_GET['user_id'] );
 	}
 	$user_id = $AppUI->getState( 'TimecardSelectedUser' ) ? $AppUI->getState( 'TimecardSelectedUser' ) : $AppUI->user_id;
 
 	$AppUI->savePlace();
 
 	if (isset( $_GET['start_date'] )) {
-		$AppUI->setState( 'TimecardStartDate', $_GET['start_date'] );
+		$AppUI->setState( 'TimecardStartDate', dPgetCleanParam( $_GET, 'start_date', '' ) );
 	}
 	$start_day = new CDate( $AppUI->getState( 'TimecardStartDate' ) ? $AppUI->getState( 'TimecardStartDate' ) : NULL);
 
@@ -102,12 +108,16 @@
 	<?php
 		//$sql = "SELECT user_id, user_username, user_last_name 
 		//FROM users WHERE user_id=".$AppUI->user_id." or (".getPermsWhereClause("companies", "user_company").") ORDER BY user_last_name, user_first_name";
-		$sql = "SELECT users.user_contact,users.user_id,contacts.contact_first_name,contacts.contact_last_name,contacts.contact_id
-		FROM users
-		inner JOIN contacts on contact_id = user_contact
-		WHERE users.user_contact = ".$AppUI->user_id." or (".getPermsWhereClause("companies", "user_company").") ORDER BY contact_first_name, contact_last_name";
 		
-		$result = db_loadList($sql);
+		$q = new DBQuery;
+		$q->addTable('users');
+		$q->addQuery('users.user_contact,users.user_id,contacts.contact_first_name,contacts.contact_last_name,contacts.contact_id');
+		$q->innerJoin('contacts', 'contacts', 'contacts.contact_id = users.user_contact');
+		$q->addWhere('users.user_contact = ' . (int)$AppUI->user_id . ' OR (' . getPermsWhereClause('companies', 'user_company') . ')');
+		$q->addOrder('contact_first_name, contact_last_name');
+
+		$result = $q->loadList();
+		$q->clear();
 		foreach ($result as $user) {
 			echo "<option value=\"".$user["user_id"]."\"".($user["user_id"]==$user_id?"selected":"").">".$user["contact_first_name"]." ".$user["contact_last_name"]."</option>\n";
 		}
@@ -138,17 +148,18 @@
 	$date = $end_day->format("%Y-%m-%d")." 23:59:59";
 	$end_day -> setDate($date, DATE_FORMAT_ISO);
   //12:23 AM 2007-08-06 Query modified to use task name rather than task summary
-	$sql = "SELECT task_log.*, tasks.task_id, tasks.task_name
-		FROM 
-			task_log 
-			LEFT JOIN tasks on task_log.task_log_task = tasks.task_id
-		WHERE "
-		." task_log_creator=".$user_id." AND"
-		." task_log_date >= \"".$start_day->format( FMT_DATETIME_MYSQL )."\" AND "
-		." task_log_date <= \"".$end_day->format( FMT_DATETIME_MYSQL )."\" "
-		." ORDER BY task_log_date";
-//print "<pre>$sql</pre>";
-	$result = db_loadList($sql);
+
+	$q = new DBQuery;
+	$q->addTable('task_log');
+	$q->addQuery('task_log.*, tasks.task_id, tasks.task_name');
+	$q->leftJoin('tasks', 'tasks', 'task_log.task_log_task = tasks.task_id');
+	$q->addWhere("task_log_creator=" . (int)$user_id);
+	$q->addWhere("task_log_date >= '" . $start_day->format( FMT_DATETIME_MYSQL ) . "'");
+	$q->addWhere("task_log_date <= '" . $end_day->format( FMT_DATETIME_MYSQL ) . "'");
+	$q->addOrder('task_log_date');
+	$result = $q->loadList();
+	$q->clear();
+
 	$date = $start_day->format("%Y-%m-%d")." 12:00:00";
 	$start_day -> setDate($date, DATE_FORMAT_ISO);
 

@@ -275,15 +275,24 @@ class dPacl extends gacl_api
 			return $this->addLogin($login, $username);
 		}
 		//Check if the details have changed.
-		list($osec, $val, $oord, $oname, $ohid) = $this->get_object_data($id, 'aro');
-		if ($oname != $username) {
-			$res = $this->edit_object($id, 'user', $username, $login, 1, 0, 'aro');
-			if (!($res)) {
-				dprint(__FILE__, __LINE__, 0, 'Failed to change user permission object');
+		$objData = $this->get_object_data($id, 'aro');
+		if (is_array($objData) && count($objData) > 0) {
+			// get_object_data returns an array of rows, we need the first one
+			$row = reset($objData);
+			list($osec, $val, $oord, $oname, $ohid) = array_pad($row, 5, null);
+			if ($username !== null && $oname != $username) {
+				$res = $this->edit_object($id, 'user', $username, $login, 1, 0, 'aro');
+				if (!($res)) {
+					dprint(__FILE__, __LINE__, 0, 'Failed to change user permission object');
+				}
+				$this->regeneratePermissions(); //this line was outside of this if (after the next bracket
+			} else {
+				$res = true;
 			}
-			$this->regeneratePermissions(); //this line was outside of this if (after the next bracket
+		} else {
+			$res = false;
 		}
-		return $res;
+		return isset($res) ? $res : false;
 	}
 
 	function deleteLogin($login)

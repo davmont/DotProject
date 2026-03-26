@@ -136,8 +136,7 @@ $perms->add_acl($login_perms, null, array($role), null, null, 1, 1, null, null, 
 
 // Administrator has ALL on ALL
 $perms->add_acl($all_perms, null, array($admin_role), null, array($all_mods), 1, 1, null, null, 'user');
-$perms->add_acl($access_perms, null, array($admin_role), $acl_perms, null, 1, 1, null, null, 'user');
-// TODO:  Add the administrator ACL access.
+$perms->add_acl($all_perms, null, array($admin_role), $acl_perms, null, 1, 1, null, null, 'user');
 
 // Guest has view on ALL
 $perms->add_acl($view_perms, null, array($guest_role), null, array($non_admin_mods), 1, 1, null, null, 'user');

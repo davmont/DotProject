@@ -149,8 +149,7 @@ foreach ($user_acls as $acl) {
 	$buf = '';
 	$permission = $perms->get_acl($acl);
 
-	$style = '';
-	// TODO: Do we want to make the colour depend on the allow/deny/inherit flag?
+	$style = $permission['allow'] ? ' style="background-color:#ccffcc;"' : ' style="background-color:#ffcccc;"';
 	// Module information.
 	if (is_array($permission)) {
 		$buf .= "<td $style>";

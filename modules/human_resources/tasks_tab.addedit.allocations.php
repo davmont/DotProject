@@ -39,10 +39,11 @@ $res =& $query->exec();
 </tr>
 <?php
 require_once DP_BASE_DIR."/modules/human_resources/configuration_functions.php";
-for ($res; ! $res->EOF; $res->MoveNext()) {
-	$project_tasks_estimated_roles_id = $res->fields['id'];
-	$allocated = isRoleAllocated($project_tasks_estimated_roles_id);
-	$style = $allocated ? '' : 'background-color:#ED9A9A; font-weight:bold';
+if ($res) {
+    for ($res; ! $res->EOF; $res->MoveNext()) {
+        $project_tasks_estimated_roles_id = $res->fields['id'];
+        $allocated = isRoleAllocated($project_tasks_estimated_roles_id);
+        $style = $allocated ? '' : 'background-color:#ED9A9A; font-weight:bold';
 ?>
 <tr>
   <td style=<?php echo $style; ?>>
@@ -51,7 +52,8 @@ for ($res; ! $res->EOF; $res->MoveNext()) {
   </td>
 </tr>
 <?php 
-} 
+    }
+}
 $query->clear(); 
 ?>
 </table>
