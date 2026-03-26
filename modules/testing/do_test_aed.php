@@ -23,12 +23,6 @@ $del = dPgetParam( $_POST, 'del', 0 );
 
 
 if ($del) {
-	// check if there are dependencies on this object (not relevant for test, left here for show-purposes)
-//	if (!$obj->canDelete( $msg )) {
-//		$AppUI->setMsg( $msg, UI_MSG_ERROR );
-//		$AppUI->redirect();
-//	}
-
 	// see how easy it is to run database commands with the object oriented architecture !
 	// simply delete a quote from db and have detailed error or success report
 	if (($msg = $obj->delete())) {
