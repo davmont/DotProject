@@ -79,6 +79,10 @@ if (!class_exists('DBQuery') && !defined('LOAD_REAL_DBQUERY')) {
         function prepare() { return ''; }
         function exec() { return true; }
         function fetchRow() { return array(); }
+        function loadHash() { return array(); }
+        function loadList() { return array(); }
+        function loadColumn() { return array(); }
+        function addInsert($field, $value) {}
     }
 }
 ?>

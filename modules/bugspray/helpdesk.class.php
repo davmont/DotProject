@@ -74,11 +74,6 @@ class CHelpDeskItem extends CDpObject {
     $this->CDpObject( 'helpdesk_items', 'item_id' );
   }
 
-  function load( $oid = null, $strip = true ) {
-    $sql = "SELECT * FROM helpdesk_items WHERE item_id = " . (int)$oid;
-    return db_loadObject( $sql, $this, false, $strip );
-  }
-
   function check() {
     if (trim($this->item_title) == '') {
       return 'Help Desk item title is required';
@@ -120,31 +115,26 @@ class CHelpDeskItem extends CDpObject {
     $this->item_modified = db_unix2dateTime( time() );
 
     //if type indicates a contact or a user, then look up that phone and email for those entries
+    $q = new DBQuery();
     switch ($this->item_requestor_type) {
       case '0'://it's not a user or a contact
         break;
       case '1'://it's a system user
-        $sql = "SELECT user_id as id,
-                user_email as email,
-                user_phone as phone,
-                CONCAT(user_first_name,' ', user_last_name) as name
-                FROM users
-                WHERE user_id='{$this->item_requestor_id}'";
+        $q->addTable('users');
+        $q->addQuery('user_id as id, user_email as email, user_phone as phone, CONCAT(user_first_name,\' \', user_last_name) as name');
+        $q->addWhere('user_id = ' . (int)$this->item_requestor_id);
         break;
       case '2':
-        $sql = "SELECT contact_id as id,
-                contact_email as email,
-                contact_phone as phone,
-                CONCAT(contact_first_name,' ', contact_last_name) as name
-                FROM contacts
-                WHERE contact_id='{$this->item_requestor_id}'";
+        $q->addTable('contacts');
+        $q->addQuery('contact_id as id, contact_email as email, contact_phone as phone, CONCAT(contact_first_name,\' \', contact_last_name) as name');
+        $q->addWhere('contact_id = ' . (int)$this->item_requestor_id);
         break;
       default:
         break;
     }
 
-    if(isset($sql)) {
-      db_loadHash( $sql, $result );
+    if ($this->item_requestor_type == '1' || $this->item_requestor_type == '2') {
+      $result = $q->loadHash();
       $this->item_requestor_email = $result['email'];
       $this->item_requestor_phone = $result['phone'];
       $this->item_requestor = $result['name'];
@@ -174,19 +164,19 @@ class CHelpDeskItem extends CDpObject {
     global $AppUI, $ist, $ict, $isa;
 
     // Pull up the user's e-mail
-    $sql = "SELECT user_email
-            FROM users
-            WHERE user_id='{$this->item_assigned_to}'";
-
-    $assigned_to_email = db_loadResult($sql);
+    $q = new DBQuery();
+    $q->addTable('users');
+    $q->addQuery('user_email');
+    $q->addWhere('user_id = ' . (int)$this->item_assigned_to);
+    $assigned_to_email = $q->loadResult();
 
     // Pull up the last status log entry
     if (is_numeric($status_log_id)) {
-      $sql = "SELECT status_code, status_comment
-              FROM helpdesk_item_status
-              WHERE status_id=$status_log_id";
-
-      db_loadHash($sql, $log);
+      $q->clear();
+      $q->addTable('helpdesk_item_status');
+      $q->addQuery('status_code, status_comment');
+      $q->addWhere('status_id = ' . (int)$status_log_id);
+      $log = $q->loadHash();
     }
 
     $mail = new Mail;
@@ -233,76 +223,60 @@ class CHelpDeskItem extends CDpObject {
       foreach($field_event_map as $key => $value){
         if(!eval("return \$hditem->$value == \$this->$value;")){
           $old = $new = "";
+          $q = new DBQuery();
           switch($value){
             // Create the comments here
             case 'item_assigned_to':
-              $sql = "
-                SELECT 
-                  user_id, concat(user_first_name,' ',user_last_name) as user_name
-                FROM 
-                  users
-                WHERE 
-                  user_id in (".
-                  ($hditem->$value?$hditem->$value:"").
-                  ($this->$value&&$hditem->$value?", ":"").
-                  ($this->$value?$this->$value:"").
-                  ")
-              ";
-
-              $ids = db_loadList($sql);
-              foreach ($ids as $row){
-                if($row["user_id"]==$this->$value){
-                  $new = $row["user_name"];
-                } else if($row["user_id"]==$hditem->$value){
-                  $old = $row["user_name"];
+              $q->addTable('users');
+              $q->addQuery('user_id, concat(user_first_name,\' \',user_last_name) as user_name');
+              $ids_in = array();
+              if ($hditem->$value) $ids_in[] = (int)$hditem->$value;
+              if ($this->$value) $ids_in[] = (int)$this->$value;
+              if (count($ids_in)) {
+                $q->addWhere('user_id IN (' . implode(',', array_unique($ids_in)) . ')');
+                $ids = $q->loadList();
+                foreach ($ids as $row){
+                  if($row["user_id"]==$this->$value){
+                    $new = $row["user_name"];
+                  } else if($row["user_id"]==$hditem->$value){
+                    $old = $row["user_name"];
+                  }
                 }
               }
               break;
             case 'item_company_id':
-              $sql = "
-                SELECT 
-                  company_id, company_name
-                FROM 
-                  companies
-                WHERE 
-                  company_id in (".
-                  ($hditem->$value?$hditem->$value:"").
-                  ($this->$value&&$hditem->$value?", ":"").
-                  ($this->$value?$this->$value:"").
-                  ")
-              ";
-                  
-              $ids = db_loadList($sql);
-
-              foreach ($ids as $row){
-                if($row["company_id"]==$this->$value){
-                  $new = $row["company_name"];
-                } else if($row["company_id"]==$hditem->$value){
-                  $old = $row["company_name"];
+              $q->addTable('companies');
+              $q->addQuery('company_id, company_name');
+              $ids_in = array();
+              if ($hditem->$value) $ids_in[] = (int)$hditem->$value;
+              if ($this->$value) $ids_in[] = (int)$this->$value;
+              if (count($ids_in)) {
+                $q->addWhere('company_id IN (' . implode(',', array_unique($ids_in)) . ')');
+                $ids = $q->loadList();
+                foreach ($ids as $row){
+                  if($row["company_id"]==$this->$value){
+                    $new = $row["company_name"];
+                  } else if($row["company_id"]==$hditem->$value){
+                    $old = $row["company_name"];
+                  }
                 }
               }
-
               break;
             case 'item_project_id':
-              $sql = "
-                SELECT 
-                  project_id, project_name
-                FROM 
-                  projects
-                WHERE 
-                  project_id in (".
-                  ($hditem->$value?$hditem->$value:"").
-                  ($this->$value&&$hditem->$value?", ":"").
-                  ($this->$value?$this->$value:"").
-                  ")
-              ";
-
-              $ids = db_loadList($sql);
-              foreach ($ids as $row){
-                if($row["project_id"]==$this->$value){
-                  $new = $row["project_name"];
-                } else if($row["project_id"]==$hditem->$value){
-                  $old = $row["project_name"];
+              $q->addTable('projects');
+              $q->addQuery('project_id, project_name');
+              $ids_in = array();
+              if ($hditem->$value) $ids_in[] = (int)$hditem->$value;
+              if ($this->$value) $ids_in[] = (int)$this->$value;
+              if (count($ids_in)) {
+                $q->addWhere('project_id IN (' . implode(',', array_unique($ids_in)) . ')');
+                $ids = $q->loadList();
+                foreach ($ids as $row){
+                  if($row["project_id"]==$this->$value){
+                    $new = $row["project_name"];
+                  } else if($row["project_id"]==$hditem->$value){
+                    $old = $row["project_name"];
+                  }
                 }
               }
               break;
@@ -363,19 +337,21 @@ class CHelpDeskItem extends CDpObject {
   function log_status ($audit_code, $comment="") {
   	global $AppUI;
 
-    $sql = "
-      INSERT INTO helpdesk_item_status
-      (status_item_id,status_code,status_date,status_modified_by,status_comment)
-      VALUES('{$this->item_id}','{$audit_code}',NOW(),'{$AppUI->user_id}','$comment')
-    ";
+    $q = new DBQuery();
+    $q->addTable('helpdesk_item_status');
+    $q->addInsert('status_item_id', $this->item_id);
+    $q->addInsert('status_code', $audit_code);
+    $q->addInsert('status_date', 'NOW()', false, true);
+    $q->addInsert('status_modified_by', $AppUI->user_id);
+    $q->addInsert('status_comment', $comment);
 
-    db_exec($sql);
-
-    if (db_error()) {
+    if (!$q->exec()) {
       return false;
     }
     
-    return mysql_insert_id();
+    $last_id = db_insert_id();
+    $q->clear();
+    return $last_id;
   }
 }
 
@@ -431,8 +407,10 @@ function getPermsWhereClause($mod, $mod_id_field, $created_by_id_field="item_cre
 
 	if((isset($perms[$mod]['-1']) && ($perms[$mod]['-1']=='1' || $perms[$mod]['-1']=='-1')) || 
      (isset($perms["all"]['-1']) && ($perms["all"]['-1']=='1' || $perms["all"]['-1']==-'1'))) {
-		$sql = "SELECT $id_field FROM $mod";
-		$list = db_loadColumn( $sql );
+		$q = new DBQuery();
+		$q->addTable($mod);
+		$q->addQuery($id_field);
+		$list = $q->loadColumn();
 	} else {
 		$list = array();
 	}
