@@ -601,15 +601,22 @@ class CTask extends CDpObject {
 
         function updateDependencies( $cslist ) {
         // delete all current entries
-                $sql = "DELETE FROM task_dependencies WHERE dependencies_task_id = $this->task_id";
-                db_exec( $sql );
+                $q = new DBQuery;
+                $q->setDelete('task_dependencies');
+                $q->addWhere('dependencies_task_id = ' . $this->task_id);
+                $q->exec();
+                $q->clear();
 
         // process dependencies
                 $tarr = explode( ",", $cslist );
                 foreach ($tarr as $task_id) {
                         if (intval( $task_id ) > 0) {
-                                $sql = "REPLACE INTO task_dependencies (dependencies_task_id, dependencies_req_task_id) VALUES ($this->task_id, $task_id)";
-                                db_exec($sql);
+                                $q->addTable('task_dependencies');
+                                $q->addInsert('dependencies_task_id', $this->task_id);
+                                $q->addInsert('dependencies_req_task_id', $task_id);
+                                $q->type = 'replace';
+                                $q->exec();
+                                $q->clear();
                         }
                 }
         }
@@ -1354,8 +1361,9 @@ class CTask extends CDpObject {
                         }
                 }
                 if (count($values)) {
+                        global $db;
                         $sql = "REPLACE INTO user_tasks (user_id, task_id, perc_assignment) VALUES " . implode(", ", $values);
-                        db_exec( $sql );
+                        $db->Execute($sql);
                 }
                 return $overAssignment;
         }
@@ -1412,8 +1420,14 @@ class CTask extends CDpObject {
         function updateUserSpecificTaskPriority( $user_task_priority = 0, $user_id = 0, $task_id = NULL ) {
                 // use task_id of given object if the optional parameter task_id is empty
                 $task_id = empty($task_id) ? $this->task_id : $task_id;
-                $sql = "REPLACE INTO user_tasks (user_id, task_id, user_task_priority) VALUES ($user_id, $task_id, $user_task_priority)";
-                db_exec( $sql );
+                $q = new DBQuery;
+                $q->addTable('user_tasks');
+                $q->addInsert('user_id', $user_id);
+                $q->addInsert('task_id', $task_id);
+                $q->addInsert('user_task_priority', $user_task_priority);
+                $q->type = 'replace';
+                $q->exec();
+                $q->clear();
         }
 
     function getProject() {
