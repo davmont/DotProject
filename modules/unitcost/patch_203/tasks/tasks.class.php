@@ -383,7 +383,7 @@ class CTask extends CDpObject {
                 $children = $this->getChildren();
                 if (!empty($children))
                 {
-                        $tempTask = & new CTask();
+                        $tempTask = new CTask();
                         foreach ($children as $child)
                         {
                                 $tempTask->load($child);
@@ -409,7 +409,7 @@ class CTask extends CDpObject {
                 $children = $this->getDeepChildren();
                 if (!empty($children))
                 {
-                        $tempChild = & new CTask();
+                        $tempChild = new CTask();
                         foreach ($children as $child)
                         {
                                 $tempChild->load($child);
@@ -1341,6 +1341,7 @@ class CTask extends CDpObject {
                 $overAssignment = false;
 
 
+                $values = array();
                 foreach ($tarr as $user_id) {
                         if (intval( $user_id ) > 0) {
                                 $perc = $perc_assign[$user_id];
@@ -1348,10 +1349,13 @@ class CTask extends CDpObject {
                                         // add Username of the overAssigned User
                                         $overAssignment .= " ".$alloc[$user_id]['userFC'];
                                 } else {
-                                        $sql = "REPLACE INTO user_tasks (user_id, task_id, perc_assignment) VALUES ($user_id, $this->task_id, $perc)";
-                                        db_exec( $sql );
+                                        $values[] = "($user_id, $this->task_id, $perc)";
                                 }
                         }
+                }
+                if (count($values)) {
+                        $sql = "REPLACE INTO user_tasks (user_id, task_id, perc_assignment) VALUES " . implode(", ", $values);
+                        db_exec( $sql );
                 }
                 return $overAssignment;
         }
@@ -1432,7 +1436,7 @@ class CTask extends CDpObject {
                 if ($children)
                 {
                         $deep_children = array();
-                        $tempTask = &new CTask();
+                        $tempTask = new CTask();
                         foreach ($children as $child)
                         {
                                 $tempTask->load($child);
