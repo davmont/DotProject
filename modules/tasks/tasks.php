@@ -294,11 +294,6 @@ if ($search_text = $AppUI->getState('searchtext')) {
 }
 
 // filter tasks considering task and project permissions
-$projects_filter = '';
-$tasks_filter = '';
-
-// TODO: Enable tasks filtering
-
 $allowedProjects = $project->getAllowedSQL($AppUI->user_id, 'task_project');
 if (count($allowedProjects)) {
 	$where .= ' AND ' . implode(' AND ', $allowedProjects);
@@ -686,7 +681,7 @@ if ($showEditCheckbox) {
 
 			global $tasks_filtered, $children_of;
 			//get list of task ids and set-up array of children
-			if (is_array($p['tasks'])) {
+			if (isset($p['tasks']) && is_array($p['tasks'])) {
 				foreach ($p['tasks'] as $i => $t) {
 					$tasks_filtered[] = $t['task_id'];
 					$children_of[$t['task_parent']] = (($children_of[$t['task_parent']])
@@ -768,6 +763,7 @@ if ($showEditCheckbox) {
 			}
 
 			$df = $AppUI->getPref('SHDATEFORMAT');
+			if (isset($summaries)) {
 			?>
 				<tr>
 					<td colspan="<?php echo $cols - 4 ?>"><?php echo $AppUI->_('Summaries'); ?>: </td>
@@ -779,6 +775,7 @@ if ($showEditCheckbox) {
 					<td></td>
 				</tr>
 				<?php
+			}
 				if ($tnums && $dPconfig['enable_gantt_charts'] && !$min_view) {
 					?>
 					<tr>

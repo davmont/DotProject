@@ -3,6 +3,9 @@ if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 
+global $m, $a;
+$search = dPgetParam($_REQUEST, 'search', '');
+
 $AppUI->savePlace();
 
 global $m, $a;

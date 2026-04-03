@@ -94,16 +94,12 @@ if ($do_report) {
 	// GJB: Note that we have to special case duration type 24 and this refers to the hours in a day, NOT 24 hours
 	$working_hours = $dPconfig['daily_working_hours'];
 
-	$sql = ('SELECT t.task_id, round(t.task_duration * IF(t.task_duration_type = 24, ' 
-			. $working_hours . ', t.task_duration_type)/count(ut.task_id),2) as hours_allocated' 
-			. ' FROM tasks as t, user_tasks as ut' 
-			. " WHERE t.task_id = ut.task_id AND t.task_milestone = '0'");
-	
 	$q = new DBQuery;
 	$q->addTable('tasks', 't');
 	$q->addTable('user_tasks', 'ut');
-	$q->addQuery('t.task_id, round(t.task_duration * IF(t.task_duration_type = 24, ' 
-			. $working_hours . ', t.task_duration_type)/count(ut.task_id),2) as hours_allocated' );
+	$q->addQuery('t.task_id, t.task_percent_complete');
+	$q->addQuery('round(t.task_duration * IF(t.task_duration_type = 24, ' . (int)$working_hours . ', t.task_duration_type), 2) as total_hours');
+	$q->addQuery('SUM(ut.perc_assignment) as total_perc, COUNT(ut.user_id) as user_count');
 	$q->addWhere("t.task_id = ut.task_id AND t.task_milestone = '0'");
 	if ($project_id != 0) {
 		$q->addWhere('t.task_project=' . (int)$project_id);
@@ -112,11 +108,32 @@ if ($do_report) {
 		$q->addWhere('t.task_start_date >= \'' . $start_date->format(FMT_DATETIME_MYSQL) . '\'');
 		$q->addWhere('t.task_start_date <= \'' . $end_date->format(FMT_DATETIME_MYSQL) . '\'');
 	}
-	
 	$q->addGroup('t.task_id');
-	
 	$task_list = $q->loadHashList('task_id');
-	//echo $sql;
+
+	$user_task_map = array();
+	$user_log_map = array();
+	if (count($task_list)) {
+		$task_ids = array_keys($task_list);
+		$q->clear();
+		$q->addTable('user_tasks');
+		$q->addQuery('user_id, task_id, perc_assignment');
+		$q->addWhere('task_id IN (' . implode(',', $task_ids) . ')');
+		$ut_list = $q->loadList();
+		foreach ($ut_list as $ut) {
+			$user_task_map[$ut['user_id']][$ut['task_id']] = $ut['perc_assignment'];
+		}
+
+		$q->clear();
+		$q->addTable('task_log');
+		$q->addQuery('task_log_creator, task_log_task, SUM(task_log_hours) as hours');
+		$q->addWhere('task_log_task IN (' . implode(',', $task_ids) . ')');
+		$q->addGroup('task_log_creator, task_log_task');
+		$log_list = $q->loadList();
+		foreach ($log_list as $log) {
+			$user_log_map[$log['task_log_creator']][$log['task_log_task']] = $log['hours'];
+		}
+	}
 ?>
 
 <table cellspacing="1" cellpadding="4" border="0" class="tbl">
@@ -134,43 +151,31 @@ if ($do_report) {
 		$sum_total_hours_allocated = $sum_total_hours_worked = 0;
 		$sum_hours_allocated_complete = $sum_hours_worked_complete = 0;
 	
-//TODO: Split times for which more than one users were working...	
-		$q = new DBQuery;
 		foreach ($user_list as $user_id => $user) {
-			$q->clear();
-			$q->addTable('user_tasks');
-			$q->addQuery('task_id');
-			$q->addWhere('user_id = ' . (int)$user_id);
-			$tasks_id = $q->loadColumn();
-
 			$total_hours_allocated = $total_hours_worked = 0;
 			$hours_allocated_complete = $hours_worked_complete = 0;
+
+			$tasks_assigned = isset($user_task_map[$user_id]) ? $user_task_map[$user_id] : array();
 			
-			foreach ($tasks_id as $task_id) {
+			foreach ($tasks_assigned as $task_id => $perc) {
 				if (isset($task_list[$task_id])) {
-					// Now let's figure out how many time did the user spent in this task
-					$q->clear();
-					$q->addTable('task_log');
-					$q->addQuery('sum(task_log_hours)');
-					$q->addWhere('task_log_task = '.(int)$task_id);
-					$q->addWhere('task_log_creator = '.(int)$user_id);
-					$hours_worked = round($q->loadResult(),2);
-					
-					
-					$q->clear();
-					$q->addTable('tasks');
-					$q->addQuery('task_percent_complete');
-					$q->addWhere('task_id = '.(int)$task_id);
-					//echo $sql;
-					$percent = $q->loadColumn();
-					$complete = ($percent[0] == 100);
+					$hours_worked = round(isset($user_log_map[$user_id][$task_id]) ? $user_log_map[$user_id][$task_id] : 0, 2);
+					$complete = ($task_list[$task_id]['task_percent_complete'] == 100);
+
+					$task_total_hours = $task_list[$task_id]['total_hours'];
+					$total_perc = $task_list[$task_id]['total_perc'];
+					if ($total_perc > 0) {
+						$hours_allocated = round(($task_total_hours * $perc) / $total_perc, 2);
+					} else {
+						$hours_allocated = round($task_total_hours / $task_list[$task_id]['user_count'], 2);
+					}
                     
 					if ($complete) {
-						$hours_allocated_complete += $task_list[$task_id]['hours_allocated'];
+						$hours_allocated_complete += $hours_allocated;
 						$hours_worked_complete += $hours_worked;
 					}
 					
-					$total_hours_allocated += $task_list[$task_id]['hours_allocated'];
+					$total_hours_allocated += $hours_allocated;
 					$total_hours_worked    += $hours_worked;
 				}
 			}

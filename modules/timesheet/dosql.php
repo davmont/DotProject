@@ -16,7 +16,7 @@ if ($punchIn) {
 	$timesheet = new Timesheet();
 	$q->addTable('timesheet');
 	$q->addQuery('*');
-	$q->addWhere("user_id = $AppUI->user_id and timesheet_date = '" . $_POST['timesheet_date'] . "'");
+	$q->addWhere("user_id = " . (int)$AppUI->user_id . " and timesheet_date = '" . db_escape($_POST['timesheet_date']) . "'");
 
 	if (!$q->loadObject($timesheet)) { // timesheet doesn't exist yet.  Create it.
 		$timesheet->timesheet_id = "";
@@ -41,7 +41,7 @@ if ($punchIn) {
 	$timesheet = new Timesheet();
 	$q->addTable('timesheet');
 	$q->addQuery('*');
-	$q->addWhere("user_id = $AppUI->user_id and timesheet_date = '" . $_POST['timesheet_date'] . "'");
+	$q->addWhere("user_id = " . (int)$AppUI->user_id . " and timesheet_date = '" . db_escape($_POST['timesheet_date']) . "'");
 
 	if (!$q->loadObject($timesheet)) { // timesheet doesn't exist yet.  Create it.
 		$timesheet->timesheet_id = "";
@@ -66,7 +66,7 @@ if ($punchIn) {
 	$timesheet = new Timesheet();
 	$q->addTable('timesheet');
 	$q->addQuery('*');
-	$q->addWhere("user_id = $AppUI->user_id and timesheet_date = '" . $_POST['timesheet_date'] . "'");
+	$q->addWhere("user_id = " . (int)$AppUI->user_id . " and timesheet_date = '" . db_escape($_POST['timesheet_date']) . "'");
 
 	if (!$q->loadObject($timesheet)) { // timesheet doesn't exist yet.  Create it.
 		$timesheet->timesheet_id = "";

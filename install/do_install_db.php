@@ -1,4 +1,7 @@
-<?php // $Id: do_install_db.php 6185 2012-11-15 04:30:47Z ajdonnison $
+<?php
+define('DP_INSTALLER', true);
+ob_start();
+// $Id: do_install_db.php 6185 2012-11-15 04:30:47Z ajdonnison $
 //Max Execution Time in Installation No Limit 
 set_time_limit(0);
 
@@ -84,6 +87,7 @@ if ($dobackup) {
 
   header('Content-Disposition: attachment; filename="dPdbBackup'.date('Ymd').date('His').'.xml"');
   header('Content-Type: text/xml');
+  ob_end_clean();
   echo $sql;
 	exit;
  } else {
@@ -91,19 +95,42 @@ if ($dobackup) {
  }
 }
 
+$early_out = ob_get_contents();
+ob_end_clean();
 ?>
 <html>
 <head>
  <title>dotProject Installer</title>
  <meta name="Description" content="dotProject Installer">
-  <link rel="stylesheet" type="text/css" href="../style/default/main.css">
+ <link rel="stylesheet" type="text/css" href="../style/material/main.css">
+ <style>
+		body { background-color: #f5f5f6; margin: 0; padding: 0; }
+		.installer-header { background-color: #1976d2; color: #fff; padding: 16px 32px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 24px; display: flex; align-items: center; }
+		.installer-header h1 { margin: 0; font-size: 24px; color: #fff; font-weight: 500; display: flex; align-items: center; }
+		.installer-header img { filter: brightness(0) invert(1); margin-right: 16px; height: 32px; }
+		.installer-container { max-width: 1000px; margin: 0 auto; padding: 0 20px 40px 20px; }
+		.card { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 24px; }
+		.card h2 { margin-top: 0; color: #1976d2; font-size: 18px; font-weight: 500; border-bottom: 1px solid #eee; padding-bottom: 12px; margin-bottom: 20px; }
+		.console { background-color: #263238; color: #eceff1; padding: 15px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.5; height: 300px; overflow-y: auto; white-space: pre-wrap; margin-bottom: 0; }
+		.feedback-row { display: flex; align-items: flex-start; gap: 20px; padding: 12px 0; border-bottom: 1px solid #eee; }
+		.feedback-row:last-child { border-bottom: none; }
+		.feedback-label { width: 30%; font-weight: 600; color: #555; }
+		.feedback-content { flex: 1; }
+	</style>
 </head>
 <body>
-<h1><img src="dp.png" align="middle" alt="dotProject Logo"/>&nbsp;dotProject Installer</h1>
-<table cellspacing="0" cellpadding="3" border="0" class="tbl" width="100%" align="left">
-<tr class='title'><td>Progress:</td></tr>
-<tr><td><pre>
+<div class="installer-header">
+	<h1><img src="dp.png" alt="dotProject Logo"/> dotProject Installer</h1>
+</div>
+
+<div class="installer-container">
+	<div class="card">
+		<h2>Installation Progress</h2>
+		<div class="console">
 <?php
+if ($early_out) {
+	echo trim($early_out) . "\n";
+}
 
 if ($dobackup)
  dPmsg($backupMsg);
@@ -250,36 +277,43 @@ if ($do_cfg || $do_db_cfg) {
 
 //echo $msg;
 ?>
-</pre></td></tr>
-</table><br/>
-<table cellspacing="0" cellpadding="3" border="0" class="tbl" width="100%" align="left">
-        <tr>
-            <td class="title" valign="top">Database Installation Feedback:</td>
-     <td class="item"><b style="color:<?php echo $dbErr ? 'red' : 'green'; ?>"><?php echo $dbMsg; ?></b><?php if ($dbErr) { ?> <br />
-		   Please note that errors relating to dropping indexes during upgrades are <b>NORMAL</b> and do not indicate a problem.
-			 <?php } ?>
-			 </td>
-         <tr>
-  <tr>
-            <td class="title">Config File Creation Feedback:</td>
-     <td class="item" align="left"><b style="color:<?php echo $cFileErr ? 'red' : 'green'; ?>"><?php echo $cFileMsg; ?></b></td>
-  </tr>
-<?php if (($do_cfg || $do_db_cfg) && $cFileErr) { ?>
- <tr>
-     <td class="item" align="left" colspan="2">The following Content should go to ./includes/config.php. Create that text file manually and copy the following lines in by hand. Delete all empty lines and empty spaces after '?>' and save. This file should be readable by the webserver.</td>
-  </tr>
-         <tr>
-            <td align="center" colspan="2"><textarea class="button" name="dbhost" cols="100" rows="20" title="Content of config.php for manual creation." /><?php echo $msg.$config; ?></textarea></td>
-         </tr>
-<?php } ?>
- <tr>
-     <td class="item" align="center" colspan="2"><br/><b><a href="<?php echo $baseUrl.'/index.php?m=system&a=systemconfig';?>">Login and Configure the dotProject System Environment</a></b></td>
-  </tr>
-<?php if ($mode == 'install') { ?>
-	<tr>
-		<td class="item" align="center" colspan="2"><p>The Administrator login has been set to <b>admin</b> with a password of <b>passwd</b>. It is a good idea to change this password when you first log in</p></td>
-	</tr>
-<?php } ?>
-        </table>
+		</div> <!-- End Console -->
+	</div> <!-- End Installation Progress Card -->
+
+	<div class="card">
+		<h2>Configuration Summary</h2>
+		<div class="feedback-row">
+			<div class="feedback-label">Database Installation:</div>
+			<div class="feedback-content"><b style="color:<?php echo $dbErr ? '#d32f2f' : '#4caf50'; ?>"><?php echo $dbMsg; ?></b></div>
+		</div>
+		<div class="feedback-row">
+			<div class="feedback-label">Configuration File:</div>
+			<div class="feedback-content"><b style="color:<?php echo $cFileErr ? '#d32f2f' : '#4caf50'; ?>"><?php echo $cFileMsg; ?></b></div>
+		</div>
+		
+		<?php if (($do_cfg || $do_db_cfg) && $cFileErr) { ?>
+			<div style="margin-top: 20px; border: 1px dashed #ccc; padding: 16px; background-color: #fafafa;">
+				<p style="font-size: 13px; color: #666; margin-bottom: 12px;">Automatic writing failed. Please manually create <code>./includes/config.php</code> and paste the following content:</p>
+				<textarea class="text" style="width: 100%; height: 200px; font-family: monospace; font-size: 12px;"><?php echo $msg.$config; ?></textarea>
+			</div>
+		<?php } ?>
+	</div>
+
+	<?php if (!$dbErr && (!$cFileErr || !($do_cfg || $do_db_cfg))) { ?>
+	<div class="card" style="text-align: center; background-color: #e8f5e9; border: 1px solid #c8e6c9;">
+		<h2 style="color: #2e7d32; border: none; margin-bottom: 8px;">Success!</h2>
+		<p style="margin-bottom: 24px;">The installation/upgrade process is complete.</p>
+		<?php if ($mode == 'install') { ?>
+			<div style="margin-bottom: 24px; padding: 12px; background-color: #fff; border-radius: 4px; display: inline-block;">
+				<p style="margin: 0; font-size: 14px;"><strong>Admin Username:</strong> admin</p>
+				<p style="margin: 4px 0 0 0; font-size: 14px;"><strong>Initial Password:</strong> passwd</p>
+			</div>
+		<?php } ?>
+		<div style="margin-top: 10px;">
+			<a href="<?php echo $baseUrl.'/index.php'; ?>" class="button" style="text-decoration: none; padding: 12px 32px;">Proceed to dotProject</a>
+		</div>
+	</div>
+	<?php } ?>
+</div> <!-- End Container -->
 </body>
 </html>
