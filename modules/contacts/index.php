@@ -68,12 +68,14 @@ $q->addQuery('contact_id, contact_order_by');
 $q->addQuery('contact_first_name, contact_last_name, contact_phone, contact_owner');
 $q->addQuery($showfields);
 $q->addQuery('user_id');
-$where_filter = '';
+$filters = array();
 foreach ($search_map as $search_name) {
-	$where_filter .= (' OR ' . $search_name . " LIKE $where");
+	$filters[] = $search_name . " LIKE $where";
 }
-$where_filter = mb_substr($where_filter, 4);
-$where_filter .= (($additional_filter) ? (' OR ' . $additional_filter) : '');
+if ($additional_filter) {
+	$filters[] = $additional_filter;
+}
+$where_filter = implode(' OR ', $filters);
 $q->addWhere('(' . $where_filter . ')');
 $q->addWhere('(contact_private = 0 OR (contact_private = 1 AND contact_owner = ' . $AppUI->user_id
 	. ') OR contact_owner IS NULL OR contact_owner = 0)');
@@ -99,6 +101,32 @@ if (!($res = db_exec($sql))) {
 	}
 }
 
+$project_counts = array();
+if (count($disp_arr) > 0) {
+	// Instead of relying on a potentially missing mapping table, we
+	// natively count occurrences from the projects table's CSV column in PHP.
+	$q = new DBQuery;
+	$q->addTable('projects');
+	$q->addQuery('project_contacts');
+	$q->addWhere("project_contacts IS NOT NULL AND project_contacts != ''");
+	$res = $q->exec();
+
+	if ($res) {
+		while ($row = db_fetch_assoc($res)) {
+			$contacts = explode(',', $row['project_contacts']);
+			foreach ($contacts as $cid) {
+				$cid = (int)trim($cid);
+				if ($cid > 0) {
+					if (!isset($project_counts[$cid])) {
+						$project_counts[$cid] = 0;
+					}
+					$project_counts[$cid]++;
+				}
+			}
+		}
+	}
+	$q->clear();
+}
 
 
 /**
@@ -146,7 +174,6 @@ if ($canAuthor) {
 		. $AppUI->_('Import vCard') . '</a>');
 }
 $titleBlock->show();
-// TODO: Check to see that the Edit function is separated.
 
 ?>
 <script language="javascript" type="text/javascript">
@@ -199,18 +226,8 @@ $titleBlock->show();
 			</td>
 			<td>
 				<?php
-				$q = new DBQuery;
-				$q->addTable('projects');
-				$q->addQuery('count(*)');
-				$q->addWhere('project_contacts LIKE "' . $contactid
-					. ',%" OR project_contacts LIKE "%,' . $contactid
-					. ',%" OR project_contacts LIKE "%,' . $contactid
-					. '" OR project_contacts LIKE "' . $contactid . '"');
-
-				$res = $q->exec();
-				$projects_contact = db_fetch_row($res);
-				$q->clear();
-				if ($projects_contact[0] > 0) {
+				$projects_contact = isset($project_counts[$contactid]) ? $project_counts[$contactid] : 0;
+				if ($projects_contact > 0) {
 					echo ('<a href="" onclick="javascript:window.open('
 						. "'?m=public&amp;a=selector&amp;dialog=1&amp;callback=goProject&amp;table=projects"
 						. '&user_id=' . $contactid

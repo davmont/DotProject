@@ -17,14 +17,14 @@
 	$tf = $AppUI->getPref('TIMEFORMAT');
 
 	if (isset( $_GET['user_id'] )) {
-		$sql = "SELECT user_company FROM users WHERE user_id = ".$_GET['user_id'] ;
+		$sql = "SELECT user_company FROM users WHERE user_id = " . (int)$_GET['user_id'];
 		$company_id = db_loadResult( $sql );
 		if(getDenyRead( "companies", $company_id )){
 			$AppUI->redirect( "m=public&a=access_denied" );
 		}
-		$AppUI->setState( 'MileageLogSelectedUser', $_GET['user_id'] );
+		$AppUI->setState( 'MileageLogSelectedUser', (int)$_GET['user_id'] );
 	}
-	$user_id = $AppUI->getState( 'MileageLogSelectedUser' ) ? $AppUI->getState( 'MileageLogSelectedUser' ) : $AppUI->user_id;
+	$user_id = $AppUI->getState( 'MileageLogSelectedUser' ) ? (int)$AppUI->getState( 'MileageLogSelectedUser' ) : $AppUI->user_id;
 
 	if (isset( $_GET['interval'] )) {
 		$AppUI->setState( 'MileageLogInterval', $_GET['interval'] );
@@ -192,6 +192,55 @@ function setCalendar( uts, fdate ) {
 	
 	$result = db_loadList($sql);
 //print '<pre>'.sizeof($result).'<pre>';
+
+	$log_ids = array();
+	foreach ($result as $log) {
+		$log_ids[] = (int)$log['mileage_log_id'];
+	}
+
+	$all_purposes = array();
+	$helpdesk_ids = array();
+	$task_ids = array();
+
+	if (count($log_ids) > 0) {
+		$q = new DBQuery;
+		$q->addTable('mileage_log_purpose');
+		$q->addQuery('*');
+		$q->addWhere('mileage_log_id IN (' . implode(',', $log_ids) . ')');
+		$all_purposes_list = $q->loadList();
+		$q->clear();
+
+		if (!is_array($all_purposes_list)) $all_purposes_list = array();
+		foreach ($all_purposes_list as $purpose) {
+			$all_purposes[$purpose['mileage_log_id']][] = $purpose;
+			if ($purpose['mileage_log_purpose_relation_type'] == 2) {
+				$helpdesk_ids[] = (int)$purpose['mileage_log_purpose_relation_id'];
+			} elseif ($purpose['mileage_log_purpose_relation_type'] == 1) {
+				$task_ids[] = (int)$purpose['mileage_log_purpose_relation_id'];
+			}
+		}
+	}
+
+	$helpdesk_desc = array();
+	if (count($helpdesk_ids) > 0) {
+		$q = new DBQuery;
+		$q->addTable('helpdesk_items');
+		$q->addQuery("item_id, CONCAT_WS(' :: ', item_title, item_summary)");
+		$q->addWhere('item_id IN (' . implode(',', array_unique($helpdesk_ids)) . ')');
+		$helpdesk_desc = $q->loadHashList();
+		$q->clear();
+	}
+
+	$task_desc = array();
+	if (count($task_ids) > 0) {
+		$q = new DBQuery;
+		$q->addTable('tasks');
+		$q->addQuery("task_id, CONCAT_WS(' :: ', task_name, task_description)");
+		$q->addWhere('task_id IN (' . implode(',', array_unique($task_ids)) . ')');
+		$task_desc = $q->loadHashList();
+		$q->clear();
+	}
+
 	$date = $start_day->format("%Y-%m-%d")." 12:00:00";
 	$start_day -> setDate($date, DATE_FORMAT_ISO);
 
@@ -218,7 +267,7 @@ function setCalendar( uts, fdate ) {
 				else
 					$total_miles_daily += $log["mileage_log_od_end"] - $log["mileage_log_od_start"];
 					
-				$mileage_log_purposes = db_loadList('select * from mileage_log_purpose where mileage_log_id=' . $log['mileage_log_id']);
+				$mileage_log_purposes = isset($all_purposes[$log['mileage_log_id']]) ? $all_purposes[$log['mileage_log_id']] : array();
 ?>
 				<tr>
 					<td nowrap="nowrap" valign="top">
@@ -233,12 +282,12 @@ function setCalendar( uts, fdate ) {
 						switch ($mileage_log_purpose['mileage_log_purpose_relation_type']) {
 						case 2:	// helpdesk item
 							if ($MILEAGELOG_CONFIG['show_purpose_helpdesk']) {
-								$desc = db_loadResult("select CONCAT_WS(' :: ', item_title, item_summary) from helpdesk_items where item_id=" . $mileage_log_purpose['mileage_log_purpose_relation_id']);
+								$desc = isset($helpdesk_desc[$mileage_log_purpose['mileage_log_purpose_relation_id']]) ? $helpdesk_desc[$mileage_log_purpose['mileage_log_purpose_relation_id']] : '';
 							}
 						break;
 						case 1: // task
 							if ($MILEAGELOG_CONFIG['show_purpose_task']) {
-								$desc = db_loadResult("select CONCAT_WS(' :: ', task_name, task_description) from tasks where task_id=" . $mileage_log_purpose['mileage_log_purpose_relation_id']);
+								$desc = isset($task_desc[$mileage_log_purpose['mileage_log_purpose_relation_id']]) ? $task_desc[$mileage_log_purpose['mileage_log_purpose_relation_id']] : '';
 							}
 						break;
 						default: // note

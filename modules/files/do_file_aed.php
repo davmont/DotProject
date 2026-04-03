@@ -162,6 +162,11 @@ if (!$file_id) {
 if (($msg = $obj->store())) {
 	$AppUI->setMsg($msg, UI_MSG_ERROR);
 } else {
+	require_once($AppUI->getSystemClass('CustomFields'));
+	$custom_fields = New CustomFields($m, 'addedit', $obj->file_id, "edit");
+	$custom_fields->bind($_POST);
+	$sql = $custom_fields->store($obj->file_id);
+
 	// Notification
 	$obj->load($obj->file_id);
 	if ($not) {

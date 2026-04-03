@@ -86,6 +86,11 @@ function submitIt() {
     } else if (form.user_password.value !=  form.password_check.value) {
         alert("<?php echo $AppUI->_('adminPasswordsDiffer', UI_OUTPUT_JS);?>");
         form.user_password.focus();
+    <?php if ($user_id > 0 && $AppUI->user_id == $user_id) { ?>
+    } else if (form.user_password.value != '<?php echo $user['user_password']; ?>' && (!form.old_password || form.old_password.value.length < 1)) {
+        alert("<?php echo $AppUI->_('Invalid old password', UI_OUTPUT_JS);?>");
+        if (form.old_password) form.old_password.focus();
+    <?php } ?>
     } else if (form.contact_first_name.value.length < 1) {
         alert("<?php echo $AppUI->_('adminValidFirstName', UI_OUTPUT_JS);?>");
         form.contact_first_name.focus();
@@ -184,6 +189,12 @@ function setDept(key, val) {
 </tr>
 <?php }
 ?>
+<?php if ($user_id > 0 && $AppUI->user_id == $user_id) { ?>
+<tr>
+    <td align="right">* <?php echo $AppUI->_('Old Password');?>:</td>
+    <td><input type="password" class="text" name="old_password" value="" maxlength="32" size="32" /> </td>
+</tr>
+<?php } ?>
 <tr>
     <td align="right">* <?php echo $AppUI->_('Password');?>:</td>
     <td><input type="password" class="text" name="user_password" value="<?php 

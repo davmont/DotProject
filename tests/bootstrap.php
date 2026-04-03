@@ -11,6 +11,10 @@ function dPgetSysVal($title) {
     return isset($mock_sysvals[$title]) ? $mock_sysvals[$title] : array();
 }
 
+function dPgetParam(&$arr, $name, $def = null) {
+    return isset($arr[$name]) ? $arr[$name] : $def;
+}
+
 function dPformSafe($txt) {
     if (is_array($txt)) {
         foreach ($txt as $k => $v) {
@@ -39,29 +43,75 @@ function arraySelect($arr, $name, $attribs, $selected) {
     return $out;
 }
 
-// Mock DBQuery
-if (!class_exists('DBQuery')) {
-    class DBQuery {
-        var $tables = array();
-        var $query = array();
-        var $where = array();
-
-        function addTable($table) { $this->tables[] = $table; }
-        function addQuery($field) { $this->query[] = $field; }
-        function addWhere($where) { $this->where[] = $where; }
-        function loadResult() { return ''; } // Return empty for now
-        function quote($str) { return "'" . addslashes($str) . "'"; }
-    }
-}
+// Mock DBQuery - moved below to allow loading real DBQuery if needed
 
 // Mock AppUI
 if (!class_exists('CAppUI')) {
     class CAppUI {
         function setMsg($msg) {}
         function _($txt) { return $txt; }
+        function getLibraryClass($class) {
+            return DP_BASE_DIR . '/lib/' . $class . '.php';
+        }
+        function getSystemClass($class) {
+            return DP_BASE_DIR . '/classes/' . $class . '.class.php';
+        }
+        function setBaseLocale() {}
     }
 }
 if (!isset($GLOBALS['AppUI'])) {
     $GLOBALS['AppUI'] = new CAppUI();
+}
+
+// Mock DBQuery
+if (!class_exists('DBQuery') && !defined('LOAD_REAL_DBQUERY')) {
+    class DBQuery {
+        var $tables = array();
+        var $query = array();
+        var $where = array();
+
+        static $mockResults = array();
+        static $mockExecReturns = true;
+
+        function addTable($table) { $this->tables[] = $table; }
+        function addQuery($field) { $this->query[] = $field; }
+        function addWhere($where, $params = array()) { $this->where[] = $where; }
+
+        function exec() {
+            return self::$mockExecReturns;
+        }
+
+        function fetchRow() {
+            if (empty(self::$mockResults)) {
+                return false;
+            }
+            return array_shift(self::$mockResults);
+        }
+
+        function clear() {
+            $this->tables = array();
+            $this->query = array();
+            $this->where = array();
+        }
+
+        function loadResult() {
+            $row = $this->fetchRow();
+            $this->clear();
+            if ($row === false) {
+                return '';
+            }
+            return is_array($row) ? reset($row) : $row;
+        }
+
+        function quote($str) { return "'" . addslashes($str) . "'"; }
+        function clear() {}
+        function prepare() { return ''; }
+        function exec() { return true; }
+        function fetchRow() { return array(); }
+        function loadHash() { return array(); }
+        function loadList() { return array(); }
+        function loadColumn() { return array(); }
+        function addInsert($field, $value) {}
+    }
 }
 ?>
