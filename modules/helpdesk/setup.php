@@ -30,62 +30,71 @@ require_once( $dPconfig['root_dir'].'/modules/system/syskeys/syskeys.class.php')
 
 class CSetupHelpDesk {
 	function install() {
+		global $db;
 		$dbprefix = dPgetConfig('dbprefix', '');
 		$success = 1;
 
-		$bulk_sql[] = "
-			CREATE TABLE `{$dbprefix}helpdesk_items` (
-			  `item_id` int(11) unsigned NOT NULL auto_increment,
-			  `item_title` varchar(64) NOT NULL default '',
-			  `item_summary` text,
-			  `item_calltype` int(3) unsigned NOT NULL default '0',
-			  `item_source` int(3) unsigned NOT NULL default '0',
-			  `item_os` varchar(48) NOT NULL default '',
-			  `item_application` varchar(48) NOT NULL default '',
-			  `item_priority` int(3) unsigned NOT NULL default '0',
-			  `item_severity` int(3) unsigned NOT NULL default '0',
-			  `item_status` int(3) unsigned NOT NULL default '0',
-			  `item_assigned_to` int(11) NOT NULL default '0',
-			  `item_created_by` int(11) NOT NULL default '0',
-			  `item_notify` int(1) DEFAULT '1' NOT NULL ,
-			  `item_requestor` varchar(48) NOT NULL default '',
-			  `item_requestor_id` int(11) NOT NULL default '0',
-			  `item_requestor_email` varchar(128) NOT NULL default '',
-			  `item_requestor_phone` varchar(30) NOT NULL default '',
-			  `item_requestor_type` tinyint NOT NULL default '0',
-			  `item_created` datetime default NULL,
-			  `item_modified` datetime default NULL,
-			  `item_parent` int(10) unsigned NOT NULL default '0',
-			  `item_project_id` int(11) NOT NULL default '0',
-			  `item_company_id` int(11) NOT NULL default '0',
-			  `item_task_id` int(11) default '0',
-			  `item_updated` datetime default NULL,
-			  `item_deadline` datetime default NULL,
-			  PRIMARY KEY (`item_id`)
-			);";
+		$tables = $db->MetaTables('TABLES');
+
+		if (!in_array("{$dbprefix}helpdesk_items", $tables)) {
+			$bulk_sql[] = "
+				CREATE TABLE `{$dbprefix}helpdesk_items` (
+				  `item_id` int(11) unsigned NOT NULL auto_increment,
+				  `item_title` varchar(64) NOT NULL default '',
+				  `item_summary` text,
+				  `item_calltype` int(3) unsigned NOT NULL default '0',
+				  `item_source` int(3) unsigned NOT NULL default '0',
+				  `item_os` varchar(48) NOT NULL default '',
+				  `item_application` varchar(48) NOT NULL default '',
+				  `item_priority` int(3) unsigned NOT NULL default '0',
+				  `item_severity` int(3) unsigned NOT NULL default '0',
+				  `item_status` int(3) unsigned NOT NULL default '0',
+				  `item_assigned_to` int(11) NOT NULL default '0',
+				  `item_created_by` int(11) NOT NULL default '0',
+				  `item_notify` int(1) DEFAULT '1' NOT NULL ,
+				  `item_requestor` varchar(48) NOT NULL default '',
+				  `item_requestor_id` int(11) NOT NULL default '0',
+				  `item_requestor_email` varchar(128) NOT NULL default '',
+				  `item_requestor_phone` varchar(30) NOT NULL default '',
+				  `item_requestor_type` tinyint NOT NULL default '0',
+				  `item_created` datetime default NULL,
+				  `item_modified` datetime default NULL,
+				  `item_parent` int(10) unsigned NOT NULL default '0',
+				  `item_project_id` int(11) NOT NULL default '0',
+				  `item_company_id` int(11) NOT NULL default '0',
+				  `item_task_id` int(11) default '0',
+				  `item_updated` datetime default NULL,
+				  `item_deadline` datetime default NULL,
+				  PRIMARY KEY (`item_id`)
+				);";
+		}
 
 		$bulk_sql[] = "
 			ALTER TABLE `{$dbprefix}task_log`
 			  ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`
 		";
 
-		$bulk_sql[] = "
-		  CREATE TABLE `{$dbprefix}helpdesk_item_status` (
-		    `status_id` int NOT NULL AUTO_INCREMENT,
-		    `status_item_id` int NOT NULL,
-		    `status_code` tinyint NOT NULL,
-		    `status_date` timestamp NOT NULL,
-		    `status_modified_by` int NOT NULL,
-		    `status_comment` text,
-		    PRIMARY KEY (`status_id`)
-		);";
-
-		$bulk_sql[] = "
-		CREATE TABLE `{$dbprefix}helpdesk_item_watchers` (
-		  `item_id` int(11) NOT NULL default '0',
-		  `user_id` int(11) NOT NULL default '0',
-		  `notify` char(1) NOT NULL default ''
+		if (!in_array("{$dbprefix}helpdesk_item_status", $tables)) {
+			$bulk_sql[] = "
+			  CREATE TABLE `{$dbprefix}helpdesk_item_status` (
+			    `status_id` int NOT NULL AUTO_INCREMENT,
+			    `status_item_id` int NOT NULL,
+			    `status_code` tinyint NOT NULL,
+			    `status_date` timestamp NOT NULL,
+			    `status_modified_by` int NOT NULL,
+			    `status_comment` text,
+			    PRIMARY KEY (`status_id`)
 			);";
+		}
+
+		if (!in_array("{$dbprefix}helpdesk_item_watchers", $tables)) {
+			$bulk_sql[] = "
+			CREATE TABLE `{$dbprefix}helpdesk_item_watchers` (
+			  `item_id` int(11) NOT NULL default '0',
+			  `user_id` int(11) NOT NULL default '0',
+			  `notify` char(1) NOT NULL default ''
+				);";
+		}
 
 		$bulk_sql[] = "
 		  ALTER TABLE `{$dbprefix}files`
@@ -180,6 +189,7 @@ class CSetupHelpDesk {
 		global $db;
 		$dbprefix = dPgetConfig('dbprefix', '');
 		$success = 1;
+		$tables = $db->MetaTables('TABLES');
 		if (!file_exists($CONFIG_FILE)) {
 			if (!(file_put_contents('./modules/helpdesk/config.php', 'CONFIGURE_ME')))
 				$success = 0;
@@ -216,6 +226,7 @@ class CSetupHelpDesk {
 	          ADD `file_helpdesk_item` int(11) NOT NULL default '0' AFTER `file_task`";
 
 		// Add help desk item status log table
+		if (!in_array("{$dbprefix}helpdesk_item_status", $tables)) {
 	        $bulk_sql[] = "
 	          CREATE TABLE `{$dbprefix}helpdesk_item_status` (
 	            `status_id` INT NOT NULL AUTO_INCREMENT,
@@ -226,6 +237,7 @@ class CSetupHelpDesk {
 	            `status_comment` TEXT DEFAULT '',
 	            PRIMARY KEY (`status_id`)
 	          )";
+		}
 
 	        // Execute the above SQL
 	        foreach ($bulk_sql as $s) {
@@ -303,6 +315,7 @@ class CSetupHelpDesk {
 	        break;
 	      case 0.3:
 	        // Version 0.31 includes new watchers functionality
+		if (!in_array("{$dbprefix}helpdesk_item_watchers", $tables)) {
 			$sql = "
 			CREATE TABLE {$dbprefix}helpdesk_item_watchers (
 			  `item_id` int(11) NOT NULL default '0',
@@ -310,6 +323,7 @@ class CSetupHelpDesk {
 			  `notify` char(1) NOT NULL default ''
 			);";
 			db_exec($sql);
+		}
 		  case 0.31:
 		    $sql = "
 	          ALTER TABLE `{$dbprefix}helpdesk_items`
@@ -341,9 +355,6 @@ class CSetupHelpDesk {
 		// These changes are to help bridge people from the "old" helpdesk
 		// to the newer helpdesk module.  Errors are ignored in case the 
 		// modified helpdesk with files support was already installed.
-		// TODO: Detection of table existance before blind creation with
-		// no error return
-		$tables = $db->MetaTables('TABLES');
 		if (!in_array("{$dbprefix}helpdesk_items", $tables)) {
 			$q = new DBQuery;
 			$q->createTable('helpdesk_items');

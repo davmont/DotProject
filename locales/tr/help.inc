@@ -10,9 +10,10 @@
 "Context Help"=>"İçerik Yardımı",
 "General Concepts"=>"Genel Kavramlar",
 "Getting Started"=>"Başlamaya hazırlık",
+"helpIntro"=>"İşte size içerik menüsünden yardım dosyasında doğrudan ulaşamıyacağınız çabuk bağlantılar",
+"index"=>"indeks",
 "Left Navigation"=>"Sol navigasyon",
 "Saving Your Place"=>"Yerinizi Kaydetmek",
 "Tabbed Property Boxes"=>"Ayıraçlı Özellik Kutuları",
 "Top Menu"=>"Üst Menü",
-"helpIntro"=>"İşte size içerik menüsünden yardım dosyasında doğrudan ulaşamıyacağınız çabuk bağlantılar",
-"index"=>"indeks",
+

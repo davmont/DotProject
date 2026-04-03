@@ -10,9 +10,10 @@
 "Context Help"=>"",
 "General Concepts"=>"Splošni koncepti",
 "Getting Started"=>"Za&#269;ni tukaj",
+"helpIntro"=>"",
+"index"=>"indeks",
 "Left Navigation"=>"",
 "Saving Your Place"=>"",
 "Tabbed Property Boxes"=>"",
 "Top Menu"=>"Vrhnji menu",
-"helpIntro"=>"",
-"index"=>"indeks",
+

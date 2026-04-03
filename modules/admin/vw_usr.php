@@ -27,6 +27,46 @@ if (!defined('DP_BASE_DIR')) {
 <?php 
 
 $perms =& $AppUI->acl();
+$show_tab_0 = ((int)dPgetParam($_REQUEST, 'tab', 0) == 0);
+
+$all_user_logs = array();
+if ($show_tab_0) {
+	$user_ids = array();
+	foreach ($users as $row) {
+		if ($perms->checkLogin($row['user_id']) == $canLogin) {
+			$user_ids[] = (int)$row['user_id'];
+		}
+	}
+
+	if (!empty($user_ids)) {
+		$q = new DBQuery;
+		$q->addTable('user_access_log', 'ual');
+		$q->addQuery('user_access_log_id, user_id,'
+		             . ' (unix_timestamp(now()) - unix_timestamp(date_time_in))/3600 as hours,'
+		             . ' (unix_timestamp(now()) - unix_timestamp(date_time_last_action))/3600'
+		             . ' as idle, if (isnull(date_time_out)'
+		             . " or date_time_out ='0000-00-00 00:00:00','1','0') as online");
+
+		// To only fetch the most recent log per user efficiently:
+		// We use a subquery in the WHERE clause to only select the maximum user_access_log_id per user.
+		$subq = new DBQuery;
+		$subq->addTable('user_access_log');
+		$subq->addQuery('MAX(user_access_log_id)');
+		$subq->addWhere("user_id IN (" . implode(',', $user_ids) . ")");
+		$subq->addGroup('user_id');
+		$max_ids_sql = $subq->prepare();
+
+		$q->addWhere("ual.user_access_log_id IN (" . $max_ids_sql . ")");
+
+		$logs = $q->loadList();
+		if ($logs) {
+			foreach ($logs as $log) {
+				$all_user_logs[$log['user_id']] = array($log);
+			}
+		}
+	}
+}
+
 foreach ($users as $row) {
 	if ($perms->checkLogin($row['user_id']) != $canLogin) {
 		continue;
@@ -65,20 +105,10 @@ foreach ($users as $row) {
 <?php } ?>
 	</td>
 	<?php 
-		if ((int)dPgetParam($_REQUEST, 'tab', 0) == 0) { ?>
+		if ($show_tab_0) { ?>
 	<td>
 	       <?php 
-	          	$q  = new DBQuery;
-			$q->addTable('user_access_log', 'ual');
-			$q->addQuery('user_access_log_id,' 
-			             . ' (unix_timestamp(now()) - unix_timestamp(date_time_in))/3600 as hours,' 
-			             . ' (unix_timestamp(now()) - unix_timestamp(date_time_last_action))/3600' 
-			             . ' as idle, if (isnull(date_time_out)' 
-			             . " or date_time_out ='0000-00-00 00:00:00','1','0') as online");
-			$q->addWhere('user_id =' . $row['user_id']);
-			$q->addOrder('user_access_log_id DESC');
-			$q->setLimit(1);
-			$user_logs = $q->loadList();
+			$user_logs = isset($all_user_logs[$row['user_id']]) ? $all_user_logs[$row['user_id']] : null;
 	           
 			if ($user_logs) {
 				foreach ($user_logs as $row_log) {

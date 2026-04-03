@@ -66,8 +66,12 @@ class CSetupPayments {
                 $q->dropTable('invoice_payment');
                 $q->exec();
                 $q->clear();
-                 // TODO : find how to delete with DBQuery
-		//db_exec( "delete from permissions where permission_grant_on like 'payments'");
+
+                $q->setDelete('permissions');
+                $q->addWhere("permission_grant_on like 'payments'");
+                $q->exec();
+                $q->clear();
+
 		return null;
 	}
 

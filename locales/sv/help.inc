@@ -10,9 +10,10 @@
 "Context Help"=>"Kontexthjälp",
 "General Concepts"=>"Allmäna koncept",
 "Getting Started"=>"Att starta",
+"helpIntro"=>"Här hittar du ett par länkar till hjälpteman som ej kan nås via kontexthjälpen.",
+"index"=>"Innehåll",
 "Left Navigation"=>"Navigeringen",
 "Saving Your Place"=>"Spara arbetsplatsen",
 "Tabbed Property Boxes"=>"Visning av registerkort",
 "Top Menu"=>"Huvudmenyn",
-"helpIntro"=>"Här hittar du ett par länkar till hjälpteman som ej kan nås via kontexthjälpen.",
-"index"=>"Innehåll",
+

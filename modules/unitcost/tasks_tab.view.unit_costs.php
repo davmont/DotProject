@@ -11,7 +11,7 @@ global $projTasksWithEndDates, $tab, $loadFromTab;
 
 // load module class
 require_once $AppUI->getModuleClass('unitcost');
-$unitcost_task_costs =& new Cunitcost_task_costs;
+$unitcost_task_costs = new Cunitcost_task_costs;
 $unitcost_task_costs->load($task_id);
 
 // get the values

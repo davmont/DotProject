@@ -33,10 +33,18 @@ foreach ($modules as $module) {
 		  . '"><img src="./images/icons/stock_new.png" align="center" width="16" height="16" border="0" alt="" />' 
 		  . $AppUI->_('Add a new Custom Field to this Module') . '</a><br /><br />');
 	echo '</td></tr>';
+
+	echo '<tr>';
+	echo '<th>' . $AppUI->_('Edit') . '</th>';
+	echo '<th>' . $AppUI->_('Delete') . '</th>';
+	echo '<th>' . $AppUI->_('Order') . '</th>';
+	echo '<th>' . $AppUI->_('Description') . '</th>';
+	echo '</tr>';
 	
 	$q->clear();
 	$q->addTable('custom_fields_struct');
 	$q->addWhere('field_module = \''.mb_strtolower($module['mod_name'])."'");
+	$q->addOrder('field_order ASC');
 	$custom_fields = $q->loadList();
 	
 	foreach ($custom_fields as $f) {
@@ -47,6 +55,8 @@ foreach ($modules as $module) {
 		echo '</td><td class="hilite">';
 		echo ('<a href="?m=system&amp;a=custom_field_addedit&amp;field_id=' . $f['field_id'] 
 			  . '&amp;delete=1"><img src="./images/icons/stock_delete-16.png" align="center" width="16" height="16" border="0" alt="" />Delete</a>');
+		echo '</td><td class="hilite">';
+		echo $f['field_order'];
 		echo '</td><td class="hilite">';
 		echo htmlspecialchars($f['field_description']) . "\n";
 		echo '</td></tr>';

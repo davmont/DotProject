@@ -29,8 +29,8 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE |
-		E_CORE_ERROR | E_CORE_WARNING);
+// error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE |
+//		E_CORE_ERROR | E_CORE_WARNING);
 
 /*
 interface Test {
@@ -147,7 +147,7 @@ class Assert {
 	  }
       }
       $htmlValue = "<code class=\"$class\">"
-	   . htmlspecialchars($translateValue) . "</code>";
+	   . htmlspecialchars((string)$translateValue) . "</code>";
       if (phpversion() >= '4.0.0') {
 	  if (is_bool($value)) {
 	      $htmlValue = $value ? "<i>true</i>" : "<i>false</i>";
@@ -221,7 +221,8 @@ class TestCase extends Assert /* implements Test */ {
   function runTest() {
     if (phpversion() >= '4') {
 	global $PHPUnit_testRunning;
-	eval('$PHPUnit_testRunning[0] = & $this;');
+	// eval('$PHPUnit_testRunning[0] = & $this;');
+    $PHPUnit_testRunning[0] = $this;
 	// Saved ref to current TestCase, so that the error handler
 	// can access it.  This code won't even parse in PHP3, so we
 	// hide it in an eval.
@@ -298,7 +299,7 @@ class TestCase extends Assert /* implements Test */ {
   }
 
   function runBare() {
-    $this->setup();
+    $this->setUp();
     $this->runTest();
     $this->tearDown();
   }
@@ -314,6 +315,7 @@ class TestSuite /* implements Test */ {
   function __construct($classname=false) {
     // Find all methods of the given class whose name starts with
     // "test" and add them to the test suite.
+    // print "Looking for tests in $classname\n";
 
     // PHP3: We are just _barely_ able to do this with PHP's limited
     // introspection...  Note that PHP seems to store method names in
@@ -331,11 +333,12 @@ class TestSuite /* implements Test */ {
       return;
     $this->fClassname = $classname;
 
-    if (true) {
+    if (version_compare(phpversion(), '4.0.0', '>=')) {
       // PHP4 introspection, submitted by Dylan Kuhn
 
       $names = get_class_methods($classname);
       foreach ($names as $key => $method) {
+        // print "Checking method: $method\n";
         if (preg_match('/^test/', $method)) {
           $test = new $classname($method);
           if (strcasecmp($method, $classname) == 0 || is_subclass_of($test, $method)) {
@@ -368,7 +371,7 @@ class TestSuite /* implements Test */ {
   function run(&$testResult) {
     /* Run all TestCases and TestSuites comprising this TestSuite,
        accumulating results in the given TestResult object. */
-    foreach ($this->fTests as $na => $test) {
+    foreach ($this->fTests as $test) {
       if ($testResult->shouldStop())
 	break;
       $test->run($testResult);
@@ -379,10 +382,8 @@ class TestSuite /* implements Test */ {
     /* Number of TestCases comprising this TestSuite (including those
        in any constituent TestSuites) */
     $count = 0;
-    if(isset($this->fTests)) {
-        foreach ($this->fTests as $na => $test_case) {
-          $count += $test_case->countTestCases();
-        }
+    foreach ($this->fTests as $test_case) {
+      $count += $test_case->countTestCases();
     }
     return $count;
   }
@@ -515,8 +516,9 @@ class TextTestResult extends TestResult {
 
 	    $exceptions = $failure->getExceptions();
 	    print("<ul>");
-	    foreach ($exceptions as $na => $exception)
+	    foreach ($exceptions as $na => $exception) {
 		printf("<li>%s\n", $exception->getMessage());
+        }
 	    print("</ul>");
 	}
 	print("</ol>\n");
@@ -591,8 +593,9 @@ class PrettyTestResult extends TestResult {
 
       $exceptions = $failure->getExceptions();
       print("<ul>");
-      foreach ($exceptions as $na => $exception)
+      foreach ($exceptions as $na => $exception) {
 	printf("<li>%s\n", $exception->getMessage());
+      }
       print("</ul>");
     }
     print("</ol>\n");

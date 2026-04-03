@@ -383,7 +383,7 @@ class CTask extends CDpObject {
                 $children = $this->getChildren();
                 if (!empty($children))
                 {
-                        $tempTask = & new CTask();
+                        $tempTask = new CTask();
                         foreach ($children as $child)
                         {
                                 $tempTask->load($child);
@@ -409,7 +409,7 @@ class CTask extends CDpObject {
                 $children = $this->getDeepChildren();
                 if (!empty($children))
                 {
-                        $tempChild = & new CTask();
+                        $tempChild = new CTask();
                         foreach ($children as $child)
                         {
                                 $tempChild->load($child);
@@ -601,15 +601,22 @@ class CTask extends CDpObject {
 
         function updateDependencies( $cslist ) {
         // delete all current entries
-                $sql = "DELETE FROM task_dependencies WHERE dependencies_task_id = $this->task_id";
-                db_exec( $sql );
+                $q = new DBQuery;
+                $q->setDelete('task_dependencies');
+                $q->addWhere('dependencies_task_id = ' . $this->task_id);
+                $q->exec();
+                $q->clear();
 
         // process dependencies
                 $tarr = explode( ",", $cslist );
                 foreach ($tarr as $task_id) {
                         if (intval( $task_id ) > 0) {
-                                $sql = "REPLACE INTO task_dependencies (dependencies_task_id, dependencies_req_task_id) VALUES ($this->task_id, $task_id)";
-                                db_exec($sql);
+                                $q->addTable('task_dependencies');
+                                $q->addInsert('dependencies_task_id', $this->task_id);
+                                $q->addInsert('dependencies_req_task_id', $task_id);
+                                $q->type = 'replace';
+                                $q->exec();
+                                $q->clear();
                         }
                 }
         }
@@ -804,7 +811,7 @@ class CTask extends CDpObject {
                 global $AppUI, $locale_char_set, $dPconfig;
 
                 $mail_recipients = array();
-                $q =& new DBQuery;
+                $q = new DBQuery;
                 if (isset($assignees) && $assignees == 'on') {
                         $q->clear();
                         $q->addTable('user_tasks', 'ut');
@@ -956,7 +963,7 @@ class CTask extends CDpObject {
 
                 // filter tasks for not allowed projects
                 $tasks_filter = '';
-                $proj =& new CProject;
+                $proj = new CProject;
                 $task_filter_where = $proj->getAllowedSQL($AppUI->user_id, 'task_project');
                 if (count($task_filter_where))
                   $tasks_filter = ' AND (' . implode(' AND ', $task_filter_where) . ")";
@@ -1341,6 +1348,7 @@ class CTask extends CDpObject {
                 $overAssignment = false;
 
 
+                $values = array();
                 foreach ($tarr as $user_id) {
                         if (intval( $user_id ) > 0) {
                                 $perc = $perc_assign[$user_id];
@@ -1348,10 +1356,14 @@ class CTask extends CDpObject {
                                         // add Username of the overAssigned User
                                         $overAssignment .= " ".$alloc[$user_id]['userFC'];
                                 } else {
-                                        $sql = "REPLACE INTO user_tasks (user_id, task_id, perc_assignment) VALUES ($user_id, $this->task_id, $perc)";
-                                        db_exec( $sql );
+                                        $values[] = "($user_id, $this->task_id, $perc)";
                                 }
                         }
+                }
+                if (count($values)) {
+                        global $db;
+                        $sql = "REPLACE INTO user_tasks (user_id, task_id, perc_assignment) VALUES " . implode(", ", $values);
+                        $db->Execute($sql);
                 }
                 return $overAssignment;
         }
@@ -1408,8 +1420,14 @@ class CTask extends CDpObject {
         function updateUserSpecificTaskPriority( $user_task_priority = 0, $user_id = 0, $task_id = NULL ) {
                 // use task_id of given object if the optional parameter task_id is empty
                 $task_id = empty($task_id) ? $this->task_id : $task_id;
-                $sql = "REPLACE INTO user_tasks (user_id, task_id, user_task_priority) VALUES ($user_id, $task_id, $user_task_priority)";
-                db_exec( $sql );
+                $q = new DBQuery;
+                $q->addTable('user_tasks');
+                $q->addInsert('user_id', $user_id);
+                $q->addInsert('task_id', $task_id);
+                $q->addInsert('user_task_priority', $user_task_priority);
+                $q->type = 'replace';
+                $q->exec();
+                $q->clear();
         }
 
     function getProject() {
@@ -1432,7 +1450,7 @@ class CTask extends CDpObject {
                 if ($children)
                 {
                         $deep_children = array();
-                        $tempTask = &new CTask();
+                        $tempTask = new CTask();
                         foreach ($children as $child)
                         {
                                 $tempTask->load($child);

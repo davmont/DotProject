@@ -106,7 +106,7 @@ $new_task_end = new CDate($task->task_end_date);
 if ($new_task_end->dateDiff($task_end_date)) {
 	$task->addReminder();
 }
-if ($notify_owner && $msg = $task->notifyOwner()) {
+if ($notify_owner && $msg = $task->notifyOwner($obj->task_log_description)) {
 	$AppUI->setMsg($msg, UI_MSG_ERROR);
 }
 

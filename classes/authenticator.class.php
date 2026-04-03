@@ -341,7 +341,6 @@ if (!defined('DP_BASE_DIR')) {
 				$c->contact_zip = $ldap_attribs["postalcode"][0];
 				$c->contact_job = $ldap_attribs["title"][0];
 
-				//print_r($c); die();
 				db_insertObject('contacts', $c, 'contact_id');
 			}
 			$contact_id = ($c->contact_id == NULL) ? "NULL" : $c->contact_id;

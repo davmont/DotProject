@@ -10,9 +10,10 @@
 "Context Help"=>"",
 "General Concepts"=>"Generele konsepter",
 "Getting Started"=>"Komme i gang",
+"helpIntro"=>"",
+"index"=>"indeks",
 "Left Navigation"=>"Venstre navigasjon",
 "Saving Your Place"=>"Lagre ditt sted",
 "Tabbed Property Boxes"=>"Tabbete egenskap bokser",
 "Top Menu"=>"Top meny",
-"helpIntro"=>"",
-"index"=>"indeks",
+

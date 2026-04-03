@@ -9,31 +9,35 @@ require_once($AppUI->getModuleClass('projects'));
 /**
  * Costs Class
  */
-class CCosts extends CDpObject {
+class CCosts extends CDpObject
+{
 	var $cost_id = NULL;
-        var $cost_type_id = NULL;
+	var $cost_type_id = NULL;
 	var $cost_description = NULL;
-        var $cost_quantity = NULL;       
-        var $cost_date_begin = NULL;
-        var $cost_date_end = NULL;
-        var $cost_value_unitary = 0;
+	var $cost_quantity = NULL;
+	var $cost_date_begin = NULL;
+	var $cost_date_end = NULL;
+	var $cost_value_unitary = 0;
 	var $cost_value_total = 0;
-       
-	function __construct() {
-            parent::__construct('costs', 'cost_id');
+
+	function __construct()
+	{
+		parent::__construct('costs', 'cost_id');
 	}
 
-	function check() {
-	// ensure the integrity of some variables
+	function check()
+	{
+		// ensure the integrity of some variables
 		$this->cost_id = intval($this->cost_id);
 		return NULL; // object is ok
 	}
 
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0)
+	{
 		global $dPconfig;
 		$this->_message = "deleted";
 
-	// delete the main table reference
+		// delete the main table reference
 		$q = new DBQuery();
 		$q->setDelete('costs');
 		$q->addWhere('cost_id = ' . $this->cost_id);
@@ -44,29 +48,33 @@ class CCosts extends CDpObject {
 	}
 }
 
-class CBudgetReserve extends CDpObject {
+class CBudgetReserve extends CDpObject
+{
 	var $budget_reserve_id = NULL;
 	var $budget_reserve_description = NULL;
-        var $budget_reserve_financial_impact = 0;       
-        var $budget_reserve_inicial_month = NULL;
-        var $budget_reserve_final_month = NULL;
-        var $budget_reserve_value_total = 0;
-        
-	function __construct() {
-            parent::__construct('budget_reserve', 'budget_reserve_id');
+	var $budget_reserve_financial_impact = 0;
+	var $budget_reserve_inicial_month = NULL;
+	var $budget_reserve_final_month = NULL;
+	var $budget_reserve_value_total = 0;
+
+	function __construct()
+	{
+		parent::__construct('budget_reserve', 'budget_reserve_id');
 	}
 
-	function check() {
-	// ensure the integrity of some variables
+	function check()
+	{
+		// ensure the integrity of some variables
 		$this->budget_reserve_id = intval($this->budget_reserve_id);
 		return NULL; // object is ok
 	}
 
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0)
+	{
 		global $dPconfig;
 		$this->_message = "deleted";
 
-	// delete the main table reference
+		// delete the main table reference
 		$q = new DBQuery();
 		$q->setDelete('budget_reserve');
 		$q->addWhere('budget_reserve_id = ' . $this->budget_reserve_id);
@@ -77,28 +85,32 @@ class CBudgetReserve extends CDpObject {
 	}
 }
 
-class CBudget extends CDpObject {
+class CBudget extends CDpObject
+{
 	var $budget_id = NULL;
 	var $budget_reserve_management = NULL;
-        var $budget_sub_total = 0;       
-        var $budget_total = 0;
-        
-        
-	function __construct() {
-            parent::__construct('budget', 'budget_id');
+	var $budget_sub_total = 0;
+	var $budget_total = 0;
+
+
+	function __construct()
+	{
+		parent::__construct('budget', 'budget_id');
 	}
 
-	function check() {
-	// ensure the integrity of some variables
+	function check()
+	{
+		// ensure the integrity of some variables
 		$this->budget_id = intval($this->budget_id);
 		return NULL; // object is ok
 	}
 
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0)
+	{
 		global $dPconfig;
 		$this->_message = "deleted";
 
-	// delete the main table reference
+		// delete the main table reference
 		$q = new DBQuery();
 		$q->setDelete('budget');
 		$q->addWhere('budget_id = ' . $this->budget_id);

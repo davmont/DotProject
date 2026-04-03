@@ -1,6 +1,7 @@
 <?php
 
-function getCostValueTotal($id) {
+function getCostValueTotal($id)
+{
     $query = new DBQuery;
     $query->addTable('human_resource');
     $query->addQuery('*');
@@ -9,7 +10,8 @@ function getCostValueTotal($id) {
     return db_loadList($sql);
 }
 
-function getResources($cond, $project) {
+function getResources($cond, $project)
+{
     $q = new DBQuery;
     if ($cond == "Human") {
         $q->clear();
@@ -30,7 +32,8 @@ function getResources($cond, $project) {
     }
 }
 
-function diasemana($data) {
+function diasemana($data)
+{
     $ano = substr("$data", 0, 4);
     $mes = substr("$data", 5, -3);
     $dia = substr("$data", 8, 9);
@@ -38,31 +41,40 @@ function diasemana($data) {
     $diasemana = date("w", mktime(0, 0, 0, $mes, $dia, $ano));
 
     switch ($diasemana) {
-        case"0": $diasemana = "Domingo";
+        case "0":
+            $diasemana = "Domingo";
             break;
-        case"1": $diasemana = "Segunda-Feira";
+        case "1":
+            $diasemana = "Segunda-Feira";
             break;
-        case"2": $diasemana = "Terça-Feira";
+        case "2":
+            $diasemana = "Terça-Feira";
             break;
-        case"3": $diasemana = "Quarta-Feira";
+        case "3":
+            $diasemana = "Quarta-Feira";
             break;
-        case"4": $diasemana = "Quinta-Feira";
+        case "4":
+            $diasemana = "Quinta-Feira";
             break;
-        case"5": $diasemana = "Sexta-Feira";
+        case "5":
+            $diasemana = "Sexta-Feira";
             break;
-        case"6": $diasemana = "Sábado";
+        case "6":
+            $diasemana = "Sábado";
             break;
     }
 
     echo "$diasemana";
 }
 
-function diferencaMeses($d1, $d2) {
+function diferencaMeses($d1, $d2)
+{
 
     return diffDate($d1, $d2, 'M');
 }
 
-function insertCostValues($project) {
+function insertCostValues($project)
+{
     // INSERT ON COSTS
 
     $q = new DBQuery();
@@ -119,9 +131,12 @@ function insertCostValues($project) {
 
     $date1 = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
     $date2 = mktime(0, 0, 0, date("m") + 1, date("d"), date("Y"));
+    global $db;
     if ($humanCost == null) {
+        $db->StartTrans();
         foreach ($res as $row) {
 
+            $q->clear();
             $q->addTable('costs');
             $q->addInsert('cost_type_id', 0);
             $q->addInsert('cost_project_id', $project);
@@ -133,6 +148,7 @@ function insertCostValues($project) {
             $q->addInsert('cost_value_total', $row['cost_value']);
             $q->exec();
         }
+        $db->CompleteTrans();
     } else {
         /* ################### UPDATE VALORES DOS CUSTOS HUMANOS #################### */
         $i = 0;
@@ -144,6 +160,7 @@ function insertCostValues($project) {
             $i++;
         }
         $j = 0;
+        $db->StartTrans();
         foreach ($humanCost as $row) {
             $l = 0;
             $value = ($array[$j][$l] * $row['cost_quantity']) * diferencaMeses(substr($row['cost_date_begin'], 0, -9), substr($row['cost_date_end'], 0, -9));
@@ -156,6 +173,8 @@ function insertCostValues($project) {
             $q->exec();
             $j++;
         }
+        $db->CompleteTrans();
+        $db->StartTrans();
         foreach ($res as $row) {
             $name = $row['contact_first_name'] . ' ' . $row['contact_last_name'] . ' - ' . $row['human_resources_role_name'];
             $bool = true;
@@ -178,6 +197,7 @@ function insertCostValues($project) {
                 $q->exec();
             }
         }
+        $db->CompleteTrans();
     }
 
     $notHumanCost = getResources("Non-Human", $whereProject);
@@ -195,8 +215,10 @@ function insertCostValues($project) {
 
 
     if ($notHumanCost == null) {
+        $db->StartTrans();
         foreach ($resNH as $row) {
 
+            $q->clear();
             $q->addTable('costs');
             $q->addInsert('cost_type_id', 1);
             $q->addInsert('cost_project_id', $project);
@@ -208,6 +230,7 @@ function insertCostValues($project) {
             $q->addInsert('cost_value_total', 0);
             $q->exec();
         }
+        $db->CompleteTrans();
     } else {
         /* ################### UPDATE OR INSERTE NON-HUMAN RESOURCES ######################## */
         $i = 0;
@@ -221,6 +244,7 @@ function insertCostValues($project) {
 
         $j = 0;
 
+        $db->StartTrans();
         foreach ($notHumanCost as $row) {
             $l = 0;
             $value = $array[$j][$l] * $row['cost_value_unitary'];
@@ -233,7 +257,9 @@ function insertCostValues($project) {
             $q->exec();
             $j++;
         }
+        $db->CompleteTrans();
 
+        $db->StartTrans();
         foreach ($resNH as $row) {
             $bool = true;
             foreach ($notHumanCost as $column) {
@@ -255,10 +281,12 @@ function insertCostValues($project) {
                 $q->exec();
             }
         }
+        $db->CompleteTrans();
     }
 }
 
-function insertReserveBudget($project) {
+function insertReserveBudget($project)
+{
 
     $q = new DBQuery();
 
@@ -278,9 +306,12 @@ function insertReserveBudget($project) {
     $budgets = $q->loadList();
 
 
+    global $db;
     if ($budgets == null) {
+        $db->StartTrans();
         foreach ($risk as $row) {
 
+            $q->clear();
             $q->addTable('budget_reserve');
             $q->addInsert('budget_reserve_project_id', $project);
             $q->addInsert('budget_reserve_risk_id', $row['risk_id']);
@@ -291,13 +322,18 @@ function insertReserveBudget($project) {
             $q->addInsert('budget_reserve_value_total', 0);
             $q->exec();
         }
+        $db->CompleteTrans();
     } else {
+        $db->StartTrans();
         foreach ($risk as $row) {
+            $q->clear();
             $q->addTable('budget_reserve');
             $q->addUpdate('budget_reserve_description', $row['risk_name']);
-            $q->addWhere('budget_reserve_project_id=' . $project . ' and budget_reserve_risk_id=' . $row[risk_id]);
+            $q->addWhere('budget_reserve_project_id=' . $project . ' and budget_reserve_risk_id=' . $row['risk_id']);
             $q->exec();
         }
+        $db->CompleteTrans();
+        $db->StartTrans();
         foreach ($risk as $row) {
             $bool = true;
             foreach ($budgets as $column) {
@@ -318,10 +354,12 @@ function insertReserveBudget($project) {
                 $q->exec();
             }
         }
+        $db->CompleteTrans();
     }
 }
 
-function insertBudget($project, $subTotal) {
+function insertBudget($project, $subTotal)
+{
 
     $q = new DBQuery();
     $q->clear();
@@ -353,9 +391,14 @@ function insertBudget($project, $subTotal) {
     }
 }
 
-function diffDate($d1, $d2, $type = '', $sep = '-') {
+function diffDate($d1, $d2, $type = '', $sep = '-')
+{
+    if (empty($d1) || empty($d2))
+        return 0;
     $d1 = explode($sep, $d1);
     $d2 = explode($sep, $d2);
+    if (count($d1) < 3 || count($d2) < 3)
+        return 0;
     switch ($type) {
         case 'A':
             $X = 31536000;
@@ -380,13 +423,15 @@ function diffDate($d1, $d2, $type = '', $sep = '-') {
     return floor(((mktime(0, 0, 0, $d2[1], $d2[2], $d2[0])) - (mktime(0, 0, 0, $d1[1], $d1[2], $d1[0]))) / $X);
 }
 
-function subTotalBudget($meses, $c, $mtz, $control, $sumColumns) {
+function subTotalBudget($meses, $c, $mtz, $control, $sumColumns)
+{
     for ($i = 0; $i <= $meses; $i++) {
 
         echo "<td nowrap='nowrap'>    <b>";
 
+        $sum = 0;
         for ($j = 0; $j <= $c; $j++) {
-            $sum = $sum + $mtz[$j][$i];
+            $sum = $sum + (isset($mtz[$j][$i]) ? $mtz[$j][$i] : 0);
         }
         $sumColumns[$control][$i] = $sum;
 
@@ -400,14 +445,17 @@ function subTotalBudget($meses, $c, $mtz, $control, $sumColumns) {
     return $sumColumns;
 }
 
-function subTotalBudgetRow($meses, $c, $mtz, $control) {
+function subTotalBudgetRow($meses, $c, $mtz, $control)
+{
+    $sum = 0;
     for ($i = 0; $i <= $meses; $i++) {
-        $sum = $sum + $mtz[$control][$i];
+        $sum = $sum + (isset($mtz[$control][$i]) ? $mtz[$control][$i] : 0);
     }
     return $sum;
 }
 
-function costsBudget($meses, $c, $row, $mStartProject, $mEndProject, $mtz) {
+function costsBudget($meses, $c, $row, $mStartProject, $mEndProject, $mtz)
+{
 
     $monthStart = substr($row['cost_date_begin'], 5, -12);
     $diffMonths = diferencaMeses(substr($row['cost_date_begin'], 0, -9), substr($row['cost_date_end'], 0, -9));
@@ -442,7 +490,8 @@ function costsBudget($meses, $c, $row, $mStartProject, $mEndProject, $mtz) {
     return $mtz;
 }
 
-function costsContingency($meses, $c, $row, $mStartProject, $mEndProject, $mtz) {
+function costsContingency($meses, $c, $row, $mStartProject, $mEndProject, $mtz)
+{
 
     $monthStart = substr($row['budget_reserve_inicial_month'], 5, -12);
     $diffMonths = diferencaMeses(substr($row['budget_reserve_inicial_month'], 0, -9), substr($row['budget_reserve_final_month'], 0, -9));
@@ -475,12 +524,12 @@ function costsContingency($meses, $c, $row, $mStartProject, $mEndProject, $mtz) 
     return $mtz;
 }
 
-function totalBudget($meses, $sumColumns) {
-
+function totalBudget($meses, $sumColumns)
+{
     for ($i = 0; $i <= $meses; $i++) {
-
+        $result = 0;
         for ($j = 0; $j <= 2; $j++) {
-            $result += $sumColumns[$j][$i];
+            $result += isset($sumColumns[$j][$i]) ? $sumColumns[$j][$i] : 0;
         }
         echo "<td nowrap='nowrap' width='10%'>";
         echo "<b>";

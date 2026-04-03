@@ -3,7 +3,7 @@
 /* Help Desk module definitions */
 $config = array();
 $config['mod_name'] = 'HelpDesk';
-$config['mod_version'] = '0.2';
+$config['mod_version'] = '0.3';
 $config['mod_directory'] = 'helpdesk';
 $config['mod_setup_class'] = 'CSetupHelpDesk';
 $config['mod_type'] = 'user';
@@ -37,6 +37,7 @@ class CSetupHelpDesk {
 			  `item_assigned_to` int(11) NOT NULL default '0',
 			  `item_created_by` int(11) NOT NULL default '0',
 			  `item_notify` int(1) DEFAULT '1' NOT NULL ,
+			  `item_public` tinyint(1) DEFAULT '0' NOT NULL,
 			  `item_requestor` varchar(48) NOT NULL default '',
 			  `item_requestor_id` int(11) NOT NULL default '0',
 			  `item_requestor_email` varchar(128) NOT NULL default '',
@@ -66,6 +67,8 @@ class CSetupHelpDesk {
 		    PRIMARY KEY (`status_id`)
 		  )";
 
+    global $db;
+    $db->StartTrans();
     foreach ($bulk_sql as $s) {
       db_exec($s);
 
@@ -73,34 +76,32 @@ class CSetupHelpDesk {
 	$success = 0;
       }
     }
+    $db->CompleteTrans();
 
 		$sk = new CSysKey( 'HelpDeskList', 'Enter values for list', '0', "\n", '|' );
 		$sk->store();
 
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskPriority', "0|Not Specified\n1|Low\n2|Medium\n3|High" );
-		$sv->store();
+		$values = array(
+			'HelpDeskPriority' => "0|Not Specified\n1|Low\n2|Medium\n3|High",
+			'HelpDeskSeverity' => "0|Not Specified\n1|No Impact\n2|Low\n3|Medium\n4|High\n5|Critical",
+			'HelpDeskCallType' => "0|Not Specified\n1|Bug\n2|Feature Request\n3|Complaint\n4|Suggestion",
+			'HelpDeskSource' => "0|Not Specified\n1|E-Mail\n2|Phone\n3|Fax\n4|In Person\n5|E-Lodged\n6|WWW",
+			'HelpDeskOS' => "Not Applicable\nLinux\nUnix\nSolaris 8\nSolaris 9\nRed Hat 6\nRed Hat 7\nRed Hat 8\nWindows 95\nWindow 98\nWindows 2000\nWindow 2000 Server\nWindows XP",
+			'HelpDeskApplic' => "Not Applicable\nWord\nExcel",
+			'HelpDeskStatus' => "0|Unassigned\n1|Open\n2|Closed\n3|On Hold\n4|Testing",
+			'HelpDeskAuditTrail' => "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted"
+		);
 
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskSeverity', "0|Not Specified\n1|No Impact\n2|Low\n3|Medium\n4|High\n5|Critical" );
-		$sv->store();
+		$dbprefix = dPgetConfig('dbprefix', '');
+		$sql = "INSERT INTO " . $dbprefix . "sysvals (sysval_key_id, sysval_title, sysval_value) VALUES ";
+		$inserts = array();
+		foreach ($values as $title => $value) {
+			$inserts[] = "(" . $sk->syskey_id . ", '" . db_escape($title) . "', '" . db_escape($value) . "')";
+		}
+		$sql .= implode(',', $inserts);
 
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskCallType', "0|Not Specified\n1|Bug\n2|Feature Request\n3|Complaint\n4|Suggestion" );
-		$sv->store();
+		db_exec($sql);
 
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskSource', "0|Not Specified\n1|E-Mail\n2|Phone\n3|Fax\n4|In Person\n5|E-Lodged\n6|WWW" );
-		$sv->store();
-
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskOS', "Not Applicable\nLinux\nUnix\nSolaris 8\nSolaris 9\nRed Hat 6\nRed Hat 7\nRed Hat 8\nWindows 95\nWindow 98\nWindows 2000\nWindow 2000 Server\nWindows XP" );
-		$sv->store();
-
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskApplic', "Not Applicable\nWord\nExcel" );
-		$sv->store();
-
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskStatus', "0|Unassigned\n1|Open\n2|Closed\n3|On Hold\n4|Testing" );
-		$sv->store();
-
-		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deleted" );
-		$sv->store();
-		
 	        return $success;
 	}
 
@@ -111,11 +112,14 @@ class CSetupHelpDesk {
 		$bulk_sql[] = "DROP TABLE helpdesk_item_status";
 		$bulk_sql[] = "ALTER TABLE `task_log` DROP COLUMN `task_log_help_desk_id`";
 
+		global $db;
+		$db->StartTrans();
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
 			if (db_error())
 				$success = 0;
 		}
+		$db->CompleteTrans();
 
 		$sql = "
 			SELECT syskey_id
@@ -128,11 +132,14 @@ class CSetupHelpDesk {
 		$bulk_sql[] = "DELETE FROM syskeys WHERE syskey_id = $id";
 		$bulk_sql[] = "DELETE FROM sysvals WHERE sysval_key_id = $id";
 
+		global $db;
+		$db->StartTrans();
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
 			if (db_error())
 				$success = 0;
 		}
+		$db->CompleteTrans();
 
 		return $success;
 	}
@@ -191,15 +198,21 @@ class CSetupHelpDesk {
 
 		db_exec($sql);
 		break;
+	      case "0.2":
+		$bulk_sql[] = "ALTER TABLE `helpdesk_items` ADD `item_public` tinyint(1) DEFAULT '0' NOT NULL";
+		break;
 	      default:
 		$success = 0;
 	    }
 
+		global $db;
+		$db->StartTrans();
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
 			if (db_error())
 				$success = 0;
 		}
+		$db->CompleteTrans();
   
 		// NOTE: Need to return true, not null, if all is good
 		return $success;

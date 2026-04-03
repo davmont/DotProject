@@ -7,7 +7,7 @@ $q->addJoin('communication_channel', 'ch', 'ch.communication_channel_id=c.commun
 $q->addJoin('communication_frequency', 'fr', 'fr.communication_frequency_id=c.communication_frequency_id');
 $q->addJoin('projects', 'p', 'p.project_id=c.communication_project_id');
 if(isset($_POST['project_id']) && $_POST['project_id'] != '0'){    
-    $q->addwhere('c.communication_project_id='.$_POST['project_id']);
+    $q->addwhere('c.communication_project_id=' . (int)$_POST['project_id']);
     $list = $q->loadList();
 }else{
     $q->setLimit(100);

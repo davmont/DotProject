@@ -26,10 +26,10 @@ $config['mod_ui_order'] = '0';
 $config['mod_description'] = 'This module is for internal staff to report their earnings to their company management.  Contractors can create invoices, Employees can create timecards, and Management can approve or decline them.  It is not for invoicing external companies.';
 
 if (@$a == 'setup') {
-	echo dPshowModuleConfig( $config );
+	echo dPshowModuleConfig($config);
 }
 
-require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php');
+require_once dPgetConfig('root_dir') . '/modules/system/syskeys/syskeys.class.php';
 
 /*
 // MODULE SETUP CLASS
@@ -38,12 +38,14 @@ require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php
 	remove - drop the appropriate db tables
 	upgrade - upgrades tables from previous versions
 */
-class CSetupEarnings {
-/*
-	Install routine
-*/
-	function install() {
-		$sql = "CREATE TABLE `earnings` (
+class CSetupEarnings
+{
+	/*
+		Install routine
+	*/
+	function install()
+	{
+		$sql = "CREATE TABLE `" . dPgetConfig('dbprefix') . "earnings` (
 			`earning_id` int(11) NOT NULL auto_increment,
 			`earning_user_id` int(11) NOT NULL default '0',
 			`earning_date` datetime NOT NULL default '0000-00-00 00:00:00',
@@ -71,10 +73,10 @@ class CSetupEarnings {
 			PRIMARY KEY  (`earning_id`),
 			UNIQUE KEY `earning_num` (`earning_num`),
 			KEY `earning_user_id` (`earning_user_id`)
-			) TYPE=MyISAM AUTO_INCREMENT=15;";
-			db_exec( $sql );
+			) ENGINE=MyISAM AUTO_INCREMENT=15;";
+		db_exec($sql);
 
-		$sql = "CREATE TABLE `earnings_items` (
+		$sql = "CREATE TABLE `" . dPgetConfig('dbprefix') . "earnings_items` (
 			`earning_items_id` int(11) NOT NULL auto_increment,
 			`earning_parent_id` int(11) default NULL,
 			`earning_tasklog_id` int(11) default NULL,
@@ -85,36 +87,38 @@ class CSetupEarnings {
 			`earning_item_rate` float NOT NULL default '0',
 			PRIMARY KEY  (`earning_items_id`),
 			KEY `earning_parent_id` (`earning_parent_id`)
-			) TYPE=MyISAM AUTO_INCREMENT=57;";
-			db_exec( $sql );
+			) ENGINE=MyISAM AUTO_INCREMENT=57;";
+		db_exec($sql);
 
 		// Required To Allow Joins To Work On Starting Tables
-		$sql="INSERT INTO `earnings_items` VALUES (0, NULL, NULL, '0000-00-00 00:00:00', '', '0', '', '0');";
-		db_exec( $sql );
-	
-		$sv = new CSysVal( 1, 'Earning Terms', "0|No Charge\n1|Due Immediately\n2|Net5\n3|Net10\n4|Net30\n5|Net45" );
+		$sql = "INSERT INTO `" . dPgetConfig('dbprefix') . "earnings_items` VALUES (0, NULL, NULL, '0000-00-00 00:00:00', '', '0', '', '0');";
+		db_exec($sql);
+
+		$sv = new CSysVal(1, 'Earning Terms', "0|No Charge\n1|Due Immediately\n2|Net5\n3|Net10\n4|Net30\n5|Net45");
 		$sv->store();
 		return null;
 	}
-/*
-	Removal routine
-*/
-	function remove() {
-		$sql = "DROP TABLE earnings;";
-		db_exec( $sql );
+	/*
+		Removal routine
+	*/
+	function remove()
+	{
+		$sql = "DROP TABLE `" . dPgetConfig('dbprefix') . "earnings`;";
+		db_exec($sql);
 
-		$sql = "DROP TABLE earnings_items;";
-		db_exec( $sql );
-		
-		$sql = "DELETE FROM sysvals WHERE sysval_title = 'Earning Terms';";
-		db_exec( $sql );
+		$sql = "DROP TABLE `" . dPgetConfig('dbprefix') . "earnings_items`;";
+		db_exec($sql);
+
+		$sql = "DELETE FROM `" . dPgetConfig('dbprefix') . "sysvals` WHERE sysval_title = 'Earning Terms';";
+		db_exec($sql);
 
 		return null;
 	}
-/*
-	Upgrade routine
-*/
-	function upgrade() {
+	/*
+		Upgrade routine
+	*/
+	function upgrade()
+	{
 		return null;
 	}
 }

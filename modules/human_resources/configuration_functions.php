@@ -45,7 +45,8 @@ function isRoleAllocated($project_tasks_estimated_roles_id) {
 	$query->addWhere('a.project_tasks_estimated_roles_id = ' . $project_tasks_estimated_roles_id);
 	$sql = $query->prepare();
 	$query->clear();
-	return count(db_loadList($sql)) > 0;
+	$list = db_loadList($sql);
+	return is_array($list) ? count($list) > 0 : false;
 }
 
 function getProjectTasksEstimatedRolesByTaskId($task_id) {
@@ -111,7 +112,8 @@ function companyHasPolicies($company_id) {
 	$query->addWhere('p.company_policies_company_id = ' . $company_id);
 	$sql = $query->prepare();
 	$query->clear();
-	return count(db_loadList($sql)) > 0;
+	$list = db_loadList($sql);
+	return is_array($list) ? count($list) > 0 : false;
 }
 
 function allCompanyHumanResourcesConfigured($company_id) {
@@ -133,7 +135,8 @@ function userHasHumanResource($user_id) {
 	$query->addWhere('h.human_resource_user_id = ' . $user_id);
 	$sql = $query->prepare();
 	$query->clear();
-	return count(db_loadList($sql)) > 0;
+	$list = db_loadList($sql);
+	return is_array($list) ? count($list) > 0 : false;
 }
 
 function getUsersByCompanyId($company_id) {
