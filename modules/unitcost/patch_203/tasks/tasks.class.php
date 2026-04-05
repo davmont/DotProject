@@ -490,22 +490,30 @@ class CTask extends CDpObject {
                 db_exec( $sql );
                 // print_r($this->task_departments);
                 if(!empty($this->task_departments)){
-                  $departments = explode(',',$this->task_departments);
-              foreach($departments as $department){
-                       $sql = 'INSERT INTO task_departments (task_id, department_id) values ('.$this->task_id.', '.$department.')';
-                       db_exec( $sql );
-              }
+                        $departments = explode(',',$this->task_departments);
+                        if(count($departments) > 0){
+                                $values = array();
+                                foreach($departments as $department){
+                                        $values[] = '('.$this->task_id.', '.$department.')';
+                                }
+                                $sql = 'INSERT INTO task_departments (task_id, department_id) VALUES ' . implode(', ', $values);
+                                db_exec( $sql );
+                        }
                 }
 
                 //split out related contacts and store them seperatly.
                 $sql = 'DELETE FROM task_contacts WHERE task_id='.$this->task_id;
                 db_exec( $sql );
                 if(!empty($this->task_contacts)){
-                    $contacts = explode(',',$this->task_contacts);
-                    foreach($contacts as $contact){
-                            $sql = 'INSERT INTO task_contacts (task_id, contact_id) values ('.$this->task_id.', '.$contact.')';
-                            db_exec( $sql );
-                    }
+                        $contacts = explode(',',$this->task_contacts);
+                        if(count($contacts) > 0){
+                                $values = array();
+                                foreach($contacts as $contact){
+                                        $values[] = '('.$this->task_id.', '.$contact.')';
+                                }
+                                $sql = 'INSERT INTO task_contacts (task_id, contact_id) VALUES ' . implode(', ', $values);
+                                db_exec( $sql );
+                        }
                 }
 
                 if ( !$importing_tasks && $this->task_parent != $this->task_id )
