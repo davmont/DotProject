@@ -485,34 +485,37 @@ class CTask extends CDpObject {
                         db_exec( $sql );
                 }
 
+                $q = new DBQuery;
                 //split out related departments and store them seperatly.
-                $sql = 'DELETE FROM task_departments WHERE task_id='.$this->task_id;
-                db_exec( $sql );
+                $q->setDelete('task_departments');
+                $q->addWhere('task_id=' . $this->task_id);
+                $q->exec();
+                $q->clear();
                 // print_r($this->task_departments);
                 if(!empty($this->task_departments)){
                         $departments = explode(',',$this->task_departments);
-                        if(count($departments) > 0){
-                                $values = array();
-                                foreach($departments as $department){
-                                        $values[] = '('.$this->task_id.', '.$department.')';
-                                }
-                                $sql = 'INSERT INTO task_departments (task_id, department_id) VALUES ' . implode(', ', $values);
-                                db_exec( $sql );
+                        foreach($departments as $department){
+                                $q->addTable('task_departments');
+                                $q->addInsert('task_id', $this->task_id);
+                                $q->addInsert('department_id', $department);
+                                $q->exec();
+                                $q->clear();
                         }
                 }
 
                 //split out related contacts and store them seperatly.
-                $sql = 'DELETE FROM task_contacts WHERE task_id='.$this->task_id;
-                db_exec( $sql );
+                $q->setDelete('task_contacts');
+                $q->addWhere('task_id=' . $this->task_id);
+                $q->exec();
+                $q->clear();
                 if(!empty($this->task_contacts)){
                         $contacts = explode(',',$this->task_contacts);
-                        if(count($contacts) > 0){
-                                $values = array();
-                                foreach($contacts as $contact){
-                                        $values[] = '('.$this->task_id.', '.$contact.')';
-                                }
-                                $sql = 'INSERT INTO task_contacts (task_id, contact_id) VALUES ' . implode(', ', $values);
-                                db_exec( $sql );
+                        foreach($contacts as $contact){
+                                $q->addTable('task_contacts');
+                                $q->addInsert('task_id', $this->task_id);
+                                $q->addInsert('contact_id', $contact);
+                                $q->exec();
+                                $q->clear();
                         }
                 }
 
