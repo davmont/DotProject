@@ -486,6 +486,8 @@ class CTask extends CDpObject {
                 }
 
                 $q = new DBQuery;
+                global $db;
+
                 //split out related departments and store them seperatly.
                 $q->setDelete('task_departments');
                 $q->addWhere('task_id=' . $this->task_id);
@@ -494,6 +496,7 @@ class CTask extends CDpObject {
                 // print_r($this->task_departments);
                 if(!empty($this->task_departments)){
                         $departments = explode(',',$this->task_departments);
+                        $db->StartTrans();
                         foreach($departments as $department){
                                 $q->addTable('task_departments');
                                 $q->addInsert('task_id', $this->task_id);
@@ -501,6 +504,7 @@ class CTask extends CDpObject {
                                 $q->exec();
                                 $q->clear();
                         }
+                        $db->CompleteTrans();
                 }
 
                 //split out related contacts and store them seperatly.
@@ -510,6 +514,7 @@ class CTask extends CDpObject {
                 $q->clear();
                 if(!empty($this->task_contacts)){
                         $contacts = explode(',',$this->task_contacts);
+                        $db->StartTrans();
                         foreach($contacts as $contact){
                                 $q->addTable('task_contacts');
                                 $q->addInsert('task_id', $this->task_id);
@@ -517,6 +522,7 @@ class CTask extends CDpObject {
                                 $q->exec();
                                 $q->clear();
                         }
+                        $db->CompleteTrans();
                 }
 
                 if ( !$importing_tasks && $this->task_parent != $this->task_id )
