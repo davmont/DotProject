@@ -609,6 +609,8 @@ class CTask extends CDpObject {
 
         // process dependencies
                 $tarr = explode( ",", $cslist );
+                global $db;
+                $db->StartTrans();
                 foreach ($tarr as $task_id) {
                         if (intval( $task_id ) > 0) {
                                 $q->addTable('task_dependencies');
@@ -619,6 +621,7 @@ class CTask extends CDpObject {
                                 $q->clear();
                         }
                 }
+                $db->CompleteTrans();
         }
 
         /**
