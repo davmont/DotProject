@@ -177,7 +177,13 @@ if ($changed_show_date != "") $show_date=$changed_show_date;
 	
 // format dates
 	$df = $AppUI->getPref('SHDATEFORMAT');            //this is the way dates should be handled! 
-	if ($show_date=="0" && $annotation_id > 0) $show_date = substr(db_LoadResult("SELECT annotation_date FROM annotations WHERE annotation_id=".$annotation_id),0,10);
+	if ($show_date=="0" && $annotation_id > 0) {
+		$q = new DBQuery();
+		$q->addTable('annotations');
+		$q->addQuery('annotation_date');
+		$q->addWhere('annotation_id = ' . (int)$annotation_id);
+		$show_date = substr($q->loadResult(), 0, 10);
+	}
 	if ($show_date=="0") $show_date = date('Ymd');
 	$oDate = new CDate($show_date); //the Date Object
 
@@ -316,7 +322,11 @@ if ($save_annotations == "1") {
 		$obj->store();  // normal store method, defined in the class....
 		$msg="Annotation inserted";	//The OK Message, see line around 129
 	} else {	//changed value --> update
-		$obj->annotation_date = db_loadResult("SELECT annotation_date FROM annotations WHERE annotation_id=".$obj->annotation_id);
+		$q->clear();
+		$q->addTable('annotations');
+		$q->addQuery('annotation_date');
+		$q->addWhere('annotation_id = ' . (int)$obj->annotation_id);
+		$obj->annotation_date = $q->loadResult();
 		//die($obj->annotation_date );
 		$obj->store();
 		$msg="Annotation altered (ID ".$obj->annotation_id.")";	//The OK Message, see line around 129
@@ -618,6 +628,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 				if ( $obj->annotation_project > 0 ) { // only if we've already got a project !
 						$q = new DBQuery();
 						$q->addTable('annotations');
+            $q->addQuery('*');
 						$q->addWhere('annotation_project=' . intval($obj->annotation_project));
 						$q->addWhere('annotation_date != "' . db_escape($obj->annotation_date) . '"');
 						$q->addOrder('annotation_date DESC');
@@ -746,6 +757,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 			if ( $addnew == "1" ) {		// if we are editing this anno, we don't want to get the preset !!
 					$q = new DBQuery();
 					$q->addTable('annotations');
+          $q->addQuery('*');
 					$q->addWhere('annotation_project=' . intval($project_id));
 					$q->addOrder('annotation_date DESC');
 				// Now get the latest values from anno:
@@ -756,6 +768,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 				} ELSE {
 						$q = new DBQuery();
 						$q->addTable('details');
+            $q->addQuery('*');
 						$q->addWhere('detail_project=' . intval($project_id));
 						$prev_values = $q->loadHash();
 						$q->clear();
@@ -767,7 +780,11 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 		?>
 		<td align="center" nowrap="nowrap">
 			<?php // Get the priority out of project table:
-				$prio = db_loadResult('SELECT project_priority FROM projects WHERE project_id='.$obj->annotation_project);
+				$q->clear();
+				$q->addTable('projects');
+				$q->addQuery('project_priority');
+				$q->addWhere('project_id = ' . (int)$obj->annotation_project);
+				$prio = $q->loadResult();
 				if ( $obj->annotation_revised_priority == NULL ) $obj->annotation_revised_priority = $prio;
 				// Show Projects Priority and Select Revised Priority
 				echo $AppUI->_('Project Priority is')." : <b>".$priorities[$prio]."</b>&nbsp;&nbsp;||&nbsp;&nbsp;".$AppUI->_('Revised Priority')." : "; echo arraySelect( $priorities,'annotation_revised_priority','size=1 class=text ',$obj->annotation_revised_priority); ?>			
