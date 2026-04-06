@@ -609,15 +609,19 @@ class CTask extends CDpObject {
 
         // process dependencies
                 $tarr = explode( ",", $cslist );
+                $values = array();
+                $base_task_id = intval($this->task_id);
                 foreach ($tarr as $task_id) {
-                        if (intval( $task_id ) > 0) {
-                                $q->addTable('task_dependencies');
-                                $q->addInsert('dependencies_task_id', $this->task_id);
-                                $q->addInsert('dependencies_req_task_id', $task_id);
-                                $q->type = 'replace';
-                                $q->exec();
-                                $q->clear();
+                        $task_id = intval($task_id);
+                        if ($task_id > 0) {
+                                $values[] = '(' . $base_task_id . ', ' . $task_id . ')';
                         }
+                }
+                if (count($values)) {
+                        global $db, $dPconfig;
+                        $prefix = isset($dPconfig['dbprefix']) ? $dPconfig['dbprefix'] : '';
+                        $sql = "REPLACE INTO {$prefix}task_dependencies (dependencies_task_id, dependencies_req_task_id) VALUES " . implode(", ", $values);
+                        $db->Execute($sql);
                 }
         }
 
