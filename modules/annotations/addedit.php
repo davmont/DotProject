@@ -626,14 +626,14 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 			$presets_from = "No Presets! Values already set."; // String to show, where the preset of the 6V is coming from
 			// We need the latest anno ( --> Get all, sort DESC) which is different from this one ( annotation_date != this_annos_date )
 				if ( $obj->annotation_project > 0 ) { // only if we've already got a project !
-					$q->clear();
-					$q->addTable('annotations');
-					$q->addQuery('*');
-					$q->addWhere('annotation_project = ' . (int)$obj->annotation_project);
-					$q->addWhere('annotation_date != ' . $q->quote($obj->annotation_date));
-					$q->addOrder('annotation_date DESC');
-					$preset_values = $q->loadHash();
-
+						$q = new DBQuery();
+						$q->addTable('annotations');
+            $q->addQuery('*');
+						$q->addWhere('annotation_project=' . intval($obj->annotation_project));
+						$q->addWhere('annotation_date != "' . db_escape($obj->annotation_date) . '"');
+						$q->addOrder('annotation_date DESC');
+						$preset_values = $q->loadHash();
+						$q->clear();
 					// If something was altered:
 					if (	$obj->annotation_strategy == NULL ||	$obj->annotation_sholders == NULL ||	$obj->annotation_risks == NULL
 						||	$obj->annotation_sizing == NULL ||	$obj->annotation_horizontality == NULL ||	$obj->annotation_costbenefit == NULL)
@@ -650,12 +650,12 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 			// ********** If there are no Values --> try to get them out of Details   ( Anno -> Details -> Opps ) ***************************************************************************
 					// We need the right detail:   detail_project = annotation_project
 					if ( $obj->annotation_project > 0 ) { // if there is an related Project  ( ?? Which one should be taken ??)
-						$q->clear();
-						$q->addTable('details');
-						$q->addQuery('detail_id,detail_project,detail_strategy,detail_sholders,detail_risks,detail_sizing,detail_horizontality,detail_costbenefit');
-						$q->addWhere('detail_project = ' . (int)$obj->annotation_project);
-						$preset_values = $q->loadHash();
-
+							$q = new DBQuery();
+							$q->addTable('details');
+							$q->addQuery('detail_id,detail_project,detail_strategy,detail_sholders,detail_risks,detail_sizing,detail_horizontality,detail_costbenefit');
+							$q->addWhere('detail_project=' . intval($obj->annotation_project));
+							$preset_values = $q->loadHash();
+							$q->clear();
 						// If something was altered:
 						if (	$obj->annotation_strategy == NULL ||	$obj->annotation_sholders == NULL ||	$obj->annotation_risks == NULL
 							||	$obj->annotation_sizing == NULL ||	$obj->annotation_horizontality == NULL ||	$obj->annotation_costbenefit == NULL)
@@ -672,25 +672,25 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 				// ********** If there are no Values --> try to get them out of opportunities   ( Anno -> Details -> Opps ) ***************************************************************************
 					if ($obj->annotation_project > 0) { // if project has already been selected
 						// We need the opportunity id.    We can get it, if there is an opportuntiy  which relates to this project (annotation_project)!:
-						$q->clear();
-						$q->addTable('opportunities_projects');
-						$q->addQuery('opportunity_project_opportunities');
-						$q->addWhere('opportunity_project_projects = ' . (int)$obj->annotation_project);
-						$preset_values = $q->loadHash();
-
-						if ( $preset_values ) { // If there is data available
+							$q = new DBQuery();
+							$q->addTable('opportunities_projects');
+							$q->addQuery('opportunity_project_opportunities');
+							$q->addWhere('opportunity_project_projects=' . intval($obj->annotation_project));
+							$preset_values = $q->loadHash();
+							$q->clear();
+							if ( $preset_values && isset($preset_values['opportunity_project_opportunities']) ) { // If there is data available
 							// If something was altered:
 							if (	$obj->annotation_strategy == NULL ||	$obj->annotation_sholders == NULL ||	$obj->annotation_risks == NULL
 								||	$obj->annotation_sizing == NULL ||	$obj->annotation_horizontality == NULL ||	$obj->annotation_costbenefit == NULL)
 								$presets_from = "From <a href='index.php?m=opportunities&a=addedit&opportunity_id=".$preset_values['opportunity_project_opportunities']."'>
 												Opportunities ID-".$preset_values['opportunity_project_opportunities']."</a> PID-".$obj->annotation_project;				
 							if ( $preset_values['opportunity_project_opportunities'] > 0 ) { // if there is an related Project  ( ?? Which one should be taken ??)
-								$q->clear();
-								$q->addTable('opportunities');
-								$q->addQuery('opportunity_strategy,opportunity_sholders,opportunity_risks,opportunity_sizing,opportunity_horizontality,opportunity_costbenefit');
-								$q->addWhere('opportunity_id = ' . (int)$preset_values['opportunity_project_opportunities']);
-								$preset_values = $q->loadHash();
-
+									$q = new DBQuery();
+									$q->addTable('opportunities');
+									$q->addQuery('opportunity_strategy,opportunity_sholders,opportunity_risks,opportunity_sizing,opportunity_horizontality,opportunity_costbenefit');
+									$q->addWhere('opportunity_id=' . intval($preset_values['opportunity_project_opportunities']));
+									$preset_values = $q->loadHash();
+									$q->clear();
 								if ($obj->annotation_strategy == NULL) $obj->annotation_strategy = $preset_values['opportunity_strategy'];
 								if ($obj->annotation_sholders == NULL) $obj->annotation_sholders = $preset_values['opportunity_sholders'];
 								if ($obj->annotation_risks == NULL) $obj->annotation_risks = $preset_values['opportunity_risks'];
@@ -755,23 +755,24 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 	<tr>
 		<?php // set $checked, try to get presets from last annos, then from details
 			if ( $addnew == "1" ) {		// if we are editing this anno, we don't want to get the preset !!
-				$q->clear();
-				$q->addTable('annotations');
-				$q->addQuery('*');
-				$q->addWhere('annotation_project = ' . (int)$project_id);
-				$q->addOrder('annotation_date DESC');
-				$prev_values = $q->loadHash();
-
-				if ($prev_values['annotation_must'] == "1" || $prev_values['annotation_must'] == "0") { 
+					$q = new DBQuery();
+					$q->addTable('annotations');
+          $q->addQuery('*');
+					$q->addWhere('annotation_project=' . intval($project_id));
+					$q->addOrder('annotation_date DESC');
+				// Now get the latest values from anno:
+					$prev_values = $q->loadHash();
+					$q->clear();
+					if (isset($prev_values['annotation_must']) && ($prev_values['annotation_must'] == "1" || $prev_values['annotation_must'] == "0")) {
 					$obj->annotation_must = $prev_values['annotation_must'];
 				} ELSE {
-					$q->clear();
-					$q->addTable('details');
-					$q->addQuery('*');
-					$q->addWhere('detail_project = ' . (int)$project_id);
-					$prev_values = $q->loadHash();
-
-					if ($prev_values['detail_must'] == "1" || $prev_values['detail_must'] == "0") { $obj->annotation_must = $prev_values['detail_must']; }
+						$q = new DBQuery();
+						$q->addTable('details');
+            $q->addQuery('*');
+						$q->addWhere('detail_project=' . intval($project_id));
+						$prev_values = $q->loadHash();
+						$q->clear();
+						if (isset($prev_values['detail_must']) && ($prev_values['detail_must'] == "1" || $prev_values['detail_must'] == "0")) { $obj->annotation_must = $prev_values['detail_must']; }
 					// ELse : there are no presets available
 				}
 			}
