@@ -1792,7 +1792,7 @@ Date.prototype.print = function (str) {
 	s["%p"] = pm ? "PM" : "AM";
 	s["%P"] = pm ? "pm" : "am";
 	// FIXME: %r : the time in am/pm notation %I:%M:%S %p
-	// FIXME: %R : the time in 24-hour notation %H:%M
+	s["%R"] = s["%H"] + ":" + s["%M"];
 	s["%s"] = Math.floor(this.getTime() / 1000);
 	s["%S"] = (sec < 10) ? ("0" + sec) : sec; // seconds, range 00 to 59
 	s["%t"] = "\t";		// a tab character
