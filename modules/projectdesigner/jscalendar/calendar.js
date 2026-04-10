@@ -1801,7 +1801,7 @@ Date.prototype.print = function (str) {
 	s["%u"] = w + 1;	// the day of the week (range 1 to 7, 1 = MON)
 	s["%w"] = w;		// the day of the week (range 0 to 6, 0 = SUN)
 	// FIXME: %x : preferred date representation for the current locale without the time
-	// FIXME: %X : preferred time representation for the current locale without the date
+	s["%X"] = s["%H"] + ":" + s["%M"] + ":" + s["%S"]; // preferred time representation for the current locale without the date
 	s["%y"] = ('' + y).substr(2, 2); // year without the century (range 00 to 99)
 	s["%Y"] = y;		// year with the century
 	s["%%"] = "%";		// a literal '%' character
