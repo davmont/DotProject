@@ -57,7 +57,8 @@ $AppUI->savePlace();
 if (isset( $task['task_log_date'] )) {
 	$date = new CDate( $task['task_log_date'] ); 
 } else if (isset( $_GET['date'] )) {
-	$date = new CDate($_GET['date']); 
+	$clean_date = dPgetCleanParam($_GET, 'date', '');
+	$date = preg_match('/^[0-9\-\/:\s]+$/', $clean_date) ? new CDate($clean_date) : new CDate();
 } else {
 	$date = new CDate();
 }
