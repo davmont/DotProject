@@ -558,7 +558,7 @@ class CEvent extends CDpObject
 			// delete user_events relationship
 			$q = new DBQuery;
 			$q->setDelete('user_events');
-			$q->addWhere('event_id = ' . $this->event_id);
+			$q->addWhere('event_id = ' . (int)$this->event_id);
 			$deleted = ((!$q->exec()) ? $AppUI->_('Could not delete Event-User relationship') . '. ' . db_error() : null);
 			$q->clear;
 		}
@@ -813,7 +813,7 @@ class CEvent extends CDpObject
 		$q->addTable('user_events', 'ue');
 		$q->addTable('contacts', 'con');
 		$q->addQuery('u.user_id, CONCAT_WS(" ",contact_first_name, contact_last_name)');
-		$q->addWhere('ue.event_id = ' . $this->event_id);
+		$q->addWhere('ue.event_id = ' . (int)$this->event_id);
 		$q->addWhere('user_contact = contact_id');
 		$q->addWhere('ue.user_id = u.user_id');
 		$assigned = $q->loadHashList();
@@ -827,7 +827,7 @@ class CEvent extends CDpObject
 
 		$q = new DBQuery;
 		$q->setDelete('user_events');
-		$q->addWhere('event_id = ' . $this->event_id);
+		$q->addWhere('event_id = ' . (int)$this->event_id);
 		$q->exec();
 		$q->clear();
 
@@ -987,7 +987,7 @@ class CEvent extends CDpObject
 		$q->addQuery('ue.user_id');
 		$q->addWhere('ue.event_id IN (' . implode(',', $events) . ')');
 		if ($this->event_id) {
-			$q->addWhere('NOT(ue.event_id = ' . $this->event_id . ')');
+			$q->addWhere('NOT(ue.event_id = ' . (int)$this->event_id . ')');
 		}
 
 		$clashes = $q->loadColumn();
