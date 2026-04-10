@@ -66,7 +66,10 @@ ORDER by p.project_name, h.item_title
 //echo "<pre>$sql</pre>";
 
 $res = db_exec( $sql );
-echo db_error();
+if (!$res) {
+	dprint(__FILE__, __LINE__, 0, 'Database error in ' . __FILE__ . ': ' . db_error());
+	$AppUI->setMsg('Database error occurred', UI_MSG_ERROR);
+}
 $helpdeskItemTasks = array();
 $project = array();
 $companies = array();

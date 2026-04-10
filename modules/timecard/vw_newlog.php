@@ -77,7 +77,10 @@ ORDER by p.project_name, t.task_name
 ##echo "<pre>$sql</pre>";
 
 $res = db_exec( $sql );
-echo db_error();
+if (!$res) {
+	dprint(__FILE__, __LINE__, 0, 'Database error in ' . __FILE__ . ': ' . db_error());
+	$AppUI->setMsg('Database error occurred', UI_MSG_ERROR);
+}
 $tasks = array();
 $projects = array();
 $companies = array( '0'=>'' );
@@ -126,7 +129,10 @@ ORDER BY billingcode_name";
 
 $task_log_costcodes[0]="None";
 $ptrc = db_exec($sql);
-echo db_error();
+if (!$ptrc) {
+	dprint(__FILE__, __LINE__, 0, 'Database error in ' . __FILE__ . ': ' . db_error());
+	$AppUI->setMsg('Database error occurred', UI_MSG_ERROR);
+}
 $nums = 0;
 if ($ptrc)
 $nums=db_num_rows($ptrc);
