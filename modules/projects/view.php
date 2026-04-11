@@ -381,7 +381,7 @@ smartUpdateProjectPercentComplete($project_id);
 					<td align="right" nowrap><?php echo $AppUI->_('Priority'); ?>:</td>
 					<td class="hilite" width="100%" style="background-color:<?php
 					echo $projectPriorityColor[$obj->project_priority] ?>"><?php
-					 echo $AppUI->_($projectPriority[$obj->project_priority]); ?></td>
+					  echo $AppUI->_($projectPriority[$obj->project_priority]); ?></td>
 				</tr>
 				<tr>
 					<td align="right" nowrap><?php echo $AppUI->_('Type'); ?>:</td>
@@ -492,6 +492,16 @@ smartUpdateProjectPercentComplete($project_id);
 </table>
 
 <?php
+//set default
+if (!isset($_GET["tab"])) {
+	$tab = 1;
+	$_SESSION["user_choosen_feature"] = "/modules/dotproject_plus/projects_tab.planning_and_monitoring.php";
+} else {
+	if (isset($_POST["user_choosen_feature"])) {
+		$_SESSION["user_choosen_feature"] = $_POST["user_choosen_feature"];
+	}
+}
+
 $tabBox = new CTabBox(('?m=projects&amp;a=view&amp;project_id=' . $project_id), '', $tab);
 $query_string = ('?m=projects&amp;a=view&amp;project_id=' . $project_id);
 //tabbed information boxes
@@ -501,7 +511,9 @@ $canAccessTaskLog = getPermission('task_log', 'access');
 $showEditCheckbox = false;
 
 $tabBox->add(DP_BASE_DIR . '/modules/journal/index', $AppUI->_('Journal'));
-$tabBox->add(DP_BASE_DIR . '/modules/initiating/index', $AppUI->_('Initiating'));
+if (isset($AppUI->getActiveModules()['initiating'])) {
+	$tabBox->add(DP_BASE_DIR . '/modules/initiating/index_table', $AppUI->_('Initiating'));
+}
 
 if ($canAccessTask) {
 	$tabBox->add(DP_BASE_DIR . '/modules/tasks/tasks', $AppUI->_('Tasks'));
@@ -518,6 +530,11 @@ if (getPermission('forums', 'access')) {
 $tabBox->loadExtras($m);
 $f = 'all';
 $min_view = true;
+
+if (isset($AppUI->getActiveModules()['dotproject_plus'])) {
+	$tabBox->add(DP_BASE_DIR . "/modules/dotproject_plus/projects_tab.planning_and_monitoring", $AppUI->_("Planning and monitoring", UI_OUTPUT_HTML));
+	$tabBox->add(DP_BASE_DIR . "/modules/dotproject_plus/projects_tab.execution", $AppUI->_("Execution", UI_OUTPUT_HTML));
+}
 
 $tabBox->show();
 ?>
