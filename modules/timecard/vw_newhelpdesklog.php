@@ -50,7 +50,11 @@ if (isset( $helpdeskItemTask['task_log_date'] )) {
 	$date = new CDate( $helpdeskItemTask['task_log_date'] ); 
 } else if (isset( $_GET['date'] )) {
 	$clean_date = dPgetCleanParam($_GET, 'date', '');
-	$date = preg_match('/^[0-9\-\/:\s]+$/', $clean_date) ? new CDate($clean_date) : new CDate();
+	if (preg_match('/^[0-9\-\/:\s]+$/', $clean_date)) {
+		$date = new CDate($clean_date);
+	} else {
+		$date = new CDate();
+	}
 } else {
 	$date = new CDate();
 }
