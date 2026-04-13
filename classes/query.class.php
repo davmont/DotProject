@@ -1028,7 +1028,7 @@ class DBQuery
 	 */
 	function sanitise($string)
 	{
-		return str_replace(array("'", '"', ')', '(', ';', '--'), '', $string);
+		return str_replace(array("'", '"', ')', '(', ';', '--'), '', (string)$string);
 	}
 
 	function quote_sanitised($string)

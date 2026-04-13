@@ -81,6 +81,14 @@ class DBQueryTest extends TestCase {
         // 'SELECT * FROM (dp_users)'
         $this->assertRegexp('/FROM \(dp_users\)/', $q);
 
+        // It removes quote, semicolon and double dash
+        $this->assertEquals('admin DROP TABLE users ', $q->sanitise('admin"; DROP TABLE users; --'));
+
+        // Additional types (null, int, float)
+        $this->assertEquals('', $q->sanitise(null));
+        $this->assertEquals('123', $q->sanitise(123));
+        $this->assertEquals('0', $q->sanitise(0));
+        $this->assertEquals('1.5', $q->sanitise(1.5));
         $this->query->clear();
         $this->query->addTable('users', 'u');
         $q = $this->query->prepareSelect();
