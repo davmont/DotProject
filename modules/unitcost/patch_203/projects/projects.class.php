@@ -331,7 +331,7 @@ class CProject extends CDpObject {
         }
 
 	function store($updateNulls = false) {
-		global $db, $dPconfig;
+		global $db;
 
 		$msg = $this->check();
 		if( $msg ) {
@@ -355,18 +355,15 @@ class CProject extends CDpObject {
                 if ($this->project_departments)
                 {
         		$departments = explode(',',$this->project_departments);
-			$values = array();
-			$projectId = intval($this->project_id);
+			$db->StartTrans();
         		foreach($departments as $department){
-				if ($department) {
-					$departmentId = intval($department);
-					$values[] = "($projectId, $departmentId)";
-				}
+				$q->addTable('project_departments');
+				$q->addInsert('project_id', $this->project_id);
+				$q->addInsert('department_id', $department);
+				$q->exec();
+				$q->clear();
         		}
-			if (count($values)) {
-				$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "project_departments (project_id, department_id) VALUES " . implode(", ", $values);
-				$db->Execute($sql);
-			}
+			$db->CompleteTrans();
                 }
 		
 		//split out related contacts and store them seperatly.
@@ -377,18 +374,17 @@ class CProject extends CDpObject {
                 if ($this->project_contacts)
                 {
         		$contacts = explode(',',$this->project_contacts);
-			$values = array();
-			$projectId = intval($this->project_id);
+			$db->StartTrans();
         		foreach($contacts as $contact){
 							if ($contact) {
-								$contactId = intval($contact);
-								$values[] = "($projectId, $contactId)";
+								$q->addTable('project_contacts');
+								$q->addInsert('project_id', $this->project_id);
+								$q->addInsert('contact_id', $contact);
+								$q->exec();
+								$q->clear();
 							}
         		}
-			if (count($values)) {
-				$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "project_contacts (project_id, contact_id) VALUES " . implode(", ", $values);
-				$db->Execute($sql);
-			}
+			$db->CompleteTrans();
                 }
 
 		if( !$ret ) {
