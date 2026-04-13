@@ -738,10 +738,17 @@ class DBQuery
 	/**
 	 * loadList - replaces dbLoadList on
 	 */
-	function loadList($maxrows = null, $cache_secs = 0)
+	function loadList($maxrows = null, $cache_secs = 0, $params = array())
 	{
 		global $db;
 		global $AppUI;
+
+		if (!is_array($params)) {
+			$params = array($params);
+		}
+		if (count($params)) {
+			$this->w_params = array_merge($this->w_params, $params);
+		}
 
 		if (!$this->exec(ADODB_FETCH_ASSOC, false, $cache_secs)) {
 			$AppUI->setMsg($db->ErrorMsg(), UI_MSG_ERROR);
