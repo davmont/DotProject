@@ -617,6 +617,9 @@ class CTask extends CDpObject {
         }
 
         function updateDependencies( $cslist ) {
+                global $db;
+
+                $db->StartTrans();
         // delete all current entries
                 $q = new DBQuery;
                 $q->setDelete('task_dependencies');
@@ -636,6 +639,7 @@ class CTask extends CDpObject {
                                 $q->clear();
                         }
                 }
+                $db->CompleteTrans();
         }
 
         /**
