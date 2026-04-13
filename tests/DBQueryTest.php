@@ -27,6 +27,12 @@ class DBQueryTest extends TestCase {
 
         // It removes quote, semicolon and double dash
         $this->assertEquals('admin DROP TABLE users ', $q->sanitise('admin"; DROP TABLE users; --'));
+
+        // Additional types (null, int, float)
+        $this->assertEquals('', $q->sanitise(null));
+        $this->assertEquals('123', $q->sanitise(123));
+        $this->assertEquals('0', $q->sanitise(0));
+        $this->assertEquals('1.5', $q->sanitise(1.5));
     }
 }
 ?>
