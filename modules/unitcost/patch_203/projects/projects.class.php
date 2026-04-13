@@ -331,6 +331,7 @@ class CProject extends CDpObject {
         }
 
 	function store($updateNulls = false) {
+		global $db;
 
 		$msg = $this->check();
 		if( $msg ) {
@@ -354,6 +355,7 @@ class CProject extends CDpObject {
                 if ($this->project_departments)
                 {
         		$departments = explode(',',$this->project_departments);
+			$db->StartTrans();
         		foreach($departments as $department){
 				$q->addTable('project_departments');
 				$q->addInsert('project_id', $this->project_id);
@@ -361,6 +363,7 @@ class CProject extends CDpObject {
 				$q->exec();
 				$q->clear();
         		}
+			$db->CompleteTrans();
                 }
 		
 		//split out related contacts and store them seperatly.
@@ -371,6 +374,7 @@ class CProject extends CDpObject {
                 if ($this->project_contacts)
                 {
         		$contacts = explode(',',$this->project_contacts);
+			$db->StartTrans();
         		foreach($contacts as $contact){
 							if ($contact) {
 								$q->addTable('project_contacts');
@@ -380,6 +384,7 @@ class CProject extends CDpObject {
 								$q->clear();
 							}
         		}
+			$db->CompleteTrans();
                 }
 
 		if( !$ret ) {
