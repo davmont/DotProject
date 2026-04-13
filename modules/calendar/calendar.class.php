@@ -823,7 +823,7 @@ class CEvent extends CDpObject
 	function updateAssigned($assigned)
 	{
 		// First remove the assigned from the user_events table
-		global $AppUI;
+		global $AppUI, $db;
 
 		$q = new DBQuery;
 		$q->setDelete('user_events');
@@ -832,6 +832,7 @@ class CEvent extends CDpObject
 		$q->clear();
 
 		if (is_array($assigned) && count($assigned)) {
+			$db->StartTrans();
 			foreach ($assigned as $uid) {
 				if ($uid) {
 					$q->addTable('user_events', 'ue');
@@ -841,6 +842,7 @@ class CEvent extends CDpObject
 					$q->clear();
 				}
 			}
+			$db->CompleteTrans();
 
 			if ($msg = db_error()) {
 				$AppUI->setMsg($msg, UI_MSG_ERROR);
