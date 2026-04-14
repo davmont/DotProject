@@ -550,6 +550,7 @@ class CEvent extends CDpObject
 	function delete($oid = NULL, $history_desc = '', $history_proj = 0)
 	{
 		global $AppUI;
+		$this->event_id = (int)$this->event_id;
 		// call default delete method first
 		$deleted = parent::delete($this->event_id);
 
