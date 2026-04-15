@@ -486,7 +486,7 @@ class CTask extends CDpObject {
                 }
 
                 $q = new DBQuery;
-                global $db, $dPconfig;
+                global $db;
 
                 //split out related departments and store them seperatly.
                 $q->setDelete('task_departments');
@@ -496,15 +496,21 @@ class CTask extends CDpObject {
                 // print_r($this->task_departments);
                 if(!empty($this->task_departments)){
                         $departments = explode(',',$this->task_departments);
-                        $values = array();
-                        $tid = intval($this->task_id);
+                        $db->StartTrans();
+
+                        $q->addTable('task_departments');
+                        $q->addInsert('task_id', '?', false, true);
+                        $q->addInsert('department_id', '?', false, true);
+                        $sql = $q->prepare();
+                        $q->clear();
+
+                        $arr = array();
                         foreach($departments as $department){
-                                $values[] = '(' . $tid . ', ' . intval($department) . ')';
+                                $arr[] = array($this->task_id, $department);
                         }
-                        if (!empty($values)) {
-                                $sql = 'INSERT INTO ' . $dPconfig['dbprefix'] . 'task_departments (task_id, department_id) VALUES ' . implode(', ', $values);
-                                $db->Execute($sql);
-                        }
+                        $db->Execute($sql, $arr);
+
+                        $db->CompleteTrans();
                 }
 
                 //split out related contacts and store them seperatly.
@@ -514,15 +520,21 @@ class CTask extends CDpObject {
                 $q->clear();
                 if(!empty($this->task_contacts)){
                         $contacts = explode(',',$this->task_contacts);
-                        $values = array();
-                        $tid = intval($this->task_id);
+                        $db->StartTrans();
+
+                        $q->addTable('task_contacts');
+                        $q->addInsert('task_id', '?', false, true);
+                        $q->addInsert('contact_id', '?', false, true);
+                        $sql = $q->prepare();
+                        $q->clear();
+
+                        $arr = array();
                         foreach($contacts as $contact){
-                                $values[] = '(' . $tid . ', ' . intval($contact) . ')';
+                                $arr[] = array($this->task_id, $contact);
                         }
-                        if (!empty($values)) {
-                                $sql = 'INSERT INTO ' . $dPconfig['dbprefix'] . 'task_contacts (task_id, contact_id) VALUES ' . implode(', ', $values);
-                                $db->Execute($sql);
-                        }
+                        $db->Execute($sql, $arr);
+
+                        $db->CompleteTrans();
                 }
 
                 if ( !$importing_tasks && $this->task_parent != $this->task_id )
