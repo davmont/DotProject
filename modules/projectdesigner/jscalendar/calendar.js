@@ -1791,19 +1791,21 @@ Date.prototype.print = function (str) {
 	s["%n"] = "\n";		// a newline character
 	s["%p"] = pm ? "PM" : "AM";
 	s["%P"] = pm ? "pm" : "am";
-	// FIXME: %r : the time in am/pm notation %I:%M:%S %p
+	s["%r"] = s["%I"] + ":" + s["%M"] + ":" + ((sec < 10) ? ("0" + sec) : sec) + " " + s["%p"]; // the time in am/pm notation %I:%M:%S %p
 	s["%R"] = s["%H"] + ":" + s["%M"];
 	s["%s"] = Math.floor(this.getTime() / 1000);
 	s["%S"] = (sec < 10) ? ("0" + sec) : sec; // seconds, range 00 to 59
 	s["%t"] = "\t";		// a tab character
-	// FIXME: %T : the time in 24-hour notation (%H:%M:%S)
+	s["%T"] = s["%H"] + ":" + s["%M"] + ":" + s["%S"]; // the time in 24-hour notation (%H:%M:%S)
 	s["%U"] = s["%W"] = s["%V"] = (wn < 10) ? ("0" + wn) : wn;
 	s["%u"] = w + 1;	// the day of the week (range 1 to 7, 1 = MON)
 	s["%w"] = w;		// the day of the week (range 0 to 6, 0 = SUN)
-	// FIXME: %x : preferred date representation for the current locale without the time
-	s["%X"] = s["%H"] + ":" + s["%M"] + ":" + s["%S"]; // preferred time representation for the current locale without the date
 	s["%y"] = ('' + y).substr(2, 2); // year without the century (range 00 to 99)
 	s["%Y"] = y;		// year with the century
+	s["%D"] = s["%m"] + "/" + s["%d"] + "/" + s["%y"]; // american date style: %m/%d/%y
+	s["%x"] = s["%D"]; // preferred date representation for the current locale without the time
+	s["%X"] = s["%H"] + ":" + s["%M"] + ":" + s["%S"]; // preferred time representation for the current locale without the date
+	s["%c"] = s["%a"] + " " + s["%b"] + " " + s["%e"] + " " + s["%T"] + " " + s["%Y"]; // preferred date and time representation for the current locale
 	s["%%"] = "%";		// a literal '%' character
 
 	var re = /%./g;
