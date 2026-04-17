@@ -112,7 +112,10 @@ if ($do_report) {
 	//print "<pre>$sql</pre>";
 
 	$logs = db_loadList( $sql );
-	echo db_error();
+	if (db_error()) {
+		dprint(__FILE__, __LINE__, 0, 'Database error in ' . __FILE__ . ': ' . db_error());
+		$AppUI->setMsg('Database error occurred', UI_MSG_ERROR);
+	}
 ?>
 	<table width=100% cellspacing="1" cellpadding="4" border="0" class="tbl">
 	<tr>

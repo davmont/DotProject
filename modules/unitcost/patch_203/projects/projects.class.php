@@ -130,13 +130,13 @@ class CProject extends CDpObject {
 		$sql = $q->prepare();
 		$q->clear();
 		$tasks_to_delete = db_loadColumn ( $sql );
-		foreach ( $tasks_to_delete as $task_id ) {
+		if (count($tasks_to_delete) > 0) {
 			$q->setDelete('user_tasks');
-			$q->addWhere('task_id ='.$task_id);
+			$q->addWhere('task_id IN (' . implode(',', $tasks_to_delete) . ')');
 			$q->exec();
 			$q->clear();
 			$q->setDelete('task_dependencies');
-			$q->addWhere('dependencies_req_task_id ='.$task_id);
+			$q->addWhere('dependencies_req_task_id IN (' . implode(',', $tasks_to_delete) . ')');
 			$q->exec();
 			$q->clear();
 		}
@@ -331,6 +331,7 @@ class CProject extends CDpObject {
         }
 
 	function store($updateNulls = false) {
+		global $db;
 
 		$msg = $this->check();
 		if( $msg ) {
@@ -354,6 +355,7 @@ class CProject extends CDpObject {
                 if ($this->project_departments)
                 {
         		$departments = explode(',',$this->project_departments);
+			$db->StartTrans();
         		foreach($departments as $department){
 				$q->addTable('project_departments');
 				$q->addInsert('project_id', $this->project_id);
@@ -361,6 +363,7 @@ class CProject extends CDpObject {
 				$q->exec();
 				$q->clear();
         		}
+			$db->CompleteTrans();
                 }
 		
 		//split out related contacts and store them seperatly.
@@ -371,6 +374,7 @@ class CProject extends CDpObject {
                 if ($this->project_contacts)
                 {
         		$contacts = explode(',',$this->project_contacts);
+			$db->StartTrans();
         		foreach($contacts as $contact){
 							if ($contact) {
 								$q->addTable('project_contacts');
@@ -380,6 +384,7 @@ class CProject extends CDpObject {
 								$q->clear();
 							}
         		}
+			$db->CompleteTrans();
                 }
 
 		if( !$ret ) {

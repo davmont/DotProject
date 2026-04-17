@@ -1753,7 +1753,34 @@ Date.prototype.print = function (str) {
 	s["%d"] = (d < 10) ? ("0" + d) : d; // the day of the month (range 01 to 31)
 	s["%e"] = d; // the day of the month (range 1 to 31)
 	// FIXME: %D : american date style: %m/%d/%y
-	// FIXME: %E, %F, %G, %g, %h (man strftime)
+	var jy = y, jm = m + 1, jd = d;
+	if (jm > 2) {
+		jm -= 3;
+	} else {
+		jm += 9;
+		jy--;
+	}
+	var jc = (jy / 100) | 0;
+	var jr = jy % 100;
+	if (jy < 0) {
+		s["%E"] = Math.floor((14609700 * jc + (jr == 0 ? 1 : 0)) / 400) +
+			Math.floor((1461 * jr + 1) / 4) +
+			Math.floor((153 * jm + 2) / 5) +
+			jd + 1721118;
+	} else {
+		s["%E"] = Math.floor(146097 * jc / 4) +
+			Math.floor(1461 * jr / 4) +
+			Math.floor((153 * jm + 2) / 5) +
+			jd + 1721119;
+	}
+	s["%F"] = y + "-" + ((m < 9) ? ("0" + (1+m)) : (1+m)) + "-" + ((d < 10) ? ("0" + d) : d);
+	var d2 = new Date(y, m, d, 12, 0, 0);
+	d2.setDate(d2.getDate() - (w + 6) % 7 + 3);
+	var gy = d2.getFullYear();
+	s["%G"] = gy;
+	s["%g"] = ('' + gy).substr(2, 2);
+	s["%h"] = Calendar._SMN[m];
+
 	s["%H"] = (hr < 10) ? ("0" + hr) : hr; // hour, range 00 to 23 (24h format)
 	s["%I"] = (ir < 10) ? ("0" + ir) : ir; // hour, range 01 to 12 (12h format)
 	s["%j"] = (dy < 100) ? ((dy < 10) ? ("00" + dy) : ("0" + dy)) : dy; // day of the year (range 001 to 366)
@@ -1765,18 +1792,20 @@ Date.prototype.print = function (str) {
 	s["%p"] = pm ? "PM" : "AM";
 	s["%P"] = pm ? "pm" : "am";
 	s["%S"] = (sec < 10) ? ("0" + sec) : sec; // seconds, range 00 to 59
-	s["%r"] = s["%I"] + ":" + s["%M"] + ":" + s["%S"] + " " + s["%p"];
-	// FIXME: %R : the time in 24-hour notation %H:%M
+	s["%r"] = s["%I"] + ":" + s["%M"] + ":" + s["%S"] + " " + s["%p"]; // the time in am/pm notation %I:%M:%S %p
+	s["%R"] = s["%H"] + ":" + s["%M"];
 	s["%s"] = Math.floor(this.getTime() / 1000);
 	s["%t"] = "\t";		// a tab character
-	// FIXME: %T : the time in 24-hour notation (%H:%M:%S)
+	s["%T"] = s["%H"] + ":" + s["%M"] + ":" + s["%S"]; // the time in 24-hour notation (%H:%M:%S)
 	s["%U"] = s["%W"] = s["%V"] = (wn < 10) ? ("0" + wn) : wn;
 	s["%u"] = w + 1;	// the day of the week (range 1 to 7, 1 = MON)
 	s["%w"] = w;		// the day of the week (range 0 to 6, 0 = SUN)
-	// FIXME: %x : preferred date representation for the current locale without the time
-	// FIXME: %X : preferred time representation for the current locale without the date
 	s["%y"] = ('' + y).substr(2, 2); // year without the century (range 00 to 99)
 	s["%Y"] = y;		// year with the century
+	s["%D"] = s["%m"] + "/" + s["%d"] + "/" + s["%y"]; // american date style: %m/%d/%y
+	s["%x"] = s["%D"]; // preferred date representation for the current locale without the time
+	s["%X"] = s["%H"] + ":" + s["%M"] + ":" + s["%S"]; // preferred time representation for the current locale without the date
+	s["%c"] = s["%a"] + " " + s["%b"] + " " + s["%e"] + " " + s["%T"] + " " + s["%Y"]; // preferred date and time representation for the current locale
 	s["%%"] = "%";		// a literal '%' character
 
 	var re = /%./g;
