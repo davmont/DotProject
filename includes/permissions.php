@@ -32,27 +32,6 @@ function getReadableModule()
 	return null;
 }
 
-// TODO: checkFlag should be depricated as it's old and unused
-/**
- * This function is used to check permissions.
- */
-function checkFlag($flag, $perm_type, $old_flag)
-{
-	if ($old_flag) {
-		return (
-			($flag == PERM_DENY) ||	// permission denied
-			($perm_type == PERM_EDIT && $flag == PERM_READ)	// we ask for editing, but are only allowed to read
-		) ? 0 : 1;
-	} else {
-		if ($perm_type == PERM_READ) {
-			return ($flag != PERM_DENY) ? 1 : 0;
-		} else {
-			// => $perm_type == PERM_EDIT
-			return ($flag == $perm_type) ? 1 : 0;
-		}
-	}
-}
-
 /**
  * This function checks certain permissions for
  * a given module and optionally an item_id.
