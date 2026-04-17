@@ -1764,10 +1764,10 @@ Date.prototype.print = function (str) {
 	s["%n"] = "\n";		// a newline character
 	s["%p"] = pm ? "PM" : "AM";
 	s["%P"] = pm ? "pm" : "am";
-	// FIXME: %r : the time in am/pm notation %I:%M:%S %p
+	s["%S"] = (sec < 10) ? ("0" + sec) : sec; // seconds, range 00 to 59
+	s["%r"] = s["%I"] + ":" + s["%M"] + ":" + s["%S"] + " " + s["%p"];
 	// FIXME: %R : the time in 24-hour notation %H:%M
 	s["%s"] = Math.floor(this.getTime() / 1000);
-	s["%S"] = (sec < 10) ? ("0" + sec) : sec; // seconds, range 00 to 59
 	s["%t"] = "\t";		// a tab character
 	// FIXME: %T : the time in 24-hour notation (%H:%M:%S)
 	s["%U"] = s["%W"] = s["%V"] = (wn < 10) ? ("0" + wn) : wn;
