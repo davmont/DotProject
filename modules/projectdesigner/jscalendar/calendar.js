@@ -1791,10 +1791,10 @@ Date.prototype.print = function (str) {
 	s["%n"] = "\n";		// a newline character
 	s["%p"] = pm ? "PM" : "AM";
 	s["%P"] = pm ? "pm" : "am";
-	s["%r"] = s["%I"] + ":" + s["%M"] + ":" + ((sec < 10) ? ("0" + sec) : sec) + " " + s["%p"]; // the time in am/pm notation %I:%M:%S %p
+	s["%S"] = (sec < 10) ? ("0" + sec) : sec; // seconds, range 00 to 59
+	s["%r"] = s["%I"] + ":" + s["%M"] + ":" + s["%S"] + " " + s["%p"]; // the time in am/pm notation %I:%M:%S %p
 	s["%R"] = s["%H"] + ":" + s["%M"];
 	s["%s"] = Math.floor(this.getTime() / 1000);
-	s["%S"] = (sec < 10) ? ("0" + sec) : sec; // seconds, range 00 to 59
 	s["%t"] = "\t";		// a tab character
 	s["%T"] = s["%H"] + ":" + s["%M"] + ":" + s["%S"]; // the time in 24-hour notation (%H:%M:%S)
 	s["%U"] = s["%W"] = s["%V"] = (wn < 10) ? ("0" + wn) : wn;
