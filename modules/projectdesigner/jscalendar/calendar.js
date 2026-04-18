@@ -1752,7 +1752,7 @@ Date.prototype.print = function (str) {
 	s["%C"] = 1 + Math.floor(y / 100); // the century number
 	s["%d"] = (d < 10) ? ("0" + d) : d; // the day of the month (range 01 to 31)
 	s["%e"] = d; // the day of the month (range 1 to 31)
-	// FIXME: %D : american date style: %m/%d/%y
+	s["%D"] = (m < 9 ? "0" + (1+m) : (1+m)) + "/" + (d < 10 ? "0" + d : d) + "/" + (y + "").substr(2, 2); // american date style: %m/%d/%y
 	var jy = y, jm = m + 1, jd = d;
 	if (jm > 2) {
 		jm -= 3;
@@ -1802,7 +1802,6 @@ Date.prototype.print = function (str) {
 	s["%w"] = w;		// the day of the week (range 0 to 6, 0 = SUN)
 	s["%y"] = ('' + y).substr(2, 2); // year without the century (range 00 to 99)
 	s["%Y"] = y;		// year with the century
-	s["%D"] = s["%m"] + "/" + s["%d"] + "/" + s["%y"]; // american date style: %m/%d/%y
 	s["%x"] = s["%D"]; // preferred date representation for the current locale without the time
 	s["%X"] = s["%H"] + ":" + s["%M"] + ":" + s["%S"]; // preferred time representation for the current locale without the date
 	s["%c"] = s["%a"] + " " + s["%b"] + " " + s["%e"] + " " + s["%T"] + " " + s["%Y"]; // preferred date and time representation for the current locale
