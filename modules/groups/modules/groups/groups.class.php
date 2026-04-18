@@ -35,20 +35,19 @@ class CGroup extends CDpObject {
 
 	// process dependencies
 		if(isset($cslist) && is_array($cslist)) {
-			global $db;
-			$q = new DBQuery;
-			$db->StartTrans();
+			$values = array();
+			$group_id = intval($this->group_id);
 			foreach ($cslist as $contact_id) {
 				$contact_id = intval($contact_id);
 				if ($contact_id > 0) {
-					$q->addTable('groups_contacts');
-					$q->addInsert('group_id', $this->group_id);
-					$q->addInsert('contact_id', $contact_id);
-					$q->exec();
-					$q->clear();
+					$values[] = "($group_id, $contact_id)";
 				}
 			}
-			$db->CompleteTrans();
+			if (count($values) > 0) {
+				global $dPconfig;
+				$sql = "INSERT INTO {$dPconfig['dbprefix']}groups_contacts (group_id, contact_id) VALUES " . implode(',', $values);
+				db_exec($sql);
+			}
 		}
 	}
 
