@@ -135,7 +135,7 @@ class CDate extends Date {
 	}
 	
 	function getAMPM() {
-		return (($this->getHour() > 11) ? 'pm' : 'am');
+		return $this->format('%p');
 	}
 	
 	/* Return date obj for the end of the next working day
