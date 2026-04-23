@@ -414,7 +414,7 @@ function sortHeader( $header, $field )
 
 	echo '<A HREF="?m=inventory&';
 	if ( $a ) echo 'a='.$a.'&';
-	if ( isset( $_GET[ 'inventory_id' ] ) ) echo 'inventory_id='.$_GET[ 'inventory_id' ].'&';
+	if ( isset( $_GET[ 'inventory_id' ] ) ) echo 'inventory_id='.(int)$_GET[ 'inventory_id' ].'&';
 	echo 'sort_item='.$field.'&sort_order='.$order.'">';
 
 	echo $header;
