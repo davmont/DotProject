@@ -1769,7 +1769,7 @@ Date.prototype.print = function (str) {
 	s["%s"] = Math.floor(this.getTime() / 1000);
 	s["%S"] = (sec < 10) ? ("0" + sec) : sec; // seconds, range 00 to 59
 	s["%t"] = "\t";		// a tab character
-	// FIXME: %T : the time in 24-hour notation (%H:%M:%S)
+	s["%T"] = s["%H"] + ":" + s["%M"] + ":" + s["%S"]; // the time in 24-hour notation (%H:%M:%S)
 	s["%U"] = s["%W"] = s["%V"] = (wn < 10) ? ("0" + wn) : wn;
 	s["%u"] = w + 1;	// the day of the week (range 1 to 7, 1 = MON)
 	s["%w"] = w;		// the day of the week (range 0 to 6, 0 = SUN)
