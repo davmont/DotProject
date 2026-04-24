@@ -78,6 +78,20 @@ class CDateTest extends TestCase {
         $this->assertEquals(-1, $diff, "Difference with invalid date should be -1");
     }
 
+    function testGetAMPM() {
+        $date = new CDate('2023-01-01 00:00:00');
+        $this->assertEquals('am', $date->getAMPM(), "00:00 should be am");
+
+        $date = new CDate('2023-01-01 11:59:59');
+        $this->assertEquals('am', $date->getAMPM(), "11:59 should be am");
+
+        $date = new CDate('2023-01-01 12:00:00');
+        $this->assertEquals('pm', $date->getAMPM(), "12:00 should be pm");
+
+        $date = new CDate('2023-01-01 23:59:59');
+        $this->assertEquals('pm', $date->getAMPM(), "23:59 should be pm");
+    }
+
 }
 
 ?>
