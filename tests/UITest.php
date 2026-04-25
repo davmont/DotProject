@@ -4,6 +4,24 @@ if (!defined('DP_BASE_DIR')) {
 }
 require_once DP_BASE_DIR . '/classes/ui.class.php';
 
+if (!function_exists('dPgetConfig')) {
+    function dPgetConfig($key, $default = null) {
+        return $default;
+    }
+}
+
+if (!function_exists('dPfindImage')) {
+    function dPfindImage($name, $module = null) {
+        return "path/to/$name";
+    }
+}
+
+if (!function_exists('dPshowImage')) {
+    function dPshowImage($src, $wid = '', $hgt = '', $alt = '', $title = '') {
+        return "<img src=\"$src\" />";
+    }
+}
+
 class TestCAppUI extends CAppUI {
     var $redirected = false;
     var $redirect_params = '';
@@ -16,6 +34,11 @@ class TestCAppUI extends CAppUI {
         $this->redirected = true;
         $this->redirect_params = $params;
         // Do not exit
+    }
+
+    // Override translation function for tests to prevent relying on global state
+    function _($str, $flags = 0) {
+        return $str;
     }
 }
 
@@ -97,6 +120,77 @@ class UITest extends TestCase {
         // Tricky cases (documenting current behavior)
         // '....//' -> '../' because str_replace is not recursive
         $this->assertEquals('../', $ui->makeFileNameSafe('....//'));
+    }
+
+    function testSetMsg() {
+        $ui = new TestCAppUI();
+        // Since we bypassed the constructor, manually initialize the properties
+        $ui->msg = '';
+        $ui->msgNo = 0;
+
+        // Initial state
+        $this->assertEquals('', $ui->msg);
+        $this->assertEquals(0, $ui->msgNo);
+
+        // Set a message
+        $ui->setMsg('Test Message');
+        $this->assertEquals('Test Message', $ui->msg);
+        $this->assertEquals(0, $ui->msgNo);
+
+        // Overwrite message
+        $ui->setMsg('New Message');
+        $this->assertEquals('New Message', $ui->msg);
+        $this->assertEquals(0, $ui->msgNo);
+
+        // Append message
+        $ui->setMsg('Appended', 0, true);
+        $this->assertEquals('New Message Appended', $ui->msg);
+        $this->assertEquals(0, $ui->msgNo);
+
+        // Set message with type
+        $ui->setMsg('Error Occurred', UI_MSG_ERROR);
+        $this->assertEquals('Error Occurred', $ui->msg);
+        $this->assertEquals(UI_MSG_ERROR, $ui->msgNo);
+    }
+
+    function testGetMsg() {
+        $ui = new TestCAppUI();
+
+        // Empty message
+        $this->assertEquals('', $ui->getMsg());
+
+        // Simple message (default type)
+        $ui->setMsg('Test Message');
+        $expected = '<table cellspacing="0" cellpadding="1" border="0"><tr><td></td><td class="message">Test Message</td></tr></table>';
+        $this->assertEquals($expected, $ui->getMsg(false));
+
+        // Test UI_MSG_OK
+        $ui->setMsg('Success', UI_MSG_OK);
+        $expected = '<table cellspacing="0" cellpadding="1" border="0"><tr><td><img src="path/to/stock_ok-16.png" /></td><td class="message">Success</td></tr></table>';
+        $this->assertEquals($expected, $ui->getMsg(false));
+
+        // Test UI_MSG_ALERT
+        $ui->setMsg('Alert', UI_MSG_ALERT);
+        $expected = '<table cellspacing="0" cellpadding="1" border="0"><tr><td><img src="path/to/rc-gui-status-downgr.png" /></td><td class="message">Alert</td></tr></table>';
+        $this->assertEquals($expected, $ui->getMsg(false));
+
+        // Test UI_MSG_WARNING
+        $ui->setMsg('Warning', UI_MSG_WARNING);
+        $expected = '<table cellspacing="0" cellpadding="1" border="0"><tr><td><img src="path/to/rc-gui-status-downgr.png" /></td><td class="warning">Warning</td></tr></table>';
+        $this->assertEquals($expected, $ui->getMsg(false));
+
+        // Test UI_MSG_ERROR
+        $ui->setMsg('Error', UI_MSG_ERROR);
+        $expected = '<table cellspacing="0" cellpadding="1" border="0"><tr><td><img src="path/to/stock_cancel-16.png" /></td><td class="error">Error</td></tr></table>';
+        $this->assertEquals($expected, $ui->getMsg(false));
+
+        // Test resetting (true by default)
+        $ui->setMsg('Test Reset');
+        $msg = $ui->getMsg(true);
+        $this->assert($msg != '', "Message should not be empty");
+        $this->assertEquals('', $ui->msg);
+        $this->assertEquals(0, $ui->msgNo);
+        $this->assertEquals('', $ui->getMsg());
     }
 }
 ?>
