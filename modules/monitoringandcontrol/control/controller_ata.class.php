@@ -47,7 +47,7 @@ class ControllerAta{
 					$values[] = "($meeting_id, $user_id)";
 				}
 				$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "monitoring_meeting_user (meeting_id, user_id) VALUES " . implode(',', $values);
-				$db->Execute($sql);
+				db_exec($sql);
 			}
 	}	
 	
@@ -67,7 +67,7 @@ class ControllerAta{
 					$values[] = "($meeting_id, $m_item_id, $status)";
 				}
 				$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "monitoring_meeting_item_select (meeting_id, meeting_item_id, status) VALUES " . implode(',', $values);
-				$db->Execute($sql);
+				db_exec($sql);
 			}
 	}
 
@@ -97,7 +97,7 @@ class ControllerAta{
 				$values[] = "($last_meeting_id, $user_id)";
 			}
 			$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "monitoring_meeting_user (meeting_id, user_id) VALUES " . implode(',', $values);
-			$db->Execute($sql);
+			db_exec($sql);
 		}
 	}
 	
@@ -113,7 +113,7 @@ class ControllerAta{
 				$values[] = "($meeting_id, $m_item_id, $m_status)";
 			}
 			$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "monitoring_meeting_item_select (meeting_id, meeting_item_id, status) VALUES " . implode(',', $values);
-			$db->Execute($sql);
+			db_exec($sql);
 		}
 	}
 		
@@ -131,7 +131,7 @@ class ControllerAta{
 		}
 		if (count($values) > 0) {
 			$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "monitoring_meeting_item_tasks_delivered (meeting_id, task_id) VALUES " . implode(',', $values);
-			$db->Execute($sql);
+			db_exec($sql);
 		}
 	}
 	
