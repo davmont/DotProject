@@ -192,6 +192,17 @@ Calendar.createElement = function(type, parent) {
 	return el;
 };
 
+Calendar.htmlDecode = function(text) {
+	if (typeof text != "string") {
+		return text;
+	}
+	if (!Calendar._decode_el) {
+		Calendar._decode_el = document.createElement("div");
+	}
+	Calendar._decode_el.innerHTML = text;
+	return Calendar._decode_el.textContent || Calendar._decode_el.innerText || text;
+};
+
 // END: UTILITY FUNCTIONS
 
 // BEGIN: CALENDAR STATIC FUNCTIONS
@@ -641,13 +652,7 @@ Calendar.prototype.create = function (_par) {
 		Calendar._add_evs(cell);
 		cell.calendar = cal;
 		cell.navtype = navtype;
-		if (text.substr(0, 1) != "&") {
-			cell.appendChild(document.createTextNode(text));
-		}
-		else {
-			// FIXME: dirty hack for entities
-			cell.innerHTML = text;
-		}
+		cell.appendChild(document.createTextNode(Calendar.htmlDecode(text)));
 		return cell;
 	};
 
