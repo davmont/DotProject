@@ -4,6 +4,25 @@ if (!defined('DP_BASE_DIR')) {
 }
 require_once DP_BASE_DIR . '/classes/ui.class.php';
 
+// Mocks for global functions
+if (!function_exists('dPgetConfig')) {
+    function dPgetConfig($key, $default = null) {
+        return $default;
+    }
+}
+
+if (!function_exists('dPfindImage')) {
+    function dPfindImage($name, $module = null) {
+        return $name;
+    }
+}
+
+if (!function_exists('dPshowImage')) {
+    function dPshowImage($src, $wid = '', $hgt = '', $alt = '', $title = '') {
+        return '<img src="' . $src . '" />';
+    }
+}
+
 class TestCAppUI extends CAppUI {
     var $redirected = false;
     var $redirect_params = '';
@@ -97,6 +116,89 @@ class UITest extends TestCase {
         // Tricky cases (documenting current behavior)
         // '....//' -> '../' because str_replace is not recursive
         $this->assertEquals('../', $ui->makeFileNameSafe('....//'));
+    }
+
+    function testSetMsg() {
+        $ui = new TestCAppUI();
+        $GLOBALS['translate']['Hello World'] = 'Hello World';
+        $GLOBALS['translate']['New Message'] = 'New Message';
+        $GLOBALS['translate']['Appended'] = 'Appended';
+        $GLOBALS['translate']['Warning'] = 'Warning';
+        $GLOBALS['translate']['Alert'] = 'Alert';
+
+        // Test basic setMsg
+        $ui->setMsg('Hello World');
+        $this->assertEquals('Hello World', $ui->msg);
+        $this->assertEquals(0, $ui->msgNo);
+
+        // Test overwrite
+        $ui->setMsg('New Message', UI_MSG_OK);
+        $this->assertEquals('New Message', $ui->msg);
+        $this->assertEquals(UI_MSG_OK, $ui->msgNo);
+
+        // Test append
+        $ui->setMsg('Appended', UI_MSG_ERROR, true);
+        $this->assertEquals('New Message Appended', $ui->msg);
+        $this->assertEquals(UI_MSG_ERROR, $ui->msgNo);
+
+        // Test with different message numbers
+        $ui->setMsg('Warning', UI_MSG_WARNING);
+        $this->assertEquals('Warning', $ui->msg);
+        $this->assertEquals(UI_MSG_WARNING, $ui->msgNo);
+
+        $ui->setMsg('Alert', UI_MSG_ALERT);
+        $this->assertEquals('Alert', $ui->msg);
+        $this->assertEquals(UI_MSG_ALERT, $ui->msgNo);
+    }
+
+    function testGetMsg() {
+        $ui = new TestCAppUI();
+        $GLOBALS['translate']['Success'] = 'Success';
+        $GLOBALS['translate']['Error Occurred'] = 'Error Occurred';
+        $GLOBALS['translate']['Warning message'] = 'Warning message';
+        $GLOBALS['translate']['Alert message'] = 'Alert message';
+        $GLOBALS['translate']['Default message'] = 'Default message';
+
+        // Test with UI_MSG_OK
+        $ui->setMsg('Success', UI_MSG_OK);
+        $msg = $ui->getMsg(false);
+        $this->assertRegexp('/Success/', $msg);
+        $this->assertRegexp('/class="message"/', $msg);
+        $this->assertRegexp('/stock_ok-16.png/', $msg);
+        $this->assertEquals('Success', $ui->msg); // Not reset yet
+
+        // Test reset
+        $msg = $ui->getMsg(true);
+        $this->assertEquals('', $ui->msg);
+        $this->assertEquals(0, $ui->msgNo);
+
+        // Test with UI_MSG_ERROR
+        $ui->setMsg('Error Occurred', UI_MSG_ERROR);
+        $msg = $ui->getMsg(true);
+        $this->assertRegexp('/Error Occurred/', $msg);
+        $this->assertRegexp('/class="error"/', $msg);
+        $this->assertRegexp('/stock_cancel-16.png/', $msg);
+
+        // Test with UI_MSG_WARNING
+        $ui->setMsg('Warning message', UI_MSG_WARNING);
+        $msg = $ui->getMsg(true);
+        $this->assertRegexp('/Warning message/', $msg);
+        $this->assertRegexp('/class="warning"/', $msg);
+        $this->assertRegexp('/rc-gui-status-downgr.png/', $msg);
+
+        // Test with UI_MSG_ALERT
+        $ui->setMsg('Alert message', UI_MSG_ALERT);
+        $msg = $ui->getMsg(true);
+        $this->assertRegexp('/Alert message/', $msg);
+        $this->assertRegexp('/class="message"/', $msg);
+        $this->assertRegexp('/rc-gui-status-downgr.png/', $msg);
+
+        // Test with default/unknown message number
+        $ui->msg = 'Default message';
+        $ui->msgNo = 999;
+        $msg = $ui->getMsg(true);
+        $this->assertRegexp('/Default message/', $msg);
+        $this->assertRegexp('/class="message"/', $msg);
     }
 }
 ?>
