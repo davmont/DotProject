@@ -184,9 +184,22 @@ class UITest extends TestCase {
         $expected = '<table cellspacing="0" cellpadding="1" border="0"><tr><td><img src="path/to/stock_cancel-16.png" /></td><td class="error">Error</td></tr></table>';
         $this->assertEquals($expected, $ui->getMsg(false));
 
-        // Test resetting (true by default)
-        $ui->setMsg('Test Reset');
+        // Test unknown type (falls to default)
+        $ui->setMsg('Unknown', 999);
+        $expected = '<table cellspacing="0" cellpadding="1" border="0"><tr><td></td><td class="message">Unknown</td></tr></table>';
+        $this->assertEquals($expected, $ui->getMsg(false));
+
+        // Test resetting explicitly
+        $ui->setMsg('Test Reset Explicit');
         $msg = $ui->getMsg(true);
+        $this->assert($msg != '', "Message should not be empty");
+        $this->assertEquals('', $ui->msg);
+        $this->assertEquals(0, $ui->msgNo);
+        $this->assertEquals('', $ui->getMsg());
+
+        // Test resetting (true by default)
+        $ui->setMsg('Test Default Reset');
+        $msg = $ui->getMsg();
         $this->assert($msg != '', "Message should not be empty");
         $this->assertEquals('', $ui->msg);
         $this->assertEquals(0, $ui->msgNo);
