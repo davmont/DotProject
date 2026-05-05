@@ -33,41 +33,39 @@ class ControllerAta{
 		}
 		
 	function updateParticipants($participants,$meeting_id){
-			global $dPconfig, $db;
+			global $db;
 			$q = new DBQuery();	
 			$q->setDelete('monitoring_meeting_user');
 			$q->addWhere('meeting_id=' . $meeting_id);
 			$q->exec();			
 			$count = count($participants);
-			if ($count > 0) {
-				$meeting_id = (int) $meeting_id;
-				$values = array();
-				for($i=0;$i< $count;$i++){
-					$user_id = (int) $participants[$i];
-					$values[] = "($meeting_id, $user_id)";
-				}
-				$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "monitoring_meeting_user (meeting_id, user_id) VALUES " . implode(',', $values);
-				db_exec($sql);
+
+			$q->clear();
+			$q->addTable('monitoring_meeting_user');
+			$q->addInsert('meeting_id', '?', false, true);
+			$q->addInsert('user_id', '?', false, true);
+			$sql = $q->prepareInsert();
+			for($i=0;$i< $count;$i++){
+				$db->Execute($sql, array((int)$meeting_id, (int)$participants[$i]));
 			}
 	}	
 	
 	function  updateMeetingItens($item_id,$item_status,$meeting_id){
-			global $dPconfig, $db;
+			global $db;
 			$q = new DBQuery();	
 			$q->setDelete('monitoring_meeting_item_select');
 			$q->addWhere('meeting_id=' . $meeting_id);
 			$q->exec();		
 			$count = count($item_id);
-			if ($count > 0) {
-				$meeting_id = (int) $meeting_id;
-				$values = array();
-				for($i=0;$i< $count;$i++){
-					$m_item_id = (int) $item_id[$i];
-					$status = (int) $item_status[$i];
-					$values[] = "($meeting_id, $m_item_id, $status)";
-				}
-				$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "monitoring_meeting_item_select (meeting_id, meeting_item_id, status) VALUES " . implode(',', $values);
-				db_exec($sql);
+
+			$q->clear();
+			$q->addTable('monitoring_meeting_item_select');
+			$q->addInsert('meeting_id', '?', false, true);
+			$q->addInsert('meeting_item_id', '?', false, true);
+			$q->addInsert('status', '?', false, true);
+			$sql = $q->prepareInsert();
+			for($i=0;$i< $count;$i++){
+				$db->Execute($sql, array((int)$meeting_id, (int)$item_id[$i], (int)$item_status[$i]));
 			}
 	}
 
@@ -87,51 +85,45 @@ class ControllerAta{
 	}
 	
 	function insertParticipants($participants,$last_meeting_id){
-		global $dPconfig, $db;
+		global $db;
+		$q = new DBQuery();
 		$count = count($participants);
-		if ($count > 0) {
-			$last_meeting_id = (int) $last_meeting_id;
-			$values = array();
-			for($i=0;$i< $count;$i++){
-				$user_id = (int) $participants[$i];
-				$values[] = "($last_meeting_id, $user_id)";
-			}
-			$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "monitoring_meeting_user (meeting_id, user_id) VALUES " . implode(',', $values);
-			db_exec($sql);
+		$q->addTable('monitoring_meeting_user');
+		$q->addInsert('meeting_id', '?', false, true);
+		$q->addInsert('user_id', '?', false, true);
+		$sql = $q->prepareInsert();
+		for($i=0;$i< $count;$i++){
+			$db->Execute($sql, array((int)$last_meeting_id, (int)$participants[$i]));
 		}
 	}
 	
 	function insertMeetingItens($item_id,$status,$meeting_id){
-		global $dPconfig, $db;
+		global $db;
+		$q = new DBQuery();
 		$count = count($item_id);
-		if ($count > 0) {
-			$meeting_id = (int) $meeting_id;
-			$values = array();
-			for($i=0;$i< $count;$i++){
-				$m_item_id = (int) $item_id[$i];
-				$m_status = (int) $status[$i];
-				$values[] = "($meeting_id, $m_item_id, $m_status)";
-			}
-			$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "monitoring_meeting_item_select (meeting_id, meeting_item_id, status) VALUES " . implode(',', $values);
-			db_exec($sql);
+		$q->addTable('monitoring_meeting_item_select');
+		$q->addInsert('meeting_id', '?', false, true);
+		$q->addInsert('meeting_item_id', '?', false, true);
+		$q->addInsert('status', '?', false, true);
+		$sql = $q->prepareInsert();
+		for($i=0;$i< $count;$i++){
+			$db->Execute($sql, array((int)$meeting_id, (int)$item_id[$i], (int)$status[$i]));
 		}
 	}
 		
 	function insertMeetingTask($task_id_entrega,$status,$last_id){
-		global $dPconfig, $db;
+		global $db;
+		$q = new DBQuery();
 		$count = count($task_id_entrega);
 		
-		$values = array();
-		$last_id = (int) $last_id;
+		$q->addTable('monitoring_meeting_item_tasks_delivered');
+		$q->addInsert('meeting_id', '?', false, true);
+		$q->addInsert('task_id', '?', false, true);
+		$sql = $q->prepareInsert();
 		for($i=0;$i< $count;$i++){
 			if ($status[$i] == 0) {
-				$task_id = (int) $task_id_entrega[$i];
-				$values[] = "($last_id, $task_id)";
+				$db->Execute($sql, array((int)$last_id, (int)$task_id_entrega[$i]));
 			}
-		}
-		if (count($values) > 0) {
-			$sql = "INSERT INTO " . $dPconfig['dbprefix'] . "monitoring_meeting_item_tasks_delivered (meeting_id, task_id) VALUES " . implode(',', $values);
-			db_exec($sql);
 		}
 	}
 	
