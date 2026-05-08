@@ -83,8 +83,10 @@ class CMileageLog {
 	}
 
 	function load( $mileage_log_id ) {
-		$sql = "SELECT * FROM mileage_log WHERE mileage_log_id = $mileage_log_id";
-		return db_loadObject( $sql, $this );
+		$q = new DBQuery;
+		$q->addTable('mileage_log');
+		$q->addWhere('mileage_log_id = ' . intval($mileage_log_id));
+		return $q->loadObject($this);
 	}
 
 	function bind( $hash ) {
@@ -120,8 +122,10 @@ class CMileageLog {
 		}
 	}
 	function delete() {
-		$sql = "DELETE FROM mileage_log WHERE mileage_log_id = $this->mileage_log_id";
-		if (!db_exec( $sql )) {
+		$q = new DBQuery;
+		$q->setDelete('mileage_log');
+		$q->addWhere('mileage_log_id = ' . intval($this->mileage_log_id));
+		if (!$q->exec()) {
 			return db_error();
 		} else {
 			return NULL;
@@ -142,8 +146,10 @@ class CMileageLogPurpose {
 	}
 
 	function load( $mileage_log_purpose_id ) {
-		$sql = "SELECT * FROM mileage_log_purpose WHERE mileage_log_purpose_id = $mileage_log_purpose_id";
-		return db_loadObject( $sql, $this );
+		$q = new DBQuery;
+		$q->addTable('mileage_log_purpose');
+		$q->addWhere('mileage_log_purpose_id = ' . intval($mileage_log_purpose_id));
+		return $q->loadObject($this);
 	}
 
 	function bind( $hash ) {
@@ -179,8 +185,10 @@ class CMileageLogPurpose {
 		}
 	}
 	function delete() {
-		$sql = "DELETE FROM mileage_log_purpose WHERE mileage_log_purpose_id = $this->mileage_log_purpose_id";
-		if (!db_exec( $sql )) {
+		$q = new DBQuery;
+		$q->setDelete('mileage_log_purpose');
+		$q->addWhere('mileage_log_purpose_id = ' . intval($this->mileage_log_purpose_id));
+		if (!$q->exec()) {
 			return db_error();
 		} else {
 			return NULL;

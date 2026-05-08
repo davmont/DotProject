@@ -35,12 +35,12 @@ class CTesting extends CDpObject {
 
 	// overload the delete method of the parent class for adaptation for einstein's needs
 	function delete() {
-		$sql = "DELETE FROM unittest WHERE unittest_id = $this->unittest_id";
-		if (!db_exec( $sql )) {
-			return db_error();
-		} else {
-			return NULL;
-		}
+		$q = new DBQuery();
+		$q->setDelete('unittest');
+		$q->addWhere("unittest_id = " . intval($this->unittest_id));
+		$result = ((!$q->exec()) ? db_error() : NULL);
+		$q->clear();
+		return $result;
 	}
 }
 ?>
