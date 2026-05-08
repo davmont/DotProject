@@ -3,3 +3,5 @@
 /.project
 /error_log
 node_modules/
+output.txt
+test_out.txt
