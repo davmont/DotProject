@@ -407,6 +407,9 @@ function dPgetSysVal($title)
 	$q->exec();
 	$row = $q->fetchRow();
 	$q->clear();
+	if (!$row)
+		return array();
+
 	// type 0 = list
 	$sep1 = $row['syskey_sep1']; // item separator
 	$sep2 = $row['syskey_sep2']; // alias separator

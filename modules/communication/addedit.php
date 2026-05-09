@@ -126,10 +126,10 @@ $titleBlock->show();
                         </td>
                     </tr>
                     <tr><td align="left" nowrap="nowrap"><?php echo $AppUI->_("LBL_TITLE"); ?>:</td>
-                        <td><input type="text" align="left" name="communication_title" cols="50" rows="1" value="<?php echo (isset($_GET['title']) ? $_GET['title'] : @$obj->communication_title); ?>"></input></td>                        
+                        <td><input type="text" align="left" name="communication_title" cols="50" rows="1" value="<?php echo (isset($_GET['title']) ? htmlspecialchars($_GET['title']) : @$obj->communication_title); ?>"></input></td>
                     </tr>
                     <tr><td align="left" nowrap="nowrap"><?php echo $AppUI->_("LBL_COMMUNICATION"); ?>:</td>
-                        <td align="left"><textarea name="communication_information" cols="100" rows="3" class="textarea"><?php echo (isset($_GET['communication']) ? $_GET['communication'] : @$obj->communication_information); ?></textarea></td>
+                        <td align="left"><textarea name="communication_information" cols="100" rows="3" class="textarea"><?php echo (isset($_GET['communication']) ? htmlspecialchars($_GET['communication']) : @$obj->communication_information); ?></textarea></td>
                     </tr>  
                     <?php
                     if ($communication_id!=0) {
@@ -222,11 +222,11 @@ $titleBlock->show();
                   }
                   ?></select>
                     <span style="margin-left:15px; <?php echo ($showdate ? '' : 'display:none;'); ?>"><?php echo $AppUI->_("LBL_DATE")?>: </span>
-                    <input type="text" style="<?php echo ($showdate ? '' : 'display:none;'); ?> margin-left: 10px;" value="<?php echo ($communication_id == 0 ? $_GET['communication_date'] : @$obj->communication_date);  ?>" name="communication_date">
+                    <input type="text" style="<?php echo ($showdate ? '' : 'display:none;'); ?> margin-left: 10px;" value="<?php echo ($communication_id == 0 ? htmlspecialchars($_GET['communication_date']) : @$obj->communication_date);  ?>" name="communication_date">
                     </td>
                  </tr>
                  <tr><td align="left" nowrap="nowrap"><?php echo $AppUI->_("LBL_RESTRICTIONS");?>: </td>
-                     <td align="left"><textarea name="communication_restrictions" cols="100" rows="3" class="textarea"><?php echo ($communication_id == 0 ? $_GET['restrictions'] : @$obj->communication_restrictions); ?></textarea></td>
+                     <td align="left"><textarea name="communication_restrictions" cols="100" rows="3" class="textarea"><?php echo ($communication_id == 0 ? htmlspecialchars($_GET['restrictions']) : @$obj->communication_restrictions); ?></textarea></td>
                  </tr>
                  <td align="left" nowrap="nowrap"><?php echo $AppUI->_("LBL_RESPONSIBLE");?>: </td> 
                      <td><select id="responsible" name="responsible" style="min-width:150px">

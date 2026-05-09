@@ -5,3 +5,11 @@
 node_modules/
 output.txt
 test_out.txt
+existing_labels_es.txt
+gen_locale.php
+gen_locale_es.php
+existing_labels.txt
+find_missing_labels.php
+missing_labels_es.txt
+used_labels.txt
+missing_labels.txt
