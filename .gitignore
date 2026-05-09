@@ -3,6 +3,8 @@
 /.project
 /error_log
 node_modules/
+output.txt
+test_out.txt
 existing_labels_es.txt
 gen_locale.php
 gen_locale_es.php
