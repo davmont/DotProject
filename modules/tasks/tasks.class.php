@@ -1828,11 +1828,20 @@ class CTask extends CDpObject
 
 		// delete all current entries from $cslist
 		if ($del == true && $rmUsers == true) {
+			$user_ids = array();
 			foreach ($tarr as $user_id) {
 				$user_id = (int) $user_id;
 				if (!empty($user_id)) {
-					$this->removeAssigned($user_id);
+					$user_ids[] = $user_id;
 				}
+			}
+
+			if (count($user_ids) > 0) {
+				$q = new DBQuery;
+				$q->setDelete('user_tasks');
+				$q->addWhere('task_id = ' . $this->task_id . ' AND user_id IN (' . implode(',', $user_ids) . ')');
+				$q->exec();
+				$q->clear();
 			}
 
 			return false;
