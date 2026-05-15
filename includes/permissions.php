@@ -32,12 +32,13 @@ function getReadableModule()
 	return null;
 }
 
-// TODO: checkFlag should be depricated as it's old and unused
 /**
  * This function is used to check permissions.
+ * @deprecated
  */
 function checkFlag($flag, $perm_type, $old_flag)
 {
+	trigger_error("checkFlag() has been deprecated and will be removed in a future release.", E_USER_DEPRECATED);
 	if ($old_flag) {
 		return (
 			($flag == PERM_DENY) ||	// permission denied
