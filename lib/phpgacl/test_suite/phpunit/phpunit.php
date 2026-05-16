@@ -342,7 +342,12 @@ class TestSuite /* implements Test */ {
         if (preg_match('/^test/', $method)) {
           $test = new $classname($method);
           if (strcasecmp($method, $classname) == 0 || is_subclass_of($test, $method)) {
-             // Constructor check
+            // Ignore the given method name since it is a constructor:
+            // it's the name of our test class or it is the name of a
+            // superclass of our test class.  (This code smells funny.
+            // Anyone got a better way?)
+
+            //print "skipping $method<br>";
           }
           else {
             $this->addTest($test);

@@ -137,48 +137,11 @@ if(dPgetParam($_POST, 'edit', 0))
 					.'<td colspan=3 style="display:none;" class="tdContentProject subTotal todo" rel="_to"></td>'
 					.'<td colspan=6 style="display:none;" class="tdContentProject total todo" rel="_tt"></td>'
 					."<tr/>\n";
-
-				// Optimization: Bulk load budgets and child counts
-				$task_ids = array();
-				foreach ($tasks as $task) {
-					$task_ids[] = (int)$task->task_id;
-				}
-
-				$all_budgets = array();
-				$all_child_counts = array();
-				$common_tax = mostCommonTax();
-
-				if (count($task_ids) > 0) {
-					$task_id_list = implode(',', $task_ids);
-
-					// Load child counts
-					$q = new DBQuery();
-					$q->addTable('tasks', 't');
-					$q->addQuery('task_parent, COUNT(DISTINCT(t.task_id)) as child_count');
-					$q->addWhere('task_parent != t.task_id');
-					$q->addWhere('task_parent IN (' . $task_id_list . ')');
-					$q->addGroup('task_parent');
-					$all_child_counts = $q->loadHashList('task_parent');
-
-					// Load budgets
-					$q->clear();
-					$q->addTable('budget');
-					$q->addQuery('*');
-					$q->addWhere('task_id IN (' . $task_id_list . ')');
-					$all_budgets = $q->loadHashList('task_id');
-				}
 				
 				foreach($tasks as $task) {
 					// Load the budget of each tasks
 					$budget = new CBudget();
-					$task_child_count = isset($all_child_counts[$task->task_id]) ? $all_child_counts[$task->task_id]['child_count'] : 0;
-					if ($task_child_count == 0) {
-						if (isset($all_budgets[$task->task_id])) {
-							$budget->bind($all_budgets[$task->task_id]);
-						} else {
-							$budget->Tax = $common_tax;
-						}
-					}
+					$budget->loadFromTask($task->task_id);
 					$budget->display_tax	= $tax;
 					$parent = null;
 					if ($task->task_parent == $task->task_id) {
@@ -199,7 +162,7 @@ if(dPgetParam($_POST, 'edit', 0))
 					else
 						echo '<a title="'.$AppUI->_("Start Date").': '.$start_date->format("%d/%m/%Y").' - '.$AppUI->_("End Date").': '.$end_date->format("%d/%m/%Y").'" href="index.php?m=tasks&a=view&task_id='.$task->task_id.'">'.$task->task_name.' ('.$budget->Tax.$AppUI->_("%").')</a></td>';
 
-					if($task_child_count == 0) {
+					if(countChildren($task->task_id) == 0) {
 						// If the task don't have children, we can edit the budget ...
 						switch($currency) {
 							case 0 : $mult = 1; $symbol = $dPconfig['currency_symbol']; break;

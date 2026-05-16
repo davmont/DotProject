@@ -705,27 +705,14 @@ class CustomFields
 		&$error_msg,
 		$field_order = 1
 	) {
-		global $db, $AppUI;
+		global $db;
 		$next_id = $db->GenID('custom_fields_struct_id', 1);
 
 		$field_a = 'addedit';
 
 		// TODO - module pages other than addedit
-
+		// TODO - validation that field_name doesnt already exist
 		$q = new DBQuery;
-		$q->addTable('custom_fields_struct');
-		$q->addQuery('field_id');
-		$q->addWhere("field_module = '" . $this->m . "'");
-		$q->addWhere("field_page = '" . $field_a . "'");
-		$q->addWhere("field_name = '" . $field_name . "'");
-
-		if ($q->loadResult()) {
-			$error_msg = $AppUI ? $AppUI->_('Custom field name already exists') : 'Custom field name already exists';
-			$q->clear();
-			return 0;
-		}
-		$q->clear();
-
 		$q->addTable('custom_fields_struct');
 		$q->addInsert('field_id', $next_id);
 		$q->addInsert('field_module', $this->m);

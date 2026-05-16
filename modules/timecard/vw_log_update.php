@@ -40,7 +40,7 @@ $task_log_costcodes = array(""); // Let's add a blank default option
 $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 */
 
-$proj = new CProject();
+$proj = &new CProject();
 $proj->load($obj->task_project);
 $sql = "SELECT billingcode_id, billingcode_name
         FROM billingcode
@@ -49,10 +49,8 @@ $sql = "SELECT billingcode_id, billingcode_name
         ORDER BY billingcode_name";
 
 $task_log_costcodes[0] = '';
-if (!($ptrc = db_exec($sql))) {
-	dprint(__FILE__, __LINE__, 0, 'Database error in ' . __FILE__ . ': ' . db_error());
-	$AppUI->setMsg('Database error occurred while fetching billing codes', UI_MSG_ERROR);
-}
+$ptrc = db_exec($sql);
+echo db_error();
 $nums = 0;
 if ($ptrc)
 	$nums=db_num_rows($ptrc);

@@ -1,34 +1,33 @@
 <?php /* MACRO_PROJECTS macroprojects.class.php, v 0.1.0 2012/05/30 */
 /*
- * Copyright (c) 2012 Region Poitou-Charentes (France)
- *
- * Author:		Henri SAULME, <henri.saulme@gmail.com>
- *
- * License:		GNU/GPL
- *
- * CHANGE LOG
- *
- * version 0.1.0
- * 	Creation
- *
- */
+* Copyright (c) 2012 Region Poitou-Charentes (France)
+*
+* Author:		Henri SAULME, <henri.saulme@gmail.com>
+*
+* License:		GNU/GPL
+*
+* CHANGE LOG
+*
+* version 0.1.0
+* 	Creation
+*
+*/
 
 if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 
-require_once($AppUI->getSystemClass('dp'));
-require_once($AppUI->getLibraryClass('PEAR/Date'));
-require_once($AppUI->getModuleClass('tasks'));
-require_once($AppUI->getModuleClass('companies'));
-require_once($AppUI->getModuleClass('departments'));
-require_once($AppUI->getModuleClass('projects'));
+require_once ($AppUI->getSystemClass ('dp'));
+require_once ($AppUI->getLibraryClass('PEAR/Date'));
+require_once ($AppUI->getModuleClass('tasks'));
+require_once ($AppUI->getModuleClass('companies'));
+require_once ($AppUI->getModuleClass('departments'));
+require_once ($AppUI->getModuleClass('projects'));
 
 /**
  * The macroproject Class
  */
-class CMacroProject extends CDpObject
-{
+class CMacroProject extends CDpObject {
 	var $macroproject_id = NULL;
 	var $macroproject_company = NULL;
 	var $macroproject_company_internal = NULL;
@@ -49,18 +48,16 @@ class CMacroProject extends CDpObject
 	var $macroproject_actual_budget = NULL;
 	var $macroproject_creator = NULL;
 	var $macroproject_private = NULL;
-	var $macroproject_departments = NULL;
+	var $macroproject_departments= NULL;
 	var $macroproject_contacts = NULL;
 	var $macroproject_priority = NULL;
 	var $macroproject_type = NULL;
 
-	function __construct()
-	{
+	function __construct() {
 		parent::__construct('macroprojects', 'macroproject_id');
 	}
 
-	function check()
-	{
+	function check() {
 		// ensure changes of state in checkboxes is captured
 		$this->macroproject_private = intval($this->macroproject_private);
 		// Make sure macroproject_short_name is the right size (issue with encoded characters)
@@ -75,21 +72,20 @@ class CMacroProject extends CDpObject
 		return null; // object is ok
 	}
 
-	function load($oid = null, $strip = true)
-	{
+	function load($oid=null, $strip=true) {
 		$result = parent::load($oid, $strip);
 		if ($result && $oid) {
 			$working_hours = ((dPgetConfig('daily_working_hours'))
-				? dPgetConfig('daily_working_hours') : 8);
+			                  ? dPgetConfig('daily_working_hours'):8);
 
 			$q = new DBQuery;
-			$q->addTable('macroprojects', 'mp');
-			$q->addQuery('mp.macroproject_percent_complete');
-			$q->addWhere('macroproject_id =' . $oid);
+		$q->addTable('macroprojects', 'mp');
+		$q->addQuery('mp.macroproject_percent_complete');
+		$q->addWhere('macroproject_id =' . $oid);
 
-			$macroprojects = $q->loadList();
-			$q->exec();
-			$q->clear();
+		$macroprojects = $q->loadList();
+		$q->exec();
+		$q->clear();
 		}
 		return $result;
 	}
@@ -106,16 +102,10 @@ class CMacroProject extends CDpObject
 		return true;
 	}
 
-	function delete($oid = null, $history_desc = '', $history_proj = 0)
-	{
+	function delete() {
 		$this->load($this->macroproject_id);
-		addHistory(
-			'macroprojects',
-			$this->macroproject_id,
-			'delete',
-			$this->macroproject_name,
-			$this->macroproject_id
-		);
+		addHistory('macroprojects', $this->macroproject_id, 'delete', $this->macroproject_name,
+		           $this->macroproject_id);
 		$q = new DBQuery;
 
 		// remove the macroproject-contacts and macroproject-departments map
@@ -145,40 +135,37 @@ class CMacroProject extends CDpObject
 	}
 
 	/**
-	 **	Overload of the dpObject::getAllowedRecords 
-	 **	to ensure that the allowed macroprojects are owned by allowed companies.
-	 **/
+	**	Overload of the dpObject::getAllowedRecords
+	**	to ensure that the allowed macroprojects are owned by allowed companies.
+	**/
 
-	function getAllowedRecords($uid, $fields = '*', $macroorderby = '', $index = null, $extra = null)
-	{
-		$oCpy = new CCompany();
+	function getAllowedRecords($uid, $fields='*', $macroorderby='', $index=null, $extra=null) {
+		$oCpy = new CCompany ();
 
-		$aCpies = $oCpy->getAllowedRecords($uid, 'company_id, company_name');
+		$aCpies = $oCpy->getAllowedRecords ($uid, 'company_id, company_name');
 
 		$buffer = ((count($aCpies))
-			? ('(macroproject_company IN (' . implode(',', array_keys($aCpies)) . '))')
-			: '1 = 0');
+		           ? ('(macroproject_company IN (' . implode(',', array_keys($aCpies)) . '))')
+		           : '1 = 0');
 		$extra['where'] = ((($extra['where'] != '') ? ($extra['where'] . ' AND ') : '')
-			. $buffer);
+		                   . $buffer);
 
-		return parent::getAllowedRecords($uid, $fields, $macroorderby, $index, $extra);
+		return parent::getAllowedRecords ($uid, $fields, $macroorderby, $index, $extra);
 
 	}
 
-	function getAllowedSQL($uid, $index = null, $alt_mod = null)
-	{
-		$oCpy = new CCompany();
+	function getAllowedSQL($uid, $index=null) {
+		$oCpy = new CCompany ();
 
-		$where = $oCpy->getAllowedSQL($uid, 'macroproject_company');
+		$where = $oCpy->getAllowedSQL ($uid, 'macroproject_company');
 		$project_where = parent::getAllowedSQL($uid, $index);
 		return array_merge($where, $project_where);
 	}
 
-	function setAllowedSQL($uid, &$query, $index = null, $key = null, $alt_mod = null)
-	{
+	function setAllowedSQL($uid, &$query, $index=null, $key=null) {
 		$oCpy = new CCompany;
 		parent::setAllowedSQL($uid, $query, $index, $key);
-		$oCpy->setAllowedSQL($uid, $query, ((($key) ? ($key . '.') : '') . 'macroproject_company'));
+		$oCpy->setAllowedSQL($uid, $query, ((($key) ? ($key . '.') : '') .'macroproject_company'));
 	}
 
 	/**
@@ -186,34 +173,32 @@ class CMacroProject extends CDpObject
 	 *	to ensure that the macroprojects owned by denied companies are denied.
 	 *
 	 */
-	function getDeniedRecords($uid)
-	{
-		$aBuf1 = parent::getDeniedRecords($uid);
+	function getDeniedRecords($uid) {
+		$aBuf1 = parent::getDeniedRecords ($uid);
 
-		$oCpy = new CCompany();
+		$oCpy = new CCompany ();
 		// Retrieve which macroprojects are allowed due to the company rules 
-		$aCpiesAllowed = $oCpy->getAllowedRecords($uid, 'company_id,company_name');
+		$aCpiesAllowed = $oCpy->getAllowedRecords ($uid, 'company_id,company_name');
 
 		$q = new DBQuery;
 		$q->addTable('macroprojects');
 		$q->addQuery('macroproject_id');
 		if (count($aCpiesAllowed)) {
-			$q->addWhere('NOT (macroproject_company IN (' . implode(',', array_keys($aCpiesAllowed))
-				. '))');
+			$q->addWhere('NOT (macroproject_company IN (' . implode (',', array_keys($aCpiesAllowed))
+			             . '))');
 		}
 		$sql = $q->prepare();
 		$q->clear();
-		$aBuf2 = db_loadColumn($sql);
+		$aBuf2 = db_loadColumn ($sql);
 
-		return array_merge($aBuf1, $aBuf2);
+		return array_merge ($aBuf1, $aBuf2);
 
 	}
 
-	function getAllowedMacroProjectsInRows($userId)
-	{
+	function getAllowedMacroProjectsInRows($userId) {
 		$q = new DBQuery;
 		$q->addQuery('macroproject_id, macroproject_status, macroproject_name, macroproject_description'
-			. ', macroproject_short_name');
+		             . ', macroproject_short_name');
 		$q->addTable('macroprojects');
 		$q->addOrder('macroproject_short_name');
 		$this->setAllowedSQL($userId, $q);
@@ -222,11 +207,10 @@ class CMacroProject extends CDpObject
 		return $allowedMacroProjectRows;
 	}
 
-	function getAssignedMacroProjectsInRows($userId)
-	{
+	function getAssignedMacroProjectsInRows($userId) {
 		$q = new DBQuery;
 		$q->addQuery('macroproject_id, macroproject_status, macroproject_name, macroproject_description'
-			. ', macroproject_short_name');
+		             . ', macroproject_short_name');
 		$q->addTable('macroprojects');
 		//$q->addJoin('tasks', 't', 't.task_project = project_id');
 		//$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
@@ -244,8 +228,7 @@ class CMacroProject extends CDpObject
 	 * @param int SQL-limit to limit the number of returned tasks
 	 * @return array List of criticalTasks
 	 */
-	function getCriticalTasks($macroproject_id = NULL, $limit = 1)
-	{
+	function getCriticalTasks($macroproject_id=NULL, $limit=1) {
 		$macroproject_id = !empty($macroproject_id) ? $macroproject_id : $this->macroproject_id;
 		$q = new DBQuery;
 		$q->addTable('tasks');
@@ -259,8 +242,7 @@ class CMacroProject extends CDpObject
 		return $q->loadList();
 	}
 
-	function store($updateNulls = false)
-	{
+	function store() {
 		$this->dPTrimAll();
 
 		$msg = $this->check();
@@ -270,22 +252,12 @@ class CMacroProject extends CDpObject
 
 		if ($this->macroproject_id) {
 			$ret = db_updateObject('macroprojects', $this, 'macroproject_id', false);
-			addHistory(
-				'macroprojects',
-				$this->macroproject_id,
-				'update',
-				$this->macroproject_name,
-				$this->macroproject_id
-			);
+			addHistory('macroprojects', $this->macroproject_id, 'update', $this->macroproject_name,
+			           $this->macroproject_id);
 		} else {
 			$ret = db_insertObject('macroprojects', $this, 'macroproject_id');
-			addHistory(
-				'macroprojects',
-				$this->macroproject_id,
-				'add',
-				$this->macroproject_name,
-				$this->macroproject_id
-			);
+			addHistory('macroprojects', $this->macroproject_id, 'add', $this->macroproject_name,
+			           $this->macroproject_id);
 		}
 
 		//split out related departments and store them seperatly.
@@ -295,7 +267,7 @@ class CMacroProject extends CDpObject
 		$q->exec();
 		$q->clear();
 		if ($this->macroproject_departments) {
-			$departments = explode(',', $this->macroproject_departments);
+			$departments = explode(',',$this->macroproject_departments);
 			foreach ($departments as $department) {
 				$q->addTable('macroproject_departments');
 				$q->addInsert('macroproject_id', $this->macroproject_id);
@@ -311,7 +283,7 @@ class CMacroProject extends CDpObject
 		$q->exec();
 		$q->clear();
 		if ($this->macroproject_contacts) {
-			$contacts = explode(',', $this->macroproject_contacts);
+			$contacts = explode(',',$this->macroproject_contacts);
 			foreach ($contacts as $contact) {
 				if ($contact) {
 					$q->addTable('macroproject_contacts');
@@ -333,26 +305,20 @@ class CMacroProject extends CDpObject
 			current viewing user $AppUI->user_id is used.
 */
 
-function macroprojects_list_data($user_id = false)
-{
+function macroprojects_list_data($user_id=false) {
 	global $AppUI, $addPwOiD, $cBuffer, $company, $company_id, $company_prefix, $deny, $department;
 	global $dept_ids, $dPconfig, $macroorderby, $orderdir, $macroprojects;//, $tasks_critical, $tasks_problems;
-	global /*$tasks_sum, $tasks_summy, $tasks_total,*/ $owner, $macroprojectTypeId, $macroproject_status, $addMacroProjectsWithAssignedTasks;
+	global /*$tasks_sum, $tasks_summy, $tasks_total,*/ $owner, $projectTypeId, $project_status;
 	global $currentTabId;
-	$addMacroProjectsWithAssignedTasks = (($AppUI->getState('addMacroProjWithTasks'))
-		? $AppUI->getState('addMacroProjWithTasks') : 0);
-
-	if (!isset($macroprojectTypeId))
-		$macroprojectTypeId = -1;
-	if (!isset($addMacroProjectsWithAssignedTasks))
-		$addMacroProjectsWithAssignedTasks = 0;
+	//$addProjectsWithAssignedTasks = (($AppUI->getState('addProjWithTasks'))
+	//                                 ? $AppUI->getState('addProjWithTasks') : 0);
 
 	//for getting permissions on project records
 	$obj_macroproject = new CMacroProject();
 
 	//Let's delete temproary tables
 	$q = new DBQuery;
-	$table_list = array('tasks_sum', 'tasks_total', 'tasks_summy', 'tasks_critical', 'tasks_problems', 'tasks_users');
+	$table_list = array('tasks_sum','tasks_total','tasks_summy','tasks_critical','tasks_problems','tasks_users');
 	$q->dropTemp($table_list);
 	$q->exec();
 	$q->clear();
@@ -361,19 +327,19 @@ function macroprojects_list_data($user_id = false)
 	// by Pablo Roca (pabloroca@mvps.org)
 	// 16 August 2003
 
-	$working_hours = ($dPconfig['daily_working_hours'] ? $dPconfig['daily_working_hours'] : 8);
+	$working_hours = ($dPconfig['daily_working_hours']?$dPconfig['daily_working_hours']:8);
 
 	// GJB: Note that we have to special case duration type 24 
 	// and this refers to the hours in a day, NOT 24 hours
 	/*$q->createTemp('tasks_sum');
 	$q->addTable('tasks', 't');
 	$q->addQuery('t.task_project, SUM(t.task_duration * t.task_percent_complete' 
-				 . ' * IF(t.task_duration_type = 24, ' . $working_hours 
-				 . ', t.task_duration_type)) / SUM(t.task_duration' 
-				 . ' * IF(t.task_duration_type = 24, ' . $working_hours 
-				 . ', t.task_duration_type)) AS project_percent_complete, SUM(t.task_duration' 
-				 . ' * IF(t.task_duration_type = 24, ' . $working_hours 
-				 . ', t.task_duration_type)) AS project_duration');
+	             . ' * IF(t.task_duration_type = 24, ' . $working_hours
+	             . ', t.task_duration_type)) / SUM(t.task_duration'
+	             . ' * IF(t.task_duration_type = 24, ' . $working_hours
+	             . ', t.task_duration_type)) AS project_percent_complete, SUM(t.task_duration'
+	             . ' * IF(t.task_duration_type = 24, ' . $working_hours
+	             . ', t.task_duration_type)) AS project_duration');
 	if ($user_id) {
 		$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
 		$q->addWhere('ut.user_id = ' . $user_id);
@@ -417,7 +383,7 @@ function macroprojects_list_data($user_id = false)
 	/*$q->createTemp('tasks_critical');
 	$q->addTable('tasks', 't');
 	$q->addQuery('t.task_project, t.task_id AS critical_task' 
-				 . ', MAX(t.task_end_date) AS project_actual_end_date');
+	             . ', MAX(t.task_end_date) AS project_actual_end_date');
 	// MerlinYoda: we don't join tables if we don't get anything out of the process
 	// $q->addJoin('projects', 'p', 'p.project_id = t.task_project');
 	$q->addOrder('t.task_end_date DESC');
@@ -486,13 +452,13 @@ function macroprojects_list_data($user_id = false)
 
 	$q->addTable('macroprojects', 'mp');
 	$q->addQuery('mp.macroproject_id, mp.macroproject_status, mp.macroproject_color_identifier, mp.macroproject_type'
-		. ', mp.macroproject_name, mp.macroproject_description, mp.macroproject_start_date'
-		. ', mp.macroproject_end_date, mp.macroproject_color_identifier, mp.macroproject_company'
-		. ', mp.macroproject_status, mp.macroproject_percent_complete, mp.macroproject_priority, com.company_name'
-		. ', com.company_description,'// tc.critical_task, tc.project_actual_end_date' 
-		//. ', if (tp.task_log_problem IS NULL, 0, tp.task_log_problem) AS task_log_problem' 
-		//. ', tt.total_tasks, tsy.my_tasks, ts.project_percent_complete' 
-		/*. ', ts.project_duration,*/ . 'u.user_username');
+	             . ', mp.macroproject_name, mp.macroproject_description, mp.macroproject_start_date'
+	             . ', mp.macroproject_end_date, mp.macroproject_color_identifier, mp.macroproject_company'
+	             . ', mp.macroproject_status, mp.macroproject_percent_complete, mp.macroproject_priority, com.company_name'
+	             . ', com.company_description,'// tc.critical_task, tc.project_actual_end_date'
+	             //. ', if (tp.task_log_problem IS NULL, 0, tp.task_log_problem) AS task_log_problem'
+				 //. ', tt.total_tasks, tsy.my_tasks, ts.project_percent_complete'
+				 /*. ', ts.project_duration,*/. 'u.user_username');
 	$q->addJoin('companies', 'com', 'mp.macroproject_company = com.company_id');
 	$q->addJoin('users', 'u', 'mp.macroproject_owner = u.user_id');
 	//$q->addJoin('tasks_critical', 'tc', 'mp.project_id = tc.task_project');
@@ -504,18 +470,18 @@ function macroprojects_list_data($user_id = false)
 		$q->addJoin('tasks_users', 'tu', 'mp.project_id = tu.task_project');
 	}*/
 	if (isset($macroproject_status) && $currentTabId != 500) {
-		$q->addWhere('mp.macroproject_status = ' . $macroproject_status);
+		$q->addWhere('mp.macroproject_status = '.$macroproject_status);
 	}
 	if (isset($department)) {
 		$q->addJoin('macroproject_departments', 'pd', 'pd.macroproject_id = mp.macroproject_id');
 		if (!$addPwOiD) {
-			$q->addWhere('pd.department_id in (' . implode(',', $dept_ids) . ')');
+			$q->addWhere('pd.department_id in (' . implode(',',$dept_ids) . ')');
 		} else {
 			// Show Projects where the Project Owner is in the given department
 			$q->addWhere('mp.macroproject_owner IN ('
-				. ((!empty($owner_ids)) ? implode(',', $owner_ids) : 0) . ')');
+			             . ((!empty($owner_ids)) ? implode(',', $owner_ids) : 0) . ')');
 		}
-	} else if ($company_id && !$addPwOiD) {
+	} else if ($company_id &&!$addPwOiD) {
 		$q->addWhere('mp.macroproject_company = ' . $company_id);
 	}
 
@@ -546,11 +512,8 @@ function macroprojects_list_data($user_id = false)
 	// 16 August 2003
 	// get the list of permitted companies
 	$obj_company = new CCompany();
-	$companies = $obj_company->getAllowedRecords(
-		$AppUI->user_id,
-		'company_id,company_name',
-		'company_name'
-	);
+	$companies = $obj_company->getAllowedRecords($AppUI->user_id, 'company_id,company_name',
+	                                             'company_name');
 	if (count($companies) == 0) {
 		$companies = array(0);
 	}
@@ -570,15 +533,15 @@ function macroprojects_list_data($user_id = false)
 	//display the select list
 	$cBuffer = '<select name="department" onchange="javascript:document.pickCompany.submit()" class="text">';
 	$cBuffer .= ('<option value="company_0" style="font-weight:bold;">' . $AppUI->_('All')
-		. '</option>' . "\n");
+	             . '</option>'."\n");
 	$company = '';
 	foreach ($rows as $row) {
 		if ($row['dept_parent'] == 0) {
 			if ($company != $row['company_id']) {
 				$cBuffer .= ('<option value="' . $AppUI->___($company_prefix . $row['company_id'])
-					. '" style="font-weight:bold;"'
-					. (($company_id == $row['company_id']) ? 'selected="selected"' : '')
-					. '>' . $AppUI->___($row['company_name']) . '</option>' . "\n");
+				             . '" style="font-weight:bold;"'
+				             . (($company_id == $row['company_id']) ? 'selected="selected"' : '')
+				             . '>' . $AppUI->___($row['company_name']) . '</option>' . "\n");
 				$company = $row['company_id'];
 			}
 
@@ -600,11 +563,12 @@ function recoverFatherMacroProjects($macroproject_id, $where)
 	$q->clear();
 	$q->addTable('macroproject_macroproject');
 	$q->addQuery('macroproject_father');
-	$q->addWhere('macroproject_son =' . $macroproject_id);
+	$q->addWhere('macroproject_son ='.$macroproject_id);
 	$macroprojectsofmacro = $q->loadList();
-	if (count($macroprojectsofmacro) > 0)//if macroproject contains macroproject
+	if(count($macroprojectsofmacro) > 0)//if macroproject contains macroproject
 	{
-		foreach ($macroprojectsofmacro as $macroReed) {
+		foreach($macroprojectsofmacro as $macroReed)
+		{
 			$allMacroprojects .= recoverFatherMacroProjects($macroReed['macroproject_father'], $where);
 		}
 	}
@@ -619,11 +583,12 @@ function recoverMacroProjects($macroproject_id)
 	$q->clear();
 	$q->addTable('macroproject_macroproject');
 	$q->addQuery('macroproject_son');
-	$q->addWhere('macroproject_father =' . $macroproject_id);
+	$q->addWhere('macroproject_father ='.$macroproject_id);
 	$macroprojectsofmacro = $q->loadList();
-	if (count($macroprojectsofmacro) > 0)//if macroproject contains macroproject
+	if(count($macroprojectsofmacro) > 0)//if macroproject contains macroproject
 	{
-		foreach ($macroprojectsofmacro as $macroReed) {
+		foreach($macroprojectsofmacro as $macroReed)
+		{
 			$allMacroprojects .= recoverMacroProjects($macroReed['macroproject_son']);
 		}
 	}
@@ -637,7 +602,7 @@ function recoverProjects($macroproject_id)
 	$q->clear();
 	$q->addTable('macroproject_project');
 	$q->addQuery('project_id');
-	$q->addWhere('macroproject_id = 0' . recoverMacroProjects($macroproject_id));
+	$q->addWhere('macroproject_id = 0'.recoverMacroProjects($macroproject_id));
 	//$q->addWhere('macroproject_id = ' . $macroproject_id);
 	$projectsofmacro = $q->loadList();
 	$q->clear();
@@ -649,20 +614,25 @@ function makeWhereClauseEachProjectOfAMacroProject($macroproject_id, $whereClaus
 	$projectsofmacro = recoverProjects($macroproject_id);
 	$q = new DBQuery;
 	$q->clear();
-	$idxMacro = 0;
-	if (count($projectsofmacro) > 0) {
+	$idxMacro=0;
+	if(count($projectsofmacro) > 0)
+	{
 		$finalWhere = "";
-		foreach ($projectsofmacro as $projectReed) {
+		foreach($projectsofmacro as $projectReed)
+		{
 			$idxMacro++;
 			$projectPrint = $projectReed['project_id'];
-			if ($idxMacro < count($projectsofmacro)) {//if we don't work on the last project of the array projectofmacro we add an or after the conditions
+			if ($idxMacro < count($projectsofmacro)){//if we don't work on the last project of the array projectofmacro we add an or after the conditions
 				$finalWhere .= "($whereClause $projectPrint) or ";
-			} else {
+			}
+			else
+			{
 				$finalWhere .= "($whereClause $projectPrint)";
 			}
 		}
-	} else {
-		$finalWhere = ($whereClause . ' 10');
+	}
+	else{
+		$finalWhere = ($whereClause.' 10');
 	}
 	return $finalWhere;
 }
@@ -680,14 +650,15 @@ function updateMacroProjectPercentComplete($macroproject_id)
 	$q->exec();
 	$q->clear();
 
-	foreach ($macroprojects as $row) {
-		echo "Macroproject ID : " . $row['macroproject_id'];
-		if ($row['macroproject_id'] != '') {	// if macroproject contains tasks
-			$q->addTable('macroprojects', 'mp');
-			$q->addWhere('macroproject_id = ' . $row['macroproject_id']);
-			$q->addUpdate('macroproject_percent_complete', $row['macroproject_percent_complete']);
-			$q->exec();
-			$q->clear();
+	foreach($macroprojects as $row)
+	{
+	echo "Macroproject ID : ".$row['macroproject_id'];
+	if ($row['macroproject_id']!=''){	// if macroproject contains tasks
+		$q->addTable('macroprojects', 'mp');
+		$q->addWhere('macroproject_id = ' . $row['macroproject_id']);
+		$q->addUpdate('macroproject_percent_complete', $row['macroproject_percent_complete']);
+		$q->exec();
+		$q->clear();
 		}
 	}
 }

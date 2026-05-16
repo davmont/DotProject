@@ -550,7 +550,6 @@ class CEvent extends CDpObject
 	function delete($oid = NULL, $history_desc = '', $history_proj = 0)
 	{
 		global $AppUI;
-		$this->event_id = (int)$this->event_id;
 		// call default delete method first
 		$deleted = parent::delete($this->event_id);
 
@@ -559,7 +558,7 @@ class CEvent extends CDpObject
 			// delete user_events relationship
 			$q = new DBQuery;
 			$q->setDelete('user_events');
-			$q->addWhere('event_id = ' . (int)$this->event_id);
+			$q->addWhere('event_id = ' . $this->event_id);
 			$deleted = ((!$q->exec()) ? $AppUI->_('Could not delete Event-User relationship') . '. ' . db_error() : null);
 			$q->clear;
 		}
@@ -708,17 +707,17 @@ class CEvent extends CDpObject
 						'user_events',
 						'ue'
 						,
-						'ue.event_id = e.event_id AND ue.user_id =' . (int)$user_id
+						'ue.event_id = e.event_id AND ue.user_id =' . $user_id
 					);
-					$$query_set->addWhere('(ue.user_id = ' . (int)$user_id
+					$$query_set->addWhere('(ue.user_id = ' . $user_id
 						. ') AND (event_private=0 OR event_owner='
-						. (int)$user_id . ')');
+						. $user_id . ')');
 					break;
 				case 'own':
-					$$query_set->addWhere('e.event_owner =' . (int)$user_id);
+					$$query_set->addWhere('e.event_owner =' . $user_id);
 					break;
 				case 'all':
-					$$query_set->addWhere('(e.event_private=0 OR e.event_owner=' . (int)$user_id . ')');
+					$$query_set->addWhere('(e.event_private=0 OR e.event_owner=' . $user_id . ')');
 					break;
 			}
 
@@ -814,7 +813,7 @@ class CEvent extends CDpObject
 		$q->addTable('user_events', 'ue');
 		$q->addTable('contacts', 'con');
 		$q->addQuery('u.user_id, CONCAT_WS(" ",contact_first_name, contact_last_name)');
-		$q->addWhere('ue.event_id = ' . (int)$this->event_id);
+		$q->addWhere('ue.event_id = ' . $this->event_id);
 		$q->addWhere('user_contact = contact_id');
 		$q->addWhere('ue.user_id = u.user_id');
 		$assigned = $q->loadHashList();
@@ -824,16 +823,15 @@ class CEvent extends CDpObject
 	function updateAssigned($assigned)
 	{
 		// First remove the assigned from the user_events table
-		global $AppUI, $db;
+		global $AppUI;
 
 		$q = new DBQuery;
 		$q->setDelete('user_events');
-		$q->addWhere('event_id = ' . (int)$this->event_id);
+		$q->addWhere('event_id = ' . $this->event_id);
 		$q->exec();
 		$q->clear();
 
 		if (is_array($assigned) && count($assigned)) {
-			$db->StartTrans();
 			foreach ($assigned as $uid) {
 				if ($uid) {
 					$q->addTable('user_events', 'ue');
@@ -843,7 +841,6 @@ class CEvent extends CDpObject
 					$q->clear();
 				}
 			}
-			$db->CompleteTrans();
 
 			if ($msg = db_error()) {
 				$AppUI->setMsg($msg, UI_MSG_ERROR);
@@ -990,7 +987,7 @@ class CEvent extends CDpObject
 		$q->addQuery('ue.user_id');
 		$q->addWhere('ue.event_id IN (' . implode(',', $events) . ')');
 		if ($this->event_id) {
-			$q->addWhere('NOT(ue.event_id = ' . (int)$this->event_id . ')');
+			$q->addWhere('NOT(ue.event_id = ' . $this->event_id . ')');
 		}
 
 		$clashes = $q->loadColumn();

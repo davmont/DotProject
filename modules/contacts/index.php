@@ -68,14 +68,12 @@ $q->addQuery('contact_id, contact_order_by');
 $q->addQuery('contact_first_name, contact_last_name, contact_phone, contact_owner');
 $q->addQuery($showfields);
 $q->addQuery('user_id');
-$filters = array();
+$where_filter = '';
 foreach ($search_map as $search_name) {
-	$filters[] = $search_name . " LIKE $where";
+	$where_filter .= (' OR ' . $search_name . " LIKE $where");
 }
-if ($additional_filter) {
-	$filters[] = $additional_filter;
-}
-$where_filter = implode(' OR ', $filters);
+$where_filter = mb_substr($where_filter, 4);
+$where_filter .= (($additional_filter) ? (' OR ' . $additional_filter) : '');
 $q->addWhere('(' . $where_filter . ')');
 $q->addWhere('(contact_private = 0 OR (contact_private = 1 AND contact_owner = ' . $AppUI->user_id
 	. ') OR contact_owner IS NULL OR contact_owner = 0)');

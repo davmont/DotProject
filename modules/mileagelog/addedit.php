@@ -190,7 +190,7 @@ function setTask( key, val ) {
 		<A href="javascript:delIt()"><img align="absmiddle" src="./images/icons/stock_delete-16.png" width="16" height="16" alt="<?=$AppUI->_('Delete this mileage log?')?>" border="0"><?php echo $AppUI->_('delete mileage log');?></a>
 	</td>
 </tr>
-<?php } ?>
+<? } ?>
 <tr>
 	<th colspan="2"><?php echo $mid?$AppUI->_('Editing'):$AppUI->_('Creating New'); ?>&nbsp;<?=$AppUI->_('Log')?></th>
 </tr>
@@ -237,7 +237,7 @@ function setTask( key, val ) {
 		<textarea name="task_mileage_log_purpose_note" cols="60" rows="3" wrap="virtual" class="textarea" readonly><?=dPFormSafe($task_desc)?></textarea>
 	</td>
 </tr>
-<?php }
+<? }
 if ($MILEAGELOG_CONFIG['show_purpose_helpdesk']) { 
 ?>
 <tr>
@@ -249,7 +249,7 @@ if ($MILEAGELOG_CONFIG['show_purpose_helpdesk']) {
 		<textarea name="helpdesk_mileage_log_purpose_note" cols="60" rows="3" wrap="virtual" class="textarea" readonly></textarea>		
 	</td>
 </tr>
-<?php }
+<? }
 if ($MILEAGELOG_CONFIG['show_purpose_note']) {
 ?>
 <tr>
@@ -260,7 +260,7 @@ if ($MILEAGELOG_CONFIG['show_purpose_note']) {
 		<textarea name="note_mileage_log_purpose_note" cols="60" rows="4" wrap="virtual" class="textarea"><?=dPformSafe($note_mileage_log_purpose->mileage_log_purpose_note)?></textarea>
 	</td>
 </tr>
-<?php } ?>
+<? } ?>
 <tr>
 	<td>
 		<input class="button" type="Button" name="Cancel" value="cancel" onClick="javascript:if(confirm('<?=$AppUI->_('Are you sure you want to cancel?')?>')){location.href = './index.php?m=mileagelog&tab=0';}">

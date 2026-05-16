@@ -231,7 +231,7 @@
 "sendpass2"=>"har begärt att ett lösenord skapas för ovan nämnda användarkonto och skickas till denna epost-adress.
 
  Det nya lösenordet lyder:",
-"sendpass3"=>",
+"sendpass3"=>"
 
 Om du ej har begärt ändringen av lösenordet behöver du ej oroa dig. Detta meddelande har endast skickats till dig. Du kan nu logga in på ovan nämnda sida och ändra lösenordet.",
 "sendpass4"=>"Nytt lösenord för",

@@ -1,12 +1,11 @@
 <?php /* $Id: vw_log_update.php,v 1.1 2004/05/07 22:28:40 uodeltasig Exp $ */
-GLOBAL $AppUI, $hditem, $ist, $canEdit, $m;
+GLOBAL $AppUI, $hditem, $ist;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
-
 // check permissions
-$canEdit = !getDenyEdit( $m, $item_id );
-if (!$canEdit) {
-	$AppUI->redirect( "m=public&a=access_denied" );
-}
+//$canEdit = !getDenyEdit( 'tasks', $item_id );
+//if (!$canEdit) {
+//	$AppUI->redirect( "m=public&a=access_denied" );
+//}
 
 $task_log_id = intval( dPgetParam( $_GET, 'task_log_id', 0 ) );
 $log = new CTaskLog();
@@ -25,7 +24,7 @@ $sql = "select distinct task_log_costcode
 $task_log_costcodes = array(""); // Let's add a blank default option
 $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 
-if ($canEdit) {
+//if ($canEdit) {
 // Task Update Form
 	$df = $AppUI->getPref( 'SHDATEFORMAT' );
 	$log_date = new CDate( $log->task_log_date );
@@ -151,4 +150,5 @@ if ($canEdit) {
 
 </form>
 </table>
-<?php } ?>
+<?php //}
+?>

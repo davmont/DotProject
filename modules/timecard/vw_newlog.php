@@ -57,8 +57,7 @@ $AppUI->savePlace();
 if (isset( $task['task_log_date'] )) {
 	$date = new CDate( $task['task_log_date'] ); 
 } else if (isset( $_GET['date'] )) {
-	$clean_date = dPgetCleanParam($_GET, 'date', '');
-	$date = preg_match('/^[0-9\-\/:\s]+$/', $clean_date) ? new CDate($clean_date) : new CDate();
+	$date = new CDate($_GET['date']);
 } else {
 	$date = new CDate();
 }
@@ -78,10 +77,7 @@ ORDER by p.project_name, t.task_name
 ##echo "<pre>$sql</pre>";
 
 $res = db_exec( $sql );
-if (!$res) {
-	dprint(__FILE__, __LINE__, 0, 'Database error in ' . __FILE__ . ': ' . db_error());
-	$AppUI->setMsg('Database error occurred', UI_MSG_ERROR);
-}
+echo db_error();
 $tasks = array();
 $projects = array();
 $companies = array( '0'=>'' );
@@ -130,10 +126,7 @@ ORDER BY billingcode_name";
 
 $task_log_costcodes[0]="None";
 $ptrc = db_exec($sql);
-if (!$ptrc) {
-	dprint(__FILE__, __LINE__, 0, 'Database error in ' . __FILE__ . ': ' . db_error());
-	$AppUI->setMsg('Database error occurred', UI_MSG_ERROR);
-}
+echo db_error();
 $nums = 0;
 if ($ptrc)
 $nums=db_num_rows($ptrc);

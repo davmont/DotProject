@@ -420,44 +420,22 @@ $titleBlock->show();
 			
 			// Load the projects coresponding to those tasks.
 			$projects 	= loadProjectsOf($tasks);
-
-			$project_ids = array();
-			foreach ($projects as $project) {
-				$project_ids[] = (int)$project->project_id;
-			}
-			$project_relations = array();
-			if (count($project_ids) > 0) {
-				$q = new DBQuery();
-				$q->addTable('projects', 'p');
-				$q->addQuery('p.project_id');
-				$q->leftJoin('users', 'u', 'u.user_id = p.project_owner');
-				$q->leftJoin('contacts', 'con', 'con.contact_id = u.user_contact');
-				$q->addQuery('con.contact_first_name, con.contact_last_name');
-				$q->leftJoin('companies', 'com', 'com.company_id = p.project_company');
-				$q->addQuery('com.company_name');
-				$q->leftJoin('departments', 'd', 'd.dept_id = p.project_department');
-				$q->addQuery('d.dept_name');
-				$q->addWhere('p.project_id IN (' . implode(',', $project_ids) . ')');
-				$project_relations = $q->loadHashList('project_id');
-			}
-
 			foreach ($projects as $project) {
 				if(getPermission('projects', 'view', $project->project_id)) {
 					$sdate 		= new CDate($project->project_start_date);
 					$edate 		= new CDate($project->project_end_date);
-
-					$rel = isset($project_relations[$project->project_id]) ? $project_relations[$project->project_id] : null;
-					$owner_first = $rel ? $rel['contact_first_name'] : '';
-					$owner_last = $rel ? $rel['contact_last_name'] : '';
-					$company_name = $rel ? $rel['company_name'] : '';
-					$dept_name = $rel ? $rel['dept_name'] : '';
-
+					$owner 		= new CContact();
+					$company 	= new CCompany();
+					$department = new CDepartment();
+					$owner->load(getContactId($project->project_owner));
+					$company->load($project->project_company);
+					$department->load($project->project_department);
 					$fun 		= 'displayProjectDetails(event,\''
-														.$owner_first.' '.$owner_last.'\',\''
+														.$owner->contact_first_name.' '.$owner->contact_last_name.'\',\''
 														.$sdate->format('%d/%m/%Y').'\',\''
 														.$edate->format('%d/%m/%Y').'\',\''
-														.$company_name.'\',\''
-														.$dept_name.'\');';
+														.$company->company_name.'\',\''
+														.$department->department_name.'\');';
 					echo '<tr id="u_'.$user->contact_id.'_p_'.$project->project_id.'" class="child-of-u_'.$user->contact_id.'">'
 							.'<td class="tdRessource" onMouseOver="timer='.$fun.'" onMouseOut="hideProjectDetails(timer)" style="background-color: #'.$project->project_color_identifier.'; " >'
 								.'<img src="./modules/projects/images/applet3-48.png" width="12px" height:"12px" /> '
