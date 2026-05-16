@@ -36,6 +36,11 @@ class TestCAppUI extends CAppUI {
         $this->redirect_params = $params;
         // Do not exit
     }
+
+    // Override translation function for tests to prevent relying on global state
+    function _($str, $flags = 0) {
+        return $str;
+    }
 }
 
 class UITest extends TestCase {

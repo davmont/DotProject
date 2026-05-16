@@ -49,7 +49,12 @@ $AppUI->savePlace();
 if (isset( $helpdeskItemTask['task_log_date'] )) {
 	$date = new CDate( $helpdeskItemTask['task_log_date'] ); 
 } else if (isset( $_GET['date'] )) {
-	$date = new CDate($_GET['date']); 
+	$clean_date = dPgetCleanParam($_GET, 'date', '');
+	if (preg_match('/^[0-9\-\/:\s]+$/', $clean_date)) {
+		$date = new CDate($clean_date);
+	} else {
+		$date = new CDate();
+	}
 } else {
 	$date = new CDate();
 }
@@ -66,7 +71,10 @@ ORDER by p.project_name, h.item_title
 //echo "<pre>$sql</pre>";
 
 $res = db_exec( $sql );
-echo db_error();
+if (!$res) {
+	dprint(__FILE__, __LINE__, 0, 'Database error in ' . __FILE__ . ': ' . db_error());
+	$AppUI->setMsg('Database error occurred', UI_MSG_ERROR);
+}
 $helpdeskItemTasks = array();
 $project = array();
 $companies = array();
