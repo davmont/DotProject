@@ -183,8 +183,31 @@ if (!defined('DP_BASE_DIR')) {
 			}
 
 			$this->user_id = $row["user_id"];
+			$db_password = $row["user_password"];
 			$q->clear();
-			if (MD5($password) == $row["user_password"]) return true;
+
+			// Security Mitigation:
+			// 1. Check for a modern password hash.
+			// 2. If that fails, check for the legacy MD5 hash.
+			// 3. If the legacy hash matches, re-hash it to the modern standard for future logins.
+
+			if (password_verify($password, $db_password)) {
+				// Modern hash successful.
+				return true;
+			}
+
+			if (md5($password) === $db_password) {
+				// Legacy MD5 hash successful. Re-hash the password to the new standard.
+				$new_hash = password_hash($password, PASSWORD_DEFAULT);
+				$update_q = new DBQuery();
+				$update_q->addTable('users');
+				$update_q->addUpdate('user_password', $new_hash);
+				$update_q->addWhere('user_id = ?', $this->user_id);
+				$update_q->exec();
+				$update_q->clear();
+				return true;
+			}
+
 			return false;
 		}
 
