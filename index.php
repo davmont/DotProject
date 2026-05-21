@@ -107,6 +107,18 @@ if (dPgetParam($_POST, 'lostpass', 0)) {
 	@include_once(DP_BASE_DIR . '/locales/core.php');
 	setlocale(LC_TIME, $AppUI->user_lang);
 	if (dPgetParam($_REQUEST, 'sendpass', 0)) {
+		// Security Mitigation: Rate limit password reset requests.
+		require_once(DP_BASE_DIR . '/classes/ratelimiter.class.php');
+		$rateLimiter = new RateLimiter('sendpass', 5, 900); // 5 attempts per 15 minutes
+
+		if (!$rateLimiter->isAllowed()) {
+			$AppUI->setMsg('Too many password reset requests. Please wait before trying again.', UI_MSG_ERROR);
+			$AppUI->redirect();
+			exit;
+		}
+		// Record the attempt before processing.
+		$rateLimiter->recordAttempt();
+
 		require(DP_BASE_DIR . '/includes/sendpass.php');
 		sendNewPass();
 	} else {
@@ -120,6 +132,16 @@ if (dPgetParam($_POST, 'lostpass', 0)) {
 // support alternative authentication methods such as the PostNuke
 // and HTTP auth methods now supported.
 if (isset($_REQUEST['login'])) {
+	// Security Mitigation: Rate limit login attempts to prevent brute-force attacks.
+	require_once(DP_BASE_DIR . '/classes/ratelimiter.class.php');
+	$rateLimiter = new RateLimiter('login');
+
+	if (!$rateLimiter->isAllowed()) {
+		$AppUI->setMsg('Too many login attempts. Please wait before trying again.', UI_MSG_ERROR);
+		$AppUI->redirect();
+		exit;
+	}
+
 	$username = dPgetCleanParam($_POST, 'username', '');
 	$password = dPgetParam($_POST, 'password', '');
 	$redirect = dPgetParam($_REQUEST, 'redirect', '');
@@ -128,6 +150,8 @@ if (isset($_REQUEST['login'])) {
 	@include_once DP_BASE_DIR . '/locales/core.php';
 	$ok = $AppUI->login($username, $password);
 	if (!$ok) {
+		// If login fails, record the attempt.
+		$rateLimiter->recordAttempt();
 		$AppUI->setMsg('Login Failed');
 	} else {
 		//Register login in user_acces_log
