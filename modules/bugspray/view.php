@@ -217,16 +217,9 @@ function toggle_comment(id){
 <?php 
 
 $tabBox = new CTabBox( "?m=helpdesk&a=view&item_id=$item_id", "", $tab );
-//if ( $obj->task_dynamic == 0 ) {
-	// tabbed information boxes
+// tabbed information boxes
 $tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_logs", 'Task Logs' );
-	// fixed bug that dP automatically jumped to access denied if user does not
-	// have read-write permissions on task_id and this tab is opened by default (session_vars)
-	// only if user has r-w perms on this task, new or edit log is beign showed
-//	if (!getDenyEdit( $m, $task_id )) {
 $tabBox->add( "{$AppUI->cfg['root_dir']}/modules/helpdesk/vw_log_update", 'New Log' );
-//	}
-//}
 $tabBox->show();
 } 
 ?>
