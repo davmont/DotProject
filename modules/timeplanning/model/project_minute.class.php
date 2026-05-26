@@ -83,7 +83,9 @@ class ProjectMinute {
 	}
 	
 	function setMembers($membersIds,$id){
+		global $db;
 		$this->deleteMembersRelations($id);
+		$db->StartTrans();
 		foreach($membersIds as $memberId){
 			if($memberId!=""){
 				$q = new DBQuery();
@@ -93,6 +95,7 @@ class ProjectMinute {
 				$q->exec();
 			}
 		}
+		$db->CompleteTrans();
 	}
 	
 	function deleteMembersRelations($id){

@@ -7,7 +7,7 @@ set_time_limit(0);
 
 include_once 'check_upgrade.php';
 if ($_POST['mode'] == 'install' && dPcheckUpgrade() == 'upgrade') {
- die('Security Check: dotProject seems to be already configured. Communication broken for Security Reasons!');
+  die('Security Check: dotProject seems to be already configured. Communication broken for Security Reasons!');
 }
 ######################################################################################################################
 
@@ -15,8 +15,8 @@ $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 'https://'
 $baseUrl .= isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : getenv('HTTP_HOST');
 $baseUrl .= isset($_SERVER['SCRIPT_NAME']) ? dirname(dirname($_SERVER['SCRIPT_NAME'])) : dirname(dirname(getenv('SCRIPT_NAME')));
 
-require_once DP_BASE_DIR.'/install/install.inc.php';
-require_once DP_BASE_DIR.'/install/versions.inc.php';
+require_once DP_BASE_DIR . '/install/install.inc.php';
+require_once DP_BASE_DIR . '/install/versions.inc.php';
 
 $AppUI = new InstallerUI(); // Fake AppUI class to appease the db_connect utilities.
 
@@ -26,7 +26,7 @@ $dbErr = false;
 $cFileErr = false;
 
 $dbtype = trim(dPInstallGetParam($_POST, 'dbtype', ''));
-$dbprefix = trim( dPInstallGetParam( $_POST, 'dbprefix', '' ) );
+$dbprefix = trim(dPInstallGetParam($_POST, 'dbprefix', ''));
 $dbhost = trim(dPInstallGetParam($_POST, 'dbhost', ''));
 $dbname = trim(dPInstallGetParam($_POST, 'dbname', ''));
 $dbuser = trim(dPInstallGetParam($_POST, 'dbuser', ''));
@@ -42,48 +42,50 @@ $do_cfg = isset($_POST['do_cfg']);
 // Create a dPconfig array for dependent code
 global $dPconfig;
 $dPconfig = array(
- 'dbtype' => $dbtype,
- 'dbhost' => $dbhost,
- 'dbname' => $dbname,
- 'dbprefix' => $dbprefix,
- 'dbpass' => $dbpass,
- 'dbuser' => $dbuser,
- 'dbpersist' => $dbpersist,
- 'root_dir' => $baseDir,
- 'base_url' => $baseUrl
+  'dbtype' => $dbtype,
+  'dbhost' => $dbhost,
+  'dbname' => $dbname,
+  'dbprefix' => $dbprefix,
+  'dbpass' => $dbpass,
+  'dbuser' => $dbuser,
+  'dbpersist' => $dbpersist,
+  'root_dir' => $baseDir,
+  'base_url' => $baseUrl
 );
 
 global $lastDBUpdate;
 $lastDBUpdate = '';
 
-require_once(DP_BASE_DIR.'/lib/adodb/adodb.inc.php');
-@include_once DP_BASE_DIR.'/includes/version.php';
+require_once(DP_BASE_DIR . '/lib/adodb/adodb.inc.php');
+@include_once DP_BASE_DIR . '/includes/version.php';
 
 $db = NewADOConnection($dbtype);
 
 if (!empty($db)) {
-  $dbc = $db->Connect($dbhost,$dbuser,$dbpass);
+  $dbc = $db->Connect($dbhost, $dbuser, $dbpass);
   if ($dbc)
     $existing_db = $db->SelectDB($dbname);
-} else { $dbc = false; }
+} else {
+  $dbc = false;
+}
 
-if('mysql'==$dbtype){
-	// Quick hack to ensure MySQL behaves itself (#2323)
-	$db->Execute("SET sql_mode := ''");
+if ('mysql' == $dbtype) {
+  // Quick hack to ensure MySQL behaves itself (#2323)
+  $db->Execute("SET sql_mode := ''");
 }
 
 $current_version = $dp_version_major . '.' . $dp_version_minor;
-$current_version .= isset($dp_version_patch) ? ('.'.$dp_version_patch) : '';
-$current_version .= isset($dp_version_prepatch) ? ('-'.$dp_version_prepatch) : '';
+$current_version .= isset($dp_version_patch) ? ('.' . $dp_version_patch) : '';
+$current_version .= isset($dp_version_prepatch) ? ('-' . $dp_version_prepatch) : '';
 
 if ($dobackup) {
 
- if ($dbc) {
-  require_once(DP_BASE_DIR.'/lib/adodb/adodb-xmlschema.inc.php');
+  if ($dbc) {
+    require_once(DP_BASE_DIR . '/lib/adodb/adodb-xmlschema.inc.php');
 
-  $schema = new adoSchema($db);
+    $schema = new adoSchema($db);
 
-  $sql = $schema->ExtractSchema(true);
+    $sql = $schema->ExtractSchema(true);
 
   header('Content-Disposition: attachment; filename="dPdbBackup'.date('Ymd').date('His').'.xml"');
   header('Content-Type: text/xml');
@@ -99,6 +101,7 @@ $early_out = ob_get_contents();
 ob_end_clean();
 ?>
 <html>
+
 <head>
  <title>dotProject Installer</title>
  <meta name="Description" content="dotProject Installer">
@@ -118,6 +121,7 @@ ob_end_clean();
 		.feedback-content { flex: 1; }
 	</style>
 </head>
+
 <body>
 <div class="installer-header">
 	<h1><img src="dp.png" alt="dotProject Logo"/> dotProject Installer</h1>
@@ -133,146 +137,146 @@ if ($early_out) {
 }
 
 if ($dobackup)
- dPmsg($backupMsg);
+  dPmsg($backupMsg);
 
 if ($dbc && ($do_db || $do_db_cfg)) {
 
- if ($mode == 'install') {
+  if ($mode == 'install') {
 
-  if ($dbdrop) { 
-   dPmsg('Dropping previous database');
-   $db->Execute('DROP DATABASE IF EXISTS `'.$dbname.'`'); 
-	 $existing_db = false;
-  }
-
-  if (! $existing_db) {
-		dPmsg('Creating new Database');
-		$db->Execute('CREATE DATABASE `'.$dbname.'`');
-         $dbError = $db->ErrorNo();
- 
-         if ($dbError <> 0 && $dbError <> 1007) {
-                 $dbErr = true;
-                $dbMsg .= 'A Database Error occurred. Database has not been created! The provided database details are probably not correct.<br>'.$db->ErrorMsg().'<br>';
-
-         }
-   }
- }
-
- // For some reason a db->SelectDB call here doesn't work.
- $db->Execute('USE `' . $dbname .'`');
- $db_version = InstallGetVersion($mode, $db);
-
- $code_updated = '';
- if ($mode == 'upgrade') {
-  dPmsg('Applying database updates');
-  $last_version = $db_version['code_version'];
-  // Convert the code version to a version string.
-  if ($last_version != $current_version) {
-    // Check for from and to versions
-    $from_key = array_search($last_version, $versionPath);
-    $to_key = array_search($current_version, $versionPath);
-    for ($i = $from_key; $i < $to_key; $i++) {
-      $from_version = str_replace(array('.','-'), '', $versionPath[$i]);
-      $to_version = str_replace(array('.','-'), '', $versionPath[$i+1]);
-      // Only do updates since last update - this is only necessary if updating via CVS of a previous
-      // version, but well worth doing anyway.
-      InstallLoadSql(DP_BASE_DIR."/db/upgrade_{$from_version}_to_{$to_version}.sql", $db_version['last_db_update']);
-      $db_version['last_db_update'] = $lastDBUpdate; // Global set by InstallLoadSql.
+    if ($dbdrop) {
+      dPmsg('Dropping previous database');
+      $db->Execute('DROP DATABASE IF EXISTS `' . $dbname . '`');
+      $existing_db = false;
     }
-  } else if (file_exists(DP_BASE_DIR.'/db/upgrade_latest.sql')) {
-    // Need to get the installed version again, as it should have been
-    // updated by the from/to stuff.
-    InstallLoadSql(DP_BASE_DIR.'/db/upgrade_latest.sql', $db_version['last_db_update']);
+
+    if (!$existing_db) {
+      dPmsg('Creating new Database');
+      $db->Execute('CREATE DATABASE `' . $dbname . '`');
+      $dbError = $db->ErrorNo();
+
+      if ($dbError <> 0 && $dbError <> 1007) {
+        $dbErr = true;
+        $dbMsg .= 'A Database Error occurred. Database has not been created! The provided database details are probably not correct.<br>' . $db->ErrorMsg() . '<br>';
+
+      }
+    }
   }
- } else {
-  dPmsg('Installing database');
-  InstallLoadSql(DP_BASE_DIR.'/db/dotproject.sql');
-  // After all the updates, find the new version information.
-  $new_version = InstallGetVersion($mode, $db);
-  $lastDBUpdate = $new_version['last_db_update'];
-  $code_updated = $new_version['last_code_update'];
- }
 
-				$dbError = $db->ErrorNo();
-        if ($dbError <> 0 && $dbError <> 1007) {
-  $dbErr = true;
-                $dbMsg .= 'A Database Error occurred. Database has probably not been populated completely!<br>'.$db->ErrorMsg().'<br>';
-        }
- if ($dbErr) {
-  $dbMsg = 'DB setup incomplete - the following errors occured:<br>'.$dbMsg;
- } else {
-  $dbMsg = 'Database successfully setup<br>';
- }
+  // For some reason a db->SelectDB call here doesn't work.
+  $db->Execute('USE `' . $dbname . '`');
+  $db_version = InstallGetVersion($mode, $db);
 
- if ($mode == 'upgrade') {
-  dPmsg('Applying data modifications');
-  // Check for an upgrade script and run it if necessary.
-  // Note we don't need to run individual version files any more
-  if (file_exists(DP_BASE_DIR.'/db/upgrade_latest.php')) {
-   include_once DP_BASE_DIR.'/db/upgrade_latest.php';
-   $code_updated = dPupgrade($db_version['code_version'], $current_version, $db_version['last_code_update']);
+  $code_updated = '';
+  if ($mode == 'upgrade') {
+    dPmsg('Applying database updates');
+    $last_version = $db_version['code_version'];
+    // Convert the code version to a version string.
+    if ($last_version != $current_version) {
+      // Check for from and to versions
+      $from_key = array_search($last_version, $versionPath);
+      $to_key = array_search($current_version, $versionPath);
+      for ($i = $from_key; $i < $to_key; $i++) {
+        $from_version = str_replace(array('.', '-'), '', $versionPath[$i]);
+        $to_version = str_replace(array('.', '-'), '', $versionPath[$i + 1]);
+        // Only do updates since last update - this is only necessary if updating via CVS of a previous
+        // version, but well worth doing anyway.
+        InstallLoadSql(DP_BASE_DIR . "/db/upgrade_{$from_version}_to_{$to_version}.sql", $db_version['last_db_update']);
+        $db_version['last_db_update'] = $lastDBUpdate; // Global set by InstallLoadSql.
+      }
+    } else if (file_exists(DP_BASE_DIR . '/db/upgrade_latest.sql')) {
+      // Need to get the installed version again, as it should have been
+      // updated by the from/to stuff.
+      InstallLoadSql(DP_BASE_DIR . '/db/upgrade_latest.sql', $db_version['last_db_update']);
+    }
   } else {
-		dPmsg('No data updates required');
-	}
- } else {
-  include_once DP_BASE_DIR.'/db/upgrade_permissions.php'; // Always required on install.
- }
+    dPmsg('Installing database');
+    InstallLoadSql(DP_BASE_DIR . '/db/dotproject.sql');
+    // After all the updates, find the new version information.
+    $new_version = InstallGetVersion($mode, $db);
+    $lastDBUpdate = $new_version['last_db_update'];
+    $code_updated = $new_version['last_code_update'];
+  }
 
- dPmsg('Updating version information');
- // No matter what occurs we should update the database version in the dpversion table.
- if (empty($lastDBUpdate)) {
- 	$lastDBUpdate = $code_updated;
- }
- $sql = "UPDATE ".$dbprefix."dpversion
+  $dbError = $db->ErrorNo();
+  if ($dbError <> 0 && $dbError <> 1007) {
+    $dbErr = true;
+    $dbMsg .= 'A Database Error occurred. Database has probably not been populated completely!<br>' . $db->ErrorMsg() . '<br>';
+  }
+  if ($dbErr) {
+    $dbMsg = 'DB setup incomplete - the following errors occured:<br>' . $dbMsg;
+  } else {
+    $dbMsg = 'Database successfully setup<br>';
+  }
+
+  if ($mode == 'upgrade') {
+    dPmsg('Applying data modifications');
+    // Check for an upgrade script and run it if necessary.
+    // Note we don't need to run individual version files any more
+    if (file_exists(DP_BASE_DIR . '/db/upgrade_latest.php')) {
+      include_once DP_BASE_DIR . '/db/upgrade_latest.php';
+      $code_updated = dPupgrade($db_version['code_version'], $current_version, $db_version['last_code_update']);
+    } else {
+      dPmsg('No data updates required');
+    }
+  } else {
+    include_once DP_BASE_DIR . '/db/upgrade_permissions.php'; // Always required on install.
+  }
+
+  dPmsg('Updating version information');
+  // No matter what occurs we should update the database version in the dpversion table.
+  if (empty($lastDBUpdate)) {
+    $lastDBUpdate = $code_updated;
+  }
+  $sql = "UPDATE " . $dbprefix . "dpversion
  SET db_version = '$dp_version_major',
  last_db_update = '$lastDBUpdate',
  code_version = '$current_version',
  last_code_update = '$code_updated'
  WHERE 1";
- $db->Execute($sql);
+  $db->Execute($sql);
 
 } else {
-	$dbMsg = 'Not Created';
-	if (! $dbc) {
-		$dbErr=1;
-		$dbMsg .= '<br/>No Database Connection available! '  . ($db ? $db->ErrorMsg() : '');
-	}
+  $dbMsg = 'Not Created';
+  if (!$dbc) {
+    $dbErr = 1;
+    $dbMsg .= '<br/>No Database Connection available! ' . ($db ? $db->ErrorMsg() : '');
+  }
 }
 
 // always create the config file content
 
- dPmsg('Creating config');
- $config = '<?php '."\n";
- $config .= 'if (!defined(\'DP_BASE_DIR\')) {'."\n";
- $config .= '	die(\'You should not access this file directly.\');'."\n";
- $config .= '}'."\n";
- $config .= '### Copyright (c) 2004, The dotProject Development Team dotproject.net and sf.net/projects/dotproject ###'."\n";
- $config .= '### All rights reserved. Released under GPL License. For further Information see LICENSE ###'."\n";
- $config .= "\n";
- $config .= '### CONFIGURATION FILE AUTOMATICALLY GENERATED BY THE DOTPROJECT INSTALLER ###'."\n";
- $config .= '### FOR INFORMATION ON MANUAL CONFIGURATION AND FOR DOCUMENTATION SEE ./includes/config-dist.php ###'."\n";
- $config .= "\n";
- $config .= '$dPconfig[\'dbtype\'] = \''.$dbtype.'\';'."\n";
- $config .= '$dPconfig[\'dbhost\'] = \''.$dbhost.'\';'."\n";
- $config .= '$dPconfig[\'dbname\'] = \''.$dbname.'\';'."\n";
- $config .= '$dPconfig[\'dbprefix\'] = \''.$dbprefix.'\';'."\n";
- $config .= '$dPconfig[\'dbuser\'] = \''.$dbuser.'\';'."\n";
- $config .= '$dPconfig[\'dbpass\'] = \''.$dbpass.'\';'."\n";
- $config .= '$dPconfig[\'dbpersist\'] = ' . ($dbpersist ? 'true' : 'false') . ";\n";
- $config .= '$dPconfig[\'root_dir\'] = $baseDir;'."\n";
- $config .= '$dPconfig[\'base_url\'] = $baseUrl;'."\n";
- $config .= '?>';
- $config = trim($config);
+dPmsg('Creating config');
+$config = '<?php ' . "\n";
+$config .= 'if (!defined(\'DP_BASE_DIR\')) {' . "\n";
+$config .= '	die(\'You should not access this file directly.\');' . "\n";
+$config .= '}' . "\n";
+$config .= '### Copyright (c) 2004, The dotProject Development Team dotproject.net and sf.net/projects/dotproject ###' . "\n";
+$config .= '### All rights reserved. Released under GPL License. For further Information see LICENSE ###' . "\n";
+$config .= "\n";
+$config .= '### CONFIGURATION FILE AUTOMATICALLY GENERATED BY THE DOTPROJECT INSTALLER ###' . "\n";
+$config .= '### FOR INFORMATION ON MANUAL CONFIGURATION AND FOR DOCUMENTATION SEE ./includes/config-dist.php ###' . "\n";
+$config .= "\n";
+$config .= '$dPconfig[\'dbtype\'] = \'' . $dbtype . '\';' . "\n";
+$config .= '$dPconfig[\'dbhost\'] = \'' . $dbhost . '\';' . "\n";
+$config .= '$dPconfig[\'dbname\'] = \'' . $dbname . '\';' . "\n";
+$config .= '$dPconfig[\'dbprefix\'] = \'' . $dbprefix . '\';' . "\n";
+$config .= '$dPconfig[\'dbuser\'] = \'' . $dbuser . '\';' . "\n";
+$config .= '$dPconfig[\'dbpass\'] = \'' . $dbpass . '\';' . "\n";
+$config .= '$dPconfig[\'dbpersist\'] = ' . ($dbpersist ? 'true' : 'false') . ";\n";
+$config .= '$dPconfig[\'root_dir\'] = DP_BASE_DIR;' . "\n";
+$config .= '$dPconfig[\'base_url\'] = DP_BASE_URL;' . "\n";
+$config .= '?>';
+$config = trim($config);
 
 if ($do_cfg || $do_db_cfg) {
- if ((is_writable('../includes/config.php')  || ! is_file('../includes/config.php')) && ($fp = fopen('../includes/config.php', 'w'))) {
-  fputs($fp, $config, mb_strlen($config));
-  fclose($fp);
-  $cFileMsg = 'Config file written successfully'."\n";
- } else {
-  $cFileErr = true;
-  $cFileMsg = 'Config file could not be written'."\n";
- }
+  if ((is_writable('../includes/config.php') || !is_file('../includes/config.php')) && ($fp = fopen('../includes/config.php', 'w'))) {
+    fputs($fp, $config, mb_strlen($config));
+    fclose($fp);
+    $cFileMsg = 'Config file written successfully' . "\n";
+  } else {
+    $cFileErr = true;
+    $cFileMsg = 'Config file could not be written' . "\n";
+  }
 }
 
 //echo $msg;
@@ -316,4 +320,5 @@ if ($do_cfg || $do_db_cfg) {
 	<?php } ?>
 </div> <!-- End Container -->
 </body>
+
 </html>

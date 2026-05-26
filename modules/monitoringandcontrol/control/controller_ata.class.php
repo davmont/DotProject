@@ -33,32 +33,40 @@ class ControllerAta{
 		}
 		
 	function updateParticipants($participants,$meeting_id){
+			global $db;
 			$q = new DBQuery();	
 			$q->setDelete('monitoring_meeting_user');
 			$q->addWhere('meeting_id=' . $meeting_id);
 			$q->exec();			
 			$count = count($participants);
+			$db->StartTrans();
 			for($i=0;$i< $count;$i++){
-				$q-> addTable('monitoring_meeting_user');			
+				$q->clear();
+				$q-> addTable('monitoring_meeting_user');
 				$q->addInsert('meeting_id', $meeting_id);
 				$q->addInsert('user_id', $participants[$i]);
-				$q->exec();	
+				$q->exec();
 			}
+			$db->CompleteTrans();
 	}	
 	
 	function  updateMeetingItens($item_id,$item_status,$meeting_id){
+			global $db;
 			$q = new DBQuery();	
 			$q->setDelete('monitoring_meeting_item_select');
 			$q->addWhere('meeting_id=' . $meeting_id);
 			$q->exec();		
 			$count = count($item_id);
+			$db->StartTrans();
 			for($i=0;$i< $count;$i++){
-				$q-> addTable('monitoring_meeting_item_select');			
+				$q->clear();
+				$q-> addTable('monitoring_meeting_item_select');
 				$q->addInsert('meeting_id', $meeting_id);
 				$q->addInsert('meeting_item_id', $item_id[$i]);
 				$q->addInsert('status', $item_status[$i]);
-				$q->exec();	
+				$q->exec();
 			}
+			$db->CompleteTrans();
 	}
 
 //////////////////  INSERT 	///////////////////////////////
@@ -77,40 +85,52 @@ class ControllerAta{
 	}
 	
 	function insertParticipants($participants,$last_meeting_id){
-		$q = new DBQuery();	
+		global $db;
+		$q = new DBQuery();
 		$count = count($participants);
+		$db->StartTrans();
 		for($i=0;$i< $count;$i++){
-			$q-> addTable('monitoring_meeting_user');			
+			$q->clear();
+			$q-> addTable('monitoring_meeting_user');
 			$q->addInsert('meeting_id', $last_meeting_id);
 			$q->addInsert('user_id', $participants[$i]);
-			$q->exec();	
+			$q->exec();
 		}
+		$db->CompleteTrans();
 	}
 	
 	function insertMeetingItens($item_id,$status,$meeting_id){
-		$q = new DBQuery();	
+		global $db;
+		$q = new DBQuery();
 		$count = count($item_id);
+		$db->StartTrans();
 		for($i=0;$i< $count;$i++){
-			$q-> addTable('monitoring_meeting_item_select');			
+			$q->clear();
+			$q-> addTable('monitoring_meeting_item_select');
 			$q->addInsert('meeting_id', $meeting_id);
 			$q->addInsert('meeting_item_id', $item_id[$i]);
 			$q->addInsert('status', $status[$i]);
-			$q->exec();	
+			$q->exec();
 		}
+		$db->CompleteTrans();
 	}
 		
 	function insertMeetingTask($task_id_entrega,$status,$last_id){
-		$q = new DBQuery();	
+		global $db;
+		$q = new DBQuery();
 		$count = count($task_id_entrega);
 		
+		$db->StartTrans();
 		for($i=0;$i< $count;$i++){
 			if ($status[$i] == 0) {
-				$q-> addTable('monitoring_meeting_item_tasks_delivered');			
+				$q->clear();
+				$q-> addTable('monitoring_meeting_item_tasks_delivered');
 				$q->addInsert('meeting_id', $last_id);
 				$q->addInsert('task_id', $task_id_entrega[$i]);
-				$q->exec();				
+				$q->exec();
 			}
 		}
+		$db->CompleteTrans();
 	}
 	
 	function insertMeetingReport($percentual,$tamanho, $idc, $idp, $va, $vp, $cr, $baseline, $last_id){
