@@ -645,13 +645,22 @@ class CTask extends CDpObject {
                 $db->StartTrans();
                 foreach ($tarr as $task_id) {
                         if (intval( $task_id ) > 0) {
-                                $q->addTable('task_dependencies');
-                                $q->addInsert('dependencies_task_id', $this->task_id);
-                                $q->addInsert('dependencies_req_task_id', $task_id);
-                                $q->type = 'replace';
-                                $q->exec();
-                                $q->clear();
+                                $data[] = array($this->task_id, intval($task_id));
                         }
+                }
+
+                if (count($data) > 0) {
+                        global $db;
+                        $db->StartTrans();
+                        $q->addTable('task_dependencies');
+                        $q->addInsert('dependencies_task_id', '?', false, true);
+                        $q->addInsert('dependencies_req_task_id', '?', false, true);
+                        $sql = $q->prepareReplace();
+                        $q->clear();
+                        foreach ($data as $row) {
+                                $db->Execute($sql, $row);
+                        }
+                        $db->CompleteTrans();
                 }
                 $db->CompleteTrans();
         }
