@@ -72,7 +72,7 @@ if (!defined('DP_BASE_DIR')) {
 			if (! $userdata = gzuncompress($compressed_data)) {
 				die($AppUI->_('The credentials supplied were missing or corrupted') . ' (2)');
 			}
-			if (! $_REQUEST['check'] = md5($userdata)) {
+			if (! $_REQUEST['check'] == md5($userdata)) {
 				die ($AppUI->_('The credentials supplied were issing or corrupted') . ' (3)');
 			}
 			$user_data = unserialize($userdata);
@@ -105,7 +105,7 @@ if (!defined('DP_BASE_DIR')) {
 				$this->user_id = $row['user_id'];
 				$q->clear();
 				$q->addTable('users');
-				$q->addUpdate('user_password', $passwd);
+				$q->addUpdate('user_password', password_hash($passwd, PASSWORD_DEFAULT));
 				$q->addWhere("user_id = {$this->user_id}");
 				if (! $q->exec()) {
 					die($AppUI->_('Could not update user credentials'));
@@ -144,7 +144,7 @@ if (!defined('DP_BASE_DIR')) {
 			$q  = new DBQuery;
 			$q->addTable('users');
 			$q->addInsert('user_username',$username);
-			$q->addInsert('user_password', $password);
+			$q->addInsert('user_password', password_hash($password, PASSWORD_DEFAULT));
 			$q->addInsert('user_type', '1');
 			$q->addInsert('user_contact', $c->contact_id);
 			if (! $q->exec())
@@ -345,7 +345,7 @@ if (!defined('DP_BASE_DIR')) {
 		function createsqluser($username, $password, $ldap_attribs = Array())
 		{
 			GLOBAL $db, $AppUI;
-			$hash_pass = MD5($password);
+			$hash_pass = password_hash($password, PASSWORD_DEFAULT);
 
 			require_once($AppUI->getModuleClass("contacts"));
 	
