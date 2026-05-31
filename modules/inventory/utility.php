@@ -412,10 +412,12 @@ function sortHeader( $header, $field )
 
 
 
-	echo '<A HREF="?m=inventory&';
-	if ( $a ) echo 'a='.$a.'&';
-	if ( isset( $_GET[ 'inventory_id' ] ) ) echo 'inventory_id='.(int)$_GET[ 'inventory_id' ].'&';
-	echo 'sort_item='.$field.'&sort_order='.$order.'">';
+	$url = '?m=inventory&';
+	if ( $a ) $url .= 'a='.$a.'&';
+	if ( isset( $_GET[ 'inventory_id' ] ) ) $url .= 'inventory_id='.(int)$_GET[ 'inventory_id' ].'&';
+	$url .= 'sort_item='.$field.'&sort_order='.$order;
+
+	echo '<A HREF="'.htmlspecialchars($url, ENT_QUOTES).'">';
 
 	echo $header;
 
