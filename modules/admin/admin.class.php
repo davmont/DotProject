@@ -63,7 +63,7 @@ class CUser extends CDpObject {
 			$q->addWhere("user_id = $this->user_id");
 			$pwd = $q->loadResult();
 			if ($pwd != $this->user_password) {
-				$this->user_password = md5($this->user_password);
+				$this->user_password = password_hash($this->user_password, PASSWORD_DEFAULT);
 				addHistory($this->_tbl, $this->user_id, 'password changed', 
 						   'Password changed from IP ' . $_SERVER['REMOTE_ADDR']);
 			} else {
@@ -73,7 +73,7 @@ class CUser extends CDpObject {
 			$ret = db_updateObject('users', $this, 'user_id', $updateNulls);
 		} else {
 			$perm_func = "addLogin";
-			$this->user_password = md5($this->user_password);
+			$this->user_password = password_hash($this->user_password, PASSWORD_DEFAULT);
 			$ret = db_insertObject('users', $this, 'user_id');
 		}
 		if (!$ret) {
