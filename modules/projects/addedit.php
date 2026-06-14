@@ -45,7 +45,7 @@ if (!$row->load($project_id, false) && $project_id > 0) {
 	$AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
 	$AppUI->redirect();
 } else if (count($companies) < 2 && $project_id == 0) {
-	$AppUI->setMsg("noCompanies", UI_MSG_ERROR, true);
+	$AppUI->setMsg("noCompanies", UI_MSG_ERROR);
 	$AppUI->redirect();
 }
 
@@ -76,7 +76,7 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 $start_date = new CDate($row->project_start_date);
 
 $end_date = intval($row->project_end_date) ? new CDate($row->project_end_date) : null;
-$actual_end_date = intval($criticalTasks[0]['task_end_date']) ? new CDate($criticalTasks[0]['task_end_date']) : null;
+$actual_end_date = (!empty($criticalTasks) && intval($criticalTasks[0]['task_end_date'])) ? new CDate($criticalTasks[0]['task_end_date']) : null;
 /*  Remarque PYB : project_actual_end_date n'existe plus en base ! ! !
 if($project_id && $actual_end_date)//we add project_actual_end_date in db
 {
