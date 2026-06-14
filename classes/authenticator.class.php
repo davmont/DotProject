@@ -72,9 +72,20 @@ if (!defined('DP_BASE_DIR')) {
 			if (! $userdata = gzuncompress($compressed_data)) {
 				die($AppUI->_('The credentials supplied were missing or corrupted') . ' (2)');
 			}
-			if (! $_REQUEST['check'] == md5($userdata)) {
-				die ($AppUI->_('The credentials supplied were issing or corrupted') . ' (3)');
+
+			// We use hash_equals to prevent timing attacks, and md5 for backwards compatibility
+			// since PostNuke generates an md5 checksum. Note: In modern systems a stronger MAC should be used.
+			$expected_checksum = md5($userdata);
+			if (function_exists('hash_equals')) {
+			    if (!hash_equals($expected_checksum, $_REQUEST['check'])) {
+			        die ($AppUI->_('The credentials supplied were issing or corrupted') . ' (3)');
+			    }
+			} else {
+			    if ($_REQUEST['check'] !== $expected_checksum) {
+			        die ($AppUI->_('The credentials supplied were issing or corrupted') . ' (3)');
+			    }
 			}
+
 			$user_data = unserialize($userdata);
 
 			// Now we need to check if the user already exists, if so we just
