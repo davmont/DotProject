@@ -29,7 +29,7 @@ require_once DP_BASE_DIR.'/classes/permissions.class.php';
  */
 function dPupgrade($from_version, $to_version, $last_updated) {
 
-	$latest_update = '20260531'; // Set to the latest upgrade date.
+	$latest_update = '20260615'; // Set to the latest upgrade date.
 
 	if (empty($last_updated) || empty($from_version)) {
 		$last_updated = '00000000';
@@ -164,8 +164,22 @@ function dPupgrade($from_version, $to_version, $last_updated) {
 		case '20110106':
 		case '20120814':	
 		case '20260531':
-      // Increase user_password length for bcrypt
+			// Increase user_password length for bcrypt
 			$sql = 'ALTER TABLE `'.$dbprefix.'users` MODIFY `user_password` VARCHAR(255) NOT NULL DEFAULT \'\'';
+			db_exec($sql);
+
+		case '20260615':
+			// Ensure gacl_acl_sections table exists (GACL self-repair support)
+			$sql = 'CREATE TABLE IF NOT EXISTS `'.$dbprefix.'gacl_acl_sections` ('
+				. '`id` int(11) NOT NULL DEFAULT \'0\','
+				. '`value` varchar(80) NOT NULL DEFAULT \'\','
+				. '`order_value` int(11) NOT NULL DEFAULT \'0\','
+				. '`name` varchar(230) NOT NULL DEFAULT \'\','
+				. '`hidden` int(11) NOT NULL DEFAULT \'0\','
+				. 'PRIMARY KEY (`id`),'
+				. 'UNIQUE KEY `gacl_value_acl_sections` (`value`),'
+				. 'KEY `gacl_hidden_acl_sections` (`hidden`)'
+				. ')';
 			db_exec($sql);
 		// Add new versions here.  Keep this message above the default label.
 		default:

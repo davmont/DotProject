@@ -17,16 +17,23 @@ Upstream: <http://www.dotproject.net/> · Fork: <https://github.com/davmont/DotP
 > modules forward into PHP 8.x and a consistent Material UI. Some optional modules may
 > or may not work; see [Module status](#module-status) below.
 >
-> 🛡 **Security:** A read-only security audit ([SECURITY_AUDIT.md](SECURITY_AUDIT.md))
-> identified 11 Critical / 18 High / 14 Medium / 8 Low findings. Mitigation is in
-> progress (see [Recent security work](#recent-security-work)). **Do not deploy this
-> branch to production until at least the Critical findings are remediated.**
+> 🛡 **Security:** v2.3.1 addressed the most critical findings: password hashing
+> migration, CSRF protection, session hardening, XSS and SQL injection fixes, and
+> file-upload MIME hardening. Some lower-severity findings remain open — see
+> [RELEASE_NOTES_v2.3.1.md](RELEASE_NOTES_v2.3.1.md) for the full list.
 
-Current release: **v2.3.0** — see [RELEASE_NOTES_v2.3.0.md](RELEASE_NOTES_v2.3.0.md).
+Current release: **v2.3.1** — see [RELEASE_NOTES_v2.3.1.md](RELEASE_NOTES_v2.3.1.md).
 
 ---
 
 ## What's new in this fork
+
+### v2.3.1 (2026-06-15)
+Security patch + devel merge. Highlights: bcrypt password migration, central CSRF
+protection, session hardening (Secure/HttpOnly/SameSite), XSS & SQL injection fixes,
+76 missing i18n keys added across all 25 locales (full Spanish translations), N+1 query
+fixes, PMBOK `task_status` field, Gantt TypeError fix, and iGantt fully translated to
+Spanish. See [RELEASE_NOTES_v2.3.1.md](RELEASE_NOTES_v2.3.1.md).
 
 ### UI modernization (v2.3.0)
 - **Material theme as global default.** Cleaner card-based layouts, consistent colour
@@ -68,24 +75,19 @@ Current release: **v2.3.0** — see [RELEASE_NOTES_v2.3.0.md](RELEASE_NOTES_v2.3
   [benchmark_n_plus_1.php](benchmark_n_plus_1.php),
   [benchmark_prefetch.php](benchmark_prefetch.php).
 
-### Recent security work
-Merged onto `devel`:
-- **Token-based password reset** replacing the legacy plaintext-email flow
-  ([includes/sendpass.php](includes/sendpass.php)).
-- **MD5 → `password_hash()` migration** with progressive rehash on legacy logins.
-- **SQL injection fixes** in user creation, password reset, calendar event
-  delete/query, mileage log, CTesting delete, and timecard date validation.
-- **XSS fixes** in the inventory utility and communication addedit views.
+### Recent security work (v2.3.1)
+- **MD5 → `password_hash()` migration** with transparent bcrypt upgrade on login.
+- **Central CSRF protection** — all `dosql` handlers covered; GET-based bypass closed.
+- **Session hardening** — `session_regenerate_id(true)` on login; `HttpOnly`, `Secure`,
+  `SameSite=Lax` cookie flags; `Secure` flag works correctly behind reverse proxies.
+- **SQL injection fixes** in calendar, mileage log, CTesting, timecard, annotations,
+  and sendpass user lookup.
+- **XSS fixes** in HR allocations, inventory utility, and communication addedit.
+- **File upload**: server-side MIME detection with safe `application/octet-stream` fallback.
 - **File-based rate limiter** ([classes/ratelimiter.class.php](classes/ratelimiter.class.php))
   on login and password-reset endpoints.
+- **`unserialize()` hardened** in PostNuke authenticator.
 - **`echo db_error()` data-exposure leak** removed.
-- **Custom-field duplicate-name validation** and stricter type validation.
-
-> See [SECURITY_AUDIT.md](SECURITY_AUDIT.md) for the full audit, including
-> known-outstanding Critical findings (merge conflict in `do_user_aed.php`,
-> pre-auth SQLi in `includes/session.php`, missing CSRF tokens, LFI in the
-> `dotproject_plus` tab files, RCE-capable `unserialize()` in monitoring chart
-> endpoints, and unauthenticated `phpinfo.php`).
 
 ### Code health
 - Deprecated `checkFlag()` removed from `includes/permissions.php`.
@@ -140,8 +142,9 @@ Full upstream documentation:
 
 ## Module status
 
-dotProject ships **60+ functional modules**. The v2.3.0 sprint focused on the core
-navigational framework, Calendar, Forums, Contacts, and Earnings. Many legacy modules
+dotProject ships **60+ functional modules**. The v2.3.0/v2.3.1 sprints focused on the
+core navigational framework, Calendar, Forums, Contacts, Earnings, security hardening,
+and localization. Many legacy modules
 have **not yet been refactored or tested** against PHP 8.x and the Material theme —
 expect `undefined index` warnings and pre-Material styling in:
 
