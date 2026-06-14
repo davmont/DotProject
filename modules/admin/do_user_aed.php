@@ -68,7 +68,7 @@ if (!$isNewUser && $AppUI->user_id == $user_id_aed) {
 	$q->addWhere("user_id = $user_id_aed");
 	$db_pwd = $q->loadResult();
 	
-	if ($db_pwd != $_POST['user_password']) {
+	if (!empty($_POST['user_password']) && $db_pwd != $_POST['user_password']) {
 		if (!isset($_POST['old_password']) || (!password_verify($_POST['old_password'], $db_pwd) && md5($_POST['old_password']) !== $db_pwd)) {
 			$AppUI->setMsg('Invalid old password', UI_MSG_ERROR, true);
 			$AppUI->redirect();

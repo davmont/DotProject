@@ -17,10 +17,12 @@ if ($user_id) {
 	if ($new_pwd1 && $new_pwd2 && $new_pwd1 == $new_pwd2) {
 		// check that the old password matches
 		$q = new DBQuery;
-		$q->addQuery('user_password');
+		$q->addQuery('user_id, user_password');
 		$q->addTable('users');
 		$q->addWhere("user_id=$user_id");
-		$db_pwd = $q->loadResult();
+		$row = $q->fetchRow();
+		$db_pwd = $row['user_password'] ?? '';
+
 		if ($AppUI->user_type == 1 || password_verify($old_pwd, $db_pwd) || md5($old_pwd) === $db_pwd) {
 			require_once($AppUI->getModuleClass('admin'));
 			$user = new CUser();

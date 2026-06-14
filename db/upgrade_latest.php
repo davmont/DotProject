@@ -29,7 +29,7 @@ require_once DP_BASE_DIR.'/classes/permissions.class.php';
  */
 function dPupgrade($from_version, $to_version, $last_updated) {
 
-	$latest_update = '20240101'; // Set to the latest upgrade date.
+	$latest_update = '20260531'; // Set to the latest upgrade date.
 
 	if (empty($last_updated) || empty($from_version)) {
 		$last_updated = '00000000';
@@ -162,10 +162,11 @@ function dPupgrade($from_version, $to_version, $last_updated) {
 		case '20101014':
 		case '20101117':
 		case '20110106':
-		case '20120814':
-		case '20240101':
-			// Increase user_password length for bcrypt
-			db_exec('ALTER TABLE `' . $dbprefix . 'users` MODIFY `user_password` varchar(255) NOT NULL default ""');
+		case '20120814':	
+		case '20260531':
+      // Increase user_password length for bcrypt
+			$sql = 'ALTER TABLE `'.$dbprefix.'users` MODIFY `user_password` VARCHAR(255) NOT NULL DEFAULT \'\'';
+			db_exec($sql);
 		// Add new versions here.  Keep this message above the default label.
 		default:
 			break;
