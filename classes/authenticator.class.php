@@ -75,7 +75,7 @@ if (!defined('DP_BASE_DIR')) {
 			if (! $_REQUEST['check'] = md5($userdata)) {
 				die ($AppUI->_('The credentials supplied were issing or corrupted') . ' (3)');
 			}
-			$user_data = unserialize($userdata);
+			$user_data = unserialize($userdata, ['allowed_classes' => false]);
 
 			// Now we need to check if the user already exists, if so we just
 			// update.  If not we need to create a new user and add a default

@@ -243,6 +243,9 @@ if ($u && file_exists(DP_BASE_DIR . '/modules/' . $m . '/' . $u . '/' . $u . '.c
 // do some db work if dosql is set
 // TODO - MUST MOVE THESE INTO THE MODULE DIRECTORY
 if (isset($_REQUEST['dosql'])) {
+	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		$AppUI->verifyCsrfToken();
+	}
 	//require('./dosql/' . $_REQUEST['dosql'] . '.php');
 	require(DP_BASE_DIR . '/modules/' . $m . '/' . ($u ? ($u . '/') : '')
 		. $AppUI->checkFileName($_REQUEST['dosql']) . '.php');

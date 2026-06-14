@@ -3,7 +3,6 @@ if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 
-$AppUI->verifyCsrfToken();
 require_once $AppUI->getSystemClass('libmail');
 include $AppUI->getModuleClass('contacts');
 $del = (bool)dPgetParam($_REQUEST, 'del', false);

@@ -20,7 +20,7 @@ else
 	<link rel="stylesheet" type="text/css" href="./style/<?php echo $uistyle;?>/main.css" media="all" />
 	<style type="text/css" media="all">@import "./style/<?php echo $uistyle;?>/main.css";</style>
 	<link rel="shortcut icon" href="./style/<?php echo $uistyle; ?>/images/favicon.ico" type="image/ico" />
-	<?php @$AppUI->loadJS(); ?>
+	<?php @$AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
 </head>
 
 <body onload="this.focus();">
