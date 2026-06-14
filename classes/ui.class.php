@@ -527,6 +527,30 @@ class CAppUI
 			. htmlspecialchars($this->getCsrfToken(), ENT_QUOTES, 'UTF-8') . '" />';
 	}
 
+	/**
+	 * Output a <meta> tag carrying the CSRF token plus a small inline script
+	 * that automatically appends the token to every POST form on submit.
+	 * Call once from each theme's header.php, just before </head>.
+	 */
+	function getCsrfMeta()
+	{
+		$token = htmlspecialchars($this->getCsrfToken(), ENT_QUOTES, 'UTF-8');
+		return '<meta name="csrf-token" content="' . $token . '" />' . "\n"
+			. '<script type="text/javascript">'
+			. '(function(){'
+			.   'var t=document.querySelector(\'meta[name="csrf-token"]\').getAttribute(\'content\');'
+			.   'document.addEventListener(\'submit\',function(e){'
+			.     'var f=e.target;'
+			.     'if(f.method&&f.method.toLowerCase()==="post"&&!f.querySelector(\'[name="csrf_token"]\")){'
+			.       'var i=document.createElement(\'input\');'
+			.       'i.type="hidden";i.name="csrf_token";i.value=t;'
+			.       'f.appendChild(i);'
+			.     '}'
+			.   '},true);'
+			. '})();'
+			. '</script>';
+	}
+
 	function verifyCsrfToken()
 	{
 		$submitted = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';

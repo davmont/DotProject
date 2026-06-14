@@ -3,8 +3,6 @@ if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 
-$AppUI->verifyCsrfToken();
-
 
 $adjustStartDate = dPgetCleanParam($_POST, 'set_task_start_date');
 $del = (int)dPgetParam($_POST, 'del', 0);

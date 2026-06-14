@@ -3,7 +3,6 @@ if (!defined('DP_BASE_DIR')) {
   die('You should not access this file directly.');
 }
 
-$AppUI->verifyCsrfToken();
 $obj = new CProject();
 $msg = '';
 
