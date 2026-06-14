@@ -3,6 +3,7 @@ if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 
+$AppUI->verifyCsrfToken();
 require_once $AppUI->getSystemClass('libmail');
 include $AppUI->getModuleClass('contacts');
 $del = (bool)dPgetParam($_REQUEST, 'del', false);
@@ -43,11 +44,11 @@ if ($del) {
 		$AppUI->redirect('m=admin&a=access_denied');
 	}
 	
-	// Security Mitigation: Use parameterized query to prevent SQL injection.
+	//pull a list of existing usernames
 	$q = new DBQuery;
 	$q->addTable('users','u');
 	$q->addQuery('user_username');
-	$q->addWhere('user_username = ?', $obj->user_username);
+	$q->addWhere("user_username like '{$obj->user_username}'");
 	$userEx = $q->loadResult();
 	
 	// If userName already exists quit with error and do nothing
@@ -61,6 +62,23 @@ if ($del) {
 	$AppUI->redirect('m=public&a=access_denied');
 }
 
+if (!$isNewUser && $AppUI->user_id == $user_id_aed) {
+	$q = new DBQuery;
+	$q->addTable('users');
+	$q->addQuery('user_password');
+	$q->addWhere("user_id = $user_id_aed");
+	$db_pwd = $q->loadResult();
+	
+	if ($db_pwd != $_POST['user_password']) {
+		$old_pwd_input = isset($_POST['old_password']) ? $_POST['old_password'] : '';
+		$legacy_match = (strlen($db_pwd) === 32 && md5($old_pwd_input) === $db_pwd);
+		if (!password_verify($old_pwd_input, $db_pwd) && !$legacy_match) {
+			$AppUI->setMsg('Invalid old password', UI_MSG_ERROR, true);
+			$AppUI->redirect();
+		}
+	}
+}
+
 if (($msg = $contact->store())) {
 	$AppUI->setMsg($msg, UI_MSG_ERROR);
 } else {        
@@ -68,10 +86,9 @@ if (($msg = $contact->store())) {
 	if (($msg = $obj->store())) {
 		$AppUI->setMsg($msg, UI_MSG_ERROR);
 	} else {
-		if ($isNewUser && isset($_POST['send_user_mail']) && $_POST['send_user_mail']) {
-			// Security Mitigation: Do not send password in email.
+		if ($isNewUser && $_POST['send_user_mail']) {
 			notifyNewUser($contact->contact_email, $contact->contact_first_name, 
-			              $obj->user_username);
+			              $obj->user_username, $_POST['user_password']);
 		}
 		if (isset($_POST['user_role']) && $_POST['user_role']) {
 			$perms =& $AppUI->acl();
@@ -86,7 +103,7 @@ if (($msg = $contact->store())) {
 	$AppUI->redirect(($isNewUser ? ('m=admin&a=viewuser&user_id=' . $obj->user_id . '&tab=3') : ''));
 }
 
-function notifyNewUser($address, $username, $logname) {
+function notifyNewUser($address, $username, $logname, $logpwd) {
 	global $AppUI, $dPconfig;
 	$mail = new Mail;
 	if ($mail->ValidEmail($address)) {
@@ -97,7 +114,6 @@ function notifyNewUser($address, $username, $logname) {
 		}
 		
 		$name = $AppUI->user_first_name .' ' . $AppUI->user_last_name;
-		// Security Mitigation: Removed password from email body.
 		$body = $username.',
 		
 An access account has been created for you in our dotProject project management system.
@@ -105,8 +121,7 @@ An access account has been created for you in our dotProject project management 
 You can access it here at ' . $dPconfig['base_url'] . '
 
 Your username is: ' . $logname . '
-
-To set your password, please use the "Forgot Password" link on the login page.
+Your password is: ' . $logpwd .'
 
 This account will allow you to see and interact with projects. If you have any questions please contact us.';
 		

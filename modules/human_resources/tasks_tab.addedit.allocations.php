@@ -31,7 +31,7 @@ $query->addWhere('e.task_id = ' . $task_id);
 $res =& $query->exec();
 ?>
 <table width='100%' border='0' cellpadding='2' cellspacing='1' class='tbl'>
-<input type="hidden" name="tab" value="<?php echo dPgetParam($_GET, 'tab', 0); ?>">
+<input type="hidden" name="tab" value="<?php echo intval(dPgetParam($_GET, 'tab', 0)); ?>">
 <tr>
 	<th nowrap='nowrap' width='100%'>
     <?php echo $AppUI->_('Estimated role'); ?>

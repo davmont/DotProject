@@ -154,6 +154,7 @@ if (isset($_REQUEST['login'])) {
 		$rateLimiter->recordAttempt();
 		$AppUI->setMsg('Login Failed');
 	} else {
+		session_regenerate_id(true);
 		//Register login in user_acces_log
 		$AppUI->registerLogin();
 	}

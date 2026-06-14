@@ -120,7 +120,10 @@ if (isset($_FILES['formfile'])) {
 	} else {
 		// store file with a unique name
 		$obj->file_name = $upload['name'];
-		$obj->file_type = $upload['type'];
+		// Detect MIME type server-side; never trust the client-supplied value.
+		$finfo = new finfo(FILEINFO_MIME_TYPE);
+		$detected_type = $finfo->file($upload['tmp_name']);
+		$obj->file_type = $detected_type ?: $upload['type'];
 		$obj->file_size = $upload['size'];
 		$obj->file_date = str_replace("'", '', $db->DBTimeStamp(time()));
 		$obj->file_real_filename = uniqid(rand());
