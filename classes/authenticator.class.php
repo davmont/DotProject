@@ -183,8 +183,21 @@ if (!defined('DP_BASE_DIR')) {
 			}
 
 			$this->user_id = $row["user_id"];
+			$stored = $row["user_password"];
 			$q->clear();
-			if (MD5($password) == $row["user_password"]) return true;
+
+			if (password_verify($password, $stored)) {
+				return true;
+			}
+			// Backward compat: accept legacy MD5 hash and transparently upgrade it.
+			if (strlen($stored) === 32 && md5($password) === $stored) {
+				$q->addTable('users');
+				$q->addUpdate('user_password', password_hash($password, PASSWORD_DEFAULT));
+				$q->addWhere('user_id = ' . intval($this->user_id));
+				$q->exec();
+				$q->clear();
+				return true;
+			}
 			return false;
 		}
 

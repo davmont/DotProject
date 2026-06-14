@@ -273,6 +273,7 @@ function setDepartment(department_id_string) {
 
 <form name="editFrm" action="?m=projects" enctype="multipart/form-data" method="post">
 	<input type="hidden" name="dosql" value="do_project_aed" />
+	<?php echo $AppUI->getCsrfInput(); ?>
 	<input type="hidden" name="project_id" value="<?php echo $project_id;?>" />
 	<input type="hidden" name="project_creator" value="<?php echo $AppUI->user_id;?>" />
 	<input name='project_contacts' type='hidden' value="<?php echo implode(',', $selected_contacts); ?>" />

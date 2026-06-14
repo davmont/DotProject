@@ -27,11 +27,11 @@ if($minuteId!='-1' && $minuteId!=""){
 ?>
 
 <script src="./modules/timeplanning/js/estimations.js"></script>
-<form action="?m=timeplanning&a=view&project_id=<?php echo dPgetParam($_GET, 'project_id', 0); ?>"  method="POST" name="minute_form" id="minute_form" >
+<form action="?m=timeplanning&a=view&project_id=<?php echo intval(dPgetParam($_GET, 'project_id', 0)); ?>"  method="POST" name="minute_form" id="minute_form" >
 	<input name="dosql" type="hidden" value="do_projects_estimations_aed" />
 	<input type="hidden" name="minute_id" id="minute_id" value="<?php echo $minuteId ?>">
-	<input type="hidden" name="project_id" value="<?php echo dPgetParam($_GET, 'project_id', 0); ?>">
-	<input type="hidden" name="tab" value="<?php echo dPgetParam($_GET, 'tab', 0); ?>">
+	<input type="hidden" name="project_id" value="<?php echo intval(dPgetParam($_GET, 'project_id', 0)); ?>">
+	<input type="hidden" name="tab" value="<?php echo intval(dPgetParam($_GET, 'tab', 0)); ?>">
 	<input type="hidden" name="membersIds" id="membersIds">
 	<input type="hidden" name="action_estimation" id="action_estimation" value="">
 	
@@ -102,7 +102,7 @@ if($minuteId!='-1' && $minuteId!=""){
 	<td>
 		<form action="?m=timeplanning&a=view" method="post" name="form_mdp" id="form_mdp">
 			<input name="dosql" type="hidden" value="do_schedule_development" />
-			<input type='hidden' value='<?php  echo dPgetParam($_GET, 'project_id', 0);  ?>' name="project_id" />
+			<input type='hidden' value='<?php  echo intval(dPgetParam($_GET, 'project_id', 0));  ?>' name="project_id" />
 			<?php echo $AppUI->_('LBL_ACTION_SCHEDULE_DEV'); ?>
 			<br/>
 			<div align="right" >

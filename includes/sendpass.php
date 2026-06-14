@@ -50,11 +50,11 @@ function sendNewPass() {
  $m->Body($message, isset($GLOBALS['locale_char_set']) ? $GLOBALS['locale_char_set'] : "");	// set the body
  $m->Send();	// send the mail
 
- $newpass = md5($newpass);
+ $hashed = password_hash($newpass, PASSWORD_DEFAULT);
  $q->clear();
  $q->addTable('users');
- $q->addUpdate('user_password', $newpass, true);
- $q->addWhere('user_id=\''.$user_id . '\'');
+ $q->addUpdate('user_password', $hashed, true);
+ $q->addWhere('user_id=' . intval($user_id));
  $cur = $q->exec();
  if (!$cur) {
   die('SQL error' . $database->stderr(true));
@@ -65,16 +65,6 @@ function sendNewPass() {
 }
 
 function makePass() {
- $makepass='';
- $salt = 'abchefghjkmnpqrstuvwxyz0123456789';
- srand((double)microtime()*1000000);
- $i = 0;
- while ($i <= 7) {
-  $num = rand() % 33;
-  $tmp = mb_substr($salt, $num, 1);
-  $makepass = $makepass . $tmp;
-  $i++;
- }
- return ($makepass);
+ return bin2hex(random_bytes(8));
 }
 ?>

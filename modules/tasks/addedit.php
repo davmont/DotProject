@@ -275,12 +275,14 @@ function delIt() {
 </script>
 <form name="frmDelete" action="./index.php?m=tasks" method="post">
 	<input type="hidden" name="dosql" value="do_task_aed">
+	<?php echo $AppUI->getCsrfInput(); ?>
 	<input type="hidden" name="del" value="1" />
 	<input type="hidden" name="task_id" value="<?php echo $task_id;?>" />
 </form>
 
 <form name="editFrm" action="?m=tasks&amp;project_id=<?php echo $task_project; ?>" method="post">
 	<input name="dosql" type="hidden" value="do_task_aed" />
+	<?php echo $AppUI->getCsrfInput(); ?>
 	<input name="task_id" type="hidden" value="<?php echo $task_id; ?>" />
 	<input name="task_project" type="hidden" value="<?php echo $task_project; ?>" />
 	<input name='task_contacts' id='task_contacts' type='hidden' value="<?php 

@@ -510,6 +510,33 @@ class CAppUI
 	}
 
 	/**
+	 * Generate a CSRF token tied to the current session and store it.
+	 * Returns an HTML hidden-input string ready to embed in a form.
+	 */
+	function getCsrfToken()
+	{
+		if (empty($this->_csrf_token)) {
+			$this->_csrf_token = bin2hex(random_bytes(32));
+		}
+		return $this->_csrf_token;
+	}
+
+	function getCsrfInput()
+	{
+		return '<input type="hidden" name="csrf_token" value="'
+			. htmlspecialchars($this->getCsrfToken(), ENT_QUOTES, 'UTF-8') . '" />';
+	}
+
+	function verifyCsrfToken()
+	{
+		$submitted = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+		if (!$this->_csrf_token || !hash_equals($this->_csrf_token, $submitted)) {
+			$this->setMsg('Invalid or missing security token.', UI_MSG_ERROR);
+			$this->redirect('m=public&a=access_denied');
+		}
+	}
+
+	/**
 	 * Set the display of warning for untranslated strings
 	 * @param string
 	 */

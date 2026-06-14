@@ -42,7 +42,7 @@ function dPsessionRead($id)
 	$q->addQuery('session_data');
 	$q->addQuery('UNIX_TIMESTAMP() - UNIX_TIMESTAMP(session_created) as session_lifespan');
 	$q->addQuery('UNIX_TIMESTAMP() - UNIX_TIMESTAMP(session_updated) as session_idle');
-	$q->addWhere("session_id = '$id'");
+	$q->addWhere('session_id = ' . $q->quote($id));
 	$qid =& $q->exec();
 	if (!$qid || $qid->EOF) {
 		dprint(__FILE__, __LINE__, 11, "Failed to retrieve session $id");
@@ -78,7 +78,7 @@ function dPsessionWrite($id, $data)
 	$q = new DBQuery;
 	$q->addQuery('count(*) as row_count');
 	$q->addTable('sessions');
-	$q->addWhere("session_id = '$id'");
+	$q->addWhere('session_id = ' . $q->quote($id));
 
 	if ($qid =& $q->exec() && (@$qid->fields['row_count'] > 0 || @$qid->fields[0] > 0)) {
 		dprint(__FILE__, __LINE__, 11, "Updating session $id");
@@ -107,7 +107,7 @@ function dPsessionDestroy($id, $user_access_log_id = 0)
 	$q = new DBQuery;
 	$q->addTable('sessions'); // Alias not required
 	$q->addQuery('session_user');
-	$q->addWhere("session_id='" . $id . "'"); //Using double quotes for readability
+	$q->addWhere('session_id = ' . $q->quote($id));
 	$sql2 = $q->prepare(true);
 
 	dprint(__FILE__, __LINE__, 11, "Killing session $id");
@@ -120,7 +120,7 @@ function dPsessionDestroy($id, $user_access_log_id = 0)
 	$q->clear();
 
 	$q->setDelete('sessions');
-	$q->addWhere("session_id = '$id'");
+	$q->addWhere('session_id = ' . $q->quote($id));
 	$q->exec();
 	$q->clear();
 
@@ -233,7 +233,8 @@ function dpSessionStart($start_vars = 'AppUI')
 	if (mb_substr($cookie_dir, -1) != '/') {
 		$cookie_dir .= '/';
 	}
-	session_set_cookie_params($max_time, $cookie_dir);
+	$is_https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+	session_set_cookie_params($max_time, $cookie_dir, '', $is_https, true);
 
 	if (is_array($start_vars)) {
 		foreach ($start_vars as $var) {
