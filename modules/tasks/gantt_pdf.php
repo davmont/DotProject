@@ -2,8 +2,6 @@
 if (!defined('DP_BASE_DIR')){
 	die('You should not access this file directly.');
 }
-//echo $AppUI->_('Please wait while your file is retrieved from the server...');
-
 /*
  * gantt_pdf.php - by P. Ferreira
  * TASKS $Id: gantt_pdf.php xxxx 2008-12-17 pferreira $
@@ -12,11 +10,7 @@ if (!defined('DP_BASE_DIR')){
 /*
  *  First clear up the temp dir of pdf files for current user
  */
-//"./files/temp/gantt" . $filedate . ".png" 
 foreach (glob('./files/temp/*' . $AppUI->user_first_name . '_' . $AppUI->user_last_name . '.pdf') as $gpdffilename) {
-//   echo "$filename size " . filesize($filename) . "\n";
-//	if( @filemtime($filename) < (time() - 3600 ))
-//	echo '<pre> Filename: ' . $filename . ' size: ' . filesize($filename) . '</pre>';
    unlink($gpdffilename);
 }
 

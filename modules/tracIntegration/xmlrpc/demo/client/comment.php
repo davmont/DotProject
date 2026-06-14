@@ -71,11 +71,11 @@ if (@$_GET["comment"] &&
    name="commenttext"></textarea></p>
 <input type="submit" value="Send comment" />
 <input type="hidden" name="storyid"
-   value="<?php echo @$_GET["comment"];?>" />
+   value="<?php echo htmlspecialchars(@$_GET["comment"], ENT_QUOTES);?>" />
 <input type="hidden" name="chanid"
-   value="<?php echo $chanid; ?>" />
+   value="<?php echo htmlspecialchars($chanid, ENT_QUOTES); ?>" />
 <input type="hidden" name="catid"
-   value="<?php echo $catid; ?>" />
+   value="<?php echo htmlspecialchars($catid, ENT_QUOTES); ?>" />
 
 </form>
 <?php
@@ -131,7 +131,7 @@ if (@$_GET["comment"] &&
 ?>
 
 <p><input type="submit" value="Update" /></p>
-<input type="hidden" name="oc" value="<?php echo $catid; ?>" />
+<input type="hidden" name="oc" value="<?php echo htmlspecialchars($catid, ENT_QUOTES); ?>" />
 </form>
 
 <?php
@@ -147,8 +147,8 @@ if (@$_GET["comment"] &&
 		 print $v['description'] . "<br />";
 		 print "<em><a target=\"_blank\" href=\"" .
 			 $v['link'] . "\">Read full story</a> ";
-		 print "<a href=\"comment.php?catid=${catid}&chanid=${chanid}&" .
-			 "oc=${oc}&comment=" . $v['id'] . "\">Comment on this story</a>";
+		 print "<a href=\"comment.php?catid=" . urlencode($catid) . "&chanid=" . urlencode($chanid) . "&" .
+			 "oc=" . urlencode(@$oc) . "&comment=" . urlencode($v['id']) . "\">Comment on this story</a>";
 		 print "</em>";
 		 print "</td>";
 		 print "</tr>\n";

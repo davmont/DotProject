@@ -62,7 +62,7 @@ class CUser extends CDpObject {
 			$q->addQuery('user_password');
 			$q->addWhere("user_id = $this->user_id");
 			$pwd = $q->loadResult();
-			if ($pwd != $this->user_password) {
+			if (!empty($this->user_password) && $pwd != $this->user_password) {
 				$this->user_password = password_hash($this->user_password, PASSWORD_DEFAULT);
 				addHistory($this->_tbl, $this->user_id, 'password changed',
 						   'Password changed from IP ' . $_SERVER['REMOTE_ADDR']);

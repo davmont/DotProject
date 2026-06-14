@@ -50,13 +50,6 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
         $dtUtil = new CDate($ini[0]);
         $dtInicioProjeto = $dtUtil->format('%d/%m/%Y');
      }
-	//  $dt_ini = new DateTime($ini[0]);
-    //  $dtIni = $dt_ini ->getTimestamp();  // data inicio periodo em timestamps
-   //   $date_timestamp = $controllerUtil->data_to_timestamp ($dtAtual); // data digitada em timestamps
-	//if ($date_timestamp < $dtIni){
-//	 echo "<script> alert('A data de consulta deve ser posterior a data de início do projeto.');</script>";
-//	 $dtAtual = date('d/m/Y');
-//}
 	 
      $vlPlanejado = array(); 
      $vlAgregado = array();

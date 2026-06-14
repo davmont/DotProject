@@ -378,10 +378,10 @@ class CDpObject {
 		}
 		
 		if (count($allow)) {
-			$this->_query->addWhere($this->_tbl_key . ' IN (' . implode(',', $allow) . ')');
+			$this->_query->addWhere($this->_tbl_key . ' IN (' . implode(',', array_fill(0, count($allow), '?')) . ')', $allow);
 		}
 		if (count($deny)) {
-			$this->_query->addWhere($this->_tbl_key . ' NOT IN (' . implode(',', $deny) . ')');
+			$this->_query->addWhere($this->_tbl_key . ' NOT IN (' . implode(',', array_fill(0, count($deny), '?')) . ')', $deny);
 		}
 		if (isset($extra['where'])) {
 			$this->_query->addWhere($extra['where']);
@@ -455,11 +455,11 @@ class CDpObject {
 		
 		if (count($allow)) {
 			$query->addWhere((($key) ? ($key . '.') : '') . $this->_tbl_key 
-			                 . ' IN (' . implode(',', $allow) . ')');
+			                 . ' IN (' . implode(',', array_fill(0, count($allow), '?')) . ')', $allow);
 		}
 		if (count($deny)) {
 			$query->addWhere((($key) ? ($key . '.') : '') . $this->_tbl_key 
-			                 . ' NOT IN (' . implode(',', $deny) . ')');
+			                 . ' NOT IN (' . implode(',', array_fill(0, count($deny), '?')) . ')', $deny);
  		}
  	}
 

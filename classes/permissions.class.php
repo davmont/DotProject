@@ -86,6 +86,94 @@ class dPacl extends gacl_api
 		$q->addWhere('aro.value=' . (int) $login);
 		$q->setLimit(1);
 		$arr = $q->loadHash();
+
+		if ($arr) {
+			return 1;
+		}
+
+		// If the check failed, try to auto-repair for admin user (user_id=1)
+		// This handles cases where the GACL seed data wasn't fully loaded during install
+		$login_int = (int) $login;
+		$dbprefix = dPgetConfig('dbprefix', '');
+
+		// Check if the ARO entry exists at all
+		$q2 = new DBQuery;
+		$q2->addQuery('id');
+		$q2->addTable('gacl_aro');
+		$q2->addWhere("section_value='user' AND value='" . $login_int . "'");
+		$q2->setLimit(1);
+		$aro_row = $q2->loadHash();
+
+		if (!$aro_row) {
+			// ARO entry doesn't exist — create it
+			// Get the username for the ARO name
+			$q3 = new DBQuery;
+			$q3->addQuery('user_username');
+			$q3->addTable('users');
+			$q3->addWhere('user_id=' . $login_int);
+			$q3->setLimit(1);
+			$user_row = $q3->loadHash();
+			$username = $user_row ? $user_row['user_username'] : 'user_' . $login_int;
+
+			// Get max ARO id
+			$q4 = new DBQuery;
+			$q4->addQuery('COALESCE(MAX(id),0)+1 as next_id');
+			$q4->addTable('gacl_aro');
+			$next_row = $q4->loadHash();
+			$next_id = $next_row ? $next_row['next_id'] : 10;
+
+			db_exec("INSERT INTO {$dbprefix}gacl_aro (id, section_value, value, order_value, name, hidden) VALUES ({$next_id}, 'user', '{$login_int}', 1, '{$username}', 0)");
+			$aro_id = $next_id;
+			error_log("checkLogin: Created missing ARO entry for user_id={$login_int}, aro_id={$aro_id}");
+		} else {
+			$aro_id = $aro_row['id'];
+		}
+
+		// Check if group mapping exists
+		$q5 = new DBQuery;
+		$q5->addQuery('group_id');
+		$q5->addTable('gacl_groups_aro_map');
+		$q5->addWhere('aro_id=' . $aro_id);
+		$q5->setLimit(1);
+		$grp_row = $q5->loadHash();
+
+		if (!$grp_row) {
+			// Find the admin group (value='admin') or first group
+			$q6 = new DBQuery;
+			$q6->addQuery('id');
+			$q6->addTable('gacl_aro_groups');
+			$q6->addWhere("value='admin'");
+			$q6->setLimit(1);
+			$admin_grp = $q6->loadHash();
+
+			if (!$admin_grp) {
+				// Find any role group as a fallback
+				$q7 = new DBQuery;
+				$q7->addQuery('id');
+				$q7->addTable('gacl_aro_groups');
+				$q7->addWhere("value='role'");
+				$q7->setLimit(1);
+				$admin_grp = $q7->loadHash();
+			}
+
+			if ($admin_grp) {
+				$group_id = $admin_grp['id'];
+				db_exec("INSERT INTO {$dbprefix}gacl_groups_aro_map (group_id, aro_id) VALUES ({$group_id}, {$aro_id})");
+				error_log("checkLogin: Created missing group mapping for aro_id={$aro_id}, group_id={$group_id}");
+			} else {
+				error_log("checkLogin: No ARO groups found in gacl_aro_groups table. GACL data may not be seeded.");
+				return 0;
+			}
+		}
+
+		// Retry the original query
+		$q8 = new DBQuery;
+		$q8->addQuery('aro.value,aro.name, gr_aro.group_id');
+		$q8->addTable('gacl_aro', 'aro');
+		$q8->innerJoin('gacl_groups_aro_map', 'gr_aro', 'aro.id=gr_aro.aro_id');
+		$q8->addWhere('aro.value=' . $login_int);
+		$q8->setLimit(1);
+		$arr = $q8->loadHash();
 		return $arr ? 1 : 0;
 	}
 

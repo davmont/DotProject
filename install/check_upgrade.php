@@ -8,21 +8,21 @@ may have their own license.
 
 Copyright (c) 2003-2005 The dotProject Development Team <core-developers@dotproject.net>
 
-    This file is part of dotProject.
+	This file is part of dotProject.
 
-    dotProject is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+	dotProject is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
 
-    dotProject is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	dotProject is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with dotProject; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	You should have received a copy of the GNU General Public License
+	along with dotProject; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 The full text of the GPL is in the COPYING file.
 */
@@ -41,44 +41,39 @@ $baseDir = dirname(dirname(__FILE__));
 define('DP_BASE_DIR', $baseDir);
 
 require_once 'install.inc.php';
-require_once DP_BASE_DIR.'/lib/adodb/adodb.inc.php';
+require_once DP_BASE_DIR . '/lib/adodb/adodb.inc.php';
 
-function dPcheckExistingDB($conf) {
+function dPcheckExistingDB($conf)
+{
 	global $AppUI, $ADODB_FETCH_MODE;
 	$AppUI = new InstallerUI;
-	
+
 	$ado = NewADOConnection($conf['dbtype'] ? $conf['dbtype'] : 'mysql');
 	if (empty($ado))
 		return false;
 	$db = $ado->Connect($conf['dbhost'], $conf['dbuser'], $conf['dbpass']);
-	if (! $db)
+	if (!$db)
 		return false;
 	$exists = $ado->SelectDB($conf['dbname']);
-	if (! $exists)
+	if (!$exists)
 		return false;
 
 	// Find the tables in the database, if there are none, or if the
 	// basic tables of project and task are missing, we are doing an
 	// install.
 	$table_list = $ado->MetaTables('TABLE');
-	if (count($table_list) < 10 ) {
+	if (count($table_list) < 10) {
 		// There are now more than 60 tables in a standard dP
 		// install, but this will at least cover the basics.
 		return false;
 	}
 
+	$prefix = $conf['dbprefix'] ? $conf['dbprefix'] : '';
+
 	// Check the table list for the standard tables.  Firstly
 	// we check for projects and tasks, and see if there is a common
 	// prefix.
-	$found = false;
-	foreach ($table_list as $tbl) {
-		if (substr($tbl, -8) == 'projects') {
-			$prefix = str_replace('projects', '', $tbl);
-			$found = true;
-			break;
-		}
-	}
-	if (! $found) {
+	if (!in_array($prefix . 'projects', $table_list)) {
 		return false; //Couldn't even find the projects table!
 	}
 	if (!in_array($prefix . 'tasks', $table_list)) {
@@ -94,8 +89,9 @@ function dPcheckExistingDB($conf) {
 	// The install procedure populates them - If this situation changes
 	// then this code must be modified to suit.
 
-	$q1 = 'SELECT count(*) from gacl_phpgacl'; // Should be 2
-	$q2 = 'SELECT count(*) from gacl_axo'; // Should be greater than the count of modules
+	$prefix = $conf['dbprefix'] ? $conf['dbprefix'] : '';
+	$q1 = 'SELECT count(*) from ' . $prefix . 'gacl_phpgacl'; // Should be 2
+	$q2 = 'SELECT count(*) from ' . $prefix . 'gacl_axo'; // Should be greater than the count of modules
 
 	$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 
@@ -104,9 +100,9 @@ function dPcheckExistingDB($conf) {
 	// If one exists and is populated (the version information is seeded by the sql file)
 	// but the other either doesn't exist or is unpopulated, then it is an install as
 	// the SQL file has been loaded manually.
-	if (($qid = $ado->Execute($q1) ) && ($q1Data = $qid->fetchRow() ) && ! empty($q1Data[0]) ) {
+	if (($qid = @$ado->Execute($q1)) && ($q1Data = $qid->fetchRow()) && !empty($q1Data[0])) {
 		$qid->Close();
-		if ( ! ($qid2 = $ado->Execute($q2) ) || ! ($q2Data = $qid2->fetchRow() ) || empty($q2Data[0]) ) {
+		if (!($qid2 = @$ado->Execute($q2)) || !($q2Data = $qid2->fetchRow()) || empty($q2Data[0])) {
 			return false;
 		}
 	}
@@ -114,7 +110,8 @@ function dPcheckExistingDB($conf) {
 	return true;
 }
 
-function dPcheckUpgrade() {
+function dPcheckUpgrade()
+{
 	$mode = 'install';
 	if (is_file('../includes/config.php')) {
 		include_once '../includes/config.php';

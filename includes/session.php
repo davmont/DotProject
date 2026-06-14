@@ -225,16 +225,28 @@ function dpSessionStart($start_vars = 'AppUI')
 		$max_time = 0; // Browser session only.
 	}
 	// Try and get the correct path to the base URL.
-	preg_match('_^(https?://)([^/:]+)(:[0-9]+)?(/.*)?$_i', dPgetConfig('base_url'), $url_parts);
-	$cookie_dir = $url_parts[4];
+	$url_info = parse_url(dPgetConfig('base_url', ''));
+	if (is_array($url_info)) {
+		$cookie_dir = $url_info['path'] ?? ($url_info[4] ?? '');
+	} else {
+		$cookie_dir = '';
+	}
 	if (mb_substr($cookie_dir, 0, 1) != '/') {
 		$cookie_dir = '/' . $cookie_dir;
 	}
 	if (mb_substr($cookie_dir, -1) != '/') {
 		$cookie_dir .= '/';
 	}
-	$is_https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
-	session_set_cookie_params($max_time, $cookie_dir, '', $is_https, true);
+	$base_url_scheme = $url_info['scheme'] ?? '';
+	$is_https = ($base_url_scheme === 'https')
+		|| (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+	session_set_cookie_params([
+		'lifetime' => $max_time,
+		'path'     => $cookie_dir,
+		'secure'   => $is_https,
+		'httponly' => true,
+		'samesite' => 'Lax',
+	]);
 
 	if (is_array($start_vars)) {
 		foreach ($start_vars as $var) {

@@ -19,12 +19,11 @@ if ($user_id) {
 		$q = new DBQuery;
 		$q->addQuery('user_id, user_password');
 		$q->addTable('users');
-		$q->addWhere('user_id = ' . $user_id);
-		$row = $q->loadList();
-		$stored = isset($row[0]['user_password']) ? $row[0]['user_password'] : '';
-		$legacy_ok = (strlen($stored) === 32 && md5($old_pwd) === $stored);
-		$pwd_ok = password_verify($old_pwd, $stored) || $legacy_ok;
-		if ($AppUI->user_type == 1 || $pwd_ok) {
+		$q->addWhere('user_id = ' . intval($user_id));
+		$row = $q->fetchRow();
+		$db_pwd = $row['user_password'] ?? '';
+
+		if ($AppUI->user_type == 1 || password_verify($old_pwd, $db_pwd) || md5($old_pwd) === $db_pwd) {
 			require_once($AppUI->getModuleClass('admin'));
 			$user = new CUser();
 			$user->user_id = $user_id;

@@ -121,9 +121,13 @@ if (isset($_FILES['formfile'])) {
 		// store file with a unique name
 		$obj->file_name = $upload['name'];
 		// Detect MIME type server-side; never trust the client-supplied value.
-		$finfo = new finfo(FILEINFO_MIME_TYPE);
-		$detected_type = $finfo->file($upload['tmp_name']);
-		$obj->file_type = $detected_type ?: $upload['type'];
+		if (class_exists('finfo')) {
+			$finfo = new finfo(FILEINFO_MIME_TYPE);
+			$detected = $finfo->file($upload['tmp_name']);
+			$obj->file_type = $detected ?: 'application/octet-stream';
+		} else {
+			$obj->file_type = 'application/octet-stream';
+		}
 		$obj->file_size = $upload['size'];
 		$obj->file_date = str_replace("'", '', $db->DBTimeStamp(time()));
 		$obj->file_real_filename = uniqid(rand());

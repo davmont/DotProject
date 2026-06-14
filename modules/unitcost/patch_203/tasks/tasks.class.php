@@ -497,13 +497,19 @@ class CTask extends CDpObject {
                 if(!empty($this->task_departments)){
                         $departments = explode(',',$this->task_departments);
                         $db->StartTrans();
+
+                        $q->addTable('task_departments');
+                        $q->addInsert('task_id', '?', false, true);
+                        $q->addInsert('department_id', '?', false, true);
+                        $sql = $q->prepare();
+                        $q->clear();
+
+                        $arr = array();
                         foreach($departments as $department){
-                                $q->addTable('task_departments');
-                                $q->addInsert('task_id', $this->task_id);
-                                $q->addInsert('department_id', $department);
-                                $q->exec();
-                                $q->clear();
+                                $arr[] = array($this->task_id, $department);
                         }
+                        $db->Execute($sql, $arr);
+
                         $db->CompleteTrans();
                 }
 
@@ -515,13 +521,19 @@ class CTask extends CDpObject {
                 if(!empty($this->task_contacts)){
                         $contacts = explode(',',$this->task_contacts);
                         $db->StartTrans();
+
+                        $q->addTable('task_contacts');
+                        $q->addInsert('task_id', '?', false, true);
+                        $q->addInsert('contact_id', '?', false, true);
+                        $sql = $q->prepare();
+                        $q->clear();
+
+                        $arr = array();
                         foreach($contacts as $contact){
-                                $q->addTable('task_contacts');
-                                $q->addInsert('task_id', $this->task_id);
-                                $q->addInsert('contact_id', $contact);
-                                $q->exec();
-                                $q->clear();
+                                $arr[] = array($this->task_id, $contact);
                         }
+                        $db->Execute($sql, $arr);
+
                         $db->CompleteTrans();
                 }
 
@@ -617,6 +629,9 @@ class CTask extends CDpObject {
         }
 
         function updateDependencies( $cslist ) {
+                global $db;
+
+                $db->StartTrans();
         // delete all current entries
                 $q = new DBQuery;
                 $q->setDelete('task_dependencies');
@@ -626,16 +641,28 @@ class CTask extends CDpObject {
 
         // process dependencies
                 $tarr = explode( ",", $cslist );
+                global $db;
+                $db->StartTrans();
                 foreach ($tarr as $task_id) {
                         if (intval( $task_id ) > 0) {
-                                $q->addTable('task_dependencies');
-                                $q->addInsert('dependencies_task_id', $this->task_id);
-                                $q->addInsert('dependencies_req_task_id', $task_id);
-                                $q->type = 'replace';
-                                $q->exec();
-                                $q->clear();
+                                $data[] = array($this->task_id, intval($task_id));
                         }
                 }
+
+                if (count($data) > 0) {
+                        global $db;
+                        $db->StartTrans();
+                        $q->addTable('task_dependencies');
+                        $q->addInsert('dependencies_task_id', '?', false, true);
+                        $q->addInsert('dependencies_req_task_id', '?', false, true);
+                        $sql = $q->prepareReplace();
+                        $q->clear();
+                        foreach ($data as $row) {
+                                $db->Execute($sql, $row);
+                        }
+                        $db->CompleteTrans();
+                }
+                $db->CompleteTrans();
         }
 
         /**
@@ -1344,19 +1371,22 @@ class CTask extends CDpObject {
 
                 // delete all current entries from $cslist
                 if ($del == true && $rmUsers == true) {
-                        foreach ($tarr as $user_id) {
-                                if ($user_id > '') {
-                                        $sql = "DELETE FROM user_tasks WHERE task_id = $this->task_id
-                                                AND user_id = $user_id";
-                                        db_exec( $sql );
-                                }
+                        $user_ids = array_filter(array_map('intval', $tarr));
+                        if (count($user_ids) > 0) {
+                                $q = new DBQuery;
+                                $q->setDelete('user_tasks');
+                                $q->addWhere('task_id = ' . (int)$this->task_id);
+                                $q->addWhere('user_id IN (' . implode(',', $user_ids) . ')');
+                                $q->exec();
                         }
 
                          return false;
 
                 } else if ($del == true) {      // delete all on this task for a hand-over of the task
-                        $sql = "DELETE FROM user_tasks WHERE task_id = $this->task_id";
-                        db_exec( $sql );
+                        $q = new DBQuery;
+                        $q->setDelete('user_tasks');
+                        $q->addWhere('task_id = ' . (int)$this->task_id);
+                        $q->exec();
                 }
 
 
