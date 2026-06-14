@@ -394,7 +394,7 @@ CREATE TABLE %dbprefix%users (
   user_id int(11) NOT NULL auto_increment,
   user_contact int(11) NOT NULL default '0',
   user_username varchar(255) NOT NULL default '',
-  user_password varchar(32) NOT NULL default '',
+  user_password varchar(255) NOT NULL default '',
   user_parent int(11) NOT NULL default '0',
   user_type tinyint(3) not null default '0',
   user_company int(11) default '0',
