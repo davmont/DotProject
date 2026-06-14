@@ -149,21 +149,22 @@ function findfiltertaskchild(&$tarr, $parent, $level=0) {
 foreach ($projects as $p) {
 	global $parents, $task_id;
 	$parents = array();
-	$tnums = count($p['tasks']);
+	$tasks = $p['tasks'] ?? [];
+	$tnums = count($tasks);
 	for ($i=0; $i < $tnums; $i++) {
-		$t = $p['tasks'][$i];
+		$t = $tasks[$i];
 		if (!(isset($parents[$t['task_parent']]))) {
 			$parents[$t['task_parent']] = false;
 		}
 		if ($t['task_parent'] == $t['task_id']) {
 			showfiltertask($t);
-			findfiltertaskchild($p['tasks'], $t['task_id']);
+			findfiltertaskchild($tasks, $t['task_id']);
 		}
 	}
 	// Check for ophans.
 	foreach ($parents as $id => $ok) {
 		if (!($ok)) {
-			findfiltertaskchild($p['tasks'], $id);
+			findfiltertaskchild($tasks, $id);
 		}
 	}
 }
