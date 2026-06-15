@@ -1030,8 +1030,12 @@ class CAppUI
 				. $this->___($js_file_name) . '"></script>' . "\n");
 		}
 
-		// additionally load overlib
-		echo ('<script type="text/javascript" src="' . $base . 'lib/overlib/overlib.js"></script>'
+		// Flatpickr date-picker (replaces the abandoned jscalendar)
+		echo ('<link rel="stylesheet" type="text/css" href="' . $base . 'lib/flatpickr/flatpickr.min.css" />' . "\n");
+		echo ('<script type="text/javascript" src="' . $base . 'lib/flatpickr/flatpickr.min.js"></script>' . "\n");
+
+		// load overlib shim (replaces the abandoned overLIB library)
+		echo ('<script type="text/javascript" src="' . $base . 'lib/overlib/overlib-shim.js"></script>'
 			. "\n");
 
 		$this->getModuleJS($m, $a, true);

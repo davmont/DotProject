@@ -1,0 +1,15 @@
+{
+    "name": "davmont/dotproject",
+    "description": "DotProject – actively maintained PHP 8 fork",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "David",
+            "email": "david.montero.isusi@gmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^7.1"
+    }
+}
