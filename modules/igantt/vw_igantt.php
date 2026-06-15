@@ -71,7 +71,7 @@ $json_tasks = json_encode($gantt_tasks);
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title><?php echo $AppUI->_('Interactive Gantt chart'); ?></title>
 	<!-- Frappe Gantt CSS -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.6.1/frappe-gantt.min.css" />
+	<link rel="stylesheet" href="<?php echo DP_BASE_URL; ?>/lib/frappe-gantt/frappe-gantt.min.css" />
 	<style>
 		body {
 			font-family: Arial, sans-serif;
@@ -128,7 +128,7 @@ $json_tasks = json_encode($gantt_tasks);
 	</div>
 
 	<!-- Frappe Gantt JS -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.6.1/frappe-gantt.min.js"></script>
+	<script src="<?php echo DP_BASE_URL; ?>/lib/frappe-gantt/frappe-gantt.min.js"></script>
 	<script>
 		// Inject JSON tasks from PHP
 		var tasks = <?php echo $json_tasks; ?>;
