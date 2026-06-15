@@ -158,16 +158,43 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
   			</td>
        </tr>
   </table>	
-	<table  width="60%" align="left" >	    
+	<table width="60%" align="left">
 		<tr>
 			<td colspan="2">
-            <?php 
-               if ((!empty($vlPlanejado) || !isset($vlPlanejado)) || (!empty($vlAgregado) || !isset($vlAgregado)) ){
-			$url = './modules/monitoringandcontrol/grafico/line_Graph_Schedule.php?titGrafico='.urlencode(serialize($titGrafico)).'&titVP='.urlencode(serialize($titVP)).'&titVA='.urlencode(serialize($titVA)).'&dtConsultaArray=' .urlencode(serialize( $dtConsultaArray)). '&vlPlanejado=' . urlencode(serialize($vlPlanejado)) . '&vlAgregado=' . urlencode(serialize($vlAgregado));             
-            	}else                        
-             $url = './modules/monitoringandcontrol/grafico/line_Graph_Schedule.php' ; ?>
-               		<img  src="<?php echo $url; ?>" >         
-            </td> 						
-		
-       </tr>  
-  </table>	
+<?php if ((!empty($vlPlanejado) && is_array($vlPlanejado)) || (!empty($vlAgregado) && is_array($vlAgregado))): ?>
+<script src="<?php echo DP_BASE_URL; ?>/lib/chartjs/chart.umd.min.js"></script>
+<canvas id="dp-schedule-chart" width="650" height="280" style="max-width:100%;"></canvas>
+<script>
+(function(){
+  var ctx = document.getElementById('dp-schedule-chart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: <?php echo json_encode(array_values((array)$dtConsultaArray)); ?>,
+      datasets: [
+        {
+          label: <?php echo json_encode((string)$titVP); ?>,
+          data: <?php echo json_encode(array_values((array)$vlPlanejado)); ?>,
+          borderColor: '#55bbdd', backgroundColor: 'rgba(85,187,221,0.1)',
+          pointStyle: 'circle', tension: 0.1
+        },
+        {
+          label: <?php echo json_encode((string)$titVA); ?>,
+          data: <?php echo json_encode(array_values((array)$vlAgregado)); ?>,
+          borderColor: '#aaaaaa', backgroundColor: 'rgba(170,170,170,0.1)',
+          pointStyle: 'triangle', tension: 0.1
+        }
+      ]
+    },
+    options: {
+      responsive: false,
+      plugins: { title: { display: true, text: <?php echo json_encode((string)$titGrafico); ?> } },
+      scales: { x: { ticks: { maxRotation: 55 } } }
+    }
+  });
+}());
+</script>
+<?php endif; ?>
+			</td>
+		</tr>
+  </table>

@@ -58,26 +58,57 @@ global $AppUI;
             </td>
         </tr>
         <tr>
-            <td >
-            <table  align="left" >	    
-                <tr>
-                    <td >
-                    <?php $urlBar = './modules/monitoringandcontrol/grafico/line_Graph_Quality_pie.php?titGrafico='.urlencode(serialize($titGraficoPizza)).'&arQualidade=' .urlencode(serialize( $arQualidadePie)) ?> 
-                            <img  src="<?php echo $urlBar; ?>" >     
-                    </td>
-                </tr>	
-          </table>	
+          <td>
+<script src="<?php echo DP_BASE_URL; ?>/lib/chartjs/chart.umd.min.js"></script>
+<?php if (!empty($arQualidadePie) && is_array($arQualidadePie)):
+  $pieLabels = array_column($arQualidadePie, 'name');
+  $pieData   = array_column($arQualidadePie, 'quantity');
+?>
+<canvas id="dp-quality-pie" width="580" height="250" style="max-width:100%;"></canvas>
+<script>
+(function(){
+  var ctx = document.getElementById('dp-quality-pie').getContext('2d');
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: <?php echo json_encode($pieLabels); ?>,
+      datasets: [{ data: <?php echo json_encode($pieData); ?>, borderWidth: 1 }]
+    },
+    options: {
+      responsive: false,
+      plugins: { title: { display: true, text: <?php echo json_encode((string)$titGraficoPizza); ?> } }
+    }
+  });
+}());
+</script>
+<?php endif; ?>
           </td>
           <td>
-            <table   align="left" >	    
-                <tr>
-                    <td >
-                    <?php $urlBar = './modules/monitoringandcontrol/grafico/line_Graph_Quality_bar.php?titGrafico='.urlencode(serialize($titGraficoBarra)).'&arQualidade=' .urlencode(serialize( $arQualidadeBar)) . '&arLabelBar=' .urlencode(serialize( $arLabelBar))?> 
-                            <img  src="<?php echo $urlBar; ?>" >         
-                    </td> 						
-               </tr>  
-          </table>	     
-            </td>
+<?php if (!empty($arQualidadeBar) && is_array($arQualidadeBar)):
+  $barDatasets = [];
+  foreach ($arQualidadeBar as $ds) {
+      $barDatasets[] = ['label' => (string)($ds['name'] ?? ''), 'data' => (array)($ds['quantity'] ?? [])];
+  }
+?>
+<canvas id="dp-quality-bar" width="580" height="250" style="max-width:100%;"></canvas>
+<script>
+(function(){
+  var ctx = document.getElementById('dp-quality-bar').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: <?php echo json_encode(array_values((array)$arLabelBar)); ?>,
+      datasets: <?php echo json_encode($barDatasets); ?>
+    },
+    options: {
+      responsive: false,
+      plugins: { title: { display: true, text: <?php echo json_encode((string)$titGraficoBarra); ?> } }
+    }
+  });
+}());
+</script>
+<?php endif; ?>
+          </td>
         </tr>        	
   </table>	
 </form>  
