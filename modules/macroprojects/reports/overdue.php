@@ -21,9 +21,9 @@ if ($err = db_error()) {
 
 $font_dir = DP_BASE_DIR.'/lib/ezpdf/fonts';
 
-require($AppUI->getLibraryClass('ezpdf/class.ezpdf'));
+require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
-$pdf = new Cezpdf($paper='A4',$orientation='landscape');
+$pdf = new DotPdf($paper='A4',$orientation='landscape');
 $pdf->ezSetCmMargins(1, 2, 1.5, 1.5);
 $pdf->selectFont("$font_dir/Helvetica.afm");
 $pdf->ezText(safe_utf8_decode(dPgetConfig('company_name')), 12);

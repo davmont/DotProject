@@ -2,7 +2,7 @@
 // chama a classe 'class.ezpdf.php' necess�ria para se gerar o documento
 //include "lib/ezpdf/class.ezpdf.php"; 
 $font_dir = DP_BASE_DIR.'/lib/ezpdf/fonts';
-require($AppUI->getLibraryClass('ezpdf/class.ezpdf'));
+require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
 $id=intval(dPgetParam($_GET, 'id', 0));
 
@@ -30,7 +30,7 @@ $q->addWhere('user_id = ' . $obj->initiating_manager);
 $contact = $q->loadHash();
 
 // instancia um novo documento com o nome de pdf
-$pdf = new Cezpdf();
+$pdf = new DotPdf();
 
 // seta a fonte que ser� usada para apresentar os dados
 //essas fontes s�o aquelas dentro do diret�rio GeraPDF/fonts

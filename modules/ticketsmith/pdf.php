@@ -8,7 +8,7 @@ require_once DP_BASE_DIR . '/modules/ticketsmith/config.inc.php';
 require_once $AppUI->getSystemClass('query');
 $font_dir = DP_BASE_DIR.'/lib/ezpdf/fonts';
 $temp_dir = DP_BASE_DIR.'/files/temp';
-require($AppUI->getLibraryClass('ezpdf/class.ezpdf'));
+require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
 $type = dPgetCleanParam($_GET, 'type', '');
 $column = dPgetCleanParam($_GET, 'column', 'timestamp');
@@ -46,7 +46,7 @@ if ($err = db_error()) {
 
 $df = $AppUI->getPref('SHDATEFORMAT');
 
-$pdf = new Cezpdf($paper='A4',$orientation='landscape');
+$pdf = new DotPdf($paper='A4',$orientation='landscape');
 $pdf->ezSetCmMargins(1, 2, 1.5, 1.5);
 $pdf->selectFont("$font_dir/Helvetica.afm");
 

@@ -208,9 +208,9 @@ if ($do_report) {
 		$font_dir = $dPconfig['root_dir']."/lib/ezpdf/fonts";
 		$temp_dir = $dPconfig['root_dir']."/files/temp";
 		$base_url  = $dPconfig['base_url'];
-		require( $AppUI->getLibraryClass( 'ezpdf/class.ezpdf' ) );
+		require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
-		$pdf = new Cezpdf();
+		$pdf = new DotPdf();
 		$pdf->ezSetCmMargins( 1, 1.5, 1.0, 1.0 );
 		$pdf->selectFont( "$font_dir/Helvetica.afm" );
 

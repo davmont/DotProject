@@ -59,9 +59,9 @@ foreach ($messages as $row) {
 $font_dir = DP_BASE_DIR . '/lib/ezpdf/fonts';
 $temp_dir = DP_BASE_DIR . '/files/temp';
 $base_url  = DB_BASE_URL;
-require( $AppUI->getLibraryClass( 'ezpdf/class.ezpdf' ) );
+require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
-$pdf = &new Cezpdf($paper='A4', $orientation='portrait');
+$pdf = &new DotPdf($paper='A4', $orientation='portrait');
 $pdf->ezSetCmMargins(1, 2, 1.5, 1.5);
 $pdf->selectFont($font_dir . '/Helvetica.afm');
 $pdf->ezText('Project: ' . $forum['project_name']. '   Forum: '.$forum['forum_name'] );
