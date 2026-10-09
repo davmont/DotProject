@@ -4,7 +4,7 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 $AppUI->savePlace();
-$sort = dPgetCleanParam($_REQUEST, 'sort', 'asc');
+$sort = dPvalidateOrder(mb_strtolower(dPgetCleanParam($_REQUEST, 'sort', 'asc')), array('asc', 'desc'), 'asc');
 $viewtype = dPgetCleanParam($_REQUEST, 'viewtype', 'normal');
 $hideEmail = dPgetConfig('hide_email_addresses', false);
 

@@ -10,7 +10,7 @@ $log_all = (int)dPgetParam($_POST['log_all'], 0);
 $use_period	= (int)dPgetParam($_POST,'use_period',0); 
 $display_week_hours = (int)dPgetParam($_POST,'display_week_hours',0); 
 $max_levels = dPgetCleanParam($_POST,'max_levels', ''); 
-$log_userfilter = dPgetCleanParam($_POST,'log_userfilter','');
+$log_userfilter = dPgetIntParam($_POST, 'log_userfilter', 0);
 $log_open = (int)dPgetParam($_POST,'log_open',0);
 $pdf_output = (int)dPgetParam($_POST,'pdf_output',0);
 
