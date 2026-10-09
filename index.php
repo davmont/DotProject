@@ -107,6 +107,18 @@ if (dPgetParam($_POST, 'lostpass', 0)) {
 	@include_once(DP_BASE_DIR . '/locales/core.php');
 	setlocale(LC_TIME, $AppUI->user_lang);
 	if (dPgetParam($_REQUEST, 'sendpass', 0)) {
+		// Security Mitigation: Rate limit password reset requests.
+		require_once(DP_BASE_DIR . '/classes/ratelimiter.class.php');
+		$rateLimiter = new RateLimiter('sendpass', 5, 900); // 5 attempts per 15 minutes
+
+		if (!$rateLimiter->isAllowed()) {
+			$AppUI->setMsg('Too many password reset requests. Please wait before trying again.', UI_MSG_ERROR);
+			$AppUI->redirect();
+			exit;
+		}
+		// Record the attempt before processing.
+		$rateLimiter->recordAttempt();
+
 		require(DP_BASE_DIR . '/includes/sendpass.php');
 		sendNewPass();
 	} else {
@@ -115,11 +127,32 @@ if (dPgetParam($_POST, 'lostpass', 0)) {
 	exit();
 }
 
+// Password reset from the emailed link. Reachable while logged out.
+if (dPgetParam($_REQUEST, 'resetpass', 0)) {
+	$uistyle = (($AppUI->getPref('UISTYLE')) ? $AppUI->getPref('UISTYLE') : dPgetConfig('host_style'));
+	$AppUI->setUserLocale();
+	@include_once(DP_BASE_DIR . '/locales/' . $AppUI->user_locale . '/locales.php');
+	@include_once(DP_BASE_DIR . '/locales/core.php');
+	setlocale(LC_TIME, $AppUI->user_lang);
+	require(DP_BASE_DIR . '/modules/public/reset_password.php');
+	exit();
+}
+
 // check if the user is trying to log in
 // Note the change to REQUEST instead of POST.  This is so that we can
 // support alternative authentication methods such as the PostNuke
 // and HTTP auth methods now supported.
 if (isset($_REQUEST['login'])) {
+	// Security Mitigation: Rate limit login attempts to prevent brute-force attacks.
+	require_once(DP_BASE_DIR . '/classes/ratelimiter.class.php');
+	$rateLimiter = new RateLimiter('login');
+
+	if (!$rateLimiter->isAllowed()) {
+		$AppUI->setMsg('Too many login attempts. Please wait before trying again.', UI_MSG_ERROR);
+		$AppUI->redirect();
+		exit;
+	}
+
 	$username = dPgetCleanParam($_POST, 'username', '');
 	$password = dPgetParam($_POST, 'password', '');
 	$redirect = dPgetParam($_REQUEST, 'redirect', '');
@@ -128,8 +161,11 @@ if (isset($_REQUEST['login'])) {
 	@include_once DP_BASE_DIR . '/locales/core.php';
 	$ok = $AppUI->login($username, $password);
 	if (!$ok) {
+		// If login fails, record the attempt.
+		$rateLimiter->recordAttempt();
 		$AppUI->setMsg('Login Failed');
 	} else {
+		session_regenerate_id(true);
 		//Register login in user_acces_log
 		$AppUI->registerLogin();
 	}
@@ -242,6 +278,12 @@ if ($u && file_exists(DP_BASE_DIR . '/modules/' . $m . '/' . $u . '/' . $u . '.c
 // do some db work if dosql is set
 // TODO - MUST MOVE THESE INTO THE MODULE DIRECTORY
 if (isset($_REQUEST['dosql'])) {
+	// Write handlers run only for POST requests that carry the session's CSRF token.
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		$AppUI->setMsg('Invalid request method.', UI_MSG_ERROR);
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	$AppUI->verifyCsrfToken();
 	//require('./dosql/' . $_REQUEST['dosql'] . '.php');
 	require(DP_BASE_DIR . '/modules/' . $m . '/' . ($u ? ($u . '/') : '')
 		. $AppUI->checkFileName($_REQUEST['dosql']) . '.php');
@@ -249,7 +291,8 @@ if (isset($_REQUEST['dosql'])) {
 
 // start output proper
 include(DP_BASE_DIR . '/style/' . $uistyle . '/overrides.php');
-ob_start();
+// Every POST form in the page gets the CSRF token checked on dosql requests.
+ob_start(array($AppUI, 'injectCsrfToken'));
 if (!$suppressHeaders) {
 	require(DP_BASE_DIR . '/style/' . $uistyle . '/header.php');
 }

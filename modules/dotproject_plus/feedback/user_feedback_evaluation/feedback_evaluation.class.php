@@ -18,7 +18,7 @@ class CFeedbackEvaluation extends CDpObject {
             $this->CDpObject('feedback_evaluation', 'id');
 	}
         
-        public function store(){
+        public function store($updateNulls = false){
             $q = new DBQuery();
             $q->addQuery("id");
             $q->addTable("feedback_evaluation");

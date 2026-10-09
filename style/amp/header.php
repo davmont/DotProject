@@ -9,7 +9,7 @@
 @import "./style/<?php echo $uistyle; ?>/main.css";
 </style>
 <link rel="shortcut icon" href="./style/<?php echo $uistyle; ?>/img/favicon.ico" type="image/ico" />
-<?php @$AppUI->loadJS(); ?>
+<?php @$AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
 <?php include("./style/".$uistyle."/color.php"); ?>
 </head>
 <body>

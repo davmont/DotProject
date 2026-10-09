@@ -510,6 +510,85 @@ class CAppUI
 	}
 
 	/**
+	 * Generate a CSRF token tied to the current session and store it.
+	 * Returns an HTML hidden-input string ready to embed in a form.
+	 */
+	function getCsrfToken()
+	{
+		if (empty($this->_csrf_token)) {
+			$this->_csrf_token = bin2hex(random_bytes(32));
+		}
+		return $this->_csrf_token;
+	}
+
+	function getCsrfInput()
+	{
+		return '<input type="hidden" name="csrf_token" value="'
+			. htmlspecialchars($this->getCsrfToken(), ENT_QUOTES, 'UTF-8') . '" />';
+	}
+
+	/**
+	 * Output a <meta> tag carrying the CSRF token plus a small inline script
+	 * that automatically appends the token to every POST form on submit.
+	 * Call once from each theme's header.php, just before </head>.
+	 */
+	function getCsrfMeta()
+	{
+		$token = htmlspecialchars($this->getCsrfToken(), ENT_QUOTES, 'UTF-8');
+		// Adds the token to POST forms that injectCsrfToken() cannot see:
+		// forms built by JavaScript, and forms submitted with form.submit(),
+		// which does not fire the submit event.
+		return '<meta name="csrf-token" content="' . $token . '" />' . "\n"
+			. '<script type="text/javascript">' . "\n"
+			. '(function () {' . "\n"
+			. '	var meta = document.querySelector(\'meta[name="csrf-token"]\');' . "\n"
+			. '	if (!meta) { return; }' . "\n"
+			. '	var token = meta.getAttribute(\'content\');' . "\n"
+			. '	function addToken(f) {' . "\n"
+			. '		if (!f || String(f.getAttribute(\'method\') || \'\').toLowerCase() !== \'post\') { return; }' . "\n"
+			. '		if (f.querySelector(\'input[name="csrf_token"]\')) { return; }' . "\n"
+			. '		var i = document.createElement(\'input\');' . "\n"
+			. '		i.type = \'hidden\'; i.name = \'csrf_token\'; i.value = token;' . "\n"
+			. '		f.appendChild(i);' . "\n"
+			. '	}' . "\n"
+			. '	document.addEventListener(\'submit\', function (e) { addToken(e.target); }, true);' . "\n"
+			. '	var nativeSubmit = HTMLFormElement.prototype.submit;' . "\n"
+			. '	HTMLFormElement.prototype.submit = function () { addToken(this); return nativeSubmit.apply(this, arguments); };' . "\n"
+			. '})();' . "\n"
+			. '</script>';
+	}
+
+	/**
+	 * Output buffer callback (see index.php): add the CSRF token as a hidden
+	 * field to every POST form in an HTML page.
+	 */
+	function injectCsrfToken($html)
+	{
+		foreach (headers_list() as $header) {
+			if (stripos($header, 'Content-Type:') === 0 && stripos($header, 'text/html') === false) {
+				return $html;
+			}
+		}
+		$field = $this->getCsrfInput();
+		$out = preg_replace_callback('/<form\b[^>]*>/i', function ($m) use ($field) {
+			if (!preg_match('/\bmethod\s*=\s*["\']?\s*post\b/i', $m[0])) {
+				return $m[0];
+			}
+			return $m[0] . $field;
+		}, $html);
+		return ($out === null) ? $html : $out;
+	}
+
+	function verifyCsrfToken()
+	{
+		$submitted = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+		if (!$this->_csrf_token || !hash_equals($this->_csrf_token, $submitted)) {
+			$this->setMsg('Invalid or missing security token.', UI_MSG_ERROR);
+			$this->redirect('m=public&a=access_denied');
+		}
+	}
+
+	/**
 	 * Set the display of warning for untranslated strings
 	 * @param string
 	 */

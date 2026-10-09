@@ -95,13 +95,13 @@ END:VCALENDAR'
 ;
 	}
 	
-	$ical = str_replace ( 'Ã©' , 'é' , $ical);
-	$ical = str_replace ( 'Ã¨' , 'è' , $ical);
-	$ical = str_replace ( 'Ã' , 'à' , $ical);
-	$ical = str_replace ( 'Â°' , '°' , $ical);
-	$ical = str_replace ( 'àª' , 'ê' , $ical);
-	$ical = str_replace ( '&eacute;' , 'é' , $ical);
-	$ical = str_replace ( '&acirc;' , 'â' , $ical);
+	$ical = str_replace ( 'Ã©' , 'ï¿½' , $ical);
+	$ical = str_replace ( 'Ã¨' , 'ï¿½' , $ical);
+	$ical = str_replace ( 'ï¿½' , 'ï¿½' , $ical);
+	$ical = str_replace ( 'Â°' , 'ï¿½' , $ical);
+	$ical = str_replace ( 'ï¿½' , 'ï¿½' , $ical);
+	$ical = str_replace ( '&eacute;' , 'ï¿½' , $ical);
+	$ical = str_replace ( '&acirc;' , 'ï¿½' , $ical);
 	if($only_mail){
 		return $organiser_email;
 	}
@@ -187,13 +187,13 @@ function sendIcal($task_id, $lastUpdate)
 	foreach($rows as $row){
 		$message = $taskText.' "'.$row['task_name'].'" '.$ofProjectText.' "'.$row['project_name'].'" '.$hasBeenText.' '.$updateMessage;
 	}
-	$message = str_replace ( 'Ã©' , 'é' , $message);
-	$message = str_replace ( 'Ã¨' , 'è' , $message);
-	$message = str_replace ( 'Ã' , 'à' , $message);
-	$message = str_replace ( 'Â°' , '°' , $message);
-	$message = str_replace ( 'àª' , 'ê' , $message);
-	$message = str_replace ( '&eacute;' , 'é' , $message);
-	$message = str_replace ( '&acirc;' , 'â' , $message);
+	$message = str_replace ( 'Ã©' , 'ï¿½' , $message);
+	$message = str_replace ( 'Ã¨' , 'ï¿½' , $message);
+	$message = str_replace ( 'ï¿½' , 'ï¿½' , $message);
+	$message = str_replace ( 'Â°' , 'ï¿½' , $message);
+	$message = str_replace ( 'ï¿½' , 'ï¿½' , $message);
+	$message = str_replace ( '&eacute;' , 'ï¿½' , $message);
+	$message = str_replace ( '&acirc;' , 'ï¿½' , $message);
 	$body = "--". $boundary ."\nContent-Type: text/calendar; charset=ISO-8859-1\r\n\n".$ical ."\r\n\n". "--". $boundary ."\nContent-Type: text/plain; charset=ISO-8859-1\r\n\n".$message. $attached;
 	$q = new DBQuery();
 	$q->addTable('user_tasks', 'ut');

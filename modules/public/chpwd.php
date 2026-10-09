@@ -15,13 +15,16 @@ if ($user_id) {
 
 	// has the change form been posted
 	if ($new_pwd1 && $new_pwd2 && $new_pwd1 == $new_pwd2) {
-		// check that the old password matches
-		$old_md5 = md5($old_pwd);
+		// check that the old password matches (supports both password_hash and legacy MD5)
 		$q = new DBQuery;
-		$q->addQuery('user_id');
+		$q->addQuery('user_id, user_password');
 		$q->addTable('users');
-		$q->addWhere("user_password='$old_md5' AND user_id=$user_id");
-		if ($AppUI->user_type == 1 || $q->loadResult() == $user_id) {
+		$q->addWhere('user_id = ' . $user_id);
+		$row = $q->loadList();
+		$stored = isset($row[0]['user_password']) ? $row[0]['user_password'] : '';
+		$legacy_ok = (strlen($stored) === 32 && md5($old_pwd) === $stored);
+		$pwd_ok = password_verify($old_pwd, $stored) || $legacy_ok;
+		if ($AppUI->user_type == 1 || $pwd_ok) {
 			require_once($AppUI->getModuleClass('admin'));
 			$user = new CUser();
 			$user->user_id = $user_id;
