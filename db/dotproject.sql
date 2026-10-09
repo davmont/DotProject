@@ -1377,6 +1377,36 @@ SELECT 2, id FROM `%dbprefix%gacl_aro` WHERE `section_value` = 'user' AND `value
 INSERT IGNORE INTO `%dbprefix%gacl_phpgacl` (`name`, `value`) VALUES
     ('version', '3.3.2'), ('schema_version', '2.1');
 
+# 11b. phpGACL id sequences: start after the seeded ids, so objects added later
+#      (installer, module installs, new users) do not collide with them
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_acl_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_acl_seq`;
+INSERT INTO `%dbprefix%gacl_acl_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_acl`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_aco_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_aco_seq`;
+INSERT INTO `%dbprefix%gacl_aco_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_aco`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_aro_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_aro_seq`;
+INSERT INTO `%dbprefix%gacl_aro_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_aro`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_axo_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_axo_seq`;
+INSERT INTO `%dbprefix%gacl_axo_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_axo`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_aco_sections_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_aco_sections_seq`;
+INSERT INTO `%dbprefix%gacl_aco_sections_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_aco_sections`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_aro_sections_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_aro_sections_seq`;
+INSERT INTO `%dbprefix%gacl_aro_sections_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_aro_sections`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_axo_sections_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_axo_sections_seq`;
+INSERT INTO `%dbprefix%gacl_axo_sections_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_axo_sections`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_aro_groups_id_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_aro_groups_id_seq`;
+INSERT INTO `%dbprefix%gacl_aro_groups_id_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_aro_groups`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_axo_groups_id_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_axo_groups_id_seq`;
+INSERT INTO `%dbprefix%gacl_axo_groups_id_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_axo_groups`;
+
 # 12. Build dotpermissions lookup table
 
 # Pass 1: Direct user to specific module object
