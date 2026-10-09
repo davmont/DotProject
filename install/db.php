@@ -85,7 +85,7 @@ if ($_POST['mode'] == 'upgrade') {
 	</tr>
 	<tr>
 		<td class="item">Database User Password</td>
-		<td align="left"><input class="text" type="password" name="dbpass" value="<?php echo htmlspecialchars($dPconfig['dbpass'], ENT_QUOTES); ?>" /></td>
+		<td align="left"><input class="text" type="password" name="dbpass" value="<?php echo is_file('../includes/config.php') ? '' : htmlspecialchars($dPconfig['dbpass'], ENT_QUOTES); ?>" /><?php if (is_file('../includes/config.php')) { ?> <span class="item" style="font-size: 12px; color: #666;">(as set in includes/config.php)</span><?php } ?></td>
 	</tr>
 	<tr>
 		<td class="item">Use Persistent Connection?</td>

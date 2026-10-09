@@ -9,6 +9,6 @@ $dPconfig['dbprefix'] = 'dotp_';
 $dPconfig['dbuser'] = 'dotproject';
 $dPconfig['dbpass'] = 'dotproject';
 $dPconfig['dbpersist'] = false;
-$dPconfig['root_dir'] = defined('DP_BASE_DIR') ? DP_BASE_DIR : dirname(__DIR__);
-$dPconfig['base_url'] = defined('DP_BASE_URL') ? DP_BASE_URL : 'http://127.0.0.1:8089';
+$dPconfig['root_dir'] = DP_BASE_DIR;
+$dPconfig['base_url'] = DP_BASE_URL;
 ?>
