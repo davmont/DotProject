@@ -1,0 +1,29 @@
+name: dp-audit
+services:
+  db:
+    image: mariadb:10.11
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: dotproject
+      MARIADB_USER: dotproject
+      MARIADB_PASSWORD: dotproject
+    command: --sql-mode=""
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    tmpfs: [/var/lib/mysql]
+  web:
+    build: .
+    security_opt: ["label:disable"]
+    environment:
+      APACHE_RUN_USER: "#1000"
+      APACHE_RUN_GROUP: "#1000"
+    ports: ["127.0.0.1:8089:80"]
+    depends_on:
+      db: { condition: service_healthy }
+    volumes:
+      - ..:/var/www/html:ro
+      - ./config.php:/var/www/html/includes/config.php:ro
+      - ./files:/var/www/html/files:rw
