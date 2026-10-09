@@ -94,6 +94,12 @@ class dPacl extends gacl_api
 		// If the check failed, try to auto-repair for admin user (user_id=1)
 		// This handles cases where the GACL seed data wasn't fully loaded during install
 		$login_int = (int) $login;
+		// Only the built-in administrator is repaired. Any other user without a
+		// role must not log in: removing all roles is how an account is disabled,
+		// and the repair below would put that user in the Administrator group.
+		if ($login_int !== 1) {
+			return 0;
+		}
 		$dbprefix = dPgetConfig('dbprefix', '');
 
 		// Check if the ARO entry exists at all
@@ -122,7 +128,7 @@ class dPacl extends gacl_api
 			$next_row = $q4->loadHash();
 			$next_id = $next_row ? $next_row['next_id'] : 10;
 
-			db_exec("INSERT INTO {$dbprefix}gacl_aro (id, section_value, value, order_value, name, hidden) VALUES ({$next_id}, 'user', '{$login_int}', 1, '{$username}', 0)");
+			db_exec("INSERT INTO {$dbprefix}gacl_aro (id, section_value, value, order_value, name, hidden) VALUES (" . (int) $next_id . ", 'user', '{$login_int}', 1, '" . db_escape($username) . "', 0)");
 			$aro_id = $next_id;
 			error_log("checkLogin: Created missing ARO entry for user_id={$login_int}, aro_id={$aro_id}");
 		} else {
