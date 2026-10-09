@@ -73,7 +73,7 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 						break;
 				}
 				
-				fwrite($handle, "\$PROJDESIGN_CONFIG['".$key."'] = '".$val."';\n");
+				fwrite($handle, "\$PROJDESIGN_CONFIG[" . var_export($key, true) . "] = " . var_export((string)$val, true) . ";\n");
 			}
 
 			fwrite($handle, "?>\n");

@@ -323,6 +323,17 @@ if (preg_match('/^do(_|sql|modsql)/', $a)) {
 	}
 }
 
+// Module configuration pages save settings when posted to (some into PHP files the
+// module includes): system administrators only, and posts need the CSRF token.
+if ($a == 'configure') {
+	if (!getPermission('system', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		$AppUI->verifyCsrfToken();
+	}
+}
+
 // start output proper
 include(DP_BASE_DIR . '/style/' . $uistyle . '/overrides.php');
 // Every POST form in the page gets the CSRF token checked on dosql requests.
