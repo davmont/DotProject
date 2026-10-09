@@ -44,7 +44,7 @@ if (!(empty($macroprojFilter_extra))) {
 natsort($macroprojFilter);
 
 $scroll_date    = 1;
-$display_option = dPgetParam($_POST, 'display_option', 'this_month');
+$display_option = dPvalidateOrder(dPgetParam($_POST, 'display_option', 'this_month'), array('this_month', 'all', 'custom'), 'this_month');
 $df             = $AppUI->getPref('SHDATEFORMAT');
 
 if ($display_option == 'custom') {
@@ -119,10 +119,7 @@ function showFullMacroProject() {
 <tr>
 	<td>
 		<form name="editFrm" method="post" action="?<?php
-foreach ($_GET as $key => $val) {
-    $url_query_string .= (($url_query_string) ? '&amp;' : '') . $key . '=' . $val;
-}
-echo ($url_query_string);
+echo htmlspecialchars(http_build_query($_GET), ENT_QUOTES);
 ?>">
 		<input type="hidden" name="display_option" value="<?php echo $display_option; ?>" />
 		<table border="0" cellpadding="4" cellspacing="0" class="tbl" summary="select dates for graphs">

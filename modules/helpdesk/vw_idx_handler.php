@@ -112,30 +112,30 @@ function vw_idx_handler ($type) {
       <td nowrap=\"nowrap\">
       <?php
       if ($row['item_requestor_email']) {
-        print "<a href=\"mailto:".$row['item_requestor_email']."\">".$row['item_requestor']."</a>";
+        print "<a href=\"mailto:".dPhtml($row['item_requestor_email'])."\">".dPhtml($row['item_requestor'])."</a>";
       } else {
-        print $row['item_requestor'];
+        print dPhtml($row['item_requestor']);
       }
       ?>
       </td>
-      <td width="20%"><a href="?m=helpdesk&a=view&item_id=<?php echo $row['item_id']?>"><?php echo $row['item_title']?></a></td>
-      <td width="80%"><?php echo substr($row['item_summary'],0,max(strpos($row['item_summary']."\n","\n"),80)) . '</td>'; ?></td>
+      <td width="20%"><a href="?m=helpdesk&a=view&item_id=<?php echo $row['item_id']?>"><?php echo dPhtml($row['item_title'])?></a></td>
+      <td width="80%"><?php echo dPhtml(substr($row['item_summary'],0,max(strpos($row['item_summary']."\n","\n"),80))) . '</td>'; ?></td>
 
       <td align="center" nowrap="nowrap">
       <?php
       if ($row['assigned_email']) {
-        print "<a href='mailto:{$row['assigned_email']}'>{$row['assigned_fullname']}</a>";
+        print "<a href='mailto:".dPhtml($row['assigned_email'])."'>".dPhtml($row['assigned_fullname'])."</a>";
       } else {
-        print $row['assigned_fullname'] ? $row['assigned_fullname'] : "-";
+        print $row['assigned_fullname'] ? dPhtml($row['assigned_fullname']) : "-";
       }
       ?>
       </td>
       <td align="center" nowrap><?php echo $AppUI->_($ist[@$row['item_status']]); ?></td>
       <td align="center" nowrap><?php echo $AppUI->_($ipr[@$row['item_priority']]); ?></td>
       <td align="center" nowrap><?php echo @$sd?></td>
-      <td align="center" style="background-color: #<?php echo $row['project_color_identifier']?>;" nowrap>
+      <td align="center" style="background-color: #<?php echo preg_replace('/[^0-9a-fA-F]/', '', $row['project_color_identifier'])?>;" nowrap>
       <?php if ($row['project_id']) { ?>
-        <a href="./index.php?m=projects&a=view&project_id=<?php echo $row['project_id']?>" style="color: <?php echo  bestColor( $row['project_color_identifier'] ) ?>;"><?php echo $row['project_name']?></a>
+        <a href="./index.php?m=projects&a=view&project_id=<?php echo $row['project_id']?>" style="color: <?php echo  bestColor( $row['project_color_identifier'] ) ?>;"><?php echo dPhtml($row['project_name'])?></a>
       <?php } else { ?>
         -
       <?php } ?>

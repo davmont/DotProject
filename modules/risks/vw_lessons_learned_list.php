@@ -53,8 +53,8 @@ $inactiveList = $q->loadList();
         </a>
     </td>
     <td width="25"><?php echo $row['risk_id'];?></td>
-    <td width="25"><?php echo $row['risk_name'];?></td>
-    <td><?php echo $row['risk_lessons_learned'];?></td>
+    <td width="25"><?php echo dPhtml($row['risk_name']);?></td>
+    <td><?php echo dPhtml($row['risk_lessons_learned']);?></td>
 </tr>
 <?php } ?>
 </table>
@@ -79,8 +79,8 @@ $inactiveList = $q->loadList();
         </a>
     </td>
     <td width="25"><?php echo $row['risk_id'];?></td>
-    <td width="25"><?php echo $row['risk_name'];?></td>
-    <td><?php echo $row['risk_lessons_learned'];?></td>
+    <td width="25"><?php echo dPhtml($row['risk_name']);?></td>
+    <td><?php echo dPhtml($row['risk_lessons_learned']);?></td>
 </tr>
 <?php } ?>
 </table>

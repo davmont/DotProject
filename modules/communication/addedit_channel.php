@@ -65,7 +65,7 @@ $channels = $channels->loadList();
                         <td><select id="channel" name="channel" style="min-width:150px">
                                 <?php
                                 foreach ($channels as $registro) {
-                                    echo '<option value="'.$registro['communication_channel_id'].'">'. $registro['communication_channel'].'</option>';
+                                    echo '<option value="'.$registro['communication_channel_id'].'">'. dPhtml($registro['communication_channel']).'</option>';
                                 }
                                 ?>
                             </select>

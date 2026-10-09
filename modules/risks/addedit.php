@@ -71,6 +71,9 @@ $projects = $q->loadHashList();
 $projectSelected = intval(dPgetParam($_GET, 'project_id'));
 $t = intval(dPgetParam($_GET, 'tab'));
 $vw = dPgetParam($_GET, 'vw');
+if (!in_array($vw, array('vw_watchlist', 'vw_near_term_responses_list', 'vw_strategys_list', 'vw_lessons_learned_list'), true)) {
+    $vw = null;
+}
 // setup the title block
 $ttl = $risk_id ? "LBL_EDIT" : "LBL_ADD";
 $titleBlock = new CTitleBlock($ttl, 'risks.png', $m, "$m.$a");
@@ -141,7 +144,7 @@ $titleBlock->show();
                     <tr>
                         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('LBL_NAME'); ?>*:</td>
                         <td>
-                            <input type="text" size="64" name="risk_name" value="<?php echo $obj->risk_name; ?>">
+                            <input type="text" size="64" name="risk_name" value="<?php echo dPhtml($obj->risk_name); ?>">
                         </td>
                     </tr>
                     <tr>
@@ -277,7 +280,7 @@ $titleBlock->show();
         </tr>
         <tr>
             <td>
-                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('LBL_CANCEL'); ?>" onClick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {location.href = '<?php echo $href; ?>';}"/>
+                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('LBL_CANCEL'); ?>" onClick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {location.href = <?php echo dPjsAttr($href); ?>;}"/>
             </td>
             <td align="right">
                 <input type="button" class="button" value="<?php echo $AppUI->_('LBL_SUBMIT'); ?>" onclick="submitIt()" />

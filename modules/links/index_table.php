@@ -200,15 +200,15 @@ for ($i=($page-1)*$xpg_pagesize, $pmax=$page*$xpg_pagesize; $i<$pmax && $i<$xpg_
 ?>
 	<tr>
 		<td colspan="10" style="background-color:#<?php 
-			echo ($row['project_color_identifier']); ?>" style="border: outset 2px #eeeeee">
+			echo preg_replace('/[^0-9a-fA-F]/', '', $row['project_color_identifier']); ?>" style="border: outset 2px #eeeeee">
 			<font color="<?php 
 			echo (bestColor($row['project_color_identifier'])); ?>">
 			<?php
 			if ($row['project_id'] > 0) {
 				echo ('a href="?m=projects&amp;a=view&amp;project_id=' . $row['link_project'] 
-				      . '">' . $row['project_name'] . '</a>');
+				      . '">' . dPhtml($row['project_name']) . '</a>');
 			} else {
-				echo ($row['project_name']);
+				echo (dPhtml($row['project_name']));
 			}
 ?>
 			</font>
@@ -231,15 +231,15 @@ for ($i=($page-1)*$xpg_pagesize, $pmax=$page*$xpg_pagesize; $i<$pmax && $i<$xpg_
 	?>
 	</td>
 	<td nowrap="8%"><?php 
-	echo ('<a href="' . $row['link_url'] . '" title="' . $row['link_description'] 
-	      . '" target="_blank">' . $row['link_name'] . '</a>'); ?></td>
-	<td width="20%"><?php echo $row['link_description'];?></td>
+	echo ('<a href="' . dPhtml(dPsafeUrl($row['link_url'])) . '" title="' . dPhtml($row['link_description']) 
+	      . '" target="_blank">' . dPhtml($row['link_name']) . '</a>'); ?></td>
+	<td width="20%"><?php echo dPhtml($row['link_description']);?></td>
     <td width="10%" nowrap="nowrap" align="center"><?php 
 	echo $link_types[$row['link_category']];?></td> 
 	<td width="5%" align="center"><a href="?m=tasks&amp;a=view&amp;task_id=<?php 
-	echo $row['task_id'];?>"><?php echo $row['task_name'];?></a></td>
+	echo $row['task_id'];?>"><?php echo dPhtml($row['task_name']);?></a></td>
 	<td width="15%" nowrap="nowrap"><?php 
-	echo $row['contact_first_name'].' '.$row['contact_last_name'];?></td>
+	echo dPhtml($row['contact_first_name'].' '.$row['contact_last_name']);?></td>
 	<td width="15%" nowrap="nowrap" align="right"><?php 
 	echo $link_date->format($df . ' ' . $tf);?></td>
 </tr>

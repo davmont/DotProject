@@ -58,7 +58,7 @@ if (!defined('DP_BASE_DIR')) {
 				                       "company_phone2"   => "contact_phone2",
 				                       "company_fax"   => "contact_fax");
 			}
-			$data_update_script = "opener.setCompany('" . $posted_id . "', '" . db_escape($r_data[$name_field]) . "');\n";
+			$data_update_script = "opener.setCompany('" . $posted_id . "', " . dPjs($r_data[$name_field]) . ");\n";
 		} else if ($table_name == "departments") {
 			$update_fields = array("dept_id"     => "contact_department");
 			if ($update_address) {
@@ -70,13 +70,13 @@ if (!defined('DP_BASE_DIR')) {
 				                       "dept_phone"   => "contact_phone",
 				                       "dept_fax"   => "contact_fax");
 			}
-			$data_update_script = "opener.setDepartment('" . $posted_id . "', '" . db_escape($r_data[$name_field]) . "');\n";
+			$data_update_script = "opener.setDepartment('" . $posted_id . "', " . dPjs($r_data[$name_field]) . ");\n";
 		}
 	
 		// Let's figure out which fields are going to
 		// be updated
 		foreach ($update_fields as $record_field => $contact_field) {
-			$data_update_script .= "opener.document.changecontact.$contact_field.value = '".$r_data[$record_field]."';\n";
+			$data_update_script .= "opener.document.changecontact.$contact_field.value = " . dPjs($r_data[$record_field]) . ";\n";
 		}
 		?>
 			<script language='javascript' type="text/javascript">

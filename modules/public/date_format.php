@@ -13,6 +13,6 @@ $formatted_date = $this_day->format($df);
 ?>
 <script language="JavaScript" type="text/javascript">
 <!--
-	window.parent.document.<?php echo $field; ?>.value = '<?php echo $formatted_date; ?>';
+	window.parent.document.<?php echo $field; ?>.value = <?php echo dPjs($formatted_date); ?>;
 //-->
 </script>

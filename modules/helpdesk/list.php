@@ -52,7 +52,7 @@ if($HELPDESK_CONFIG['search_criteria_search']){
     //echo $AppUI->getState( 'HelpDeskSearch' ); 
     /*
     $search =$AppUI->getState( 'HelpDeskSearch' ) !== null ? $AppUI->getState( 'HelpDeskSearch' ) : '';
-    echo "<br>".$search."<br>";
+    echo "<br>".dPhtml($search)."<br>";
     */
 		/*if(strlen(trim($search))>0){
 			$tarr[] = "(lower(hi.item_title) LIKE lower('%$search%')
@@ -72,7 +72,7 @@ if($HELPDESK_CONFIG['search_criteria_search']){
 		$selectors[] = "<td align=\"right\"><label for=\"search\">"
                . $AppUI->_('Search')
                . ":</label></td><td nowrap=\"nowrap\">"
-               . "<input type=\"text\" name=\"search\" id=\"search\" class=\"text\" value=\"".$search."\" size=\"20\">"
+               . "<input type=\"text\" name=\"search\" id=\"search\" class=\"text\" value=\"".dPhtml($search)."\" size=\"20\">"
                . " <input type=\"submit\" value=\""
                . $AppUI->_('Search')
                . "\" class=\"button\" /></td>";
@@ -555,29 +555,29 @@ foreach ($rows as $row) {
 	
 	$s .= $CR . '<td nowrap align="center">';
 	if ($row['item_requestor_email']) {
-		$s .= $CR . "<a href=\"mailto:".$row['item_requestor_email']."\">"
-              . $row['item_requestor']
+		$s .= $CR . "<a href=\"mailto:".dPhtml($row['item_requestor_email'])."\">"
+              . dPhtml($row['item_requestor'])
               . "</a>";
 	} else {
-		$s .= $CR . $row['item_requestor'];
+		$s .= $CR . dPhtml($row['item_requestor']);
 	}
 	$s .= $CR . "</td>";
 
 	$s .= $CR . '<td width="20%" align="center"><a href="?m=helpdesk&a=view&item_id='
             . $row['item_id']
             . '">'
-            . $row['item_title']
+            . dPhtml($row['item_title'])
             . '</a></td>';
 	$s .= $CR . '<td width="50%">' 
-            . substr($row['item_summary'],0,max(strpos($row['item_summary']."\n","\n"),70))
+            . dPhtml(substr($row['item_summary'],0,max(strpos($row['item_summary']."\n","\n"),70)))
             . ' </td>';
 	$s .= $CR . '<td nowrap align="center">';
 	if ($row['assigned_email']) {
-		$s .= $CR . '<a href="mailto:'.$row['assigned_email'].'">'
-              . $row['assigned_fullname']
+		$s .= $CR . '<a href="mailto:'.dPhtml($row['assigned_email']).'">'
+              . dPhtml($row['assigned_fullname'])
               . "</a>";
 	} else {
-		$s .= $CR . $row['assigned_fullname'];
+		$s .= $CR . dPhtml($row['assigned_fullname']);
 	}
 	$s .= $CR . "</td>";
 	$s .= $CR . '<td align="center" nowrap>' . $AppUI->_($ist[@$row['item_status']]) . '</td>';
@@ -618,12 +618,12 @@ foreach ($rows as $row) {
 	
 	if($row['project_id']){
 		$s .= $CR . '<td width="30%" align="center" style="background-color: #'
-		    . $row['project_color_identifier']
+		    . preg_replace('/[^0-9a-fA-F]/', '', $row['project_color_identifier'])
 		    . ';"><a href="./index.php?m=projects&a=view&project_id='
         . $row['project_id'].'" style="color: '
         . bestColor( @$row['project_color_identifier'] )
         . ';">'
-        . $row['project_name']
+        . dPhtml($row['project_name'])
         .'</a></td>';
 	} else {
 		$s .= $CR . '<td align="center">-</td>';
@@ -718,9 +718,9 @@ function sort_header($field, $name) {
   	$link = "<a class=\"hdr\" href=\"?m=helpdesk&a=list&orderby=$field&orderdesc=";
   } else {
   	if (!$_REQUEST['project_id']) {
-  		$link = "<a class=\"hdr\" href=\"?m=companies&a=view&company_id={$_REQUEST['company_id']}&orderby=$field&orderdesc=";
+  		$link = "<a class=\"hdr\" href=\"?m=companies&a=view&company_id=".(int)$_REQUEST['company_id']."&orderby=$field&orderdesc=";
   	} else {
-  		$link = "<a class=\"hdr\" href=\"?m=projects&a=view&project_id={$_REQUEST['project_id']}&orderby=$field&orderdesc=";
+  		$link = "<a class=\"hdr\" href=\"?m=projects&a=view&project_id=".(int)$_REQUEST['project_id']."&orderby=$field&orderdesc=";
   	}
   }
 

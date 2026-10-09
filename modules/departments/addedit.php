@@ -104,51 +104,51 @@ function submitIt() {
 <table cellspacing="0" cellpadding="4" border="0" width="98%" class="std" summary="add/edit department">
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Department Company');?>:</td>
-	<td><strong><?php echo $company_name;?></strong></td>
+	<td><strong><?php echo dPhtml($company_name);?></strong></td>
 </tr>
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Department Name');?>:</td>
 	<td>
-		<input type="text" class="text" name="dept_name" value="<?php echo @$drow["dept_name"];?>" size="50" maxlength="255" />
+		<input type="text" class="text" name="dept_name" value="<?php echo dPhtml(@$drow["dept_name"]);?>" size="50" maxlength="255" />
 		<span class="smallNorm">(<?php echo $AppUI->_('required');?>)</span>
 	</td>
 </tr>
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Phone');?>:</td>
 	<td>
-		<input type="text" class="text" name="dept_phone" value="<?php echo @$drow["dept_phone"];?>" maxlength="30" />
+		<input type="text" class="text" name="dept_phone" value="<?php echo dPhtml(@$drow["dept_phone"]);?>" maxlength="30" />
 	</td>
 </tr>
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Fax');?>:</td>
 	<td>
-		<input type="text" class="text" name="dept_fax" value="<?php echo @$drow["dept_fax"];?>" maxlength="30" />
+		<input type="text" class="text" name="dept_fax" value="<?php echo dPhtml(@$drow["dept_fax"]);?>" maxlength="30" />
 	</td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('Address');?>1:</td>
-	<td><input type="text" class="text" name="dept_address1" value="<?php echo @$drow["dept_address1"];?>" size="50" maxlength="255" /></td>
+	<td><input type="text" class="text" name="dept_address1" value="<?php echo dPhtml(@$drow["dept_address1"]);?>" size="50" maxlength="255" /></td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('Address');?>2:</td>
-	<td><input type="text" class="text" name="dept_address2" value="<?php echo @$drow["dept_address2"];?>" size="50" maxlength="255" /></td>
+	<td><input type="text" class="text" name="dept_address2" value="<?php echo dPhtml(@$drow["dept_address2"]);?>" size="50" maxlength="255" /></td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('City');?>:</td>
-	<td><input type="text" class="text" name="dept_city" value="<?php echo @$drow["dept_city"];?>" size="50" maxlength="50" /></td>
+	<td><input type="text" class="text" name="dept_city" value="<?php echo dPhtml(@$drow["dept_city"]);?>" size="50" maxlength="50" /></td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('State');?>:</td>
-	<td><input type="text" class="text" name="dept_state" value="<?php echo @$drow["dept_state"];?>" maxlength="50" /></td>
+	<td><input type="text" class="text" name="dept_state" value="<?php echo dPhtml(@$drow["dept_state"]);?>" maxlength="50" /></td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('Zip');?>:</td>
-	<td><input type="text" class="text" name="dept_zip" value="<?php echo @$drow["dept_zip"];?>" maxlength="15" /></td>
+	<td><input type="text" class="text" name="dept_zip" value="<?php echo dPhtml(@$drow["dept_zip"]);?>" maxlength="15" /></td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('URL');?><A name="x"></a></td>
 	<td>
-		<input type="text" class="text" value="<?php echo @$drow["dept_url"];?>" name="dept_url" size="50" maxlength="255" />
+		<input type="text" class="text" value="<?php echo dPhtml(@$drow["dept_url"]);?>" name="dept_url" size="50" maxlength="255" />
 		<a href="#x" onclick="javascript:testURL('dept_url')">[<?php echo $AppUI->_('test');?>]</a>
 	</td>
 </tr>
@@ -179,7 +179,7 @@ if (count($depts)) {
 <tr>
 	<td align="right" valign="top" nowrap="nowrap"><?php echo $AppUI->_('Description');?>:</td>
 	<td align="left">
-		<textarea cols="70" rows="10" class="textarea" name="dept_desc"><?php echo @$drow["dept_desc"];?></textarea>
+		<textarea cols="70" rows="10" class="textarea" name="dept_desc"><?php echo dPhtml(@$drow["dept_desc"]);?></textarea>
 	</td>
 </tr>
 

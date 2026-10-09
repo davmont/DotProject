@@ -61,12 +61,12 @@ if (!defined('DP_BASE_DIR')) {
 						$m_row .= "</td>"; // Priority icons
 						$m_row .= "<td>".$message->task_start_date."</td>";
 						$task_name = $message->task_name != "" ? $message->task_name : $AppUI->_("No subject");
-						$m_row .= "<td> <a href='index.php?m=messages&message_id=".$message->task_id."'>$task_name</a></td>";
+						$m_row .= "<td> <a href='index.php?m=messages&message_id=".$message->task_id."'>" . dPhtml($task_name) . "</a></td>";
 						
 						if($show_sent_messages){
 							$m_row .= "<td>".$AppUI->_($message->task_status == -1 ? "Yes" : "No")."</td>";
 						} else {
-							$m_row .= "<td>".$user_hash[$message->task_owner]."</td>";
+							$m_row .= "<td>".dPhtml($user_hash[$message->task_owner])."</td>";
 						}
 						
 						$m_row .= "<td></td>"; // Actions
@@ -86,7 +86,7 @@ if (!defined('DP_BASE_DIR')) {
 					
 					$recipient_list = "";
 					foreach(db_loadColumn($sql) as $user_id){
-						$recipient_list .= $user_hash[$user_id].", ";
+						$recipient_list .= dPhtml($user_hash[$user_id]).", ";
 					}
 					$recipient_list = substr($recipient_list, 0, strlen($recipient_list)-2);
 					
@@ -96,10 +96,10 @@ if (!defined('DP_BASE_DIR')) {
 								<th><?php echo $AppUI->_("Date"); ?></th><td><?php echo $view_message->task_start_date; ?></td>
 							</tr>
 							<tr>
-								<th><?php echo $AppUI->_("Title"); ?></th><td><?php echo $view_message->task_name; ?></td>
+								<th><?php echo $AppUI->_("Title"); ?></th><td><?php echo dPhtml($view_message->task_name); ?></td>
 							</tr>
 							<tr>
-								<th><?php echo $AppUI->_("Author"); ?></th><td><?php echo $user_hash[$view_message->task_owner]; ?></td>
+								<th><?php echo $AppUI->_("Author"); ?></th><td><?php echo dPhtml($user_hash[$view_message->task_owner]); ?></td>
 							</tr>
 							<tr>
 								<th><?php echo $AppUI->_("Recipients"); ?></th><td><?php echo $recipient_list; ?></td>
@@ -108,7 +108,7 @@ if (!defined('DP_BASE_DIR')) {
 								<th colspan='2'><?php echo $AppUI->_("Message"); ?></th>
 							</tr>
 							<tr>
-								<td colspan='2'><?php echo nl2br($view_message->task_description); ?></td>
+								<td colspan='2'><?php echo nl2br(dPhtml($view_message->task_description)); ?></td>
 							</tr>
 							<tr>
 								<td colspan='2'>

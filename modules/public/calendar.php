@@ -10,6 +10,9 @@ require_once($AppUI->getModuleClass('calendar'));
 $callback = isset($_GET['callback']) ? preg_replace('/[^A-Za-z0-9_.]/', '', $_GET['callback']) : 0;
 $date = dpGetParam($_GET, 'date', null);
 $prev_date = dpGetParam($_GET, 'uts', null);
+if (!is_null($prev_date)) {
+	$prev_date = preg_replace('/[^0-9]/', '', $prev_date);
+}
 
 // if $date is empty, set to null
 $date = $date !== '' ? $date : null;

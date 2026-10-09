@@ -148,7 +148,7 @@ $notHumanCost = $q->loadList();
     <?php foreach ($humanCost as $row) {
         ?>
         <tr>
-            <td nowrap="nowrap"><?php echo $row['cost_description']; ?></td>
+            <td nowrap="nowrap"><?php echo dPhtml($row['cost_description']); ?></td>
             <?php
             $mtz = costsBudget($meses, $c, $row, substr($datesProject->fields['project_start_date'], 5, -12), substr($datesProject->fields['project_end_date'], 5, -12), $mtz);
             $c++;
@@ -187,7 +187,7 @@ $notHumanCost = $q->loadList();
     <?php foreach ($notHumanCost as $row) {
         ?>
         <tr>
-            <td nowrap="nowrap" width="15%"><?php echo $row['cost_description']; ?></td>
+            <td nowrap="nowrap" width="15%"><?php echo dPhtml($row['cost_description']); ?></td>
             <?php
             $mtzNH = costsBudget($meses, $c, $row, substr($datesProject->fields['project_start_date'], 5, -12), substr($datesProject->fields['project_end_date'], 5, -12), $mtzNH);
             $c++;
@@ -237,7 +237,7 @@ $notHumanCost = $q->loadList();
                     href="index.php?m=costs&a=addedit_budget_reserve&budget_reserve_id=<?php echo $row['budget_reserve_id']; ?>&project_id=<?php echo $projectSelected ?>">
                     <img src="./modules/costs/images/stock_edit-16.png" border="0" width="12" height="12">
                 </a>&nbsp;
-                <?php echo $row['budget_reserve_description'] ?>
+                <?php echo dPhtml($row['budget_reserve_description']) ?>
             </td>
 
             <?php

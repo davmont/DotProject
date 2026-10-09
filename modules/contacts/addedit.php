@@ -47,7 +47,7 @@ $dept_detail = $row->getDepartmentDetails();
 if ($contact_id == 0 && $company_id > 0) {
 	$company_detail['company_id'] = $company_id;
 	$company_detail['company_name'] = $company_name;
-	echo $company_name;
+	echo dPhtml($company_name);
 }
 
 ?>
@@ -55,7 +55,7 @@ if ($contact_id == 0 && $company_id > 0) {
 <script language="javascript" type="text/javascript">
 <?php
 	echo "window.company_id=" . (int)dPgetParam($company_detail, 'company_id', 0) . ";\n";
-	echo "window.company_value='" . dPgetCleanParam($company_detail, 'company_name', "") . "';\n";
+	echo "window.company_value=" . dPjs(dPgetCleanParam($company_detail, 'company_name', "")) . ";\n";
 ?>
 
 function submitIt() {
@@ -160,20 +160,20 @@ function companyChange() {
 		<tr>
 			<td align="right"><?php echo $AppUI->_('First Name');?>:</td>
 			<td>
-				<input type="text" class="text" size="25" name="contact_first_name" value="<?php echo @$row->contact_first_name;?>" maxlength="50" />
+				<input type="text" class="text" size="25" name="contact_first_name" value="<?php echo dPhtml(@$row->contact_first_name);?>" maxlength="50" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right">&nbsp;&nbsp;<?php echo $AppUI->_('Last Name');?>:</td>
 			<td>
-				<input type="text" class="text" size="25" name="contact_last_name" value="<?php echo @$row->contact_last_name;?>" maxlength="50" <?php if ($contact_id==0) {?> onblur="javascript:orderByName('name')"<?php }?> />
+				<input type="text" class="text" size="25" name="contact_last_name" value="<?php echo dPhtml(@$row->contact_last_name);?>" maxlength="50" <?php if ($contact_id==0) {?> onblur="javascript:orderByName('name')"<?php }?> />
 				<a href="#" onclick="javascript:orderByName('name')">[<?php echo $AppUI->_('use in display');?>]</a>
 			</td>
 		</tr>
 		<tr>
 			<td align="right" width="100"><?php echo $AppUI->_('Display Name');?>: </td>
 			<td>
-				<input type="text" class="text" size="25" name="contact_order_by" value="<?php echo @$row->contact_order_by;?>" maxlength="50" />
+				<input type="text" class="text" size="25" name="contact_order_by" value="<?php echo dPhtml(@$row->contact_order_by);?>" maxlength="50" />
 			</td>
 		</tr>
 		<tr>
@@ -191,14 +191,14 @@ function companyChange() {
 		<tr>
 			<td align="right" width="100"><?php echo $AppUI->_('Job Title');?>:</td>
 			<td nowrap="nowrap">
-				<input type="text" class="text" name="contact_job" value="<?php echo @$row->contact_job;?>" maxlength="100" size="25" />
+				<input type="text" class="text" name="contact_job" value="<?php echo dPhtml(@$row->contact_job);?>" maxlength="100" size="25" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right" width="100"><?php echo $AppUI->_('Company');?>:</td>
 			<td nowrap="nowrap">
 				<input type="text" class="text" name="contact_company_name" value="<?php 
-					echo $company_detail['company_name'];
+					echo dPhtml($company_detail['company_name']);
 					?>" maxlength="100" size="25" />
 				<input type="button" class="button" value="<?php echo $AppUI->_('select company...');?>..." onclick="popCompany()" />
 				<input type='hidden' name='contact_company' value="<?php echo $company_detail['company_id']; ?>" />
@@ -208,7 +208,7 @@ function companyChange() {
 		<tr>
 			<td align="right" width="100"><?php echo $AppUI->_('Department');?>:</td>
 			<td nowrap="nowrap">
-				<input type="text" class="text" name="contact_department_name" value="<?php echo $dept_detail['dept_name'];?>" maxlength="100" size="25" />
+				<input type="text" class="text" name="contact_department_name" value="<?php echo dPhtml($dept_detail['dept_name']);?>" maxlength="100" size="25" />
 
 				<input type='hidden' name='contact_department' value='<?php echo $dept_detail['dept_id'];?>' />
 				<input type="button" class="button" value="<?php echo $AppUI->_('select department...');?>" onclick="popDepartment()" />
@@ -216,106 +216,106 @@ function companyChange() {
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Title');?>:</td>
-			<td><input type="text" class="text" name="contact_title" value="<?php echo @$row->contact_title;?>" maxlength="50" size="25" /></td>
+			<td><input type="text" class="text" name="contact_title" value="<?php echo dPhtml(@$row->contact_title);?>" maxlength="50" size="25" /></td>
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Type');?>:</td>
-			<td><input type="text" class="text" name="contact_type" value="<?php echo @$row->contact_type;?>" maxlength="50" size="25" /></td>
+			<td><input type="text" class="text" name="contact_type" value="<?php echo dPhtml(@$row->contact_type);?>" maxlength="50" size="25" /></td>
 		</tr>
 		<tr>
 			<td align="right" width="100"><?php echo $AppUI->_('Address');?>1:</td>
-			<td><input type="text" class="text" name="contact_address1" value="<?php echo @$row->contact_address1;?>" maxlength="60" size="25" /></td>
+			<td><input type="text" class="text" name="contact_address1" value="<?php echo dPhtml(@$row->contact_address1);?>" maxlength="60" size="25" /></td>
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Address');?>2:</td>
-			<td><input type="text" class="text" name="contact_address2" value="<?php echo @$row->contact_address2;?>" maxlength="60" size="25" /></td>
+			<td><input type="text" class="text" name="contact_address2" value="<?php echo dPhtml(@$row->contact_address2);?>" maxlength="60" size="25" /></td>
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('City');?>:</td>
-			<td><input type="text" class="text" name="contact_city" value="<?php echo @$row->contact_city;?>" maxlength="30" size="25" /></td>
+			<td><input type="text" class="text" name="contact_city" value="<?php echo dPhtml(@$row->contact_city);?>" maxlength="30" size="25" /></td>
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('State');?>:</td>
-			<td><input type="text" class="text" name="contact_state" value="<?php echo @$row->contact_state;?>" maxlength="30" size="25" /></td>
+			<td><input type="text" class="text" name="contact_state" value="<?php echo dPhtml(@$row->contact_state);?>" maxlength="30" size="25" /></td>
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Postcode').' / '.$AppUI->_('Zip');?>:</td>
-			<td><input type="text" class="text" name="contact_zip" value="<?php echo @$row->contact_zip;?>" maxlength="11" size="25" /></td>
+			<td><input type="text" class="text" name="contact_zip" value="<?php echo dPhtml(@$row->contact_zip);?>" maxlength="11" size="25" /></td>
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Country');?>:</td>
-			<td><input type="text" class="text" name="contact_country" value="<?php echo @$row->contact_country;?>" maxlength="30" size="25" /></td>
+			<td><input type="text" class="text" name="contact_country" value="<?php echo dPhtml(@$row->contact_country);?>" maxlength="30" size="25" /></td>
 		</tr>
 		<tr>
 			<td align="right" width="100"><?php echo $AppUI->_('Phone');?>:</td>
 			<td>
-				<input type="text" class="text" name="contact_phone" value="<?php echo @$row->contact_phone;?>" maxlength="30" size="25" />
+				<input type="text" class="text" name="contact_phone" value="<?php echo dPhtml(@$row->contact_phone);?>" maxlength="30" size="25" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Phone');?>2:</td>
 			<td>
-				<input type="text" class="text" name="contact_phone2" value="<?php echo @$row->contact_phone2;?>" maxlength="30" size="25" />
+				<input type="text" class="text" name="contact_phone2" value="<?php echo dPhtml(@$row->contact_phone2);?>" maxlength="30" size="25" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Fax');?>:</td>
 			<td>
-				<input type="text" class="text" name="contact_fax" value="<?php echo @$row->contact_fax;?>" maxlength="30" size="25" />
+				<input type="text" class="text" name="contact_fax" value="<?php echo dPhtml(@$row->contact_fax);?>" maxlength="30" size="25" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Mobile Phone');?>:</td>
 			<td>
-				<input type="text" class="text" name="contact_mobile" value="<?php echo @$row->contact_mobile;?>" maxlength="30" size="25" />
+				<input type="text" class="text" name="contact_mobile" value="<?php echo dPhtml(@$row->contact_mobile);?>" maxlength="30" size="25" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right" width="100"><?php echo $AppUI->_('Email');?>:</td>
 			<td nowrap="nowrap">
-				<input type="text" class="text" name="contact_email" value="<?php echo @$row->contact_email;?>" maxlength="255" size="25" />
+				<input type="text" class="text" name="contact_email" value="<?php echo dPhtml(@$row->contact_email);?>" maxlength="255" size="25" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Email');?>2:</td>
 			<td>
-				<input type="text" class="text" name="contact_email2" value="<?php echo @$row->contact_email2;?>" maxlength="255" size="25" />
+				<input type="text" class="text" name="contact_email2" value="<?php echo dPhtml(@$row->contact_email2);?>" maxlength="255" size="25" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('URL');?>:</td>
 			<td>
-				<input type="text" class="text" name="contact_url" value="<?php echo @$row->contact_url;?>" maxlength="255" size="25" />
+				<input type="text" class="text" name="contact_url" value="<?php echo dPhtml(@$row->contact_url);?>" maxlength="255" size="25" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right">Jabber:</td>
 			<td>
-				<input type="text" class="text" name="contact_jabber" value="<?php echo @$row->contact_jabber;?>" maxlength="255" size="25" />
+				<input type="text" class="text" name="contact_jabber" value="<?php echo dPhtml(@$row->contact_jabber);?>" maxlength="255" size="25" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right">ICQ:</td>
 			<td>
-				<input type="text" class="text" name="contact_icq" value="<?php echo @$row->contact_icq;?>" maxlength="20" size="25" />
+				<input type="text" class="text" name="contact_icq" value="<?php echo dPhtml(@$row->contact_icq);?>" maxlength="20" size="25" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right">AOL:</td>
 			<td>
-				<input type="text" class="text" name="contact_aol" value="<?php echo @$row->contact_aol;?>" maxlength="20" size="25" />
+				<input type="text" class="text" name="contact_aol" value="<?php echo dPhtml(@$row->contact_aol);?>" maxlength="20" size="25" />
 			</td>
                 </tr>
 		<tr>
 			<td align="right">MSN:</td>
 			<td>
-				<input type="text" class="text" name="contact_msn" value="<?php echo @$row->contact_msn;?>" maxlength="255" size="25" />
+				<input type="text" class="text" name="contact_msn" value="<?php echo dPhtml(@$row->contact_msn);?>" maxlength="255" size="25" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right">Yahoo:</td>
 			<td>
-				<input type="text" class="text" name="contact_yahoo" value="<?php echo @$row->contact_yahoo;?>" maxlength="255" size="25" />
+				<input type="text" class="text" name="contact_yahoo" value="<?php echo dPhtml(@$row->contact_yahoo);?>" maxlength="255" size="25" />
 			</td>
 		</tr>
 		<tr>
@@ -328,7 +328,7 @@ function companyChange() {
 	</td>
 	<td valign="top" width="50%">
 		<strong><?php echo $AppUI->_('Contact Notes');?></strong><br />
-		<textarea class="textarea" name="contact_notes" rows="20" cols="40"><?php echo @$row->contact_notes;?></textarea>
+		<textarea class="textarea" name="contact_notes" rows="20" cols="40"><?php echo dPhtml(@$row->contact_notes);?></textarea>
 	</td>
 </tr>
 <tr>

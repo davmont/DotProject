@@ -82,7 +82,7 @@ $frequencies = $frequencies->loadList();
                             <select id="frequency" name="frequency" style="min-width:150px">
                                 <?php
                                 foreach ($frequencies as $registro) {
-                                    echo '<option value="'.$registro['communication_frequency_id'].'">'. $registro['communication_frequency'].'</option>';
+                                    echo '<option value="'.$registro['communication_frequency_id'].'">'. dPhtml($registro['communication_frequency']).'</option>';
                                 }
                                 ?>
                             </select>

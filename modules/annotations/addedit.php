@@ -138,7 +138,10 @@ $AppUI->savePlace();	//save the workplace state (have a footprint on this site)
 	$project_status= 		intval( dPgetParam( $_REQEUST, "project_status", "-1" ) );
 	$show_owner_id= 		intval( dPgetParam( $_REQUEST, "show_owner_id", "-1" ) );
 	$show_date= 			intval( dPgetParam( $_REQUEST, "show_date", "0" ) );
-	$show_time=				dPgetParam( $_REQUEST, "show_time", date("H:i") );  // Dont add seconds --> they will be  added before the storage in storage loop
+	$show_time=				dPgetParam( $_REQUEST, "show_time", date("H:i") );
+	if (!preg_match('/^\d{1,2}:\d{2}$/', $show_time)) {
+		$show_time = date("H:i");
+	}  // Dont add seconds --> they will be  added before the storage in storage loop
 	$changed_show_date= 	intval( dPgetParam( $_REQUEST, "changed_show_date", "0" ) );
 	$annotation_id = 		intval( dPgetParam( $_REQUEST, "annotation_id", "-1" ) );
 	$save_annotations= 		intval( dPgetParam( $_REQUEST, "save_annotations", "0" ) );
@@ -243,11 +246,10 @@ function selectTeam() {
 				if ( $last_letter != strtoupper(substr($v,0,1))) {
 					$last_letter = strtoupper(substr($v,0,1));
 					?>
-					win.document.write('<br><center><a name="<?php echo $last_letter; ?>"><?php echo $last_letter; ?></a></center>');<?php
+					win.document.write(<?php echo dPjs('<br><center><a name="' . dPhtml($last_letter) . '">' . dPhtml($last_letter) . '</a></center>'); ?>);<?php
 				}
 				?>
-				atxt = "<?php echo $v; ?>";
-				win.document.write("<center><input name=\"neu\" value=\""+ atxt +"\" type=\"button\" style=\"width: 200px;\"size=\"20\" onClick=\"opener.Hinzufuegen('"+ atxt +"\\n');\"></center>");
+				win.document.write(<?php echo dPjs('<center><input name="neu" value="' . dPhtml($v) . '" type="button" style="width: 200px;" size="20" onClick="opener.Hinzufuegen(' . dPjsAttr($v . "\n") . ');"></center>'); ?>);
 				<?php
 			}
 		?>		
@@ -426,7 +428,7 @@ if ($obj->annotation_time == "") $obj->annotation_time=0;
 			$addnew="0"; ?>
 				
 			<!-- --------------- the headlines -------------- -->	
-			<th align="left"><?php echo $AppUI->_('Project'); ?> : <?php echo ($project_name); ?></th>
+			<th align="left"><?php echo $AppUI->_('Project'); ?> : <?php echo dPhtml($project_name); ?></th>
 			<th align="left"><?php echo $AppUI->_('Project Owner'); ?> : <?php echo $project_owner_name; ?></th>
 			<th align="left"><?php echo $AppUI->_('Shown Date'); ?> : <?php echo $oDate->format( $df )." ".$show_time; ?></th>
 		<?php
@@ -442,9 +444,9 @@ if ($obj->annotation_time == "") $obj->annotation_time=0;
 				<input type="HIDDEN" name="annotation_scope" value="<?php echo $obj->annotation_scope; ?>">
 				<input type="HIDDEN" name="annotation_resources" value="<?php echo $obj->annotation_resources; ?>">
 				<input type="HIDDEN" name="annotation_time" value="<?php echo $obj->annotation_time; ?>">
-				<input type="HIDDEN" name="annotation_scope_desc" value="<?php echo $obj->annotation_scope_desc; ?>">
-				<input type="HIDDEN" name="annotation_resources_desc" value="<?php echo $obj->annotation_resources_desc; ?>">
-				<input type="HIDDEN" name="annotation_time_desc" value="<?php echo $obj->annotation_time_desc; ?>">
+				<input type="HIDDEN" name="annotation_scope_desc" value="<?php echo dPhtml($obj->annotation_scope_desc); ?>">
+				<input type="HIDDEN" name="annotation_resources_desc" value="<?php echo dPhtml($obj->annotation_resources_desc); ?>">
+				<input type="HIDDEN" name="annotation_time_desc" value="<?php echo dPhtml($obj->annotation_time_desc); ?>">
 				<input type="HIDDEN" name="addnew" value="1">
 				<th align="left"><?php echo $AppUI->_('Select Project'); ?> : <?php echo arraySelect( $tmpProj,'project_id','size=1 class=text onChange="document.chooseProject.submit();"',$project_id); ?></th>
 
@@ -455,9 +457,9 @@ if ($obj->annotation_time == "") $obj->annotation_time=0;
 				<input type="HIDDEN" name="annotation_scope" value="<?php echo $obj->annotation_scope; ?>">
 				<input type="HIDDEN" name="annotation_resources" value="<?php echo $obj->annotation_resources; ?>">
 				<input type="HIDDEN" name="annotation_time" value="<?php echo $obj->annotation_time; ?>">
-				<input type="HIDDEN" name="annotation_scope_desc" value="<?php echo $obj->annotation_scope_desc; ?>">
-				<input type="HIDDEN" name="annotation_resources_desc" value="<?php echo $obj->annotation_resources_desc; ?>">
-				<input type="HIDDEN" name="annotation_time_desc" value="<?php echo $obj->annotation_time_desc; ?>">
+				<input type="HIDDEN" name="annotation_scope_desc" value="<?php echo dPhtml($obj->annotation_scope_desc); ?>">
+				<input type="HIDDEN" name="annotation_resources_desc" value="<?php echo dPhtml($obj->annotation_resources_desc); ?>">
+				<input type="HIDDEN" name="annotation_time_desc" value="<?php echo dPhtml($obj->annotation_time_desc); ?>">
 -->				<input type="HIDDEN" name="annotation_show_date" value="<?php echo $oDate->format( FMT_TIMESTAMP_DATE );?>" />
 				<input type="HIDDEN" name="addnew" value="1">
 				<input type="text" class="text" name="show_date" id="date1" style="text-align: center;" value="<?php echo $oDate->format( $df );?>" class="text" disabled="disabled" />

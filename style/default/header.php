@@ -32,7 +32,7 @@ else
 	?></strong>
 	<?php if (getPermission('smartsearch', 'access')): ?>
 	<form name="frmHeaderSearch" action="?m=smartsearch"  method="post">
-		<input class="text" type="text" id="keyword1" name="keyword1" value="<?php echo dPgetCleanParam($_POST, 'keyword1', ''); ?>" accesskey="k" />
+		<input class="text" type="text" id="keyword1" name="keyword1" value="<?php echo dPhtml(dPgetCleanParam($_POST, 'keyword1', '')); ?>" accesskey="k" />
 		<input class="button" type="submit" value="<?php echo $AppUI->_('Search')?>" />
 	</form>
 	<?php endif; ?>

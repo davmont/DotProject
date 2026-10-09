@@ -161,12 +161,12 @@ if ( $row['opportunity_status'] != "4" ) continue;  // Status == 4 == Archieved
 	//	echo $row["opportunity_name"];		// finally show the opportunities quote stored in the indexed array
 	?>
 	</td>
-	<td><?php echo $row['opportunity_strategy']; ?></td>
-	<td><?php echo $row['opportunity_sholders']; ?></td>
-	<td><?php echo $row['opportunity_risks']; ?></td>
-	<td><?php echo $row['opportunity_sizing']; ?></td>
-	<td><?php echo $row['opportunity_horizontality']; ?></td>
-	<td><?php echo $row['opportunity_costbenefit']; ?></td>
+	<td><?php echo dPhtml($row['opportunity_strategy']); ?></td>
+	<td><?php echo dPhtml($row['opportunity_sholders']); ?></td>
+	<td><?php echo dPhtml($row['opportunity_risks']); ?></td>
+	<td><?php echo dPhtml($row['opportunity_sizing']); ?></td>
+	<td><?php echo dPhtml($row['opportunity_horizontality']); ?></td>
+	<td><?php echo dPhtml($row['opportunity_costbenefit']); ?></td>
 
 
 	<td><center>
@@ -177,7 +177,7 @@ if ( $row['opportunity_status'] != "4" ) continue;  // Status == 4 == Archieved
 	</center></td>
 	<td >
 	<?php
-	echo $row["contact_last_name"].", ".substr($row["contact_first_name"],0,1).".";		// finally show the opportunities quote stored in the indexed array
+	echo dPhtml($row["contact_last_name"].", ".substr($row["contact_first_name"],0,1).".");		// finally show the opportunities quote stored in the indexed array
 	?>
 	</td>
 	<td >

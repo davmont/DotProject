@@ -55,19 +55,19 @@ for ($res_companies; ! $res_companies->EOF; $res_companies->MoveNext()) {
 <tr>
   <td style=<?php echo $style;?>>
    <a href="index.php?m=human_resources&amp;a=view_role&amp;human_resources_role_id=<?php echo $human_resources_role_id;?>&amp;company_id=<?php echo $company_id;?>">
-	<?php echo $res_companies->fields['human_resources_role_name']; ?>
+	<?php echo dPhtml($res_companies->fields['human_resources_role_name']); ?>
 	</td>
   <td style=<?php echo $style;?>>
    <a href="index.php?m=human_resources&amp;a=view_role&amp;human_resources_role_id=<?php echo $human_resources_role_id;?>&amp;company_id=<?php echo $company_id;?>">
-    <?php echo $res_companies->fields['human_resources_role_responsability']; ?>
+    <?php echo dPhtml($res_companies->fields['human_resources_role_responsability']); ?>
   </td>
   <td style=<?php echo $style;?>>
    <a href="index.php?m=human_resources&amp;a=view_role&amp;human_resources_role_id=<?php echo $human_resources_role_id;?>&amp;company_id=<?php echo $company_id;?>">
-    <?php echo $res_companies->fields['human_resources_role_authority']; ?>
+    <?php echo dPhtml($res_companies->fields['human_resources_role_authority']); ?>
   </td>
   <td style=<?php echo $style;?>>
    <a href="index.php?m=human_resources&amp;a=view_role&amp;human_resource_role_id=<?php echo $human_resource_role_id;?>&amp;company_id=<?php echo $company_id;?>">
-    <?php echo $res_companies->fields['human_resources_role_competence']; ?>
+    <?php echo dPhtml($res_companies->fields['human_resources_role_competence']); ?>
   </td>
 </tr>
 <?php

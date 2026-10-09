@@ -245,7 +245,7 @@ function display_item( &$item, $indent, $children = 0 )
 	echo "</TD><TD>";
 	if ( isset( $item['inventory_asset_no']) && $item['inventory_asset_no'])
 	{
-		echo $item['inventory_asset_no'];
+		echo dPhtml( $item['inventory_asset_no'] );
 	}
 	else printf( "%06d", $item['inventory_id'] );
 
@@ -258,7 +258,7 @@ function display_item( &$item, $indent, $children = 0 )
 		}
 	}
 	echo "<A HREF='?m=inventory&a=view&inventory_id={$item['inventory_id']}' ".(($children && !$item[ 'inventory_parent' ] )?" style='font-weight: bold'":"").">";
-	echo $item['inventory_name'];
+	echo dPhtml( $item['inventory_name'] );
 	if ( !$children && isset( $item_list_parents[ $item[ 'inventory_id' ] ] ) )
 	{
 		$num = count( $item_list_parents[ $item[ 'inventory_id' ] ] );
@@ -267,20 +267,20 @@ function display_item( &$item, $indent, $children = 0 )
 	echo "</A>";
 
 	echo "</TD><TD NOWRAP>";
-	echo dPgetParam( $item, 'inventory_brand_name', $AppUI->_( "Unknown" ) );
+	echo dPhtml( dPgetParam( $item, 'inventory_brand_name', $AppUI->_( "Unknown" ) ) );
 
 	echo "</TD><TD NOWRAP>";
-	echo dPgetParam( $item, 'inventory_category_name', $AppUI->_( "Unknown" ) );
+	echo dPhtml( dPgetParam( $item, 'inventory_category_name', $AppUI->_( "Unknown" ) ) );
 
 /* lookup of company-name */
 
 	echo "</TD><TD NOWRAP>";
-	echo dPgetParam( $item, 'inventory_company_name', $AppUI->_( "Unknown" ) );
+	echo dPhtml( dPgetParam( $item, 'inventory_company_name', $AppUI->_( "Unknown" ) ) );
 
 /* lookup of department name */
 
 	echo "</TD><TD NOWRAP>";
-	echo dPgetParam( $item, 'inventory_department_name', $AppUI->_( "Unknown" ) );
+	echo dPhtml( dPgetParam( $item, 'inventory_department_name', $AppUI->_( "Unknown" ) ) );
 
 /* lookup of user-name */
 
@@ -290,7 +290,7 @@ function display_item( &$item, $indent, $children = 0 )
 	{
 		echo '<A HREF="?m=inventory&';
 		echo 'quick_filter=user&quick_filter_id='.$item[ 'inventory_user' ].'" />';
-		echo $username;
+		echo dPhtml( $username );
 		echo '</A>';
 	}
 	else
@@ -306,7 +306,7 @@ function display_item( &$item, $indent, $children = 0 )
 	{
 		echo '<A HREF="?m=inventory&';
 		echo 'quick_filter=project&quick_filter_id='.$item[ 'inventory_project' ].'" />';
-		echo $projname;
+		echo dPhtml( $projname );
 		echo '</A>';
 	}
 	else

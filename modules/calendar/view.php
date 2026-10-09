@@ -105,7 +105,7 @@ function delIt() {
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Event Title');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->event_title;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->event_title);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Type');?>:</td>
@@ -114,7 +114,7 @@ function delIt() {
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project');?>:</td>
 			<td class="hilite" width="100%"><a href='?m=projects&amp;a=view&amp;project_id=<?php 
-echo $obj->event_project ?>'><?php echo $event_project;?></a></td>
+echo $obj->event_project ?>'><?php echo dPhtml($event_project);?></a></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Starts');?>:</td>
@@ -136,7 +136,7 @@ echo ($AppUI->_($recurs[$obj->event_recurs]) . ' (' . $obj->event_times_recuring
 				if (is_array($assigned)) {
 					$start = false;
 					foreach ($assigned as $user) {
-						echo ((($start) ? '<br />' : '') . $user);
+						echo ((($start) ? '<br />' : '') . dPhtml($user));
 						if (!($start)) {
 							$start = true;
 						}

@@ -82,22 +82,22 @@ foreach ($quotes as $row) {		//parse the array of einstein quotes
 	</td>
 	<td >
 	<?php
-	echo $row["unittest_name"];		
+	echo dPhtml($row["unittest_name"]);		
 	?>
 	</td>
 	<td >
 	<?php
-	echo $row["unittest_description"];		
+	echo dPhtml($row["unittest_description"]);		
 	?>
 	</td>
 	<td >
 	<?php
-	echo $row["unittest_result"];		
+	echo dPhtml($row["unittest_result"]);		
 	?>
 	</td>
 	<td >
 	<?php
-	echo $row["task_name"];		
+	echo dPhtml($row["task_name"]);		
 	?>
 	</td>
 </tr>

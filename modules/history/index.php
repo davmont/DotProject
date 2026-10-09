@@ -40,7 +40,7 @@ function show_history($history) {
 	}
 	
 	if ($table == 'login') {
-		return ($AppUI->_('User') . ' \'' . $history['history_description'] . '\' ' 
+		return ($AppUI->_('User') . ' \'' . dPhtml($history['history_description']) . '\' ' 
 		        . $AppUI->_($history['history_action']));
 	}
 	
@@ -49,7 +49,7 @@ function show_history($history) {
 	} else if ($history['history_action'] == 'update') {
 		$msg = $AppUI->_('Modified').' ';
 	} else if ($history['history_action'] == 'delete') {
-		return ($AppUI->_('Deleted').' \'' . $history['history_description'] . '\' ' 
+		return ($AppUI->_('Deleted').' \'' . dPhtml($history['history_description']) . '\' ' 
 		        . $AppUI->_('from').' ' . $AppUI->_($table) . ' ' . $AppUI->_('table'));
 	}
 	
@@ -94,8 +94,8 @@ function show_history($history) {
 	
 	$link = ((!empty($link)) 
 	         ? ('<a href="?m=' . $module . $link . $id . $in_page_anchor . '">' 
-	            . stripslashes($history['history_description']) . '</a>') 
-	         : stripslashes($history['history_description']));
+	            . dPhtml(stripslashes($history['history_description'])) . '</a>') 
+	         : dPhtml(stripslashes($history['history_description'])));
 	
 	$msg .= ($AppUI->_('item') . ' "' . $link . '" ' . $AppUI->_('in') . ' "' 
 	         . $AppUI->_($table) . '" ' . $AppUI->_('table'));
@@ -221,7 +221,7 @@ if ($pages > 1) {
 		if ($i == $page) {
 			echo '<b>'.$i.'</b>';
 		} else {
-			echo '<a href="?m=history&amp;filter=' . $in_filter . '&amp;pg=' . $i . '">' . $i . '</a>';
+			echo '<a href="?m=history&amp;filter=' . dPhtml(rawurlencode($in_filter)) . '&amp;pg=' . $i . '">' . $i . '</a>';
 		}
 	}
 }
@@ -261,7 +261,7 @@ echo $AppUI->_('Edit History') ?>" border="0" width="12" height="12" />
 	</a></td>
 	<td align="center"><?php echo ($hd->format($df) . ' ' . $hd->format($tf)); ?></td>
 	<td><?php echo show_history($row); ?></td>
-	<td align="center"><?php echo $row['user_username']; ?></td>
+	<td align="center"><?php echo dPhtml($row['user_username']); ?></td>
 </tr>
 <?php
 	}

@@ -54,24 +54,24 @@ $q->clear();
 
 <?php foreach ($list as $row) {?>
 <tr>
-    <td><?php echo $row['project_name'] ?></td>
-    <td><?php echo $row['communication_title'] ?></td>
+    <td><?php echo dPhtml($row['project_name']) ?></td>
+    <td><?php echo dPhtml($row['communication_title']) ?></td>
     <!--<td>
     <//?php foreach($list_Emissor as $emissor){
         if($emissor['communication_id']==$row['communication_id'])
-        {echo $emissor['emissor_first_name'].' '.$emissor['emissor_last_name'].' - '; }
+        {echo dPhtml($emissor['emissor_first_name'].' '.$emissor['emissor_last_name']).' - '; }
     }?> 
     </td>
 
     <td>
     <//?php foreach($list_Receptor as $receptor){
         if($receptor['communication_id']==$row['communication_id'])
-        {echo $receptor['receptor_first_name'].' '.$receptor['receptor_last_name'].' - '; }
+        {echo dPhtml($receptor['receptor_first_name'].' '.$receptor['receptor_last_name']).' - '; }
     }?>
     </td> -->      
-    <td><?php echo $row['communication_information'] ?></td>
-    <td><?php echo $row['communication_channel'] ?></td>
-    <td><?php echo $row['communication_frequency'] ?></td>
+    <td><?php echo dPhtml($row['communication_information']) ?></td>
+    <td><?php echo dPhtml($row['communication_channel']) ?></td>
+    <td><?php echo dPhtml($row['communication_frequency']) ?></td>
     <td><a href="index.php?m=communication&a=addedit&communication_id=<?php echo $row['communication_id'] ?>"><?php echo $AppUI->_("LBL_EDIT")?></a></td>
 </tr>
 <?php } ?>
