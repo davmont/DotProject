@@ -96,16 +96,28 @@ New items found during Phase 0, scheduled below:
 - `modules/public/chpwd.php` runs passwords through `dPgetCleanParam()` and `db_escape()` before hashing, so a password containing a quote or `<` no longer matches at login.
 - The dotproject_plus installer does not create the `feedback_evaluation` table that the feedback feature uses.
 
-### Phase 1: core gates (small diffs, highest leverage)
-1. `index.php`: redirect to `m=public&a=access_denied` when `!$canAccess` before the dosql include and before the module view include. Expect a few modules that were silently relying on the gap (check `worker` can still open companies/projects/tasks/calendar/files/contacts/forums).
-2. `install/`: abort every entry point when `includes/config.php` exists and the DB is populated, regardless of `mode`; write config values with `var_export()`; fix the `DP_BASE_URL` undefined-constant fatal in `check_upgrade.php` (installer cannot run on this branch at all); fix `lib/phpgacl/gacl_api.class.php:849` `count(null)` (fresh installs crash before permissions are created).
-3. Delete or guard pre-auth files: wireit `examples/` and `backend/`, `xmlrpc/` debugger and demo servers, `tracIntegration/xmlrpc`, mantis PHPXMLRPC copies. Add the `if (!defined('DP_BASE_DIR')) die()` guard to every remaining module PHP file that lacks it (`grep -L "DP_BASE_DIR" modules -r --include=*.php`).
-4. Secrets: `includes/config.php` is still tracked on devel (now with `dotproject`/`dotproject`). Rotate the DB password, `git rm --cached includes/config.php`, add to `.gitignore`, keep `config-dist.php` as the template.
-5. Output helpers: switch `$AppUI->___()`, `dPformSafe()` and `check_plain` paths to `ENT_QUOTES`; make `dPformSafe($v, DP_FORM_URI)` also HTML-escape; fix `makeFileNameSafe()` to loop or use `basename()` + realpath containment.
-6. Escape `redirect` on `style/*/login.php` and `lostpass.php`; whitelist `callback`/`field`/`table` in the `modules/public` selectors and `helpdesk/selector.php`.
-7. `locales/core.php`: stop `eval`ing; load translations with `include` of a `return array(...)` file written through `var_export()`, and gate `translate_save.php` like `translate.php` (`$canEdit && user_type == 1`), validating `$lang` against the locale directory list.
-8. Treat view routes that write as write handlers: require POST plus `verifyCsrfToken()` when `$a` starts with `do` (covers `domodsql`, `do_*_aed`, `dosql_timesheet`), and turn the module install/remove links in `system/viewmods.php` into POST forms.
-9. Stop forcing `display_errors=1` in `base.php` (log instead), and fix `$userDeleteProtect` in `contacts/addedit.php`; otherwise any PHP 8 warning inside a `<script>` block breaks the page's JavaScript.
+### Phase 1: core gates (DONE except item 4, 2026-10-09)
+Branch `security/phase1-core-gates`, stacked on `security/devel-hardening`. Every item reproduced the exploit in `docker/` before the fix and shows it blocked after; `smoke.sh` 17/17 after each commit.
+
+| # | Commit | Fix |
+|---|---|---|
+| 9 | `e3d2d9f2` | `base.php` logs errors instead of printing them (`display_errors=0`); `$userDeleteProtect` defaulted. The contact form works again. |
+| 2 | `707204ea` | Fresh installs: `gacl_api::add_acl()` `count(null)` fatal fixed; gacl id sequences start after the seeded ids (schema and `upgrade_latest.sql`). Before, modules installed later never got ACL objects. `reset-db.sh` now uses the real installer. |
+| 1 | `2fe1746e` | `index.php` enforces `$canAccess` before dosql and the view. `public` stays open; own account view and own preferences stay allowed. Worker could overwrite system config and admin's preferences before. |
+| 8 | `59184748` | Actions named `do_*`, `dosql*`, `domodsql` need POST + CSRF token; module page commands are POST forms; `domodsql` checks system edit permission. |
+| 2 | `55ed9bf6` | Installer locked once `config.php` has DB settings: requests must carry the same DB settings, password included. Before, `install/db.php` showed the DB password to anyone and `do_install_db.php` dumped the database or rewrote the config. Config written with `var_export()`. The `DP_BASE_URL` fatal noted in the audit no longer happens on devel. |
+| 3 | `cfbdb240` | Removed `tracIntegration/xmlrpc` (debugger, demos, tests) and wireit `backend/php` and `lib/inputex/examples` (anonymous file write in `TaskManager/store.php`). |
+| 3 | `0626dfa0` | `DP_BASE_DIR` guard added to 282 module files. Vendored libraries, mantis side copies and `unitcost/patch_203` left for Phase 6. |
+| 6 | `e44bbfc6` | Login/lostpass `redirect` escaped (pre-auth attribute injection); selector `callback`/`field` limited to `[A-Za-z0-9_.]`; `public/selector.php` `table` whitelisted. |
+| 7 | `682b5604` | Translation save: admin only, module/lang whitelisted, entries written with `var_export()`. Every translation `eval` (core and four module loaders) runs only after `dPisTranslationSource()` accepts the source. Before, an admin save ran code for every user and `module=../../files/x` wrote outside `locales/`. |
+| 5 | `7e5b6713` | `___()` uses `ENT_QUOTES`; `dPformSafe(.., DP_FORM_URI)` HTML-escapes (company URL attribute breakout); `makeFileNameSafe()` loops (`....//` bypass). |
+
+Item 4 is still open and needs the owner: `includes/config.php` is tracked (now `dotproject`/`dotproject`). Untracking it deletes the file on any server that deploys with `git pull`, so first move those servers to an untracked config, then `git rm --cached includes/config.php`, add it to `.gitignore`, keep `config-dist.php` as the template, and rotate the DB password.
+
+New items found during Phase 1:
+- Role creation is broken for everyone: `CRole::store()` calls `insertRole()` on a null `$perms` (`modules/system/roles/roles.class.php:65`).
+- PHP 8 fatals in module installers (`annotations`, `holiday`, `gallery2`, `registers`, `timetrack` setup: `ADORecordSet_empty & int`; `timeplanning` setup writes into `locales/`) and on 21 index/addedit pages (communication, dataimport, earnings, hosting, informer, inventory, links, mantis, opportunities, payments, projectdesigner, testing, timecard). `CLink::delete()` signature mismatch kills the links module. Candidates for Phase 6.
+- `locales/*/common.inc` contains entries like `"no $table"=>"no $table"`, which interpolate undefined variables (the `Undefined variable $table` warnings in the log). `modules/timeplanning/locales/pt_br.inc` starts with a UTF-8 BOM and never parsed.
 
 ### Phase 2: authorization in every dosql handler (one PR per module group)
 Add at the top of each handler the same check its `addedit.php` already does (`getPermission($m,'edit'|'add'|'delete', $id)` or `getDenyEdit`/`canDelete`), and `intval()` the primary key before `bind()`/`load()`/`delete()`. Remove `canDelete()` overrides that `return true` (human_resources classes) and restore the commented-out checks (history, initiating, HR). Module order by exposure:
