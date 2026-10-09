@@ -18,16 +18,21 @@ if (!defined('DP_BASE_DIR')) {
 		if (substr($evdir, -1) == DIRECTORY_SEPARATOR)
 			$evdir = substr($evdir, 0, -1);
 		if ($evdir && $evdir != $current_dir) {
+			// The module reads Eventum's config.inc.php from this directory and runs its
+			// define() lines: system administrators only.
+			if (!getPermission('system', 'edit')) {
+				$AppUI->redirect('m=public&a=access_denied');
+			}
 			if (!is_dir($evdir)) {
 				$AppUI->setMsg('Eventum directory invalid (not a directory)', UI_MSG_ALERT);
 				$ok = false;
 			} else {
-				$evcfile = $evdir . DIRECTORY_SEPARATOR . 'config.inc.php';
-				if (!file_exists($evcfile)) {
-					$evcfile = $evdir . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.inc.php';
+				$evcfile = dPexternalAppFile($evdir, 'config.inc.php');
+				if (!$evcfile) {
+					$evcfile = dPexternalAppFile($evdir, 'config' . DIRECTORY_SEPARATOR . 'config.inc.php');
 				}
 
-				if (!file_exists($evcfile) || !is_readable($evcfile)) {
+				if (!$evcfile || !is_readable($evcfile)) {
 					$AppUI->setMsg('Eventum config file not found or not readable', UI_MSG_ALERT);
 					$ok = false;
 				} else {
