@@ -278,7 +278,9 @@ if ($u && file_exists(DP_BASE_DIR . '/modules/' . $m . '/' . $u . '/' . $u . '.c
 // do some db work if dosql is set
 // TODO - MUST MOVE THESE INTO THE MODULE DIRECTORY
 if (isset($_REQUEST['dosql'])) {
+	// Write handlers run only for POST requests that carry the session's CSRF token.
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		$AppUI->setMsg('Invalid request method.', UI_MSG_ERROR);
 		$AppUI->redirect('m=public&a=access_denied');
 	}
 	$AppUI->verifyCsrfToken();
@@ -289,7 +291,8 @@ if (isset($_REQUEST['dosql'])) {
 
 // start output proper
 include(DP_BASE_DIR . '/style/' . $uistyle . '/overrides.php');
-ob_start();
+// Every POST form in the page gets the CSRF token checked on dosql requests.
+ob_start(array($AppUI, 'injectCsrfToken'));
 if (!$suppressHeaders) {
 	require(DP_BASE_DIR . '/style/' . $uistyle . '/header.php');
 }

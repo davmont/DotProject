@@ -28,7 +28,7 @@ echo $uistyle;?>/main.css";</style>
 	<link rel="shortcut icon" href="./style/<?php 
 echo $uistyle;?>/images/favicon.ico" type="image/ico" />
 	<?php 
-$AppUI->loadJS(); ?>
+$AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
 	<script>
 	function gt_hide_tabs() {
 		var tabs = document.getElementsByTagName('td');
