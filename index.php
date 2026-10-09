@@ -257,6 +257,20 @@ $canEdit = getPermission($m, 'edit');
 $canAuthor = getPermission($m, 'add');
 $canDelete = getPermission($m, 'delete');
 
+// Module access is required before any of the module's write handlers or views run.
+// The public module (login, password change, selectors, access denied) stays open, and
+// every user can view their own account and edit their own preferences.
+$dosql = isset($_REQUEST['dosql']) ? $_REQUEST['dosql'] : '';
+$ownAccount = ($m == 'admin' && $a == 'viewuser' && !$dosql
+		&& (int)dPgetParam($_GET, 'user_id', 0) == $AppUI->user_id)
+	|| ($m == 'system' && $a == 'addeditpref' && !$dosql
+		&& (int)dPgetParam($_GET, 'user_id', 0) == $AppUI->user_id)
+	|| ($m == 'system' && $dosql == 'do_preference_aed'
+		&& (int)dPgetParam($_POST, 'pref_user', 0) == $AppUI->user_id);
+if (!$canAccess && $m != 'public' && !$ownAccount) {
+	$AppUI->redirect('m=public&a=access_denied');
+}
+
 if (!$suppressHeaders) {
 	// output the character set header
 	if (isset($locale_char_set)) {
