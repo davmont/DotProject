@@ -27,9 +27,12 @@ $rating= $AppUI->_("LBL_FEEDBACK_USEFUL")."<br />
 function saveRatingFeedbackEvaluation(){
     
     var grade=$('input[name=star]:checked').val();
-    var url='index.php?m=dotproject_plus&dosql=do_save_feedback_student_evaluation&feedback_id=$feedback_id&user_id=$AppUI->user_id&grade='+grade;
-    //window.open(url);
-    $.get(url);
+    $.post('index.php?m=dotproject_plus', {
+        dosql: 'do_save_feedback_student_evaluation',
+        feedback_id: '" . (int)$feedback_id . "',
+        grade: grade,
+        csrf_token: $('meta[name=csrf-token]').attr('content')
+    });
     
 }
 </script>
