@@ -127,6 +127,17 @@ if (dPgetParam($_POST, 'lostpass', 0)) {
 	exit();
 }
 
+// Password reset from the emailed link. Reachable while logged out.
+if (dPgetParam($_REQUEST, 'resetpass', 0)) {
+	$uistyle = (($AppUI->getPref('UISTYLE')) ? $AppUI->getPref('UISTYLE') : dPgetConfig('host_style'));
+	$AppUI->setUserLocale();
+	@include_once(DP_BASE_DIR . '/locales/' . $AppUI->user_locale . '/locales.php');
+	@include_once(DP_BASE_DIR . '/locales/core.php');
+	setlocale(LC_TIME, $AppUI->user_lang);
+	require(DP_BASE_DIR . '/modules/public/reset_password.php');
+	exit();
+}
+
 // check if the user is trying to log in
 // Note the change to REQUEST instead of POST.  This is so that we can
 // support alternative authentication methods such as the PostNuke

@@ -53,14 +53,10 @@ function sendNewPass() {
 	$token_hash = password_hash($token, PASSWORD_DEFAULT);
 	$expiry_time = date('Y-m-d H:i:s', time() + 3600); // Token is valid for 1 hour
 
-	// Store the hashed token and its expiry in the database.
-	// A new table 'password_reset' is required for this.
-	// We will use user_custom_fields for now to avoid schema changes without approval.
-	// This is not ideal but works as a proof-of-concept.
-	// A proper solution requires a `user_reset_token` and `user_reset_expiry` column in the `users` table.
-	
+	// Store only the hash of the token, plus its expiry.
 	$q->addTable('users');
-	$q->addUpdate('user_custom', json_encode(['reset_token' => $token_hash, 'reset_expiry' => $expiry_time]));
+	$q->addUpdate('user_reset_token', $token_hash);
+	$q->addUpdate('user_reset_expiry', $expiry_time);
 	$q->addWhere('user_id = ?', $user_id);
 	if (!$q->exec()) {
 		$AppUI->setMsg('Error initiating password reset.', UI_MSG_ERROR);
@@ -70,12 +66,12 @@ function sendNewPass() {
 
 
 	// Security Mitigation: Email a link with the token, not the password.
-	$reset_link = $_live_site . '/index.php?m=public&a=reset_password&token=' . $token . '&user_id=' . $user_id;
+	$reset_link = $_live_site . '/index.php?resetpass=1&user_id=' . (int)$user_id . '&token=' . $token;
 
-	$message = $AppUI->_('password_reset_email_msg1', UI_OUTPUT_RAW) . "\n\n"
-		. $AppUI->_('password_reset_email_msg2', UI_OUTPUT_RAW) . ' ' . $reset_link . "\n\n"
-		. $AppUI->_('password_reset_email_msg3', UI_OUTPUT_RAW);
-	$subject = $_sitename . ' :: ' . $AppUI->_('password_reset_subject', UI_OUTPUT_RAW);
+	$message = $AppUI->_('A password reset was requested for your account.', UI_OUTPUT_RAW) . "\n\n"
+		. $AppUI->_('To choose a new password, open this link within one hour:', UI_OUTPUT_RAW) . ' ' . $reset_link . "\n\n"
+		. $AppUI->_('If you did not ask for this, ignore this message. Your password has not been changed.', UI_OUTPUT_RAW);
+	$subject = $_sitename . ' :: ' . $AppUI->_('Password reset', UI_OUTPUT_RAW);
 
 	$m = new Mail;
 	$m->From("no-reply@" . dPgetConfig('site_domain'));
