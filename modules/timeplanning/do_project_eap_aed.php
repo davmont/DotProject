@@ -2,6 +2,9 @@
 require_once (DP_BASE_DIR . "/modules/timeplanning/control/controller_wbs_items.class.php");
 $project_id = dPgetParam($_POST, 'project_id');
 $eap_items_ids = dPgetParam($_POST, 'eap_items_ids');
+// Ids are used in SQL below: keep them integers, as checked.
+$project_id = (int)$project_id;
+$eap_items_ids = dPintList($eap_items_ids);
 // The user must be able to edit this project, and the records named must belong to it.
 dPrequireProjectEdit($project_id, array_merge(dPrecordList('project_eap_items', 'id', 'project_id', $eap_items_ids),
 	dPrecordList('project_eap_items', 'id', 'project_id', dPgetParam($_POST, 'items_ids_to_delete'))));
@@ -19,7 +22,7 @@ if($eap_items_ids  != ""){
 }
 
 //delete items
-$items_ids_to_delete=dPgetParam($_POST, 'items_ids_to_delete');
+$items_ids_to_delete=dPintList(dPgetParam($_POST, 'items_ids_to_delete'));
 if($items_ids_to_delete  != ""){
 	$items_ids_to_delete = explode(",",$items_ids_to_delete);
 	for($i=0;$i<sizeof($items_ids_to_delete);$i++){

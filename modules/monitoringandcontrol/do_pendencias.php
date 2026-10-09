@@ -16,6 +16,9 @@ $acao = new ControllerAcaoCorretiva();
 	$date_limit = dPgetParam($_POST,'date_limit');
 	$user = dPgetParam($_POST,'user');
 	$project_id = dPgetParam($_POST,'project_id');
+	// Ids are used in SQL below: keep them integers, as checked.
+	$project_id = (int)$project_id;
+	$id = (int)$id;
 	// The user must be able to edit this project, and the records named must belong to it.
 	dPrequireProjectEdit($project_id, array(array('monitoring_change_request', 'change_id', 'project_id', $id)));
 

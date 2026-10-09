@@ -3,6 +3,8 @@ require_once (DP_BASE_DIR . "/modules/dotproject_plus/copy_project/ProjectTempla
 $projectTemplate= new ProjectTemplate();
 $sourceProjectId=$_POST["project_to_copy"];
 $targetProjectId=$_POST["target_project_id"];
+$sourceProjectId = (int)$sourceProjectId;
+$targetProjectId = (int)$targetProjectId;
 // Copying needs edit on the target project and view on the source.
 dPrequireProjectEdit($targetProjectId);
 if (!getPermission('projects', 'view', (int)$sourceProjectId)) {

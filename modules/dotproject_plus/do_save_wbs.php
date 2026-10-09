@@ -10,6 +10,9 @@ set_time_limit(300);
 //save
 $project_id = $_POST['project_id'];
 $wbs_item_id=$_POST["wbs_item_id"];
+// Ids are used in SQL below: keep them integers, as checked.
+$project_id = (int)$project_id;
+$wbs_item_id = (int)$wbs_item_id;
 // The user must be able to edit this project, and the records named must belong to it.
 dPrequireProjectEdit($project_id, array(array('project_eap_items', 'id', 'project_id', $wbs_item_id)));
 $description=$_POST["wbs_item_description_".$wbs_item_id];

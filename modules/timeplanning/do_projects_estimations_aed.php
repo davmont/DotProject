@@ -18,6 +18,9 @@
 	$isResource=$_POST['isResource'];
 	$isSize=$_POST['isSize'];
 	$id=$_POST['minute_id'];
+	// Ids are used in SQL below: keep them integers, as checked.
+	$project_id = (int)$project_id;
+	$id = (int)$id;
 	// The user must be able to edit this project, and the records named must belong to it.
 	dPrequireProjectEdit($project_id, array(array('project_minutes', 'id', 'project_id', $id)));
 	$tab=$_POST['tab'];

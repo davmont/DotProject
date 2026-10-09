@@ -10,6 +10,9 @@ $quality = new ControllerQuality();
 
 	$id = dPgetParam($_POST,'quality_id');
 	$task_id = dPgetParam($_POST,'task_id');
+	// Ids are used in SQL below: keep them integers, as checked.
+	$task_id = (int)$task_id;
+	$id = (int)$id;
 	// The user must be able to edit this task, and the quality item must belong to it.
 	dPrequireWritePermission('tasks', $task_id);
 	if (!dPrecordsBelongTo($task_id, array(array('monitoring_quality', 'quality_id', 'task_id', $id)))) {
