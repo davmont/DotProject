@@ -28,7 +28,10 @@ if (file_exists(DP_BASE_DIR.'/modules/'.$modules[$module].'/locales/en.inc')) {
 } else {
 	@readfile(DP_BASE_DIR.'/locales/en/'.$modules[$module].'.inc');
 }
-eval("\$english=array(".ob_get_contents()."\n'0');");
+$english = array();
+if (dPisTranslationSource(ob_get_contents())) {
+	eval("\$english=array(".ob_get_contents()."\n'0');");
+}
 ob_end_clean();
 
 $trans = array();
@@ -50,7 +53,10 @@ if ($lang != 'en') {
 	} else {
 		@readfile(DP_BASE_DIR.'/locales/'.$lang.'/'.$modules[$module].'.inc');
 	}
-	eval("\$locale=array(".ob_get_contents()."\n'0');");
+	$locale = array();
+	if (dPisTranslationSource(ob_get_contents())) {
+		eval("\$locale=array(".ob_get_contents()."\n'0');");
+	}
 	ob_end_clean();
 
 	foreach ($locale as $k => $v) {

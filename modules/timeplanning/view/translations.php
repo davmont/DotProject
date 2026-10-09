@@ -4,7 +4,10 @@
 	if (file_exists(DP_BASE_DIR.'/modules/timeplanning/locales/'.$AppUI->user_prefs['LOCALE'].'.inc')) {
 		@readfile(DP_BASE_DIR.'/modules/timeplanning/locales/'. $AppUI->user_prefs['LOCALE'] .'.inc');
 	} 
-	eval("\$locale=array(".ob_get_contents()."\n'0');");
+	$locale = array();
+	if (dPisTranslationSource(ob_get_contents())) {
+		eval("\$locale=array(".ob_get_contents()."\n'0');");
+	}
 	ob_end_clean();
 	if(is_array($locale)){
 		$trans=array();

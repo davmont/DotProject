@@ -329,6 +329,25 @@ function dPhashPassword($password)
 }
 
 /**
+ * True when $source (the contents of locale .inc files) holds only string literals,
+ * "=>", commas and comments, so it can be evaluated as the body of array(...) without
+ * running code. Double-quoted strings may contain a plain $name (it only reads a variable)
+ * but not {$...}, ${...}, $name[...] or $name->..., which can call code.
+ */
+function dPisTranslationSource($source)
+{
+	$name = '\$[A-Za-z_\x80-\xff][A-Za-z0-9_\x80-\xff]*+(?!\[|->)';
+	$string = '"(?:[^"\\\\${]++|\\\\.|\{(?!\$)|' . $name . '|\$(?![A-Za-z_\x80-\xff{]))*+"'
+		. '|\'(?:[^\'\\\\]++|\\\\.)*+\'';
+	$comment = '#[^\n]*+|//[^\n]*+|/\*.*?\*/';
+	if (preg_match('~\A(?:\s++|' . $string . '|=>|,|' . $comment . ')*+\z~s', $source) === 1) {
+		return true;
+	}
+	error_log('dotProject: translation file skipped, it contains more than string literals');
+	return false;
+}
+
+/**
  * True when users.user_password is wide enough for password_hash() output.
  */
 function dPpasswordColumnFitsHash()
