@@ -25,9 +25,10 @@ if (count($companies) > 0) {
 }
 
 if ($stub) {
-	$q->addWhere("(UPPER(user_username) LIKE '$stub%'" 
-				 . " OR UPPER(contact_first_name) LIKE '$stub%'" 
-				 . " OR UPPER(contact_last_name) LIKE '$stub%')");
+	$stub = $q->quote($stub . '%');
+	$q->addWhere("(UPPER(user_username) LIKE $stub" 
+				 . " OR UPPER(contact_first_name) LIKE $stub" 
+				 . " OR UPPER(contact_last_name) LIKE $stub)");
 } else if ($where) {
 	$where = $q->quote("%$where%");
 	$q->addWhere("(UPPER(user_username) LIKE $where" 

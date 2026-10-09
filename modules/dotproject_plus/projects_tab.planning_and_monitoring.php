@@ -88,7 +88,7 @@ require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 
 <?php
 
-$project_id = dPgetParam($_GET, "project_id", 0);
+$project_id = dPgetIntParam($_GET, "project_id", 0);
 $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
 ?>
 
@@ -846,7 +846,7 @@ require_once(DP_BASE_DIR . "/modules/timeplanning/control/controller_company_rol
 require_once(DP_BASE_DIR . "/modules/tasks/tasks.class.php");
 require_once(DP_BASE_DIR . "/modules/projects/projects.class.php");
 
-$projectId = dPgetParam($_GET, 'project_id', 0);
+$projectId = dPgetIntParam($_GET, 'project_id', 0);
 $activitiesIdsForDisplay = array();
 $q = new DBQuery();
 $q->addTable('tasks');

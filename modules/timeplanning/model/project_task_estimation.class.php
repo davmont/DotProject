@@ -60,6 +60,7 @@ class ProjectTaskEstimation
 
 	function store($idValue, $durationValue, $effortValue, $effortUnitValue, $rolesIdsValues, $rolesQuantityValues)
 	{
+		$idValue = (int)$idValue; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('t.id');
 		$q->addTable('project_tasks_estimations', 't');
@@ -102,6 +103,7 @@ class ProjectTaskEstimation
 
 	function load($idValue)
 	{
+		$idValue = (int)$idValue; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('t.task_id,t.effort,t.effort_unit,t.duration');
 		$q->addTable('project_tasks_estimations', 't');

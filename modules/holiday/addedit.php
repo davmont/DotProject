@@ -10,7 +10,7 @@ if (!defined('DP_BASE_DIR')) {
 ## Vegard Fiksdal (fiksdal@sensorlink.no)
 ##
 
-$holiday_id = defVal( @$_GET["holiday_id"], 0);
+$holiday_id = (int)defVal( @$_GET["holiday_id"], 0);
 $holiday_white = defVal( @$_GET["white"], -1);
 
 // Create date objects

@@ -20,7 +20,7 @@ $ticket_project = (int) dPgetParam($_POST, 'ticket_project', 0);
 $author = $name . " <" . $email . ">";
 $tsql =
 	"INSERT INTO " . dPgetConfig('dbprefix', '') . "tickets (author,subject,priority,body,timestamp,type, ticket_company, ticket_project) " .
-	"VALUES('$author', '" . addslashes($subject) . "','$priority','" . addslashes($description) . "',UNIX_TIMESTAMP(),'Open', $ticket_company, $ticket_project)";
+	"VALUES('" . db_escape($author) . "', '" . db_escape($subject) . "','" . db_escape($priority) . "','" . db_escape($description) . "',UNIX_TIMESTAMP(),'Open', $ticket_company, $ticket_project)";
 
 $rc = db_exec($tsql);
 

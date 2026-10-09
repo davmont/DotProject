@@ -30,6 +30,10 @@ $type = dPgetCleanParam($_GET, 'type', '');
 $column = dPgetCleanParam($_GET, 'column', $column);
 $direction = dPgetCleanParam($_GET, 'direction', $direction);
 $offset = dPgetCleanParam($_GET, 'offset', $offset);
+// Sort column, direction and offset go into ORDER BY/LIMIT below: whitelist and cast them.
+$column = dPvalidateOrder($column, array("author", "subject", "timestamp", "activity", "type", "priority", "assignment"), $CONFIG["order_by"]);
+$direction = dPvalidateOrder(mb_strtoupper($direction), array('ASC', 'DESC'), 'ASC');
+$offset = (int)$offset;
 $action = dPgetCleanParam($_REQUEST, 'action', null);
 
 if ($type == '') {
@@ -89,7 +93,7 @@ if ($type == "my") {
 /* count tickets */
 $query = "SELECT COUNT(*) FROM {$dbprefix}tickets WHERE parent = '0'";
 if ($type != 'All') {
-    $query .= " AND type = '$type'";
+    $query .= " AND type = '" . db_escape($type) . "'";
 }
 $ticket_count = query2result($query);
 
@@ -139,7 +143,7 @@ if ($type == "My") {
     $query .= "type = 'Open' AND (assignment = '$AppUI->user_id' OR assignment = '0') AND ";
 }
 else if ($type != "All") {
-    $query .= "type = '$type' AND ";
+    $query .= "type = '" . db_escape($type) . "' AND ";
 }
 $query .= "parent = '0' ORDER BY " . urlencode($column) . " $direction LIMIT $offset, $limit";
 

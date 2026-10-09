@@ -9,12 +9,12 @@ require_once $AppUI->getModuleClass('macroprojects');
 $today = new CDate();
 $default[0] = $today->getYear();														// Default array for $years
 $yearsGET 		= dPgetParam($_GET, 'years', $default);
-$years = explode("y", $yearsGET); 
+$years = array_map('intval', explode("y", $yearsGET)); 
 
 $hideNull 		= dPgetParam($_GET, 'hideNull', 1);
 $tax 		= dPgetParam($_GET, 'tax', 0);												// 0: without, 1: with	 				Default: without
-$company_id 		= dPgetParam($_GET, 'companyId', 0);
-$department_id 		= dPgetParam($_GET, 'departmentId', 0);
+$company_id 		= dPgetIntParam($_GET, 'companyId', 0);
+$department_id 		= dPgetIntParam($_GET, 'departmentId', 0);
 $project_type 		= dPgetParam($_GET, 'projectType', 0);
 $project_status 		= dPgetParam($_GET, '$projectStatus', 0);
 $printproject 		= dPgetParam($_GET, 'project', 0);

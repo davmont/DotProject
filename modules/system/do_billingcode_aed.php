@@ -22,7 +22,7 @@ if ($del) {
 	}
 } else {
 	if ($edit) {
-		$obj->_billingcode_id = $edit;
+		$obj->_billingcode_id = (int)$edit;
 	}
 	
 	$obj->billingcode_value = dPgetCleanParam($_REQUEST,'billingcode_value');

@@ -5,7 +5,7 @@ if (!defined('DP_BASE_DIR')) {
 	GLOBAL $AppUI, $db;
 
 
-	$del_id = dPGetParam( $_POST, "delete_level_id", 0); 
+	$del_id = dPgetIntParam( $_POST, "delete_level_id", 0); 
 	$save_config = dPGetParam( $_POST, "apply_config_changes", 0);
 	$GLOBALS['evDirChanged'] = null;
 

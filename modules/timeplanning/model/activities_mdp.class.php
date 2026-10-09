@@ -19,6 +19,7 @@ class ActivityMDP {
 	}
 	
 	function updatePosition($task_id,$x,$y){
+		$task_id = (int)$task_id; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('id');
 		$q->addTable('tasks_mdp');

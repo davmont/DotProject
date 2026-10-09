@@ -50,19 +50,19 @@ if ( isset( $_POST['format_start_date_billing'] ) ) {
 	$AppUI->setState( 'start_date_billing', @$_POST['format_start_date_billing'] );
 }
 if ( isset( $_POST['task'] ) ) {
-	$AppUI->setState( 'billing_report_task' , @$_POST['task'] );
+	$AppUI->setState( 'billing_report_task' , (int)@$_POST['task'] );
 }
 if ( isset( $_POST['project'] ) ) {
-	$AppUI->setState( 'billing_report_project' , @$_POST['project'] );
+	$AppUI->setState( 'billing_report_project' , (int)@$_POST['project'] );
 }
 if ( isset( $_POST['company'] ) ) {
-	$AppUI->setState( 'billing_report_company' , @$_POST['company'] );
+	$AppUI->setState( 'billing_report_company' , (int)@$_POST['company'] );
 }
 if ( isset( $_POST['department'] ) ) {
-	$AppUI->setState( 'billing_report_department' , @$_POST['department'] );
+	$AppUI->setState( 'billing_report_department' , (int)@$_POST['department'] );
 }
 if ( isset( $_POST['employee'] ) ) {
-	$AppUI->setState( 'billing_report_employee' , @$_POST['employee'] );
+	$AppUI->setState( 'billing_report_employee' , (int)@$_POST['employee'] );
 }
 
 if ( isset( $_POST['do_billing_report'] ) ) {
@@ -113,7 +113,7 @@ if ( $AppUI->getState( 'show_work_categories_payroll' ) === NULL ) {
 }
 
 if ( isset( $_POST['employee_payroll'] ) ) {
-	$AppUI->setState( 'employee_payroll', $_POST['employee_payroll'] );
+	$AppUI->setState( 'employee_payroll', (int)$_POST['employee_payroll'] );
 }
 
 if ( isset( $_POST['format_start_date_payroll'] ) ) {

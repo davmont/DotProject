@@ -22,7 +22,7 @@ GLOBAL $AppUI;
 
 $df = $AppUI->getPref('SHDATEFORMAT');
 
-$tid = isset($_GET['tid']) ? $_GET['tid'] : 0;
+$tid = isset($_GET['tid']) ? (int)$_GET['tid'] : 0;
 
 $winnow_project = getPermsWhereClause("projects", "projects.project_id");
 $winnow_tasks = getPermsWhereClause("tasks", "tasks.task_id");

@@ -13,7 +13,7 @@ if (!defined('DP_BASE_DIR')) {
 	
 	require_once($AppUI->getModuleClass("tasks"));
 	
-	$tasks_template_id = dPgetParam($_REQUEST, "tasks_template_id", 0);
+	$tasks_template_id = dPgetIntParam($_REQUEST, "tasks_template_id", 0);
 	$tasks_id_mapping        = array();
 	
 	if($tasks_template_id >= 1 && $obj){

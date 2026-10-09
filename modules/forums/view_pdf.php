@@ -4,9 +4,9 @@ if (!defined('DP_BASE_DIR')){
 }
 
 $AppUI->savePlace();
-$sort = dPgetParam($_REQUEST, 'sort', 'asc');
-$forum_id = dPgetParam($_REQUEST, 'forum_id', 0);
-$message_id = dPgetParam($_REQUEST, 'message_id', 0);
+$sort = dPvalidateOrder(mb_strtolower(dPgetParam($_REQUEST, 'sort', 'asc')), array('asc', 'desc'), 'asc');
+$forum_id = dPgetIntParam($_REQUEST, 'forum_id', 0);
+$message_id = dPgetIntParam($_REQUEST, 'message_id', 0);
 $perms =& $AppUI->acl();
 
 if ( ! $perms->checkModuleItem('forums', 'view', $message_id))

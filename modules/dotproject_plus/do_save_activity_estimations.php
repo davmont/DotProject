@@ -45,8 +45,8 @@ $allRolesHR= explode(";", $_POST["estimatedRolesHR_".$task_id]);
 for ($i = 0; $i <= $numRoles; $i++) {
     if (strpos($_POST["estimatedRolesExcluded_$task_id"], $i . "") === false) {
         if($allRolesIds[$i]!=""){
-            $rolesIds[$i] = $allRolesIds[$i];
-            $rolesHRs[$i] = $allRolesHR[$i];
+            $rolesIds[$i] = (int)$allRolesIds[$i];
+            $rolesHRs[$i] = (int)$allRolesHR[$i];
             $rolesQuantity[$i]=1;
         }
     }

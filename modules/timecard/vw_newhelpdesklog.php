@@ -18,7 +18,7 @@ require_once $AppUI->getSystemClass('date');
 require_once $AppUI->getModuleClass('helpdesk');
 $df = $AppUI->getPref('SHDATEFORMAT');
 
-$tid = isset($_GET['tid']) ? $_GET['tid'] : 0;
+$tid = isset($_GET['tid']) ? (int)$_GET['tid'] : 0;
 
 //pull data 
 // if we have a TID, then we editing an existing row
@@ -29,8 +29,6 @@ LEFT JOIN helpdesk_items ON task_log_help_desk_id = item_id
 WHERE  task_log_id = $tid 
 AND ".getItemPerms()."
 "; 
-echo "<pre>$sql</pre>";
-echo '<pre>';print_r($sql);echo '</pre>';
 
 db_loadHash( $sql, $helpdeskItemTask );
 

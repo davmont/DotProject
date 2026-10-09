@@ -9,8 +9,9 @@ if (!defined('DP_BASE_DIR')) {
 $do_report = dPgetParam($_POST, "do_report", 0);
 $log_pdf = dPgetParam($_POST, 'log_pdf', 0);
 
-$log_start_date = dPgetParam($_POST, "log_start_date", 0);
-$log_end_date = dPgetParam($_POST, "log_end_date", 0);
+// Dates are YYYYMMDD numbers compared in SQL.
+$log_start_date = dPgetIntParam($_POST, "log_start_date", 0);
+$log_end_date = dPgetIntParam($_POST, "log_end_date", 0);
 $log_all = dPgetParam($_POST, 'log_all', 0);
 
 // create Date objects from the datetime fields

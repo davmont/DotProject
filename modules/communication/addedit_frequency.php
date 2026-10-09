@@ -18,7 +18,7 @@ if (isset($_GET['communication_frequency'])){
 
 // del communication frequency
 if (isset($_GET['communication_frequency_id'])){
-    $del = ($_GET['communication_frequency_id']);
+    $del = (int)$_GET['communication_frequency_id'];
     $rdel = new DBQuery;
     $rdel->setDelete('communication_frequency');
     $rdel->addWhere('communication_frequency_id=' .$del);

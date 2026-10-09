@@ -141,13 +141,13 @@ $q->addTable('history', 'h');
 $q->leftJoin('users', 'u', 'u.user_id = h.history_user');
 $q->addQuery('h.*, u.*');
 if ($in_filter) {
-	$filter .= (($filter) ? ' AND ' : '') . "(h.`history_table` LIKE '" . $in_filter . "%')";
+	$filter .= (($filter) ? ' AND ' : '') . "(h.`history_table` LIKE '" . db_escape($in_filter) . "%')";
 }
 if ($denied_tables) {
 	$filter .= (($filter) ? ' AND ' : '') . "(NOT h.`history_table` IN ('" . $denied_tables . "'))";
 }
 if (!empty($_REQUEST['project_id'])) {
-	$project_id = $_REQUEST['project_id'];
+	$project_id = (int)$_REQUEST['project_id'];
 	$r = new DBQuery;
 	
 	$r->addTable('tasks');

@@ -57,7 +57,7 @@ class CDataImport extends CDpObject {
   {
     $q = new DBQuery;
     $q->addTable('dataimport_map');
-    $q->addWhere('dimap_config_id = ' . $this->diconfig_id);
+    $q->addWhere('dimap_config_id = ' . (int)$this->diconfig_id);
     if ($index)
       return $q->loadHashList('dimap_source_field');
     else
@@ -69,7 +69,7 @@ class CDataImport extends CDpObject {
     $msg = '';
     $q = new DBQuery;
     $q->setDelete('dataimport_map');
-    $q->addWhere('dimap_config_id = \'' . $id . '\'');
+    $q->addWhere('dimap_config_id = ' . (int)$id);
     if ( ! $q->exec()) {
       $msg = $GLOBALS['db']->ErrorMsg();
     }

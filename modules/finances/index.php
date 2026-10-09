@@ -70,6 +70,10 @@ if ($company_id == '') {
 	$department		= 	''.$department_id;
 } else
 	$department_id 	= 	0;
+// Filters below are used in SQL: ids and years are integers.
+$company_id = (int)$company_id;
+$department_id = (int)$department_id;
+$years = array_map('intval', (array)$years);
 
 // Edit the values if necessary
 if(dPgetParam($_POST, 'edit', 0))

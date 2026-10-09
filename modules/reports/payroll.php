@@ -56,7 +56,7 @@ if ($AppUI->getState('show_timesheet_payroll')) {
 
 	} else {
 
-		$q->addWhere("u.user_id = $AppUI->getState('employee_payroll')");
+		$q->addWhere('u.user_id = ' . (int)$AppUI->getState('employee_payroll'));
 		$q->loadObject($row);
 
 		traverse_employees($row->user_id, $row->contact_first_name, $row->contact_last_name);
@@ -73,7 +73,7 @@ if ($AppUI->getState('show_project_payroll')) {
 	$q->addJoin('tasks', 't', 't.task_id = l.task_log_task');
 	$q->addJoin('projects', 'p', 'p.project_id = t.task_project');
 	if ($AppUI->getState('employee_payroll')) {
-		$q->addWhere("l.task_log_creator = " . $AppUI->getState('employee_payroll'));
+		$q->addWhere("l.task_log_creator = " . (int)$AppUI->getState('employee_payroll'));
 	}
 	$q->addWhere("l.task_log_date >= '" . $start_date->format(FMT_DATETIME_MYSQL) . "'");
 	$q->addWhere("l.task_log_date <= '" . $end_date->format(FMT_DATETIME_MYSQL) . "'");
@@ -131,7 +131,7 @@ if ($AppUI->getState('show_work_categories_payroll')) {
 	$q->addQuery('SUM(task_log_hours) as sum_hours, task_log_costcode, task_log_costcode');
 	$q->addJoin('tasks', 't', 't.task_id = l.task_log_task');
 	if ($AppUI->getState('employee_payroll')) {
-		$q->addWhere("task_log_creator = " . $AppUI->getState('employee_payroll'));
+		$q->addWhere("task_log_creator = " . (int)$AppUI->getState('employee_payroll'));
 	}
 	$q->addWhere("task_log_date >= '" . $start_date->format(FMT_DATETIME_MYSQL) . "'");
 	$q->addWhere("task_log_date <= '" . $end_date->format(FMT_DATETIME_MYSQL) . "'");

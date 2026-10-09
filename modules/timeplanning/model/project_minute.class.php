@@ -50,6 +50,7 @@ class ProjectMinute {
 	}
 	
 	function store($description,$date,$project_id,$id,$isEffort,$isDuration,$isResource,$isSize,$membersIds) {
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->addTable('project_minutes');
 		if ($id!="-1"){
@@ -99,6 +100,7 @@ class ProjectMinute {
 	}
 	
 	function deleteMembersRelations($id){
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('task_minute_members');
 		$q->addWhere('task_minute_id =' . $id);
@@ -110,6 +112,7 @@ class ProjectMinute {
 	}
 	
 	function load($minute_id) {
+		$minute_id = (int)$minute_id; // used in SQL below
 		$q = new DBQuery;
 		$q->addQuery("tm.description, tm.minute_date,tm.id,tm.isEffort,tm.isSize,tm.isDuration,tm.isResource");
 		$q->addTable('project_minutes', 'tm');
@@ -148,6 +151,7 @@ class ProjectMinute {
 	}
 
 	function delete($id){
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('project_minutes');
 		$q->addWhere('id =' . $id);

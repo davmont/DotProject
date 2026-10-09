@@ -37,14 +37,14 @@ if (!defined('DP_BASE_DIR')) {
 	$end_day = new CDate( $AppUI->getState( 'TimecardWeeklyReportEndDate' ) ? $AppUI->getState( 'TimecardWeeklyReportEndDate' ) : NULL);
 
 	if (isset( $_GET['company_id'] )) {
-		$AppUI->setState( 'TimecardWeeklyReportCompanyId', $_GET['company_id'] );
+		$AppUI->setState( 'TimecardWeeklyReportCompanyId', (int)$_GET['company_id'] );
 	}
-	$company_id = $AppUI->getState( 'TimecardWeeklyReportCompanyId' ) ? $AppUI->getState( 'TimecardWeeklyReportCompanyId' ) : 0;
+	$company_id = (int)$AppUI->getState( 'TimecardWeeklyReportCompanyId' );
 
 	if (isset( $_GET['user_id'] )) {
-		$AppUI->setState( 'TimecardWeeklyReportPeopleId', $_GET['user_id'] );
+		$AppUI->setState( 'TimecardWeeklyReportPeopleId', (int)$_GET['user_id'] );
 	}
-	$user_id = $AppUI->getState( 'TimecardWeeklyReportPeopleId' ) ? $AppUI->getState( 'TimecardWeeklyReportPeopleId' ) : 0;
+	$user_id = (int)$AppUI->getState( 'TimecardWeeklyReportPeopleId' );
 
 	if (isset( $_GET['browse'] )) {
 		$AppUI->setState( 'TimecardWeeklyReportBrowse', $_GET['browse'] );

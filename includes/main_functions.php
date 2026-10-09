@@ -313,6 +313,24 @@ function dPgetParam(&$arr, $name, $def = null)
 }
 
 /**
+ * Returns a named array value as an integer, or $def when it is not set. Use it for ids
+ * and other numbers that end up in SQL.
+ */
+function dPgetIntParam(&$arr, $name, $def = 0)
+{
+	return isset($arr[$name]) ? (int)$arr[$name] : (int)$def;
+}
+
+/**
+ * Returns $value when it is one of $allowed, otherwise $default. ORDER BY and GROUP BY
+ * clauses cannot take bound parameters, so sort columns from the request must pass this.
+ */
+function dPvalidateOrder($value, array $allowed, $default)
+{
+	return in_array($value, $allowed, true) ? $value : $default;
+}
+
+/**
  * Alternative to protect from XSS attacks.
  */
 /**

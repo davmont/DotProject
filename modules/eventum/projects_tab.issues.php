@@ -20,7 +20,7 @@ $contact = new CContact;
 // Before getting too far into it, we need to assess if there is
 // a project linkage for us, and if not we need to allow project
 // linkages.
-$project_id = dPgetParam($_GET, 'project_id', 0);
+$project_id = dPgetIntParam($_GET, 'project_id', 0);
 if (! $project_id) {
   $AppUI->redirect('m=public&a=access_denied');
 }

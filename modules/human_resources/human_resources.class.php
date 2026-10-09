@@ -161,7 +161,7 @@ class CHumanResourceRoles extends CDpObject
 	{
 		$q = new DBQuery;
 		$q->setDelete('human_resource_roles');
-		$q->addWhere('human_resource_id = ' . $human_resource_id);
+		$q->addWhere('human_resource_id = ' . (int)$human_resource_id);
 		$q->exec();
 		$q->clear();
 	}

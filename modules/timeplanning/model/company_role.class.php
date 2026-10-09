@@ -47,6 +47,7 @@ class CompanyRole {
 	}
 	
 	function store($company_id,$description,$identation,$id,$sort_order) {
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('id');
 		$q->addTable('company_role');
@@ -78,6 +79,7 @@ class CompanyRole {
 	}
 
 	function delete($id){
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('company_role');
 		$q->addWhere('id =' . $id);
