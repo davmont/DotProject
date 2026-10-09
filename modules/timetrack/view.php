@@ -7,7 +7,7 @@ if (!defined('DP_BASE_DIR')) {
 <!-- ################################## [ view section ] ################################ -->
 
 <?php
-$timesheet_id = isset($_GET['timesheet_id']) ? $_GET['timesheet_id'] : 0;
+$timesheet_id = isset($_GET['timesheet_id']) ? (int)$_GET['timesheet_id'] : 0;
 
 // check permissions
 $denyRead = getDenyRead( $m, $timesheet_id );

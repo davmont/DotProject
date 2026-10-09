@@ -19,8 +19,8 @@ if ($denyEdit) {
 require_once $AppUI->getSystemClass('date');
 $df = $AppUI->getPref('SHDATEFORMAT');
 
-$mid = isset($_GET['mid']) ? $_GET['mid'] : 0;
-$user_id = isset($_GET['user_id']) ? $_GET['user_id'] : $AppUI->user_id;
+$mid = isset($_GET['mid']) ? (int)$_GET['mid'] : 0;
+$user_id = isset($_GET['user_id']) ? (int)$_GET['user_id'] : $AppUI->user_id;
 
 $mileage_log = new CMileageLog();
 if ($mid)

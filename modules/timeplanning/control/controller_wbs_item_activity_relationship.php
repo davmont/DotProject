@@ -17,6 +17,7 @@ class ControllerWBSItemActivityRelationship{
 	}
 	
 	function getActivitiesByWorkPackage($WBSItemId){
+		$WBSItemId = (int)$WBSItemId; // used in SQL below
 		$list= array();
 		$q = new DBQuery();
 		$q->addQuery('t.task_id');
@@ -34,6 +35,7 @@ class ControllerWBSItemActivityRelationship{
 	}
 	
 	function getAllActivities($project_id){
+		$project_id = (int)$project_id; // used in SQL below
 		$list= array();
 		$q = new DBQuery();
 		$q->addQuery('pt.task_id');

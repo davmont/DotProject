@@ -8,7 +8,7 @@ global $min_view, $m, $a, $user_id, $tab, $tasks, $sortByName, $project_id, $gan
 $base_url = dPgetConfig('base_url');
 $min_view = defVal(@$min_view, false);
 
-$project_id = defVal(@$_GET['project_id'], 0);
+$project_id = (int)defVal(@$_GET['project_id'], 0);
 
 // sdate and edate passed as unix time stamps
 $sdate = dPgetParam($_POST, 'sdate', 0);

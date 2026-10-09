@@ -22,9 +22,9 @@ if (!defined('DP_BASE_DIR')) {
 	$start_day = new CDate( $AppUI->getState( 'TimecardWeeklyReportStartDate' ) ? $AppUI->getState( 'TimecardWeeklyReportStartDate' ) : NULL);
 
 	if (isset( $_GET['company_id'] )) {
-		$AppUI->setState( 'TimecardWeeklyReportCompanyId', $_GET['company_id'] );
+		$AppUI->setState( 'TimecardWeeklyReportCompanyId', (int)$_GET['company_id'] );
 	}
-	$company_id = $AppUI->getState( 'TimecardWeeklyReportCompanyId' ) ? $AppUI->getState( 'TimecardWeeklyReportCompanyId' ) : 0;
+	$company_id = (int)$AppUI->getState( 'TimecardWeeklyReportCompanyId' );
   //print $company_id;
 	//set that to just midnight so as to grab the whole day
 	$date = $start_day->format("%Y-%m-%d")." 00:00:00";

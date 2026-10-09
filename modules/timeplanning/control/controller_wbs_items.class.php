@@ -16,6 +16,7 @@ class ControllerWBSItem {
 	}
 	
 	function getWBSItems($projectId){
+		$projectId = (int)$projectId; // used in SQL below
 		$list=array();
 		$q = new DBQuery();
 		$q->addQuery('t.id, t.item_name,t.identation,t.number,t.is_leaf');
@@ -37,6 +38,7 @@ class ControllerWBSItem {
 	}
 	
 	function getWorkPackages($projectId){
+		$projectId = (int)$projectId; // used in SQL below
 		$list=array();
 		$q = new DBQuery();
 		$q->addQuery('t.id, t.item_name,t.identation,t.number,t.is_leaf');
@@ -58,6 +60,7 @@ class ControllerWBSItem {
 	}
 	
 	function getWBSItemByTask($task_id){
+		$task_id = (int)$task_id; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('t.id, t.item_name,t.identation,t.number,t.is_leaf');
 		$q->addTable('project_eap_items', 't');

@@ -73,7 +73,7 @@ class CTimeSheet {
                 $q = new DBQuery();
                 $q -> addTable('timetrack_data');
                 $q -> addQuery('tt_data_timesheet_id');
-                $q -> addWhere('tt_data_timesheet_id = '.$this->tt_id);
+                $q -> addWhere('tt_data_timesheet_id = '.(int)$this->tt_id);
                 $q -> exec();
 		if ($q -> foundRows()) {
 			return "You cannot delete a timesheet that has entries associated with it.";
@@ -110,7 +110,7 @@ class CTimeData {
                 $q = new DBQuery();
                 $q -> addTable('timetrack_data');
                 $q -> addQuery('*');
-                $q -> addWhere('tt_data_id = '.$oid);
+                $q -> addWhere('tt_data_id = '.(int)$oid);
                 $q -> loadObject($this);
 		return $this;
 	}
@@ -152,7 +152,7 @@ class CTimeData {
                 $ok=1;
                 $q = new DBQuery();
                 $q -> setDelete('timetrack_data');
-                $q -> addWhere('tt_data_id = '.$this->tt_data_id);
+                $q -> addWhere('tt_data_id = '.(int)$this->tt_data_id);
                 if (!$q->exec()) {
 			return db_error();
 		} else {

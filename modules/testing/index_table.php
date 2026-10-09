@@ -41,7 +41,7 @@ if($tab=="1")
 if($tab=="2")
 	$sql.= " AND unittest_passed = 1";
 if($project_id > 0)
-	$sql.= " AND unittest_project_id = ".$project_id;
+	$sql.= " AND unittest_project_id = ".(int)$project_id;
 	
 // pass the query to the database, please consider always using the (still poor) database abstraction layer
 $quotes = db_loadList( $sql );		// retrieve a list (in form of an indexed array) of einstein quotes via an abstract db method

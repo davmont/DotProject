@@ -155,7 +155,7 @@ class InstructionalFeebackManager {
     public function runFeedbackTriggersEvaluation() {
         global $feedback_list;
         //Start triggers evaluation
-        $projectId = $_GET["project_id"];
+        $projectId = dPgetIntParam($_GET, "project_id", 0);
         if ($projectId != "") {
             $project = new CProject();
             $project->load($projectId);

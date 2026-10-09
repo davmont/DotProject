@@ -7,7 +7,7 @@
 		$controllerWBSItem= new ControllerWBSItem();
 		$ControllerWBSItemActivityRelationship= new ControllerWBSItemActivityRelationship();
 		$controllerCompanyRole= new ControllerCompanyRole();
-		$project_id = dPgetParam($_GET, 'project_id', 0);
+		$project_id = dPgetIntParam($_GET, 'project_id', 0);
 		$items = $controllerWBSItem->getWorkPackages($project_id);
 		//start: build the roles list
 		$roles = $controllerCompanyRole->getCompanyRoles($obj->project_company);
