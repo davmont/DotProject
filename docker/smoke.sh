@@ -30,6 +30,7 @@ check "token present" "${#T}" "64"
 check "POST without token refused" "$(code -X POST "$U?m=companies" -d 'dosql=do_company_aed&company_id=0&company_name=SmokeNoTok')" "302:$U?m=public&a=access_denied"
 check "POST bad token refused" "$(code -X POST "$U?m=companies" -d "dosql=do_company_aed&company_id=0&company_name=SmokeBad&csrf_token=$(printf '0%.0s' $(seq 64))")" "302:$U?m=public&a=access_denied"
 check "GET dosql refused" "$(code "$U?m=companies&dosql=do_company_aed&company_id=0&company_name=SmokeGet")" "302:$U?m=public&a=access_denied"
+$DB -e "DELETE FROM dotp_companies WHERE company_name LIKE 'Smoke%'"
 code -X POST "$U?m=companies" -d "dosql=do_company_aed&company_id=0&company_name=SmokeGood&csrf_token=$T" >/dev/null
 check "POST valid token saves" "$($DB -e "SELECT COUNT(*) FROM dotp_companies WHERE company_name='SmokeGood'")" "1"
 check "token injected into POST forms" "$(curl -s -c "$CJ" -b "$CJ" "$U?m=companies&a=addedit" | grep -c 'name="csrf_token"')" "2"
@@ -40,13 +41,13 @@ check "reset form reachable logged out" "$(curl -s "$U?resetpass=1&user_id=2&tok
 check "reset rejects bad token" "$(curl -s -X POST $U -d "resetpass=1&user_id=2&token=$(printf 'a%.0s' $(seq 64))&new_password=x1234567&password_confirm=x1234567" | grep -o 'Invalid or expired' | head -1)" "Invalid or expired"
 
 # A user with no role must not log in, and must not be promoted
-$DB -e "DELETE FROM dotp_gacl_groups_aro_map WHERE aro_id=2"
+$DB -e "DELETE FROM dotp_gacl_groups_aro_map WHERE aro_id=(SELECT id FROM dotp_gacl_aro WHERE section_value='user' AND value='2')"
 check "role-less worker refused" "$(login worker worker)" ""
-check "role-less worker not promoted" "$($DB -e "SELECT COUNT(*) FROM dotp_gacl_groups_aro_map WHERE aro_id=2")" "0"
-$DB -e "INSERT INTO dotp_gacl_groups_aro_map (group_id, aro_id) VALUES (5, 2)"
+check "role-less worker not promoted" "$($DB -e "SELECT COUNT(*) FROM dotp_gacl_groups_aro_map WHERE aro_id=(SELECT id FROM dotp_gacl_aro WHERE section_value='user' AND value='2')")" "0"
+$DB -e "INSERT INTO dotp_gacl_groups_aro_map (group_id, aro_id) SELECT g.id, a.id FROM dotp_gacl_aro_groups g, dotp_gacl_aro a WHERE g.value='normal' AND a.section_value='user' AND a.value='2'"
 
-# No PHP fatals during the run (the installer's phpgacl crash is known and excluded)
-F=$(docker compose logs --since $(( $(date +%s) - START + 2 ))s web 2>&1 | grep 'PHP Fatal' | grep -vc gacl_api)
+# No PHP fatals during the run
+F=$(docker compose logs --since $(( $(date +%s) - START + 2 ))s web 2>&1 | grep -c 'PHP Fatal')
 check "no PHP fatals" "$F" "0"
 
 [ $FAIL -eq 0 ] && echo "ALL PASS" || echo "SOME CHECKS FAILED"

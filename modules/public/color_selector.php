@@ -3,7 +3,8 @@ if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 
-$callback = dPgetCleanParam($_GET,'callback','');
+// callback is written into a <script> block: accept only a JavaScript function name.
+$callback = preg_replace('/[^A-Za-z0-9_.]/', '', dPgetCleanParam($_GET,'callback',''));
 ?>
 <script language="javascript">
 	function setClose(color) {

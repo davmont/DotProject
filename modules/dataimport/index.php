@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // Copyright (c) 2005, Adam Donnison <ajdonnison@dotproject.net>
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

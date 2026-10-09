@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 function getAllTasks() {
 	$query = new DBQuery;
 	$query->addTable('tasks');

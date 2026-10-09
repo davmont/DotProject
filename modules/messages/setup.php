@@ -1,4 +1,8 @@
-<?php /* TIMECARD $Id: setup.php,v 1.1 2004/06/18 17:51:04 jcgonz Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* TIMECARD $Id: setup.php,v 1.1 2004/06/18 17:51:04 jcgonz Exp $ */
 /*
 dotProject Module
 

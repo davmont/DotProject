@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 $AppUI->savePlace();
 
 require_once( $AppUI->getModuleClass( 'registers' ) );

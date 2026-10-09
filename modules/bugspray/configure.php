@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: configure.php,v 1.1 2004/05/07 22:28:40 uodeltasig Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: configure.php,v 1.1 2004/05/07 22:28:40 uodeltasig Exp $ */
 $AppUI->savePlace();
 
 if (isset($_POST['update'])) {

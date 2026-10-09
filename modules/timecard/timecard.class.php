@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: timecard.class.php,v 1.6 2007/01/31 16:02:50 theideaman Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: timecard.class.php,v 1.6 2007/01/31 16:02:50 theideaman Exp $ */
 require_once $AppUI->getSystemClass('dp');
 //require_once $AppUI->getSystemClass('libmail');
 

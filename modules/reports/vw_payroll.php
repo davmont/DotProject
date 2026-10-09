@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 // may need so more thought as to which company to pull.  (maybe just search for 'internal' type companies)
 
 $is_special = ($AppUI->user_type > 0 and $AppUI->user_type < 7);

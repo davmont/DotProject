@@ -1,3 +1,8 @@
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+?>
 <STYLE>
 	TABLE.tbl TD.hilite {
 		//background-color: #EAF4FF;

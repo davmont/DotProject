@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: setup.php,v 1.48 2011/08/02 06:22:55 hatax Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: setup.php,v 1.48 2011/08/02 06:22:55 hatax Exp $ */
 
 /* Issue module definitions */
 $config = array();

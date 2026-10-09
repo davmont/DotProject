@@ -1,4 +1,8 @@
-<?php /* INVENTORY $id: inventory.class.php,v 1.00 2003/11/02 17:32:00 dylan_cuthbert Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* INVENTORY $id: inventory.class.php,v 1.00 2003/11/02 17:32:00 dylan_cuthbert Exp $ */
 
 error_reporting( E_ALL );
 

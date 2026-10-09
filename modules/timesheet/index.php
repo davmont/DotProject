@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 $timesheet_id = isset($_GET['timesheet_id']) ? $_GET['timesheet_id'] : 0; 
  
 // check permissions 

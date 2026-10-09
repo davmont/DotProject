@@ -31,7 +31,9 @@ foreach ($locales_locations as $loc) {
             if ($content) {
                 $content = str_replace(array('<?php', '?>', '<?'), '', $content);
                 $locale = array();
-                @eval ("\$locale=array(" . $content . "\n'0');");
+                if (dPisTranslationSource($content)) {
+                    @eval ("\$locale=array(" . $content . "\n'0');");
+                }
                 if (is_array($locale) && count($locale) > 1) {
                     $trans = array();
                     foreach ($locale as $k => $v) {

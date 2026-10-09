@@ -1,4 +1,8 @@
-<?php  /* INVOICES $Id: index.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* INVOICES $Id: index.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
 $AppUI->savePlace();
 
 // load the companies class to retrieved denied companies

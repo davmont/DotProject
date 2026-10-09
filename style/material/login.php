@@ -166,7 +166,7 @@ $page_title = dPgetConfig('page_title', 'dotProject');
 		<form method="post" action="<?php echo $loginFromPage; ?>" name="loginform">
 			<input type="hidden" name="login" value="login" />
 			<input type="hidden" name="lostpass" value="0" />
-			<input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />
+			<input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect, ENT_QUOTES);?>" />
 
 			<div class="form-group">
 				<label for="username">

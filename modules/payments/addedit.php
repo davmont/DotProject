@@ -1,4 +1,8 @@
-<?php /* PAYMENTS $Id: addedit.php,v 1.1.1.1 2004/04/01 16:20:41 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PAYMENTS $Id: addedit.php,v 1.1.1.1 2004/04/01 16:20:41 aardvarkads Exp $ */
 $payment_id = intval( dPgetParam( $_GET, "payment_id", 0 ) );
 
 // check permissions for this payment

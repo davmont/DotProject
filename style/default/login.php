@@ -115,7 +115,7 @@ if (!defined('DP_BASE_DIR')) {
 		<form method="post" action="<?php echo $loginFromPage; ?>" name="loginform">
 			<input type="hidden" name="login" value="<?php echo time(); ?>" />
 			<input type="hidden" name="lostpass" value="0" />
-			<input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />
+			<input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect, ENT_QUOTES);?>" />
 
 			<table border="0" cellpadding="0" cellspacing="0">
 				<tr>

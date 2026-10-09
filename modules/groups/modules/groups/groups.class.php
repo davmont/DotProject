@@ -1,4 +1,8 @@
-<?php /* GROUPS $Id: groups.class.php,v 1.1.1.2 2004/02/09 21:54:54 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* GROUPS $Id: groups.class.php,v 1.1.1.2 2004/02/09 21:54:54 aardvarkads Exp $ */
 /**
  *	@package dotProject
  *	@subpackage modules

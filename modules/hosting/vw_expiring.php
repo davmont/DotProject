@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /* Hosting module -> $Id: vw_expiring.php,v 1.1 2007/04/16 05:36:02 mbelos Exp $ */
 
 global $AppUI;

@@ -1,4 +1,8 @@
-<?php /* SMARTSEARCHNS$Id: events.inc.php,v 1.2 2007/01/29 01:11:27 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* SMARTSEARCHNS$Id: events.inc.php,v 1.2 2007/01/29 01:11:27 pedroix Exp $ */
 /**
 * events Class
 */

@@ -1,4 +1,8 @@
-<?php /* PRODUCT $Id: vw_idx_products.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PRODUCT $Id: vw_idx_products.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
 global $AppUI, $invoice_id, $df, $canEdit;
 ?>
 <script language="JavaScript">

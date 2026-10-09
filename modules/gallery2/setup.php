@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 ##
 ## Gallery2 module - A gallery2 integration for dotProject
 ##

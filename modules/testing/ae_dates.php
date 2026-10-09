@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // $Id: ae_dates.php,v 1.1.1.1 2005/07/27 02:35:21 lucidlogic Exp $
 
 global $AppUI, $dPconfig, $task_parent_options, $loadFromTab;

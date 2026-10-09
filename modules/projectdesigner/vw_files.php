@@ -1,4 +1,8 @@
-<?php /* PROJECTS $Id: vw_files.php,v 1.1 2007/03/15 18:16:42 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PROJECTS $Id: vw_files.php,v 1.1 2007/03/15 18:16:42 pedroix Exp $ */
 GLOBAL $AppUI, $project_id, $deny, $canRead, $canEdit, $dPconfig;
 require_once( $AppUI->getModuleClass( 'files' ) );
    

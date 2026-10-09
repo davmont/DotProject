@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 	global $project_id,$custom_fields;
 	if( $custom_fields->fields['idMantisIntegration']->value_intvalue == 0 ) {
 		$AppUI->savePlace();

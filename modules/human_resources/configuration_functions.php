@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 function getRolesByCompanyId($company_id) {
 	$query = new DBQuery;
 	$query->addTable('human_resources_role', 'r');

@@ -6,7 +6,8 @@ if (! defined('DP_BASE_DIR')) {
 require_once($AppUI->getSystemClass('ui'));
 require_once($AppUI->getModuleClass('calendar'));
 
-$callback = isset($_GET['callback']) ? htmlentities($_GET['callback']) : 0;
+// callback is written into a <script> block: accept only a JavaScript function name.
+$callback = isset($_GET['callback']) ? preg_replace('/[^A-Za-z0-9_.]/', '', $_GET['callback']) : 0;
 $date = dpGetParam($_GET, 'date', null);
 $prev_date = dpGetParam($_GET, 'uts', null);
 

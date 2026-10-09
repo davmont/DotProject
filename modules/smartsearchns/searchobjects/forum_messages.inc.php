@@ -1,4 +1,8 @@
-<?php /* SMARTSEARCHNS$Id: forum_messages.inc.php,v 1.1 2006/11/03 17:08:44 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* SMARTSEARCHNS$Id: forum_messages.inc.php,v 1.1 2006/11/03 17:08:44 pedroix Exp $ */
 /**
 * forum_messages Class
 */

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 global $HELPDESK_CONFIG, $hditem, $isa, $m, $item_id;
 
 // User's specified format for date and time

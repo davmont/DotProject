@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /*
 Unitcost main class file
 Written by Alejandro Imass <ait@p2ee.org>

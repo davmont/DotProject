@@ -1,4 +1,8 @@
-<?php /* INVENTORY $Id: addedit.php,v 1.16 2007/08/22 14:32:48 arcoz67 Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* INVENTORY $Id: addedit.php,v 1.16 2007/08/22 14:32:48 arcoz67 Exp $ */
 
 global $m,$a,$ttl,$category_list,$brand_list,$company_list;
 

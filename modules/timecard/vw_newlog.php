@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: vw_newlog.php,v 1.11 2007/08/22 07:17:43 arcoz67 Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: vw_newlog.php,v 1.11 2007/08/22 07:17:43 arcoz67 Exp $ */
 
 //Based largely on the page with the same funtion in the existing TimeTrack module by ajdonnison.  
 

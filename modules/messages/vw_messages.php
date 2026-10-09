@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 	global $AppUI, $user_hash, $view_message, $show_read_messages, $show_sent_messages;	
 	
 	$q = new DBQuery();

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 /*
  * To change this license header, choose License Headers in Project Properties.

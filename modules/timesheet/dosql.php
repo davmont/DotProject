@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 $del = isset($_POST['del']) ? $_POST['del'] : 0;
 $punchIn = isset($_POST['punchin']) ? 1 : 0;
 $punchOut = isset($_POST['punchout']) ? 1 : 0;

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /**
  * $Id: embed.php,v 1.10 2008/05/07 14:07:56 david_iondev Exp $
  * Trac integration for dotProject

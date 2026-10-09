@@ -1,4 +1,8 @@
-<?php /* PAYMENTS $Id: do_payment_aed.php,v 1.1.1.1 2004/04/01 16:20:41 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PAYMENTS $Id: do_payment_aed.php,v 1.1.1.1 2004/04/01 16:20:41 aardvarkads Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $obj = new CPayment();
 $msg = '';

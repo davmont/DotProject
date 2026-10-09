@@ -1,4 +1,8 @@
-<?php /* FILES $Id: files.class.php,v 1.1 2004/08/30 19:02:41 jcgonz Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* FILES $Id: files.class.php,v 1.1 2004/08/30 19:02:41 jcgonz Exp $ */
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once( $AppUI->getSystemClass( 'dp' ) );
 require_once( $AppUI->getModuleClass( 'tasks' ) );

@@ -1,4 +1,8 @@
-<?php /* SMARTSEARCHNS$Id: contacts.inc.php,v 1.1 2006/11/03 17:08:43 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* SMARTSEARCHNS$Id: contacts.inc.php,v 1.1 2006/11/03 17:08:43 pedroix Exp $ */
 /**
 * Contacts Class
 */

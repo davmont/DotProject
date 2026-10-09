@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 	require_once $AppUI->getModuleClass("companies");
 
 	$titleblock = New CTitleBlock('Add/Edit Eventum Support Contract', '', $m, '$m.$a');

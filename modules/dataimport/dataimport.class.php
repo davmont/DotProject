@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // We don't really need a class, more a collection of functions.
 
 class CDataImport extends CDpObject {

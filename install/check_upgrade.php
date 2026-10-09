@@ -110,6 +110,30 @@ function dPcheckExistingDB($conf)
 	return true;
 }
 
+/**
+ * Once includes/config.php holds database settings, the installer only accepts requests
+ * that carry the same settings, password included. Only someone who can read the config
+ * file can then upgrade, back up the database or rewrite the configuration.
+ */
+function dPinstallerAuthorised($request)
+{
+	if (!is_file('../includes/config.php')) {
+		return true;
+	}
+	include '../includes/config.php';
+	if (empty($dPconfig['dbhost'])) {
+		return true;
+	}
+	foreach (array('dbhost', 'dbname', 'dbprefix', 'dbuser', 'dbpass') as $key) {
+		$expected = isset($dPconfig[$key]) ? (string)$dPconfig[$key] : '';
+		$given = isset($request[$key]) ? trim((string)$request[$key]) : '';
+		if (!hash_equals($expected, $given)) {
+			return false;
+		}
+	}
+	return true;
+}
+
 function dPcheckUpgrade()
 {
 	$mode = 'install';

@@ -1,4 +1,8 @@
-<?php /* HISTORY $Id: index.php,v 1.2 2004/12/15 23:34:46 jcgonz Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HISTORY $Id: index.php,v 1.2 2004/12/15 23:34:46 jcgonz Exp $ */
 ##
 ## Reports module
 ## (c) Copyright 2003

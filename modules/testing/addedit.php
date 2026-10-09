@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 require_once( $AppUI->getModuleClass( 'projects' ) );
 // one site for both adding and editing einstein's quote items
 // besides the following lines show the possiblities of the dPframework

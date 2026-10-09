@@ -18,6 +18,7 @@ $msg = '';
 $row = new CContact();
 
 $canDelete = $row->canDelete($msg, $contact_id);
+$userDeleteProtect = false;
 if ($msg == $AppUI->_('contactsDeleteUserError', UI_OUTPUT_JS)) {
 	$userDeleteProtect=true;
 }

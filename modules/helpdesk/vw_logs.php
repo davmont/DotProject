@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: vw_logs.php,v 1.9 2011/08/02 06:22:55 hatax Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: vw_logs.php,v 1.9 2011/08/02 06:22:55 hatax Exp $ */
 global $AppUI, $df, $m;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 

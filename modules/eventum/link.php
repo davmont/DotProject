@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // If we don't have admin rights, and we are not given a project id
 // then we debunk.
 

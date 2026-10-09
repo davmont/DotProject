@@ -1,4 +1,8 @@
-<?php /* PROJECTDESIGNER $Id: gantt.php,v 1.2 2008/10/04 15:38:32 theideaman Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PROJECTDESIGNER $Id: gantt.php,v 1.2 2008/10/04 15:38:32 theideaman Exp $ */
 
 /*
  * Gantt.php - by J. Christopher Pereira
