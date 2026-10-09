@@ -45,6 +45,8 @@ if ($type == '') {
 } else {
 	$AppUI->setState("ticket_type", $type);
 }
+// $type is echoed into links below: accept only known ticket types.
+$type = dPvalidateOrder((string)$type, array_merge(array_values($CONFIG["type_names"]), array("My", "my", "Open", "Processing", "Closed", "Deleted", "All")), "Open");
 
 
 /* expunge deleted tickets */

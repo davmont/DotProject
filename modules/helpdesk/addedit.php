@@ -59,9 +59,9 @@ if ( (!$hditem) && (count($_GET) > 3) && (!$item_id) ) {
 	$item_source = dPgetParam($_GET, 'item_source', 0);
 	$item_os = dPgetParam($_GET, 'item_os', 0);
 	$item_application = dPgetParam($_GET, 'item_application', 0);
-	$project_id = dPgetParam($_GET, 'project', 0);
-	$company_id = dPgetParam($_GET, 'company', 0);
-	$assigned_to = dPgetParam($_GET, 'assigned_to', 0);
+	$project_id = dPgetIntParam($_GET, 'project', 0);
+	$company_id = dPgetIntParam($_GET, 'company', 0);
+	$assigned_to = dPgetIntParam($_GET, 'assigned_to', 0);
 	$requestor = dPgetParam($_GET, 'requestor', 0);
 }
 
@@ -582,14 +582,14 @@ function selectList( listName, target ) {
 
       <td align="right"><font color="red"><label for="it">* <?php echo $AppUI->_('Title'); ?>:</label></font></td>
       <td valign="top"><input type="text" class="text" id="it" name="item_title"
-                              value="<?php echo @$hditem["item_title"]; ?>" maxlength="64" /></td>
+                              value="<?php echo dPhtml(@$hditem["item_title"]); ?>" maxlength="64" /></td>
     </tr>
 
     <tr>
       <td align="right" nowrap="nowrap"><font color="red"><label for="ir">* <?php echo $AppUI->_('Requestor'); ?>:</label></font></td>
       <td valign="top" nowrap="nowrap">
         <input type="text" class="text" id="ir" name="item_requestor"
-        value="<?php echo @$hditem["item_requestor"]; ?>" maxlength="64"
+        value="<?php echo dPhtml(@$hditem["item_requestor"]); ?>" maxlength="64"
 	onClick="checkRequestorType();"
         onChange="if (this.value!=oldRequestor) {
                     document.frmHelpDeskItem.item_requestor_id.value = 0;
@@ -618,9 +618,9 @@ function selectList( listName, target ) {
 	                      onClick="checkRequestorType();"
       <?php if ($hditem["item_requestor_type"]!=0): ?>
                               disabled="disabled"
-                              value="<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 1); ?>"
+                              value="<?php echo dPhtml(getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 1)); ?>"
       <?php else: ?>
-                              value="<?php echo @$hditem["item_requestor_email"]; ?>"
+                              value="<?php echo dPhtml(@$hditem["item_requestor_email"]); ?>"
       <?php endif; ?>
                               name="item_requestor_email"
                               maxlength="64" /></td>
@@ -632,10 +632,10 @@ function selectList( listName, target ) {
                               onClick="checkRequestorType();"
       <?php if ($hditem["item_requestor_type"]!=0): ?>
                               disabled="disabled"
-                              value="<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 2); ?>"
+                              value="<?php echo dPhtml(getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 2)); ?>"
       <?php endif; ?>
                               name="item_requestor_phone"
-                              value="<?php echo @$hditem["item_requestor_phone"]; ?>"
+                              value="<?php echo dPhtml(@$hditem["item_requestor_phone"]); ?>"
                               maxlength="30" /></td>
     </tr>
 
@@ -803,7 +803,7 @@ function selectList( listName, target ) {
 <tr>
   <td valign="top">
     <textarea id="summary" cols="75" rows="12" class="textarea"
-              name="item_summary"><?php echo @$hditem["item_summary"]; ?></textarea>
+              name="item_summary"><?php echo dPhtml(@$hditem["item_summary"]); ?></textarea>
   </td>
   <td>&nbsp;&nbsp;</td>
       <td>
@@ -814,13 +814,13 @@ function selectList( listName, target ) {
       >
       <?php
 	      foreach($users as $id => $name){
-		echo "<option value=\"{$id}\"";
+		echo "<option value=\"".dPhtml($id)."\"";
     // Two situations -- KZHAO
 		if($item_id && array_key_exists($id,$watchers))
 			echo " selected";
     elseif(!$item_id && $watchers && in_array($id, $watchers))
       echo " selected";
-		echo ">{$name}</option>";
+		echo ">".dPhtml($name)."</option>";
 	      }
       ?></select>
       <input type="hidden" name="watchers" value="" /></td>
@@ -871,8 +871,8 @@ function selectList( listName, target ) {
 ?>
 
 <script language="javascript">
-selectList('item_company_id',<?php echo $target?>);
-changeList('item_project_id', projects, <?php echo $target?>);
-selectList('item_project_id',<?php echo $select?>);
+selectList('item_company_id',<?php echo (int)$target?>);
+changeList('item_project_id', projects, <?php echo (int)$target?>);
+selectList('item_project_id',<?php echo (int)$select?>);
 </script>
 </html>

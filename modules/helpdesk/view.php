@@ -8,7 +8,7 @@ $df = $AppUI->getPref( 'SHDATEFORMAT' );
 $tf = $AppUI->getPref( 'TIMEFORMAT' );
 $format = $df." ".$tf;
 
-$item_id = dPgetParam( $_GET, 'item_id', 0 );
+$item_id = dPgetIntParam( $_GET, 'item_id', 0 );
 $helpdesk_id = $item_id;
 $task_log_id = intval(dPgetParam($_GET, 'task_log_id', 0)); 
 
@@ -273,11 +273,11 @@ if (!$hditem ) {
         <td><strong><?php echo $AppUI->_('Summary')?></strong></td>
         <td><strong><?php echo $AppUI->_('Watchers')?></strong></td>
       <tr>
-        <td class="hilite" width="50%"><?php echo str_replace( chr(10), "<br />", linkLinks($hditem["item_summary"]))?>&nbsp;</td>
+        <td class="hilite" width="50%"><?php echo str_replace( chr(10), "<br />", linkLinks(dPhtml($hditem["item_summary"])))?>&nbsp;</td>
         <td class="hilite" width="50%"><?php
 		$delimiter = "";
 		foreach($watchers as $watcher){
-			echo "$delimiter <a href=\"mailto: {$watcher['contact_email']}\">".$watcher['name']."</a>";
+			echo "$delimiter <a href=\"mailto: ".dPhtml($watcher['contact_email'])."\">".dPhtml($watcher['name'])."</a>";
 			$delimiter = ",";
 		}
         ?>&nbsp;</td>

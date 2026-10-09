@@ -74,15 +74,15 @@ if(!$gallery_uri){
 <table width='100%' border='0' cellpadding='1' cellspacing='1' class='std'>
 <tr>
 	<td nowrap="nowrap" align="right"><?php echo $AppUI->_( 'Gallery2 URI:' );?></td>
-	<td nowrap="nowrap" align="left"><input type="text" class="text" size="100%" name="gallery_uri" value=<?php echo $gallery_uri;?>></td>
+	<td nowrap="nowrap" align="left"><input type="text" class="text" size="100%" name="gallery_uri" value="<?php echo dPhtml($gallery_uri);?>"></td>
 </tr>
 <tr>
 	<td nowrap="nowrap" align="right"><?php echo $AppUI->_( 'Gallery2 Local Folder:' );?></td>
-	<td nowrap="nowrap" align="left"><input type="text" class="text" size="100%" name="gallery_folder" value=<?php echo $gallery_folder;?>></td>
+	<td nowrap="nowrap" align="left"><input type="text" class="text" size="100%" name="gallery_folder" value="<?php echo dPhtml($gallery_folder);?>"></td>
 </tr>
 <tr>
 	<td nowrap="nowrap" align="right"><?php echo $AppUI->_( 'Gallery2 Username:' );?></td>
-	<td nowrap="nowrap" align="left"><input type="text" class="text" size="100%" name="gallery_user" value=<?php echo $gallery_user;?>></td>
+	<td nowrap="nowrap" align="left"><input type="text" class="text" size="100%" name="gallery_user" value="<?php echo dPhtml($gallery_user);?>"></td>
 </tr>
 </table>	
 

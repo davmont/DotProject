@@ -210,11 +210,11 @@ if ($do_report) {
 			$str =  "<tr valign=\"top\">";
 			$str .= "<td align=\"right\">".$Tasks['item_id']."</td>";
 			$str .= "<td align=\"center\">".$start_date->format( $df )."</td>";
-			$str .= "<td align=\"center\"><b>".$Tasks['item_requestor']."</b></td>";
+			$str .= "<td align=\"center\"><b>".dPhtml($Tasks['item_requestor'])."</b></td>";
 //			$str .= "<td align=\"center\">".$Tasks['requested_by']."</td>";
-			$str .= "<td align=\"center\">".$Tasks['item_title']."</td>";
-			$str .= "<td align=\"center\">".$Tasks['item_summary']."</td>";
-			$str .= "<td align=\"center\">".$Tasks['assigned_to']."</td>";
+			$str .= "<td align=\"center\">".dPhtml($Tasks['item_title'])."</td>";
+			$str .= "<td align=\"center\">".dPhtml($Tasks['item_summary'])."</td>";
+			$str .= "<td align=\"center\">".dPhtml($Tasks['assigned_to'])."</td>";
 			$str .= "<td align=\"center\">".$Log_Status_desc."</td>";
 			$str .= "<td align=\"center\">".$Log_Priority_desc."</td>";
 			$str .= "</tr>";

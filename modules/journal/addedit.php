@@ -114,7 +114,7 @@ echo arraySelect( $projects, 'journal_project', 'class="text"', $project_id );
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Description' );?>:</td>
 	<td width="60%">
-		<textarea name="journal_description" class="textarea" cols="60" rows="5" wrap="virtual"><?php echo $journal["journal_description"];?></textarea>
+		<textarea name="journal_description" class="textarea" cols="60" rows="5" wrap="virtual"><?php echo dPhtml($journal["journal_description"]);?></textarea>
 	</td>
 </tr>	
 		

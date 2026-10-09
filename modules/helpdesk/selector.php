@@ -123,7 +123,7 @@ if (!$ok) {
 	echo "Incorrect parameters passed\n";
 	if ($debug) {
 		echo "<br />callback = $callback \n";
-		echo "<br />table = $table \n";
+		echo "<br />table = ".dPhtml($table)." \n";
 		echo "<br />ok = $ok \n";
 	}
 } else {
@@ -163,7 +163,7 @@ if (!$ok) {
 	if (count( $list ) > 1) {
 		echo $AppUI->_( 'Select' ).' '.$AppUI->_( $title ).':<br />';
 		foreach ($list as $key => $val) {
-			echo "<a href=\"javascript:setClose('$key','".addslashes($val)."');\">$val</a><br>\n";
+			echo "<a href=\"#\" onclick=\"setClose(".dPjsAttr((string)$key).",".dPjsAttr($val)."); return false;\">".dPhtml($val)."</a><br>\n";
 		}
 ?>
 	</td>

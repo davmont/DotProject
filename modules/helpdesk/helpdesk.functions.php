@@ -129,9 +129,9 @@ function getAllowedProjectsForJavascript($activeonly=0){
   /* Build array of company/projects for output to javascript
      Adding slashes in case special characters exist */
   foreach($allowedCompanyProjectList as $row){
-    $projects[] = "[{$row['company_id']},{$row['project_id']},'"
-                . addslashes($row['project_name'])
-                . "']";
+    $projects[] = "[".(int)$row['company_id'].",".(int)$row['project_id'].","
+                . dPjs($row['project_name'])
+                . "]";
     $reverse[$row['project_id']] = $row['company_id'];
   }
   return $projects;
