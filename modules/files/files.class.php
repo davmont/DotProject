@@ -320,7 +320,7 @@ class CFile extends CDpObject
 		}
 
 		db_exec('UNLOCK TABLES;');	//TODO: use DBQuery?  What about other sql engines?
-		return nwords;
+		return count($wordarr);
 	}
 
 	//function notifies about file changing
