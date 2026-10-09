@@ -7,11 +7,17 @@ $show_all = (int) dPgetParam($_REQUEST, 'show_all', 0);
 $company_id = (int) dPgetParam($_REQUEST, 'company_id', 0);
 $contact_id = (int) dPgetParam($_POST, 'contact_id', 0);
 $call_back = dPgetCleanParam($_GET, 'call_back', null);
+// call_back names a JavaScript function in the opener: letters, digits and _ only.
+if (!is_null($call_back)) {
+	$call_back = preg_replace('/[^A-Za-z0-9_]/', '', $call_back);
+}
 $contacts_submited = (int) dPgetParam($_POST, 'contacts_submited', 0);
 $selected_contacts_id = dPgetCleanParam($_GET, 'selected_contacts_id', '');
 if (dPgetParam($_POST, 'selected_contacts_id')) {
 	$selected_contacts_id = dPgetCleanParam($_POST, 'selected_contacts_id');
 }
+// A comma-separated list of contact ids, written into JavaScript and links below.
+$selected_contacts_id = dPintList($selected_contacts_id);
 ?>
 <script language="javascript">
 	function setContactIDs(method, querystring) {
@@ -205,20 +211,20 @@ echo ((!is_null($call_back)) ? '&call_back=' . $call_back : '');
 			<?php echo $AppUI->_('View all allowed companies'); ?>
 		</a></h4>
 	<hr />
-	<h2><?php echo $AppUI->_('Contacts for'); ?> <?php echo $company_name ?></h2>
+	<h2><?php echo $AppUI->_('Contacts for'); ?> <?php echo dPhtml($company_name) ?></h2>
 	<?php
 	foreach ($contacts as $contact_id => $contact_data) {
 		$contact_company = (($contact_data['company_name'])
 			? $contact_data['company_name'] : $contact_data['contact_company']);
 		if ($contact_company && $contact_company != $pointer_company) {
-			echo '<h4>' . $contact_company . '</h4>';
+			echo '<h4>' . dPhtml($contact_company) . '</h4>';
 			$pointer_company = $contact_company;
 		}
 
 		$contact_department = (($contact_data['dept_name'])
 			? $contact_data['dept_name'] : $contact_data['contact_department']);
 		if ($contact_department && $contact_department != $pointer_department) {
-			echo '<h5>' . $contact_department . '</h5>';
+			echo '<h5>' . dPhtml($contact_department) . '</h5>';
 			$pointer_department = $contact_department;
 		}
 
@@ -226,8 +232,8 @@ echo ((!is_null($call_back)) ? '&call_back=' . $call_back : '');
 
 		echo ('<input type="checkbox" name="contact_id[]" id="contact_' . $contact_id . '" value="'
 			. $contact_id . '" ' . $checked . ' />');
-		echo ('<label for="contact_' . $contact_id . '">' . $contact_data['contact_first_name'] . ' '
-			. $contact_data['contact_last_name']
+		echo ('<label for="contact_' . $contact_id . '">' . dPhtml($contact_data['contact_first_name']) . ' '
+			. dPhtml($contact_data['contact_last_name'])
 			. (isset($contact_data['contact_extra']) ? ($contact_data['contact_extra']) : '')
 			. '</label>');
 		echo ('<br />');

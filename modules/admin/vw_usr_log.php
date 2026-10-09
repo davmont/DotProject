@@ -61,7 +61,7 @@ if ($a = dPgetCleanParam($_REQUEST, "a", "") == "") {
 		<td align="right" width="45%" ><?php echo $AppUI->_('Start Date');?></td>
 			<td width="55%" align="left">
 				<input type="hidden" name="log_start_date" value="<?php echo $start_date ? $start_date->format(FMT_TIMESTAMP_DATE) : "" ;?>" />
-				<input type="text" name="start_date" value="<?php echo $start_date ? $start_date->format($df) : "" ;?>" class="text" readonly="readonly" disabled="disabled" />
+				<input type="text" name="start_date" value="<?php echo dPhtml($start_date ? $start_date->format($df) : "") ;?>" class="text" readonly="readonly" disabled="disabled" />
 				<a href="#" onclick="javascript:popCalendar('start_date')">
 				<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" ></a>
 			</td>
@@ -70,7 +70,7 @@ if ($a = dPgetCleanParam($_REQUEST, "a", "") == "") {
 		<td align="right" width="45%"><?php echo $AppUI->_('End Date');?></td>
 			<td width="55%" align="left">
 				<input type="hidden" name="log_end_date" value="<?php echo $end_date ? $end_date->format(FMT_TIMESTAMP_DATE) : '';?>" />
-				<input type="text" name="end_date" value="<?php echo $end_date ? $end_date->format($df) : '';?>" class="text" readonly="readonly" disabled="disabled" />
+				<input type="text" name="end_date" value="<?php echo dPhtml($end_date ? $end_date->format($df) : '');?>" class="text" readonly="readonly" disabled="disabled" />
 				<a href="#" onclick="javascript:popCalendar('end_date')">
 				<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a>
 		</td>
@@ -111,8 +111,8 @@ if (dPgetParam($_REQUEST, "showdetails", 0) == 1) {
 </tr>
 <?php foreach ($logs as $detail) {?>
 	<tr>
-		<td align="center"><?php echo $detail["contact_first_name"];?></td>
-		<td align="center"><?php echo $detail["contact_last_name"];?></td>
+		<td align="center"><?php echo dPhtml($detail["contact_first_name"]);?></td>
+		<td align="center"><?php echo dPhtml($detail["contact_last_name"]);?></td>
 		<td align="center"><?php echo $detail["user_ip"];?></td>
 		<td align="center"><?php echo $detail["date_time_in"];?></td>
 		<td align="center"><?php echo $detail["date_time_out"];?></td>
