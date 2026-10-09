@@ -6,7 +6,8 @@ require_once($AppUI->getSystemClass('ui'));
 require_once ($AppUI->getSystemClass('date'));
 $df = $AppUI->getPref('SHDATEFORMAT');;
 $date = dPgetCleanParam($_GET,'date');
-$field = dPgetCleanParam($_GET,'field');
+// field is written into a <script> block: accept only a form.field name.
+$field = preg_replace('/[^A-Za-z0-9_.]/', '', dPgetCleanParam($_GET,'field'));
 $this_day = new CDate($date);
 $formatted_date = $this_day->format($df);
 ?>

@@ -276,8 +276,11 @@ class CAppUI
 	 */
 	function makeFileNameSafe($file)
 	{
-		$file = str_replace('../', '', $file);
-		$file = str_replace('..\\', '', $file);
+		// Repeat until nothing changes: a single pass turns '....//' into '../'.
+		do {
+			$before = $file;
+			$file = str_replace(array('../', '..\\'), '', $file);
+		} while ($file !== $before);
 		return $file;
 	}
 
@@ -496,7 +499,8 @@ class CAppUI
 				$str = str_replace(' ', '%20', $str);
 				break;
 			case UI_OUTPUT_HTML:
-				$str = htmlentities(stripslashes($str), ENT_COMPAT, $locale_char_set);
+				// ENT_QUOTES: single quotes too, so values are safe in attributes quoted either way.
+				$str = htmlentities(stripslashes($str), ENT_QUOTES, $locale_char_set);
 				$str = str_replace('&#039;', '&apos;', $str);
 				break;
 			case UI_OUTPUT_JS:
@@ -535,20 +539,48 @@ class CAppUI
 	function getCsrfMeta()
 	{
 		$token = htmlspecialchars($this->getCsrfToken(), ENT_QUOTES, 'UTF-8');
+		// Adds the token to POST forms that injectCsrfToken() cannot see:
+		// forms built by JavaScript, and forms submitted with form.submit(),
+		// which does not fire the submit event.
 		return '<meta name="csrf-token" content="' . $token . '" />' . "\n"
-			. '<script type="text/javascript">'
-			. '(function(){'
-			.   'var t=document.querySelector(\'meta[name="csrf-token"]\').getAttribute(\'content\');'
-			.   'document.addEventListener(\'submit\',function(e){'
-			.     'var f=e.target;'
-			.     'if(f.method&&f.method.toLowerCase()==="post"&&!f.querySelector(\'[name="csrf_token"]\")){'
-			.       'var i=document.createElement(\'input\');'
-			.       'i.type="hidden";i.name="csrf_token";i.value=t;'
-			.       'f.appendChild(i);'
-			.     '}'
-			.   '},true);'
-			. '})();'
+			. '<script type="text/javascript">' . "\n"
+			. '(function () {' . "\n"
+			. '	var meta = document.querySelector(\'meta[name="csrf-token"]\');' . "\n"
+			. '	if (!meta) { return; }' . "\n"
+			. '	var token = meta.getAttribute(\'content\');' . "\n"
+			. '	function addToken(f) {' . "\n"
+			. '		if (!f || String(f.getAttribute(\'method\') || \'\').toLowerCase() !== \'post\') { return; }' . "\n"
+			. '		if (f.querySelector(\'input[name="csrf_token"]\')) { return; }' . "\n"
+			. '		var i = document.createElement(\'input\');' . "\n"
+			. '		i.type = \'hidden\'; i.name = \'csrf_token\'; i.value = token;' . "\n"
+			. '		f.appendChild(i);' . "\n"
+			. '	}' . "\n"
+			. '	document.addEventListener(\'submit\', function (e) { addToken(e.target); }, true);' . "\n"
+			. '	var nativeSubmit = HTMLFormElement.prototype.submit;' . "\n"
+			. '	HTMLFormElement.prototype.submit = function () { addToken(this); return nativeSubmit.apply(this, arguments); };' . "\n"
+			. '})();' . "\n"
 			. '</script>';
+	}
+
+	/**
+	 * Output buffer callback (see index.php): add the CSRF token as a hidden
+	 * field to every POST form in an HTML page.
+	 */
+	function injectCsrfToken($html)
+	{
+		foreach (headers_list() as $header) {
+			if (stripos($header, 'Content-Type:') === 0 && stripos($header, 'text/html') === false) {
+				return $html;
+			}
+		}
+		$field = $this->getCsrfInput();
+		$out = preg_replace_callback('/<form\b[^>]*>/i', function ($m) use ($field) {
+			if (!preg_match('/\bmethod\s*=\s*["\']?\s*post\b/i', $m[0])) {
+				return $m[0];
+			}
+			return $m[0] . $field;
+		}, $html);
+		return ($out === null) ? $html : $out;
 	}
 
 	function verifyCsrfToken()

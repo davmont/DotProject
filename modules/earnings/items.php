@@ -1,4 +1,8 @@
-<?php /* earnings $Id: items.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* earnings $Id: items.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
 GLOBAL $m, $a, $earning_id, $f, $query_string, $changeLock, $timecard;
 // get the prefered date format
 $df = $AppUI->getPref('SHDATEFORMAT');

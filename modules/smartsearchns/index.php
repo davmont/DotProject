@@ -1,4 +1,8 @@
-<?php /* SMARTSEARCHNS$Id: index.php,v 1.3 2007/01/29 01:07:39 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* SMARTSEARCHNS$Id: index.php,v 1.3 2007/01/29 01:07:39 pedroix Exp $ */
 //--MSy--
 $files = $AppUI->readFiles( dPgetConfig( 'root_dir' )."/modules/$m/searchobjects", "\.php$" );
 $ssearch=ARRAY();

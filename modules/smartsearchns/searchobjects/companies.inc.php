@@ -1,4 +1,8 @@
-<?php /* SMARTSEARCHNS$Id: companies.inc.php,v 1.1 2006/11/03 17:08:43 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* SMARTSEARCHNS$Id: companies.inc.php,v 1.1 2006/11/03 17:08:43 pedroix Exp $ */
 class companies extends smartsearchns {
 	var $table = "companies";
 	var $table_module	= "companies";

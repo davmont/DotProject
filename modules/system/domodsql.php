@@ -6,9 +6,13 @@ if (!defined('DP_BASE_DIR')) {
 ##
 ## Activate or move a module entry
 ##
-$cmd = dPgetCleanParam($_GET, 'cmd', '0');
-$mod_id = intval(dPgetParam($_GET, 'mod_id', '0'));
-$mod_directory = dPgetCleanParam($_GET, 'mod_directory', '0');
+if (!getPermission('system', 'edit')) {
+	$AppUI->redirect('m=public&a=access_denied');
+}
+
+$cmd = dPgetCleanParam($_POST, 'cmd', '0');
+$mod_id = intval(dPgetParam($_POST, 'mod_id', '0'));
+$mod_directory = $AppUI->checkFileName(dPgetCleanParam($_POST, 'mod_directory', '0'));
 
 $obj = new CModule();
 if ($mod_id) {

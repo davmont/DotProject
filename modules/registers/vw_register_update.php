@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 GLOBAL $AppUI;
 
 $register_id = intval( dPgetParam( $_GET, 'register_id', 0 ) );

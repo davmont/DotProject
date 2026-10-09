@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 	global $obj;
 
 	$is_task    = isset($obj->_tbl) && $obj->_tbl == "tasks";

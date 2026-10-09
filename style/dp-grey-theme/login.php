@@ -26,7 +26,7 @@ if (!defined('DP_BASE_DIR')) {
 <table align="center" border="0" width="250" cellpadding="6" cellspacing="0" class="std">
 <input type="hidden" name="login" value="<?php echo time();?>" />
 <input type="hidden" name="lostpass" value="0" />
-<input type="hidden" name="redirect" value="<?php echo $redirect;?>" />
+<input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect, ENT_QUOTES);?>" />
 <tr>
 	<th colspan="2"><em><?php echo @$dPconfig['company_name'];?></em></th>
 </tr>

@@ -1,4 +1,8 @@
-<?php /* earnings $Id: inv_aed.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* earnings $Id: inv_aed.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
 $earning_id = intval( dPgetParam( $_GET, "earning_id", 0 ) );
 
 require_once( $AppUI->getSystemClass( 'libmail' ) );

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 define ("TREE_ROOT", 0);
 define ("COMPANY", 1);

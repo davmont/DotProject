@@ -24,6 +24,10 @@ switch ($m) {
 		@readfile(DP_BASE_DIR . '/locales/' . $dPconfig['host_locale'] . '/styles.inc');
 		break;
 }
-eval ('$GLOBALS[\'translate\']=array(' . ob_get_contents() . "\n);");
+if (dPisTranslationSource(ob_get_contents())) {
+	eval ('$GLOBALS[\'translate\']=array(' . ob_get_contents() . "\n);");
+} else {
+	$GLOBALS['translate'] = array();
+}
 ob_end_clean();
 ?>

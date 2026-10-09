@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
   $project_id = dPgetParam($_POST, 'project_id', 0);
   $eventum_project = dPgetParam($_POST, 'eventum_project', 0);
 

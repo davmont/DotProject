@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 global $m,$df,$item_list,$sorted_item_list,$AppUI, $dPconfig;
 global $user_list, $project_list, $company_list, $department_list;

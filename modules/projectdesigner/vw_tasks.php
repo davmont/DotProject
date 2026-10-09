@@ -1,4 +1,8 @@
-<?php /* TASKS $Id: vw_tasks.php,v 1.2 2007/06/19 11:43:05 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* TASKS $Id: vw_tasks.php,v 1.2 2007/06/19 11:43:05 pedroix Exp $ */
 GLOBAL $m, $a, $project_id, $f, $task_status, $min_view, $query_string, $durnTypes, $tpl;
 GLOBAL $task_sort_item1, $task_sort_type1, $task_sort_order1;
 GLOBAL $task_sort_item2, $task_sort_type2, $task_sort_order2;

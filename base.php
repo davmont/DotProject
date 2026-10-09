@@ -20,7 +20,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 }}} */
 
-ini_set('display_errors', 1);
+// Log PHP errors instead of printing them: a warning printed inside a <script>
+// block breaks the page's JavaScript, and messages can leak paths and SQL.
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
 if (defined('E_DEPRECATED')) {
   error_reporting(E_ALL & ~(E_DEPRECATED | E_NOTICE | E_STRICT));

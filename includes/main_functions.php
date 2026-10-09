@@ -315,6 +315,58 @@ function dPgetParam(&$arr, $name, $def = null)
 /**
  * Alternative to protect from XSS attacks.
  */
+/**
+ * Hash a password for storage in users.user_password.
+ *
+ * Uses password_hash() once the column can hold its output (VARCHAR(255),
+ * added by the 20261009 entry in db/upgrade_latest.sql). On a database that
+ * has not been upgraded yet it keeps the legacy MD5 format, because a bcrypt
+ * hash cut to 32 characters would lock the user out.
+ */
+function dPhashPassword($password)
+{
+	return dPpasswordColumnFitsHash() ? password_hash($password, PASSWORD_DEFAULT) : md5($password);
+}
+
+/**
+ * True when $source (the contents of locale .inc files) holds only string literals,
+ * "=>", commas and comments, so it can be evaluated as the body of array(...) without
+ * running code. Double-quoted strings may contain a plain $name (it only reads a variable)
+ * but not {$...}, ${...}, $name[...] or $name->..., which can call code.
+ */
+function dPisTranslationSource($source)
+{
+	$name = '\$[A-Za-z_\x80-\xff][A-Za-z0-9_\x80-\xff]*+(?!\[|->)';
+	$string = '"(?:[^"\\\\${]++|\\\\.|\{(?!\$)|' . $name . '|\$(?![A-Za-z_\x80-\xff{]))*+"'
+		. '|\'(?:[^\'\\\\]++|\\\\.)*+\'';
+	$comment = '#[^\n]*+|//[^\n]*+|/\*.*?\*/';
+	if (preg_match('~\A(?:\s++|' . $string . '|=>|,|' . $comment . ')*+\z~s', $source) === 1) {
+		return true;
+	}
+	error_log('dotProject: translation file skipped, it contains more than string literals');
+	return false;
+}
+
+/**
+ * True when users.user_password is wide enough for password_hash() output.
+ */
+function dPpasswordColumnFitsHash()
+{
+	static $fits = null;
+	if ($fits === null) {
+		$len = db_loadResult('SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS'
+			. ' WHERE TABLE_SCHEMA = DATABASE()'
+			. " AND TABLE_NAME = '" . db_escape(dPgetConfig('dbprefix', '') . 'users') . "'"
+			. " AND COLUMN_NAME = 'user_password'");
+		$fits = ((int)$len >= 60);
+		if (!$fits) {
+			error_log('dotProject: users.user_password is too short for password_hash();'
+				. ' run the database upgrade (db/upgrade_latest.sql). Falling back to MD5.');
+		}
+	}
+	return $fits;
+}
+
 function dPgetCleanParam(&$arr, $name, $def = null)
 {
 	if (isset($arr[$name]) && is_array($arr[$name])) {
@@ -517,7 +569,8 @@ function dPformSafe($txt, $flag_bits = 0)
 		$txt_arr = is_object($txt) ? get_object_vars($txt) : $txt;
 		foreach ($txt_arr as $k => $v) {
 			$value = $deslash ? $AppUI->___($v, UI_OUTPUT_RAW) : $v;
-			$value = $isURI ? $AppUI->___($value, UI_OUTPUT_URI) : $value;
+			// URIs are written into href attributes, so they are HTML-escaped too.
+			$value = $isURI ? htmlspecialchars($AppUI->___($value, UI_OUTPUT_URI), ENT_QUOTES) : $value;
 
 			if (!$isURI) {
 				$value = $isJSVars ? $AppUI->___($value, UI_OUTPUT_JS) : $value;
@@ -533,7 +586,7 @@ function dPformSafe($txt, $flag_bits = 0)
 
 	} else {
 		$txt = $deslash ? $AppUI->___($txt, UI_OUTPUT_RAW) : $txt;
-		$txt = $isURI ? $AppUI->___($txt, UI_OUTPUT_URI) : $txt;
+		$txt = $isURI ? htmlspecialchars($AppUI->___($txt, UI_OUTPUT_URI), ENT_QUOTES) : $txt;
 
 		if (!$isURI) {
 			$txt = $isJSVars ? $AppUI->___($txt, UI_OUTPUT_JS) : $txt;

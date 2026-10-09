@@ -1,4 +1,8 @@
-<?php /* $Id: timetrack.class.php,v 1.2 2003/09/04 03:07:12 kripper Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* $Id: timetrack.class.php,v 1.2 2003/09/04 03:07:12 kripper Exp $ */
 ##
 ## TimeTrack Classes
 ##

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 $perms =& $AppUI->acl();
 if (! $perms->checkModule('eventum', 'access')

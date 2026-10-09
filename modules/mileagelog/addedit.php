@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 //Based largely on the page with the same funtion in the existing TimeCard module
 

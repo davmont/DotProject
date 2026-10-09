@@ -28,7 +28,8 @@ function selPermWhere( $table, $idfld ) {
 }
 
 $debug = false;
-$callback = dPgetParam( $_GET, 'callback', 0 );
+// callback is written into a <script> block: accept only a JavaScript function name.
+$callback = preg_replace('/[^A-Za-z0-9_.]/', '', dPgetParam( $_GET, 'callback', '' ));
 $table = dPgetParam( $_GET, 'table', 0 );
 $comp=dPgetParam($_GET, 'comp', 0);
 

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 GLOBAL $AppUI, $timesheets, $company_id, $tg_data, $review, $f;
 $df = $AppUI->getPref( 'SHDATEFORMAT' );
 ?>

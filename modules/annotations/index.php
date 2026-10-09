@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 // TODO: remove a load of these "unnecessary" comments
 
 // this is the index site for our Annotations module

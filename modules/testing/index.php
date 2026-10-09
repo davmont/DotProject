@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 // this is the index site for our testing module
 // it is automatically appended on the applications main ./index.php
 // by the dPframework

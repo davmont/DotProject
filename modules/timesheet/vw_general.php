@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 global $wk;
 $thisDate = new CDate(); // set date for displaying and timesheet_date
 //check if user is on break

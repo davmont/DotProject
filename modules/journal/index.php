@@ -1,4 +1,8 @@
-<?php /* journal $Id: index.php,v 1.1 2004/03/30 23:21:40 jcgonz Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* journal $Id: index.php,v 1.1 2004/03/30 23:21:40 jcgonz Exp $ */
 ##
 ## journal module - a quick hack of the history module by HGS 3/16/2004
 

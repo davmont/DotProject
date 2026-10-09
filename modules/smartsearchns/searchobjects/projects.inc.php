@@ -1,4 +1,8 @@
-<?php /* SMARTSEARCHNS$Id: projects.inc.php,v 1.2 2007/01/29 01:09:35 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* SMARTSEARCHNS$Id: projects.inc.php,v 1.2 2007/01/29 01:09:35 pedroix Exp $ */
 /**
 * projects Class
 */

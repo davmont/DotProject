@@ -1,4 +1,8 @@
-<?php /* $Id: index.php,v 1.3 2004/02/09 22:09:37 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* $Id: index.php,v 1.3 2004/02/09 22:09:37 aardvarkads Exp $ */
 $AppUI->savePlace();
 
 // load the groups class to retrieved denied groups

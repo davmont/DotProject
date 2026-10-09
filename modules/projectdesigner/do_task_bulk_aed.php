@@ -1,4 +1,8 @@
-<?php /* PROJECTDESIGNER $Id: do_task_bulk_aed.php,v 1.2 2007/06/19 11:43:04 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PROJECTDESIGNER $Id: do_task_bulk_aed.php,v 1.2 2007/06/19 11:43:04 pedroix Exp $ */
 global $AppUI;
 $project_id = (int)dPgetParam( $_POST, 'project_id', 0 );
 $selected = dPgetCleanParam( $_POST, 'bulk_selected_task', 0 );

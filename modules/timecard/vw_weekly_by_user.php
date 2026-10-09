@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: vw_weekly_by_user.php,v 1.1 2007/08/22 07:47:47 arcoz67 Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: vw_weekly_by_user.php,v 1.1 2007/08/22 07:47:47 arcoz67 Exp $ */
 	global $tab,$TIMECARD_CONFIG;
 	$show_possible_hours_worked = $TIMECARD_CONFIG['show_possible_hours_worked'];
 	//print "<pre>$show_possible_hours_worked</pre>";

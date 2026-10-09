@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: vw_timecard.php,v 1.13 2007/08/22 07:17:43 arcoz67 Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: vw_timecard.php,v 1.13 2007/08/22 07:17:43 arcoz67 Exp $ */
 
 	Global $TIMECARD_CONFIG,$newTLogTabNum;
 	

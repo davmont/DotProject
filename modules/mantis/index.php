@@ -1,4 +1,8 @@
-<?php /* ID: index.php 2007/04/10 12:46 weboholic */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* ID: index.php 2007/04/10 12:46 weboholic */
 
 /*
  *	@(c) 		2007 MG Training GmbH <http://www.mgtraining.com>

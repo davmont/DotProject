@@ -16,8 +16,14 @@ function selPermWhere($obj, $idfld, $namefield, $prefix = '') {
 }
 
 $debug = false;
-$callback = dPgetCleanParam($_GET, 'callback', 0);
-$table = dPgetCleanParam($_GET, 'table', 0);
+// callback is written into a <script> block: accept only a JavaScript function name.
+$callback = preg_replace('/[^A-Za-z0-9_.]/', '', dPgetCleanParam($_GET, 'callback', ''));
+// table selects a class file and a table: accept only the tables handled below.
+$table = dPgetCleanParam($_GET, 'table', '');
+if (!in_array($table, array('companies', 'departments', 'files', 'file_folders', 'forums',
+		'projects', 'tasks', 'users', 'SGD', 'helpdesk_items'), true)) {
+	$table = '';
+}
 $user_id = (int)dPgetParam($_GET, 'user_id', 0);
 
 $ok = $callback & $table;

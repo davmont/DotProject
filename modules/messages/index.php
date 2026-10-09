@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 	/**
 	* Ok, here is the deal. There is no need to create a new table for internal messages if we have 
 	* a task table that happens to have all the information we require for this purpose. So I'll

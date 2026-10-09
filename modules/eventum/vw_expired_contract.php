@@ -1,3 +1,8 @@
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+?>
 <table width="100%" class="std" cellspacing="1" cellpadding="1">
 <th><?php echo $AppUI->_('Company Name'); ?></th>
 <th><?php echo $AppUI->_('Expired'); ?></th>

@@ -402,8 +402,11 @@ function format_field($value, $type, $ticket = NULL)
             $output .= "Link</a>";
             break;
         case "doattach":
-            $output = "<a href='?m=ticketsmith&amp;a=attach&amp;newparent=$value&amp;dosql=reattachticket&amp;ticket=$ticket'>";
-            $output .= "Link</a>";
+            $output = "<form method='post' action='?m=ticketsmith&amp;a=attach' style='display:inline'>"
+                . "<input type='hidden' name='dosql' value='reattachticket' />"
+                . "<input type='hidden' name='newparent' value='" . (int)$value . "' />"
+                . "<input type='hidden' name='ticket' value='" . (int)$ticket . "' />"
+                . "<input type='submit' class='button' value='Link' /></form>";
             break;
         case "open_date":
             $output = get_time_ago($value);

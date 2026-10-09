@@ -1,4 +1,8 @@
-<?php /* $Id: timesheet.class.php,v 1.1.1.1 2003/12/04 17:53:45 iexposure Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* $Id: timesheet.class.php,v 1.1.1.1 2003/12/04 17:53:45 iexposure Exp $ */
 ##
 ## Timesheet Class
 ##

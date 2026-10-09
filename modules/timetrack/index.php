@@ -1,4 +1,8 @@
-<?php /* $Id: index.php,v 1.6 2003/09/18 06:02:56 ajdonnison Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* $Id: index.php,v 1.6 2003/09/18 06:02:56 ajdonnison Exp $ */
 // check permissions
 $denyRead = getDenyRead( $m );
 $denyEdit = getDenyEdit( $m );

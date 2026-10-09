@@ -1,4 +1,8 @@
-<?php /* PROJECTDESIGNER $Id: printproject.php,v 1.2 2007/07/06 11:38:13 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PROJECTDESIGNER $Id: printproject.php,v 1.2 2007/07/06 11:38:13 pedroix Exp $ */
 global $AppUI, $dPconfig;
 // check permissions for this module
 $perms =& $AppUI->acl();

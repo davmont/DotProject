@@ -1,4 +1,8 @@
-<?php /* GROUPS $Id: addedit.php,v 1.1.1.2 2004/02/09 21:54:54 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* GROUPS $Id: addedit.php,v 1.1.1.2 2004/02/09 21:54:54 aardvarkads Exp $ */
 $group_id = intval( dPgetParam( $_GET, "group_id", 0 ) );
 
 // check permissions for this group

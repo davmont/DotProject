@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 
 $diconfig_id = dPgetParam($_REQUEST, 'diconfig_id', 0);

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 	global $AppUI, $user_hash, $reply_to_message_id;
 
 	$default_recipient_id = 0;

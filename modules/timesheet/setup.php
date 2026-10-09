@@ -1,4 +1,8 @@
-<?php /* $Id: setup.php,v 1.2 2007/04/19 19:57:09 caseydk Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* $Id: setup.php,v 1.2 2007/04/19 19:57:09 caseydk Exp $ */
 /*
 dotProject Module
 

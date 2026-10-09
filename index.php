@@ -127,6 +127,17 @@ if (dPgetParam($_POST, 'lostpass', 0)) {
 	exit();
 }
 
+// Password reset from the emailed link. Reachable while logged out.
+if (dPgetParam($_REQUEST, 'resetpass', 0)) {
+	$uistyle = (($AppUI->getPref('UISTYLE')) ? $AppUI->getPref('UISTYLE') : dPgetConfig('host_style'));
+	$AppUI->setUserLocale();
+	@include_once(DP_BASE_DIR . '/locales/' . $AppUI->user_locale . '/locales.php');
+	@include_once(DP_BASE_DIR . '/locales/core.php');
+	setlocale(LC_TIME, $AppUI->user_lang);
+	require(DP_BASE_DIR . '/modules/public/reset_password.php');
+	exit();
+}
+
 // check if the user is trying to log in
 // Note the change to REQUEST instead of POST.  This is so that we can
 // support alternative authentication methods such as the PostNuke
@@ -246,6 +257,20 @@ $canEdit = getPermission($m, 'edit');
 $canAuthor = getPermission($m, 'add');
 $canDelete = getPermission($m, 'delete');
 
+// Module access is required before any of the module's write handlers or views run.
+// The public module (login, password change, selectors, access denied) stays open, and
+// every user can view their own account and edit their own preferences.
+$dosql = isset($_REQUEST['dosql']) ? $_REQUEST['dosql'] : '';
+$ownAccount = ($m == 'admin' && $a == 'viewuser' && !$dosql
+		&& (int)dPgetParam($_GET, 'user_id', 0) == $AppUI->user_id)
+	|| ($m == 'system' && $a == 'addeditpref' && !$dosql
+		&& (int)dPgetParam($_GET, 'user_id', 0) == $AppUI->user_id)
+	|| ($m == 'system' && $dosql == 'do_preference_aed'
+		&& (int)dPgetParam($_POST, 'pref_user', 0) == $AppUI->user_id);
+if (!$canAccess && $m != 'public' && !$ownAccount) {
+	$AppUI->redirect('m=public&a=access_denied');
+}
+
 if (!$suppressHeaders) {
 	// output the character set header
 	if (isset($locale_char_set)) {
@@ -267,7 +292,9 @@ if ($u && file_exists(DP_BASE_DIR . '/modules/' . $m . '/' . $u . '/' . $u . '.c
 // do some db work if dosql is set
 // TODO - MUST MOVE THESE INTO THE MODULE DIRECTORY
 if (isset($_REQUEST['dosql'])) {
+	// Write handlers run only for POST requests that carry the session's CSRF token.
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		$AppUI->setMsg('Invalid request method.', UI_MSG_ERROR);
 		$AppUI->redirect('m=public&a=access_denied');
 	}
 	$AppUI->verifyCsrfToken();
@@ -276,9 +303,19 @@ if (isset($_REQUEST['dosql'])) {
 		. $AppUI->checkFileName($_REQUEST['dosql']) . '.php');
 }
 
+// Views named do_*, dosql* or domodsql are write handlers too: same POST and token rule.
+if (preg_match('/^do(_|sql|modsql)/', $a)) {
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		$AppUI->setMsg('Invalid request method.', UI_MSG_ERROR);
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	$AppUI->verifyCsrfToken();
+}
+
 // start output proper
 include(DP_BASE_DIR . '/style/' . $uistyle . '/overrides.php');
-ob_start();
+// Every POST form in the page gets the CSRF token checked on dosql requests.
+ob_start(array($AppUI, 'injectCsrfToken'));
 if (!$suppressHeaders) {
 	require(DP_BASE_DIR . '/style/' . $uistyle . '/header.php');
 }
