@@ -39,6 +39,14 @@ The full text of the GPL is in the COPYING file.
 
 $baseDir = dirname(dirname(__FILE__));
 define('DP_BASE_DIR', $baseDir);
+// includes/config.php refers to DP_BASE_URL; base.php is not loaded here, so define it
+// the same way do_install_db.php computes the site URL.
+if (!defined('DP_BASE_URL')) {
+	$installerBaseUrl = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 'https://' : 'http://')
+		. (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : getenv('HTTP_HOST'))
+		. dirname(dirname(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : getenv('SCRIPT_NAME')));
+	define('DP_BASE_URL', $installerBaseUrl);
+}
 
 require_once 'install.inc.php';
 require_once DP_BASE_DIR . '/lib/adodb/adodb.inc.php';

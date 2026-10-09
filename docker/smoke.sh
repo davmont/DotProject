@@ -46,6 +46,13 @@ check "role-less worker refused" "$(login worker worker)" ""
 check "role-less worker not promoted" "$($DB -e "SELECT COUNT(*) FROM dotp_gacl_groups_aro_map WHERE aro_id=(SELECT id FROM dotp_gacl_aro WHERE section_value='user' AND value='2')")" "0"
 $DB -e "INSERT INTO dotp_gacl_groups_aro_map (group_id, aro_id) SELECT g.id, a.id FROM dotp_gacl_aro_groups g, dotp_gacl_aro a WHERE g.value='normal' AND a.section_value='user' AND a.value='2'"
 
+# Installer on a configured system: needs the DB settings from config.php, and upgrade runs
+I=http://127.0.0.1:8089/install
+IC="dbtype=mysqli&dbhost=db&dbname=dotproject&dbuser=dotproject&dbprefix=dotp_"
+check "installer hides DB password" "$(curl -s -X POST $I/db.php -d mode=upgrade | grep -o 'name="dbpass" value="[^"]*"')" 'name="dbpass" value=""'
+check "installer refuses wrong password" "$(curl -s -X POST $I/do_install_db.php -d "mode=upgrade&dobackup=1&$IC&dbpass=wrong" | grep -o '^Security Check')" "Security Check"
+check "installer upgrade runs" "$(curl -s -X POST $I/do_install_db.php -d "mode=upgrade&do_db=1&$IC&dbpass=dotproject" | grep -o 'Updating version information' | head -1)" "Updating version information"
+
 # No PHP fatals during the run
 F=$(docker compose logs --since $(( $(date +%s) - START + 2 ))s web 2>&1 | grep -c 'PHP Fatal')
 check "no PHP fatals" "$F" "0"
