@@ -5,6 +5,11 @@ $controllerWBSItem= new ControllerWBSItem();
 $ControllerWBSItemActivityRelationship = new ControllerWBSItemActivityRelationship();
 $project_id=dPgetParam($_POST, 'project_id');
 $wbs_item_id=dPgetParam($_POST, 'wbs_item_id');
+// Ids are used in SQL below: keep them integers, as checked.
+$project_id = (int)$project_id;
+$wbs_item_id = (int)$wbs_item_id;
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id, array(array('project_eap_items', 'id', 'project_id', $wbs_item_id)));
 $wbs_item_name=dPgetParam($_POST, 'wbs_item_name');
 
 $wbsItem=$controllerWBSItem->getWBSItemById($wbs_item_id);

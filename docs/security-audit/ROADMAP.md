@@ -121,9 +121,24 @@ New items found during Phase 1:
 - PHP 8 fatals in module installers (`annotations`, `holiday`, `gallery2`, `registers`, `timetrack` setup: `ADORecordSet_empty & int`; `timeplanning` setup writes into `locales/`) and on 21 index/addedit pages (communication, dataimport, earnings, hosting, informer, inventory, links, mantis, opportunities, payments, projectdesigner, testing, timecard). `CLink::delete()` signature mismatch kills the links module. Candidates for Phase 6.
 - `locales/*/common.inc` contains entries like `"no $table"=>"no $table"`, which interpolate undefined variables (the `Undefined variable $table` warnings in the log). `modules/timeplanning/locales/pt_br.inc` starts with a UTF-8 BOM and never parsed.
 
-### Phase 2: authorization in every dosql handler (one PR per module group)
-Add at the top of each handler the same check its `addedit.php` already does (`getPermission($m,'edit'|'add'|'delete', $id)` or `getDenyEdit`/`canDelete`), and `intval()` the primary key before `bind()`/`load()`/`delete()`. Remove `canDelete()` overrides that `return true` (human_resources classes) and restore the commented-out checks (history, initiating, HR). Module order by exposure:
-system (roles, perms, config, preferences, syskeys) → companies, contacts, departments → dotproject_plus + timeplanning → timetrack, timesheet, human_resources, holiday → costs, risks, invoices, opportunities, payments, registers → hosting, mngdocument, eventum, ticketsmith, helpdesk → forums, initiating, projectdesigner, igantt, messages, communication, links, dataimport.
+### Phase 2: authorization in every write handler (DONE, 2026-10-09)
+Branch `security/phase2-handler-authz`. Each fix reproduced the exploit in `docker/` before and shows it blocked after; `smoke.sh` (now 24 checks, with a `guest/guest` read-only account) passes after each commit.
+
+| Commit | Fix |
+|---|---|
+| `aabab845` | `index.php`: dosql and `a=do*` requests need the module's delete permission for `del=1`, otherwise add or edit. 79 of 104 handlers checked nothing; the Guest role (view only) could create, change and delete anything. |
+| `dcbe86e7` | `dPacl::checkModuleItem()` read a scalar as a row: per-record denies were ignored, and per-record allows threw a TypeError on PHP 8. Per-record permissions work now. |
+| `b37ed3b1` | `dPrequireWritePermission()` in the core handlers (companies, contacts, departments, projects, tasks, files, folders, forums, events, links, resources), with the permission name their addedit page uses; forum posts check the stored forum. |
+| `5e0449c5` | `dPrequireProjectEdit()` in dotproject_plus (13 handlers), timeplanning (5) and monitoringandcontrol (5): edit on the project, and every task, WBS item, log, minute, meeting, change request, baseline or responsibility named must belong to it. Copy-project needs view on the source. Quality items check the task; user cost rates need admin edit. |
+| `44afd46c` | `CDpObject::delete()` pasted the bound key into SQL: worker sent `company_id=3' OR '1'='1` and emptied the companies table. Now a bound parameter (`canDelete()` quotes it). |
+| `2855e15d` | The project-scoped handlers keep the ids they check as integers (`dPintList()` for lists), so check and SQL see the same value. |
+| `aa4750dc` | human_resources classes use `human_resources` as permission name; their `canDelete()` overrides no longer return true. |
+
+Not changed: a per-record *allow* beyond the role's module rights (e.g. guest may edit project 5) is still refused by the module-level rule; such allows crashed on PHP 8 before, so nothing relies on them. Handlers in closure, initiating, costs, risks, invoices, opportunities, payments, registers, hosting, mngdocument, eventum, ticketsmith, helpdesk and the remaining add-on modules rely on the module-level rule; their records are not per-record ACL items. Raw ids in their SQL are Phase 3.
+
+New items found during Phase 2:
+- `monitoringandcontrol/control/controller_respons.class.php`: `count()` on a string, a PHP 8 fatal; responsibility rows cannot be inserted.
+- Human resources role creation through `do_role_aed.php` fails silently (store error not surfaced).
 
 ### Phase 3: SQL injection
 1. Add two helpers to `includes/main_functions.php`: `dPgetIntParam($arr,$name,$def)` and `dPvalidateOrder($value, array $allowed, $default)`; use them at every request boundary.

@@ -4,6 +4,8 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 $del = (int)dPgetParam($_POST, 'del', 0);
+// Permission on this record, as its addedit page checks.
+dPrequireWritePermission('companies', dPgetParam($_POST, 'company_id', 0), $del);
 $obj = new CCompany();
 $msg = '';
 

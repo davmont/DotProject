@@ -5,6 +5,8 @@ if (!defined('DP_BASE_DIR')) {
 //addfile sql
 $file_id = intval(dPgetParam($_POST, 'file_id', 0));
 $del = intval(dPgetParam($_POST, 'del', 0));
+// Permission on this record, as its addedit page checks.
+dPrequireWritePermission('files', dPgetParam($_POST, 'file_id', 0), $del);
 $duplicate = intval(dPgetParam($_POST, 'duplicate', 0));
 $redirect = dPgetCleanParam($_POST, 'redirect', '');
 global $db;

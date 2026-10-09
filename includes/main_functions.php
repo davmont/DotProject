@@ -329,6 +329,17 @@ function dPhashPassword($password)
 }
 
 /**
+ * Cleans a comma-separated list of ids: every entry becomes an integer, '' stays ''.
+ */
+function dPintList($ids)
+{
+	if ((string)$ids === '') {
+		return '';
+	}
+	return implode(',', array_map('intval', explode(',', (string)$ids)));
+}
+
+/**
  * True when $source (the contents of locale .inc files) holds only string literals,
  * "=>", commas and comments, so it can be evaluated as the body of array(...) without
  * running code. Double-quoted strings may contain a plain $name (it only reads a variable)

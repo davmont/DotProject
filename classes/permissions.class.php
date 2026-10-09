@@ -214,13 +214,14 @@ class dPacl extends gacl_api
 		}
 
 		$q = new DBQuery;
-		$q->addQuery('allow');
+		// acl_id tells an explicit rule for this item from no rule at all (see below).
+		$q->addQuery('allow, acl_id');
 		$q->addTable('dotpermissions');
 		$q->addWhere("permission='$op' AND axo=" . $q->quote($item) . " AND user_id='$userid' and section='$module'");
 		$q->addOrder('priority ASC,acl_id DESC');
 		$q->setLimit(1);
 		$arr = $q->loadHash();
-		$result = $arr ? $arr['allow'] : null;
+		$result = $arr ? $arr : null;
 		// Hack to allow access to item owner or participant. Inheritance of task rights from project rights. 
 		if (isset($item)) {
 			$IsProjectOwner = false;

@@ -4,6 +4,8 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 $del = isset($_POST['del']) ? $_POST['del'] : 0;
+// Permission on this record, as its addedit page checks.
+dPrequireWritePermission('departments', dPgetParam($_POST, 'dept_id', 0), $del);
 
 $dept = new CDepartment();
 if (($msg = $dept->bind($_POST))) {

@@ -3,6 +3,13 @@ require_once (DP_BASE_DIR . "/modules/dotproject_plus/copy_project/ProjectTempla
 $projectTemplate= new ProjectTemplate();
 $sourceProjectId=$_POST["project_to_copy"];
 $targetProjectId=$_POST["target_project_id"];
+$sourceProjectId = (int)$sourceProjectId;
+$targetProjectId = (int)$targetProjectId;
+// Copying needs edit on the target project and view on the source.
+dPrequireProjectEdit($targetProjectId);
+if (!getPermission('projects', 'view', (int)$sourceProjectId)) {
+    $AppUI->redirect('m=public&a=access_denied');
+}
 $result=$projectTemplate->closeWBS($sourceProjectId, $targetProjectId);
 if($result===0){
     $AppUI->setMsg( $AppUI->_("LBL_COPY_FROM_TEMPLATE_SUCCESS" ,UI_OUTPUT_HTML), UI_MSG_OK, true);

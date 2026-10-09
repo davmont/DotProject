@@ -7,6 +7,8 @@ if (!defined('DP_BASE_DIR')) {
 $adjustStartDate = dPgetCleanParam($_POST, 'set_task_start_date');
 $del = (int)dPgetParam($_POST, 'del', 0);
 $task_id = (int)dPgetParam($_POST, 'task_id', 0);
+// Permission on this record, as its addedit page checks.
+dPrequireWritePermission('tasks', $task_id, $del);
 $hassign = dPgetCleanParam($_POST, 'hassign');
 $hperc_assign = dPgetCleanParam($_POST, 'hperc_assign');
 $hdependencies = dPgetCleanParam($_POST, 'hdependencies');

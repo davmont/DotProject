@@ -21,6 +21,14 @@ DB filelds - TABLE: 'monitoring_change_request ' :
 	$date_limit =  dPgetParam($_POST,'date_limit');
 	$change_id =  dPgetParam($_POST,'change_id');
 	$project_id = dPgetParam( $_POST, 'project_id', 0 );
+	// Ids are used in SQL below: keep them integers, as checked.
+	$project_id = (int)$project_id;
+	$change_id = (int)$change_id;
+	$task_id = (int)$task_id;
+	$id_ata = (int)$id_ata;
+	// The user must be able to edit this project, and the records named must belong to it.
+	dPrequireProjectEdit($project_id, array(array('monitoring_change_request', 'change_id', 'project_id', $change_id), array('tasks', 'task_id', 'task_project', $task_id),
+		array('monitoring_meeting', 'meeting_id', 'project_id', $id_ata)));
 	
 
 	if (isset($_POST['acao']) && $_POST['acao']=='insert'){	

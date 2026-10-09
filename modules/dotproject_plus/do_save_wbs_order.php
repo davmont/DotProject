@@ -9,6 +9,11 @@ require_once (DP_BASE_DIR . "/modules/timeplanning/control/controller_wbs_items.
 //save
 $project_id = $_POST["project_id"];
 $wbs_id = $_POST["wbs_id"];
+// Ids are used in SQL below: keep them integers, as checked.
+$project_id = (int)$project_id;
+$wbs_id = (int)$wbs_id;
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id, array(array('project_eap_items', 'id', 'project_id', $wbs_id)));
 $wbs_order = $_POST["wbs_order"];
 $direction = $_POST["direction"];
 
