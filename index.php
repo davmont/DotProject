@@ -303,6 +303,15 @@ if (isset($_REQUEST['dosql'])) {
 		. $AppUI->checkFileName($_REQUEST['dosql']) . '.php');
 }
 
+// Views named do_*, dosql* or domodsql are write handlers too: same POST and token rule.
+if (preg_match('/^do(_|sql|modsql)/', $a)) {
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		$AppUI->setMsg('Invalid request method.', UI_MSG_ERROR);
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	$AppUI->verifyCsrfToken();
+}
+
 // start output proper
 include(DP_BASE_DIR . '/style/' . $uistyle . '/overrides.php');
 // Every POST form in the page gets the CSRF token checked on dosql requests.
