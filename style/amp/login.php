@@ -31,7 +31,7 @@
 		<td bgcolor="#ffffff"><table align="center" border="0" width="250" cellpadding="6" cellspacing="0" class="std">
 				<input type="hidden" name="login" value="<?php echo time();?>" />
 				<input type="hidden" name="lostpass" value="0" />
-				<input type="hidden" name="redirect" value="<?php echo $redirect;?>" />
+				<input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect, ENT_QUOTES);?>" />
 				<tr>
 					<td align="right" nowrap><?php echo $AppUI->_('Username');?>:</td>
 					<td align="left" nowrap><input type="text" size="25" maxlength="20" name="username" class="text" /></td>

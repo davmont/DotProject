@@ -110,7 +110,7 @@ if (!defined('DP_BASE_DIR')) {
 	<div class="login-container">
 		<form method="post" name="lostpassform">
 			<input type="hidden" name="lostpass" value="1" />
-			<input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />
+			<input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect, ENT_QUOTES);?>" />
 
 			<table border="0" cellpadding="0" cellspacing="0">
 				<tr>
