@@ -2,8 +2,8 @@
 $file_id = intval( dPgetParam( $_GET, 'file_id', 0 ) );
 
 $padre = intval( dPgetParam( $_GET, 'padre', 0 ) );
-$accion = dPgetParam( $_GET, 'accion', "" );
-$actual = dPgetParam( $_GET, 'actual', "" );
+$accion = dPvalidateOrder( dPgetParam( $_GET, 'accion', "" ), array('newdocument', 'newdirectory', 'deldirectory', 'deldocument'), '' );
+$actual = intval( dPgetParam( $_GET, 'actual', 0 ) );
 ?>
 <script language="javascript">
 function submitIt() {
