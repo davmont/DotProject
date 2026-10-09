@@ -120,7 +120,7 @@ function displayFolders($folder_id = 0, $level = 0)
 			'folder icon',
 			$AppUI->_('show only this folder')
 		)
-			. $row['file_folder_name'] . "\n");
+			. dPhtml($row['file_folder_name']) . "\n");
 		echo ((($m == 'files') ? '</a>' : '') . "\n");
 
 		if ($file_count > 0) {
@@ -133,7 +133,7 @@ function displayFolders($folder_id = 0, $level = 0)
 
 
 		if ($row['file_folder_description'] && !($folder_id && $level)) {
-			echo ('<p>' . $row['file_folder_description'] . '</p>');
+			echo ('<p>' . dPhtml($row['file_folder_description']) . '</p>');
 		} else if ($level) {
 
 			if ($folder_id) {
@@ -482,7 +482,7 @@ function displayFiles($folder_id)
 					<tr>
 						<td colspan="20" style="border: outset 2px #eeeeee;<?php echo $style; ?>">
 							<a href="?m=projects&amp;a=view&amp;project_id=<?php echo $row['file_project']; ?>">
-								<span style="<?php echo $style; ?>"><?php echo $row['project_name']; ?></span></a>
+								<span style="<?php echo $style; ?>"><?php echo dPhtml($row['project_name']); ?></span></a>
 						</td>
 					</tr>
 					<?php
@@ -496,26 +496,26 @@ function displayFiles($folder_id)
 						<input type="hidden" name="dosql" value="do_file_aed" />
 						<input type="hidden" name="del" value="1" />
 						<input type="hidden" name="file_id" value="<?php echo $row['file_id']; ?>" />
-						<input type="hidden" name="redirect" value="<?php echo $current_uri; ?>" />
+						<input type="hidden" name="redirect" value="<?php echo dPhtml($current_uri); ?>" />
 					</form>
 					<form name="frm_duplicate_file_<?php echo $row['file_id']; ?>" action="?m=files" method="post">
 						<input type="hidden" name="dosql" value="do_file_aed" />
 						<input type="hidden" name="duplicate" value="1" />
 						<input type="hidden" name="file_id" value="<?php echo $row['file_id']; ?>" />
-						<input type="hidden" name="redirect" value="<?php echo $current_uri; ?>" />
+						<input type="hidden" name="redirect" value="<?php echo dPhtml($current_uri); ?>" />
 					</form>
 					<?php
 					$file_icon = getIcon($row['file_type']);
 					?>
 					<a href="./fileviewer.php?file_id=<?php echo $row['file_id']; ?>" title="<?php
-					   echo $row['file_description']; ?>">
+					   echo dPhtml($row['file_description']); ?>">
 						<?php
 						echo dPshowImage((DP_BASE_URL . '/modules/files/images/' . $file_icon), '16', '16');
 						?>
-						&nbsp;<?php echo $row['file_name']; ?>
+						&nbsp;<?php echo dPhtml($row['file_name']); ?>
 					</a>
 				</td>
-				<td width="20%"><?php echo $row['file_description']; ?></td>
+				<td width="20%"><?php echo dPhtml($row['file_description']); ?></td>
 				<td width="5%" nowrap="nowrap" align="center">
 					<?php
 					$hidden_table = '';
@@ -534,11 +534,11 @@ function displayFiles($folder_id)
 				</td>
 				<td width="5%" align="center">
 					<a href="?m=tasks&amp;a=view&amp;task_id=<?php echo $row['file_task']; ?>">
-						<?php echo $row['task_name']; ?>
+						<?php echo dPhtml($row['task_name']); ?>
 					</a>
 				</td>
 				<td width="15%" nowrap="nowrap">
-					<?php echo ($row["contact_first_name"] . ' ' . $row["contact_last_name"]); ?>
+					<?php echo (dPhtml($row["contact_first_name"] . ' ' . $row["contact_last_name"])); ?>
 				</td>
 				<td width="5%" nowrap="nowrap" align="right">
 					<?php echo file_size(intval($row['file_size'])); ?>
@@ -550,7 +550,7 @@ function displayFiles($folder_id)
 					<?php echo $file_date->format($df . ' ' . $tf); ?>
 				</td>
 				<td width="15%">
-					<?php echo $row['file_co_reason']; ?>
+					<?php echo dPhtml($row['file_co_reason']); ?>
 					<?php
 					if (
 						!(empty($row['file_checkout']))
@@ -718,17 +718,17 @@ function displayFiles($folder_id)
 												<input type="hidden" name="dosql" value="do_file_aed" />
 												<input type="hidden" name="del" value="1" />
 												<input type="hidden" name="file_id" value="<?php echo $file['file_id']; ?>" />
-												<input type="hidden" name="redirect" value="<?php echo $current_uri; ?>" />
+												<input type="hidden" name="redirect" value="<?php echo dPhtml($current_uri); ?>" />
 											</form>
 											<form name="frm_duplicate_sub_file_<?php echo $file['file_id'];
 											?>" action="?m=files" method="post">
 												<input type="hidden" name="dosql" value="do_file_aed" />
 												<input type="hidden" name="duplicate" value="1" />
 												<input type="hidden" name="file_id" value="<?php echo $file['file_id']; ?>" />
-												<input type="hidden" name="redirect" value="<?php echo $current_uri; ?>" />
+												<input type="hidden" name="redirect" value="<?php echo dPhtml($current_uri); ?>" />
 											</form>
 											<a href="./fileviewer.php?file_id=<?php echo $file['file_id'];
-											?>" title="<?php echo $file['file_description']; ?>">
+											?>" title="<?php echo dPhtml($file['file_description']); ?>">
 												<?php
 												echo dPshowImage(
 													(DP_BASE_URL . '/modules/files/images/' . $file_icon),
@@ -736,21 +736,21 @@ function displayFiles($folder_id)
 													'16'
 												);
 												?>
-												<?php echo $file['file_name']; ?>
+												<?php echo dPhtml($file['file_name']); ?>
 											</a>
 										</td>
-										<td width="20%"><?php echo $file['file_description']; ?></td>
+										<td width="20%"><?php echo dPhtml($file['file_description']); ?></td>
 										<td width="5%" nowrap="nowrap" align="center"><?php echo $file['file_version']; ?></td>
 										<td width="10%" nowrap="nowrap" align="center">
 											<?php echo $file_types[$file['file_category']]; ?>
 										</td>
 										<td width="5%" align="center">
 											<a href="?m=tasks&amp;a=view&amp;task_id=<?php echo $file['file_task']; ?>">
-												<?php echo $file['task_name']; ?>
+												<?php echo dPhtml($file['task_name']); ?>
 											</a>
 										</td>
 										<td width="15%" nowrap="nowrap">
-											<?php echo ($file["contact_first_name"] . ' ' . $file["contact_last_name"]); ?>
+											<?php echo (dPhtml($file["contact_first_name"] . ' ' . $file["contact_last_name"])); ?>
 										</td>
 										<td width="5%" nowrap="nowrap" align="right">
 											<?php echo file_size(intval($file['file_size'])); ?>
@@ -1028,7 +1028,7 @@ if ($folder) {
 				if ($canEdit_this_folder) {
 					echo ("\t\t\t" . '<a href="?m=' . $m . '&amp;a=addedit_folder&amp;tab=' . $tab
 						. '&folder=' . $cfObj->file_folder_id . '" title="' . $AppUI->_('edit folder')
-						. ': ' . $cfObj->file_folder_name . '">' . "\n");
+						. ': ' . dPhtml($cfObj->file_folder_name) . '">' . "\n");
 					echo ("\t\t\t" . dPshowImage(
 						DP_BASE_URL . '/modules/files/images/filesaveas.png',
 						'22',
@@ -1107,7 +1107,7 @@ if ($folder) {
 	<tr>
 		<td colspan="50" align="right">
 			<form name='frm_bulk' method='POST' action='?m=files&amp;a=do_files_bulk_aed'>
-				<input type="hidden" name="redirect" value="<?php echo $current_uri; ?>" />
+				<input type="hidden" name="redirect" value="<?php echo dPhtml($current_uri); ?>" />
 				<table id="tbl_bulk" name="tbl_bulk">
 					<tr>
 						<td>

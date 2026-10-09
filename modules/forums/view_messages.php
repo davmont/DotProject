@@ -155,7 +155,7 @@ foreach ($messages as $row) {
 		
 		$s .= '<td valign="top" style="' . $style . '" nowrap="nowrap">';
 		if (!($hideEmail)) {
-			$s .= '<a href="mailto:' . $row['contact_email'] . '">';
+			$s .= '<a href="mailto:' . dPhtml($row['contact_email']) . '">';
 		}
 		$s .= '<font size="2">' . $AppUI->___($row['contact_first_name']) . ' ' . $AppUI->___($row['contact_last_name']) . '</font>';
 		if (! $hideEmail) {
@@ -165,7 +165,7 @@ foreach ($messages as $row) {
 			$s .= '<br/>&nbsp;<br/>' . $AppUI->_('last edited by');
 			$s .= ':<br/>';
 			if (!$hideEmail) {
-				$s .= '<a href="mailto:' . $editor[0]['contact_email'] . '">';
+				$s .= '<a href="mailto:' . dPhtml($editor[0]['contact_email']) . '">';
 			}
 			$s .= ('<font size="1">' . $AppUI->___($editor[0]['contact_first_name'] . ' ' . $editor[0]['contact_last_name']) 
 			       . '</font>');
@@ -179,7 +179,7 @@ foreach ($messages as $row) {
 		}
 		$s .= '</td>';
 		$s .= '<td valign="top" style="' . $style . '">';
-		$s .= '<font size="2"><strong>' . $row['message_title'] . '</strong><hr size=1>';
+		$s .= '<font size="2"><strong>' . dPhtml($row['message_title']) . '</strong><hr size=1>';
 		$s .= nl2br($AppUI->___($row['message_body']));
 		$s .= '</font></td>';
 		
@@ -215,13 +215,13 @@ foreach ($messages as $row) {
 		$s .= "<tr>";
 		
         $s .= '<td valign="top" style="' . $style . '" >';
-        $s .= '<a href="mailto:' . $row['contact_email'] . '">';
-        $s .= '<font size="2">' . $row['contact_first_name'] . ' ' . $row['contact_last_name'] . '</font></a>';
+        $s .= '<a href="mailto:' . dPhtml($row['contact_email']) . '">';
+        $s .= '<font size="2">' . dPhtml($row['contact_first_name'] . ' ' . $row['contact_last_name']) . '</font></a>';
         $s .= ' (' . $date->format("$df $tf") . ') ';
         if (sizeof($editor)>0) {
 			$s .= '<br/>&nbsp;<br/>' . $AppUI->_('last edited by');
-			$s .= ':<br/><a href="mailto:' . $editor[0]['contact_email'] . '">';
-			$s .= ('<font size="1">' . $editor[0]['contact_first_name'] . ' ' . $editor[0]['contact_last_name'] 
+			$s .= ':<br/><a href="mailto:' . dPhtml($editor[0]['contact_email']) . '">';
+			$s .= ('<font size="1">' . dPhtml($editor[0]['contact_first_name'] . ' ' . $editor[0]['contact_last_name']) 
 			       . '</font></a>');
         }
 		$s .= ('<a name="' . $row['message_id'] . '" href="#' . $row['message_id'] . '" onclick="javascript:toggle(' 
@@ -237,17 +237,17 @@ foreach ($messages as $row) {
 		
         $s .= '<td valign="top" style="' . $style . '">';
         $s .= $date->format("$df $tf") . ' - ';
-        $s .= '<a href="mailto:' . $row['contact_email'] . '">';
+        $s .= '<a href="mailto:' . dPhtml($row['contact_email']) . '">';
         $s .= '<font size="2">' . $AppUI->___($row['contact_first_name']) . ' ' . $AppUI->___($row['contact_last_name']) . '</font></a>';
         $s .= '<br />';
         if (sizeof($editor)>0) {
 			$s .= '<br/>&nbsp;<br/>' . $AppUI->_('last edited by');
-			$s .= ':<br/><a href="mailto:' . $editor[0]['contact_email'] . '">';
+			$s .= ':<br/><a href="mailto:' . dPhtml($editor[0]['contact_email']) . '">';
 			$s .= ('<font size="1">' . $AppUI->___($editor[0]['contact_first_name']) . ' ' . $AppUI->___($editor[0]['contact_last_name']) 
 			       . '</font></a>');
         }
 		$s .= '<a href="#" onclick="javascript:toggle(' . $row['message_id'] . ')">';
-        $s .= '<span size="2"><strong>' . $row['message_title'] . '</strong></span></a>';
+        $s .= '<span size="2"><strong>' . dPhtml($row['message_title']) . '</strong></span></a>';
         $side .= '<div class="message" id="' . $row['message_id'] . '" style="display: none">';
         $side .= nl2br($AppUI->___($row['message_body']));
         $side .= '</div>';

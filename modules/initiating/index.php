@@ -40,7 +40,7 @@ $projects = arrayMerge(array('0' => $AppUI->_('All', UI_OUTPUT_JS)), $projects);
 $titleBlock = new CTitleBlock('Initiating', 'applet3-48.png', $m, "$m.$a");
 $titleBlock->addCell($AppUI->_('Search') . ':');
 $titleBlock->addCell(
-	'<input type="text" class="text" SIZE="10" name="search" onChange="document.searchfilter.submit();" value=' . "'$search'" . 'title="' . $AppUI->_('Search in text', UI_OUTPUT_JS) . '"/>'
+	'<input type="text" class="text" SIZE="10" name="search" onChange="document.searchfilter.submit();" value=' . "'" . dPhtml($search) . "'" . 'title="' . $AppUI->_('Search in text', UI_OUTPUT_JS) . '"/>'
 	,
 	'',
 	'<form action="?m=initiating" method="post" id="searchfilter">',

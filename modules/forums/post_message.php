@@ -4,20 +4,16 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 // Add / Edit forum
-$message_id = isset($_GET['message_id']) ? $_GET['message_id'] : 0;
-$message_parent = isset($_GET['message_parent']) ? $_GET['message_parent'] : -1;
+$message_id = isset($_GET['message_id']) ? (int)$_GET['message_id'] : 0;
+$message_parent = isset($_GET['message_parent']) ? (int)$_GET['message_parent'] : -1;
 $forum_id = (int) dPgetParam($_REQUEST, 'forum_id', 0);
 
 $canEdit = getPermission('forums', 'edit', $forum_id);
 
 // Build a back-url for when the back button is pressed
-$back_url_params = array();
-foreach ($_GET as $k => $v) {
-	if ($k != 'post_message') {
-		$back_url_params[] = "$k=$v";
-	}
-}
-$back_url = implode('&', $back_url_params);
+$back_url_params = $_GET;
+unset($back_url_params['post_message']);
+$back_url = http_build_query($back_url_params);
 
 //Pull forum information
 $q = new DBQuery;
@@ -139,7 +135,7 @@ if ($message_parent > -1) {
 
 				<tr>
 					<td align="right"><?php echo $AppUI->_('Author') ?>:</td>
-					<td align="left"><?php echo dPgetUsername($message_info['user_username']) ?>
+					<td align="left"><?php echo dPhtml(dPgetUsername($message_info['user_username'])) ?>
 						(<?php echo $date->format("$df $tf"); ?>)</td>
 				</tr>
 				<tr>
@@ -178,7 +174,7 @@ if ($message_parent > -1) {
 			<tr>
 				<td>
 					<input type="button" value="<?php echo $AppUI->_('back'); ?>" class=button
-						onclick="javascript:window.location='?<?php echo $back_url; ?>';">
+						onclick="javascript:window.location=<?php echo htmlspecialchars(json_encode('?' . $back_url), ENT_QUOTES); ?>;">
 				</td>
 				<td align="right">
 					<?php
