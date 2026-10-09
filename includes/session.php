@@ -237,8 +237,19 @@ function dpSessionStart($start_vars = 'AppUI')
 	if (mb_substr($cookie_dir, -1) != '/') {
 		$cookie_dir .= '/';
 	}
-	$is_https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
-	session_set_cookie_params($max_time, $cookie_dir, '', $is_https, true);
+	// Mark the cookie Secure when the site is served over HTTPS, directly or
+	// behind a proxy (base_url scheme). SameSite=Lax keeps it off cross-site
+	// POSTs; HttpOnly keeps it away from scripts.
+	$base_url_scheme = is_array($url_info) ? strtolower($url_info['scheme'] ?? '') : '';
+	$is_https = ($base_url_scheme === 'https')
+		|| (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+	session_set_cookie_params(array(
+		'lifetime' => $max_time,
+		'path'     => $cookie_dir,
+		'secure'   => $is_https,
+		'httponly' => true,
+		'samesite' => 'Lax',
+	));
 
 	if (is_array($start_vars)) {
 		foreach ($start_vars as $var) {
