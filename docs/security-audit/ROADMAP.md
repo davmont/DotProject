@@ -74,15 +74,25 @@ Each phase is one or more atomic PRs against the feature branch. Every PR must: 
 log in as `admin/passwd` and `worker/worker`, reproduce the exploit before and show it blocked after (curl), and leave
 `docker compose logs web` free of new `PHP Fatal`/`Warning` lines on the touched pages.
 
-### Phase 0: make `security/core-hardening` shippable (branch already exists, see section 4)
-- `classes/ratelimiter.class.php` `isAllowed()`: compare `count($attempts)`, not the array. Today every login is blocked (same bug on devel).
-- Widen `users.user_password` to `VARCHAR(255)` in `db/dotproject.sql` and add the `ALTER` to `db/upgrade_latest.php` (devel commit `3b874f53`). Without it bcrypt hashes are truncated and users are locked out after the transparent MD5 upgrade.
-- The ported password-reset flow (`includes/sendpass.php`, `modules/public/do_reset_password.php`, `reset_password.php`) stores the token in `users.user_custom`, a column that does not exist. Either add `user_reset_token`/`user_reset_expiry` columns plus upgrade step, or drop the token flow and keep devel's final simpler version (new random password emailed, hashed with `password_hash`).
-- Add `echo $AppUI->getCsrfMeta()` to `style/dp-grey-theme/header.php` (the other four themes were patched by the cherry-pick).
-- Convert the three GET-based dosql callers to POST: `modules/dotproject_plus/do_show_feedback.php:30`, `modules/ticketsmith/common.inc.php:405`, and remove `modules/dotproject_plus/dotproject_plus/` (dead copy).
-- Remove the cherry-picked `SECURITY_AUDIT.md` (devel deleted it later).
-- Also port devel's session cookie block (`session_set_cookie_params([... 'samesite' => 'Lax'])`); the cherry-pick brought the positional form without SameSite.
-- Verify: login works for both accounts twice (second login exercises the rehashed password), a `dosql` POST without token is refused, a `dosql` GET is refused, hash in DB starts with `$2y$`.
+### Phase 0: make `security/core-hardening` shippable (DONE, 2026-10-09)
+All items verified in `docker/` and covered by `docker/smoke.sh`. Commits on `security/core-hardening`:
+
+| Commit | Fix |
+|---|---|
+| `f03b3a5f` | `RateLimiter::isAllowed()` compared an array to an int, so every login was refused. |
+| `22145e4a` | `user_password` widened to `VARCHAR(255)`, reset token columns added (schema + `upgrade_latest.sql` entry `20261009`). `dPhashPassword()` keeps MD5 on a database that has not been upgraded, instead of truncating bcrypt hashes. |
+| `e9fb33fc` | Token password reset works while logged out (`index.php?resetpass=1`), stores the token hash in the new columns, escapes output, single use, expires after 1 h, rate-limited. |
+| `ec739a4a` | **New finding:** `dPacl::checkLogin()` auto-repair put any user with no role into the Administrator group at login. Limited to `user_id` 1. |
+| `6753fc9b` | CSRF actually enforced: `dosql` is POST-only; the token is added server-side to every POST form (`CAppUI::injectCsrfToken()` output filter) and client-side for JavaScript-built forms; the ported client script had a syntax error and never ran; `dp-grey-theme` had no meta tag. Feedback rating and ticketsmith reattach moved to POST. |
+| `846c90a3` | Removed the stale nested `modules/dotproject_plus/dotproject_plus/` copy (81 files, `root/root` credentials). |
+| `ef97d117` | Session cookie `SameSite=Lax`, `Secure` on HTTPS; removed the stale `SECURITY_AUDIT.md`. |
+
+New items found during Phase 0, scheduled below:
+- Write handlers routed as views bypass the `dosql` CSRF check: `a=domodsql` (module install/remove from GET links in `system/viewmods.php`), `a=do_*_aed` in monitoringandcontrol and costs, `a=dosql_timesheet`, `a=do_task_bulk_aed`. See Phase 1, item 8.
+- `modules/contacts/addedit.php:113` warns on PHP 8 (`$userDeleteProtect` undefined). `base.php` forces `display_errors=1`, so the warning lands inside a `<script>` block and the contact form cannot be submitted. See Phase 1, item 9.
+- `modules/public/chpwd.php` runs passwords through `dPgetCleanParam()` and `db_escape()` before hashing, so a password containing a quote or `<` no longer matches at login.
+- `dPacl::updateLogin()` (`classes/permissions.class.php:366`) emits undefined-key warnings when a user record is saved.
+- The dotproject_plus installer does not create the `feedback_evaluation` table that the feedback feature uses.
 
 ### Phase 1: core gates (small diffs, highest leverage)
 1. `index.php`: redirect to `m=public&a=access_denied` when `!$canAccess` before the dosql include and before the module view include. Expect a few modules that were silently relying on the gap (check `worker` can still open companies/projects/tasks/calendar/files/contacts/forums).
@@ -92,6 +102,8 @@ log in as `admin/passwd` and `worker/worker`, reproduce the exploit before and s
 5. Output helpers: switch `$AppUI->___()`, `dPformSafe()` and `check_plain` paths to `ENT_QUOTES`; make `dPformSafe($v, DP_FORM_URI)` also HTML-escape; fix `makeFileNameSafe()` to loop or use `basename()` + realpath containment.
 6. Escape `redirect` on `style/*/login.php` and `lostpass.php`; whitelist `callback`/`field`/`table` in the `modules/public` selectors and `helpdesk/selector.php`.
 7. `locales/core.php`: stop `eval`ing; load translations with `include` of a `return array(...)` file written through `var_export()`, and gate `translate_save.php` like `translate.php` (`$canEdit && user_type == 1`), validating `$lang` against the locale directory list.
+8. Treat view routes that write as write handlers: require POST plus `verifyCsrfToken()` when `$a` starts with `do` (covers `domodsql`, `do_*_aed`, `dosql_timesheet`), and turn the module install/remove links in `system/viewmods.php` into POST forms.
+9. Stop forcing `display_errors=1` in `base.php` (log instead), and fix `$userDeleteProtect` in `contacts/addedit.php`; otherwise any PHP 8 warning inside a `<script>` block breaks the page's JavaScript.
 
 ### Phase 2: authorization in every dosql handler (one PR per module group)
 Add at the top of each handler the same check its `addedit.php` already does (`getPermission($m,'edit'|'add'|'delete', $id)` or `getDenyEdit`/`canDelete`), and `intval()` the primary key before `bind()`/`load()`/`delete()`. Remove `canDelete()` overrides that `return true` (human_resources classes) and restore the commented-out checks (history, initiating, HR). Module order by exposure:
@@ -128,23 +140,16 @@ Candidates confirmed dead or fatal on PHP 8: `modules/smartsearchns`, `modules/b
 
 ## 4. State of the remediation branch `security/core-hardening`
 
-Created from `dotproject_plus-module-integration-in-the-core` (`8788e077`). Four devel commits were cherry-picked with `-x`:
+Draft PR: https://github.com/davmont/DotProject/pull/243, against `dotproject_plus-module-integration-in-the-core`.
+That base branch had been deleted on origin after PR #57 merged it into devel. It was restored at its last commit `8788e077`, which holds 9 commits not in devel.
 
-| Commit on this branch | Origin on devel | Content |
-|---|---|---|
-| `aca8d1b6` | `b24299e0` | file-based `RateLimiter` for login and password reset |
-| `4b2f09e4` | `1e06ce2b` | `password_hash`, token-based password reset, parameterised user lookups |
-| `40010a72` | `f3f60992` | CSRF token helpers in `CAppUI`, session cookie flags, admin/tasks/files hardening (conflicts resolved: kept the token reset flow in `sendpass.php` and `authenticator.class.php`, took devel's `do_user_aed.php`) |
-| `fb2ae946` | `fc9050d7` | `verifyCsrfToken()` on every `dosql`, POST-only `dosql`, `getCsrfMeta()` in four theme headers, `chpwd.php` fix |
-
-Known-broken items on the branch are listed in Phase 0. Nothing has been pushed; no PR has been opened.
-Working tree extras, untracked: `docker/` (sandbox) and `docs/security-audit/` (this report).
+The branch starts with four devel commits cherry-picked with `-x` (`aca8d1b6` rate limiter, `4b2f09e4` password_hash and token reset, `40010a72` CSRF helpers, `fb2ae946` central CSRF check), followed by the audit docs and sandbox (`8bf53f13`) and the Phase 0 commits listed above. Phase 0 is complete; next is Phase 1.
 
 ## 5. Sandbox
 
 See `docker/README.md`. Quick start:
 
-    cd docker && docker compose up -d --build && ./reset-db.sh
+    cd docker && docker compose up -d --build && ./reset-db.sh && ./smoke.sh
     # http://127.0.0.1:8089  admin/passwd (administrator), worker/worker (Project worker role)
 
 The repo is mounted read-only; code changes are live immediately. `docker/config.php` replaces `includes/config.php` inside the container.
