@@ -8,7 +8,8 @@ if (!defined('DP_BASE_DIR')) {
 global $AppUI, $tab, $df, $canEdit, $m;
 
 $filter = intval( dPgetParam( $_GET, 'filter', 0 ) );
-$order_by = dPgetParam( $_GET, 'order_by', 'register_start_date' );
+$order_by = dPvalidateOrder(dPgetParam( $_GET, 'order_by', 'register_start_date' ),
+	array('register_start_date', 'register_code', 'register_client', 'register_project'), 'register_start_date');
 ?>
 
 <table width="100%">

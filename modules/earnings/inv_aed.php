@@ -16,19 +16,19 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		// Add items from AdHoc Form To earning
 		$sql="INSERT INTO earnings_items (earning_parent_id, earning_tasklog_id, earning_item_date, earning_item_description, earning_item_hours,earning_item_costcode,earning_item_rate) VALUES (";
 		// earning_parent_id
-		$sql .= "'" . $_POST["adhoc_earning_parent_id"] . "',";
+		$sql .= "'" . (int)$_POST["adhoc_earning_parent_id"] . "',";
 		// earning_tasklog_id (n/a)
-		$sql .= "'" . $_POST["adhoc_earning_tasklog_id"] . "',";
+		$sql .= "'" . (int)$_POST["adhoc_earning_tasklog_id"] . "',";
 		// earning_item_date (formatted for MySQL)
-		$sql .= "'" . $_POST["adhoc_earning_item_date"] . "',";
+		$sql .= "'" . db_escape($_POST["adhoc_earning_item_date"]) . "',";
 		// earning_item_description
-		$sql .= "'" . addslashes($_POST["adhoc_earning_item_description"]) . "',";
+		$sql .= "'" . db_escape($_POST["adhoc_earning_item_description"]) . "',";
 		// earning_item_hours
-		$sql .= $_POST["adhoc_earning_item_hours"] . ",";
+		$sql .= (float)$_POST["adhoc_earning_item_hours"] . ",";
 		// earning_item_costcode
 		$sql .= "'n/a',";
 		// earning_item_rate
-		$sql .= $_POST["adhoc_earning_item_rate"];
+		$sql .= (float)$_POST["adhoc_earning_item_rate"];
 		// end sql statement.
 		$sql .= ");";
 		if (!db_exec( $sql )) {
@@ -48,7 +48,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 					if ( strlen($remove_items) > 0 ) {
 						$remove_items .= ",";
 					}
-					$remove_items .= "'" . strval($item_value) . "'";
+					$remove_items .= (int)$item_value;
 				}
 			}
 		}
@@ -99,7 +99,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 					if ( strlen($add_items) > 0 ) {
 						$add_items .= ",";
 					}
-					$add_items .= "'" . $item_value . "'";
+					$add_items .= (int)$item_value;
 				}
 			}
 		}
@@ -121,11 +121,11 @@ if (isset( $_POST['inv_dosql'] ) ) {
 			// earning_item_date (formatted for MySQL)
 			$sql .= "'" . $x["task_log_date"] . "',";
 			// earning_item_description
-			$sql .= "'" . addslashes($x["task_log_description"]) . "',";
+			$sql .= "'" . db_escape($x["task_log_description"]) . "',";
 			// earning_item_hours
 			$sql .= $x["task_log_hours"] . ",";
 			// earning_item_costcode
-			$sql .= "'" . addslashes($x["task_log_costcode"]) . "',";
+			$sql .= "'" . db_escape($x["task_log_costcode"]) . "',";
 			// earning_item_rate
 			$sql .= '0';
 			// end sql statement.
@@ -165,18 +165,18 @@ if (isset( $_POST['inv_dosql'] ) ) {
 	if ($_POST['inv_dosql'] == "editinv") {
 		// Create SQL UPDATE command from POST variables
 		$sql = "UPDATE earnings SET";
-		$sql .= " earning_date='" . $_POST["earning_date"] . "',";
-		$sql .= " earning_num='" . $_POST["earning_num"] . "',";
-		$sql .= " earning_submit_contact='" . $_POST["earning_submit_contact"] . "',";
-		$sql .= " earning_submit_company_id='" . $_POST["earning_submit_company_id"] . "',";
-		$sql .= " earning_submit_email='" . $_POST["earning_submit_email"] . "',";
-		$sql .= " earning_terms='" . $_POST["earning_terms"] . "',";
-		$sql .= " earning_comments='" . addslashes($_POST["earning_comments"]) . "',";
-		$sql .= " earning_title='" . addslashes($_POST["earning_title"]) . "',";
+		$sql .= " earning_date='" . db_escape($_POST["earning_date"]) . "',";
+		$sql .= " earning_num='" . db_escape($_POST["earning_num"]) . "',";
+		$sql .= " earning_submit_contact='" . db_escape($_POST["earning_submit_contact"]) . "',";
+		$sql .= " earning_submit_company_id='" . (int)$_POST["earning_submit_company_id"] . "',";
+		$sql .= " earning_submit_email='" . db_escape($_POST["earning_submit_email"]) . "',";
+		$sql .= " earning_terms='" . db_escape($_POST["earning_terms"]) . "',";
+		$sql .= " earning_comments='" . db_escape($_POST["earning_comments"]) . "',";
+		$sql .= " earning_title='" . db_escape($_POST["earning_title"]) . "',";
 		if ( strcmp($_POST["earning_submit_address1"], "") == 0 ) {
 			// The earning address override hasn't been used so let's fill it in automatically
 			// Gather Company Details
-			$sql2="SELECT companies.* FROM companies WHERE company_id='" . $_POST["earning_submit_company_id"] . "';";
+			$sql2="SELECT companies.* FROM companies WHERE company_id='" . (int)$_POST["earning_submit_company_id"] . "';";
 			$crc= db_exec( $sql2 );
 			echo db_error();
 			while ($row = db_fetch_assoc($crc)) {
@@ -189,12 +189,12 @@ if (isset( $_POST['inv_dosql'] ) ) {
 			$sql .= " earning_submit_zip='" . $company_records[""]["company_zip"] . "',";
 			$sql .= " earning_submit_phone='" . $company_records[""]["company_phone1"] . "'";
 		} else {
-			$sql .= " earning_submit_address1='" . $_POST["earning_submit_address1"] . "',";
-			$sql .= " earning_submit_address2='" . $_POST["earning_submit_address2"] . "',";
-			$sql .= " earning_submit_city='" . $_POST["earning_submit_city"] . "',";
-			$sql .= " earning_submit_state='" . $_POST["earning_submit_state"] . "',";
-			$sql .= " earning_submit_zip='" . $_POST["earning_submit_zip"] . "',";
-			$sql .= " earning_submit_phone='" . $_POST["earning_submit_phone"] . "'";
+			$sql .= " earning_submit_address1='" . db_escape($_POST["earning_submit_address1"]) . "',";
+			$sql .= " earning_submit_address2='" . db_escape($_POST["earning_submit_address2"]) . "',";
+			$sql .= " earning_submit_city='" . db_escape($_POST["earning_submit_city"]) . "',";
+			$sql .= " earning_submit_state='" . db_escape($_POST["earning_submit_state"]) . "',";
+			$sql .= " earning_submit_zip='" . db_escape($_POST["earning_submit_zip"]) . "',";
+			$sql .= " earning_submit_phone='" . db_escape($_POST["earning_submit_phone"]) . "'";
 		}
 		$sql .= " WHERE earning_id=" . $earning_id . ";";
 		echo $sql;
@@ -216,18 +216,18 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		$sql .= "earning_submit_city, earning_submit_state, earning_submit_zip, earning_submit_phone";
 		$sql .= ") VALUES ( ";
 		$sql .= "'" .$AppUI->user_id . "',";
-		$sql .= "'" .$_POST["earning_date"] . "',";
-		$sql .= "'" . $_POST["earning_num"] . "',";
-		$sql .= "'" . $_POST["earning_submit_contact"] . "',";
-		$sql .= "'" . $_POST["earning_submit_company_id"] . "',";
-		$sql .= "'" . $_POST["earning_submit_email"] . "',";
-		$sql .= "'" . $_POST["earning_terms"] . "',";
-		$sql .= "'" . addslashes($_POST["earning_comments"]) . "',";
-		$sql .= "'" . addslashes($_POST["earning_title"]) . "',";
+		$sql .= "'" .db_escape($_POST["earning_date"]) . "',";
+		$sql .= "'" . db_escape($_POST["earning_num"]) . "',";
+		$sql .= "'" . db_escape($_POST["earning_submit_contact"]) . "',";
+		$sql .= "'" . (int)$_POST["earning_submit_company_id"] . "',";
+		$sql .= "'" . db_escape($_POST["earning_submit_email"]) . "',";
+		$sql .= "'" . db_escape($_POST["earning_terms"]) . "',";
+		$sql .= "'" . db_escape($_POST["earning_comments"]) . "',";
+		$sql .= "'" . db_escape($_POST["earning_title"]) . "',";
 		if ( strcmp($_POST["earning_submit_address1"], "") == 0 ) {
 			// The earning address override hasn't been used so let's fill it in automatically
 			// Gather Company Details
-			$sql2="SELECT companies.* FROM companies WHERE company_id='" . $_POST["earning_submit_company_id"] . "';";
+			$sql2="SELECT companies.* FROM companies WHERE company_id='" . (int)$_POST["earning_submit_company_id"] . "';";
 			$crc= db_exec( $sql2 );
 			echo db_error();
 			while ($row = db_fetch_assoc($crc)) {
@@ -240,12 +240,12 @@ if (isset( $_POST['inv_dosql'] ) ) {
 			$sql .= "'" . $company_records[""]["company_zip"] . "',";
 			$sql .= "'" . $company_records[""]["company_phone1"] . "'";
 		} else {
-			$sql .= "'" . $_POST["earning_submit_address1"] . "',";
-			$sql .= "'" . $_POST["earning_submit_address2"] . "',";
-			$sql .= "'" . $_POST["earning_submit_city"] . "',";
-			$sql .= "'" . $_POST["earning_submit_state"] . "',";
-			$sql .= "'" . $_POST["earning_submit_zip"] . "',";
-			$sql .= "'" . $_POST["earning_submit_phone"] . "'";
+			$sql .= "'" . db_escape($_POST["earning_submit_address1"]) . "',";
+			$sql .= "'" . db_escape($_POST["earning_submit_address2"]) . "',";
+			$sql .= "'" . db_escape($_POST["earning_submit_city"]) . "',";
+			$sql .= "'" . db_escape($_POST["earning_submit_state"]) . "',";
+			$sql .= "'" . db_escape($_POST["earning_submit_zip"]) . "',";
+			$sql .= "'" . db_escape($_POST["earning_submit_phone"]) . "'";
 		}
 		$sql .= ");";
 		echo $sql;
@@ -263,7 +263,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		$notifyMail = new Mail;
 		switch ($_POST['inv_dosql']) {
 			case "postsubmit":
-				$sql="UPDATE earnings SET earning_submitted_comment='" . addslashes($_POST["earning_submitted_comment"]) . "', earning_submitted='" . date("Ymd") . "', earning_approved='', earning_approved_comment='' WHERE earning_id=" . $earning_id . ";";
+				$sql="UPDATE earnings SET earning_submitted_comment='" . db_escape($_POST["earning_submitted_comment"]) . "', earning_submitted='" . date("Ymd") . "', earning_approved='', earning_approved_comment='' WHERE earning_id=" . $earning_id . ";";
 				$notifyMail->From( $AppUI->user_first_name . " " . $AppUI->user_last_name . " <" . $AppUI->user_email . ">" );
 				$notifyMail->To( $_POST['earning_submit_contact'] . " <" . $_POST['earning_submit_email'] . ">" );
 				$notifyMail->Subject( "Approval Requested from " . $AppUI->user_first_name . " " . $AppUI->user_last_name . "." );
@@ -281,7 +281,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 				$notifyMail->Priority(3);
 				break;
 			case "postapprove":
-				$sql="UPDATE earnings SET earning_approved_comment='" . addslashes($_POST["earning_approved_comment"]) . "', earning_approved='" . date("Ymd") . "', earning_approved_by=" . $AppUI->user_id . " WHERE earning_id=" . $earning_id . ";";
+				$sql="UPDATE earnings SET earning_approved_comment='" . db_escape($_POST["earning_approved_comment"]) . "', earning_approved='" . date("Ymd") . "', earning_approved_by=" . $AppUI->user_id . " WHERE earning_id=" . $earning_id . ";";
 				$notifyMail->From( $AppUI->user_first_name . " " . $AppUI->user_last_name . " <" . $AppUI->user_email . ">" );
 				$notifyMail->To( $_POST['earning_user_name'] . " <" . $_POST['earning_user_email'] . ">" );
 				$notifyMail->Subject( "Approval Received from " . $AppUI->user_first_name . " " . $AppUI->user_last_name . "." );
@@ -300,10 +300,10 @@ if (isset( $_POST['inv_dosql'] ) ) {
 				$notifyMail->Priority(3);
 				break;
 			case "postpaid":
-				$sql="UPDATE earnings SET earning_paid_comment='" . addslashes($_POST["earning_paid_comment"]) . "', earning_paid='" . date("Ymd") . "' WHERE earning_id=" . $earning_id . ";";
+				$sql="UPDATE earnings SET earning_paid_comment='" . db_escape($_POST["earning_paid_comment"]) . "', earning_paid='" . date("Ymd") . "' WHERE earning_id=" . $earning_id . ";";
 				break;
 			case "postdecline":
-				$sql="UPDATE earnings SET earning_approved_comment='" . addslashes($_POST["earning_approved_comment"]) . "', earning_submitted='0000-00-00 00:00:00' WHERE earning_id=" . $earning_id . ";";
+				$sql="UPDATE earnings SET earning_approved_comment='" . db_escape($_POST["earning_approved_comment"]) . "', earning_submitted='0000-00-00 00:00:00' WHERE earning_id=" . $earning_id . ";";
 				$notifyMail->From( $AppUI->user_first_name . " " . $AppUI->user_last_name . " <" . $AppUI->user_email . ">" );
 				$notifyMail->To( $_POST['earning_user_name'] . " <" . $_POST['earning_user_email'] . ">" );
 				$notifyMail->Subject( "Request Declined from " . $AppUI->user_first_name . " " . $AppUI->user_last_name . "." );

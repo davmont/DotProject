@@ -90,6 +90,11 @@ function load_all_items()
 	$filter_company = $AppUI->getState( 'InventoryIdxFilterCompany' ) ? $AppUI->getState( 'InventoryIdxFilterCompany' ) : 0;
 	$filter_type    = $AppUI->getState( 'InventoryIdxFilterType' ) ? $AppUI->getState( 'InventoryIdxFilterType' ) : 0;
 	$filter_index   = $AppUI->getState( 'InventoryIdxFilterIndex' ) ? $AppUI->getState( 'InventoryIdxFilterIndex' ) : 0;
+	// The filters come from the request (session state) and go into SQL below: ids are
+	// integers and the type must name one of the inventory columns.
+	$filter_company = (int)$filter_company;
+	$filter_index = (int)$filter_index;
+	$filter_type = dPvalidateOrder($filter_type, array('user', 'company', 'department', 'project'), 'choose');
         $query=new DBQuery();
         $query->addTable('inventory','inventory');
         $query->addQuery('inventory.*, cat.inventory_category_name, brand.inventory_brand_name'.

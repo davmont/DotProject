@@ -172,7 +172,7 @@ function insertCostValues($project)
             $q->addUpdate('cost_value_unitary', $array[$j][$l]);
             $q->addUpdate('cost_value_total', $value);
             $l = $l + 1;
-            $q->addWhere('cost_description="' . $array[$j][$l] . '" and cost_type_id= 0');
+            $q->addWhere('cost_description = ' . $q->quote($array[$j][$l]) . ' and cost_type_id= 0');
             $q->exec();
             $j++;
         }
@@ -256,7 +256,7 @@ function insertCostValues($project)
             $q->addUpdate('cost_quantity', $array[$j][$l]);
             $q->addUpdate('cost_value_total', $value);
             $l = $l + 1;
-            $q->addWhere('cost_description="' . $array[$j][$l] . '" and cost_type_id= 1');
+            $q->addWhere('cost_description = ' . $q->quote($array[$j][$l]) . ' and cost_type_id= 1');
             $q->exec();
             $j++;
         }
