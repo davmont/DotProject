@@ -137,7 +137,8 @@ $q->leftJoin('contacts', 'c', 'user_contact = c.contact_id');
 //$q->leftJoin('tasks', 't', 'link_task = t.task_id');
 
 if (!empty($search)) {
-	$q->addWhere("(link_name like '%$search%' OR link_description like '%$search%')");
+	$like = $q->quote('%' . $search . '%');
+	$q->addWhere("(link_name like $like OR link_description like $like)");
 }
 if ($project_id) { // Project
 	$q->addWhere('link_project = ' . $project_id);
