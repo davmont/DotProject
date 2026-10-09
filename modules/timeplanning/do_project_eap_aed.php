@@ -2,6 +2,9 @@
 require_once (DP_BASE_DIR . "/modules/timeplanning/control/controller_wbs_items.class.php");
 $project_id = dPgetParam($_POST, 'project_id');
 $eap_items_ids = dPgetParam($_POST, 'eap_items_ids');
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id, array_merge(dPrecordList('project_eap_items', 'id', 'project_id', $eap_items_ids),
+	dPrecordList('project_eap_items', 'id', 'project_id', dPgetParam($_POST, 'items_ids_to_delete'))));
 $controllerWBSItem= new ControllerWBSItem();
 if($eap_items_ids  != ""){
 	$eap_items_ids = explode(",",$eap_items_ids);

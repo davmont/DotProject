@@ -1,6 +1,8 @@
 <?php
 require_once(DP_BASE_DIR . "/modules/timeplanning/control/controller_wbs_items.class.php");
 $project_id = dPgetParam($_POST, 'project_id');
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id);
 $controllerWBSItem = new ControllerWBSItem();
 $id = -1;
 $description = $AppUI->_("LBL_NEW_WBS_ITEM");

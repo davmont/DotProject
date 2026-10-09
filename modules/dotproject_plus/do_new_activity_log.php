@@ -19,6 +19,8 @@ require_once (DP_BASE_DIR . '/modules/tasks/tasks.class.php');
 
 $taskLogDescription = dPgetParam($_POST,"task_log_description");
 $taskLogActivityId = dPgetParam($_POST, "activity_id");
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit(dPgetParam($_POST, 'project_id', 0), array(array('tasks', 'task_id', 'task_project', $taskLogActivityId)));
 $taskLogDate = dPgetParam($_POST, "task_log_date_$taskLogActivityId");
 $taskLogHours = dPgetParam($_POST, "task_log_hours");
 $taskLogCreator = dPgetParam($_POST, "task_log_creator");

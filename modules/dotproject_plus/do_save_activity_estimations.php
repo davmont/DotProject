@@ -12,6 +12,8 @@ set_time_limit(300);
 //save
 $project_id = $_POST['project_id'];
 $task_id=$_POST["activity_id"];
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id, array(array('tasks', 'task_id', 'task_project', $task_id)));
 $description=$_POST["activity_description_id_".$task_id];
 $owner_id=$_POST["task_owner_".$task_id];
 $effort = $_POST["planned_effort_$task_id"];

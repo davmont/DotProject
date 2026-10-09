@@ -5,6 +5,8 @@ require_once (DP_BASE_DIR . "/modules/timeplanning/model/project_task_estimation
 require_once (DP_BASE_DIR . '/modules/tasks/tasks.class.php');
 require_once (DP_BASE_DIR . '/modules/projects/projects.class.php');
 $project_id = dPgetParam($_POST, 'project_id');
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id);
 echo "Project id:".$project_id."<br/>";
 $controllerActivityMDP = new ControllerActivityMDP();
 $activities=$controllerActivityMDP->getProjectActivities($project_id);

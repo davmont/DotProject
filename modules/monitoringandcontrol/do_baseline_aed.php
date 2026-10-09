@@ -9,6 +9,8 @@ global $AppUI;
 	
 	$project_id = dPgetParam($_POST,'project_id');
 	$idBaseline = dPgetParam($_POST,'idBaseline');
+	// The user must be able to edit this project, and the records named must belong to it.
+	dPrequireProjectEdit($project_id, array(array('monitoring_baseline', 'baseline_id', 'project_id', $idBaseline)));
 	$nmBaseline = dPgetParam($_POST,'nmBaseline');	
 	$nmVersao = dPgetParam($_POST,'nmVersao');
 	$dsObservacao = dPgetParam($_POST,'dsObservacao');

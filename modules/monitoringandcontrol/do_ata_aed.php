@@ -26,6 +26,8 @@ DB filelds - TABLE: 'monitoring_meeting_item_select' :
 	// NOVA ATA
 	$meeting_id = dPgetParam($_POST,'meeting_id');
 	$project_id = dPgetParam($_POST,'project_id');
+	// The user must be able to edit this project, and the records named must belong to it.
+	dPrequireProjectEdit($project_id, array(array('monitoring_meeting', 'meeting_id', 'project_id', $meeting_id)));
 	$dt_begin = dPgetParam($_POST,'dt_begin');	
 	$hr_begin = dPgetParam($_POST,'hr_begin');
 	$min_begin = dPgetParam($_POST,'min_begin');

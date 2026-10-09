@@ -3,6 +3,8 @@ require_once (DP_BASE_DIR . "/modules/timeplanning/control/controller_wbs_item_a
 $ControllerWBSItemActivityRelationship= new ControllerWBSItemActivityRelationship();
 $project_id=dPgetParam($_POST, 'project_id');
 $activity_id=dPgetParam($_POST, 'activity_id');
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id, array(array('tasks', 'task_id', 'task_project', $activity_id)));
 $activity_name=dPgetParam($_POST, 'activity_name');
 $ControllerWBSItemActivityRelationship->delete($activity_id);
 

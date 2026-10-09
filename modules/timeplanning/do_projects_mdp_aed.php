@@ -7,6 +7,12 @@
 	$project_id = dPgetParam($_POST, 'project_id');
 	$tasks_dependencies_ids = dPgetParam($_POST, 'tasks_dependencies_ids');
 	$tasks_positions = dPgetParam($_POST, 'tasks_positions');
+	// The user must be able to edit this project, and the records named must belong to it.
+	$mdp_task_ids = array();
+	foreach (explode('#', $tasks_dependencies_ids . '#' . $tasks_positions) as $entry) {
+		$mdp_task_ids[] = (int)$entry;
+	}
+	dPrequireProjectEdit($project_id, dPrecordList('tasks', 'task_id', 'task_project', $mdp_task_ids));
 	$tasks_data=explode("#",$tasks_dependencies_ids);
 	for($i=0;$i<sizeof($tasks_data);$i++){
 		if($tasks_data[$i]!=""){

@@ -103,6 +103,57 @@ function dPrequireWritePermission($module, $id, $del = false)
 	}
 }
 
+/**
+ * True when every record listed in $records belongs to $parent_id. Each entry is
+ * array(table, key column, parent column, id); ids of 0 or less (new records) are skipped.
+ */
+function dPrecordsBelongTo($parent_id, $records)
+{
+	foreach ($records as $record) {
+		list($table, $key, $parent_column, $id) = $record;
+		$id = (int)$id;
+		if ($id <= 0) {
+			continue;
+		}
+		$q = new DBQuery();
+		$q->addTable($table);
+		$q->addQuery($parent_column);
+		$q->addWhere($key . ' = ' . $id);
+		if ((int)$q->loadResult() !== (int)$parent_id) {
+			return false;
+		}
+	}
+	return true;
+}
+
+/**
+ * Stops a write handler unless the user may edit the project and every record listed in
+ * $records (see dPrecordsBelongTo()) belongs to it.
+ */
+function dPrequireProjectEdit($project_id, $records = array())
+{
+	global $AppUI;
+	$project_id = (int)$project_id;
+	if (!($project_id > 0 && getPermission('projects', 'edit', $project_id)
+			&& dPrecordsBelongTo($project_id, $records))) {
+		$AppUI->setMsg('Access denied.', UI_MSG_ERROR);
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+}
+
+/**
+ * Builds dPrecordsBelongTo() entries for a list of ids given as an array or a
+ * comma-separated string.
+ */
+function dPrecordList($table, $key, $parent_column, $ids)
+{
+	$records = array();
+	foreach ((is_array($ids) ? $ids : explode(',', (string)$ids)) as $id) {
+		$records[] = array($table, $key, $parent_column, $id);
+	}
+	return $records;
+}
+
 function getPermission($mod, $perm, $item_id = 0)
 {
 	global $AppUI;

@@ -7,6 +7,10 @@ if (!defined('DP_BASE_DIR')) {
 	$resCost = new ControllerResourcesCosts();  
 	
 	$id = dPgetParam($_POST,'cost_id');
+	// Cost rates belong to user accounts: only user administrators may change them.
+	if (!getPermission('admin', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
 	$tx_pad = dPgetParam($_POST,'tx_pad');
 	$use_cost = dPgetParam($_POST,'use_cost');
 	$dt_begin = dPgetParam($_POST,'dt_begin');

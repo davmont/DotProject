@@ -18,6 +18,8 @@
 	$isResource=$_POST['isResource'];
 	$isSize=$_POST['isSize'];
 	$id=$_POST['minute_id'];
+	// The user must be able to edit this project, and the records named must belong to it.
+	dPrequireProjectEdit($project_id, array(array('project_minutes', 'id', 'project_id', $id)));
 	$tab=$_POST['tab'];
 	$members=$_POST['membersIds'];
 	$pos = strpos($members,",");

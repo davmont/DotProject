@@ -10,6 +10,8 @@ set_time_limit(300);
 //save
 $project_id = $_POST['project_id'];
 $wbs_item_id=$_POST["wbs_item_id"];
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id, array(array('project_eap_items', 'id', 'project_id', $wbs_item_id)));
 $description=$_POST["wbs_item_description_".$wbs_item_id];
 $estimated_size=$_POST["estimated_size_".$wbs_item_id];
 $estimated_size_unit=$_POST["estimated_size_unit_".$wbs_item_id];

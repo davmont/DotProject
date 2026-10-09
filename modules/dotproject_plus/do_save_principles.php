@@ -4,6 +4,8 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 $project_id = intval(dPgetParam($_POST, 'project_id', 0));
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id);
 $ratings = dPgetParam($_POST, 'rating', array());
 $notes = dPgetParam($_POST, 'notes', array());
 $tab = dPgetParam($_POST, 'tab', 0);
