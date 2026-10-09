@@ -7,4 +7,9 @@
 #
 
 # Extend value_charvalue from 250 to 1000 characters
-ALTER TABLE `%dbprefix%custom_fields_values` MODIFY `value_charvalue` `value_charvalue` VARCHAR( 1000 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL; 
+ALTER TABLE `%dbprefix%custom_fields_values` MODIFY `value_charvalue` `value_charvalue` VARCHAR( 1000 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL;
+
+# 20261009
+# Widen user_password for password_hash() output and add password reset token columns
+ALTER TABLE `%dbprefix%users` MODIFY `user_password` VARCHAR(255) NOT NULL DEFAULT '';
+ALTER TABLE `%dbprefix%users` ADD `user_reset_token` VARCHAR(255) NULL DEFAULT NULL, ADD `user_reset_expiry` DATETIME NULL DEFAULT NULL;

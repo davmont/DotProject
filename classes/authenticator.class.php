@@ -196,8 +196,12 @@ if (!defined('DP_BASE_DIR')) {
 				return true;
 			}
 
-			if (md5($password) === $db_password) {
-				// Legacy MD5 hash successful. Re-hash the password to the new standard.
+			if (strlen($db_password) === 32 && md5($password) === $db_password) {
+				// Legacy MD5 hash successful. Re-hash the password to the new standard,
+				// unless the column is still too short to store it.
+				if (!dPpasswordColumnFitsHash()) {
+					return true;
+				}
 				$new_hash = password_hash($password, PASSWORD_DEFAULT);
 				$update_q = new DBQuery();
 				$update_q->addTable('users');
@@ -345,7 +349,7 @@ if (!defined('DP_BASE_DIR')) {
 		function createsqluser($username, $password, $ldap_attribs = Array())
 		{
 			GLOBAL $db, $AppUI;
-			$hash_pass = MD5($password);
+			$hash_pass = dPhashPassword($password);
 
 			require_once($AppUI->getModuleClass("contacts"));
 	
