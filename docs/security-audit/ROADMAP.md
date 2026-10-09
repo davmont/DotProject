@@ -1,6 +1,8 @@
 # DotProject security audit and remediation roadmap
 
 Audit date: 2026-10-09. Branch audited: `dotproject_plus-module-integration-in-the-core` (commit `8788e077`).
+Re-checked against `devel` (`12a5359f`) the same day, when the remediation moved there (section 4). Line numbers in the
+`findings-*.md` files refer to `8788e077` and may have shifted on devel.
 Scope: OWASP Top 10 with emphasis on SQL injection, XSS, CSRF and authorization in the legacy PHP 8 code base.
 Method: manual data-flow review of every module (six parallel reviewers, one per module group), core framework read by hand,
 patches verified in the Docker sandbox under `docker/`.
@@ -55,7 +57,7 @@ Also confirmed in core:
 
 | Sev | Where | What |
 |---|---|---|
-| CRITICAL | `modules/monitoringandcontrol/grafico/line_Graph_*.php` | Pre-auth `unserialize(urldecode($_GET[...]))`, no bootstrap. PHP object injection. |
+| ~~CRITICAL~~ | `modules/monitoringandcontrol/grafico/line_Graph_*.php` | Pre-auth `unserialize(urldecode($_GET[...]))`, no bootstrap. PHP object injection. **Gone on devel** (removed with jpgraph in `625878bf`). |
 | CRITICAL | `install/do_install_db.php` | Unauthenticated config rewrite / outbound DB connection via `mode=upgrade`. |
 | CRITICAL | `modules/timeplanning/js/jsLibraries/wireit/lib/inputex/examples/` | Pre-auth reflected XSS (`echo.php`, `default.php`) and unauthenticated file write (`TaskManager/store.php`). |
 | HIGH (RCE) | `modules/mngdocument/do_file_aed.php` | Any logged-in user uploads any file name to `<webroot>/SGD/`, no extension check, no permission check. |
@@ -74,18 +76,19 @@ Each phase is one or more atomic PRs against the feature branch. Every PR must: 
 log in as `admin/passwd` and `worker/worker`, reproduce the exploit before and show it blocked after (curl), and leave
 `docker compose logs web` free of new `PHP Fatal`/`Warning` lines on the touched pages.
 
-### Phase 0: make `security/core-hardening` shippable (DONE, 2026-10-09)
-All items verified in `docker/` and covered by `docker/smoke.sh`. Commits on `security/core-hardening`:
+### Phase 0: make the security fixes shippable (DONE, 2026-10-09)
+All items verified in `docker/` and covered by `docker/smoke.sh`. Commits on `security/devel-hardening` (original hash on `security/core-hardening` in brackets):
 
 | Commit | Fix |
 |---|---|
-| `f03b3a5f` | `RateLimiter::isAllowed()` compared an array to an int, so every login was refused. |
-| `22145e4a` | `user_password` widened to `VARCHAR(255)`, reset token columns added (schema + `upgrade_latest.sql` entry `20261009`). `dPhashPassword()` keeps MD5 on a database that has not been upgraded, instead of truncating bcrypt hashes. |
-| `e9fb33fc` | Token password reset works while logged out (`index.php?resetpass=1`), stores the token hash in the new columns, escapes output, single use, expires after 1 h, rate-limited. |
-| `ec739a4a` | **New finding:** `dPacl::checkLogin()` auto-repair put any user with no role into the Administrator group at login. Limited to `user_id` 1. |
-| `6753fc9b` | CSRF actually enforced: `dosql` is POST-only; the token is added server-side to every POST form (`CAppUI::injectCsrfToken()` output filter) and client-side for JavaScript-built forms; the ported client script had a syntax error and never ran; `dp-grey-theme` had no meta tag. Feedback rating and ticketsmith reattach moved to POST. |
-| `846c90a3` | Removed the stale nested `modules/dotproject_plus/dotproject_plus/` copy (81 files, `root/root` credentials). |
-| `ef97d117` | Session cookie `SameSite=Lax`, `Secure` on HTTPS; removed the stale `SECURITY_AUDIT.md`. |
+| `b783502d` (`f03b3a5f`) | `RateLimiter::isAllowed()` compared an array to an int, so every login was refused. |
+| `1d37be8f` (`22145e4a`) | `user_password` widened to `VARCHAR(255)`, reset token columns added (schema + `upgrade_latest.sql` entry `20261009`). `dPhashPassword()` keeps MD5 on a database that has not been upgraded, instead of truncating bcrypt hashes. On devel the fresh schema was already 255 wide, but upgraded installs were not. |
+| `f0fc1a45` (`e9fb33fc`) | Token password reset works while logged out. Devel had gone back to emailing a new password, which let anyone who knows a user name and email lock that user out; the token flow replaces it again. Works while logged out (`index.php?resetpass=1`), stores the token hash in the new columns, escapes output, single use, expires after 1 h, rate-limited. |
+| `55d95d85` (`ec739a4a`) | **New finding:** `dPacl::checkLogin()` auto-repair put any user with no role into the Administrator group at login. Limited to `user_id` 1. |
+| `ddb74471` (`6753fc9b`) | CSRF actually enforced: `dosql` is POST-only; the token is added server-side to every POST form (`CAppUI::injectCsrfToken()` output filter) and client-side for JavaScript-built forms; the ported client script had a syntax error and never ran; `dp-grey-theme` had no meta tag. Feedback rating and ticketsmith reattach moved to POST. |
+| `8c7d24c3` (`846c90a3`) | Removed the stale nested `modules/dotproject_plus/dotproject_plus/` copy (81 files, `root/root` credentials). |
+| (`ef97d117`) | Session cookie `SameSite=Lax`, `Secure` on HTTPS; removed the stale `SECURITY_AUDIT.md`. Already on devel, not re-applied. |
+| `3128031d` | **New finding on devel:** developer scripts committed to the web root ran over HTTP. `install_timeplanning.php` ran the timeplanning installer for anyone, writing to the database and appending to locale files. All eight (`benchmark_*`, `test_*`, `fix_locales`, `install_timeplanning`) now refuse to run outside the CLI; `output.txt`/`test_out.txt` untracked. |
 
 New items found during Phase 0, scheduled below:
 - Write handlers routed as views bypass the `dosql` CSRF check: `a=domodsql` (module install/remove from GET links in `system/viewmods.php`), `a=do_*_aed` in monitoringandcontrol and costs, `a=dosql_timesheet`, `a=do_task_bulk_aed`. See Phase 1, item 8.
@@ -97,8 +100,8 @@ New items found during Phase 0, scheduled below:
 ### Phase 1: core gates (small diffs, highest leverage)
 1. `index.php`: redirect to `m=public&a=access_denied` when `!$canAccess` before the dosql include and before the module view include. Expect a few modules that were silently relying on the gap (check `worker` can still open companies/projects/tasks/calendar/files/contacts/forums).
 2. `install/`: abort every entry point when `includes/config.php` exists and the DB is populated, regardless of `mode`; write config values with `var_export()`; fix the `DP_BASE_URL` undefined-constant fatal in `check_upgrade.php` (installer cannot run on this branch at all); fix `lib/phpgacl/gacl_api.class.php:849` `count(null)` (fresh installs crash before permissions are created).
-3. Delete or guard pre-auth files: `monitoringandcontrol/grafico/line_Graph_*.php` (replace `unserialize` with `json_decode` and add the normal bootstrap), wireit `examples/` and `backend/`, `xmlrpc/` debugger and demo servers, `tracIntegration/xmlrpc`, mantis PHPXMLRPC copies. Add the `if (!defined('DP_BASE_DIR')) die()` guard to every remaining module PHP file that lacks it (`grep -L "DP_BASE_DIR" modules -r --include=*.php`).
-4. Secrets: rotate the DB password, `git rm --cached includes/config.php`, add to `.gitignore`, keep `config-dist.php` as the template.
+3. Delete or guard pre-auth files: wireit `examples/` and `backend/`, `xmlrpc/` debugger and demo servers, `tracIntegration/xmlrpc`, mantis PHPXMLRPC copies. Add the `if (!defined('DP_BASE_DIR')) die()` guard to every remaining module PHP file that lacks it (`grep -L "DP_BASE_DIR" modules -r --include=*.php`).
+4. Secrets: `includes/config.php` is still tracked on devel (now with `dotproject`/`dotproject`). Rotate the DB password, `git rm --cached includes/config.php`, add to `.gitignore`, keep `config-dist.php` as the template.
 5. Output helpers: switch `$AppUI->___()`, `dPformSafe()` and `check_plain` paths to `ENT_QUOTES`; make `dPformSafe($v, DP_FORM_URI)` also HTML-escape; fix `makeFileNameSafe()` to loop or use `basename()` + realpath containment.
 6. Escape `redirect` on `style/*/login.php` and `lostpass.php`; whitelist `callback`/`field`/`table` in the `modules/public` selectors and `helpdesk/selector.php`.
 7. `locales/core.php`: stop `eval`ing; load translations with `include` of a `return array(...)` file written through `var_export()`, and gate `translate_save.php` like `translate.php` (`$canEdit && user_type == 1`), validating `$lang` against the locale directory list.
@@ -138,12 +141,16 @@ Candidates confirmed dead or fatal on PHP 8: `modules/smartsearchns`, `modules/b
 - PHPStan at level 2 with a baseline, in CI, to catch new raw `$_GET`/`$_POST` use via a custom rule or `grep` guard.
 - Keep `docker/` in the repo and add a `make audit-smoke` target that runs the login, CSRF and permission curl checks.
 
-## 4. State of the remediation branch `security/core-hardening`
+## 4. State of the remediation branch
 
-Draft PR: https://github.com/davmont/DotProject/pull/243, against `dotproject_plus-module-integration-in-the-core`.
-That base branch had been deleted on origin after PR #57 merged it into devel. It was restored at its last commit `8788e077`, which holds 9 commits not in devel.
+Work moved from `security/core-hardening` (PR #243, against the stale `dotproject_plus-module-integration-in-the-core`) to
+`security/devel-hardening`, which starts from `devel` at `12a5359f`:
 
-The branch starts with four devel commits cherry-picked with `-x` (`aca8d1b6` rate limiter, `4b2f09e4` password_hash and token reset, `40010a72` CSRF helpers, `fb2ae946` central CSRF check), followed by the audit docs and sandbox (`8bf53f13`) and the Phase 0 commits listed above. Phase 0 is complete; next is Phase 1.
+- `1fc4fe81` merges `dotproject_plus-module-integration-in-the-core`. Its 9 commits were already on devel in other form, so the tree is unchanged; the merge only records them.
+- The audit docs, sandbox and Phase 0 commits were cherry-picked with `-x`. Conflicts were resolved in favour of devel's code, keeping the Phase 0 behaviour (column-width guard, token reset, POST-only `dosql` message).
+- Devel's own security work (`f3f60992`, `fc9050d7`, PRs #236-#242) was already on devel, so the four devel commits PR #243 had cherry-picked are not repeated.
+
+Verified in `docker/` on the new branch: `smoke.sh` 17/17; company forms (button, `form.submit()` and JavaScript-built) save under all five themes. The contact form still fails because of Phase 1 item 9.
 
 ## 5. Sandbox
 
