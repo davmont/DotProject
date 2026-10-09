@@ -133,16 +133,16 @@ if ( $tab ) {
 			?>
 		</td>
 		<td>
-			<?php echo $x["project_short_name"]; ?>
+			<?php echo dPhtml($x["project_short_name"]); ?>
 		</td>
 		<td>
-			<?php echo $x["task_name"]; ?>
+			<?php echo dPhtml($x["task_name"]); ?>
 		</td>
 		<td>
 			<?php echo $x["task_log_hours"]; ?>
 		</td>
 		<td>
-			<?php echo $x["task_log_costcode"]; ?>
+			<?php echo dPhtml($x["task_log_costcode"]); ?>
 		</td>
 		<td>
 			<?php if ( !$changeLock ) { ?>
@@ -153,7 +153,7 @@ if ( $tab ) {
 	<tr>
 		<td colspan="2">&nbsp;</td>
 		<td colspan="5">
-			<?php echo $x["task_log_description"]; ?>
+			<?php echo dPhtml($x["task_log_description"]); ?>
 		</td>
 	</tr>
 	<?
@@ -221,10 +221,10 @@ if ( $tab ) {
 			?>
 		</td>
 		<td>
-			<?php echo $x["project_short_name"]; ?>
+			<?php echo dPhtml($x["project_short_name"]); ?>
 		</td>
 		<td>
-			<?php echo $x["task_name"]; ?>
+			<?php echo dPhtml($x["task_name"]); ?>
 		</td>
 		<td>
 			<?php 
@@ -257,7 +257,7 @@ if ( $tab ) {
 	<tr>
 		<td colspan="2">&nbsp;</td>
 		<td colspan="5">
-			<?php echo $x["task_log_description"]; ?>
+			<?php echo dPhtml($x["task_log_description"]); ?>
 		</td>
 	</tr>
 	<?
@@ -336,7 +336,7 @@ if ( $tab ) {
 			?>
 		</td>
 		<td colspan="2">
-			<?php echo $x["earning_item_description"]; ?>
+			<?php echo dPhtml($x["earning_item_description"]); ?>
 		</td>
 		<td>
 			<?php 

@@ -70,6 +70,9 @@ $projects = $q->loadHashList();
 $projectSelected = intval(dPgetParam($_GET, 'project_id'));
 $t = intval(dPgetParam($_GET, 'tab'));
 $vw = dPgetParam($_GET, 'vw');
+if (!in_array($vw, array('vw_watchlist', 'vw_near_term_responses_list', 'vw_strategys_list', 'vw_lessons_learned_list'), true)) {
+    $vw = null;
+}
 
 // setup the title block
 $titleBlock = new CTitleBlock("LBL_VIEW", 'risks.png', $m, "$m.$a");
@@ -111,7 +114,7 @@ $titleBlock->show();
                 <table cellspacing="1" cellpadding="2" width="60%">
                     <tr>
                         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('LBL_NAME'); ?>:</td>
-                        <td nowrap="nowrap"><?php echo $obj->risk_name; ?></td>
+                        <td nowrap="nowrap"><?php echo dPhtml($obj->risk_name); ?></td>
                     </tr>
                     <tr>
                         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('LBL_DESCRIPTION'); ?>:</td>
@@ -209,7 +212,7 @@ $titleBlock->show();
         </tr>
         <tr>
             <td align="center">
-                <input type="button" class="button" value="<?php echo $AppUI->_('LBL_RETURN'); ?>" onclick="{location.href = '<?php echo $href; ?>';}"/>
+                <input type="button" class="button" value="<?php echo $AppUI->_('LBL_RETURN'); ?>" onclick="{location.href = <?php echo dPjsAttr($href); ?>;}"/>
             </td>
         </tr>
     </form>

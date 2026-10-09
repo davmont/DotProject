@@ -55,8 +55,8 @@ foreach ($logs as $row) {
 	}
 	$s .= "\n\t</td>";
 	$s .= '<td nowrap="nowrap">'.@$row['product_id'].'</td>';
-	$s .= '<td nowrap="nowrap">'.@$row["product_costcode"].'</td>';
-	$s .= '<td nowrap="nowrap">'.$row["product_name"].'</td>';
+	$s .= '<td nowrap="nowrap">'.dPhtml(@$row["product_costcode"]).'</td>';
+	$s .= '<td nowrap="nowrap">'.dPhtml($row["product_name"]).'</td>';
 	$s .= '<td nowrap="nowrap">'.$row["product_qty"].'</td>';
 	$s .= '<td nowrap="nowrap" align=right>'.$row["product_price"].'</td>';
 	$s .= '<td nowrap="nowrap" align=right>'.sprintf("%01.2f",($row["product_price"] * $row["product_qty"])).'</td>';
