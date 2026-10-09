@@ -569,7 +569,8 @@ function dPformSafe($txt, $flag_bits = 0)
 		$txt_arr = is_object($txt) ? get_object_vars($txt) : $txt;
 		foreach ($txt_arr as $k => $v) {
 			$value = $deslash ? $AppUI->___($v, UI_OUTPUT_RAW) : $v;
-			$value = $isURI ? $AppUI->___($value, UI_OUTPUT_URI) : $value;
+			// URIs are written into href attributes, so they are HTML-escaped too.
+			$value = $isURI ? htmlspecialchars($AppUI->___($value, UI_OUTPUT_URI), ENT_QUOTES) : $value;
 
 			if (!$isURI) {
 				$value = $isJSVars ? $AppUI->___($value, UI_OUTPUT_JS) : $value;
@@ -585,7 +586,7 @@ function dPformSafe($txt, $flag_bits = 0)
 
 	} else {
 		$txt = $deslash ? $AppUI->___($txt, UI_OUTPUT_RAW) : $txt;
-		$txt = $isURI ? $AppUI->___($txt, UI_OUTPUT_URI) : $txt;
+		$txt = $isURI ? htmlspecialchars($AppUI->___($txt, UI_OUTPUT_URI), ENT_QUOTES) : $txt;
 
 		if (!$isURI) {
 			$txt = $isJSVars ? $AppUI->___($txt, UI_OUTPUT_JS) : $txt;

@@ -276,8 +276,11 @@ class CAppUI
 	 */
 	function makeFileNameSafe($file)
 	{
-		$file = str_replace('../', '', $file);
-		$file = str_replace('..\\', '', $file);
+		// Repeat until nothing changes: a single pass turns '....//' into '../'.
+		do {
+			$before = $file;
+			$file = str_replace(array('../', '..\\'), '', $file);
+		} while ($file !== $before);
 		return $file;
 	}
 
@@ -496,7 +499,8 @@ class CAppUI
 				$str = str_replace(' ', '%20', $str);
 				break;
 			case UI_OUTPUT_HTML:
-				$str = htmlentities(stripslashes($str), ENT_COMPAT, $locale_char_set);
+				// ENT_QUOTES: single quotes too, so values are safe in attributes quoted either way.
+				$str = htmlentities(stripslashes($str), ENT_QUOTES, $locale_char_set);
 				$str = str_replace('&#039;', '&apos;', $str);
 				break;
 			case UI_OUTPUT_JS:
