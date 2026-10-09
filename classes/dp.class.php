@@ -272,7 +272,7 @@ class CDpObject {
 				$q->addQuery('COUNT(DISTINCT ' . $table_alias . '.' . $table['idfield'] . ') AS ' 
 							 . $table['idfield'] . $table_alias);
 			}
-			$q->addWhere($k . " = '" . $this->$k . "'");
+			$q->addWhere($k . ' = ' . $q->quote($this->$k));
 			$q->addGroup($k);
 			$sql = $q->prepare(true);
 			
@@ -317,7 +317,8 @@ class CDpObject {
 		
 		$q = new DBQuery;
 		$q->setDelete($this->_tbl);
-		$q->addWhere($this->_tbl_key . " = '" . $this->$k . "'");
+		// Bound, not quoted in: the key often comes straight from bind($_POST).
+		$q->addWhere($this->_tbl_key . ' = ?', array($this->$k));
 		$result = ((!$q->exec())?db_error():null);
 		if (!$result) {
 			// only record history if deletion actually occurred
