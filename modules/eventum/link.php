@@ -14,7 +14,7 @@ if (! $perms->checkModule('system', 'edit'))
 if (! $perms->checkModule($m, 'edit'))
   $AppUI->redirect('m=public&a=access_denied');
 
-if (! $project_id = dPgetParam($_GET, 'project_id', 0))
+if (! $project_id = dPgetIntParam($_GET, 'project_id', 0))
   $AppUI->redirect('m=public&a=access_denied');
 
 // Preliminary checks over, now we find all projects that use the

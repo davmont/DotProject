@@ -12,7 +12,7 @@ $padre = intval( dPgetParam( $_POST, 'padre', 0 ) );
 $descripcion = dPgetParam( $_POST, 'descripcion', '' );
 $dirname = dPgetParam( $_POST, 'dirname', '' );
 $accion = dPgetParam( $_POST, 'accion', '' );
-$actual = dPgetParam( $_POST, 'actual', '' );
+$actual = dPgetIntParam( $_POST, 'actual', 0 );
 $delall = dPgetParam( $_POST, 'delall', '' );
 
 

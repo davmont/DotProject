@@ -15,11 +15,11 @@ $list_by_company    = $AppUI->getState( 'list_by_company_billing' );
 $list_by_department = $AppUI->getState( 'list_by_department_billing' );
 $list_by_employee   = $AppUI->getState( 'list_by_employee_billing' );
 
-$task       = $AppUI->getState( 'billing_report_task' );
-$project    = $AppUI->getState( 'billing_report_project' );
-$company    = $AppUI->getState( 'billing_report_company' );
-$department = $AppUI->getState( 'billing_report_department' );
-$employee   = $AppUI->getState( 'billing_report_employee' );
+$task       = (int)$AppUI->getState( 'billing_report_task' );
+$project    = (int)$AppUI->getState( 'billing_report_project' );
+$company    = (int)$AppUI->getState( 'billing_report_company' );
+$department = (int)$AppUI->getState( 'billing_report_department' );
+$employee   = (int)$AppUI->getState( 'billing_report_employee' );
 
 $start_date = $AppUI->getState( 'start_date_billing' );
 $end_date   = $AppUI->getState( 'end_date_billing' );

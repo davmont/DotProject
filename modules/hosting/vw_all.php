@@ -31,7 +31,7 @@ $q->addJoin('hosting', 'h', 'h.domain_id = dom.domain_id');
 
 if($AppUI->getState('HostIdxCompany') != null){
 	if($AppUI->getState('HostIdxCompany') != "" || $AppUI->getState('HostIdxCompany') != 0 || $AppUI->getState('HostIdxCompany') != "0"){
-		$q->addWhere('dom.company_id = '.$AppUI->getState('HostIdxCompany'));
+		$q->addWhere('dom.company_id = '.(int)$AppUI->getState('HostIdxCompany'));
 	}
 }
 

@@ -42,7 +42,7 @@ if(!(strpos($department, $company_prefix)===false)){
 }*/
 
 if(!(strpos($company_id, $company_prefix)===false)){
-	$company_id = substr($company_id,strlen($company_prefix));
+	$company_id = (int)substr($company_id,strlen($company_prefix));
 	$AppUI->setState( 'HostIdxCompany', $company_id );
 }
 

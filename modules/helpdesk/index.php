@@ -32,7 +32,8 @@ require_once ($AppUI->getModuleClass('companies'));
 
 // ANDY - get CCompany() to filter tasks by company
 if (isset($_POST['f2'])) {
-	$AppUI->setState('CompanyIdxFilter', $_POST['f2']);
+	// 'all' or a company id, used in SQL below.
+	$AppUI->setState('CompanyIdxFilter', $_POST['f2'] == 'all' ? 'all' : (int)$_POST['f2']);
 }
 $company_id = $AppUI->getState('CompanyIdxFilter') ? $AppUI->getState('CompanyIdxFilter') : 'all';
 
@@ -78,8 +79,8 @@ $titleBlock->show();
 $item_perms = getItemPerms();
 
 //ANDY - add company filter
-if ($company_id != 0) 
-	$item_perms = $item_perms . ' and item_company_id = ' . $company_id;
+if ($company_id != 'all' && (int)$company_id != 0) 
+	$item_perms = $item_perms . ' and item_company_id = ' . (int)$company_id;
 
 $q = new DBQuery; 
 $q->addQuery('COUNT(item_id)'); 

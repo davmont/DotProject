@@ -13,6 +13,8 @@ require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 $type = dPgetCleanParam($_GET, 'type', '');
 $column = dPgetCleanParam($_GET, 'column', 'timestamp');
 $direction = dPgetCleanParam($_GET, 'direction', 'DESC');
+$column = dPvalidateOrder($column, array("author", "subject", "timestamp", "activity", "type", "priority", "assignment"), 'timestamp');
+$direction = dPvalidateOrder(mb_strtoupper($direction), array('ASC', 'DESC'), 'DESC');
 $q = new DBQuery;
 $q->addQuery(array(
 	'ticket',
@@ -33,7 +35,7 @@ if ($type == 'My') {
 	$q->addWhere("type = 'Open'");
 	$q->addWhere("(assignment = '$AppUI->user_id' OR assignment = '0')");
 } else if ($type != 'All') {
-	$q->addWhere("type = '$type'");
+	$q->addWhere('type = ' . $q->quote($type));
 }
 $q->addWhere("parent = '0'");
 $q->addOrder(urlencode($column) . " " . $direction);
