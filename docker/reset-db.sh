@@ -15,5 +15,8 @@ curl -s -c $J -b $J -o /dev/null -X POST $U -d login=login -d username=admin -d 
 T=$(curl -s -b $J "$U?m=admin&a=addedituser" | grep -o 'name="csrf_token" value="[^"]*"' | head -1 | sed 's/.*value="//;s/"//')
 ROLE=$($DB -N -e "SELECT id FROM dotp_gacl_aro_groups WHERE value='normal'")
 curl -s -b $J -o /dev/null -X POST "$U?m=admin" --data "csrf_token=$T&dosql=do_user_aed&user_id=0&contact_id=0&user_username=worker&user_password=worker&password_check=worker&user_type=0&user_role=$ROLE&contact_first_name=Low&contact_last_name=Priv&contact_email=worker@example.com&contact_company=0&contact_department=0"
+# Read-only test account: guest / guest (role "Guest": access and view only)
+GROLE=$($DB -N -e "SELECT id FROM dotp_gacl_aro_groups WHERE value='guest'")
+curl -s -b $J -o /dev/null -X POST "$U?m=admin" --data "csrf_token=$T&dosql=do_user_aed&user_id=0&contact_id=0&user_username=guest&user_password=guest&password_check=guest&user_type=0&user_role=$GROLE&contact_first_name=Read&contact_last_name=Only&contact_email=guest@example.com&contact_company=0&contact_department=0"
 rm -f $J files/temp/ratelimit_*
 $DB -N -e "SELECT CONCAT('tables=',COUNT(*)) FROM information_schema.tables WHERE table_schema='dotproject'; SELECT CONCAT('acl=',COUNT(*)) FROM dotp_gacl_acl; SELECT CONCAT('users=',GROUP_CONCAT(user_username)) FROM dotp_users; SELECT CONCAT('worker roles=',COUNT(*)) FROM dotp_gacl_groups_aro_map m JOIN dotp_gacl_aro a ON a.id=m.aro_id WHERE a.name='worker' OR a.value=(SELECT user_id FROM dotp_users WHERE user_username='worker')"

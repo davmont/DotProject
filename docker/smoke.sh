@@ -35,6 +35,21 @@ code -X POST "$U?m=companies" -d "dosql=do_company_aed&company_id=0&company_name
 check "POST valid token saves" "$($DB -e "SELECT COUNT(*) FROM dotp_companies WHERE company_name='SmokeGood'")" "1"
 check "token injected into POST forms" "$(curl -s -c "$CJ" -b "$CJ" "$U?m=companies&a=addedit" | grep -c 'name="csrf_token"')" "2"
 
+# Write permission on the module: guest (view only) cannot write, worker can
+login guest guest >/dev/null; T=$(token)
+code -X POST "$U?m=companies" -d "dosql=do_company_aed&company_id=0&company_name=SmokeGuest&csrf_token=$T" >/dev/null
+check "guest cannot create company" "$($DB -e "SELECT COUNT(*) FROM dotp_companies WHERE company_name='SmokeGuest'")" "0"
+SID=$($DB -e "SELECT company_id FROM dotp_companies WHERE company_name='SmokeGood'")
+code -X POST "$U?m=companies" -d "dosql=do_company_aed&del=1&company_id=$SID&csrf_token=$T" >/dev/null
+check "guest cannot delete company" "$($DB -e "SELECT COUNT(*) FROM dotp_companies WHERE company_id=$SID")" "1"
+GID=$($DB -e "SELECT user_id FROM dotp_users WHERE user_username='guest'")
+$DB -e "DELETE FROM dotp_user_preferences WHERE pref_user=$GID AND pref_name='TABVIEW'"
+code -X POST "$U?m=system" -d "dosql=do_preference_aed&pref_user=$GID&pref_name[TABVIEW]=2&csrf_token=$T" >/dev/null
+check "guest saves own preferences" "$($DB -e "SELECT COUNT(*) FROM dotp_user_preferences WHERE pref_user=$GID AND pref_name='TABVIEW'")" "1"
+login worker worker >/dev/null; T=$(token)
+code -X POST "$U?m=companies" -d "dosql=do_company_aed&del=1&company_id=$SID&csrf_token=$T" >/dev/null
+check "worker deletes company" "$($DB -e "SELECT COUNT(*) FROM dotp_companies WHERE company_id=$SID")" "0"
+
 # Password reset page reachable while logged out
 rm -f "$CJ"
 check "reset form reachable logged out" "$(curl -s "$U?resetpass=1&user_id=2&token=$(printf 'a%.0s' $(seq 64))" | grep -o 'name="new_password"' | head -1)" 'name="new_password"'

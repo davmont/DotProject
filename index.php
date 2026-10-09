@@ -298,18 +298,29 @@ if (isset($_REQUEST['dosql'])) {
 		$AppUI->redirect('m=public&a=access_denied');
 	}
 	$AppUI->verifyCsrfToken();
+	// Write handlers need write permission on the module: delete for del=1, otherwise add
+	// or edit. Handlers check the individual record themselves.
+	if (!$ownAccount && !(dPgetParam($_POST, 'del', 0) ? $canDelete : ($canEdit || $canAuthor))) {
+		$AppUI->setMsg('Access denied.', UI_MSG_ERROR);
+		$AppUI->redirect('m=public&a=access_denied');
+	}
 	//require('./dosql/' . $_REQUEST['dosql'] . '.php');
 	require(DP_BASE_DIR . '/modules/' . $m . '/' . ($u ? ($u . '/') : '')
 		. $AppUI->checkFileName($_REQUEST['dosql']) . '.php');
 }
 
-// Views named do_*, dosql* or domodsql are write handlers too: same POST and token rule.
+// Views named do_*, dosql* or domodsql are write handlers too: same POST, token and
+// write permission rules.
 if (preg_match('/^do(_|sql|modsql)/', $a)) {
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 		$AppUI->setMsg('Invalid request method.', UI_MSG_ERROR);
 		$AppUI->redirect('m=public&a=access_denied');
 	}
 	$AppUI->verifyCsrfToken();
+	if (!(dPgetParam($_POST, 'del', 0) ? $canDelete : ($canEdit || $canAuthor))) {
+		$AppUI->setMsg('Access denied.', UI_MSG_ERROR);
+		$AppUI->redirect('m=public&a=access_denied');
+	}
 }
 
 // start output proper
