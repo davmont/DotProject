@@ -5,8 +5,7 @@ if (!defined('DP_BASE_DIR')) {
 
 // Try to load from both locales locations if they exist
 $locales_locations = array(
-    DP_BASE_DIR . '/modules/dotproject_plus/locales/',
-    DP_BASE_DIR . '/modules/dotproject_plus/dotproject_plus/locales/'
+    DP_BASE_DIR . '/modules/dotproject_plus/locales/'
 );
 
 $locale_to_load = isset($AppUI->user_prefs['LOCALE']) ? $AppUI->user_prefs['LOCALE'] : 'en_US';
