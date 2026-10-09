@@ -862,9 +862,9 @@ foreach ($tasks_for_ids as $t) {
 
 
 
-if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
-    include_once DP_BASE_DIR . $_GET["show_external_page"];
-} else {
+// show_external_page used to include a file named by the request (a file inclusion hole).
+// The pages it pointed to no longer exist, so the tab is always shown.
+{
 
     $project = new CProject();
     $project->load($project_id);
