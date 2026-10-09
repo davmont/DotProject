@@ -332,6 +332,30 @@ function dPhtml($str)
 }
 
 /**
+ * Returns a value as a JavaScript string literal (with its quotes) that is safe anywhere in a
+ * <script> block: quotes, <, > and & are \u-escaped. Use dPjsAttr() inside an onclick or
+ * other event attribute.
+ */
+function dPjs($value)
+{
+	global $locale_char_set;
+	$value = (string)$value;
+	if ($locale_char_set && mb_strtolower($locale_char_set) != 'utf-8') {
+		$value = mb_convert_encoding($value, 'UTF-8', $locale_char_set);
+	}
+	return json_encode($value, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+		| JSON_INVALID_UTF8_SUBSTITUTE);
+}
+
+/**
+ * dPjs() for event attributes such as onclick="f(<?php echo dPjsAttr($v); ?>)".
+ */
+function dPjsAttr($value)
+{
+	return htmlspecialchars(dPjs($value), ENT_QUOTES);
+}
+
+/**
  * Returns $url when it is safe to use as a link target: relative, or with an http, https,
  * mailto or ftp scheme. Anything else (javascript:, data:, vbscript:, ...) returns ''.
  * The result still needs HTML escaping when written into an attribute.

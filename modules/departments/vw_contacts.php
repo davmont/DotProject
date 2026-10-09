@@ -20,9 +20,9 @@ if (!defined('DP_BASE_DIR')) {
 	$contacts = $q->loadHashList("contact_id");
 	
 	foreach ($contacts as $contact_id => $contact_data) {
-		echo "<tr><td>".$contact_data["contact_first_name"]." ".$contact_data["contact_last_name"]."</td>";
-		echo "<td>".$contact_data["contact_email"]."</td>";
-		echo "<td>".$contact_data["contact_phone"]."</td></tr>";
+		echo "<tr><td>".dPhtml($contact_data["contact_first_name"]." ".$contact_data["contact_last_name"])."</td>";
+		echo "<td>".dPhtml($contact_data["contact_email"])."</td>";
+		echo "<td>".dPhtml($contact_data["contact_phone"])."</td></tr>";
 	}
 ?>
 </table>

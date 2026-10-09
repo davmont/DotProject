@@ -331,7 +331,7 @@ foreach ($aProject as $v) {
 	
 		echo '<tr>';
 			// Show the Project progress and Project color
-			echo '<td nowrap="nowrap" style="border: outset #eeeeee 2px; background-color:#'.$v['project_color_identifier'].';"><center>'; 
+			echo '<td nowrap="nowrap" style="border: outset #eeeeee 2px; background-color:#'.preg_replace('/[^0-9a-fA-F]/', '', $v['project_color_identifier']).';"><center>'; 
 			$inserted=0;  //tmp state for inserting an empty cell, if the project does not have a progress so far
 			foreach ($aComplete as $c) {
 				if ($c['task_project'] == $v['project_id']) {
@@ -381,7 +381,7 @@ foreach ($aProject as $v) {
 			echo '<td colspan="2" nowrap="nowrap" align="center"><center>';
 				echo '<table width="100%" ><tr>';
 					if ( $v['annotation_subject'] != "" ) {
-						echo '<td width="100%" colspan="2" align="Left">'.$AppUI->_('Subject')." : <textarea READONLY style='width: 88%; background-color: #efefef;' rows='1'>".$v['annotation_subject'].'</textarea></td>';
+						echo '<td width="100%" colspan="2" align="Left">'.$AppUI->_('Subject')." : <textarea READONLY style='width: 88%; background-color: #efefef;' rows='1'>".dPhtml($v['annotation_subject']).'</textarea></td>';
 						echo '</tr><tr>';
 					}
 					echo '<td width="49%" nowrap="nowrap" align="center"><center>';

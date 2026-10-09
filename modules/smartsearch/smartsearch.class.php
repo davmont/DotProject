@@ -80,7 +80,7 @@ class smartsearch  {
 					
 					$tmplink = $this->createlink($records); 
 					$outresults .= ('<tr><td>'."\n" . '<a href="' . $tmplink . '">' 
-					               . highlight($display_val, $this->keywords) . '</a>' . "\n" 
+					               . highlight(dPhtml($display_val), $this->keywords) . '</a>' . "\n" 
 					               . '</td></tr>' . "\n");
 			    }
 			}
@@ -184,7 +184,8 @@ function highlight($text, $keyval) {
 								 $txt);
 			} else if (!(isset($ssearch['ignore_specchar'])) || $ssearch['ignore_specchar'] == '') {
 				$case = (($ssearch['ignore_case']=='on') ? '/i' : '/');
-				$txt = preg_replace('/'.$key[0].$case, 
+				// The text is HTML-escaped: match the escaped keyword, as a literal.
+				$txt = preg_replace('/'.preg_quote(dPhtml($key[0]), '/').$case, 
 								 ('<span style="background:' . $hicolor[$key[1]] .'" >\0</span>'), 
 								 $txt);
 			} else {

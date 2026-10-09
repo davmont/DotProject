@@ -151,10 +151,10 @@ if (!defined('DP_BASE_DIR')) {
 			
 			
 			echo "\t<tr>\n";
-				echo "\t\t<td align=\"left\" valign=\"top\"><a href=\"./index.php?m=projects&a=view&project_id=". $row['project_id'] ."\">". $row['project_short_name'] ."</a></td>\n";
-				echo "\t\t<td align=\"left\" valign=\"top\"><a href=\"./index.php?m=tasks&a=view&task_id=". $row['task_id'] ."\">". $row['task_name'] ."</a></td>\n";
-				echo "\t\t<td align=\"left\" valign=\"top\">". $act . $row['task_log_name'] ."</td>\n";
-				echo "\t\t<td style=\"text-align: justify;\" valign=\"top\">". nl2br( $row['task_log_description'] ) ."</td>\n";
+				echo "\t\t<td align=\"left\" valign=\"top\"><a href=\"./index.php?m=projects&a=view&project_id=". $row['project_id'] ."\">". dPhtml($row['project_short_name']) ."</a></td>\n";
+				echo "\t\t<td align=\"left\" valign=\"top\"><a href=\"./index.php?m=tasks&a=view&task_id=". $row['task_id'] ."\">". dPhtml($row['task_name']) ."</a></td>\n";
+				echo "\t\t<td align=\"left\" valign=\"top\">". $act . dPhtml($row['task_log_name']) ."</td>\n";
+				echo "\t\t<td style=\"text-align: justify;\" valign=\"top\">". nl2br( dPhtml($row['task_log_description']) ) ."</td>\n";
 				echo "\t\t<td align=\"right\" valign=\"top\">";
 					echo printSum( $row['task_log_hours'] );
 					if( $show_possible_hours_worked ) echo ' / '. printSum( $day_hours );

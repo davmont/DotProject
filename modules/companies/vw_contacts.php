@@ -50,7 +50,7 @@ if (!($rows = $q->loadList())) {
 $s .= '<tr><td colspan="3" align="right" valign="top" style="background-color:#ffffff">';
 $s .= ('<input type="button" class=button value="' . $AppUI->_('new contact') 
 	   . '" onclick="javascript:window.location=\'./index.php?m=contacts&amp;a=addedit&amp;company_id=' 
-	   . dPformSafe($company_id) . '&amp;company_name=' . dPformSafe($obj->company_name) . '\'">');
+	   . dPformSafe($company_id) . '&amp;company_name=' . rawurlencode($obj->company_name) . '\'">');
 $s .= '</td></tr>';
 echo $s;
 	
