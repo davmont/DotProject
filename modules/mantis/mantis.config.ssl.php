@@ -1,4 +1,8 @@
-<?php /* ID: mantis.config.ssl.php 2007/04/10 12:46 weboholic */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* ID: mantis.config.ssl.php 2007/04/10 12:46 weboholic */
 
 // To be used with SSL enabled httpd
 // Advanced understanding is required

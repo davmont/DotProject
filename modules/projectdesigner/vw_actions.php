@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 include_once( $AppUI->getModuleClass( 'tasks' ) );
 global $task_access, $task_priority, $project_id;
 

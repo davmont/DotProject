@@ -1,4 +1,8 @@
-<?php /* FILES $Id: do_file_aed.php,v 1.1 2004/08/30 19:02:41 jcgonz Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* FILES $Id: do_file_aed.php,v 1.1 2004/08/30 19:02:41 jcgonz Exp $ */
 
 require_once("modules/mngdocument/files.class.php");
 

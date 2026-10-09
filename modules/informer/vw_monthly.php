@@ -1,4 +1,8 @@
-<?php /* informer $Id: vw_monthly.php 2007/04/11 14:07 weboholic */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* informer $Id: vw_monthly.php 2007/04/11 14:07 weboholic */
 	global $INFORMER_CONFIG;
 	$perms =& $AppUI->acl();
 	

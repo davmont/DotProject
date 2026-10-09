@@ -1,4 +1,8 @@
-<?php      // create Date objects from the datetime fields
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+// create Date objects from the datetime fields
       $df = $AppUI->getPref( 'SHDATEFORMAT' );
       $start_date = intval( $obj->project_start_date ) ? new CDate( $obj->project_start_date ) : null;
       $end_date = intval( $obj->project_end_date ) ? new CDate( $obj->project_end_date ) : null;

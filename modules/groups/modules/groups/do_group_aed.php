@@ -1,4 +1,8 @@
-<?php /* GROUPS $Id: do_group_aed.php,v 1.2 2004/05/26 14:07:28 lehdem Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* GROUPS $Id: do_group_aed.php,v 1.2 2004/05/26 14:07:28 lehdem Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $obj = new CGroup();
 $msg = '';

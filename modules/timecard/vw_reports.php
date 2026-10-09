@@ -1,4 +1,8 @@
-<?php /* TIMECARD $Id: vw_reports.php,v 1.7 2005/06/27 21:17:54 hstanton Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* TIMECARD $Id: vw_reports.php,v 1.7 2005/06/27 21:17:54 hstanton Exp $ */
 error_reporting( E_ALL );
 Global $m,$a,$tab,$TIMECARD_CONFIG;
 

@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 require_once dPgetConfig( 'root_dir' ).'/modules/ticketsmith/common.inc.php';
 
 

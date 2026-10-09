@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // one site for both adding and editing opportunities's quote items
 // besides the following lines show the possiblities of the dPframework
 

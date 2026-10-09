@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 GLOBAL $AppUI, $timesheets, $company_id, $tg_data, $denyEdit, $last_sheet_end;
 $df = $AppUI->getPref( 'SHDATEFORMAT' );
 $tt_interval = "1"; // weeks interval for timesheets

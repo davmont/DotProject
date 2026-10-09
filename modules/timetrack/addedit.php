@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 $tid = isset($HTTP_GET_VARS['tid']) ? $HTTP_GET_VARS['tid'] : 0;
 
 // check permissions

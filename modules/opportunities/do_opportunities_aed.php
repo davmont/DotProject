@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // this doSQL script is called from the addedit.php script
 // its purpose is to use the COpportunities class to interoperate with the database (store, edit, delete)
 

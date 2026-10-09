@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 	$do_del = dPgetParam($_POST, 'do_del', 0);
 	$company_id = dPgetParam($_REQUEST, 'company_id', 0);

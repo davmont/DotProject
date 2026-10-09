@@ -1,4 +1,8 @@
-<?php /*  */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/*  */
 
 $MILEAGELOG_CONFIG = array();
 require_once( "./modules/mileagelog/config.php" );

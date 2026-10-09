@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: vw_idx_watched.php,v 1.4 2011/08/02 06:22:55 hatax Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: vw_idx_watched.php,v 1.4 2011/08/02 06:22:55 hatax Exp $ */
 
   include ("./modules/helpdesk/config.php");
   global $m, $AppUI;

@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: vw_newhelpdesklog.php,v 1.13 2007/08/22 07:17:43 arcoz67 Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: vw_newhelpdesklog.php,v 1.13 2007/08/22 07:17:43 arcoz67 Exp $ */
 //THIS TAB IS NOT CURRENTLY FUNCTIONAL for current CVS of HelpDesk (as of 1:31 PM 2007-08-22)
 
 //Based largely on the page with the same funtion in the existing TimeTrack module by ajdonnison.  

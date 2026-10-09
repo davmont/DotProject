@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
  
 require "../../includes/config.php";
 require "../../classes/ui.class.php";

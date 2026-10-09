@@ -1,4 +1,8 @@
-<?php /* PROJECTS $Id: invoices.class.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PROJECTS $Id: invoices.class.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
 /**
  *	@package dotProject
  *	@subpackage modules

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // use the dPFramework to have easy database operations (store, delete etc.) by using its ObjectOrientedDesign
 // therefore we have to create a child class for the module opportunities
 

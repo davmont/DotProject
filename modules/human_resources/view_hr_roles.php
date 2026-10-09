@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 $concat_role_names = "";
 $roles = array();
 if($human_resource_id) {

@@ -1,4 +1,8 @@
-<?php /* ID: createproject.php 2007/04/10 12:46 weboholic */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* ID: createproject.php 2007/04/10 12:46 weboholic */
 global $AppUI;
 $perms =& $AppUI->acl();
 if( $perms->checkModule( 'mantis','access' ) ) {

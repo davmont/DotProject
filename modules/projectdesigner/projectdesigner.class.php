@@ -1,4 +1,8 @@
-<?php /* PROJECTDESIGNER $Id: projectdesigner.class.php,v 1.2 2008/10/17 19:12:21 theideaman Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PROJECTDESIGNER $Id: projectdesigner.class.php,v 1.2 2008/10/17 19:12:21 theideaman Exp $ */
 
 //Lets require the main classes needed
 include_once("./modules/projectdesigner/config.php");

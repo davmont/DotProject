@@ -1,4 +1,8 @@
-<?php /* PROJECTS $Id: reports.php,v 1.2 2004/12/15 23:34:46 jcgonz Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PROJECTS $Id: reports.php,v 1.2 2004/12/15 23:34:46 jcgonz Exp $ */
 error_reporting( E_ALL );
 
 $project_id = intval( dPgetParam( $_REQUEST, "project_id", 0 ) );

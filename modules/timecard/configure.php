@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: configure.php,v 1.6 2007/08/22 07:17:43 arcoz67 Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: configure.php,v 1.6 2007/08/22 07:17:43 arcoz67 Exp $ */
 
 //This file will write a php config file to be included during execution of all timecard file for configuration.
 

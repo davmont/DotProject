@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // backup database module for dotProject
 // (c)2003 Daniel Vijge
 // Licensed under GNU/GPL v2 or later

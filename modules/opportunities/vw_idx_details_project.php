@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // this is another example showing how the dPFramework is working
 // additionally we will have an easy database connection here
 

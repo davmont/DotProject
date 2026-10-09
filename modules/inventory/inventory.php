@@ -1,4 +1,8 @@
-<?php /* INVENTORY $Id: inventory.php,v 1.3 2004/08/04 07:51:25 dylan_cuthbert Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* INVENTORY $Id: inventory.php,v 1.3 2004/08/04 07:51:25 dylan_cuthbert Exp $ */
 GLOBAL $m, $a, $project_id, $f, $min_view, $query_string, $durnTypes,$canRead,$canEdit;
 /*
 	inventory.php

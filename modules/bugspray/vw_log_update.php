@@ -1,4 +1,8 @@
-<?php /* $Id: vw_log_update.php,v 1.1 2004/05/07 22:28:40 uodeltasig Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* $Id: vw_log_update.php,v 1.1 2004/05/07 22:28:40 uodeltasig Exp $ */
 GLOBAL $AppUI, $hditem, $ist, $canEdit, $m;
 $item_id = dPgetParam( $_GET, 'item_id', 0 );
 

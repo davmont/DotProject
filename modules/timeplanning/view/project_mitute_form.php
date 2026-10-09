@@ -1,3 +1,8 @@
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+?>
 	<?php $actionEstimation=$_GET['action_estimation'];?>
 	<div id="ata_div" width="100%" style="display:<?php echo $actionEstimation=="read"?'block':'none'; ?>">
 		<!-- TinyMCE -->

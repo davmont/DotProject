@@ -1,4 +1,8 @@
-<?php /* TASKS $Id: registers.class.php,v 1.1.1.1 2004/08/31 15:56:35 edeisoft Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* TASKS $Id: registers.class.php,v 1.1.1.1 2004/08/31 15:56:35 edeisoft Exp $ */
 
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 require_once( $AppUI->getSystemClass( 'dp' ) );

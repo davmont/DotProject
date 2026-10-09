@@ -1,4 +1,8 @@
-<?php /* ID: taskimport.php 2007/04/10 12:46 weboholic */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* ID: taskimport.php 2007/04/10 12:46 weboholic */
 $perms =& $AppUI->acl();
 $pid = dPgetParam( $_POST,'project_id',0 );
 $act = dPgetParam( $_POST,'bug_action',0 );

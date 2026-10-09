@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /**
  * $Id: trac.class.php,v 1.14 2008/05/08 13:41:41 david_iondev Exp $ 
  * This class contains all methods used by the dpTrac module
