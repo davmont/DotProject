@@ -163,13 +163,13 @@ if ($do_report) {
 				<?php echo $date->format( $df );?>
 				</td>
 				<td nowrap="nowrap" valign="top">
-				<?php echo $log['project_name'];?>
+				<?php echo dPhtml($log['project_name']);?>
 				</td>
 				<td valign="top">
-				<?php echo $taskTitle;?>
+				<?php echo dPhtml($taskTitle);?>
 				</td>
 				<td valign="top">
-				<?php echo $log['task_log_description'];?>
+				<?php echo dPhtml($log['task_log_description']);?>
 				</td>
 				<td nowrap="nowrap" valign="top">
 				<?php echo sprintf( "%.2f", $log['task_log_hours']);?>

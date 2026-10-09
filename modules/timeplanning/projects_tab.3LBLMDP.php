@@ -6,7 +6,7 @@ $AppUI->savePlace();
 require_once (DP_BASE_DIR . "/modules/timeplanning/view/translations.php");
 require_once (DP_BASE_DIR . "/modules/timeplanning/control/controller_activity_mdp.class.php");
 $controllerActivityMDP= new ControllerActivityMDP();
-$projectId = dPgetParam($_GET, 'project_id', 0);
+$projectId = dPgetIntParam($_GET, 'project_id', 0);
 ?>
 <!-- YUI -->
 <link rel="stylesheet" type="text/css" href="./modules/timeplanning/js/jsLibraries/wireit/lib/yui/fonts/fonts-min.css" /> 
@@ -71,7 +71,7 @@ div.blockBox {
 	<?php 
 	$tasks=$controllerActivityMDP->getProjectActivities($projectId);
     foreach ($tasks as $task) {
-		echo "\n<script>addNew('".$task->getName()."','".$task->getId()."',".$task->getX().",".$task->getY().");</script>\n";
+		echo "\n<script>addNew(".dPjs($task->getName()).",'".$task->getId()."',".$task->getX().",".$task->getY().");</script>\n";
 	}
 	foreach ($tasks as $task) {
 		foreach ($task->getDependencies()  as $dep_id) {

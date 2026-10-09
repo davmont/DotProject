@@ -80,8 +80,8 @@ if($minuteId!='-1' && $minuteId!=""){
 							
 						?>
 						<td valign='top'><?php echo $id;?></td>
-						<td valign='top'><?php echo $date;?></td>
-						<td valign='top'><?php echo $description;?></td>
+						<td valign='top'><?php echo dPhtml($date);?></td>
+						<td valign='top'><?php echo dPhtml(strip_tags($description));?></td>
 						<td valign='top'> <img src="./modules/timeplanning/images/view_icon.gif" style="cursor:pointer" onclick="openReport('<?php echo $id;?>')"></td>
 						<td><input type="button" name="Deletar" value="<?php echo $AppUI->_('LBL_EXCLUSION'); ?>" onclick=deleteReport('<?php echo $id;?>') class="button"></td>
 					</tr>

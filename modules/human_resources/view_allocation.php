@@ -93,7 +93,7 @@ $titleBlock->show();
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Task name');?>:</td>
-			<td class="hilite" width="100%"><?php echo $task->task_name;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($task->task_name);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Task start date');?>:</td>
@@ -109,27 +109,27 @@ $titleBlock->show();
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Allocated role name');?>:</td>
-			<td class="hilite" width="100%"><?php echo $res_company_role->fields['role_name'];?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($res_company_role->fields['role_name']);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Allocated role responsability');?>:</td>
-			<td class="hilite" width="100%"><?php echo $res_company_role->fields['human_resources_role_responsability'];?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($res_company_role->fields['human_resources_role_responsability']);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Allocated role authority');?>:</td>
-			<td class="hilite" width="100%"><?php echo $res_company_role->fields['human_resources_role_authority'];?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($res_company_role->fields['human_resources_role_authority']);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Allocated role competence');?>:</td>
-			<td class="hilite" width="100%"><?php echo $res_company_role->fields['human_resources_role_competence'];?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($res_company_role->fields['human_resources_role_competence']);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Allocated user contact');?>:</td>
-			<td class="hilite" width="100%"><?php echo $contact_name;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($contact_name);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Allocated user username');?>:</td>
-			<td class="hilite" width="100%"><?php echo $res_hr->fields['user_username'];?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($res_hr->fields['user_username']);?></td>
 		</tr>
 		</table>
 	</td>

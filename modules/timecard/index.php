@@ -28,7 +28,7 @@ $titleBlock = new CTitleBlock('Time Card', 'TimeCard.png', $m, "$m.$a");
 $titleBlock->show();
 
 if (isset( $_GET['tab'] )) {
-	$AppUI->setState('TimecardVwTab', $_GET['tab']);
+	$AppUI->setState('TimecardVwTab', (int) $_GET['tab']);
 }
 $tab = $AppUI->getState('TimecardVwTab') ? $AppUI->getState('TimecardVwTab') : 0;
 

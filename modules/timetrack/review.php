@@ -83,7 +83,7 @@ $crumbs["?m=timetrack&timesheet_id=$timesheet_id&f=$f"] = "timesheets list";
 		<table cellspacing="0" cellpadding="2" border="0" width="50%" align="right">
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Employee Name');?>:</td>
-			<td class="hilite" width="100%" nowrap><?php echo $tg_data['user_last_name'] . ", " . $tg_data['user_first_name'];?></td>
+			<td class="hilite" width="100%" nowrap><?php echo dPhtml($tg_data['user_last_name'] . ", " . $tg_data['user_first_name']);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Supervisor Approval');?>:</td>
@@ -160,11 +160,11 @@ foreach ($tt_data as $row) {
 		echo $row["tt_data_id"];
 	?>
 	</td> 
-	<td nowrap><?php echo @$row["company_name"]?></td> 
-	<td nowrap><?php echo @$row["project_name"]?></td> 
-	<td nowrap><?php echo @$row["task_name"]?></td> 
+	<td nowrap><?php echo dPhtml(@$row["company_name"])?></td> 
+	<td nowrap><?php echo dPhtml(@$row["project_name"])?></td> 
+	<td nowrap><?php echo dPhtml(@$row["task_name"])?></td> 
 	<td width="100%" nowrap> 
-		<?php echo $row["tt_data_description"]?>
+		<?php echo dPhtml($row["tt_data_description"])?>
     </td> 
 	<td nowrap> 
 		<?php echo $row["tt_data_hours"]?>
@@ -174,7 +174,7 @@ foreach ($tt_data as $row) {
 <tr><td colspan="6">&nbsp;</td></tr>
 <tr>
 	<td></td>
-	<td colspan="4" align="right" valign="top">Comment <input type="text" name="tt_approve_note" size="80" maxlength="75" value="<?php echo $tg_data['tt_approve_note'] ?>"></td>
+	<td colspan="4" align="right" valign="top">Comment <input type="text" name="tt_approve_note" size="80" maxlength="75" value="<?php echo dPhtml($tg_data['tt_approve_note']) ?>"></td>
 	<td align="center" valign="top"><input name="reject" class="button" type="submit" value="Reject"><P><input name="accept" class="button" type="submit" value="Accept"></td>
 </tr>
 </table> 

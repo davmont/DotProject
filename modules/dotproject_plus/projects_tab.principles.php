@@ -39,7 +39,7 @@ foreach ($rows as $row) {
     <form name="principlesForm" action="?m=dotproject_plus" method="post">
         <input type="hidden" name="dosql" value="do_save_principles" />
         <input type="hidden" name="project_id" value="<?php echo $project_id; ?>" />
-        <input type="hidden" name="tab" value="<?php echo $_GET['tab']; ?>" />
+        <input type="hidden" name="tab" value="<?php echo (int) $_GET['tab']; ?>" />
 
         <?php foreach ($principles as $id => $name) {
             $rating = isset($data[$id]) ? $data[$id]['rating'] : 0;

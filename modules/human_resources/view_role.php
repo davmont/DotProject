@@ -72,19 +72,19 @@ else {
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Role name');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resources_role_name;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resources_role_name);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Role responsability');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resources_role_responsability;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resources_role_responsability);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Role authority');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resources_role_authority;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resources_role_authority);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Role competence');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resources_role_competence;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resources_role_competence);?></td>
 		</tr>
 		</table>
 	</td>

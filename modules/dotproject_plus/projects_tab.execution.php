@@ -198,7 +198,7 @@ foreach ($tasks_for_ids as $t) {
     ?>
     <br />
     <div style="text-align:right">
-        <form name="select_human_resource_filter_form" action="<?php echo $currentPage ?>" method="post">
+        <form name="select_human_resource_filter_form" action="<?php echo dPhtml($currentPage) ?>" method="post">
             <span style="color:#000000"><?php echo $AppUI->_("LBL_FILTER"); ?>:</span>
             <select id="project_resources_filter" name="project_resources_filter" onchange="filterActivitiesByUser()">
                 <!-- Filter to select activities for just a resource -->
@@ -209,8 +209,8 @@ foreach ($tasks_for_ids as $t) {
                 foreach ($records as $record) {
                     ?>
                     <option <?php echo $project_resources_filter == $record[1] ? "selected" : "" ?>
-                        value="<?php echo $record[1] ?>">
-                        <?php echo $record[3] ?>
+                        value="<?php echo dPhtml($record[1]) ?>">
+                        <?php echo dPhtml($record[3]) ?>
                     </option>
                     <?php
                 }
@@ -313,7 +313,7 @@ foreach ($tasks_for_ids as $t) {
                                 <span style="margin-left: 21px" id="div_numbering_<?php echo $id ?>">
                                     <?php echo $number ?>
                                 </span>
-                                <?php echo $name ?>
+                                <?php echo dPhtml($name) ?>
                                 &nbsp;
                                 <span style="display:<?php echo $hasActivities ? "inline" : "none" ?>">
                                     (<?php echo sizeof($tasks) ?>)
@@ -378,7 +378,7 @@ foreach ($tasks_for_ids as $t) {
                                         $roleId = $role->getRoleId();
                                         $roleName = $roles[$roleId];
                                         $roleQuantity = $role->getQuantity();
-                                        $estimatedRolesTxt .= $roleName . " (" . $roleQuantity . ") <br />";
+                                        $estimatedRolesTxt .= dPhtml($roleName) . " (" . $roleQuantity . ") <br />";
                                     }
                                     //metric index is db key
                                     $effortMetrics = array();
@@ -421,9 +421,9 @@ foreach ($tasks_for_ids as $t) {
                                             $allocated_hr_id = $record[0];
                                         }
                                         if ($allocated_hr_id != "") {
-                                            $estimatedRolesTxt .= $userNameByHRid[$allocated_hr_id]; //write user name
+                                            $estimatedRolesTxt .= dPhtml($userNameByHRid[$allocated_hr_id]); //write user name
                                         } else {
-                                            $estimatedRolesTxt .= "<i style='color:red'>" . $roles[$role->getRoleId()] . "</i>";
+                                            $estimatedRolesTxt .= "<i style='color:red'>" . dPhtml($roles[$role->getRoleId()]) . "</i>";
                                         }
                                         if ($totalRoles > $i) {
                                             $estimatedRolesTxt .= ", ";
@@ -448,13 +448,13 @@ foreach ($tasks_for_ids as $t) {
                                                 A.<?php echo $activitiesIdsForDisplay[$task_id] ?></span>
 
                                             <div id="activity_description_read_id_<?php echo $task_id ?>" style="width:160px;float:right">
-                                                <?php echo $taskDescription ?>
+                                                <?php echo dPhtml($taskDescription) ?>
                                             </div>
                                             <span id="activity_description_edit_id_<?php echo $task_id ?>" style="display:none;" nowrap="nowrap">
                                                 <input name="activity_description_id_<?php echo $task_id ?>"
                                                     id="activity_description_id_<?php echo $task_id ?>" class="text"
                                                     style="width:200px;margin-left: 4px;margin-bottom: 4px;" type="text"
-                                                    value="<?php echo $taskDescription ?>" />
+                                                    value="<?php echo dPhtml($taskDescription) ?>" />
                                             </span>
                                             <br />
 
@@ -471,7 +471,7 @@ foreach ($tasks_for_ids as $t) {
                                                     <input type="hidden" name="project_id" value="<?php echo $project_id; ?>" />
                                                     <input type="hidden" name="activity_id" value="<?php echo $obj->task_id ?>" />
                                                     <input type="hidden" name="task_log_creator" value="<?php echo $AppUI->user_id ?>" />
-                                                    <input type="hidden" name="tab" value="<?php echo $_GET["tab"] ?>" />
+                                                    <input type="hidden" name="tab" value="<?php echo (int) $_GET["tab"] ?>" />
 
                                                     <div align="center"><b><?php echo $AppUI->_("LBL_NEW_ACTVITY_LOG"); ?></b><br /><br /></div>
                                                     <table>
@@ -550,13 +550,13 @@ foreach ($tasks_for_ids as $t) {
                                                             ?>
                                                             <tr>
                                                                 <td>
-                                                                    <?php echo $record[2] ?>
+                                                                    <?php echo dPhtml($record[2]) ?>
                                                                 </td>
                                                                 <td>
-                                                                    <?php echo $record[1] ?>
+                                                                    <?php echo dPhtml($record[1]) ?>
                                                                 </td>
                                                                 <td>
-                                                                    <?php echo $record[4] ?>&nbsp;<?php echo $record[5] ?>
+                                                                    <?php echo dPhtml($record[4]) ?>&nbsp;<?php echo dPhtml($record[5]) ?>
                                                                 </td>
                                                                 <td>
                                                                     <form name="form_activity_log_delete_<?php echo $record[0] ?>" method="post"
@@ -564,7 +564,7 @@ foreach ($tasks_for_ids as $t) {
                                                                         <input name="dosql" type="hidden" value="do_delete_activity_log" />
                                                                         <input type="hidden" name="project_id" value="<?php echo $project_id; ?>" />
                                                                         <input type="hidden" name="activity_id" value="<?php echo $obj->task_id ?>" />
-                                                                        <input type="hidden" name="tab" value="<?php echo $_GET["tab"] ?>" />
+                                                                        <input type="hidden" name="tab" value="<?php echo (int) $_GET["tab"] ?>" />
                                                                         <input type="hidden" name="task_log_id" value="<?php echo $record[0] ?>">
                                                                         <img src="./modules/dotproject_plus/images/trash_small.gif"
                                                                             onclick="document.form_activity_log_delete_<?php echo $record[0] ?>.submit();"
@@ -674,7 +674,7 @@ foreach ($tasks_for_ids as $t) {
                                 <span style="margin-left: 21px" id="div_numbering_<?php echo $id ?>">
                                     <?php echo $number ?>
                                 </span>
-                                <?php echo $name ?>
+                                <?php echo dPhtml($name) ?>
                             </span>
 
                         </td>

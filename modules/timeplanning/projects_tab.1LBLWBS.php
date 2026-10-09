@@ -48,6 +48,6 @@ $controllerWBSItem= new ControllerWBSItem();
 <?php 
 	$items = $controllerWBSItem->getWBSItems($project_id);
     foreach ($items as $item) {
-		echo '<script>addItem('.$item->getId().',"'. $item->getName() .'",0,"'.$item->getIdentation().'");</script>';
+		echo '<script>addItem('.$item->getId().','. dPjs($item->getName()) .',0,'.dPjs($item->getIdentation()).');</script>';
     }
  ?>

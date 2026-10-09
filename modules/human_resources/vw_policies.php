@@ -81,16 +81,16 @@ if ($edit || !$company_policies_id) {
 				<table cellspacing="1" cellpadding="2" width="100%">
 					<tr>
 						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Rewards and recognition'); ?>:</td>
-						<td class="hilite" width="100%"><?php echo $policies->company_policies_recognition; ?></td>
+						<td class="hilite" width="100%"><?php echo dPhtml($policies->company_policies_recognition); ?></td>
 					</tr>
 					<tr>
 						<td align="right" nowrap="nowrap">
 							<?php echo $AppUI->_('Regulations, standards, and policy compliance'); ?>:</td>
-						<td class="hilite" width="100%"><?php echo $policies->company_policies_policy; ?></td>
+						<td class="hilite" width="100%"><?php echo dPhtml($policies->company_policies_policy); ?></td>
 					</tr>
 					<tr>
 						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Safety'); ?>:</td>
-						<td class="hilite" width="100%"><?php echo $policies->company_policies_safety; ?></td>
+						<td class="hilite" width="100%"><?php echo dPhtml($policies->company_policies_safety); ?></td>
 					</tr>
 				</table>
 			</td>

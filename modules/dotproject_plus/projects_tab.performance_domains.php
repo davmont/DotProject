@@ -41,7 +41,7 @@ foreach ($rows as $row) {
     <form name="domainsForm" action="?m=dotproject_plus" method="post">
         <input type="hidden" name="dosql" value="do_save_domains" />
         <input type="hidden" name="project_id" value="<?php echo $project_id; ?>" />
-        <input type="hidden" name="tab" value="<?php echo $_GET['tab']; ?>" />
+        <input type="hidden" name="tab" value="<?php echo (int) $_GET['tab']; ?>" />
 
         <?php foreach ($domains as $id => $name) {
             $status = isset($data[$id]) ? $data[$id]['status'] : 0;

@@ -69,7 +69,7 @@ function addRole(id,roleName,index,identation){
 	<?php
 	foreach($roles as $role) {
 	?>
-		var thisRoleName = "<?php echo $role['name']; ?>";
+		var thisRoleName = <?php echo dPjs($role['name']); ?>;
 		if (roleName == thisRoleName) {
 			selected = counter;
 		}
@@ -197,6 +197,6 @@ function saveOrgonogram(){
 		$id = $role->getId();
 		$name = $role->getDescription();
 		$identation= $role->getIdentation();
-		echo '<script>addRole('.$id.',"'.$name.'",0,"'.$identation.'");</script>';
+		echo '<script>addRole('.$id.','.dPjs($name).',0,'.dPjs($identation).');</script>';
     }
    ?>

@@ -122,20 +122,20 @@ $res =& $query->exec();
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('User contact');?>:</td>
-			<td class="hilite" width="100%"><?php echo $contact_name;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($contact_name);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('User username');?>:</td>
-			<td class="hilite" width="100%"><?php echo $res->fields['user_username'];?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($res->fields['user_username']);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Roles'); ?>:</td>
-			<td class="hilite" width="100%"><?php echo $concat_roles_names;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($concat_roles_names);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Lattes URL');?>:</td>
 			<td width="2%" align="left" >
-			<a href="<?php echo $obj->human_resource_lattes_url;?>"><?php echo $obj->human_resource_lattes_url;?></a>
+			<a href="<?php echo dPhtml(dPsafeUrl($obj->human_resource_lattes_url));?>"><?php echo dPhtml($obj->human_resource_lattes_url);?></a>
 			</td>
 		</tr>
 		<tr>
@@ -143,31 +143,31 @@ $res =& $query->exec();
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[0]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_mon;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_mon);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[1]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_tue;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_tue);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[2]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_wed;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_wed);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_($cwd_conv[3]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_thu;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_thu);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[4]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_fri;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_fri);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[5]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_sat;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_sat);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[6]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_sun;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_sun);?></td>
 		</tr>
 	</td>
 </tr>

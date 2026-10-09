@@ -32,12 +32,12 @@ $res =& $query->exec();
 <tr>
   <td>
     <a href="index.php?m=resources&amp;a=view&amp;resource_id=<?php echo $res->fields['resource_id'];?>">
-    <?php echo $res->fields['resource_key']; ?>
+    <?php echo dPhtml($res->fields['resource_key']); ?>
     </a>
   </td>
   <td>
     <a href="index.php?m=resources&amp;a=view&amp;resource_id=<?php echo $res->fields['resource_id'];?>">
-    <?php echo $res->fields['resource_name']; ?>
+    <?php echo dPhtml($res->fields['resource_name']); ?>
 		</a>
   </td>
   <td>

@@ -191,11 +191,11 @@ if (!defined('DP_BASE_DIR')) {
 				<tr>
 					<td nowrap="nowrap" valign="top">
 					<?php if($task['task_id']){ ?>
-						<a href="?m=tasks&a=view&task_id=<?php echo $task["task_id"]; ?>"><?php echo $task["task_name"]; ?></a>
+						<a href="?m=tasks&a=view&task_id=<?php echo $task["task_id"]; ?>"><?php echo dPhtml($task["task_name"]); ?></a>
 					<?php } else if(isset($task['task_log_help_desk_id'])&&$task['task_log_help_desk_id']){ ?>
-						<a href="?m=helpdesk&a=view&item_id=<?php echo $task["task_log_help_desk_id"];?>"><?php echo $task["task_name"]; ?></a>
+						<a href="?m=helpdesk&a=view&item_id=<?php echo $task["task_log_help_desk_id"];?>"><?php echo dPhtml($task["task_name"]); ?></a>
 					<?php } else { ?>
-						<?php echo $task["task_log_name"]; ?>
+						<?php echo dPhtml($task["task_log_name"]); ?>
 					<?php } ?>
 					</td>
 					<td>
@@ -205,7 +205,7 @@ if (!defined('DP_BASE_DIR')) {
 						<a href="?m=timecard&tab=<?php echo isset($task['task_log_help_desk_id']) && $task['task_log_help_desk_id'] ? 5 : $newTLogTabNum;?>&tid=<?php echo $task["task_log_id"]; ?>">[<?php echo $AppUI->_('Edit'); ?>]</a>
 					<?php }
 						} ?>
-					<?php echo $task["task_log_description"]; ?></td>
+					<?php echo dPhtml($task["task_log_description"]); ?></td>
 					<td align="right" valign="top"><?php echo number_format($task["task_log_hours"],2); ?></td>
 				</tr>
 				<?php
