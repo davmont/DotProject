@@ -105,7 +105,7 @@ Branch `security/phase1-core-gates`, stacked on `security/devel-hardening`. Ever
 | 2 | `707204ea` | Fresh installs: `gacl_api::add_acl()` `count(null)` fatal fixed; gacl id sequences start after the seeded ids (schema and `upgrade_latest.sql`). Before, modules installed later never got ACL objects. `reset-db.sh` now uses the real installer. |
 | 1 | `2fe1746e` | `index.php` enforces `$canAccess` before dosql and the view. `public` stays open; own account view and own preferences stay allowed. Worker could overwrite system config and admin's preferences before. |
 | 8 | `59184748` | Actions named `do_*`, `dosql*`, `domodsql` need POST + CSRF token; module page commands are POST forms; `domodsql` checks system edit permission. |
-| 2 | `55ed9bf6` | Installer locked once `config.php` has DB settings: requests must carry the same DB settings, password included. Before, `install/db.php` showed the DB password to anyone and `do_install_db.php` dumped the database or rewrote the config. Config written with `var_export()`. The `DP_BASE_URL` fatal noted in the audit no longer happens on devel. |
+| 2 | `55ed9bf6` | Installer locked once `config.php` has DB settings: requests must carry the same DB settings, password included. Before, `install/db.php` showed the DB password to anyone and `do_install_db.php` dumped the database or rewrote the config. Config written with `var_export()`. The installer still crashed with `Undefined constant DP_BASE_URL` on any installer-written config; that test had run against a stale bind mount. Fixed afterwards in the installer hotfix (see below). |
 | 3 | `cfbdb240` | Removed `tracIntegration/xmlrpc` (debugger, demos, tests) and wireit `backend/php` and `lib/inputex/examples` (anonymous file write in `TaskManager/store.php`). |
 | 3 | `0626dfa0` | `DP_BASE_DIR` guard added to 282 module files. Vendored libraries, mantis side copies and `unitcost/patch_203` left for Phase 6. |
 | 6 | `e44bbfc6` | Login/lostpass `redirect` escaped (pre-auth attribute injection); selector `callback`/`field` limited to `[A-Za-z0-9_.]`; `public/selector.php` `table` whitelisted. |
@@ -113,6 +113,8 @@ Branch `security/phase1-core-gates`, stacked on `security/devel-hardening`. Ever
 | 5 | `7e5b6713` | `___()` uses `ENT_QUOTES`; `dPformSafe(.., DP_FORM_URI)` HTML-escapes (company URL attribute breakout); `makeFileNameSafe()` loops (`....//` bypass). |
 
 Item 4 is still open and needs the owner: `includes/config.php` is tracked (now `dotproject`/`dotproject`). Untracking it deletes the file on any server that deploys with `git pull`, so first move those servers to an untracked config, then `git rm --cached includes/config.php`, add it to `.gitignore`, keep `config-dist.php` as the template, and rotate the DB password.
+
+Installer hotfix (after Phase 1): `install/check_upgrade.php` and `install/db.php` define `DP_BASE_URL`, so the installer runs against a real `includes/config.php`; `smoke.sh` now checks the installer (password hidden, wrong password refused, upgrade runs).
 
 New items found during Phase 1:
 - Role creation is broken for everyone: `CRole::store()` calls `insertRole()` on a null `$perms` (`modules/system/roles/roles.class.php:65`).
