@@ -123,7 +123,10 @@ Two test suites live alongside the application:
 Quick path:
 
 1. Drop the source into your web root.
-2. Point a browser at the `install/` directory and follow the wizard.
+2. Point a browser at the `install/` directory and follow the wizard. It writes
+   `includes/config.php`; to configure by hand instead, copy
+   [includes/config-dist.php](includes/config-dist.php) to `includes/config.php`
+   and set your database values. `includes/config.php` is not tracked by git.
 3. **Post-install:** remove or `Deny from all` the `install/` directory — and
    in particular delete [install/docs/phpinfo.php](install/docs/phpinfo.php)
    (audit finding C8).
