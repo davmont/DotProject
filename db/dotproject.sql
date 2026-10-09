@@ -401,6 +401,8 @@ CREATE TABLE %dbprefix%users (
   user_department int(11) default '0',
   user_owner int(11) NOT NULL default '0',
   user_signature TEXT,
+  user_reset_token varchar(255) default NULL,
+  user_reset_expiry datetime default NULL,
   PRIMARY KEY  (user_id),
   KEY idx_uid (user_username),
   KEY idx_pwd (user_password),
@@ -429,7 +431,8 @@ CREATE TABLE %dbprefix%user_preferences (
 #   New admin email -> replace {admin@localhost}
 #
 
-INSERT INTO %dbprefix%users VALUES (1,1,'admin',MD5('passwd'),0,1,0,0,0,'');
+INSERT INTO %dbprefix%users (user_id, user_contact, user_username, user_password, user_parent, user_type, user_company, user_department, user_owner, user_signature)
+  VALUES (1,1,'admin',MD5('passwd'),0,1,0,0,0,'');
 INSERT INTO %dbprefix%contacts (contact_id, contact_first_name, contact_last_name, contact_email) 
   VALUES (1,'Admin','Person','admin@example.com');
 

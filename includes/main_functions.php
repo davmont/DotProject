@@ -315,6 +315,39 @@ function dPgetParam(&$arr, $name, $def = null)
 /**
  * Alternative to protect from XSS attacks.
  */
+/**
+ * Hash a password for storage in users.user_password.
+ *
+ * Uses password_hash() once the column can hold its output (VARCHAR(255),
+ * added by the 20261009 entry in db/upgrade_latest.sql). On a database that
+ * has not been upgraded yet it keeps the legacy MD5 format, because a bcrypt
+ * hash cut to 32 characters would lock the user out.
+ */
+function dPhashPassword($password)
+{
+	return dPpasswordColumnFitsHash() ? password_hash($password, PASSWORD_DEFAULT) : md5($password);
+}
+
+/**
+ * True when users.user_password is wide enough for password_hash() output.
+ */
+function dPpasswordColumnFitsHash()
+{
+	static $fits = null;
+	if ($fits === null) {
+		$len = db_loadResult('SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS'
+			. ' WHERE TABLE_SCHEMA = DATABASE()'
+			. " AND TABLE_NAME = '" . db_escape(dPgetConfig('dbprefix', '') . 'users') . "'"
+			. " AND COLUMN_NAME = 'user_password'");
+		$fits = ((int)$len >= 60);
+		if (!$fits) {
+			error_log('dotProject: users.user_password is too short for password_hash();'
+				. ' run the database upgrade (db/upgrade_latest.sql). Falling back to MD5.');
+		}
+	}
+	return $fits;
+}
+
 function dPgetCleanParam(&$arr, $name, $def = null)
 {
 	if (isset($arr[$name]) && is_array($arr[$name])) {
