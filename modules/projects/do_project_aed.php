@@ -33,6 +33,8 @@ if (!dPgetParam($_POST, "project_departments", 0)) {
 }
 
 $del = (int)dPgetParam($_POST, 'del', 0);
+// Permission on this record, as its addedit page checks.
+dPrequireWritePermission('projects', dPgetParam($_POST, 'project_id', 0), $del);
 
 // prepare (and translate) the module name ready for the suffix
 if ($del) {

@@ -4,6 +4,20 @@ if (!defined('DP_BASE_DIR')){
 }
 
 $del = isset($_POST['del']) ? $_POST['del'] : 0;
+// Posting needs edit permission on the forum, as post_message.php checks. For an existing
+// message, use the forum it is stored in rather than the one in the request.
+$forum_id = (int)dPgetParam($_POST, 'message_forum', 0);
+$message_id = (int)dPgetParam($_POST, 'message_id', 0);
+if ($message_id) {
+	$stored = new CForumMessage();
+	if ($stored->load($message_id)) {
+		$forum_id = (int)$stored->message_forum;
+	}
+}
+if (!getPermission('forums', 'edit', $forum_id)) {
+	$AppUI->setMsg('Access denied.', UI_MSG_ERROR);
+	$AppUI->redirect('m=public&a=access_denied');
+}
 
 $obj = new CForumMessage();
 

@@ -6,6 +6,8 @@ if (!defined('DP_BASE_DIR')) {
 //addlink sql
 $link_id = intval(dPgetParam($_POST, 'link_id', 0));
 $del = intval(dPgetParam($_POST, 'del', 0));
+// Permission on this record, as its addedit page checks.
+dPrequireWritePermission('links', dPgetParam($_POST, 'link_id', 0), $del);
 
 $not = (int)dPgetParam($_POST, 'notify', '0');
 if ($not!='0') $not='1';

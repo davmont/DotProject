@@ -87,6 +87,22 @@ function isAllowed($perm_type, $mod, $item_id = 0)
 	return $allowed;
 }
 
+/**
+ * Stops a write handler unless the user may make this change to the record: delete when
+ * $del is set, otherwise edit for an existing record (id > 0) or add for a new one.
+ * $module is the permission name the record's addedit page checks (e.g. 'events').
+ */
+function dPrequireWritePermission($module, $id, $del = false)
+{
+	global $AppUI;
+	$id = (int)$id;
+	$perm = $del ? 'delete' : ($id ? 'edit' : 'add');
+	if (!getPermission($module, $perm, $id)) {
+		$AppUI->setMsg('Access denied.', UI_MSG_ERROR);
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+}
+
 function getPermission($mod, $perm, $item_id = 0)
 {
 	global $AppUI;
