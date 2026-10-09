@@ -94,7 +94,6 @@ New items found during Phase 0, scheduled below:
 - Write handlers routed as views bypass the `dosql` CSRF check: `a=domodsql` (module install/remove from GET links in `system/viewmods.php`), `a=do_*_aed` in monitoringandcontrol and costs, `a=dosql_timesheet`, `a=do_task_bulk_aed`. See Phase 1, item 8.
 - `modules/contacts/addedit.php:113` warns on PHP 8 (`$userDeleteProtect` undefined). `base.php` forces `display_errors=1`, so the warning lands inside a `<script>` block and the contact form cannot be submitted. See Phase 1, item 9.
 - `modules/public/chpwd.php` runs passwords through `dPgetCleanParam()` and `db_escape()` before hashing, so a password containing a quote or `<` no longer matches at login.
-- `dPacl::updateLogin()` (`classes/permissions.class.php:366`) emits undefined-key warnings when a user record is saved.
 - The dotproject_plus installer does not create the `feedback_evaluation` table that the feedback feature uses.
 
 ### Phase 1: core gates (small diffs, highest leverage)
