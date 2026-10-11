@@ -91,8 +91,8 @@ $controllerUtil = new ControllerUtil();
 			foreach($lstData as $lst){
 				echo "<script>
 				          globalData[index] = new Array();
-						  globalData[index][0] = '".$controllerUtil -> formatDate($lst[cost_dt_begin])."'; 
-						  globalData[index][1] = '".$controllerUtil -> formatDate($lst[cost_dt_end])."';
+						  globalData[index][0] = '".$controllerUtil -> formatDate($lst['cost_dt_begin'])."'; 
+						  globalData[index][1] = '".$controllerUtil -> formatDate($lst['cost_dt_end'])."';
 						  index++;
 					  </script>";	
 			}
@@ -185,8 +185,8 @@ $controllerUtil = new ControllerUtil();
 			foreach($lstData as $lst){
 				echo "<script>
 						  globalData[index] = new Array();
-						  globalData[index][0] = '".$controllerUtil -> formatDate($lst[cost_dt_begin])."'; 
-						  globalData[index][1] = '".$controllerUtil -> formatDate($lst[cost_dt_end])."';
+						  globalData[index][0] = '".$controllerUtil -> formatDate($lst['cost_dt_begin'])."'; 
+						  globalData[index][1] = '".$controllerUtil -> formatDate($lst['cost_dt_end'])."';
 						  index++;
 					  </script>";	
 			}

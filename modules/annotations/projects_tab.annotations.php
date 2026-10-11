@@ -345,7 +345,7 @@ $q = new DBQuery;
 					}
 				// Annotation Previous / Next			
 				echo '<td nowrap="nowrap" align="center" width="49%"><center>';
-					echo ($v[annotation_previous] || $v[annotation_next]) ? 
+					echo ($v['annotation_previous'] || $v['annotation_next']) ? 
 						'<textarea READONLY name="prev" style="width:99%" rows="'.$rows_to_show.'" wrap="physical">'
 							:
 						'<textarea READONLY name="prev" style="width:99%" rows="'.$rows_to_show.'" wrap="physical" style="overflow:hidden; background-Color:'.$unsetColor.';">';
@@ -355,7 +355,7 @@ $q = new DBQuery;
 					echo '</textarea></center>';
 				echo '</td>';
 				echo '<td nowrap="nowrap" align="center" width="49%"><center>';
-					echo ($v[annotation_previous] || $v[annotation_next]) ? 
+					echo ($v['annotation_previous'] || $v['annotation_next']) ? 
 						'<textarea READONLY name="prev" style="width:99%" rows="'.$rows_to_show.'" wrap="physical">'
 							:
 						'<textarea READONLY name="prev" style="width:99%" rows="'.$rows_to_show.'" wrap="physical" style="overflow:hidden; background-Color:'.$unsetColor.';">';

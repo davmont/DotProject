@@ -62,7 +62,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 			
 			$qAux->addWhere('t.task_project ='.$project_id);
 			$qAux->addWhere('q.quality_status_id <> 3');//Cancelado
-			$qAux->addWhere('q.quality_type_id='.$row[quality_type_id]);
+			$qAux->addWhere('q.quality_type_id='.$row['quality_type_id']);
 			
 			if(isset($user) && $user > 0) {
 				$qAux->innerJoin('user_tasks', 'ut', 't.task_id = ut.task_id');
@@ -73,8 +73,8 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 			$listAux = db_loadList($sql);
 		
 			if (count($listAux) > 0) {
-				$arQualidadeBarComErro[$indice][quantity] = count($listAux);
-				$arQualidadeBarComErro[$indice][name] = $row[quality_type_name];
+				$arQualidadeBarComErro[$indice]['quantity'] = count($listAux);
+				$arQualidadeBarComErro[$indice]['name'] = $row['quality_type_name'];
 				$indice += 1;			
 			}	
 		}	
@@ -212,9 +212,9 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$qualityControl = new ControllerQuality();
 		$indice = 0;
 		foreach($list as $row){
-			$arQualidadeBarComErro[$indice][name] = $row[quality_type_name];
-			$arQualidadeBarComErro[$indice][index] = $row[quality_type_id];
-			$arQualidadeBarComErro[$indice][quantity] = $qualityControl->obterQuantidadeTarefaComErroPorTipo($project_id, $row[quality_type_id], $user);	
+			$arQualidadeBarComErro[$indice]['name'] = $row['quality_type_name'];
+			$arQualidadeBarComErro[$indice]['index'] = $row['quality_type_id'];
+			$arQualidadeBarComErro[$indice]['quantity'] = $qualityControl->obterQuantidadeTarefaComErroPorTipo($project_id, $row['quality_type_id'], $user);	
 			$indice += 1; 	
 		}			 
 		$arQualidadeBarSemErro = $qualityControl->obterQuantidadeTarefaSemErro($project_id, $user,  true);
@@ -224,7 +224,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 			$dataSemErro[$i] = $qualityControl->buscaValorRefencia($arQualidadeBarSemErro, $date);
 			
 			for($j=0; $j < $indice; ++$j) {
-				$dataComErro[$j][$i] = $qualityControl->buscaValorRefencia($arQualidadeBarComErro[$j][quantity], $date);	
+				$dataComErro[$j][$i] = $qualityControl->buscaValorRefencia($arQualidadeBarComErro[$j]['quantity'], $date);	
 			}				
 		}
 	
@@ -234,7 +234,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$arQualidadeBar[0]['quantity'] = $dataSemErro;		
 		for($j=0; $j < $indice; ++$j) {
 		
-			$arQualidadeBar[$j+1]['name'] = $arQualidadeBarComErro[$j][name];
+			$arQualidadeBar[$j+1]['name'] = $arQualidadeBarComErro[$j]['name'];
 			$arQualidadeBar[$j+1]['quantity'] = $dataComErro[$j];	
 
 		}
@@ -321,7 +321,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$list = db_loadList($sql);	
 		$statusname='';
 			if(!empty($list)){
-				$statusname = $list[0][quality_status_name];
+				$statusname = $list[0]['quality_status_name'];
 			}					
 		return $statusname;	
 	}	
@@ -338,7 +338,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$list = db_loadList($sql);	
 		$typename='';
 			if(!empty($list)){
-				$typename = $list[0][quality_type_name];
+				$typename = $list[0]['quality_type_name'];
 			}					
 		return $typename;	
 	}	

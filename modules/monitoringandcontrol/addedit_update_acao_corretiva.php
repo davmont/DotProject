@@ -47,7 +47,7 @@ $controllerUtil = new ControllerUtil();
              <td  style="width:90%" >
              		<?php
 					  		$records= $controllerAcaoCorretiva->getChangeRequestById($change_id);
-							$project_name = $controllerUtil->getProjectName($records[project_id]) ; 						
+							$project_name = $controllerUtil->getProjectName($records['project_id']) ; 						
 					 ?>
                  <input type="text" name="projeto" size="20" id="projeto" readonly="readonly" value="<?php echo  $project_name[0][0] ; ?> " />			
             </td>
@@ -57,8 +57,8 @@ $controllerUtil = new ControllerUtil();
 	  <tr>
       		<td align="right" style="width:10%" ><?php echo $AppUI->_('LBL_TAREFA'); ?>:</td>
              <td  style="width:90%">
-                 <input type="text" name="tarefa" size="20" id="tarefa" readonly="readonly" value="<?php echo $records[task_name] ; ?> " />	
-				 <input name="task_id" type="hidden" id="task_id" value="<?php echo $records[task_id]; ?>" /> 
+                 <input type="text" name="tarefa" size="20" id="tarefa" readonly="readonly" value="<?php echo $records['task_name'] ; ?> " />	
+				 <input name="task_id" type="hidden" id="task_id" value="<?php echo $records['task_id']; ?>" /> 
             </td>  
                <td colspan="5">&nbsp;</td>           
         </tr>
@@ -66,7 +66,7 @@ $controllerUtil = new ControllerUtil();
       		<td align="right" style="width:10%" ><?php echo $AppUI->_('LBL_IMPACTO'); ?> (<?php echo $AppUI->_('LBL_HORA'); ?>):</td>
              <td  style="width:90%" >
 
-                 <input name="impact" type="text" id="impact" size="3" maxlength="3"  value="<?php echo $records[change_impact]; ?>" />					
+                 <input name="impact" type="text" id="impact" size="3" maxlength="3"  value="<?php echo $records['change_impact']; ?>" />					
             </td>
         <td colspan="5">&nbsp;</td>
         </tr> 
@@ -77,9 +77,9 @@ $controllerUtil = new ControllerUtil();
                 	<?php
 					    $select = Array(0=>$AppUI->_('LBL_SELECIONE')."...",1=>$AppUI->_('LBL_ABERTO'),2=>$AppUI->_('LBL_FECHADO'),3=>$AppUI->_('LBL_DESENVOLVIMENTO'),4=>$AppUI->_('LBL_CANCELADO'));
 						for($i=0;$i<count($select);$i++){
-							  if($records[change_status] ==  $i){								 
+							  if($records['change_status'] ==  $i){								 
 								  $option =  $select[$i];
-							     echo "<option value='".$records[change_status]."' selected>".$option."</option>";			 
+							     echo "<option value='".$records['change_status']."' selected>".$option."</option>";			 
 							  }else
 						 		 echo "<option value='".$i."' >".$select[$i]."</option>";	
 						  }
@@ -88,15 +88,15 @@ $controllerUtil = new ControllerUtil();
          </td>
  	     	</tr>          
      		 <tr>
-                 <td align="right" ><?php echo $AppUI->_('LBL_DESCRICAO_DESVIO'); ?>:</td><td  colspan="6"><textarea  name="description" cols="60" rows="4" ><?php  echo $records[change_description];	 ?></textarea></td>
+                 <td align="right" ><?php echo $AppUI->_('LBL_DESCRICAO_DESVIO'); ?>:</td><td  colspan="6"><textarea  name="description" cols="60" rows="4" ><?php  echo $records['change_description'];	 ?></textarea></td>
            </tr>
           
           <tr>
-           		<td align="right" ><?php echo $AppUI->_('LBL_CAUSA'); ?>:</td><td  colspan="7"><textarea  name="cause" cols="60" rows="4" ><?php echo $records[change_cause]; ?></textarea></td>
+           		<td align="right" ><?php echo $AppUI->_('LBL_CAUSA'); ?>:</td><td  colspan="7"><textarea  name="cause" cols="60" rows="4" ><?php echo $records['change_cause']; ?></textarea></td>
            </tr>
           
           <tr>
-           		<td align="right" ><?php echo $AppUI->_('LBL_ACAO_CORRETIVA'); ?>:</td><td  colspan="7"><textarea  name="acao_corretiva" cols="60" rows="4" ><?php echo $records[change_request]; ?></textarea></td>
+           		<td align="right" ><?php echo $AppUI->_('LBL_ACAO_CORRETIVA'); ?>:</td><td  colspan="7"><textarea  name="acao_corretiva" cols="60" rows="4" ><?php echo $records['change_request']; ?></textarea></td>
            </tr>
 
       <tr>
@@ -108,8 +108,8 @@ $controllerUtil = new ControllerUtil();
 								$list = array();	
 								$list = $controllerUtil -> getUsers();
 								foreach($list as $row){		
-									if($records[user_id] == $row[0]){
-							    	  echo "<option value='".$records[user_id]."' selected>".$row[1]."</option>";	
+									if($records['user_id'] == $row[0]){
+							    	  echo "<option value='".$records['user_id']."' selected>".$row[1]."</option>";	
 									}else{
 									  echo "<option value='".$row[0]."' >$row[1]</option>";		
 									}
@@ -127,11 +127,11 @@ $controllerUtil = new ControllerUtil();
 							$list = array();	
 							$list = $controllerAta -> getMeeting($project_id);
 							foreach($list as $row){								
-								  $data = $controllerUtil -> formatDate($row[dt_meeting_begin]); 								  
-									if($records[meeting_id] == $row[0]){
-							    	  echo "<option value='".$records[meeting_id]."' selected>$data - $row[3]</option>";	
+								  $data = $controllerUtil -> formatDate($row['dt_meeting_begin']); 								  
+									if($records['meeting_id'] == $row[0]){
+							    	  echo "<option value='".$records['meeting_id']."' selected>$data - $row[3]</option>";	
 									}else{
-									  echo " <option value='".$row[meeting_id]."' >$data - $row[dt_meeting_begin]</option>";	
+									  echo " <option value='".$row['meeting_id']."' >$data - $row[dt_meeting_begin]</option>";	
 									}									
 							}							
 						 ?>     
@@ -141,7 +141,7 @@ $controllerUtil = new ControllerUtil();
       <tr>
              <td align="right" ><?php echo $AppUI->_('LBL_PRAZO'); ?>:</td>
 			 <td nowrap="nowrap" >   
-             <?php	$date_limit =  $controllerUtil -> formatDate($records[change_date_limit]) 	?>              	  
+             <?php	$date_limit =  $controllerUtil -> formatDate($records['change_date_limit']) 	?>              	  
 				   <input type="text" class="text"  name="date_limit"  id="date_edit"   value="<?php echo $date_limit ; ?>" maxlength="10" onkeyup="formatadata(this,event)"/>
 				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)" />     
                 </td>   

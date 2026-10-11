@@ -32,13 +32,13 @@ $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 					$task_id = $row[1];
 				?>		
 					<tr>
-						<td><?php echo $row[change_request]; ?> </td>
+						<td><?php echo $row['change_request']; ?> </td>
 						<td>
 							<?php
 								$select = Array(0=>$AppUI->_('LBL_SELECIONE')."...",1=>$AppUI->_('LBL_ABERTO'),2=>$AppUI->_('LBL_FECHADO'),3=>$AppUI->_('LBL_DESENVOLVIMENTO'),4=>$AppUI->_('LBL_CANCELADO'));
 								for($i=0;$i<count($select);$i++){
-									  if($row[change_status] ==  $i){								 
-										 echo "<option value='".$row[change_status]."' selected>".$select[$i]."</option>";	
+									  if($row['change_status'] ==  $i){								 
+										 echo "<option value='".$row['change_status']."' selected>".$select[$i]."</option>";	
 										 break;		 
 								      }
 								}	  

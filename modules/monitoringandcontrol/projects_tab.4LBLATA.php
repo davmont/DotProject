@@ -39,9 +39,9 @@ $controllerUtil = new ControllerUtil();
 				?>		
 				
 					<tr>
-						<td><?php echo  $controllerUtil -> formatDate($row[dt_meeting_begin]); ?> </td>
-						<td><?php echo $row[meeting_type_name]; ?> </td>
-						<td><?php echo $row[ds_title]; ?> </td>
+						<td><?php echo  $controllerUtil -> formatDate($row['dt_meeting_begin']); ?> </td>
+						<td><?php echo $row['meeting_type_name']; ?> </td>
+						<td><?php echo $row['ds_title']; ?> </td>
 
                         <td align="center">
  							 <form name="form_update" method="post" action="?m=monitoringandcontrol&a=addedit_update_ata&project_id=<?php echo $project_id ; ?>" enctype="multipart/form-data" >  

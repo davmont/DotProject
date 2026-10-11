@@ -61,14 +61,14 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 	  <tr>
       		<td align="right" width="15%"><?php echo $AppUI->_('LBL_DATA'); ?>:</td>
 			 <td nowrap="nowrap" width="15%">                 	  
-			 	  <input type="text" class="text"  name="dt_begin"  id="date_edit"  value="<?php echo  $controllerUtil -> formatDate($meetingData[dt_meeting_begin]); ?>" maxlength="10" onkeyup="formatadata(this,event)"/>
+			 	  <input type="text" class="text"  name="dt_begin"  id="date_edit"  value="<?php echo  $controllerUtil -> formatDate($meetingData['dt_meeting_begin']); ?>" maxlength="10" onkeyup="formatadata(this,event)"/>
 				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)" />     
                 </td>   
       		<td align="right" width="5%"><?php echo $AppUI->_('LBL_HORA'); ?>:</td>
             <td width="5%">
 					<select name="hr_begin" size="1" id="hr_begin"> 		
 						 <?php	
-						$time =  $controllerUtil -> getHora($meetingData[dt_meeting_begin]);						 
+						$time =  $controllerUtil -> getHora($meetingData['dt_meeting_begin']);						 
 						$hours = $controllerUtil->setHours();
 							
 						for($i=0;$i<count($hours);$i++){
@@ -84,7 +84,7 @@ $meetingData = $controllerAta -> getListById($meeting_id);
             <td width="3%">
 					<select name="min_begin" size="1" id="min_begin"> 		
 						 <?php	
-							$time =  $controllerUtil -> getHora($meetingData[dt_meeting_begin]);		
+							$time =  $controllerUtil -> getHora($meetingData['dt_meeting_begin']);		
 							$minutes = $controllerUtil->setMinutes();
 						for($i=0;$i<count($minutes);$i++){
 								if ($time[1]==$minutes[$i]){								 
@@ -100,7 +100,7 @@ $meetingData = $controllerAta -> getListById($meeting_id);
             <td width="5%">
 					<select name="hr_end" size="1" id="hr_end"> 		
 						 <?php	
-						$time =  $controllerUtil -> getHora($meetingData[dt_meeting_end]);						 
+						$time =  $controllerUtil -> getHora($meetingData['dt_meeting_end']);						 
 						$hours = $controllerUtil->setHours();
 							
 						for($i=0;$i<count($hours);$i++){
@@ -116,7 +116,7 @@ $meetingData = $controllerAta -> getListById($meeting_id);
             <td width="5%">
 					<select name="min_end" size="1" id="min_end"> 		
 						 <?php	
-							$time =  $controllerUtil -> getHora($meetingData[dt_meeting_end]);		
+							$time =  $controllerUtil -> getHora($meetingData['dt_meeting_end']);		
 							$minutes = $controllerUtil->setMinutes();
 						for($i=0;$i<count($minutes);$i++){
 								if ($time[1]==$minutes[$i]){								 
@@ -133,7 +133,7 @@ $meetingData = $controllerAta -> getListById($meeting_id);
       </tr>
 	  <tr>
       		<td align="right"><?php echo $AppUI->_('LBL_TITULO'); ?>:</td>
-			<td colspan="8"><input type="text" name="title" id="title" size="90"  value="<?php echo  $meetingData[ds_title]; ?>" /> </td>
+			<td colspan="8"><input type="text" name="title" id="title" size="90"  value="<?php echo  $meetingData['ds_title']; ?>" /> </td>
         </tr>
 	  <tr>
             <td>&nbsp;</td>
@@ -174,20 +174,20 @@ $meetingData = $controllerAta -> getListById($meeting_id);
       </tr>
 	   <tr>
 			<td align="right" ><?php echo $AppUI->_('LBL_ASSUNTO'); ?>:</td>
-			<td colspan="8"><textarea  name="subject" cols="106" rows="4" ><?php echo  $meetingData[ds_subject]; ?></textarea></td>
+			<td colspan="8"><textarea  name="subject" cols="106" rows="4" ><?php echo  $meetingData['ds_subject']; ?></textarea></td>
 			
 	   </tr>
 	  <tr valign="top">
       		<td align="right"><?php echo $AppUI->_('LBL_TIPO'); ?>:</td>  
-             <td colspan="8"><?php echo $meetingData[meeting_type_name]; ?>
-			 <input  type="hidden" name="meeting_type" value="<?php echo $meetingData[meeting_type_id]; ?>"  />
+             <td colspan="8"><?php echo $meetingData['meeting_type_name']; ?>
+			 <input  type="hidden" name="meeting_type" value="<?php echo $meetingData['meeting_type_id']; ?>"  />
             </td>
        </tr>    
      
 	  <tr>
       		<td>&nbsp;</td>
              <td colspan="8">
-					<table class="tbl" width="60%" id="p1" style="<?php if ($meetingData[meeting_type_id] != 3 && $meetingData[meeting_type_id] != 5){ echo 'display:none;';}; ?>}">	
+					<table class="tbl" width="60%" id="p1" style="<?php if ($meetingData['meeting_type_id'] != 3 && $meetingData['meeting_type_id'] != 5){ echo 'display:none;';}; ?>}">	
 						 <tr>
 							   <td colspan="2" style="background-color:#D6EBFF" ><?php echo $AppUI->_('LBL_ITEM_MONITORACAO'); ?>:</td>                        
 						</tr>
@@ -197,13 +197,13 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 							foreach($itens as $item){
 								?>
 									<tr>
-										<td width="95%"><?php echo $item[meeting_item_description]; ?>    
-										 <input type="hidden" name="meeting_item_id[]" value="<?php echo $item[meeting_item_id]; ?>"   />                                  
+										<td width="95%"><?php echo $item['meeting_item_description']; ?>    
+										 <input type="hidden" name="meeting_item_id[]" value="<?php echo $item['meeting_item_id']; ?>"   />                                  
 										</td>
 										<td width="5%">                                         
 											<select name="item_select_status[]" size="1">
 											<?php													
-												if ($item[status]==0){					
+												if ($item['status']==0){					
 													echo "<option value='0' selected>Sim</option>";
 													echo "<option value='1'>N&atilde;o</option>";				 
 												}else {
@@ -217,7 +217,7 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 									</tr>
 					<?php }	?>
 					</table>     			 
-				<table class="tbl" width="80%" id="p2" style="<?php if ($meetingData[meeting_type_id] != 2){ echo 'display:none;';}; ?>}">	
+				<table class="tbl" width="80%" id="p2" style="<?php if ($meetingData['meeting_type_id'] != 2){ echo 'display:none;';}; ?>}">	
 				<tr>
 					<th align="center"><?php echo $AppUI->_('LBL_TAREFA'); ?></th>
 					<th align="center"><?php echo $AppUI->_('LBL_DATA_INICIO'); ?></th>
@@ -229,15 +229,15 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 					
 					foreach($tasks as $task){?>
 					<tr>
-						<td  align="center"><?php echo $task[task_name]; ?></td>
-						<td  align="center"><?php echo $controllerUtil->formatDateTime($task[task_start_date]); ?></td>
-						<td  align="center"><?php echo $controllerUtil->formatDateTime($task[task_end_date]); ?></td>
-						<td  align="center"><?php echo $task[task_duration]; ?></td>		
+						<td  align="center"><?php echo $task['task_name']; ?></td>
+						<td  align="center"><?php echo $controllerUtil->formatDateTime($task['task_start_date']); ?></td>
+						<td  align="center"><?php echo $controllerUtil->formatDateTime($task['task_end_date']); ?></td>
+						<td  align="center"><?php echo $task['task_duration']; ?></td>		
 					</tr>				
 				<?php } ?>	
 				</table>                                  
              
-        <table class="std"  width="61%" align="left" border="0"  id="p3" style="<?php if ($meetingData[meeting_type_id] != 4 && $meetingData[meeting_type_id] != 5){ echo 'display:none;';}; ?>}">	
+        <table class="std"  width="61%" align="left" border="0"  id="p3" style="<?php if ($meetingData['meeting_type_id'] != 4 && $meetingData['meeting_type_id'] != 5){ echo 'display:none;';}; ?>}">	
 		<tr>
 			<th align="center">%</th>
 			<th align="center"><?php echo $AppUI->_('LBL_TAMANHO'); ?> (<?php echo $AppUI->_('LBL_HORA'); ?>)</th>
@@ -253,18 +253,18 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 						
 					foreach($reports as $cad){
 					
-					if($cad[meeting_idc] < 0.8){$corIdc="#FF9FA5";}elseif ($cad[meeting_idc] < 1){$corIdc="#FFFFAE";}elseif ($cad[meeting_idc] > 1){$corIdc="#B7FFB7";}
-					if($cad[meeting_idp] < 0.8){$corIdp="#FF9FA5";}elseif ($cad[meeting_idp] < 1){$corIdp="#FFFFAE";}elseif ($cad[meeting_idp] > 1){$corIdp="#B7FFB7";} 						
+					if($cad['meeting_idc'] < 0.8){$corIdc="#FF9FA5";}elseif ($cad['meeting_idc'] < 1){$corIdc="#FFFFAE";}elseif ($cad['meeting_idc'] > 1){$corIdc="#B7FFB7";}
+					if($cad['meeting_idp'] < 0.8){$corIdp="#FF9FA5";}elseif ($cad['meeting_idp'] < 1){$corIdp="#FFFFAE";}elseif ($cad['meeting_idp'] > 1){$corIdp="#B7FFB7";} 						
 				?>										
 					<tr>
-						<td  align="center"><?php echo round($cad[meeting_percentual], 2); ?></td>
-						<td  align="center"><?php echo $cad[meeting_size]; ?> </td>
-						<td bgcolor="<?php echo $corIdc; ?>" align="center" ><?php echo number_format($cad[meeting_idc], 2, ',', '.'); ?> </td>
-						<td bgcolor="<?php echo $corIdp; ?>" align="center" ><?php echo number_format($cad[meeting_idp], 2, ',', '.'); ?> </td>							
-						<td align="center" ><?php echo number_format($cad[meeting_vp], 2, ',', '.'); ?> </td>
-						<td align="center" ><?php echo number_format($cad[meeting_va], 2, ',', '.'); ?> </td>
-						<td align="center" ><?php echo number_format($cad[meeting_cr], 2, ',', '.'); ?> </td>
-						<td align="center"><?php echo $cad[meeting_baseline]; ?> </td>								
+						<td  align="center"><?php echo round($cad['meeting_percentual'], 2); ?></td>
+						<td  align="center"><?php echo $cad['meeting_size']; ?> </td>
+						<td bgcolor="<?php echo $corIdc; ?>" align="center" ><?php echo number_format($cad['meeting_idc'], 2, ',', '.'); ?> </td>
+						<td bgcolor="<?php echo $corIdp; ?>" align="center" ><?php echo number_format($cad['meeting_idp'], 2, ',', '.'); ?> </td>							
+						<td align="center" ><?php echo number_format($cad['meeting_vp'], 2, ',', '.'); ?> </td>
+						<td align="center" ><?php echo number_format($cad['meeting_va'], 2, ',', '.'); ?> </td>
+						<td align="center" ><?php echo number_format($cad['meeting_cr'], 2, ',', '.'); ?> </td>
+						<td align="center"><?php echo $cad['meeting_baseline']; ?> </td>								
 			        </tr>				
 				<?php } ?>	
 					<tr><td colspan='8'align="center">
@@ -377,14 +377,14 @@ function deleteRole(rowId){
 		foreach($records as $rec){
 		?>
 		<tr>  
-			<td> <?php echo $rec[change_description] ; ?></td>
-			<td align="center"><?php echo $rec[user_username] ; ?></td>        
-			<td align="center"><?php echo $controllerUtil-> formatDate($rec[change_date_limit]) ; ?> </td> 
+			<td> <?php echo $rec['change_description'] ; ?></td>
+			<td align="center"><?php echo $rec['user_username'] ; ?></td>        
+			<td align="center"><?php echo $controllerUtil-> formatDate($rec['change_date_limit']) ; ?> </td> 
 			<td align="center">
 					<?php
 						$select = Array(0=>$AppUI->_('LBL_SELECIONE')."...",1=>$AppUI->_('LBL_ABERTO'),2=>$AppUI->_('LBL_FECHADO'),3=>$AppUI->_('LBL_DESENVOLVIMENTO'),4=>$AppUI->_('LBL_CANCELADO'));
 						for($i=0;$i<count($select);$i++){
-							  if($rec[change_status] ==  $i){								 
+							  if($rec['change_status'] ==  $i){								 
 								 echo $select[$i];									 
 							  }						 		 
 						  }

@@ -157,7 +157,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		$list = db_loadList($sql);	
 		$username='';
 			if(!empty($list)){
-				$username = $list[0][user_username];
+				$username = $list[0]['user_username'];
 			}					
 		return $username;	
 	}

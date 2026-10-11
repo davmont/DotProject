@@ -48,11 +48,11 @@ $controllerUtil = new ControllerUtil();
              <?php if(isset($task_id)&& $task_id!=''){
 			 
 						$task_name = $controllerUtil->getTaskName($task_id) ;
-						$project_name = $task_name[0][project_name] ;
-						$project_id = $task_name[0][project_id] ;
+						$project_name = $task_name[0]['project_name'] ;
+						$project_id = $task_name[0]['project_id'] ;
 					} else {
 						$project_retorno= $controllerUtil->getProjectName($project_id) ;
-						$project_name = $project_retorno[0][project_name] ;
+						$project_name = $project_retorno[0]['project_name'] ;
 					} 						
 					 						
 					 ?>
@@ -73,7 +73,7 @@ $controllerUtil = new ControllerUtil();
              <?php if(isset($task_id)&& $task_id!=''){
 			 
 				$task_name = $controllerUtil->getTaskName($task_id) ; 						
-				 echo ' <input type="text" name="tarefa" size="40" id="tarefa" readonly="readonly" value="'.$task_name[0][task_name].'" />';
+				 echo ' <input type="text" name="tarefa" size="40" id="tarefa" readonly="readonly" value="'.$task_name[0]['task_name'].'" />';
 				 echo ' <input type="hidden" name="task_id" size="40" id="task_id"  value="'.$task_id.'" />';				 
 				 } else{ ?>
                     <select name="task_id" size="1"  >
@@ -147,8 +147,8 @@ $controllerUtil = new ControllerUtil();
 							$lista = $controllerAta -> getMeeting($project_id);
 							foreach($lista as $line){	
 												
-							  $data = $controllerUtil -> formatDate($line[dt_meeting_begin]); 
-							  echo "<option value='".$line[meeting_id]."'>".$data." - ".$line[ds_title]."</option>";	
+							  $data = $controllerUtil -> formatDate($line['dt_meeting_begin']); 
+							  echo "<option value='".$line['meeting_id']."'>".$data." - ".$line['ds_title']."</option>";	
 							  }	
 						?>    
                 </select>

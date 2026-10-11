@@ -42,11 +42,11 @@ $lstUser  = $controllerUtil-> getUsers();
 					//   ' quality_id, quality_type_id, quality_description, quality_status_id, quality_date_end, task_id, user_id  '	
 				?>										
 					<tr>
-						<td><?php  echo  $controllerQuality -> getTypeName($q_rec[quality_type_id]); ?> </td>
-						<td> <?php  echo $q_rec[quality_description]; ?> </td>
+						<td><?php  echo  $controllerQuality -> getTypeName($q_rec['quality_type_id']); ?> </td>
+						<td> <?php  echo $q_rec['quality_description']; ?> </td>
 						
-						<td> <?php  echo  $controllerQuality -> getStatusName( $q_rec[quality_status_id]); ?> </td>
-						<td> <?php  echo  $controllerUtil -> formatDate($q_rec[quality_date_end]); ?> </td>
+						<td> <?php  echo  $controllerQuality -> getStatusName( $q_rec['quality_status_id']); ?> </td>
+						<td> <?php  echo  $controllerUtil -> formatDate($q_rec['quality_date_end']); ?> </td>
                         <td align="center">
                                 <form name="form_update" method="post" action="" enctype="multipart/form-data" >
 								     <?php  $id =  $q_rec[0];  ?>                          
