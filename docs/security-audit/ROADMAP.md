@@ -203,15 +203,26 @@ Left for later phases:
 - `CustomFieldsParser` has no callers (only `tests/CustomFieldsParserTest.php`) and unserializes field config. `EventQueue` unserializes data the application wrote itself.
 - `fileviewer.php` sends the stored `file_type` as Content-Type with `attachment`; adding `nosniff` belongs with the Phase 7 headers.
 
-### Phase 6: dead and broken code (reduces attack surface and audit noise)
-Rescoped 2026-10-12 with the owner: modules that are dormant on PHP 8 (bugspray, mantis, tracIntegration, smartsearchns, unitcost and the ones that do not install) stay in the tree and will be revived later; their open issues are listed under "Nice to have" below. Phase 6 removes code that no module uses and closes direct HTTP access to the rest:
-- `modules/monitoringandcontrol/jpgraph/`: a second, unused jpgraph copy (charts moved to Chart.js in `625878bf`) whose examples and barcode demo app answer over HTTP.
-- `modules/ticketsmith/admin.php`: dead page in a live module, no permission check, every branch fails.
-- `DP_BASE_DIR` guard for the module files the Phase 1 pass left (e.g. `unitcost/patch_203`), found by requesting every unguarded file in `docker/`.
-- Developer scripts in the web root that still run over HTTP.
+### Phase 6: dead and broken code (DONE, 2026-10-12)
+Rescoped 2026-10-12 with the owner: modules that are dormant on PHP 8 stay in the tree and will be revived later; their open issues are under "Nice to have" below. Branch `security/phase6-dead-code`, stacked on `security/phase5-files`. Each change was checked in `docker/` before and after; admin and worker crawls of every module page are identical to Phase 5.
+
+| Commit | Change |
+|---|---|
+| `85d09223` | Removed `modules/monitoringandcontrol/jpgraph/` (699 PHP files, 9.6 MB): unused since the charts moved to Chart.js (`625878bf`); its examples and barcode demo app answered over HTTP. |
+| `2c96d63f` | Removed `modules/ticketsmith/admin.php`: no permission check, no links to it, HTTP 500 for everyone. |
+| `ce6f1b40` | **Security:** smart search listed other users' private events (privacy filter set in a PHP 4 constructor that PHP 8 never calls). |
+| `c80b0445` | `CRole` constructor: the roles page was empty, role creation was HTTP 500, and the new-user form offered no role, so admins could not create users through the UI. |
+| `4f7c61f2` | PHP 4 constructors in core classes: task log tab, adding task logs and system lookup values were HTTP 500 (`CTaskLog`, `CSysKey`, `CSysVal`, `CTasksTemplate`); custom fields were never loaded, shown or saved (`CustomFields`, `CustomOptionList`, `CustomField*`). |
+| `8699985c` | Quoted 141 bare-word array keys (`$row[key]`, an Error on PHP 8) in monitoringandcontrol, earnings and annotations; a tokenizer scan reports none left. |
+
+Checked and left as is:
+- Direct HTTP access: every one of the 1191 PHP files without a `DP_BASE_DIR` guard was requested in `docker/`. Apart from the removed jpgraph demos, each one dies on its first statements or prints static text (`public/index.php`), so no guards were added. Denying direct requests to `modules/**/*.php` at the web server is listed under Phase 7.
+- Root-level developer scripts that are tracked are CLI-only already (`3128031d`); `gen_locale*.php`, `find_missing_labels.php` and the label `.txt` files are untracked and git-ignored, so they are not deployed from the repository. `queuescanner.php` processes due queue events (reminder mails) for anyone who requests it over HTTP; it only runs them early. Restricting it to the CLI is listed under Phase 7, since a cron job may fetch it over HTTP.
 
 ### Phase 7: hardening and regression safety
 - `Content-Security-Policy` header (start with `script-src 'self'` plus a nonce for inline blocks), `X-Content-Type-Options`, `X-Frame-Options`.
+- Web-server rule denying direct requests to `modules/**/*.php` and `lib/**/*.php` (every page is served through `index.php`; check AJAX endpoints first). Phase 6 found no file that does harm when requested directly, but path disclosure depends on the server's `display_errors`.
+- Decide whether `queuescanner.php` may run over HTTP (CLI-only guard like the developer scripts, or a shared token for cron jobs that fetch it).
 - PHPStan at level 2 with a baseline, in CI, to catch new raw `$_GET`/`$_POST` use via a custom rule or `grep` guard.
 - Keep `docker/` in the repo and add a `make audit-smoke` target that runs the login, CSRF and permission curl checks.
 
@@ -224,6 +235,11 @@ These modules do not run on PHP 8 today, so their remaining issues are not reach
 - **unitcost**: `patch_203/` holds patched copies of dotProject 2.0.3 core files; they must be redone against the current core.
 - **PHP 4 constructors and PHP 8 fatals** (helpdesk `CHelpDeskItem`/`CHDTaskLog`, dataimport `CDataImport`, testing, opportunities and projectdesigner signature mismatches, installers failing with `ADORecordSet_empty & int`, links `CLink::delete()`): the SQL, XSS and file sinks behind them were fixed by review in Phases 3-5. When a module is revived, re-run the Phase 3/4/5 checks (`probe.sh`, marker check, direct-request scan) against it in `docker/`.
 - **Review-only fixes to retest once installable**: helpdesk, holiday, mileagelog, timetrack, registers, links pages, dataimport, opportunities, projectdesigner configure, gallery2.
+- **smartsearchns**: its `events` search object has the same PHP 4 constructor as smartsearch had (fixed there in Phase 6, `ce6f1b40`): without it, search lists other users' private events.
+- **communication**: every page fatals on `CCommunication::delete()` signature; `CCommunication` also has a PHP 4 constructor. `addedit_channel.php`/`addedit_frequency.php` delete on GET (Phase 3 note).
+- **reports** (billing/payroll): needs timetrack-era session state, so the billing report never runs; the `Tree` classes it builds have PHP 4 constructors.
+- **dotproject_plus instructional feedback**: `Feedback` has a PHP 4 constructor, `feedback/feedback_area.php` is not included anywhere and `do_show_feedback.php` stores a message nothing displays; `feedback_area.php` also echoes the raw query string into two attributes.
+- **PHP 8 runtime errors in add-on modules that do run** (seen in the Phase 6 tab crawl): monitoringandcontrol quality tab (`count(null)` in `ControllerQuality::obterDadosGraficoPizza()`), a timeplanning task tab (`array_keys()` on a non-array), and undefined-variable warnings in monitoringandcontrol, timeplanning, human_resources and dotproject_plus tabs.
 
 ## 4. State of the remediation branch
 
