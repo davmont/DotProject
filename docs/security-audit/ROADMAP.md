@@ -112,7 +112,7 @@ Branch `security/phase1-core-gates`, stacked on `security/devel-hardening`. Ever
 | 7 | `682b5604` | Translation save: admin only, module/lang whitelisted, entries written with `var_export()`. Every translation `eval` (core and four module loaders) runs only after `dPisTranslationSource()` accepts the source. Before, an admin save ran code for every user and `module=../../files/x` wrote outside `locales/`. |
 | 5 | `7e5b6713` | `___()` uses `ENT_QUOTES`; `dPformSafe(.., DP_FORM_URI)` HTML-escapes (company URL attribute breakout); `makeFileNameSafe()` loops (`....//` bypass). |
 
-Item 4 is still open and needs the owner: `includes/config.php` is tracked (now `dotproject`/`dotproject`). Untracking it deletes the file on any server that deploys with `git pull`, so first move those servers to an untracked config, then `git rm --cached includes/config.php`, add it to `.gitignore`, keep `config-dist.php` as the template, and rotate the DB password.
+Item 4 done afterwards (`security/untrack-config`): `includes/config.php` only held placeholder credentials (as `config-dist.php` does), so nothing to rotate. It is no longer tracked and is in `.gitignore`; `config-dist.php` stays the sample. This also matters for the installer lock: a tracked placeholder config made fresh installs refuse the real database settings.
 
 Installer hotfix (after Phase 1): `install/check_upgrade.php` and `install/db.php` define `DP_BASE_URL`, so the installer runs against a real `includes/config.php`; `smoke.sh` now checks the installer (password hidden, wrong password refused, upgrade runs).
 
