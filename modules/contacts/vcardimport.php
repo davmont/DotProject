@@ -11,6 +11,8 @@ if (!($canAuthor)) {
 // check whether vCard file should be fetched from source or parsed for vCardKeys; criteria: get parameters
 if (isset($_FILES['vcf']) && isset($_GET['suppressHeaders']) && ($_GET['suppressHeaders']=='true')) {	//parse and store vCard file
 
+	// This view stores contacts: same CSRF rule as the dosql handlers.
+	$AppUI->verifyCsrfToken();
 	$vcf = $_FILES['vcf'];
 	// include PEAR vCard class
 	require_once($AppUI->getLibraryClass('PEAR/Contact_Vcard_Parse'));
