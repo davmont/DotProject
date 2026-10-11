@@ -82,9 +82,9 @@ $project = array();
 $companies = array();
 while ($row = db_fetch_assoc( $res )) {
 // collect help desk items in js format
-	$helpdeskItemTasks[$row['item_id']] = "[{$row['item_project_id']},{$row['item_id']},'".addslashes($row['item_title'])."',{$row['item_company_id']}]";
+	$helpdeskItemTasks[$row['item_id']] = "[{$row['item_project_id']},{$row['item_id']},".dPjs($row['item_title']).",{$row['item_company_id']}]";
 // collect projects in js format
-	$projects[$row['item_project_id']] = "[{$row['company_id']},{$row['item_project_id']},'".addslashes($row['project_name'])."']";
+	$projects[$row['item_project_id']] = "[{$row['company_id']},{$row['item_project_id']},".dPjs($row['project_name'])."]";
 // collect companies in normal format
 	$companies[$row['item_company_id']] = $row['company_name'];
 };
@@ -94,12 +94,12 @@ while ($row = db_fetch_assoc( $res )) {
 if ($helpdeskItemTask_found)
 {
 	// need to add the entry for the helpdesk itself as that was not found
-	$helpdeskItemTasks[$helpdeskItemTask['item_id']] = "[{$helpdeskItemTask['item_project_id']}, {$helpdeskItemTask['item_id']}, '{$helpdeskItemTask['item_title']}', {$helpdeskItemTask['item_company_id']}]";
+	$helpdeskItemTasks[$helpdeskItemTask['item_id']] = "[{$helpdeskItemTask['item_project_id']}, {$helpdeskItemTask['item_id']}, " . dPjs($helpdeskItemTask['item_title']) . ", {$helpdeskItemTask['item_company_id']}]";
 	// get the project name
 	$sql = "SELECT project_name FROM projects WHERE project_id = ".$helpdeskItemTask['item_project_id'];
 	$itemCompanyName = db_LoadResult($sql);
 	// collect projects in js format
-	$projects[$helpdeskItemTask['item_project_id']] = "[{$helpdeskItemTask['item_company_id']},{$helpdeskItemTask['item_project_id']}, '{$itemCompanyName}']";
+	$projects[$helpdeskItemTask['item_project_id']] = "[{$helpdeskItemTask['item_company_id']},{$helpdeskItemTask['item_project_id']}, " . dPjs($itemCompanyName) . "]";
 	// get the company name
 	$sql = "SELECT company_name FROM companies WHERE company_id = ".$helpdeskItemTask['item_company_id'];
 	// collect companies in normal format
@@ -278,7 +278,7 @@ function delIt() {
 ?>
 	<td align="right" nowrap="nowrap">Task Description:</td>
 	<td>
-		<input type="text" name="task_log_name" value="<?php echo @$helpdeskItemTask['task_log_name'] ;?>" class="text"> * The company, project or task that this time was logged against has been deleted.
+		<input type="text" name="task_log_name" value="<?php echo dPhtml(@$helpdeskItemTask['task_log_name']) ;?>" class="text"> * The company, project or task that this time was logged against has been deleted.
 	</td>
 <?php
 	} else {
@@ -331,7 +331,7 @@ function delIt() {
 <tr>
 	<td align="right" valign="top" nowrap="nowrap"><?php echo $AppUI->_('Description');?>* :</td>
 	<td align="left">
-		<textarea name="task_log_description" cols="60" rows="6" wrap="virtual" class="textarea"><?php echo (($tid > 0) ? $helpdeskItemTask["task_log_description"] : "");?></textarea>
+		<textarea name="task_log_description" cols="60" rows="6" wrap="virtual" class="textarea"><?php echo (($tid > 0) ? dPhtml($helpdeskItemTask["task_log_description"]) : "");?></textarea>
 	</td>
 </tr>
 <tr>

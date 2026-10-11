@@ -79,9 +79,9 @@ $journal = array();
 							src="./images/icons/pencil.gif" alt="<?php echo $AppUI->_('Edit journal') ?>" border="0"
 							width="12" height="12"></a></td>
 				<td><?php echo $row["journal_date"] ?></td>
-				<td><?php echo $row["project_name"] ?></td>
-				<td><?php echo $row["journal_description"] ?></td>
-				<td><?php echo $row["user_username"] ?></td>
+				<td><?php echo dPhtml($row["project_name"]) ?></td>
+				<td><?php echo dPhtml($row["journal_description"]) ?></td>
+				<td><?php echo dPhtml($row["user_username"]) ?></td>
 			</tr>
 			<?php
 		}

@@ -68,7 +68,7 @@ $AppUI->getModuleJS('unitcost', 'tabs');
                 </tr>
                 <tr>
                   <td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Unit of Measure' );?></td>
-                  <td class="hilite" width="100" ><?php echo $unit_of_measure ?></td>
+                  <td class="hilite" width="100" ><?php echo dPhtml($unit_of_measure) ?></td>
                 </tr>
                 <tr>
                   <td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Total Units' );?></td>
@@ -85,12 +85,12 @@ $AppUI->getModuleJS('unitcost', 'tabs');
               <table width="100%">
                 <tr>
                   <td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Normative Reference' );?></td>
-                  <td class="hilite" width="250" ><?php echo $norm_ref ?></td>
+                  <td class="hilite" width="250" ><?php echo dPhtml($norm_ref) ?></td>
                 </tr>
                 <tr>
                 <tr>
                   <td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Normative Description' );?></td>
-                  <td class="hilite" width="250" height="100"><?php echo $norm_dsc ?></td>
+                  <td class="hilite" width="250" height="100"><?php echo dPhtml($norm_dsc) ?></td>
                 </tr>
               </table>
             </td>

@@ -159,7 +159,7 @@ for ($x=0; $x < $nums; $x++) {
 	<input type="hidden" name="task_log_id" value="<?php echo $log->task_log_id; ?>" />
 	<input type="hidden" name="task_log_help_desk_id" value="<?php echo $item_id; ?>" />
 	<input type="hidden" name="task_log_creator" value="<?php echo $AppUI->user_id; ?>" />
-	<input type="hidden" name="task_log_name" value="Update :<?php echo $log->task_log_name; ?>" />
+	<input type="hidden" name="task_log_name" value="Update :<?php echo dPhtml($log->task_log_name); ?>" />
 <tr>
 	<td nowrap="nowrap">
 		<?php echo $AppUI->_('Date'); ?><br />
@@ -172,7 +172,7 @@ for ($x=0; $x < $nums; $x++) {
 		</a>
 	</td>
 	<td><?php echo $AppUI->_('Summary'); ?>:<br />
-		<input type="text" class="text" name="task_log_name" value="<?php echo $log->task_log_name; ?>" maxlength="255" size="30" />
+		<input type="text" class="text" name="task_log_name" value="<?php echo dPhtml($log->task_log_name); ?>" maxlength="255" size="30" />
 	</td>
 
 </tr>
@@ -188,7 +188,7 @@ for ($x=0; $x < $nums; $x++) {
 	  </td>
 	<td rowspan="3">
 	<?php echo $AppUI->_('Description'); ?>:<br />
-		<textarea name="task_log_description" class="textarea" cols="50" rows="6"><?php echo $log->task_log_description; ?></textarea>
+		<textarea name="task_log_description" class="textarea" cols="50" rows="6"><?php echo dPhtml($log->task_log_description); ?></textarea>
 	</td>
 </tr>
 <!--tr-->

@@ -158,11 +158,25 @@ Left for later phases:
 - earnings' hand-written SQL uses unprefixed table names and fails on prefixed installs.
 - XSS noticed on the way: helpdesk `sort_header()` echoes `company_id`/`project_id` from the request into links (Phase 4).
 
-### Phase 4: XSS
-1. Views listed under "Stored XSS" in the findings files: wrap echoed DB fields with `htmlspecialchars($v, ENT_QUOTES, 'UTF-8')` (or `$AppUI->___()` once it uses ENT_QUOTES); for values inside JS strings use `json_encode()`.
-2. Link-type fields (`links.link_url`, `contact_url`, `company_primary_url`, `human_resource_lattes_url`): validate scheme is http/https/mailto at store time and at render time.
-3. Reflected parameters echoed into attributes (`helpdesk/list.php` search, `ticketsmith/index.php` type, `communication/addedit.php`, `timesheet/index.php` wk): escape or cast.
-4. Add a small automated check: a PHPUnit test (see `tests/`) that stores a `<script>` payload through the public API of each model class and asserts the list/view output is escaped, extended module by module.
+### Phase 4: XSS (DONE, 2026-10-09)
+Branch `security/phase4-xss`, stacked on `security/phase3-sqli`. The findings were re-triaged against current code first (most stored-XSS rows still open, plus many sinks the audit missed). Each group was checked by storing or sending a marker value (`zQ"'<i>Qz`) and confirming it came back raw before and escaped after; unreachable modules were reviewed.
+
+New helpers in `includes/main_functions.php`: `dPhtml()` (HTML text and quoted attributes, in the install's character set), `dPjs()` / `dPjsAttr()` (JavaScript string literals for `<script>` and event attributes), `dPsafeUrl()` (link targets limited to relative, http, https, mailto, ftp). Covered by `tests/EscapeTest.php`.
+
+| Commit | Scope |
+|---|---|
+| `b2be7686` | files, forums (also casts post_message ids, an SQL injection), calendar, closure, initiating, project/task lists; helpers. |
+| `8e4fcdb6` | contacts (incl. `contact_url` scheme check), companies, departments, history, links (URL check), smartsearch, theme search box, dataimport, messages, communication, annotations, informer. |
+| `5f95ca8e` | title-bar crumbs (all modules), public selectors (contact selector callback/ids, onclick instead of `javascript:` links), calendar `uts` and date preference, admin user/session/log pages, translate `lang`. |
+| `bd2f4b39` | dotproject_plus `show_external_page`: removed an `include_once` of a request-supplied path (LFI). |
+| `a1d6f2ae` | helpdesk, ticketsmith (type whitelist; search fixed for PHP 8 and its field/depth/sort whitelisted), hosting, journal, mngdocument, gallery2. |
+| `f82cc11a` | dotproject_plus and timeplanning tabs (JS literals via `dPjs`), human_resources (CV URL check), timecard, timetrack, timesheet, holiday, resources, resource_m, testing. |
+| `a7dfba5e` | risks (`vw` whitelist), earnings (short tags, variable-variable bug), inventory, costs, opportunities, registers, invoices, unitcost. |
+
+Left for later phases:
+- Stored values are still not filtered on input (`bind()` keeps HTML); output escaping is the defence. Rich-text fields that are meant to hold HTML (timeplanning minutes) are shown as text.
+- Modules that do not install on PHP 8 in the sandbox (helpdesk, holiday, mileagelog, timetrack, registers, links pages) were fixed by review only.
+- A Content-Security-Policy header (Phase 7) would contain whatever escaping misses.
 
 ### Phase 5: file handling and RCE sinks
 - `mngdocument`: require `getPermission('mngdocument','add')`, store uploads outside the web root (or under `files/` with the same `uniqid` scheme the files module uses) with an extension allow-list; fix the `$actual` SQL and `unlink` chain.

@@ -27,10 +27,10 @@ if($human_resource_id) {
 foreach ($roles as $role) {
 	?>
 	<tr>
-	<td align='left'><input type='text' id="<?php echo $role['human_resources_role_id']; ?>" value="<?php echo $role['human_resources_role_name']; ?>" />
+	<td align='left'><input type='text' id="<?php echo dPhtml($role['human_resources_role_id']); ?>" value="<?php echo dPhtml($role['human_resources_role_name']); ?>" />
 	</td>
 	<td>
-	<a href="javascript:deleteRole('<?php echo $role['human_resources_role_id'];?>', '<?php echo $role['human_resources_role_name'];?>')" title="<?php echo $AppUI->_('delete'); ?>">
+	<a href="#" onclick="deleteRole(<?php echo dPjsAttr($role['human_resources_role_id']);?>, <?php echo dPjsAttr($role['human_resources_role_name']);?>); return false;" title="<?php echo $AppUI->_('delete'); ?>">
 	<?php echo dPshowImage('./images/icons/stock_delete-16.png', 16, 16, ''); ?></a>
 	</td>
 	</tr>
@@ -72,12 +72,22 @@ function addRole() {
 	var rolesTable = document.getElementById('roles_table');
 	var lastRowNumber = rolesTable.rows.length;
 	var row = rolesTable.insertRow(lastRowNumber);
+	var roleId = roleCombo.options[roleCombo.selectedIndex].value;
+	var roleName = roleCombo.options[roleCombo.selectedIndex].text;
 	var td1 = row.insertCell(0);
-	td1.innerHTML = "<input readonly='readonly' type='text' id='"+ roleCombo.options[roleCombo.selectedIndex].value +"' value='" + roleCombo.options[roleCombo.selectedIndex].text + "'/>";
+	var input = document.createElement('input');
+	input.readOnly = true;
+	input.type = 'text';
+	input.id = roleId;
+	input.value = roleName;
+	td1.appendChild(input);
 	var td2 = row.insertCell(1);
-	var deleteString = '"javascript:deleteRole(' + roleCombo.options[roleCombo.selectedIndex].value + ', \'' + roleCombo.options[roleCombo.selectedIndex].text + '\')"';
-	td2.innerHTML = '<a href=' + deleteString + ' title="delete">'
-	+ '<?php echo dPshowImage("./images/icons/stock_delete-16.png", 16, 16, ""); ?>' + '</a>';
+	var link = document.createElement('a');
+	link.href = '#';
+	link.title = 'delete';
+	link.onclick = function() { deleteRole(roleId, roleName); return false; };
+	link.innerHTML = '<?php echo dPshowImage("./images/icons/stock_delete-16.png", 16, 16, ""); ?>';
+	td2.appendChild(link);
 	roleCombo.remove(roleCombo.selectedIndex);
 }
 </script>
@@ -94,8 +104,8 @@ function addRole() {
 	<?php
 	foreach($different_roles as $role) {
 	?>
-	<option name="<?php echo $role['human_resources_role_name'];?>" value="<?php echo $role['human_resources_role_id']; ?>">
-	<?php echo $role['human_resources_role_name'];?>
+	<option name="<?php echo dPhtml($role['human_resources_role_name']);?>" value="<?php echo dPhtml($role['human_resources_role_id']); ?>">
+	<?php echo dPhtml($role['human_resources_role_name']);?>
 	</option>
 	<?php
 	}

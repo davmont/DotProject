@@ -62,19 +62,19 @@ for ($res; ! $res->EOF; $res->MoveNext()) {
 <tr>
   <td style=<?php echo $style; ?>>
    <a href="index.php?m=human_resources&amp;a=view_allocation&amp;project_tasks_estimated_roles_id=<?php echo $project_tasks_estimated_roles_id; ?>&amp;task_id=<?php echo $task_id; ?>&amp;project_id=<?php echo $project_id; ?>">
-    <?php echo $res->fields['human_resources_role_name']; ?></a>
+    <?php echo dPhtml($res->fields['human_resources_role_name']); ?></a>
   </td>
   <td style=<?php echo $style; ?>>
    <a href="index.php?m=human_resources&amp;a=view_allocation&amp;project_tasks_estimated_roles_id=<?php echo $project_tasks_estimated_roles_id; ?>&amp;task_id=<?php echo $task_id; ?>&amp;project_id=<?php echo $project_id; ?>">
-    <?php echo $res->fields['human_resources_role_responsability']; ?></a>
+    <?php echo dPhtml($res->fields['human_resources_role_responsability']); ?></a>
   </td>
   <td style=<?php echo $style; ?>>
    <a href="index.php?m=human_resources&amp;a=view_allocation&amp;project_tasks_estimated_roles_id=<?php echo $project_tasks_estimated_roles_id; ?>&amp;task_id=<?php echo $task_id; ?>&amp;project_id=<?php echo $project_id; ?>">
-    <?php echo $res->fields['human_resources_role_authority']; ?></a>
+    <?php echo dPhtml($res->fields['human_resources_role_authority']); ?></a>
   </td>
   <td style=<?php echo $style; ?>>
    <a href="index.php?m=human_resources&amp;a=view_allocation&amp;project_tasks_estimated_roles_id=<?php echo $project_tasks_estimated_roles_id; ?>&amp;task_id=<?php echo $task_id; ?>&amp;project_id=<?php echo $project_id; ?>">
-    <?php echo $res->fields['human_resources_role_competence']; ?></a>
+    <?php echo dPhtml($res->fields['human_resources_role_competence']); ?></a>
   </td>
 </tr>
 <?php 

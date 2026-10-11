@@ -32,7 +32,7 @@ function showchilddept_comp(&$a, $level=0) {
 	}
 
 	$s .= ('<a href="?m=departments&amp;a=view&amp;dept_id=' . $a['dept_id'] . '">' 
-	       . $a['dept_name'] . '</a>');
+	       . dPhtml($a['dept_name']) . '</a>');
 	$s .= '</td>';
 	$s .= '<td align="center">' . (($a['dept_users']) ? $a['dept_users'] : '') . '</td>';
 	

@@ -143,7 +143,7 @@ if($allocated_user_id || $human_resource_allocation_id) {
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Task name');?>:</td>
-			<td class="hilite" width="100%"><?php echo $task->task_name;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($task->task_name);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Task start date');?>:</td>
@@ -159,27 +159,27 @@ if($allocated_user_id || $human_resource_allocation_id) {
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Aloccated role name');?>:</td>
-			<td class="hilite" width="100%"><?php echo $company_role;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($company_role);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Aloccated user name');?>:</td>
-			<td class="hilite" width="100%"><?php echo $allocated_user_username;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($allocated_user_username);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Aloccated user contact');?>:</td>
-			<td class="hilite" width="100%"><?php echo $allocated_user_contact;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($allocated_user_contact);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Aloccated user roles');?>:</td>
-			<td class="hilite" width="100%"><?php echo $allocated_user_roles;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($allocated_user_roles);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Aloccated user weekday working hours');?>:</td>
-			<td class="hilite" width="100%"><?php echo $allocated_user_weekday_hours;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($allocated_user_weekday_hours);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Aloccated user Lattes URL');?>:</td>
-			<td class="hilite" width="100%"><?php echo $allocated_user_lattes_url;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($allocated_user_lattes_url);?></td>
 		</tr>
 		</table>
 	</td>
@@ -242,13 +242,13 @@ if($allocated_user_id || $human_resource_allocation_id) {
 			?>		
 			<tr>
 			<td style=<?php echo $style;?>>
-			<?php echo $human_resource_task_project->project_name; ?></a>
+			<?php echo dPhtml($human_resource_task_project->project_name); ?></a>
 			</td>
 			<td style=<?php echo $style;?>>
-			<?php echo $human_resource_task['task_name']; ?></a>
+			<?php echo dPhtml($human_resource_task['task_name']); ?></a>
 			</td>
 			<td style=<?php echo $style;?>>
-			<?php echo $estimated_role_names; ?></a>
+			<?php echo dPhtml($estimated_role_names); ?></a>
 			</td>
 			<td style=<?php echo $style;?>>
 			<?php echo $human_resource_task['task_start_date']; ?></a>
@@ -374,25 +374,25 @@ for ($i = 0; $i < count($ordered_hrs); $i++) {
 <tr>
   <td style=<?php echo $style;?>>
    <a href="?m=human_resources&amp;a=addedit_allocation&amp;human_resource_allocation_id=<?php echo $human_resource_allocation_id;?>&amp;project_tasks_estimated_roles_id=<?php echo $project_tasks_estimated_roles_id;?>&amp;task_id=<?php echo $task_id;?>&amp;project_id=<?php echo $project_id;?>&amp;allocated_user_id=<?php echo $user_id;?>">
-	<?php echo $user->user_username;?></a>
+	<?php echo dPhtml($user->user_username);?></a>
   </td>
   <td style=<?php echo $style;?>>
    <a href="?m=human_resources&amp;a=addedit_allocation&amp;human_resource_allocation_id=<?php echo $human_resource_allocation_id;?>&amp;project_tasks_estimated_roles_id=<?php echo $project_tasks_estimated_roles_id;?>&amp;task_id=<?php echo $task_id;?>&amp;project_id=<?php echo $project_id;?>&amp;allocated_user_id=<?php echo $user_id;?>">
-    <?php echo $contact->contact_last_name . ', ' . $contact->contact_first_name;?></a>
+    <?php echo dPhtml($contact->contact_last_name . ', ' . $contact->contact_first_name);?></a>
   </td>
   <td style=<?php echo $style;?>>
    <a href="?m=human_resources&amp;a=addedit_allocation&amp;human_resource_allocation_id=<?php echo $human_resource_allocation_id;?>&amp;project_tasks_estimated_roles_id=<?php echo $project_tasks_estimated_roles_id;?>&amp;task_id=<?php echo $task_id;?>&amp;project_id=<?php echo $project_id;?>&amp;allocated_user_id=<?php echo $user_id;?>">
-    <?php echo $role_names[$i];?></a>
+    <?php echo dPhtml($role_names[$i]);?></a>
   </td>
   <td style=<?php echo $style;?>>
    <a href="?m=human_resources&amp;a=addedit_allocation&amp;human_resource_allocation_id=<?php echo $human_resource_allocation_id;?>&amp;project_tasks_estimated_roles_id=<?php echo $project_tasks_estimated_roles_id;?>&amp;task_id=<?php echo $task_id;?>&amp;project_id=<?php echo $project_id;?>&amp;allocated_user_id=<?php echo $user_id;?>">
-    <?php echo $weekday_working_hours;?></a>
+    <?php echo dPhtml($weekday_working_hours);?></a>
   </td>
   <?php 
   if($hr->human_resource_lattes_url) {
   ?>
   <td style=<?php echo $style;?> align='center'>
-	<a href="#" onclick="window.open('<?php echo $hr->human_resource_lattes_url; ?>')"><?php echo dPshowImage( './modules/human_resources/images/lattes.png', 16, 16, '' ); ?>
+	<a href="#" onclick="window.open(<?php echo dPjsAttr(dPsafeUrl($hr->human_resource_lattes_url)); ?>); return false;"><?php echo dPshowImage( './modules/human_resources/images/lattes.png', 16, 16, '' ); ?>
 	</a>
   </td>
   <?php

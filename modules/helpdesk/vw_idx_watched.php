@@ -73,38 +73,38 @@ foreach ($rows as $row) {
 
 	$s .= $CR . "<td nowrap align=\"center\">";
 	if ($row['item_requestor_email']) {
-		$s .= $CR . "<a href=\"mailto:".$row['item_requestor_email']."\">"
-              . $row['item_requestor']
+		$s .= $CR . "<a href=\"mailto:".dPhtml($row['item_requestor_email'])."\">"
+              . dPhtml($row['item_requestor'])
               . "</a>";
 	} else {
-		$s .= $CR . $row['item_requestor'];
+		$s .= $CR . dPhtml($row['item_requestor']);
 	}
 	$s .= $CR . "</td>";
 
 	$s .= $CR . '<td width="20%"><a href="?m=helpdesk&a=view&item_id='
             . $row['item_id']
             . '">'
-		        . $row['item_title']
+		        . dPhtml($row['item_title'])
             . '</a></td>';
   $s .= $CR . '<td width="80%">' 
-            . substr($row['item_summary'],0,max(strpos($row['item_summary']."\n","\n"),100))
+            . dPhtml(substr($row['item_summary'],0,max(strpos($row['item_summary']."\n","\n"),100)))
             . ' </td>';
   $s .= $CR . "<td nowrap align=\"center\">";
 	if ($row['assigned_email']) {
-		$s .= $CR . "<a href=\"mailto:".$row['assigned_email']."\">"
-              . $row['assigned_fullname']
+		$s .= $CR . "<a href=\"mailto:".dPhtml($row['assigned_email'])."\">"
+              . dPhtml($row['assigned_fullname'])
               . "</a>";
 	} else {
-		$s .= $CR . $row['assigned_fullname'];
+		$s .= $CR . dPhtml($row['assigned_fullname']);
 	}
 	$s .= $CR . "</td>";
 	$s .= $CR . '<td align="center" nowrap>' . $ist[@$row['item_status']] . '</td>';
 	$s .= $CR . '<td align="center" nowrap>' . $ipr[@$row['item_priority']] . '</td>';
 	if($row['project_id']){
 		$s .= $CR . '<td align="center" style="background-color: #'
-		    . $row['project_color_identifier']
+		    . preg_replace('/[^0-9a-fA-F]/', '', $row['project_color_identifier'])
 		    . ';" nowrap><a href="./index.php?m=projects&a=view&project_id='
-		    . $row['project_id'].'">'.$row['project_name'].'</a></td>';
+		    . $row['project_id'].'">'.dPhtml($row['project_name']).'</a></td>';
 	} else {
 		$s .= $CR . '<td align="center">-</td>';
 	}

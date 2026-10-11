@@ -27,7 +27,7 @@
 		$items = $controllerWBSItem->getWorkPackages($project_id);
 		$workpackages_combo="<option value='-1'>-- ". $AppUI->_('LBL_MOVE') ."--</option>";
 		foreach ($items as $item) {
-			$workpackages_combo.="<option value='".$item->getId()."'> ".$item->getNumber() ."-". $item->getName() ."</option>";
+			$workpackages_combo.="<option value='".$item->getId()."'> ".dPhtml($item->getNumber()) ."-". dPhtml($item->getName()) ."</option>";
 		}	
 		echo "<div id='work_packages_combo' style='display:none'>$workpackages_combo</div>";
 		//end: set workpackages
@@ -55,10 +55,10 @@
 				$is_leaf=$item->isLeaf();
 				if($is_leaf=="1"){
 					echo "<tr id='id_$id' bgcolor='#E8E8E8' title='is_wbs_item'>";
-					echo "<td colspan='9'><b>$number - $name</b><br><input type='button' value='+' class='button' onclick=addLine('','','','','','','','','','','',$id);></td>";			
+					echo "<td colspan='9'><b>" . dPhtml($number) . " - " . dPhtml($name) . "</b><br><input type='button' value='+' class='button' onclick=addLine('','','','','','','','','','','',$id);></td>";			
 				}else{
 					echo "<tr id='id_$id' title='is_wbs_item'>";
-					echo "<td colspan='4'>$number - $name</td>";
+					echo "<td colspan='4'>" . dPhtml($number) . " - " . dPhtml($name) . "</td>";
 				}		
 				echo "</td>";
 				echo '</tr>';
@@ -71,7 +71,7 @@
 						$activities[$obj->task_id]=true;//just inform this activity was used 
 						$hasActivities=true;
 						$task_name=$obj->task_name;
-						echo "<script>addLine('$task_name','','','','','','". $obj->task_id ."','','','','',$id);</script>";
+						echo "<script>addLine(" . dPjs($task_name) . ",'','','','','','". $obj->task_id ."','','','','',$id);</script>";
 					}
 					//end: code to filter workpackages activities		
 					if(!$hasActivities){
@@ -97,7 +97,7 @@
 		if($activities[$task->task_id]==null){
 			$taskDescription=$task->task_name;
 			$taskId=$task->task_id;
-			echo "<script>addLine('$taskDescription','','','','','',$taskId,'','','','',$id);</script>";
+			echo "<script>addLine(" . dPjs($taskDescription) . ",'','','','','',$taskId,'','','','',$id);</script>";
 			//$startDate=$task['task_start_date'];
 			//$endDate=$task['task_end_date'];
 			//$startDateObj=new DateTime($startDate);

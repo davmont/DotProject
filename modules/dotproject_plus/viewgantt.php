@@ -179,7 +179,7 @@ foreach ($projects as $p) {
 // months to scroll
 $scroll_date = 1;
 
-$display_option = dPgetParam($_POST, 'display_option', 'all');
+$display_option = dPvalidateOrder(dPgetParam($_POST, 'display_option', 'all'), array('this_month', 'all', 'custom'), 'all');
 
 // format dates
 $df = $AppUI->getPref('SHDATEFORMAT');

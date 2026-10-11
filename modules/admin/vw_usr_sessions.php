@@ -135,30 +135,30 @@ $tab = (int) dPgetParam($_REQUEST, 'tab', 0);
         if ($canEdit && $canDelete) {
             echo ('<input type="button" class="button" value="' . $AppUI->_('logout_session')
                 . '" onclick="javascript:logoutSession(\'' . $row['session_id'] . "', '"
-                . $row['user_access_log_id'] . "', '" . $row['u_user_id'] . "', '"
-                . ($row['contact_first_name'] . ' ' . $row['contact_last_name']) . '\');" />' . "\n");
+                . $row['user_access_log_id'] . "', '" . $row['u_user_id'] . "', "
+                . dPjsAttr($row['contact_first_name'] . ' ' . $row['contact_last_name']) . ');" />' . "\n");
         }
         echo ("    </td>\n");
         echo ('    <td align="center" nowrap="nowrap">' . "\n");
         if ($canEdit && $canDelete && $logoutUserFlag) {
             echo ('<input type="button" class="button" value="' . $AppUI->_('logout_user')
-                . '" onclick="javascript:logoutUser(\'' . $row['u_user_id'] . "', '"
-                . ($row['contact_first_name'] . ' ' . $row['contact_last_name']) . '\');" />' . "\n");
+                . '" onclick="javascript:logoutUser(\'' . $row['u_user_id'] . "', "
+                . dPjsAttr($row['contact_first_name'] . ' ' . $row['contact_last_name']) . ');" />' . "\n");
         }
         echo ("    </td>\n");
         echo ('    <td><a href="?m=admin&amp;a=viewuser&amp;user_id=' . $row['u_user_id']
-            . '">' . $row['user_username'] . "</a></td>\n");
+            . '">' . dPhtml($row['user_username']) . "</a></td>\n");
         echo ('    <td>');
 
         if ($row['contact_first_name'] && $row['contact_last_name']) {
-            echo ($row['contact_last_name'] . ', ' . $row['contact_first_name']);
+            echo dPhtml($row['contact_last_name'] . ', ' . $row['contact_first_name']);
         } else {
             echo ('<span style="font-style: italic">unknown</span>');
         }
 
         echo ("</td>\n");
-        echo ('    <td><a href="?m=companies&amp;a=view&amp;company_id=' . $row['contact_company']
-            . '">' . $row['company_name'] . "</a></td>\n");
+        echo ('    <td><a href="?m=companies&amp;a=view&amp;company_id=' . (int)$row['contact_company']
+            . '">' . dPhtml($row['company_name']) . "</a></td>\n");
         echo ('    <td>' . $row['date_time_in'] . "</td>\n");
         echo ('    <td>' . $row['user_ip'] . "</td>\n");
         echo ("  </tr>\n");

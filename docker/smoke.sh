@@ -33,7 +33,8 @@ check "GET dosql refused" "$(code "$U?m=companies&dosql=do_company_aed&company_i
 $DB -e "DELETE FROM dotp_companies WHERE company_name LIKE 'Smoke%'"
 code -X POST "$U?m=companies" -d "dosql=do_company_aed&company_id=0&company_name=SmokeGood&csrf_token=$T" >/dev/null
 check "POST valid token saves" "$($DB -e "SELECT COUNT(*) FROM dotp_companies WHERE company_name='SmokeGood'")" "1"
-check "token injected into POST forms" "$(curl -s -c "$CJ" -b "$CJ" "$U?m=companies&a=addedit" | grep -c 'name="csrf_token"')" "2"
+P=$(curl -s -c "$CJ" -b "$CJ" "$U?m=companies&a=addedit")
+check "token injected into POST forms" "$(grep -o 'name="csrf_token" value=' <<<"$P" | wc -l)" "$(tr '\n' ' ' <<<"$P" | grep -oiE '<form[^>]*method=.?post' | wc -l)"
 
 # Write permission on the module: guest (view only) cannot write, worker can
 login guest guest >/dev/null; T=$(token)

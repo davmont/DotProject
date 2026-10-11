@@ -1469,14 +1469,15 @@ class CTitleBlock_core
 				$t = (($v[1]) ? ('<img src="' . dPfindImage($v[1], $this->module)
 					. '" border="" alt="" />&nbsp;') : '');
 				$t .= $AppUI->_($v[0]);
-				$crumbs[] = ('<a href="' . $k . '">' . $t . '</a>');
+				// Links may carry request values; keep entities already written as &amp;.
+				$crumbs[] = ('<a href="' . htmlspecialchars($k, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '">' . $t . '</a>');
 			}
 			$breadcrumbs = array();
 			foreach ($this->breadcrumbs as $k => $v) {
 				$t = (($v[1]) ? ('<img src="' . dPfindImage($v[1], $this->module)
 					. '" border="" alt="" width="16" height="16"/>&nbsp;') : '');
 				$t .= $AppUI->_($v[0]);
-				$breadcrumbs[] = ($k != '') ? ('<a href="' . $k . '">' . $t . '</a>') : ('<span>' . $t . '</span>');
+				$breadcrumbs[] = ($k != '') ? ('<a href="' . htmlspecialchars($k, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '">' . $t . '</a>') : ('<span>' . $t . '</span>');
 			}
 			$s .= "\n" . '<table border="0" cellpadding="4" cellspacing="0" width="100%">';
 			$s .= "\n<tr>";

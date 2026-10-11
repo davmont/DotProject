@@ -78,14 +78,14 @@ $s = '';
 foreach ($logs as $row) {
 	$s .= '<tr bgcolor="white" valign="top">';
 	$s .= '<td width="100">'.$register_format[$row["register_format"]].'</td>';
-	$s .= '<td nowrap="nowrap">'.$row["register_code"] .'</td>';
-	$s .= '<td width="100">'.@$row["register_start_date"] .'</td>';
-	$s .= '<td width="100">'.@$row["register_end_date"] . '</td>';
-	$s .= '<td width="100">'.@$row["register_description"].'</td>';
-	$s .= '<td width="100">'.($row["register_owner"] ? $users[$row["register_owner"]] : null) .'</td>';
-	$s .= '<td width="100">'.($row["register_client"] ? $contacts[$row["register_client"]] : null).'</td>';
-	$s .= '<td width="100">'.($row["register_project"] ? $projects[$row["register_project"]] : null) .'</td>';
-	$s .= '<td width="100">'.($row["register_ref_id"] ? $row["register_ref_id"] : null).'</td>';
+	$s .= '<td nowrap="nowrap">'.dPhtml($row["register_code"]) .'</td>';
+	$s .= '<td width="100">'.dPhtml(@$row["register_start_date"]) .'</td>';
+	$s .= '<td width="100">'.dPhtml(@$row["register_end_date"]) . '</td>';
+	$s .= '<td width="100">'.dPhtml(@$row["register_description"]).'</td>';
+	$s .= '<td width="100">'.dPhtml(($row["register_owner"] ? $users[$row["register_owner"]] : null)) .'</td>';
+	$s .= '<td width="100">'.dPhtml(($row["register_client"] ? $contacts[$row["register_client"]] : null)).'</td>';
+	$s .= '<td width="100">'.dPhtml(($row["register_project"] ? $projects[$row["register_project"]] : null)) .'</td>';
+	$s .= '<td width="100">'.dPhtml(($row["register_ref_id"] ? $row["register_ref_id"] : null)).'</td>';
 	$s .= '<td width="100">'.($row["register_state"] ? $register_state[$row["register_state"]] : null).'</td>';
 	$s .= '</tr>';
 }

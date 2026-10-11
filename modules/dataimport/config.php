@@ -12,7 +12,7 @@ if (! $canEdit)
 $allowedTables = array('projects', 'tasks');
 
 $firstTime = dPgetParam($_REQUEST, 'first', 0);
-$diconfig_id = dPgetParam($_REQUEST, 'diconfig_id', 0);
+$diconfig_id = dPgetIntParam($_REQUEST, 'diconfig_id', 0);
 $obj = new CDataImport;
 if ($diconfig_id) {
   $obj->load($diconfig_id, false);
@@ -87,11 +87,11 @@ $titleBlock->show();
 <table border="0" cellpadding="4" cellspacing="0" width="100%" class="std">
   <tr>
     <td align="right"><?php echo $AppUI->_('Format Name'); ?></td>
-    <td><input type="text" class="text" name="diconfig_name" value="<?php echo $obj->diconfig_name; ?>" /></td>
+    <td><input type="text" class="text" name="diconfig_name" value="<?php echo dPhtml($obj->diconfig_name); ?>" /></td>
   </tr>
   <tr>
     <td align="right"><?php echo $AppUI->_('Field Separator'); ?></td>
-    <td><input type="text" class="text" name="diconfig_field_sep" value="<?php echo $obj->diconfig_field_sep; ?>" /></td>
+    <td><input type="text" class="text" name="diconfig_field_sep" value="<?php echo dPhtml($obj->diconfig_field_sep); ?>" /></td>
   </tr>
   <tr>
     <td align="right"><?php echo $AppUI->_('Strip Quotes'); ?></td>
@@ -101,7 +101,7 @@ $titleBlock->show();
   </tr>
   <tr>
     <td align="right"><?php echo $AppUI->_('Quote Escape'); ?></td>
-    <td><input type="text" class="text" name="diconfig_quote_char" value="<?php echo $obj->diconfig_quote_char; ?>" /></td>
+    <td><input type="text" class="text" name="diconfig_quote_char" value="<?php echo dPhtml($obj->diconfig_quote_char); ?>" /></td>
   </tr>
   <tr>
     <td align="right"><?php echo $AppUI->_('Make Default'); ?></td>
@@ -126,7 +126,7 @@ $titleBlock->show();
     foreach ($field_list as $field) {
       $id++;
       $row = '<tr id="field_row^' . $id . '"><td><input type="text" class="text" name="dimap_source_field[';
-      $row .= $id . ']" id="dimap_source_field^' . $id . '"  value="' . $field['dimap_source_field'];
+      $row .= $id . ']" id="dimap_source_field^' . $id . '"  value="' . dPhtml($field['dimap_source_field']);
       $row .= '" /></td><td>';
       $row .= diBuildSelect('dimap_target_table', $id, $allowedTables, $field['dimap_target_table'], true, 'diconfig_set_target(this)');
       $row .= '</td><td>';

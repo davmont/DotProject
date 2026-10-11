@@ -110,7 +110,7 @@ function delIt() {
 		<table cellspacing="1" cellpadding="2" border="0" width="100%">
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Company');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->company_name;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->company_name);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Total');?>:</td>
@@ -139,7 +139,7 @@ function delIt() {
 		</tr>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Terms');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->invoice_terms; ?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->invoice_terms); ?></td>
 		</tr>
 		</table>
 	</td>

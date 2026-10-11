@@ -166,7 +166,7 @@ $search_text = (($AppUI->getState('searchtext')) ? $AppUI->getState('searchtext'
 $titleBlock->addCell($AppUI->_('Search') . ':');
 $titleBlock->addCell(
 	('<input type="text" class="text" SIZE="10" name="searchtext"'
-		. ' onchange="javascript:document.searchfilter.submit();" value="' . $search_text . '" '
+		. ' onchange="javascript:document.searchfilter.submit();" value="' . dPhtml($search_text) . '" '
 		. 'title="' . $AppUI->_('Search in name and description fields')
 		. '"/><!--<input type="submit" class="button" value=">" title="'
 		. $AppUI->_('Search in name and description fields') . '"/>-->'),

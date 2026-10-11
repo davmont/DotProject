@@ -94,7 +94,7 @@ $AppUI->getModuleJS('unitcost', 'tabs');
                     <?php echo $AppUI->_( 'Unit of Measure' );?>
                   </td>
                   <td>
-                    <input type="text" name="unit_of_measure" id="unit_of_measure" value="<?php echo $unit_of_measure ?>" class="text" size="5" maxlength="5"/>
+                    <input type="text" name="unit_of_measure" id="unit_of_measure" value="<?php echo dPhtml($unit_of_measure) ?>" class="text" size="5" maxlength="5"/>
                   </td>
                 </tr>
                 <tr>
@@ -136,7 +136,7 @@ $AppUI->getModuleJS('unitcost', 'tabs');
                     <?php echo $AppUI->_( 'Normative Reference' );?>
                   </td>
                   <td>
-                    <input type="text" name="norm_ref" id="norm_ref" value="<?php echo $norm_ref ?>" class="text" size="40" maxlength="40"/>
+                    <input type="text" name="norm_ref" id="norm_ref" value="<?php echo dPhtml($norm_ref) ?>" class="text" size="40" maxlength="40"/>
                   </td>
                 </tr>
                 <tr>
@@ -144,7 +144,7 @@ $AppUI->getModuleJS('unitcost', 'tabs');
                     <?php echo $AppUI->_( 'Normative Description' );?>
                   </td>
                   <td>
-                    <textarea name="norm_dsc" id="norm_dsc" class="textarea" cols="40" rows="8"/><?php echo $norm_dsc ?></textarea>
+                    <textarea name="norm_dsc" id="norm_dsc" class="textarea" cols="40" rows="8"/><?php echo dPhtml($norm_dsc) ?></textarea>
                   </td>
                 </tr>
               </table>

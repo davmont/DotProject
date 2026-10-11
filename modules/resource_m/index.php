@@ -152,7 +152,7 @@ $titleBlock->show();
 		if(isset($_POST['expandedList'])) {
 			$expand = explode(',',$toExpand);
 			foreach ($expand as $id) {
-				if ($id != '')
+				if ($id != '' && preg_match('/^[\w-]+$/', $id))
 					echo '$("tr#'.$id.'").expand();';
 			}
 		} ?>

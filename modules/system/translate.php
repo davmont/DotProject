@@ -11,6 +11,10 @@ if (!$canEdit || $AppUI->user_type != 1) {
 
 $module = dPgetCleanParam($_REQUEST, 'module', 'admin');
 $lang = dPgetCleanParam($_REQUEST, 'lang', $AppUI->user_locale);
+// lang names a locale directory and is echoed into the form below.
+if (!in_array($lang, $AppUI->readDirs('locales'), true)) {
+	$lang = $AppUI->user_locale;
+}
 
 $AppUI->savePlace('m=system&a=translate&module='.$module.'&lang=' . $lang);
 

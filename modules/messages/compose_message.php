@@ -59,14 +59,14 @@ if (!defined('DP_BASE_DIR')) {
 			
 			<tr>
 				<th><?php echo $AppUI->_("Title"); ?></th>
-				<td><input name='task_name' type='text' size='40' value='<?php echo $default_title; ?>' class='text' /></td>
+				<td><input name='task_name' type='text' size='40' value='<?php echo dPhtml($default_title); ?>' class='text' /></td>
 			</tr>
 			
 			<tr>
 				<th colspan='2'><?php echo $AppUI->_("Body"); ?></th>
 			</tr>
 			<tr>
-				<td colspan='2'><textarea name='task_description' class='text' cols='70' rows='10'><?php echo $default_body; ?></textarea></td>
+				<td colspan='2'><textarea name='task_description' class='text' cols='70' rows='10'><?php echo dPhtml($default_body); ?></textarea></td>
 			</tr>
 			
 			<tr>

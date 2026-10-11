@@ -15,7 +15,7 @@
 		echo "<script>var roleIds=new Array();roleNames=new Array();";
 		foreach ($roles as $role) {
 			$roles[$role->getId()]=$role->getDescription();
-			echo "roleNames[$i]='".$role->getDescription()."';roleIds[$i]='".$role->getId()."';";
+			echo "roleNames[$i]=".dPjs($role->getDescription()).";roleIds[$i]='".$role->getId()."';";
 			$i++;		
 		}
 		echo "</script>";
@@ -65,7 +65,7 @@
 				$sizeMetrics[3]="Hours";
 				//add decomposed activities
 				if($is_leaf=="1"){	
-					echo "<tr bgcolor='#E8E8E8'><td colspan='7'>$number - $name</td>";
+					echo "<tr bgcolor='#E8E8E8'><td colspan='7'>" . dPhtml($number) . " - " . dPhtml($name) . "</td>";
 					//start: add column for size estimation
 					$eapItem= new  WBSItemEstimation();
 					$eapItem->load($id);
@@ -100,7 +100,7 @@
 							echo "<tr>";
 							echo "<td></td>";
 							echo "<td valign='top'>$task_id</td>";
-							echo "<td width='200' valign='top'>$taskDescription</td>";
+							echo "<td width='200' valign='top'>" . dPhtml($taskDescription) . "</td>";
 							echo "<td valign='top' nowrap>
 								   <input type='text' class='text' name='planned_effort_$task_id' value='".$projectTaskEstimation->getEffort()."' size='8'>
 									<select class='text' name='planned_effort_unit_$task_id'  />";
@@ -127,7 +127,7 @@
 					}
 					//end: code to filter workpackages activities
 				}else{
-					echo "<tr><td colspan='8'>$number - $name</td></tr>";
+					echo "<tr><td colspan='8'>" . dPhtml($number) . " - " . dPhtml($name) . "</td></tr>";
 				}
 			}
 			?>

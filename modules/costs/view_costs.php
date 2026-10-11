@@ -90,7 +90,7 @@ $notHumanCost = getResources("Non-Human", $whereProject);
                     <img src="./modules/costs/images/stock_edit-16.png" border="0" width="12" height="12">
                 </a>
             </td>
-            <td nowrap="nowrap"><?php echo $row['cost_description']; ?></td>
+            <td nowrap="nowrap"><?php echo dPhtml($row['cost_description']); ?></td>
             <td nowrap="nowrap"><?php echo $date_begin ? $date_begin->format($df) : ''; ?></td>
             <td nowrap="nowrap"><?php echo $date_end ? $date_end->format($df) : ''; ?></td>
             <td nowrap="nowrap"><?php echo $row['cost_quantity']; ?></td>
@@ -137,7 +137,7 @@ $notHumanCost = getResources("Non-Human", $whereProject);
                     <img src="./modules/costs/images/stock_edit-16.png" border="0" width="12" height="12">
                 </a>
             </td>
-            <td nowrap="nowrap"><?php echo $row['cost_description']; ?></td>
+            <td nowrap="nowrap"><?php echo dPhtml($row['cost_description']); ?></td>
             <td nowrap="nowrap"><?php echo $date_begin ? $date_begin->format($df) : ''; ?></td>
             <td nowrap="nowrap"><?php echo $date_end ? $date_end->format($df) : ''; ?></td>
             <td nowrap="nowrap"><?php echo $row['cost_quantity']; ?></td>

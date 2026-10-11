@@ -104,7 +104,7 @@ echo ($advanced_search == 'on' ? 'visibility:visible':'visibility:hidden'); ?> "
 	</td>
 	<td align="left">
 		<input class="text" size="18" type="text" id="keyword1" name="keyword1" value="<?php 
-echo stripslashes($keyword1); ?>" />
+echo dPhtml(stripslashes($keyword1)); ?>" />
 	</td>
 	<td align="left">
 		<input class="button" type="submit" value="<?php echo $AppUI->_('Search'); ?>" />
@@ -134,17 +134,17 @@ echo ($advanced_search== 'on' ? 'display:block' : 'display:none'); ?> ">
 	<td align="left">
 		<label for="keyword2">2.</label>
 		<input class="text" size="18" type="text" id="keyword2" name="keyword2" value="<?php 
-echo stripslashes($keyword2); ?>" />
+echo dPhtml(stripslashes($keyword2)); ?>" />
 	</td>
 	<td align="left">
 		<label for="keyword3">3.</label>
 		<input class="text" size="18" type="text" id="keyword3" name="keyword3" value="<?php 
-echo stripslashes($keyword3); ?>" />
+echo dPhtml(stripslashes($keyword3)); ?>" />
 	</td>
 	<td align="left">
 		<label for="keyword4">4.</label>
 		<input class="text" size="18" type="text" id="keyword4" name="keyword4" value="<?php 
-echo stripslashes($keyword4); ?>" />
+echo dPhtml(stripslashes($keyword4)); ?>" />
 	</td>
 	<td align="left">
 		<input name="ignorespecchar" id="ignorespecchar" type="checkbox" value="on"<?php 

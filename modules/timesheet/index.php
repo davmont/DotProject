@@ -110,7 +110,7 @@ $titleBlock->show();
 
 //get week to be displayed (#weeks ago current week being 0)
 if (isset( $_GET['wk'] ) ) {
-	$AppUI->setState( 'TmsWk', $_GET['wk'] );
+	$AppUI->setState( 'TmsWk', (int) $_GET['wk'] );
 }
 $wk = $AppUI->getState( 'TmsWk') !== NULL && $wk >= 0 ? $AppUI->getState( 'TmsWk' ) : 0;
 
@@ -122,7 +122,7 @@ else
 	$week_text = "$wk " . $AppUI->_("weeks ago");
 
 if (isset( $_GET['tab'] )) {
-	$AppUI->setState( 'TmsVwTab', $_GET['tab'] );
+	$AppUI->setState( 'TmsVwTab', (int) $_GET['tab'] );
 }
 $tab = $AppUI->getState( 'TmsVwTab' ) !== NULL ? $AppUI->getState( 'TmsVwTab' ) : 0;
 
@@ -193,8 +193,8 @@ foreach ($logs as $log_row) {
 	$s .= "\n\t\t<td><a href=\"?m=tasks&a=view&task_id=${log_row['task_log_task']}&tab=1&task_log_id=".@$log_row['task_log_id'].'" style="cursor: hand;" title="edit log">'
 			. "\n\t\t\t". dPshowImage( './images/icons/stock_edit-16.png', 16, 16, 'edit log' )
 			. "\n\t\t</a></td>";
-	$s .= "<td nowrap=\"nowrap\" align=\"left\"><a href=\"index.php?m=projects&a=view&project_id=${log_row['project_id']}\" title=\"${log_row['project_description']}\">${log_row['project_short_name']}</a> -> ";
-	$s .= "<a href=\"index.php?m=tasks&a=view&task_id=${log_row['task_id']}\" title=\"${log_row['task_description']}\">" . truncate($log_row["task_name"], 30, '...') . "</a> -> " . truncate($log_row["task_log_name"], 30, '...') . "</td>\n\t";
+	$s .= "<td nowrap=\"nowrap\" align=\"left\"><a href=\"index.php?m=projects&a=view&project_id=${log_row['project_id']}\" title=\"" . dPhtml($log_row['project_description']) . "\">" . dPhtml($log_row['project_short_name']) . "</a> -> ";
+	$s .= "<a href=\"index.php?m=tasks&a=view&task_id=${log_row['task_id']}\" title=\"" . dPhtml($log_row['task_description']) . "\">" . dPhtml(truncate($log_row["task_name"], 30, '...')) . "</a> -> " . dPhtml(truncate($log_row["task_log_name"], 30, '...')) . "</td>\n\t";
 	$s .= '<td nowrap="nowrap" class="numerical">' . sprintf("%.2f", $log_row["task_log_hours"]) . "</td>\n";
 	$s .= '</tr>';
 }

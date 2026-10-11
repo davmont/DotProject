@@ -126,15 +126,15 @@ function setTask(key, val) {
 		<table cellspacing="1" cellpadding="2" width="60%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Link Name');?>:</td>
-			<td align="left"><input type="text" class="text" name="link_name" value="<?php echo $obj->link_name;?>" /></td>
+			<td align="left"><input type="text" class="text" name="link_name" value="<?php echo dPhtml($obj->link_name);?>" /></td>
 	<?php if ($link_id) { ?>
 			<td>
-				<a href="<?php echo $obj->link_url;?>" target="_blank"><?php echo $AppUI->_('go');?></a>
+				<a href="<?php echo dPhtml(dPsafeUrl($obj->link_url));?>" target="_blank"><?php echo $AppUI->_('go');?></a>
 			</td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Uploaded By');?>:</td>
-			<td align="left" class="hilite"><?php echo $obj->contact_first_name . ' '. $obj->contact_last_name;?></td>
+			<td align="left" class="hilite"><?php echo dPhtml($obj->contact_first_name . ' '. $obj->contact_last_name);?></td>
 	<?php } ?>
 		</tr>
                 <tr>
@@ -156,7 +156,7 @@ function setTask(key, val) {
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Task');?>:</td>
 			<td align="left" colspan="2" valign="top">
 				<input type="hidden" name="link_task" value="<?php echo $link_task;?>" />
-				<input type="text" class="text" name="task_name" value="<?php echo $task_name;?>" size="40" disabled="disabled" />
+				<input type="text" class="text" name="task_name" value="<?php echo dPhtml($task_name);?>" size="40" disabled="disabled" />
 				<input type="button" class="button" value="<?php echo $AppUI->_('select task');?>..." onclick="javascript:popTask()" />
 			</td>
 		</tr>
@@ -164,13 +164,13 @@ function setTask(key, val) {
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Description');?>:</td>
 			<td align="left">
-				<textarea name="link_description" class="textarea" rows="4" style="width:270px"><?php echo $obj->link_description;?></textarea>
+				<textarea name="link_description" class="textarea" rows="4" style="width:270px"><?php echo dPhtml($obj->link_description);?></textarea>
 			</td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Link URL');?>:</td>
-			<td align="left"><input type="field" name="link_url" style="width:270px" value="<?php echo $obj->link_url ?>" /></td>
+			<td align="left"><input type="field" name="link_url" style="width:270px" value="<?php echo dPhtml($obj->link_url) ?>" /></td>
 		</tr>
 		</table>
 	</td>

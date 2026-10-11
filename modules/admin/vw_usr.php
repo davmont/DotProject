@@ -90,13 +90,13 @@ foreach ($users as $row) {
 			</td>
 			<td>
 <?php 
-		$user_display = addslashes($row['contact_first_name'] . ' ' . $row['contact_last_name']);
+		$user_display = $row['contact_first_name'] . ' ' . $row['contact_last_name'];
 		$user_display = trim($user_display);
 		if (empty($user_display)) {
         $user_display = $row['user_username'];
 		}
 ?>
-				<a href="javascript:delMe(<?php echo $row['user_id'];?>, '<?php echo $user_display;?>')" title="<?php echo $AppUI->_('delete');?>">
+				<a href="#" onclick="delMe(<?php echo (int)$row['user_id'];?>, <?php echo dPjsAttr($user_display);?>); return false;" title="<?php echo $AppUI->_('delete');?>">
 					<?php echo dPshowImage('./images/icons/stock_delete-16.png', 16, 16, ''); ?>
 				</a>
 			</td>
@@ -130,20 +130,20 @@ foreach ($users as $row) {
 	</td>
 	<td>
 		<a href="?m=admin&amp;a=viewuser&amp;user_id=<?php echo $row['user_id'];?>"><?php 
-echo $row['user_username'];?></a>
+echo dPhtml($row['user_username']);?></a>
 	</td>
 	<td>
-		<a href="mailto:<?php echo $row['contact_email'];?>"><img src="images/obj/email.gif" width="16" height="16" border="0" alt="email"></a>
+		<a href="mailto:<?php echo dPhtml($row['contact_email']);?>"><img src="images/obj/email.gif" width="16" height="16" border="0" alt="email"></a>
 <?php
 	if ($row['contact_last_name'] && $row['contact_first_name']) {
-		echo $row['contact_last_name'].', '.$row['contact_first_name'];
+		echo dPhtml($row['contact_last_name'].', '.$row['contact_first_name']);
 	} else {
         echo '<span style="font-style: italic">unknown</span>';
 	}
 ?>
 	</td>
 	<td>
-		<a href="?m=companies&amp;a=view&amp;company_id=<?php echo $row['contact_company'];?>"><?php echo $row['company_name'];?></a>
+		<a href="?m=companies&amp;a=view&amp;company_id=<?php echo (int)$row['contact_company'];?>"><?php echo dPhtml($row['company_name']);?></a>
 	</td>
 </tr>
 <?php 

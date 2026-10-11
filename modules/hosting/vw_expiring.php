@@ -64,7 +64,7 @@ while($row = db_fetch_assoc($results)){
 		}
 ?>
 				<tr>
-					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $row['domain_id']; ?>"><?php echo $modifier; ?><?php echo $row['domain_name']; ?><?php echo $endModifier; ?></a></td>
+					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $row['domain_id']; ?>"><?php echo $modifier; ?><?php echo dPhtml($row['domain_name']); ?><?php echo $endModifier; ?></a></td>
 					<td align="center"><?php echo $modifier; ?><?php echo $row['domain_expiry_date']; ?><?php echo $endModifier; ?></td>
 				</tr>		
 <?php
@@ -96,8 +96,8 @@ foreach($domains as $domain){
 		}
 ?>
 				<tr>
-					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $domain['domain_id']; ?>"><?php echo $modifier; ?><?php echo $domain['domain_name']; ?><?php echo $endModifier; ?></a></td>
-					<td align="center"><?php echo $modifier; ?><?php echo $domain['hosting_package_name']; ?><?php echo $endModifier; ?></td>
+					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $domain['domain_id']; ?>"><?php echo $modifier; ?><?php echo dPhtml($domain['domain_name']); ?><?php echo $endModifier; ?></a></td>
+					<td align="center"><?php echo $modifier; ?><?php echo dPhtml($domain['hosting_package_name']); ?><?php echo $endModifier; ?></td>
 					<td align="center"><?php echo $modifier; ?><?php echo $domain['hosting_expiry_date']; ?><?php echo $endModifier; ?></td>
 				</tr>
 <?php

@@ -40,7 +40,7 @@ else
 								<form name="frmHeaderSearch" action="?m=smartsearch" method="post"
 									style="display:inline; margin-left:20px;">
 									<input class="text" type="text" id="keyword1" name="keyword1"
-										value="<?php echo dPgetCleanParam($_POST, 'keyword1', ''); ?>" accesskey="k" />
+										value="<?php echo dPhtml(dPgetCleanParam($_POST, 'keyword1', '')); ?>" accesskey="k" />
 									<input class="button" type="submit" value="<?php echo $AppUI->_('Search') ?>" />
 								</form>
 							<?php endif; ?>

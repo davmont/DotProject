@@ -213,16 +213,16 @@ $titleBlock->show();
 					href="?m=contacts&amp;a=view&amp;contact_id=<?php echo $contactid; ?>"><strong><?php echo $contact_name; ?></strong></a>
 			</td>
 			<td>
-				<?php echo (!is_numeric($row['contact_company']) ? $row['contact_company'] : $row['company_name']); ?>
+				<?php echo dPhtml((!is_numeric($row['contact_company']) ? $row['contact_company'] : $row['company_name'])); ?>
 			</td>
 			<td>
 				<?php if ($row['contact_email']) { ?>
-					<a href="mailto:<?php echo $row['contact_email']; ?>"
-						class="mailto"><?php echo $row['contact_email']; ?></a>
+					<a href="mailto:<?php echo dPhtml($row['contact_email']); ?>"
+						class="mailto"><?php echo dPhtml($row['contact_email']); ?></a>
 				<?php } ?>
 			</td>
 			<td>
-				<?php echo $row['contact_phone']; ?>
+				<?php echo dPhtml($row['contact_phone']); ?>
 			</td>
 			<td>
 				<?php

@@ -58,7 +58,7 @@ $df = $AppUI->getPref('SHDATEFORMAT');
  	<td> <a href="?m=closure&amp;a=view&amp;pma_id=<?php echo $p['pma_id'];?>">
    <?php echo $meeting_date ? $meeting_date->format($df) : ''; ?> </a></td>
 
-	<td> <?php echo $p['participants']; ?></td>
+	<td> <?php echo dPhtml($p['participants']); ?></td>
 
   </tr>
 <?php } ?>
@@ -70,5 +70,5 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 </td></tr>
 </table>
 <div align="right">
-<input class="button" type="button" name="new post mortem" value="<?php echo 'new post mortem'; ?>" onclick="location.href = '?m=closure&amp;a=addedit&amp;project_name=<?php echo $project_name;?>';" />
+<input class="button" type="button" name="new post mortem" value="<?php echo 'new post mortem'; ?>" onclick="location.href = <?php echo htmlspecialchars(json_encode('?m=closure&a=addedit&project_name=' . urlencode($project_name)), ENT_QUOTES); ?>;" />
 </div>

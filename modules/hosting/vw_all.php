@@ -58,7 +58,7 @@ while($row = db_fetch_assoc($results)){
 	$domains[] = $row;
 ?>
 				<tr>
-					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $row['domain_id']; ?>"><?php echo $row['domain_name']; ?></a></td>
+					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $row['domain_id']; ?>"><?php echo dPhtml($row['domain_name']); ?></a></td>
 					<td align="center"><?php echo $row['domain_expiry_date']; ?></td>
 				</tr>
 <?php
@@ -75,8 +75,8 @@ while($row = db_fetch_assoc($results)){
 foreach($domains as $domain){
 ?>
 				<tr>
-					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $domain['domain_id']; ?>"><?php echo $domain['domain_name']; ?></a></td>
-					<td align="center"><?php echo $domain['hosting_package_name']; ?></td>
+					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $domain['domain_id']; ?>"><?php echo dPhtml($domain['domain_name']); ?></a></td>
+					<td align="center"><?php echo dPhtml($domain['hosting_package_name']); ?></td>
 					<td align="center"><?php echo $domain['hosting_expiry_date']; ?></td>
 				</tr>
 <?php

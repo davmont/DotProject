@@ -862,9 +862,9 @@ foreach ($tasks_for_ids as $t) {
 
 
 
-if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
-    include_once DP_BASE_DIR . $_GET["show_external_page"];
-} else {
+// show_external_page used to include a file named by the request (a file inclusion hole).
+// The pages it pointed to no longer exist, so the tab is always shown.
+{
 
     $project = new CProject();
     $project->load($project_id);
@@ -888,7 +888,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
         foreach ($roles as $role) {
             $roles[$role->getId()] = $role->getDescription();
             ?>
-            roleNames[<?php echo $i ?>] = "<?php echo $role->getDescription() ?>";
+            roleNames[<?php echo $i ?>] = <?php echo dPjs($role->getDescription()) ?>;
             roleIds[<?php echo $i ?>] = "<?php echo $role->getId() ?>";
             hrPerRole[<?php echo $i ?>] = new Array();
             <?php
@@ -908,7 +908,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
             foreach ($records as $record) {
                 $userNameByHRid[$record[1]] = $record[5] . " " . $record[4];
                 ?>
-                hrPerRole[<?php echo $i ?>][<?php echo $j ?>] = "<?php echo $record[1] . "#!" . $record[5] . " " . $record[4] ?>";
+                hrPerRole[<?php echo $i ?>][<?php echo $j ?>] = <?php echo dPjs($record[1] . "#!" . $record[5] . " " . $record[4]) ?>;
                 <?php
                 $j++;
             }
@@ -931,7 +931,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
         foreach ($records as $record) {
             $userNameByHRid[$record[1]] = $record[5] . " " . $record[4];
             ?>
-            hrNames[<?php echo $i ?>] = "<?php echo $record[5] . " " . $record[4] ?>";
+            hrNames[<?php echo $i ?>] = <?php echo dPjs($record[5] . " " . $record[4]) ?>;
             hrIds[<?php echo $i ?>] = "<?php echo $record[1] ?>";
             <?php
             $i++;
@@ -946,7 +946,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
     ?>
     <br />
     <div style="text-align:right">
-        <form name="select_human_resource_filter_form" action="<?php echo $currentPage ?>" method="post">
+        <form name="select_human_resource_filter_form" action="<?php echo dPhtml($currentPage) ?>" method="post">
             <span style="color:#000000"><?php echo $AppUI->_("LBL_FILTER"); ?>:</span>
             <select id="project_resources_filter" name="project_resources_filter" onchange="filterActivitiesByUser()">
                 <!-- Filter to select activities for just a resource -->
@@ -957,8 +957,8 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                 foreach ($records as $record) {
                     ?>
                     <option <?php echo $project_resources_filter == $record[1] ? "selected" : "" ?>
-                        value="<?php echo $record[1] ?>">
-                        <?php echo $record[3] ?>
+                        value="<?php echo dPhtml($record[1]) ?>">
+                        <?php echo dPhtml($record[3]) ?>
                     </option>
                     <?php
                 }
@@ -1116,7 +1116,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                         <input name="dosql" type="hidden" value="do_delete_wbs_item" />
                         <input type="hidden" name="project_id" value="<?php echo $project_id; ?>" />
                         <input type="hidden" name="wbs_item_id" value="<?php echo $id; ?>" />
-                        <input type="hidden" name="wbs_item_name" value="<?php echo $name; ?>" />
+                        <input type="hidden" name="wbs_item_name" value="<?php echo dPhtml($name); ?>" />
                     </form>
 
                     <form name="sort_wbs_<?php echo $id ?>" id="sort_wbs_<?php echo $id ?>" method="post"
@@ -1156,7 +1156,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                     <span style="margin-left: 21px" id="div_numbering_<?php echo $id ?>">
                                         <?php echo $number ?>
                                     </span>
-                                    <?php echo $name ?>
+                                    <?php echo dPhtml($name) ?>
                                     &nbsp;&nbsp;
                                     (<?php echo sizeof($tasks) ?>)
 
@@ -1164,7 +1164,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                     <span style="font-style: italic">
                                         <?php
                                         echo $AppUI->_("LBL_TAMANHO") . ":  ";
-                                        echo $eapItem->getSize() . "   " . $eapItem->getSizeUnit();
+                                        echo $eapItem->getSize() . "   " . dPhtml($eapItem->getSizeUnit());
                                         ?>
                                     </span>
                                     <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -1193,7 +1193,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                             name="leaf_field_<?php echo $id ?>" value="<?php echo $is_leaf ?>" />
                                         <input type="hidden" name="wbs_item_order_<?php echo $id ?>" value="<?php echo $order; ?>" />
                                         <?php echo $AppUI->_("LBL_DESCRICAO") ?>: <input type="text" class="text"
-                                            value="<?php echo $name ?>" id="wbs_item_description_<?php echo $id ?>"
+                                            value="<?php echo dPhtml($name) ?>" id="wbs_item_description_<?php echo $id ?>"
                                             name="wbs_item_description_<?php echo $id ?>" size="35" maxlength="50" />
                                         &nbsp;
                                         <?php echo $AppUI->_("LBL_TAMANHO") ?>: <input type="text" class="text"
@@ -1204,7 +1204,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
 
                                         <input type="text" class="text" name="estimated_size_unit_<?php echo $id ?>"
                                             id="estimated_size_unit_<?php echo $id ?>" maxlength="30" size="25"
-                                            value="<?php echo $eapItem->getSizeUnit() ?>" />
+                                            value="<?php echo dPhtml($eapItem->getSizeUnit()) ?>" />
                                         <script>
                                             $("#estimated_size_unit_<?php echo $id ?>").autocomplete({ source: workPackageSizeOptions });
                                         </script>
@@ -1268,7 +1268,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                             $roleId = $role->getRoleId();
                                             $roleName = $roles[$roleId];
                                             $roleQuantity = $role->getQuantity();
-                                            $estimatedRolesTxt .= $roleName . " (" . $roleQuantity . ") <br />";
+                                            $estimatedRolesTxt .= dPhtml($roleName) . " (" . $roleQuantity . ") <br />";
                                         }
                                         //metric index is db key
                                         $effortMetrics = array();
@@ -1311,9 +1311,9 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                                 $allocated_hr_id = $record[0];
                                             }
                                             if ($allocated_hr_id != "") {
-                                                $estimatedRolesTxt .= $userNameByHRid[$allocated_hr_id]; //write user name
+                                                $estimatedRolesTxt .= dPhtml($userNameByHRid[$allocated_hr_id]); //write user name
                                             } else {
-                                                $estimatedRolesTxt .= "<i style='color:red'>" . $roles[$role->getRoleId()] . "</i>";
+                                                $estimatedRolesTxt .= "<i style='color:red'>" . dPhtml($roles[$role->getRoleId()]) . "</i>";
                                             }
                                             if ($totalRoles > $i) {
                                                 $estimatedRolesTxt .= ", ";
@@ -1335,7 +1335,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                             <input name="dosql" type="hidden" value="do_delete_activity" />
                                             <input type="hidden" name="project_id" value="<?php echo $project_id; ?>" />
                                             <input type="hidden" name="activity_id" value="<?php echo $obj->task_id ?>" />
-                                            <input type="hidden" name="activity_name" value="<?php echo $taskDescription ?>" />
+                                            <input type="hidden" name="activity_name" value="<?php echo dPhtml($taskDescription) ?>" />
                                         </form>
 
                                         <form name="sort_activity_<?php echo $obj->task_id ?>" id="sort_activity_<?php echo $obj->task_id ?>"
@@ -1353,7 +1353,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                             <input name="dosql" type="hidden" value="do_save_activity_estimations" />
                                             <input type="hidden" name="project_id" value="<?php echo $project_id; ?>" />
                                             <input type="hidden" name="activity_id" value="<?php echo $obj->task_id ?>" />
-                                            <input type="hidden" name="tab" value="<?php echo $_GET["tab"] ?>" />
+                                            <input type="hidden" name="tab" value="<?php echo (int) $_GET["tab"] ?>" />
 
                                             <tr id="<?php echo $rowId; ?>" ondblclick="showActivityDetails(<?php echo $task_id ?>,<?php echo $id ?>)"
                                                 style="cursor:pointer;height:  30px">
@@ -1383,14 +1383,14 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                                         A.<?php echo $activitiesIdsForDisplay[$task_id] ?></span>
 
                                                     <div id="activity_description_read_id_<?php echo $task_id ?>" style="width:160px;float:right">
-                                                        <?php echo $taskDescription ?>
+                                                        <?php echo dPhtml($taskDescription) ?>
                                                     </div>
                                                     <span id="activity_description_edit_id_<?php echo $task_id ?>" style="display:none;"
                                                         nowrap="nowrap">
                                                         <input name="activity_description_id_<?php echo $task_id ?>"
                                                             id="activity_description_id_<?php echo $task_id ?>" class="text"
                                                             style="width:200px;margin-left: 4px;margin-bottom: 4px;" type="text"
-                                                            value="<?php echo $taskDescription ?>" />
+                                                            value="<?php echo dPhtml($taskDescription) ?>" />
                                                     </span>
                                                 </td>
                                                 <td style="text-align: center" nowrap="nowrap">
@@ -1504,7 +1504,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                                                             $user_name = $res->fields["contact_first_name"] . " " . $res->fields["contact_last_name"];
                                                                             ?>
                                                                             <option value="<?php echo $user_id; ?>" <?php echo $user_id == $obj->task_owner ? "selected" : "" ?>>
-                                                                                <?php echo $user_name; ?>
+                                                                                <?php echo dPhtml($user_name); ?>
                                                                             </option>
                                                                             <?php
                                                                         }
@@ -1523,7 +1523,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                                                     $res = &$query->exec();
                                                                     for ($res; !$res->EOF; $res->MoveNext()) {
                                                                         $user_name = $res->fields["contact_first_name"] . " " . $res->fields["contact_last_name"];
-                                                                        echo $user_name;
+                                                                        echo dPhtml($user_name);
                                                                     }
                                                                     ?>
                                                                 </span>
@@ -1676,7 +1676,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                     <span style="margin-left: 21px" id="div_numbering_<?php echo $id ?>">
                                         <?php echo $number ?>
                                     </span>
-                                    <?php echo $name ?>
+                                    <?php echo dPhtml($name) ?>
 
                                 </span>
                                 <span id="edit_workpackage_id_<?php echo $id ?>" style="display:none">
@@ -1694,7 +1694,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
                                         <input type="hidden" name="wbs_item_order_<?php echo $id ?>" value="<?php echo $order; ?>" />
 
                                         <?php echo $AppUI->_("LBL_DESCRIPTION") ?>: <input type="text" class="text"
-                                            value="<?php echo $name ?>" id="wbs_item_description_<?php echo $id ?>"
+                                            value="<?php echo dPhtml($name) ?>" id="wbs_item_description_<?php echo $id ?>"
                                             name="wbs_item_description_<?php echo $id ?>" size="35" maxlength="40" />
                                         <input type="hidden" class="text" value="0" maxlength="10" size="15"
                                             name="estimated_size_<?php echo $id ?>" />
@@ -1731,7 +1731,7 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
             $_SESSION["new_eap_array"][$_GET["id_new_eap_item"] . "_" . $projectId] = true;
             ?>
             <script>
-                showWBSItemEdit(<?php echo $_GET["id_new_eap_item"]; ?>);
+                showWBSItemEdit(<?php echo (int) $_GET["id_new_eap_item"]; ?>);
             </script>
             <?php
         }
@@ -1743,8 +1743,8 @@ if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
             $_SESSION["new_activity_array"][$_GET["id_new_activity"] . "_" . $projectId] = true;
             ?>
                 <script>
-                    showActivityEdit(<?php echo $_GET["id_new_activity"] ?>, <?php echo $_GET["work_package_id"] ?>);
-                    //addEstimatedRoleHR(<?php echo $_GET["id_new_activity"] ?>, '', '', 1); // show HR for the new activities. Show to be unneeded.
+                    showActivityEdit(<?php echo (int) $_GET["id_new_activity"] ?>, <?php echo (int) $_GET["work_package_id"] ?>);
+                    //addEstimatedRoleHR(<?php echo (int) $_GET["id_new_activity"] ?>, '', '', 1); // show HR for the new activities. Show to be unneeded.
                 </script>
             <?php
         }

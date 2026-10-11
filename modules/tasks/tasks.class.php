@@ -2993,7 +2993,7 @@ function sort_by_item_title($title, $item_name, $item_type)
 				'task_sort_order2'
 			)))
 		) {
-			$link .= ((($not_first) ? '&' : '') . $var . '=' . dPgetCleanParam($_GET, $var));
+			$link .= ((($not_first) ? '&' : '') . urlencode($var) . '=' . urlencode(dPgetCleanParam($_GET, $var)));
 			$not_first = 1;
 		}
 	}
@@ -3015,9 +3015,9 @@ function sort_by_item_title($title, $item_name, $item_type)
 				|| $task_sort_item2) && $task_sort_item2 != 'task_priority'
 		) {
 			$item_num = (($task_sort_item1 == $item_name) ? '2' : '1');
-			$link .= '&task_sort_item2=' . ${'task_sort_item' . $item_num};
-			$link .= '&task_sort_type2=' . ${'task_sort_type' . $item_num};
-			$link .= '&task_sort_order2=' . ${'task_sort_order' . $item_num};
+			$link .= '&task_sort_item2=' . urlencode(${'task_sort_item' . $item_num});
+			$link .= '&task_sort_type2=' . urlencode(${'task_sort_type' . $item_num});
+			$link .= '&task_sort_order2=' . urlencode(${'task_sort_order' . $item_num});
 		}
 	}
 	$link .= '" class="hdr">';

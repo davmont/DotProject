@@ -102,7 +102,7 @@ if (is_array($status_log)) {
     ?>
     <tr>
       <td class="hilite" nowrap="nowrap" width="1%"><?php echo $time?></td>
-      <td class="hilite" nowrap="nowrap" width="1%"><?php echo ($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
+      <td class="hilite" nowrap="nowrap" width="1%"><?php echo ($log['email']?"<a href=\"mailto: ".dPhtml($log['email'])."\">".dPhtml($log['modified_by'])."</a>":dPhtml($log['modified_by']))?></td>
       <td class="hilite" width="98%"><?php
 
         if($log['status_code']==0 || $log['status_code']==18){	//ANDY 17 -> 18
@@ -125,7 +125,7 @@ if (is_array($status_log)) {
               . "</span>";
         } else {
           // Everything else
-          print $AppUI->_($isa[$log['status_code']])." ".$log['status_comment'];
+          print $AppUI->_($isa[$log['status_code']])." ".dPhtml($log['status_comment']);
         }
       ?></td>
     </tr>

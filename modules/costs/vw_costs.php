@@ -31,7 +31,7 @@ $res = $q->loadList();
             </td>
             <td nowrap='nowrap'>
                 <a href="index.php?m=costs&amp;a=view_costs&amp;project_id=<?php echo $row['project_id']; ?>">
-                    <?php echo $row['project_name']; ?>
+                    <?php echo dPhtml($row['project_name']); ?>
                 </a>
             </td>
         </tr>

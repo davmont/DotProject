@@ -48,7 +48,7 @@ if ($res) {
 <tr>
   <td style=<?php echo $style; ?>>
    <a href="index.php?m=human_resources&amp;a=view_allocation&amp;project_tasks_estimated_roles_id=<?php echo $project_tasks_estimated_roles_id; ?>&amp;task_id=<?php echo $task_id; ?>&amp;project_id=<?php echo $project_id; ?>">
-    <?php echo $res->fields['role_name']; ?></a>
+    <?php echo dPhtml($res->fields['role_name']); ?></a>
   </td>
 </tr>
 <?php 

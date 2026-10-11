@@ -34,7 +34,7 @@ foreach ($timesheets as $row) {
 		<?php 
 		// get the PM note for a timesheet.
 		if(isset($row["tt_approve_note"])) {
-		    echo $row["tt_approve_note_date"]  . ' - ' . $row["tt_approve_note"];
+		    echo $row["tt_approve_note_date"]  . ' - ' . dPhtml($row["tt_approve_note"]);
 		}
 		else {
 			print "none";

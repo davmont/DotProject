@@ -105,7 +105,7 @@ if (is_numeric($dept_id) && $dept_id > 0) {
 								<?php echo $AppUI->_('Company'); ?>:
 							</td>
 							<td bgcolor="#ffffff" width="100%">
-								<?php echo $dept['company_name']; ?>
+								<?php echo dPhtml($dept['company_name']); ?>
 							</td>
 						</tr>
 						<tr>
@@ -113,7 +113,7 @@ if (is_numeric($dept_id) && $dept_id > 0) {
 								<?php echo $AppUI->_('Department'); ?>:
 							</td>
 							<td bgcolor="#ffffff" width="100%">
-								<?php echo $dept['dept_name']; ?>
+								<?php echo dPhtml($dept['dept_name']); ?>
 							</td>
 						</tr>
 						<tr>
@@ -121,7 +121,7 @@ if (is_numeric($dept_id) && $dept_id > 0) {
 								<?php echo $AppUI->_('Owner'); ?>:
 							</td>
 							<td bgcolor="#ffffff" width="100%">
-								<?php echo @$dept['contact_first_name'] . ' ' . @$dept['contact_last_name']; ?>
+								<?php echo dPhtml(@$dept['contact_first_name'] . ' ' . @$dept['contact_last_name']); ?>
 							</td>
 						</tr>
 						<tr>
@@ -129,7 +129,7 @@ if (is_numeric($dept_id) && $dept_id > 0) {
 								<?php echo $AppUI->_('Phone'); ?>:
 							</td>
 							<td bgcolor="#ffffff" width="100%">
-								<?php echo @$dept['dept_phone']; ?>
+								<?php echo dPhtml(@$dept['dept_phone']); ?>
 							</td>
 						</tr>
 						<tr>
@@ -137,7 +137,7 @@ if (is_numeric($dept_id) && $dept_id > 0) {
 								<?php echo $AppUI->_('Fax'); ?>:
 							</td>
 							<td bgcolor="#ffffff" width="100%">
-								<?php echo @$dept['dept_fax']; ?>
+								<?php echo dPhtml(@$dept['dept_fax']); ?>
 							</td>
 						</tr>
 						<tr valign=top>
@@ -146,11 +146,11 @@ if (is_numeric($dept_id) && $dept_id > 0) {
 							</td>
 							<td bgcolor="#ffffff">
 								<?php
-								echo @$dept['dept_address1']
-									. (@$dept['dept_address2'] ? '<br />' . $dept['dept_address2'] : '')
-									. '<br />' . @$dept['dept_city']
-									. '&nbsp;&nbsp;' . @$dept['dept_state']
-									. '&nbsp;&nbsp;' . @$dept['dept_zip']
+								echo dPhtml(@$dept['dept_address1'])
+									. (@dPhtml($dept['dept_address2']) ? '<br />' . $dept['dept_address2'] : '')
+									. '<br />' . dPhtml(@$dept['dept_city'])
+									. '&nbsp;&nbsp;' . dPhtml(@$dept['dept_state'])
+									. '&nbsp;&nbsp;' . dPhtml(@$dept['dept_zip'])
 								;
 								?>
 							</td>
@@ -164,7 +164,7 @@ if (is_numeric($dept_id) && $dept_id > 0) {
 					<table cellspacing="1" cellpadding="2" border="0" width="100%">
 						<tr>
 							<td bgcolor="#ffffff" width="100%">
-								<?php echo str_replace(chr(10), "<br />", @$dept['dept_desc']); ?>&nbsp;
+								<?php echo nl2br(dPhtml(@$dept['dept_desc'])); ?>&nbsp;
 							</td>
 						</tr>
 					</table>

@@ -23,7 +23,7 @@ foreach ($timesheets as $row) {
 <tr>
 	<td nowrap><?php 
 	if(isset($review)) { 
-		echo $row['user_last_name'] . ", " . $row['user_first_name']; 
+		echo dPhtml($row['user_last_name'] . ", " . $row['user_first_name']); 
 	} ?>
 	</td>
 	<td nowrap>
@@ -37,7 +37,7 @@ foreach ($timesheets as $row) {
 		<?php 
 		// get the PM note for a timesheet.
 		if(isset($row["tt_approve_note"])) {
-		    echo $row["tt_approve_note_date"]  . ' - ' . $row["tt_approve_note"];
+		    echo $row["tt_approve_note_date"]  . ' - ' . dPhtml($row["tt_approve_note"]);
 		}
 		else {
 			print "none";

@@ -144,11 +144,11 @@ foreach ($tt_data as $row) {
 		echo $row["tt_data_id"];
 	}?>
 	</td>
-	<td nowrap><?php echo @$row["company_name"]?></td>
-	<td nowrap><?php echo @$row["project_name"]?></td>
-	<td nowrap><?php echo @$row["task_name"]?></td>
+	<td nowrap><?php echo dPhtml(@$row["company_name"])?></td>
+	<td nowrap><?php echo dPhtml(@$row["project_name"])?></td>
+	<td nowrap><?php echo dPhtml(@$row["task_name"])?></td>
 	<td width="100%" nowrap>
-		<?php echo $row["tt_data_description"]?>
+		<?php echo dPhtml($row["tt_data_description"])?>
     </td>
 	<td nowrap>
 		<?php echo $row["tt_data_hours"]?>

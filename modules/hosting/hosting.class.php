@@ -132,7 +132,7 @@ function getCompanies(){
 	foreach ($rows as $row) {
 		if ($row["dept_parent"] == 0) {
 			if($company!=$row['company_id']){
-				$buffer .= '<option value="'.$company_prefix.$row['company_id'].'" style="font-weight:bold;"'.($company_id==$row['company_id']?'selected="selected"':'').'>'.$row['company_name'].'</option>'."\n";
+				$buffer .= '<option value="'.$company_prefix.$row['company_id'].'" style="font-weight:bold;"'.($company_id==$row['company_id']?'selected="selected"':'').'>'.dPhtml($row['company_name']).'</option>'."\n";
 				$company=$row['company_id'];
 			}
 			if($row["dept_parent"]!=null){

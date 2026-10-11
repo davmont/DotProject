@@ -2,7 +2,7 @@
 if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
-$tid = isset($HTTP_GET_VARS['tid']) ? $HTTP_GET_VARS['tid'] : 0;
+$tid = isset($HTTP_GET_VARS['tid']) ? (int) $HTTP_GET_VARS['tid'] : 0;
 
 // check permissions
 $denyEdit = getDenyEdit( $m );
@@ -47,9 +47,9 @@ $project = array();
 $companies = array( '0'=>'' );
 while ($row = db_fetch_assoc( $res )) {
 // collect tasks in js format
-	$tasks[] = "[{$row['task_project']},{$row['task_id']},'{$row['task_name']}']";
+	$tasks[] = "[{$row['task_project']},{$row['task_id']}," . dPjs($row['task_name']) . "]";
 // collect projects in js format
-	$projects[] = "[{$row['project_company']},{$row['task_project']},'{$row['project_name']}']";
+	$projects[] = "[{$row['project_company']},{$row['task_project']}," . dPjs($row['project_name']) . "]";
 // collect companies in normal format
 	$companies[$row['project_company']] = $row['company_name'];
 };
@@ -226,7 +226,7 @@ function delIt() {
 <tr>
 	<td align="right" nowrap="nowrap">Work Description:</td>
 	<td>
-		<input type="text" name="tt_data_description" value="<?php echo (($tid > 0) ? $tt_data["tt_data_description"] : ""); ?>" class="text" size="45">
+		<input type="text" name="tt_data_description" value="<?php echo (($tid > 0) ? dPhtml($tt_data["tt_data_description"]) : ""); ?>" class="text" size="45">
 	</td>
 </tr>
 <tr>
@@ -243,14 +243,14 @@ function delIt() {
 <tr>
 	<td align="right" nowrap="nowrap">Hours *</td>
 	<td>
-		<input type="text" name="tt_data_hours" value="<?php echo (($tid > 0) ? $tt_data["tt_data_hours"] : "");?>" class="text" size="4" maxlength="10">
+		<input type="text" name="tt_data_hours" value="<?php echo (($tid > 0) ? dPhtml($tt_data["tt_data_hours"]) : "");?>" class="text" size="4" maxlength="10">
 	</td>
 
 </tr>
 <tr>
 	<td align="right" valign="top" nowrap="nowrap">Task Note</td>
 	<td align="left">
-		<textarea name="tt_data_note" cols="60" rows="3" wrap="virtual" class="textarea"><?php echo (($tid > 0) ? $tt_data["tt_data_note"] : "");?></textarea>
+		<textarea name="tt_data_note" cols="60" rows="3" wrap="virtual" class="textarea"><?php echo (($tid > 0) ? dPhtml($tt_data["tt_data_note"]) : "");?></textarea>
 	</td>
 </tr>
 <tr>

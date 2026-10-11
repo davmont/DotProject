@@ -109,7 +109,7 @@ $inactiveList = $q->loadList();
                 </a>
             </td>
             <td width="25"><?php echo $row['risk_id'] ?></td>
-            <td><?php echo $row['risk_name'] ?></td>
+            <td><?php echo dPhtml($row['risk_name']) ?></td>
             <td style="background-color:#<?php if ($row['risk_priority'] == 0) {
                 echo $bgGreen;
             } else {
@@ -131,7 +131,7 @@ $inactiveList = $q->loadList();
                 $row['risk_project'] = $AppUI->_('LBL_NOT_DEFINED');
             }
             ?>
-            <td><?php echo $row['risk_project'] ?></td>
+            <td><?php echo dPhtml($row['risk_project']) ?></td>
     <?php
     foreach ($tasks as $k => $v ) {
         if ($k==$row['risk_task']) {
@@ -146,11 +146,11 @@ $inactiveList = $q->loadList();
         }
     }        
     ?>
-            <td><?php echo $row['risk_task'] ?></td>
+            <td><?php echo dPhtml($row['risk_task']) ?></td>
             <td><?php echo $riskPotential[$row['risk_potential_other_projects']] ?></td>
             <td><?php echo $riskStrategy[$row['risk_strategy']] ?></td>
-            <td><?php echo $row['risk_prevention_actions'] ?></td>
-            <td><?php echo $row['risk_contingency_plan'] ?></td>
+            <td><?php echo dPhtml($row['risk_prevention_actions']) ?></td>
+            <td><?php echo dPhtml($row['risk_contingency_plan']) ?></td>
         </tr>
 <?php } ?>
 </table>
@@ -186,7 +186,7 @@ $inactiveList = $q->loadList();
                 </a>
             </td>
             <td width="25"><?php echo $row['risk_id'] ?></td>
-            <td><?php echo $row['risk_name'] ?></td>
+            <td><?php echo dPhtml($row['risk_name']) ?></td>
             <td style="background-color:#<?php if ($row['risk_priority'] == 0) {
                 echo $bgGreen;
             } else {
@@ -208,7 +208,7 @@ $inactiveList = $q->loadList();
         $row['risk_project'] = $AppUI->_('LBL_NOT_DEFINED');
     }
     ?>
-            <td><?php echo $row['risk_project'] ?></td>
+            <td><?php echo dPhtml($row['risk_project']) ?></td>
     <?php
     foreach ($tasks as $k => $v ) {
         if ($k==$row['risk_task']) {
@@ -223,11 +223,11 @@ $inactiveList = $q->loadList();
         }
     }        
     ?>
-            <td><?php echo $row['risk_task'] ?></td>
+            <td><?php echo dPhtml($row['risk_task']) ?></td>
             <td><?php echo $riskPotential[$row['risk_potential_other_projects']] ?></td>
             <td><?php echo $riskStrategy[$row['risk_strategy']] ?></td>
-            <td><?php echo $row['risk_prevention_actions'] ?></td>
-            <td><?php echo $row['risk_contingency_plan'] ?></td>
+            <td><?php echo dPhtml($row['risk_prevention_actions']) ?></td>
+            <td><?php echo dPhtml($row['risk_contingency_plan']) ?></td>
         </tr>
 <?php } ?>
 </table>
