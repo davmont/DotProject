@@ -103,7 +103,7 @@ $yesno = array(1 => 'no', 2 => 'yes');
 	}
 
 // unserialize the multiselection array ( for selection ) :
-	$multisystemselect = unserialize( $obj->opportunity_ba );
+	$multisystemselect = unserialize( (string)$obj->opportunity_ba, array('allowed_classes' => false) );
 	
 // Projects link
 	if ($opportunity_id == 0 && $project_id > 0) {
