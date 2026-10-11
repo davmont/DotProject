@@ -153,7 +153,7 @@ Branch `security/phase3-sqli`. The findings files were re-triaged against devel 
 | `498ec9e0` | helpdesk list filters and ids, ticketsmith, hosting, mngdocument, eventum, reports, journal. |
 
 Left for later phases:
-- Dead or uninstallable modules keep their sinks: bugspray, tracIntegration, mantis (Phase 6, delete). helpdesk, holiday, mileagelog, timetrack, registers and others fail to install on PHP 8, so their fixes are review-only.
+- Dead or uninstallable modules keep their sinks: bugspray, tracIntegration, mantis (kept for a later revival; see "Nice to have"). helpdesk, holiday, mileagelog, timetrack, registers and others fail to install on PHP 8, so their fixes are review-only.
 - `communication/addedit_channel.php` and `addedit_frequency.php` delete rows on a plain GET (CSRF; ids are now integers).
 - earnings' hand-written SQL uses unprefixed table names and fails on prefixed installs.
 - XSS noticed on the way: helpdesk `sort_header()` echoes `company_id`/`project_id` from the request into links (Phase 4).
@@ -198,18 +198,32 @@ Branch `security/phase5-files`, stacked on `security/phase4-xss`. The planned it
 `show_external_page` was already closed in Phase 4 (`bd2f4b39`).
 
 Left for later phases:
-- eventum still `eval()`s `define(APP_...)` lines from the admin-chosen Eventum config; unreachable on PHP 8 while `CEventumConfig` keeps its PHP 4 constructor. Replace with literal parsing if the module is kept (Phase 6).
+- eventum still `eval()`s `define(APP_...)` lines from the admin-chosen Eventum config; unreachable on PHP 8 while `CEventumConfig` keeps its PHP 4 constructor. Replace with literal parsing when the module is revived (see "Nice to have").
 - Modules fatal on PHP 8 before their fixed code runs: dataimport, opportunities, projectdesigner (configure), gallery2, mileagelog/helpdesk (do not install).
-- `CustomFieldsParser` has no callers and unserializes field config (Phase 6, delete). `EventQueue` unserializes data the application wrote itself.
+- `CustomFieldsParser` has no callers (only `tests/CustomFieldsParserTest.php`) and unserializes field config. `EventQueue` unserializes data the application wrote itself.
 - `fileviewer.php` sends the stored `file_type` as Content-Type with `attachment`; adding `nosniff` belongs with the Phase 7 headers.
 
 ### Phase 6: dead and broken code (reduces attack surface and audit noise)
-Candidates confirmed dead or fatal on PHP 8: `modules/smartsearchns`, `modules/bugspray`, `modules/mantis`, `modules/tracIntegration`, `xmlrpc/` demos, `modules/dotproject_plus/dotproject_plus/`, `modules/unitcost`, `modules/install`, `modules/ticketsmith/admin.php`, `modules/eventum/evlink`, PHP4-style constructors in helpdesk/eventum/testing/mngdocument (fix the SQL sinks in those classes before fixing the constructors, otherwise currently masked bugs go live). Decide per module with the owner; delete rather than patch where the module is unused.
+Rescoped 2026-10-12 with the owner: modules that are dormant on PHP 8 (bugspray, mantis, tracIntegration, smartsearchns, unitcost and the ones that do not install) stay in the tree and will be revived later; their open issues are listed under "Nice to have" below. Phase 6 removes code that no module uses and closes direct HTTP access to the rest:
+- `modules/monitoringandcontrol/jpgraph/`: a second, unused jpgraph copy (charts moved to Chart.js in `625878bf`) whose examples and barcode demo app answer over HTTP.
+- `modules/ticketsmith/admin.php`: dead page in a live module, no permission check, every branch fails.
+- `DP_BASE_DIR` guard for the module files the Phase 1 pass left (e.g. `unitcost/patch_203`), found by requesting every unguarded file in `docker/`.
+- Developer scripts in the web root that still run over HTTP.
 
 ### Phase 7: hardening and regression safety
 - `Content-Security-Policy` header (start with `script-src 'self'` plus a nonce for inline blocks), `X-Content-Type-Options`, `X-Frame-Options`.
 - PHPStan at level 2 with a baseline, in CI, to catch new raw `$_GET`/`$_POST` use via a custom rule or `grep` guard.
 - Keep `docker/` in the repo and add a `make audit-smoke` target that runs the login, CSRF and permission curl checks.
+
+### Nice to have: dormant modules (to be revived later)
+These modules do not run on PHP 8 today, so their remaining issues are not reachable. Fix them as part of each module's revival, before it is installed again:
+- **bugspray** (an old copy of helpdesk working on the live `helpdesk_items` tables): SQL injection in every list filter and sort (`list.php` search, `orderby`, `item_os`, `item_application`, `requestor`), raw `item_id` in `view.php`, `vw_logs.php`, `do_item_aed.php`; reflected XSS (`list.php` search box, `selector.php` callback); no output escaping; weaker permission checks than helpdesk (only `getDenyRead($m)`, no `getItemPerms()`). `setup.php` registers it as `mod_directory='helpdesk'`. Simplest revival: port the helpdesk fixes from Phases 3-4, or rebuild it on helpdesk.
+- **tracIntegration**: raw ids in `trac.class.php` (`addWhere` with `envId`, `task_id`, ...), `embed.php` builds an iframe URL from `ticket`/`envId`/`tab` (reflected XSS), `ticket_backend.php` and `tasks_tab.view.trac_tickets.php` echo request values; `setup.php` says `mod_directory='trac'` while the directory is `tracIntegration`. The vendored XML-RPC debugger/demos were removed in Phase 1; `xrlib/` remains.
+- **mantis**: sends every user's name and password hash over plain HTTP to a hard-coded third-party host (`mantis.config.php`: `bugs.dechobot.com`, port 80); the bundled Mantis-side server (`core/`, `no.core/`, two PHPXMLRPC copies) stores the hash as the Mantis password with an injectable `UPDATE`; uses `mysql_real_escape_string()`. Revival: configurable host, HTTPS only, never send password hashes, keep the Mantis-side code out of the dotProject web root.
+- **eventum**: `CEventumConfig::loadEventumConfig()` `eval()`s the `define(APP_...)` lines of the admin-chosen Eventum config; replace with literal parsing before modernising the PHP 4 constructors (`CEventumConfig`, `CEventumContract`, `CEventumSupportLevel`). `evlink/` holds files meant to be copied into an Eventum install, not served by dotProject.
+- **unitcost**: `patch_203/` holds patched copies of dotProject 2.0.3 core files; they must be redone against the current core.
+- **PHP 4 constructors and PHP 8 fatals** (helpdesk `CHelpDeskItem`/`CHDTaskLog`, dataimport `CDataImport`, testing, opportunities and projectdesigner signature mismatches, installers failing with `ADORecordSet_empty & int`, links `CLink::delete()`): the SQL, XSS and file sinks behind them were fixed by review in Phases 3-5. When a module is revived, re-run the Phase 3/4/5 checks (`probe.sh`, marker check, direct-request scan) against it in `docker/`.
+- **Review-only fixes to retest once installable**: helpdesk, holiday, mileagelog, timetrack, registers, links pages, dataimport, opportunities, projectdesigner configure, gallery2.
 
 ## 4. State of the remediation branch
 
