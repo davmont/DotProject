@@ -5,7 +5,7 @@ if (!defined('DP_BASE_DIR')){
 
 global $HELPDESK_CONFIG;
 
-$item_id = dPgetParam($_GET, 'item_id', 0);
+$item_id = dPgetIntParam($_GET, 'item_id', 0);
 
 $allowedCompanies = arrayMerge( array( 0 => '' ), getAllowedCompanies() );
 

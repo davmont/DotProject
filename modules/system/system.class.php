@@ -62,7 +62,7 @@ class CPreferences {
 		$q = new DBQuery;
 		$q->setDelete('user_preferences');
 		$q->addWhere('pref_user = ' . (int)$this->pref_user);
-		$q->addWhere('pref_name = \'' . $this->pref_name . '\'');
+		$q->addWhere('pref_name = ?', array($this->pref_name));
 		return ((!($q->exec())) ? db_error() : null);
 	}
 }
@@ -324,8 +324,8 @@ class bcode extends CDpObject {
 		$q = new DBQuery;
 		$q->addQuery('billingcode_id');
 		$q->addTable('billingcode');
-		$q->addWhere("billingcode_name = '" . $this->billingcode_name . "'");
-		$q->addWhere('company_id = ' . $this->company_id);
+		$q->addWhere('billingcode_name = ' . $q->quote($this->billingcode_name));
+		$q->addWhere('company_id = ' . (int)$this->company_id);
 		$found_id = $q->loadResult();
 		
 		if ($found_id && $found_id != $this->_billingcode_id) {

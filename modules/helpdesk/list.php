@@ -17,7 +17,9 @@ $format = $df." ".$tf;
 
 // check sort order
 if (isset( $_GET['orderby'] )) {
-	$AppUI->setState( 'HelpDeskIdxOrderBy', $_GET['orderby'] );
+	$AppUI->setState( 'HelpDeskIdxOrderBy', dPvalidateOrder($_GET['orderby'], array('item_id', 'item_created',
+		'item_requestor', 'item_title', 'item_summary', 'item_assigned_to', 'item_status', 'item_priority',
+		'item_updated', 'item_deadline', 'project_name'), 'item_id') );
 }
 $orderby = $AppUI->getState( 'HelpDeskIdxOrderBy' ) ? $AppUI->getState( 'HelpDeskIdxOrderBy' ) : 'item_id';
 
@@ -61,8 +63,9 @@ if($HELPDESK_CONFIG['search_criteria_search']){
   $search =$AppUI->getState( 'HelpDeskSearch' ) !== null ? $AppUI->getState( 'HelpDeskSearch' ) : '';
   //echo "<br>".$search."<br>";
   if(strlen(trim($search))>0){
-      $tarr[] = "(lower(hi.item_title) LIKE lower('%$search%')
-                    OR lower(hi.item_summary) LIKE lower('%$search%'))";
+      $search_sql = db_escape($search);
+      $tarr[] = "(lower(hi.item_title) LIKE lower('%$search_sql%')
+                    OR lower(hi.item_summary) LIKE lower('%$search_sql%'))";
   }
   
 	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
@@ -92,12 +95,12 @@ if($HELPDESK_CONFIG['search_criteria_company']){
 		$q = new DBQuery; 
 		$q->addQuery('project_company');
 		$q->addTable('projects');
-		$q->addWhere('project_id='.$_GET['project']);
+		$q->addWhere('project_id='.(int)$_GET['project']);
 		$company = $q->loadResult();
 	}
 
 	if ($company >= 0) {
-		$tarr[] = "hi.item_company_id=$company";
+		$tarr[] = "hi.item_company_id=" . (int)$company;
 	}
 	
 	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
@@ -125,7 +128,7 @@ if($HELPDESK_CONFIG['search_criteria_project']){
 	}
 
 	if ($project >= 0) {
-		$tarr[] = "hi.item_project_id=$project";
+		$tarr[] = "hi.item_project_id=" . (int)$project;
 	}
 
 	// retrieve project list
@@ -171,7 +174,7 @@ if($HELPDESK_CONFIG['search_criteria_assigned_to']){
 	$assigned_to = $AppUI->getState( 'HelpDeskAssignedTo' ) !== null ? $AppUI->getState( 'HelpDeskAssignedTo' ) : -1;
 
 	if ($assigned_to >= 0) {
-		$tarr[] = "hi.item_assigned_to=$assigned_to";
+		$tarr[] = "hi.item_assigned_to=" . (int)$assigned_to;
 	}
 
 	// retrieve assigned to user list
@@ -206,7 +209,7 @@ if($HELPDESK_CONFIG['search_criteria_status']){
 	$status = $AppUI->getState( 'HelpDeskStatus' ) !== null ? $AppUI->getState( 'HelpDeskStatus' ) : -1;
 
 	if ($status >= 0) {
-		$tarr[] = "hi.item_status=$status";
+		$tarr[] = "hi.item_status=" . (int)$status;
 	} elseif ($status == -2) {
 		$tarr[] = "hi.item_status<>".$HELPDESK_CONFIG['closed_status_id'];
 	}
@@ -232,7 +235,7 @@ if($HELPDESK_CONFIG['search_criteria_call_type']){
 	$calltype = $AppUI->getState( 'HelpDeskCallType' ) !== null ? $AppUI->getState( 'HelpDeskCallType' ) : -1;
 
 	if ($calltype >= 0) {
-		$tarr[] = "hi.item_calltype=$calltype";
+		$tarr[] = "hi.item_calltype=" . (int)$calltype;
 	}
 	
 	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
@@ -256,7 +259,7 @@ if($HELPDESK_CONFIG['search_criteria_call_source']){
 	$item_source = $AppUI->getState( 'HelpDeskSource' ) !== null ? $AppUI->getState( 'HelpDeskSource' ) : -1;
 
 	if ($item_source >= 0) {
-		$tarr[] = "hi.item_source=$item_source";
+		$tarr[] = "hi.item_source=" . (int)$item_source;
 	}
 
 	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
@@ -280,7 +283,7 @@ if($HELPDESK_CONFIG['search_criteria_priority']){
 	$priority = $AppUI->getState( 'HelpDeskPriority' ) !== null ? $AppUI->getState( 'HelpDeskPriority' ) : -1;
 
 	if ($priority >= 0) {
-		$tarr[] = "hi.item_priority=$priority";
+		$tarr[] = "hi.item_priority=" . (int)$priority;
 	}
 
 	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
@@ -304,7 +307,7 @@ if($HELPDESK_CONFIG['search_criteria_severity']){
 	$item_severity = $AppUI->getState( 'HelpDeskSeverity' ) !== null ? $AppUI->getState( 'HelpDeskSeverity' ) : -1;
 
 	if ($item_severity >= 0) {
-		$tarr[] = "hi.item_severity=$item_severity";
+		$tarr[] = "hi.item_severity=" . (int)$item_severity;
 	}
 
 	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
@@ -328,7 +331,7 @@ if($HELPDESK_CONFIG['search_criteria_application']){
 	$item_application = $AppUI->getState( 'HelpDeskApplication' ) !== null ? $AppUI->getState( 'HelpDeskApplication' ) : -1;
 
 	if (isset($item_application)  && strlen($item_application)>0 && $item_application!='-1') {
-		$tarr[] = "hi.item_application='$item_application'";
+		$tarr[] = "hi.item_application='" . db_escape($item_application) . "'";
 	}
 
 	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
@@ -352,7 +355,7 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 	$requestor = $AppUI->getState( 'HelpDeskRequestor' ) !== null ? $AppUI->getState( 'HelpDeskRequestor' ) : -1;
 
 	if (isset($requestor)  && strlen($requestor)>0 && $requestor!='-1') {
-		$tarr[] = "hi.item_requestor='$requestor'";
+		$tarr[] = "hi.item_requestor='" . db_escape($requestor) . "'";
 	}
 
 	// retrieve requestor list
@@ -385,7 +388,7 @@ if($HELPDESK_CONFIG['search_criteria_os']){
 	$item_os = $AppUI->getState( 'HelpDeskOS' ) !== null ? $AppUI->getState( 'HelpDeskOS' ) : -1;
 
 	if (isset($item_os)  && strlen($item_os)>0 && $item_os!='-1') {
-		$tarr[] = "hi.item_os='$item_os'";
+		$tarr[] = "hi.item_os='" . db_escape($item_os) . "'";
 	}
 
 	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {

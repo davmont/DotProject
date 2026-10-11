@@ -1,7 +1,7 @@
 <?php /* $Id: vw_log_update.php,v 1.13 2011/08/02 06:22:55 hatax Exp $ */
 GLOBAL $AppUI, $hditem, $ist, $HELPDESK_CONFIG;
 //New style for date selection--KZHAO 9-11-2006
-$item_id = dPgetParam( $_GET, 'item_id', 0 );
+$item_id = dPgetIntParam( $_GET, 'item_id', 0 );
 
 // check permissions
 //$canEdit = !getDenyEdit( 'tasks', $item_id );

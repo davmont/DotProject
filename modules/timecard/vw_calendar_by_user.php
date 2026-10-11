@@ -16,6 +16,7 @@ $end_date = intval( $log_end_date ) ? new CDate( $log_end_date ) : new CDate();
 
 $df = $AppUI->getPref('SHDATEFORMAT');
 if (isset( $_GET['user_id'] )) {
+	$_GET['user_id'] = (int)$_GET['user_id'];
 	$sql = "SELECT user_contact FROM users WHERE user_id = ".$_GET['user_id'] ;
   $user_contact = db_loadresult( $sql );
 	$sql = "SELECT contact_company FROM contacts WHERE contact_id = ".$user_contact ;
@@ -27,7 +28,7 @@ if (isset( $_GET['user_id'] )) {
 	}
 	$AppUI->setState( 'TimecardSelectedUser', $_GET['user_id'] );
 }
-$user_id = $AppUI->getState( 'TimecardSelectedUser' ) ? $AppUI->getState( 'TimecardSelectedUser' ) : $AppUI->user_id;
+$user_id = (int)($AppUI->getState( 'TimecardSelectedUser' ) ? $AppUI->getState( 'TimecardSelectedUser' ) : $AppUI->user_id);
 
 $AppUI->savePlace();
 

@@ -68,9 +68,9 @@ $cinOneMonth->addMonths(1);
 $inOneMonth = $cinOneMonth->format(FMT_TIMESTAMP_DATE);
 
 // Get the param
-$project_id = dPgetParam($_POST, 'project_id', 0); 								// Project filter 					Default: all(0)
+$project_id = dPgetIntParam($_POST, 'project_id', 0); 								// Project filter 					Default: all(0)
 $company 	= dPgetParam($_POST, 'company_id', 0);								// Company/Department filter		Default: all(0)
-$contact_id = dPgetParam($_POST, 'contact_id', getContactId($AppUI->user_id));	// Contact filter					Default: user
+$contact_id = dPgetIntParam($_POST, 'contact_id', getContactId($AppUI->user_id));	// Contact filter					Default: user
 $aff_style 	= dPgetParam($_POST, 'aff_style', 1);								// 0 : % , 1 : daily assigned hours Default: daily assigned hours
 $dyna 		= dPgetParam($_POST, 'dyna', 0);									// 0 : show dynamic tasks, 1 : hide	Default: show dynamic tasks
 $start_date = dPgetParam($_POST, 'start_date', $today);							// Start Date filter 				Default: today
@@ -86,6 +86,16 @@ if ($company_id == '') {
 	$department		= 	''.$department_id;
 } else
 	$department_id 	= 	0;
+// Filters below are used in SQL: ids are integers, dates are YYYYMMDD.
+$company_id = (int)$company_id;
+$department_id = (int)$department_id;
+$department = '' . $department_id;
+if (!preg_match('/^\d{8}$/', $start_date)) {
+	$start_date = $today;
+}
+if (!preg_match('/^\d{8}$/', $end_date)) {
+	$end_date = $inOneMonth;
+}
 
 // Count how many days, weeks, months, year are in range date
 $cstart_date	= 	new CDate($start_date);
@@ -112,8 +122,8 @@ $colCount = ($showHours) ? $dPconfig['daily_working_hours'] : (($showDays) ? $da
 if (isset($_POST['aTId']) && $_POST['aTId'] != "..."){
 	if (getPermission('tasks', 'edit', $_POST['aTId'])) {
 		switch ($_POST['editType']) {
-			case 'ad' : editAssign($_POST['aUId'],$_POST['aTId'],$_POST['aPercent'],$_POST['aAffStyle'],$_POST['aAdaptD']); break;
-			case 'aa' : editDur($_POST['aUId'],$_POST['aTId'],$_POST['aSDate'],$_POST['aEDate'],$_POST['aAdaptA']);break;
+			case 'ad' : editAssign((int)$_POST['aUId'],(int)$_POST['aTId'],$_POST['aPercent'],$_POST['aAffStyle'],$_POST['aAdaptD']); break;
+			case 'aa' : editDur((int)$_POST['aUId'],(int)$_POST['aTId'],$_POST['aSDate'],$_POST['aEDate'],$_POST['aAdaptA']);break;
 			default : break;
 		}
 	} else

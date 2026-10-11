@@ -31,7 +31,7 @@ class CDepartment extends CDpObject {
 		$q  = new DBQuery;
 		$q->addTable('departments','dep');
 		$q->addQuery('dep.*');
-		$q->addWhere('dep.dept_id = '.$oid);
+		$q->addWhere('dep.dept_id = '.(int)$oid);
 		$sql = $q->prepare();
 		$q->clear();
 		return db_loadObject($sql, $this,false,$trip);
@@ -75,6 +75,8 @@ class CDepartment extends CDpObject {
 	}
 
 	function delete($oid = NULL, $history_desc = '', $history_proj = 0) {
+		// The id comes from bind($_POST): keep it an integer, it is used in the SQL below.
+		$this->dept_id = (int)$this->dept_id;
 		$q  = new DBQuery;
 		$q->addTable('departments','dep');
 		$q->addQuery('dep.*');

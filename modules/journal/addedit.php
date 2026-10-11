@@ -11,7 +11,7 @@ if (!defined('DP_BASE_DIR')) {
 ## IMATRONIX
 ##
 
-$journal_id = defVal( @$_GET["journal_id"], 0);
+$journal_id = (int)defVal( @$_GET["journal_id"], 0);
 
 $project_id = intval( dPgetParam( $_GET, "project_id", 0 ) );
 

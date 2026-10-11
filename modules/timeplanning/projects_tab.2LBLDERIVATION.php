@@ -12,7 +12,7 @@
 	<link type="text/css" rel="stylesheet" href="./modules/timeplanning/js/dhtmlgoodies_calendar/dhtmlgoodies_calendar.css?random=20051112" media="screen"></LINK>
 	<script type="text/javascript" src="./modules/timeplanning/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.js?random=20060118"></script>
 	<!-- end: calendar goodies -->
-	<?php $project_id = dPgetParam( $_GET, 'project_id', 0 );?>
+	<?php $project_id = dPgetIntParam( $_GET, 'project_id', 0 );?>
 	<form  name="decomposition_form" method="post" action="?m=timeplanning&a=view&project_id=<?php echo $project_id; ?>">
 		<input type="hidden" name="activities_ids" id="activities_ids">
 		<input type="hidden" name="activities_ids_to_delete" id="activities_ids_to_delete" value="">
@@ -20,7 +20,7 @@
 		<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
 		
 		<?php
-		$project_id = dPgetParam($_GET, 'project_id', 0);
+		$project_id = dPgetIntParam($_GET, 'project_id', 0);
 		//start: set workpackages
 		$controllerWBSItem= new ControllerWBSItem();
 		$ControllerWBSItemActivityRelationship= new ControllerWBSItemActivityRelationship();

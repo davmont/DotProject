@@ -11,9 +11,9 @@ $user_id = $AppUI->user_id;
 if (getPermission('admin', 'view')) { // Only sysadmins are able to change users
 	if ((int)dPgetParam($_POST, 'user_id', 0) != 0) { // this means that 
 		$user_id = (int)dPgetParam($_POST, 'user_id', 0);
-		$AppUI->setState('user_id', $_POST['user_id']);
+		$AppUI->setState('user_id', $user_id);
 	} else if ($AppUI->getState('user_id')) {
-		$user_id = $AppUI->getState('user_id');
+		$user_id = (int)$AppUI->getState('user_id');
 	} else {
 		$AppUI->setState('user_id', $user_id);
 	}
@@ -30,9 +30,9 @@ if (isset($_POST['f2'])) {
 $f2 = $AppUI->getState('CompanyIdxFilter') ? $AppUI->getState('CompanyIdxFilter') : 'all';
 
 if (isset($_GET['project_id'])) {
-	$AppUI->setState('TaskIdxProject', $_GET['project_id']);
+	$AppUI->setState('TaskIdxProject', (int)$_GET['project_id']);
 }
-$project_id = $AppUI->getState('TaskIdxProject') ? $AppUI->getState('TaskIdxProject') : 0;
+$project_id = (int)$AppUI->getState('TaskIdxProject');
 
 // get CCompany() to filter tasks by company
 require_once($AppUI->getModuleClass('companies'));

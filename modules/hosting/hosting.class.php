@@ -40,7 +40,7 @@ class CHosting extends CDpObject {
 		$q->addQuery("dom.domain_id, company_id, domain_name, domain_expiry_date, domain_registrar, domain_status,
 			domain_notes, hosting_id, hosting_package_name, hosting_expiry_date, hosting_status, hosting_notes");
 		$q->addJoin('hosting', 'h', 'h.domain_id = dom.domain_id');
-		$q->addWhere('dom.domain_id = '.$domain_id);
+		$q->addWhere('dom.domain_id = '.(int)$domain_id);
 		$results = $q->exec();
 
 		$row = db_fetch_assoc($results);
@@ -63,12 +63,12 @@ class CHosting extends CDpObject {
 	function delete(){
 		$q = new DBQuery;
 		$q->setDelete('domains');
-		$q->addWhere('domain_id='.$this->domain_id);
+		$q->addWhere('domain_id='.(int)$this->domain_id);
 		$q->exec();
 		$q->clear();
 
 		$q->setDelete('hosting');
-		$q->addWhere('domain_id='.$this->domain_id);
+		$q->addWhere('domain_id='.(int)$this->domain_id);
 		$q->exec();
 		$q->clear();
 	}

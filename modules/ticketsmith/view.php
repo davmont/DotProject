@@ -65,7 +65,7 @@ $priority = dPgetCleanParam($_POST, 'priority', '');
 $subject = dPgetCleanParam($_POST, 'subject', '');
 
 if (@$type_toggle || @$priority_toggle || @$assignment_toggle) {
-    do_query("UPDATE {$dbprefix}tickets SET type = '$type_toggle', priority = '$priority_toggle', assignment = '$assignment_toggle' WHERE ticket = '$ticket'");
+    do_query("UPDATE {$dbprefix}tickets SET type = '" . db_escape($type_toggle) . "', priority = '$priority_toggle', assignment = '$assignment_toggle' WHERE ticket = '$ticket'");
 
 	//Emailing notifications.
 	$change = ' ';

@@ -9,6 +9,7 @@ class WBSItemActivityRelationship {
 	}
 	
 	function store($id,$description,$work_package,$project_id) {
+			$id = (int)$id; // used in SQL below
 			$q = new DBQuery();
 			$obj = new CTask();
 			$q->addQuery('task_id');
@@ -58,6 +59,7 @@ class WBSItemActivityRelationship {
 
 	
 	function delete($id){
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('tasks');
 		$q->addWhere('task_id=' . $id);

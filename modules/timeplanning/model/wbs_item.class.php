@@ -45,6 +45,7 @@ class WBSItem {
 	}
 	
 	function store($projectId,$description,$number,$sortOrder,$isLeaf,$identation,$id) {
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('id');
 		$q->addTable('project_eap_items');
@@ -80,6 +81,7 @@ class WBSItem {
 	}
 	
 	function delete($id){
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('project_eap_items');
 		$q->addWhere('id=' . $id);

@@ -17,7 +17,7 @@ if (isset($_GET['communication_channel'])){
 
 // del communication channel
 if (isset($_GET['communication_channel_id'])){
-    $del = ($_GET['communication_channel_id']);
+    $del = (int)$_GET['communication_channel_id'];
     $rdel = new DBQuery;
     $rdel->setDelete('communication_channel');
     $rdel->addWhere('communication_channel_id=' .$del);

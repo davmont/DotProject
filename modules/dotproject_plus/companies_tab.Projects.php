@@ -59,7 +59,9 @@ if (count($projList)) {
     $q->addWhere('NOT (project_id IN (' . implode(',', $projList) . '))');
 }
 $q->addWhere('prj.project_status <> 7');
-$sort = dPgetParam($_GET, 'orderby', 'project_name');
+$sort = dPvalidateOrder(dPgetParam($_GET, 'orderby', 'project_name'), array('project_name',
+	'project_start_date', 'project_end_date', 'project_status', 'project_priority', 'project_percent_complete'),
+	'project_name');
 $q->addOrder($sort);
 
 

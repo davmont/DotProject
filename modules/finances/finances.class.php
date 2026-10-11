@@ -228,8 +228,9 @@ function updateValue($var, $val, $tax)
 	$tab = explode('_', $var);
 	if (count($tab) != 5)
 		return -1;
-	$project_id = $tab[1];
-	$task_id = $tab[3];
+	// Both ids come from a form field name and are used in SQL below.
+	$project_id = (int)$tab[1];
+	$task_id = (int)$tab[3];
 	$type = $tab[4];
 	if (!getPermission('tasks', 'edit', $task_id)) {
 		$AppUI->redirect("m=public&a=access_denied");

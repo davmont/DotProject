@@ -32,7 +32,7 @@ if (isset($_GET['update_macroproject_status']) && isset($_GET['macroproject_stat
 	foreach ($macroprojects_id as $macroproject_id) {
 		$q->addTable('macroprojects');
 		$q->addUpdate('macroproject_status', $_GET['macroproject_status']);
-		$q->addWhere('macroproject_id = ' . $macroproject_id);
+		$q->addWhere('macroproject_id = ' . (int)$macroproject_id);
 		$q->exec();
 		$q->clear();
 	}
@@ -72,9 +72,11 @@ $department = (($AppUI->getState('MacroProjIdxDepartment') !== NULL)
 //if $department contains the $company_prefix string that it's requesting a company
 // and not a department.  So, clear the $department variable, and populate the $company_id variable.
 if (!(mb_strpos($department, $company_prefix)===false)) {
-	$company_id = mb_substr($department,mb_strlen($company_prefix));
+	$company_id = (int)mb_substr($department,mb_strlen($company_prefix));
 	$AppUI->setState('MacroProjIdxCompany', $company_id);
 	unset($department);
+} else {
+	$department = (int)$department;
 }
 
 $valid_ordering = array('macroproject_name', 'user_username', 'my_tasks desc', 'total_tasks desc',

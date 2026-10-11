@@ -140,12 +140,23 @@ New items found during Phase 2:
 - `monitoringandcontrol/control/controller_respons.class.php`: `count()` on a string, a PHP 8 fatal; responsibility rows cannot be inserted.
 - Human resources role creation through `do_role_aed.php` fails silently (store error not surfaced).
 
-### Phase 3: SQL injection
-1. Add two helpers to `includes/main_functions.php`: `dPgetIntParam($arr,$name,$def)` and `dPvalidateOrder($value, array $allowed, $default)`; use them at every request boundary.
-2. Project-view and company-view tab files must stop re-reading `project_id`/`company_id` from `$_GET`; use the already intval'd variable from the parent view (dotproject_plus, timeplanning, closure tabs).
-3. `$AppUI->setState()` call sites: cast or whitelist before storing (helpdesk list, inventory, earnings, invoices, payments, timecard, mileagelog, testing, tasks `searchtext`, ticketsmith `type`).
-4. Shared timeplanning model/controller layer (`modules/timeplanning/model/*.class.php`, `control/*.class.php`): `intval()` every id in `addWhere` (about 12 methods, closes ~20 HIGH rows in dotproject_plus and timeplanning at once).
-5. Convert remaining interpolations in the touched files to `addWhere('col = ?', [$v])` or `$q->quote($v)`; for legacy raw-SQL modules (earnings `inv_aed.php`, ticketsmith `common.inc.php`, helpdesk reports) wrap values with `db_escape()` as the minimum, or retire the module (see Phase 6).
+### Phase 3: SQL injection (DONE, 2026-10-09)
+Branch `security/phase3-sqli`. The findings files were re-triaged against devel first (about 140 sinks still open, ~20 of them missed by the audit). Each group was checked with a time-based and SQL-error probe (baseline-aware, record id as prefix) before and after the fix; sinks the sandbox cannot reach were reviewed, and each commit lists which is which.
+
+| Commit | Scope |
+|---|---|
+| `1f9bdd8a` | `dPgetIntParam()`, `dPvalidateOrder()`; admin user list filter, session logout ids, preference names, billing codes. |
+| `6bb041eb` | companies sort, departments delete, history filter/ids, links search, dataimport, communication. |
+| `1fae81d0` | task search and filters, project and macroproject department/company filters, report dates and user filters, forum sort, closure tab, tasks_template. |
+| `ea43ccf0` | dotproject_plus and timeplanning project tabs (re-read raw `project_id`), viewgantt, feedback controller, resource_m, timecard, timetrack, holiday, mileagelog, testing; casts in 22 timeplanning model/controller methods. |
+| `0c01f7c3` | Sort whitelists in earnings, invoices, payments, registers, opportunities; earnings `inv_aed.php` hand-built SQL; finances filters and budget update; inventory filters; costs second-order. |
+| `498ec9e0` | helpdesk list filters and ids, ticketsmith, hosting, mngdocument, eventum, reports, journal. |
+
+Left for later phases:
+- Dead or uninstallable modules keep their sinks: bugspray, tracIntegration, mantis (Phase 6, delete). helpdesk, holiday, mileagelog, timetrack, registers and others fail to install on PHP 8, so their fixes are review-only.
+- `communication/addedit_channel.php` and `addedit_frequency.php` delete rows on a plain GET (CSRF; ids are now integers).
+- earnings' hand-written SQL uses unprefixed table names and fails on prefixed installs.
+- XSS noticed on the way: helpdesk `sort_header()` echoes `company_id`/`project_id` from the request into links (Phase 4).
 
 ### Phase 4: XSS
 1. Views listed under "Stored XSS" in the findings files: wrap echoed DB fields with `htmlspecialchars($v, ENT_QUOTES, 'UTF-8')` (or `$AppUI->___()` once it uses ENT_QUOTES); for values inside JS strings use `json_encode()`.

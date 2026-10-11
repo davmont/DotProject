@@ -118,7 +118,7 @@ require_once(DP_BASE_DIR . "/modules/timeplanning/control/controller_company_rol
 require_once(DP_BASE_DIR . "/modules/tasks/tasks.class.php");
 require_once(DP_BASE_DIR . "/modules/projects/projects.class.php");
 
-$projectId = dPgetParam($_GET, 'project_id', 0);
+$projectId = dPgetIntParam($_GET, 'project_id', 0);
 $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
 $activitiesIdsForDisplay = array();
 $q = new DBQuery();
@@ -138,7 +138,7 @@ foreach ($tasks_for_ids as $t) {
 if (isset($_GET["show_external_page"]) && $_GET["show_external_page"] != "") {
     include_once DP_BASE_DIR . $_GET["show_external_page"];
 } else {
-    $project_id = dPgetParam($_GET, "project_id", 0);
+    $project_id = dPgetIntParam($_GET, "project_id", 0);
     $project = new CProject();
     $project->load($project_id);
     global $pstatus;

@@ -9,8 +9,9 @@ require_once($AppUI->getModuleClass('files'));
 
 $pstatus = dPgetSysVal( 'ProjectStatus' );
 
-$project_id = $_GET['project_id'];
-$sort = dPgetParam($_GET, 'orderby', 'pma_id');
+$project_id = dPgetIntParam($_GET, 'project_id', 0);
+$sort = dPvalidateOrder(dPgetParam($_GET, 'orderby', 'pma_id'),
+	array('pma_id', 'project_name', 'project_meeting_date', 'participants'), 'pma_id');
 if ($sort == 'pma_id') {
   $sort .= ' DESC';
 }

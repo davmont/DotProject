@@ -9,7 +9,7 @@ $controllerWBSItem= new ControllerWBSItem();
 ?>
 <script src="./modules/timeplanning/js/eap.js"></script>
 <br>
-<?php $project_id = dPgetParam( $_GET, 'project_id', 0 );?>
+<?php $project_id = dPgetIntParam( $_GET, 'project_id', 0 );?>
 <form action="?m=timeplanning&a=view&project_id=<?php echo $project_id; ?>" method="post" name="form_eap" id="form_eap">
 	<input name="dosql" type="hidden" value="do_project_eap_aed" />
 	<input name="eap_items_ids" id="eap_items_ids" type="hidden">

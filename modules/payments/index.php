@@ -8,7 +8,8 @@ $AppUI->savePlace();
 
 // retrieve any state parameters
 if (isset( $_GET['orderby'] )) {
-	$AppUI->setState( 'PaymentIdxOrderBy', $_GET['orderby'] );
+	$AppUI->setState( 'PaymentIdxOrderBy', dPvalidateOrder($_GET['orderby'], array('payment_id', 'payment_date',
+		'payment_type', 'payment_authcode', 'payment_amount', 'payment_company', 'invct'), 'payment_date desc') );
 }
 $orderby = $AppUI->getState( 'PaymentIdxOrderBy' ) ? $AppUI->getState( 'PaymentIdxOrderBy' ) : 'payment_date desc';
 

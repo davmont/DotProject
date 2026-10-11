@@ -15,8 +15,9 @@ if (!$canRead) {			// lock out users that do not have at least readPermission on
 //Get POST Data
 	$tab			=	intval( dPgetParam( $_GET, "tab", 0 ) );
 	
-	$order_by = (isset($_GET['order_by'])) ? $_GET['order_by'] : "";
-	$order = (isset($_GET['order'])) ? $_GET['order'] : "";
+	$order_by = dPvalidateOrder(isset($_GET['order_by']) ? $_GET['order_by'] : '', array('opportunity_name',
+		'contact_last_name', 'opportunity_sizing', 'opportunity_status'), '');
+	$order = dPvalidateOrder(isset($_GET['order']) ? mb_strtolower($_GET['order']) : '', array('asc', 'desc'), '');
 	
 if ($show_owner_id != "-1") $where="WHERE opportunity_pm=".$show_owner_id;
 

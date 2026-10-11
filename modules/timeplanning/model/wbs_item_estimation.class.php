@@ -25,6 +25,7 @@ class WBSItemEstimation {
 	}
 	
 	function store($idValue,$sizeValue,$sizeUnitValue) {
+		$idValue = (int)$idValue; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('t.id');
 		$q->addTable('eap_item_estimations', 't');
@@ -46,6 +47,7 @@ class WBSItemEstimation {
 	}
 	
 	function load($idValue) {
+		$idValue = (int)$idValue; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('t.eap_item_id,t.size,t.size_unit');
 		$q->addTable('eap_item_estimations', 't');

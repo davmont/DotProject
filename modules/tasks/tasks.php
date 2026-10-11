@@ -289,6 +289,7 @@ $where .= ' AND task_status = ' . $task_status;
 
 // patch 2.12.04 text search
 if ($search_text = $AppUI->getState('searchtext')) {
+	$search_text = db_escape($search_text);
 	$where .= (" AND (task_name LIKE ('%{$search_text}%') "
 		. "OR task_description LIKE ('%{$search_text}%'))");
 }

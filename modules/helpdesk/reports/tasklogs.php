@@ -10,7 +10,7 @@ $do_report = dPgetParam( $_GET, "do_report", 0 );
 $log_all = dPgetParam( $_GET, 'log_all', 0 );
 $log_pdf = dPgetParam( $_GET, 'log_pdf', 0 );
 $log_ignore = dPgetParam( $_GET, 'log_ignore', 0 );
-$log_userfilter = dPgetParam( $_GET, 'log_userfilter', '0' );
+$log_userfilter = dPgetIntParam( $_GET, 'log_userfilter', 0 );
 
 $log_start_date = dPgetParam( $_GET, "log_start_date", 0 );
 $log_end_date = dPgetParam( $_GET, "log_end_date", 0 );

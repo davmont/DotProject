@@ -8,7 +8,7 @@ if (!defined('DP_BASE_DIR')) {
 ##
 global $AppUI, $company_id, $pstatus, $dPconfig;
 
-$sort = dPgetCleanParam($_GET, 'sort', 'project_name');
+$sort = dPvalidateOrder(dPgetCleanParam($_GET, 'sort', 'project_name'), array('project_name', 'project_priority'), 'project_name');
 if ($sort == 'project_priority') {
         $sort .= ' DESC';
 }

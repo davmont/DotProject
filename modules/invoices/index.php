@@ -16,7 +16,8 @@ $tab = $AppUI->getState('InvIdxTab') !== NULL ? $AppUI->getState('InvIdxTab') : 
 $active = intval(!$AppUI->getState('InvIdxTab'));
 
 if (isset($_GET['orderby'])) {
-	$AppUI->setState('InvIdxOrderBy', $_GET['orderby']);
+	$AppUI->setState('InvIdxOrderBy', dPvalidateOrder($_GET['orderby'], array('invoice_id', 'invoice_date',
+		'invoice_due', 'invoice_company', 'invoice_grand_total', 'invoice_status'), 'invoice_id desc'));
 }
 $orderby = $AppUI->getState('InvIdxOrderBy') ? $AppUI->getState('InvIdxOrderBy') : 'invoice_id desc';
 

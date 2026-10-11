@@ -64,9 +64,11 @@ $department = (($AppUI->getState('ProjIdxDepartment') !== NULL)
 //if $department contains the $company_prefix string that it's requesting a company
 // and not a department.  So, clear the $department variable, and populate the $company_id variable.
 if (!(mb_strpos($department, $company_prefix) === false)) {
-	$company_id = mb_substr($department, mb_strlen($company_prefix));
+	$company_id = (int)mb_substr($department, mb_strlen($company_prefix));
 	$AppUI->setState('ProjIdxCompany', $company_id);
 	unset($department);
+} else {
+	$department = (int)$department;
 }
 
 $valid_ordering = array(

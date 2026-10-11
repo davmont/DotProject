@@ -8,7 +8,8 @@ if (!defined('DP_BASE_DIR')) {
 global $AppUI, $tab, $df, $canEdit, $m;
 
 $filter = intval( dPgetParam( $_GET, 'filter', 0 ) );
-$order_by = dPgetParam( $_GET, 'order_by', 'SGD_Logs_document_name' );
+$order_by = dPvalidateOrder(dPgetParam( $_GET, 'order_by', 'SGD_Logs_document_name' ),
+	array('SGD_Logs_user_id', 'SGD_Logs_action', 'SGD_Logs_document_name'), 'SGD_Logs_document_name');
 ?>
 
 <table width="100%">

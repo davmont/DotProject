@@ -8,7 +8,7 @@ require_once (DP_BASE_DIR . "/modules/timeplanning/view/translations.php");
 require_once (DP_BASE_DIR . "/modules/timeplanning/model/project_minute.class.php");
 require_once (DP_BASE_DIR . "/modules/timeplanning/control/controller_project_minute.class.php");
 $controllerProjectMinute=new ControllerProjectMinute();
-$minuteId=dPgetParam($_GET, 'minute_id', 0);
+$minuteId=dPgetIntParam($_GET, 'minute_id', 0);
 $date=""; 
 $description="";
 if($minuteId!='-1' && $minuteId!=""){
@@ -67,7 +67,7 @@ if($minuteId!='-1' && $minuteId!=""){
 			</tr>
 			
 			<?php
-				$minutes=$controllerProjectMinute->getProjectMinutes($_GET['project_id']);			
+				$minutes=$controllerProjectMinute->getProjectMinutes(dPgetIntParam($_GET, 'project_id', 0));			
 				foreach ($minutes as $minute) {
 				?>
 					<tr>
