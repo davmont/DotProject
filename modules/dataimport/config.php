@@ -9,7 +9,7 @@ if (! $canEdit)
 
 // Allowed tables is a list of tables that we allow updates into.
 // At the moment we limit this to projects and tasks.
-$allowedTables = array('projects', 'tasks');
+$allowedTables = diAllowedTables();
 
 $firstTime = dPgetParam($_REQUEST, 'first', 0);
 $diconfig_id = dPgetIntParam($_REQUEST, 'diconfig_id', 0);

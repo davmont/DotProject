@@ -47,7 +47,7 @@ $reports = $AppUI->readFiles(DP_BASE_DIR.'/modules/projects/reports', "\.php$");
 
 $report_type_var = dPgetCleanParam($_GET, 'report_type', '');
 if (!empty($report_type_var))
-	$report_type_var = '&report_type=' . $report_type;
+	$report_type_var = '&amp;report_type=' . rawurlencode($report_type);
 
 $report_title = 'Project Reports';
 if ($report_type) {

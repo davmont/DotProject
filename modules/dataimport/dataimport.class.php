@@ -83,7 +83,8 @@ class CDataImport extends CDpObject {
     $this->deleteDataMap($id);
     $q = new DBQuery;
     foreach ($array['dimap_source_field'] as $key => $val) {
-      if ($val && @$array['dimap_target_table'][$key] && @$array['dimap_target_field'][$key]) {
+      if ($val && @$array['dimap_target_table'][$key] && @$array['dimap_target_field'][$key]
+        && diAllowedTarget($array['dimap_target_table'][$key], $array['dimap_target_field'][$key])) {
 	$q->addTable('dataimport_map');
 	$q->addInsert('dimap_config_id', $id);
 	$q->addInsert('dimap_source_field', $val);
@@ -96,6 +97,28 @@ class CDataImport extends CDpObject {
   }
 
 } // End of class
+
+// Tables an import may write into. config.php offers only these, and the map is
+// checked against them when it is saved and again when it is used.
+function diAllowedTables()
+{
+  return array('projects', 'tasks');
+}
+
+function diAllowedTarget($table, $field)
+{
+  static $columns = array();
+  if (!in_array($table, diAllowedTables(), true)) {
+    return false;
+  }
+  if (!isset($columns[$table])) {
+    $columns[$table] = array();
+    foreach ($GLOBALS['db']->MetaColumns(dPgetConfig('dbprefix', '') . $table) as $col) {
+      $columns[$table][] = $col->name;
+    }
+  }
+  return in_array($field, $columns[$table], true);
+}
 
 
 function diBuildSelect($name, $id, &$data, $default = '', $addSelect = false, $onChange = '')

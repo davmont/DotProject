@@ -141,7 +141,8 @@ if ($file_id) {
 	// END extra headers to resolve IE caching bug
 	*/
 
-	$fname = DP_BASE_DIR.'/files/'.$file['file_project'].'/'.$file['file_real_filename'];
+	// Records saved before do_file_aed.php stopped binding these could hold any path.
+	$fname = DP_BASE_DIR.'/files/'.(int)$file['file_project'].'/'.basename($file['file_real_filename']);
 	if (! file_exists($fname)) {
 		$AppUI->setMsg('fileIdError', UI_MSG_ERROR);
 		$AppUI->redirect();
@@ -166,7 +167,7 @@ if ($file_id) {
 	header('Content-disposition: attachment; filename="'.$file['file_name'].'"');
 
 	// read and output the file in chunks to bypass limiting settings in php.ini
-	$handle = fopen(DP_BASE_DIR . '/files/'.$file['file_project'].'/'.$file['file_real_filename'], 'rb');
+	$handle = fopen($fname, 'rb');
 	if ($handle)
 	{
 		while (!feof($handle)) {

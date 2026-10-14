@@ -101,7 +101,7 @@ if (! $suppressHeaders) {
 
 $report_type_var = dPgetParam($_GET, 'report_type', '');
 if (!empty($report_type_var))
-	$report_type_var = '&report_type=' . $report_type;
+	$report_type_var = '&amp;report_type=' . rawurlencode($report_type);
 
 if (! $suppressHeaders) {
 if (!isset($display_company_name)) {

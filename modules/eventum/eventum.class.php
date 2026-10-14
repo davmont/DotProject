@@ -68,12 +68,12 @@ class CEventumConfig
 		if (!$evdir) {
 			return false;
 		}
-		$evcfg = $evdir . DIRECTORY_SEPARATOR . 'config.inc.php';
-		if (!is_readable($evcfg)) {
-			$evcfg = $evdir . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.inc.php';
+		$evcfg = dPexternalAppFile($evdir, 'config.inc.php');
+		if (!$evcfg || !is_readable($evcfg)) {
+			$evcfg = dPexternalAppFile($evdir, 'config' . DIRECTORY_SEPARATOR . 'config.inc.php');
 		}
 
-		if (!is_readable($evcfg)) {
+		if (!$evcfg || !is_readable($evcfg)) {
 			return false;
 		}
 		$ev = file($evcfg);

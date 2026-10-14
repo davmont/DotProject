@@ -11,12 +11,19 @@ if (!defined('DP_BASE_DIR')) {
 ##
 
 // Update database if we are saving
-$action = @$_REQUEST["action"];
+$action = dPgetParam($_POST, 'action', '');
 $q = new DBQuery();
 if($action) {
         $gallery_uri= $_POST["gallery_uri"];
         $gallery_folder = $_POST["gallery_folder"];
         $gallery_user = $_POST["gallery_user"];
+
+        // index.php includes <folder>/embed.php: it must be a Gallery2 install, not a
+        // directory users can upload into.
+        if (!dPexternalAppFile($gallery_folder, 'embed.php')) {
+		$AppUI->setMsg('Gallery2 Local Folder must contain embed.php', UI_MSG_ERROR);
+		$AppUI->redirect('m=gallery2&a=configure');
+        }
 
         if( $action == "add" ) {        	
         	$q -> addTable('gallery2');

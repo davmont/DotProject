@@ -93,7 +93,7 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 						break;
 				}
 				
-				fwrite($handle, "\$MILEAGELOG_CONFIG['".$key."'] = '".$val."';\n");
+				fwrite($handle, "\$MILEAGELOG_CONFIG[" . var_export($key, true) . "] = " . var_export((string)$val, true) . ";\n");
 			}
 
 			fwrite($handle, "?>");

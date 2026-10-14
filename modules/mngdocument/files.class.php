@@ -22,7 +22,13 @@ class CFile extends CDpObject {
 
 	
 	function __construct() {
-		parent::__construct( 'mngdocument', 'file_id' );
+		parent::__construct( 'SGD', 'SGD_id' );
+	}
+
+	// Uploads are kept outside the web root, under the record id rather than the name
+	// the user gave the file. documentview.php sends them.
+	function filePath() {
+		return DP_BASE_DIR . '/files/mngdocument/' . (int)$this->SGD_id;
 	}
 
 	function check() {
@@ -38,9 +44,9 @@ class CFile extends CDpObject {
 		$this->_message = "deleted";
 		
 	// remove the file from the file system
-		@unlink( dPgetConfig('root_dir')."/SGD/$this->SGD_name" );
+		@unlink( $this->filePath() );
 	// delete the main table reference
-		$sql = "DELETE FROM SGD WHERE SGD_id = $this->SGD_id";
+		$sql = "DELETE FROM " . dPgetConfig('dbprefix', '') . "SGD WHERE SGD_id = " . (int)$this->SGD_id;
 		if (!db_exec( $sql )) {
 			return db_error();
 		}
@@ -53,7 +59,7 @@ class CFile extends CDpObject {
 		
 
 	// delete the main table reference
-		$sql = "DELETE FROM SGD WHERE SGD_id = $this->SGD_id";
+		$sql = "DELETE FROM " . dPgetConfig('dbprefix', '') . "SGD WHERE SGD_id = " . (int)$this->SGD_id;
 		if (!db_exec( $sql )) {
 			return db_error();
 		}
@@ -64,14 +70,17 @@ class CFile extends CDpObject {
 	function moveTemp( $upload ) {
 		global $AppUI;
 	// check that directories are created
-		if (!is_dir(dPgetConfig('root_dir')."/SGD")) {
-		    $res = mkdir( dPgetConfig('root_dir')."/SGD", 0777 );
+		if (!$this->SGD_id) {
+			return false;
+		}
+		if (!is_dir(DP_BASE_DIR . '/files/mngdocument')) {
+		    $res = mkdir( DP_BASE_DIR . '/files/mngdocument', 0777 );
 		    if (!$res) {
 			     return false;
 			 }
 		}
 
-		$this->_filepath = dPgetConfig('root_dir')."/SGD/$this->SGD_name";
+		$this->_filepath = $this->filePath();
 	// move it
 		$res = move_uploaded_file( $upload['tmp_name'], $this->_filepath );
 		if (!$res) {
@@ -87,14 +96,14 @@ class CFile extends CDpObject {
 * CFileLog Class
 */
 class CFileLog extends CDpObject {
-	var $SGD_Log_id = NULL;
-	var $SGD_Log_document_name = NULL;
-	var $SGD_Log_user = NULL;
-	var $SGD_Log_date = NULL;
-	var $SGD_Log_action = NULL;
+	var $SGD_Logs_id = NULL;
+	var $SGD_Logs_document_name = NULL;
+	var $SGD_Logs_user_id = NULL;
+	var $SGD_Logs_date = NULL;
+	var $SGD_Logs_action = NULL;
 
-	function CFileLog() {
-		$this->CDpObject( 'CFile_Log', 'SGD_Log_id' );
+	function __construct() {
+		parent::__construct( 'SGD_Logs', 'SGD_Logs_id' );
 	}
 }
 ?>

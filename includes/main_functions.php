@@ -375,6 +375,27 @@ function dPsafeUrl($url)
 }
 
 /**
+ * Returns the real path of $name inside $dir, the installation directory of an external
+ * application a module reads or includes (Gallery2, Eventum), or false. The file must
+ * exist on the local file system and must not be under a directory users upload into
+ * (files/, and SGD/ where the document management module used to store uploads).
+ */
+function dPexternalAppFile($dir, $name)
+{
+	$file = realpath(rtrim((string)$dir, '/\\') . DIRECTORY_SEPARATOR . $name);
+	if ($file === false || !is_file($file)) {
+		return false;
+	}
+	foreach (array('/files', '/SGD') as $upload_dir) {
+		$upload_dir = realpath(DP_BASE_DIR . $upload_dir);
+		if ($upload_dir !== false && strpos($file, $upload_dir . DIRECTORY_SEPARATOR) === 0) {
+			return false;
+		}
+	}
+	return $file;
+}
+
+/**
  * Returns $value when it is one of $allowed, otherwise $default. ORDER BY and GROUP BY
  * clauses cannot take bound parameters, so sort columns from the request must pass this.
  */

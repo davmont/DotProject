@@ -175,14 +175,15 @@ class CFile extends CDpObject
 	function deleteFile()
 	{
 		global $dPconfig;
-		return @unlink(DP_BASE_DIR . '/files/' . $this->file_project . '/'
-			. $this->file_real_filename);
+		return @unlink(DP_BASE_DIR . '/files/' . (int)$this->file_project . '/'
+			. basename($this->file_real_filename));
 	}
 
 	// move the file if the affiliated project was changed
 	function moveFile($oldProj, $realname)
 	{
 		global $AppUI, $dPconfig;
+		$this->file_project = (int)$this->file_project;
 		if (!is_dir(DP_BASE_DIR . '/files/' . $this->file_project)) {
 			$res = mkdir(DP_BASE_DIR . '/files/' . $this->file_project, 0777);
 			if (!$res) {
@@ -192,8 +193,8 @@ class CFile extends CDpObject
 			}
 		}
 		$res = rename(
-			DP_BASE_DIR . '/files/' . $oldProj . '/' . $realname,
-			DP_BASE_DIR . '/files/' . $this->file_project . '/' . $realname
+			DP_BASE_DIR . '/files/' . (int)$oldProj . '/' . basename($realname),
+			DP_BASE_DIR . '/files/' . $this->file_project . '/' . basename($realname)
 		);
 
 		return $res;
@@ -213,7 +214,7 @@ class CFile extends CDpObject
 		}
 		$dest_realname = uniqid(rand());
 		$res = copy(
-			DP_BASE_DIR . '/files/' . $oldProj . '/' . $realname,
+			DP_BASE_DIR . '/files/' . (int)$oldProj . '/' . basename($realname),
 			DP_BASE_DIR . '/files/0/' . $dest_realname
 		);
 
@@ -231,6 +232,7 @@ class CFile extends CDpObject
 				return false;
 			}
 		}
+		$this->file_project = (int)$this->file_project;
 		if (!is_dir(DP_BASE_DIR . '/files/' . $this->file_project)) {
 			$res = mkdir(DP_BASE_DIR . '/files/' . $this->file_project, 0777);
 			if (!$res) {
@@ -241,7 +243,7 @@ class CFile extends CDpObject
 		}
 
 
-		$filepath = DP_BASE_DIR . '/files/' . $this->file_project . '/' . $this->file_real_filename;
+		$filepath = DP_BASE_DIR . '/files/' . $this->file_project . '/' . basename($this->file_real_filename);
 		// move it
 		$res = move_uploaded_file($upload['tmp_name'], $filepath);
 		return $res;
@@ -260,14 +262,14 @@ class CFile extends CDpObject
 			return false;
 		}
 		// buffer the file
-		$filepath = (DP_BASE_DIR . '/files/' . $this->file_project . '/'
-			. $this->file_real_filename);
+		$filepath = (DP_BASE_DIR . '/files/' . (int)$this->file_project . '/'
+			. basename($this->file_real_filename));
 		$fp = fopen($filepath, 'rb');
 		$x = fread($fp, $this->file_size);
 		fclose($fp);
 
 		// parse it
-		$parser = $parser . ' ' . $filepath;
+		$parser = $parser . ' ' . escapeshellarg($filepath);
 		$pos = mb_strpos($parser, '/pdf');
 		// If we have safe mode turned on just return.
 		// This should be replaced with a simple string tokenizer.
@@ -318,7 +320,7 @@ class CFile extends CDpObject
 		}
 
 		db_exec('UNLOCK TABLES;');	//TODO: use DBQuery?  What about other sql engines?
-		return nwords;
+		return count($wordarr);
 	}
 
 	//function notifies about file changing

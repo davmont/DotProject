@@ -18,7 +18,8 @@ if (!defined('DP_BASE_DIR')) {
 //   Added localisation code so that it can be translated.
 
 $perms =& $AppUI->acl();
-if (!$perms->checkModule('backup', 'view'))	// Should we have an exec permission?
+// A backup holds every table, user password hashes included: system administrators only.
+if (!$perms->checkModule('backup', 'view') || !$perms->checkModule('system', 'edit'))
 	$AppUI->redirect("m=public&a=access_denied");
 
 $title = new CTitleBlock('Backup Database', 'companies.gif', $m, $m . '.' . $a);

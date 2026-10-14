@@ -29,8 +29,11 @@ if ($report_type) {
 $titleBlock->show();
 
 if ($report_type) {
-	$report_type = $AppUI->makeFileNameSafe( $report_type );
 	$report_type = str_replace( ' ', '_', $report_type );
+	// Only the report files listed above can be included.
+	if (!in_array( $report_type . '.php', $reports, true )) {
+		$AppUI->redirect( "m=public&a=access_denied" );
+	}
 	require( dPgetConfig( 'root_dir' )."/modules/projects/reports/$report_type.php" );
 } else {
 	echo "<table>";

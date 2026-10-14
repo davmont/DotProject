@@ -153,7 +153,7 @@ Branch `security/phase3-sqli`. The findings files were re-triaged against devel 
 | `498ec9e0` | helpdesk list filters and ids, ticketsmith, hosting, mngdocument, eventum, reports, journal. |
 
 Left for later phases:
-- Dead or uninstallable modules keep their sinks: bugspray, tracIntegration, mantis (Phase 6, delete). helpdesk, holiday, mileagelog, timetrack, registers and others fail to install on PHP 8, so their fixes are review-only.
+- Dead or uninstallable modules keep their sinks: bugspray, tracIntegration, mantis (kept for a later revival; see "Nice to have"). helpdesk, holiday, mileagelog, timetrack, registers and others fail to install on PHP 8, so their fixes are review-only.
 - `communication/addedit_channel.php` and `addedit_frequency.php` delete rows on a plain GET (CSRF; ids are now integers).
 - earnings' hand-written SQL uses unprefixed table names and fails on prefixed installs.
 - XSS noticed on the way: helpdesk `sort_header()` echoes `company_id`/`project_id` from the request into links (Phase 4).
@@ -178,21 +178,52 @@ Left for later phases:
 - Modules that do not install on PHP 8 in the sandbox (helpdesk, holiday, mileagelog, timetrack, registers, links pages) were fixed by review only.
 - A Content-Security-Policy header (Phase 7) would contain whatever escaping misses.
 
-### Phase 5: file handling and RCE sinks
-- `mngdocument`: require `getPermission('mngdocument','add')`, store uploads outside the web root (or under `files/` with the same `uniqid` scheme the files module uses) with an extension allow-list; fix the `$actual` SQL and `unlink` chain.
-- `gallery2/configure.php`: permission check and realpath containment for `gallery_folder`.
-- `dotproject_plus` `show_external_page`: whitelist of known page names; never include a request-supplied path.
-- `invoices/reports.php` and every other `makeFileNameSafe` caller: `basename()` plus directory containment.
-- `timecard/configure.php`, `mileagelog/configure.php`, `helpdesk/configure.php`, `eventum/configure.php`: write config as data (`var_export`), not interpolated PHP.
-- `classes/authenticator.class.php` PostNuke path: replace `unserialize` with `json_decode` and verify an HMAC, or remove the method.
+### Phase 5: file handling and RCE sinks (DONE, 2026-10-11)
+Branch `security/phase5-files`, stacked on `security/phase4-xss`. The planned items were re-checked against current code and the sweep was widened to every upload, include, file read/write, `eval`, `unserialize` and shell call; three of the worst findings (files, backup, PostNuke) were not in the audit. Each fix reproduced the problem in `docker/` before and shows it blocked after; modules that fatal on PHP 8 were fixed by review, as each commit says.
+
+| Commit | Fix |
+|---|---|
+| `c92861fb` | Files: `do_file_aed.php` bound `file_real_filename`/`file_size` from POST, so a worker read `includes/config.php` (DB password) through `fileviewer.php`, and delete unlinked any file. Storage fields now come from the record or the upload; every path uses an int project and `basename()`; the indexer quotes its shell argument. |
+| `ba77a066` | Files: `return nwords` fatal ended every text upload with HTTP 500 (bug fix needed to test uploads). |
+| `3ddbffff` | `index.php`: `a=configure` pages need system edit, POSTs need the CSRF token. timecard, mileagelog, projectdesigner, helpdesk write settings with `var_export()`; before, a tokenless POST through an admin's browser wrote PHP into `timecard/config.php`. |
+| `624b9e29` | `dPexternalAppFile()` (tests in `tests/ExternalAppFileTest.php`): gallery2's `embed.php` include and eventum's `config.inc.php` must be real local files outside `files/`/`SGD/`; changing the eventum directory needs system edit (worker could set it before); generated `dp_config.php` uses `var_export()`. |
+| `28093f95` | mngdocument: uploads went to `<webroot>/SGD/<user's name>` and ran as PHP. Now `files/mngdocument/<id>`, downloaded through a permission-checked `documentview` page as an attachment; deletes by id; addedit escapes. PHP 8 fixes so the module stores records at all (wrong table since 2013). Operators: delete any `SGD/` directory. |
+| `17ca4da5` | Backup: worker (module edit via the Project worker role) downloaded a full dump with password hashes and ran SQL through restore. Backup and restore now need system edit. |
+| `13e9ae85` | dataimport: target table/field checked on the server (projects, tasks, existing columns) when the map is saved and used. |
+| `2085047d` | invoices reports: only report files from the directory listing are included (last `makeFileNameSafe()` caller); `report_type` URL-encoded in report form actions. |
+| `9392f601` | PostNuke auth: the `check` was md5 of the data itself, so anyone could log in as any user (account created on the fly). Now HMAC-SHA256 with `$dPconfig['postnuke_secret']` (documented in `config-dist.php`); no secret, no PostNuke logins. **The PostNuke bridge must be changed to send the HMAC.** |
+| `f4395a61` | opportunities: `unserialize()` with `allowed_classes => false`. |
+| `222e3412` | vCard import verifies the CSRF token (it is a view that stores contacts); help page `hid` limited to a file name. |
+
+`show_external_page` was already closed in Phase 4 (`bd2f4b39`).
+
+Left for later phases:
+- eventum still `eval()`s `define(APP_...)` lines from the admin-chosen Eventum config; unreachable on PHP 8 while `CEventumConfig` keeps its PHP 4 constructor. Replace with literal parsing when the module is revived (see "Nice to have").
+- Modules fatal on PHP 8 before their fixed code runs: dataimport, opportunities, projectdesigner (configure), gallery2, mileagelog/helpdesk (do not install).
+- `CustomFieldsParser` has no callers (only `tests/CustomFieldsParserTest.php`) and unserializes field config. `EventQueue` unserializes data the application wrote itself.
+- `fileviewer.php` sends the stored `file_type` as Content-Type with `attachment`; adding `nosniff` belongs with the Phase 7 headers.
 
 ### Phase 6: dead and broken code (reduces attack surface and audit noise)
-Candidates confirmed dead or fatal on PHP 8: `modules/smartsearchns`, `modules/bugspray`, `modules/mantis`, `modules/tracIntegration`, `xmlrpc/` demos, `modules/dotproject_plus/dotproject_plus/`, `modules/unitcost`, `modules/install`, `modules/ticketsmith/admin.php`, `modules/eventum/evlink`, PHP4-style constructors in helpdesk/eventum/testing/mngdocument (fix the SQL sinks in those classes before fixing the constructors, otherwise currently masked bugs go live). Decide per module with the owner; delete rather than patch where the module is unused.
+Rescoped 2026-10-12 with the owner: modules that are dormant on PHP 8 (bugspray, mantis, tracIntegration, smartsearchns, unitcost and the ones that do not install) stay in the tree and will be revived later; their open issues are listed under "Nice to have" below. Phase 6 removes code that no module uses and closes direct HTTP access to the rest:
+- `modules/monitoringandcontrol/jpgraph/`: a second, unused jpgraph copy (charts moved to Chart.js in `625878bf`) whose examples and barcode demo app answer over HTTP.
+- `modules/ticketsmith/admin.php`: dead page in a live module, no permission check, every branch fails.
+- `DP_BASE_DIR` guard for the module files the Phase 1 pass left (e.g. `unitcost/patch_203`), found by requesting every unguarded file in `docker/`.
+- Developer scripts in the web root that still run over HTTP.
 
 ### Phase 7: hardening and regression safety
 - `Content-Security-Policy` header (start with `script-src 'self'` plus a nonce for inline blocks), `X-Content-Type-Options`, `X-Frame-Options`.
 - PHPStan at level 2 with a baseline, in CI, to catch new raw `$_GET`/`$_POST` use via a custom rule or `grep` guard.
 - Keep `docker/` in the repo and add a `make audit-smoke` target that runs the login, CSRF and permission curl checks.
+
+### Nice to have: dormant modules (to be revived later)
+These modules do not run on PHP 8 today, so their remaining issues are not reachable. Fix them as part of each module's revival, before it is installed again:
+- **bugspray** (an old copy of helpdesk working on the live `helpdesk_items` tables): SQL injection in every list filter and sort (`list.php` search, `orderby`, `item_os`, `item_application`, `requestor`), raw `item_id` in `view.php`, `vw_logs.php`, `do_item_aed.php`; reflected XSS (`list.php` search box, `selector.php` callback); no output escaping; weaker permission checks than helpdesk (only `getDenyRead($m)`, no `getItemPerms()`). `setup.php` registers it as `mod_directory='helpdesk'`. Simplest revival: port the helpdesk fixes from Phases 3-4, or rebuild it on helpdesk.
+- **tracIntegration**: raw ids in `trac.class.php` (`addWhere` with `envId`, `task_id`, ...), `embed.php` builds an iframe URL from `ticket`/`envId`/`tab` (reflected XSS), `ticket_backend.php` and `tasks_tab.view.trac_tickets.php` echo request values; `setup.php` says `mod_directory='trac'` while the directory is `tracIntegration`. The vendored XML-RPC debugger/demos were removed in Phase 1; `xrlib/` remains.
+- **mantis**: sends every user's name and password hash over plain HTTP to a hard-coded third-party host (`mantis.config.php`: `bugs.dechobot.com`, port 80); the bundled Mantis-side server (`core/`, `no.core/`, two PHPXMLRPC copies) stores the hash as the Mantis password with an injectable `UPDATE`; uses `mysql_real_escape_string()`. Revival: configurable host, HTTPS only, never send password hashes, keep the Mantis-side code out of the dotProject web root.
+- **eventum**: `CEventumConfig::loadEventumConfig()` `eval()`s the `define(APP_...)` lines of the admin-chosen Eventum config; replace with literal parsing before modernising the PHP 4 constructors (`CEventumConfig`, `CEventumContract`, `CEventumSupportLevel`). `evlink/` holds files meant to be copied into an Eventum install, not served by dotProject.
+- **unitcost**: `patch_203/` holds patched copies of dotProject 2.0.3 core files; they must be redone against the current core.
+- **PHP 4 constructors and PHP 8 fatals** (helpdesk `CHelpDeskItem`/`CHDTaskLog`, dataimport `CDataImport`, testing, opportunities and projectdesigner signature mismatches, installers failing with `ADORecordSet_empty & int`, links `CLink::delete()`): the SQL, XSS and file sinks behind them were fixed by review in Phases 3-5. When a module is revived, re-run the Phase 3/4/5 checks (`probe.sh`, marker check, direct-request scan) against it in `docker/`.
+- **Review-only fixes to retest once installable**: helpdesk, holiday, mileagelog, timetrack, registers, links pages, dataimport, opportunities, projectdesigner configure, gallery2.
 
 ## 4. State of the remediation branch
 

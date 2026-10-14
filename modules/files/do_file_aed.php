@@ -59,6 +59,12 @@ if (!$obj->bind($_POST)) {
 	$AppUI->setMsg($obj->getError(), UI_MSG_ERROR);
 	$AppUI->redirect($redirect);
 }
+// Where the file lives on disk, its size and type come from the stored record or the
+// upload below, never from the request (a posted name like ../../includes/config.php
+// was served by fileviewer.php and unlinked on delete).
+$obj->file_real_filename = $file_id ? $oldObj->file_real_filename : null;
+$obj->file_size = $file_id ? $oldObj->file_size : null;
+$obj->file_type = $file_id ? $oldObj->file_type : null;
 
 // prepare (and translate) the module name ready for the suffix
 $AppUI->setMsg('File');
@@ -206,7 +212,7 @@ if (($msg = $obj->store())) {
 	*/
 	$index_max_file_size = dPgetConfig('index_max_file_size', 0);
 	if ($index_max_file_size < 0 || $obj->file_size <= $index_max_file_size*1024) {
-		$obj->indexStrings();
+		$indexed = $obj->indexStrings();
 		$AppUI->setMsg('; ' . $indexed . ' words indexed', UI_MSG_OK, true);
 	}
 }

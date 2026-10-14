@@ -4,6 +4,10 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 $hid = dPgetCleanParam($_GET, 'hid', 'help.toc');
+// A help file name, not a path.
+if (!preg_match('/^[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*$/', $hid)) {
+	$hid = 'help.toc';
+}
 
 $inc = DP_BASE_DIR.'/modules/help/'.$AppUI->user_locale.'/'.$hid.'.hlp';
 

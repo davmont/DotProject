@@ -320,7 +320,7 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 					default:
 						break;
 				}
-				fwrite($handle, "\$HELPDESK_CONFIG['".$key."'] = '".$val."';\n");
+				fwrite($handle, "\$HELPDESK_CONFIG[" . var_export($key, true) . "] = " . var_export((string)$val, true) . ";\n");
 			}
 			fwrite($handle, "?>\n");
 			$AppUI->setMsg( $CONFIG_FILE." ".$AppUI->_('has been successfully updated'), UI_MSG_OK );
