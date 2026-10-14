@@ -46,6 +46,14 @@ $baseDir = dirname(__FILE__);
 // Define to deprecate the global baseDir
 define('DP_BASE_DIR', $baseDir);
 
+// Security headers for every page (the installer sends the same ones, see
+// install/check_upgrade.php). The Content-Security-Policy comes separately.
+if (PHP_SAPI !== 'cli' && !headers_sent()) {
+  header('X-Content-Type-Options: nosniff');
+  header('X-Frame-Options: SAMEORIGIN');
+  header('Referrer-Policy: strict-origin-when-cross-origin');
+}
+
 require_once($baseDir . '/includes/dP_compat.php');
 
 // only rely on env variables if not using a apache handler
