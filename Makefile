@@ -19,11 +19,14 @@ lint:
 	  | $(DOCKER_RUN) -i --entrypoint sh php:8.3-cli -c 'xargs -0 -n 50 -P 4 sh -c "for f; do php -d error_reporting=E_ALL\&~E_DEPRECATED -l \"\$$f\" >/dev/null || { php -l \"\$$f\"; exit 255; }; done" _'
 	@echo "OK: no syntax errors."
 
+# includes/config.php is not tracked; PHPStan follows require statements into it.
 phpstan:
+	test -e includes/config.php || cp includes/config-dist.php includes/config.php
 	$(DOCKER_RUN) $(PHPSTAN_IMAGE) analyse -c phpstan.neon.dist --memory-limit=3G --no-progress
 
 # Only after fixing existing findings: records the remaining ones as accepted.
 phpstan-baseline:
+	test -e includes/config.php || cp includes/config-dist.php includes/config.php
 	$(DOCKER_RUN) $(PHPSTAN_IMAGE) analyse -c phpstan.neon.dist --memory-limit=3G --no-progress --generate-baseline phpstan-baseline.neon
 
 raw-input:
