@@ -1,2 +1,11 @@
-Options -All
-deny from all
+# Uploaded files and generated reports. Nothing here is served directly:
+# uploads go through fileviewer.php?file_id=..., each user's PDF report through
+# fileviewer.php?report=pdf. ("Options -All" was refused by Apache 2.4 with a 500.)
+Options None
+<IfModule mod_authz_core.c>
+	Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+	Order allow,deny
+	Deny from all
+</IfModule>

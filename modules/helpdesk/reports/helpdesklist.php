@@ -361,7 +361,7 @@ if ($log_pdf) {
 		if ($fp = fopen( "$temp_dir/temp$AppUI->user_id.pdf", 'wb' )) {
 			fwrite( $fp, $pdf->ezOutput() );
 			fclose( $fp );
-			echo "<a href=\"$base_url/files/temp/temp$AppUI->user_id.pdf\" target=\"pdf\">";
+			echo "<a href=\"$base_url/fileviewer.php?report=pdf\" target=\"pdf\">";
 			echo $AppUI->_( "View PDF File" );
 			echo "</a>";
 		} else {

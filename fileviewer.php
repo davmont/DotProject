@@ -89,6 +89,29 @@ if (!isset($_SESSION['AppUI']) || isset($_GET['logout'])) {
 }
 $AppUI =& $_SESSION['AppUI'];
 
+// PDF reports are written to files/temp/temp<user_id>.pdf. files/ is not served
+// directly (the names are predictable), so each user fetches their own report here.
+if (isset($_GET['report'])) {
+	if ($AppUI->doLogin()) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	$fname = DP_BASE_DIR.'/files/temp/temp'.(int)$AppUI->user_id.'.pdf';
+	if (!is_file($fname)) {
+		http_response_code(404);
+		exit;
+	}
+	while (ob_get_level()) {
+		ob_end_clean();
+	}
+	header('Content-Type: application/pdf');
+	header('Content-Length: '.filesize($fname));
+	header('Content-Disposition: inline; filename="report.pdf"');
+	header('Cache-Control: private, no-store');
+	header('X-Content-Type-Options: nosniff');
+	readfile($fname);
+	exit;
+}
+
 require_once DP_BASE_DIR.'/includes/permissions.php';
 
 $perms =& $AppUI->acl();
