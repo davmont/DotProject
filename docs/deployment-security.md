@@ -47,3 +47,25 @@ for p in modules/tasks/tasks.class.php vendor/autoload.php includes/config.php \
   printf '%-32s %s\n' "$p" "$(curl -s -o /dev/null -w '%{http_code}' "https://your-host/$p")"
 done
 ```
+
+## Event queue (`queuescanner.php`)
+
+`queuescanner.php` sends the queued events, such as task reminder mails. It
+runs on the command line only: over HTTP it answers 404 (and the web server
+rules above refuse it before PHP runs). Run it from cron as the web server
+user, with the site's public URL so that the links in the mails work:
+
+```cron
+# /etc/cron.d/dotproject
+*/5 * * * * www-data php /var/www/dotproject/queuescanner.php --base-url=https://pm.example.com
+```
+
+- `--base-url` (or the `DP_BASE_URL` environment variable) is required; the
+  script exits with status 2 without it.
+- Overlapping runs are skipped through a lock on
+  `files/temp/queuescanner.lock`; status 1 means that file could not be
+  opened (wrong user or permissions).
+- Output goes to cron's mail, or append `>> /var/log/dotproject-queue.log 2>&1`.
+
+Sites that fetched `queuescanner.php` over HTTP (`wget`/`curl` in a cron job)
+must switch to the command above.

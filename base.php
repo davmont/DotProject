@@ -82,8 +82,11 @@ if (@$pathInfo) {
 
 $baseUrl = preg_replace('#/$#D', '', $baseUrl);
 
-// Define to deprecate the global baseUrl
-define('DP_BASE_URL', $baseUrl);
+// Define to deprecate the global baseUrl. Command-line scripts (queuescanner.php)
+// define it first from their --base-url option, since there is no request to read.
+if (!defined('DP_BASE_URL')) {
+  define('DP_BASE_URL', $baseUrl);
+}
 // And now we need to ensure we have a valid path for included pear libraries.
 // This dependency sucks, but if we don't do it we have no idea what versions we have
 $dpLib = DP_BASE_DIR . DIRECTORY_SEPARATOR . 'lib';
