@@ -14,7 +14,7 @@ if ( ! $perms->checkModuleItem('forums', 'view', $message_id))
 
 $q  = new DBQuery;
 $q->addTable('forums');
-$q->addTable('forum_messages');
+$q->addTable('forum_messages', 'forum_messages');
 $q->addQuery('forum_messages.*,	contact_first_name, contact_last_name, contact_email, user_username,
 		forum_moderated, visit_user');
 $q->addJoin('forum_visits', 'v', "visit_user = {$AppUI->user_id} AND visit_forum = $forum_id AND visit_message = 				forum_messages.message_id");
@@ -42,7 +42,7 @@ foreach ($messages as $row) {
 		
 	$q  = new DBQuery;
 	$q->addTable('forum_messages');
-	$q->addTable('users');
+	$q->addTable('users', 'users');
 	$q->addQuery('DISTINCT contact_email, contact_first_name, contact_last_name, user_username');
 	$q->addJoin('contacts', 'con', 'contact_id = user_contact');
 	$q->addWhere('users.user_id = '.$row["message_editor"]);
@@ -58,10 +58,10 @@ foreach ($messages as $row) {
 
 $font_dir = DP_BASE_DIR . '/lib/ezpdf/fonts';
 $temp_dir = DP_BASE_DIR . '/files/temp';
-$base_url  = DB_BASE_URL;
+$base_url  = DP_BASE_URL;
 require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
-$pdf = &new DotPdf($paper='A4', $orientation='portrait');
+$pdf = new DotPdf($paper='A4', $orientation='portrait');
 $pdf->ezSetCmMargins(1, 2, 1.5, 1.5);
 $pdf->selectFont($font_dir . '/Helvetica.afm');
 $pdf->ezText('Project: ' . $forum['project_name']. '   Forum: '.$forum['forum_name'] );
