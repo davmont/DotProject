@@ -124,10 +124,14 @@ class CDate extends Date {
 		global $AppUI;
 		global $baseDir;
 		
-		require_once $baseDir."/modules/holiday/holiday_func.php";
-		if(isHoliday($this))
-		{
-			return 0;
+		// Holidays only count when the holiday module is installed and active.
+		// Its PEAR Holidays code is fatal on PHP 8 and was loaded unconditionally,
+		// so every working-day check (task reminders, next_working_day()) crashed.
+		if (isset($AppUI) && is_object($AppUI) && $AppUI->isActiveModule('holiday')) {
+			require_once $baseDir."/modules/holiday/holiday_func.php";
+			if (isHoliday($this)) {
+				return 0;
+			}
 		}
 		$working_days = dPgetConfig("cal_working_days");
 		$working_days = ((is_null($working_days)) ? array('1','2','3','4','5') : explode(",", $working_days));
