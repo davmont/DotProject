@@ -47,7 +47,7 @@ global $AppUI;
                     $list = array();	
                     $list = $qualityControl -> obterUsuarioDeTarefa($project_id);
                     foreach($list as $row){		
-                      if($user ==  $row[user_id]){			
+                      if($user ==  $row['user_id']){			
                         echo "<option value='$row[user_id]' selected>$row[user_username]</option>";					 
                       }else {
                         echo "<option value='$row[user_id]'>$row[user_username]</option>";

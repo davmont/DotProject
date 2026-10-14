@@ -132,7 +132,7 @@ class ControllerEarnValue{
 		
 		$controllerEarnValue = new ControllerEarnValue();	
 		foreach($list as $row){
-			$vp =  ($row[task_duration] *  $row[cost_value])* $controllerEarnValue->calculaPercentualAvanco($row[task_start_date], $row[task_end_date], $date) ;	
+			$vp =  ($row['task_duration'] *  $row['cost_value'])* $controllerEarnValue->calculaPercentualAvanco($row['task_start_date'], $row['task_end_date'], $date) ;	
 			$result+= $vp;   
 	    }	
 		return  $result;    
@@ -246,8 +246,8 @@ class ControllerEarnValue{
 		
 		$duracaoTotal = 0;
 		foreach($list as $row){
-			$duracaoTotal += $row[task_duration];					
-			$duracaoCalculada += $row[task_duration] * $row[task_percent_complete] / 100;
+			$duracaoTotal += $row['task_duration'];					
+			$duracaoCalculada += $row['task_duration'] * $row['task_percent_complete'] / 100;
 		}		
 		if ($duracaoTotal == 0) {
 			return 0;
@@ -268,7 +268,7 @@ class ControllerEarnValue{
 		$list = db_loadList($sql);
 		$duracaoTotal = 0;
 		foreach($list as $row){
-			$duracaoTotal += $row[task_duration];					
+			$duracaoTotal += $row['task_duration'];					
 		}			
 		return $duracaoTotal;
 	}
@@ -304,7 +304,7 @@ class ControllerEarnValue{
 		$list = db_loadList($sql);
 		$result = "0";		
 		foreach($list as $row){			
-			$vp =  ($row[task_duration] *  $row[cost_value])* $controllerEarnValue->calculaPercentualAvanco($row[task_start_date], $row[task_end_date], $date) ;		
+			$vp =  ($row['task_duration'] *  $row['cost_value'])* $controllerEarnValue->calculaPercentualAvanco($row['task_start_date'], $row['task_end_date'], $date) ;		
 			$result+= $vp;   
 		}	
 		return  $result;    

@@ -9,8 +9,8 @@ if (!defined('DP_BASE_DIR')) {
 		var $tasks_template_roles = "";
 		var $tasks_template_observations = "";	
 		
-		function CTasksTemplate(){
-			$this->CDpObject( "tasks_template", "tasks_template_id" );
+		function __construct(){
+			parent::__construct( "tasks_template", "tasks_template_id" );
 		}
 	}
 ?>

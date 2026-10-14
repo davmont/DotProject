@@ -20,7 +20,9 @@ class events extends smartsearch
 	var $display_fields = array('event_title', 'event_description', 'event_start_date', 
 	                            'event_end_date');
 
-	function events() {
+	// PHP 8 never ran this as a PHP 4 constructor: without the filter, search listed
+	// other users' private events.
+	function __construct() {
 		global $AppUI;
 		$this->table_extra = '(event_private = 0 or event_owner = ' . $AppUI->user_id . ')';	
 	}

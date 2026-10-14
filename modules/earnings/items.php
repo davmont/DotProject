@@ -235,7 +235,7 @@ if ( $tab ) {
 		<?php if ( $AppUI->user_type != 7 && !$timecard) { ?>
 			<td nowrap="nowrap">
 				<?php $tmp_rate = $x["earning_item_rate"]; ?>
-				$&nbsp;<input type="text" size="6" maxlength="10" name="rate:<?php echo $x[earning_items_id];?>" value="<?php echo $x["earning_item_rate"];?>">
+				$&nbsp;<input type="text" size="6" maxlength="10" name="rate:<?php echo $x['earning_items_id'];?>" value="<?php echo $x["earning_item_rate"];?>">
 			</td>
 			<td>
 				<?php 
@@ -245,12 +245,12 @@ if ( $tab ) {
 				?>
 			</td>
 		<?php } else { ?>
-			<td><input type="hidden" name="rate:<?php echo $x[earning_items_id];?>" value="0"></td>
+			<td><input type="hidden" name="rate:<?php echo $x['earning_items_id'];?>" value="0"></td>
 			<td></td>
 		<?php } ?>
 		<td>
 			<?php if ( !$changeLock ) { ?>
-				<center><input type="checkbox" name="remove:<?php echo $x[earning_items_id];?>" value="remove:<?php echo $x[earning_items_id];?>"></center>
+				<center><input type="checkbox" name="remove:<?php echo $x['earning_items_id'];?>" value="remove:<?php echo $x['earning_items_id'];?>"></center>
 			<?php } ?>
 		</td>
 	</tr>
@@ -347,7 +347,7 @@ if ( $tab ) {
 		<?php if ( $AppUI->user_type != 7 && !$timecard) { ?>
 			<td nowrap="nowrap">
 				<?php $tmp_rate = $x["earning_item_rate"]; ?>
-				$&nbsp;<input type="text" size="6" maxlength="10" name="rate:<?php echo $x[earning_items_id];?>" value="<?php echo $x["earning_item_rate"];?>">
+				$&nbsp;<input type="text" size="6" maxlength="10" name="rate:<?php echo $x['earning_items_id'];?>" value="<?php echo $x["earning_item_rate"];?>">
 			</td>
 			<td>
 				<?php $tmp_subtotal = $x["earning_item_rate"] * $x["earning_item_hours"];
@@ -356,12 +356,12 @@ if ( $tab ) {
 				?>
 			</td>
 		<?php } else { ?>
-			<td><input type="hidden" name="rate:<?php echo $x[earning_items_id];?>" value="0"></td>
+			<td><input type="hidden" name="rate:<?php echo $x['earning_items_id'];?>" value="0"></td>
 			<td></td>
 		<?php } ?>
 		<td>
 			<?php if ( !$changeLock ) { ?>
-				<center><input type="checkbox" name="remove:<?php echo $x[earning_items_id];?>" value="remove:<?php echo $x[earning_items_id];?>"></center>
+				<center><input type="checkbox" name="remove:<?php echo $x['earning_items_id'];?>" value="remove:<?php echo $x['earning_items_id'];?>"></center>
 			<?php } ?>
 		</td>
 	</tr>

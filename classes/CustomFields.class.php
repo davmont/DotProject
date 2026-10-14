@@ -61,20 +61,17 @@ class CustomField
 		global $db;
 		$q = new DBQuery;
 		$q->addTable('custom_fields_values');
-		$q->addWhere('value_field_id = ' . $this->field_id);
-		$q->addWhere('value_object_id = ' . $object_id);
+		$q->addWhere('value_field_id = ' . (int)$this->field_id);
+		$q->addWhere('value_object_id = ' . (int)$object_id);
 		$rs = $q->exec();
 		$row = $q->fetchRow();
 		$q->clear();
 
-		$value_id = $row['value_id'];
-		$value_charvalue = $row['value_charvalue'];
-		$value_intvalue = $row['value_intvalue'];
-
-		if ($value_id != NULL) {
-			$this->value_id = $value_id;
-			$this->value_charvalue = $value_charvalue;
-			$this->value_intvalue = $value_intvalue;
+		// No row yet for this record: keep the empty value.
+		if ($row && $row['value_id'] != NULL) {
+			$this->value_id = $row['value_id'];
+			$this->value_charvalue = $row['value_charvalue'];
+			$this->value_intvalue = $row['value_intvalue'];
 		}
 	}
 
@@ -189,7 +186,7 @@ class CustomField
 // CustomFieldCheckBox - Produces an INPUT Element of the CheckBox type in edit mode, view mode indicates 'Yes' or 'No'
 class CustomFieldCheckBox extends CustomField
 {
-	function CustomFieldCheckBox(
+	function __construct(
 		$field_id,
 		$field_name,
 		$field_order,
@@ -236,7 +233,7 @@ class CustomFieldCheckBox extends CustomField
 // CustomFieldText - Produces an INPUT Element of the TEXT type in edit mode
 class CustomFieldText extends CustomField
 {
-	function CustomFieldText(
+	function __construct(
 		$field_id,
 		$field_name,
 		$field_order,
@@ -277,7 +274,7 @@ class CustomFieldText extends CustomField
 // CustomFieldTextArea - Produces a TEXTAREA Element in edit mode
 class CustomFieldTextArea extends CustomField
 {
-	function CustomFieldTextArea(
+	function __construct(
 		$field_id,
 		$field_name,
 		$field_order,
@@ -318,7 +315,7 @@ class CustomFieldTextArea extends CustomField
 // CustomFieldLabel - Produces just a non editable label
 class CustomFieldLabel extends CustomField
 {
-	function CustomFieldLabel(
+	function __construct(
 		$field_id,
 		$field_name,
 		$field_order,
@@ -352,7 +349,7 @@ class CustomFieldLabel extends CustomField
 // CustomFieldSeparator - Produces just an horizontal line
 class CustomFieldSeparator extends CustomField
 {
-	function CustomFieldSeparator(
+	function __construct(
 		$field_id,
 		$field_name,
 		$field_order,
@@ -386,7 +383,7 @@ class CustomFieldSelect extends CustomField
 {
 	public $options;
 
-	function CustomFieldSelect(
+	function __construct(
 		$field_id,
 		$field_name,
 		$field_order,
@@ -442,7 +439,7 @@ class CustomFieldSelect extends CustomField
 
 class CustomFieldWeblink extends CustomField
 {
-	function CustomFieldWeblink(
+	function __construct(
 		$field_id,
 		$field_name,
 		$field_order,
@@ -494,7 +491,7 @@ class CustomFieldWeblink extends CustomField
 class CustomFieldFilelink extends CustomField
 {
 
-	function CustomFieldFilelink(
+	function __construct(
 		$field_id,
 		$field_name,
 		$field_order,
@@ -634,7 +631,7 @@ class CustomFields
 
 	public $fields;
 
-	function CustomFields($m, $a, $obj_id = NULL, $mode = 'edit')
+	function __construct($m, $a, $obj_id = NULL, $mode = 'edit')
 	{
 		$this->m = $m;
 		$this->a = 'addedit'; // only addedit pages can carry the custom field for now
@@ -877,7 +874,7 @@ class CustomOptionList
 	public $field_id;
 	public $options;
 
-	function CustomOptionList($field_id)
+	function __construct($field_id)
 	{
 		$this->field_id = $field_id;
 		$this->options = array();

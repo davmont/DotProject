@@ -30,11 +30,14 @@ class CRole
 	var $role_description = NULL;
 	var $perms = null;
 
-	function CRole($name = '', $description = '')
+	function __construct($name = '', $description = '')
 	{
+		global $AppUI;
 		$this->role_name = $name;
 		$this->role_description = $description;
-		$this->perms = isset($GLOBALS['acl']) ? $GLOBALS['acl'] : null;
+		// PHP 8 never ran the old PHP 4 constructor, so $perms stayed null: no role
+		// was listed and creating one failed. acl() also sets $GLOBALS['acl'].
+		$this->perms =& $AppUI->acl();
 	}
 
 	function bind($hash)

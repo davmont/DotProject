@@ -2445,9 +2445,9 @@ class CTaskLog extends CDpObject
 	var $task_log_related_url = NULL;
 
 
-	function CTaskLog()
+	function __construct()
 	{
-		$this->CDpObject('task_log', 'task_log_id');
+		parent::__construct('task_log', 'task_log_id');
 
 		// ensure changes to checkboxes are honoured
 		$this->task_log_problem = intval($this->task_log_problem);

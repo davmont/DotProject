@@ -111,11 +111,11 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 						 $lstBaseline = $controllerBaseline->listBaseline($project_id);
 						echo "<option value='0'>".$AppUI->_('LBL_POSICAO_ATUAL')."</option>";	
 						for($i=0;$i<count($lstBaseline);$i++){
-							  if($cmbBaseline ==  $lstBaseline[$i][baseline_id]){								 
-								echo "<option value='".$lstBaseline[$i][baseline_id]."' selected>".$lstBaseline[$i][baseline_version]."</option>";
+							  if($cmbBaseline ==  $lstBaseline[$i]['baseline_id']){								 
+								echo "<option value='".$lstBaseline[$i]['baseline_id']."' selected>".$lstBaseline[$i]['baseline_version']."</option>";
 								 			 
 							  }else {
-							   	echo "<option value='".$lstBaseline[$i][baseline_id]."' >".$lstBaseline[$i][baseline_version]."</option>";
+							   	echo "<option value='".$lstBaseline[$i]['baseline_id']."' >".$lstBaseline[$i]['baseline_version']."</option>";
 							  }						
 						}
 						 ?>          

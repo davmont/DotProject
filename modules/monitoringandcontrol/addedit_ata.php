@@ -229,17 +229,17 @@ $(document).ready(function() {
 
 
 					<tr>
-						<td  align="left"><?php echo $task[task_name]; ?></td>
-						<td  align="center"><?php echo $controllerUtil->formatDateTime($task[task_start_date]); ?></td>
-						<td  align="center"><?php echo $controllerUtil->formatDateTime($task[task_end_date]); ?></td>
-						<td  align="center"><?php echo $task[task_duration]; ?></td>		
+						<td  align="left"><?php echo $task['task_name']; ?></td>
+						<td  align="center"><?php echo $controllerUtil->formatDateTime($task['task_start_date']); ?></td>
+						<td  align="center"><?php echo $controllerUtil->formatDateTime($task['task_end_date']); ?></td>
+						<td  align="center"><?php echo $task['task_duration']; ?></td>		
 						<td width="5%">                                         
 							<select name="item_select_status_entrega[]" size="1">
 								<option value="0" ><?php echo $AppUI->_('LBL_SIM'); ?></option>
 								<option value="1" ><?php echo $AppUI->_('LBL_NAO'); ?></option>
 							</select>
 						</td>
-						<input type="hidden" name="task_id_entrega[]" value="<?php echo $task[task_id]; ?>"   />
+						<input type="hidden" name="task_id_entrega[]" value="<?php echo $task['task_id']; ?>"   />
 											
 					</tr>				
 				<?php } ?>	
@@ -277,24 +277,24 @@ $(document).ready(function() {
 					if($cad['idp'] < 0.8){$corIdp="#FF9FA5";}elseif ($cad['idp'] < 1){$corIdp="#FFFFAE";}elseif ($cad['idp'] > 1){$corIdp="#B7FFB7";} 						
 				?>										
 					<tr>
-						<td  align="center"><?php echo number_format($cad[percentual], 2, ',', '.'); ?></td>
-						<td  align="center"><?php echo $cad[tamanho]; ?> </td>
-						<td bgcolor="<?php echo $corIdc; ?>" align="center" ><?php echo number_format($cad[idc], 2, ',', '.'); ?> </td>
-						<td bgcolor="<?php echo $corIdp; ?>" align="center" ><?php echo number_format($cad[idp], 2, ',', '.'); ?> </td>	
+						<td  align="center"><?php echo number_format($cad['percentual'], 2, ',', '.'); ?></td>
+						<td  align="center"><?php echo $cad['tamanho']; ?> </td>
+						<td bgcolor="<?php echo $corIdc; ?>" align="center" ><?php echo number_format($cad['idc'], 2, ',', '.'); ?> </td>
+						<td bgcolor="<?php echo $corIdp; ?>" align="center" ><?php echo number_format($cad['idp'], 2, ',', '.'); ?> </td>	
 						
-						<td align="center" ><?php echo number_format($cad[vp], 2, ',', '.'); ?> </td>
-						<td align="center" ><?php echo number_format($cad[va], 2, ',', '.'); ?> </td>
-						<td align="center" ><?php echo number_format($cad[cr], 2, ',', '.'); ?> </td>
-						<td align="center"><?php echo $cad[baseline]; ?> </td>								
+						<td align="center" ><?php echo number_format($cad['vp'], 2, ',', '.'); ?> </td>
+						<td align="center" ><?php echo number_format($cad['va'], 2, ',', '.'); ?> </td>
+						<td align="center" ><?php echo number_format($cad['cr'], 2, ',', '.'); ?> </td>
+						<td align="center"><?php echo $cad['baseline']; ?> </td>								
 						
-						<input type="hidden" name="percentual" value="<?php echo $cad[percentual]; ?>"   />
-						<input type="hidden" name="tamanho" value="<?php echo $cad[tamanho]; ?>"   />
-						<input type="hidden" name="idc" value="<?php echo $cad[idc]; ?>"   />
-						<input type="hidden" name="idp" value="<?php echo $cad[idp]; ?>"   />
-						<input type="hidden" name="va" value="<?php echo $cad[va]; ?>"   />
-						<input type="hidden" name="vp" value="<?php echo $cad[vp]; ?>"   />
-						<input type="hidden" name="cr" value="<?php echo $cad[cr]; ?>"   />
-						<input type="hidden" name="baseline" value="<?php echo $cad[baseline]; ?>"   />
+						<input type="hidden" name="percentual" value="<?php echo $cad['percentual']; ?>"   />
+						<input type="hidden" name="tamanho" value="<?php echo $cad['tamanho']; ?>"   />
+						<input type="hidden" name="idc" value="<?php echo $cad['idc']; ?>"   />
+						<input type="hidden" name="idp" value="<?php echo $cad['idp']; ?>"   />
+						<input type="hidden" name="va" value="<?php echo $cad['va']; ?>"   />
+						<input type="hidden" name="vp" value="<?php echo $cad['vp']; ?>"   />
+						<input type="hidden" name="cr" value="<?php echo $cad['cr']; ?>"   />
+						<input type="hidden" name="baseline" value="<?php echo $cad['baseline']; ?>"   />
 						  
 											
 			        </tr>				
