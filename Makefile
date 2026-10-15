@@ -1,6 +1,6 @@
 # Developer checks. Each target is also a CI job (.github/workflows/ci.yml).
 #
-#   make check         lint + phpstan + raw-input (no sandbox needed)
+#   make check         lint + phpstan + raw-input + js-test (no sandbox needed)
 #   make audit-smoke   start docker/, reinstall the database, run the security smoke test
 
 PHPSTAN_IMAGE := ghcr.io/phpstan/phpstan:2
@@ -8,9 +8,9 @@ DOCKER_RUN := docker run --rm --user $(shell id -u):$(shell id -g) --security-op
 export DP_UID := $(shell id -u)
 export DP_GID := $(shell id -g)
 
-.PHONY: check lint phpstan phpstan-baseline raw-input audit-smoke
+.PHONY: check lint phpstan phpstan-baseline raw-input js-test audit-smoke
 
-check: lint phpstan raw-input
+check: lint phpstan raw-input js-test
 
 # PHP 8.3 syntax check of first-party code (vendored copies excluded, as in phpstan.neon.dist).
 lint:
@@ -31,6 +31,10 @@ phpstan-baseline:
 
 raw-input:
 	scripts/check-raw-input.sh
+
+# Jest tests for js/ (js/tests/*.test.js), in the node image so no local Node is needed.
+js-test:
+	$(DOCKER_RUN) -e HOME=/tmp node:22 sh -c 'npm ci --no-audit --no-fund --silent && npx jest js/tests'
 
 audit-smoke:
 	docker/up.sh

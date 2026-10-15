@@ -32,6 +32,13 @@ jobs:
       - uses: actions/checkout@v4
       - run: make raw-input
 
+  js-test:
+    name: JavaScript tests (Jest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make js-test
+
   audit-smoke:
     name: Security smoke test (docker/)
     runs-on: ubuntu-latest
