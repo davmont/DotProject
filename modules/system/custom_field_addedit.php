@@ -169,8 +169,9 @@ echo intval($field_order)?>" />
 		<?php echo $AppUI->_('Field Data Type')?>:
 		</td><td>
 		<?php
-echo arraySelect(array('alpha' => $AppUI->_('Text'), 'numeric' => $AppUI->_('Numeric')), 'field_datatype',
-                 'id="field_datatype"', $field_datatype); ?>
+// arraySelect() takes the list by reference, so it must be a variable (PHP 8).
+$datatypes = array('alpha' => $AppUI->_('Text'), 'numeric' => $AppUI->_('Numeric'));
+echo arraySelect($datatypes, 'field_datatype', 'id="field_datatype"', $field_datatype); ?>
 	</td></tr>
 	<tr><td>
 		<?php echo $AppUI->_('Field Display Type')?>:
