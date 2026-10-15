@@ -110,9 +110,9 @@ if (!defined('DP_BASE_DIR')) {
 </style>
 </head>
 
-<body onload="document.loginform.username.focus();">
+<body>
 	<div class="login-container">
-		<form method="post" action="<?php echo $loginFromPage; ?>" name="loginform">
+		<form method="post" action="<?php echo $loginFromPage; ?>" name="loginform" id="loginform">
 			<input type="hidden" name="login" value="<?php echo time(); ?>" />
 			<input type="hidden" name="lostpass" value="0" />
 			<input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect, ENT_QUOTES);?>" />
@@ -122,7 +122,7 @@ if (!defined('DP_BASE_DIR')) {
 					<th colspan="2"><em><?php echo dPgetConfig('company_name'); ?></em></th>
 				</tr>
 				<tr>
-					<td colspan="2"><input type="text" maxlength="255" name="username" class="text"
+					<td colspan="2"><input type="text" maxlength="255" name="username" autofocus="autofocus" class="text"
 							placeholder="<?php echo $AppUI->_('Username'); ?>" /></td>
 				</tr>
 				<tr>
@@ -139,8 +139,7 @@ if (!defined('DP_BASE_DIR')) {
 		</form>
 
 		<div class="login-footer">
-			<a href="#"
-				onclick="f=document.loginform;f.lostpass.value=1;f.submit();"><?php echo $AppUI->_('forgotPassword'); ?></a>
+			<button type="submit" form="loginform" name="lostpass" value="1" formnovalidate="formnovalidate" style="background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer"><?php echo $AppUI->_('forgotPassword'); ?></button>
 		</div>
 	</div>
 

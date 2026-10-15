@@ -14,7 +14,7 @@
 	<link rel="shortcut icon" href="./style/<?php echo $uistyle;?>/images/favicon.ico" type="image/ico" />
 </head>
 
-<body style="background-color: #f0f0f0" onload="document.loginform.username.focus();">
+<body style="background-color: #f0f0f0">
 <br /><br /><br /><br />
 <?php //please leave action argument empty ?>
 <!--form action="./index.php" method="post" name="loginform"-->
@@ -27,7 +27,7 @@
 </tr>
 <tr>
 	<td align="right" nowrap><?php echo $AppUI->_('Username');?>:</td>
-	<td align="left" nowrap><input type="text" size="25" maxlength="20" name="checkusername" class="text" /></td>
+	<td align="left" nowrap><input type="text" size="25" maxlength="20" name="checkusername" autofocus="autofocus" class="text" /></td>
 </tr>
 <tr>
 	<td align="right" nowrap><?php echo $AppUI->_('EMail');?>:</td>

@@ -12,7 +12,7 @@
 </style>
 <link rel="shortcut icon" href="./style/<?php echo $uistyle;?>/img/favicon.ico" type="image/ico" />
 </head>
-<body bgcolor="#f0f0f0" onload="document.lostpassform.checkusername.focus();">
+<body bgcolor="#f0f0f0">
 <center>
 <br />
 <br />
@@ -36,7 +36,7 @@
 				</tr>
 				<tr>
 					<td align="right" nowrap><?php echo $AppUI->_('Username');?>:</td>
-					<td align="left" nowrap><input type="text" size="25" maxlength="20" name="checkusername" class="text" /></td>
+					<td align="left" nowrap><input type="text" size="25" maxlength="20" name="checkusername" autofocus="autofocus" class="text" /></td>
 				</tr>
 				<tr>
 					<td align="right" nowrap><?php echo $AppUI->_('EMail');?>:</td>
