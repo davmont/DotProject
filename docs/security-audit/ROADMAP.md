@@ -239,9 +239,18 @@ New items found during Phase 7a (pre-existing, unchanged by it):
 - HTTP 500 on core admin pages under PHP 8: custom fields add/edit (`arraySelect()` by-reference argument, `modules/system/custom_field_addedit.php:172`), role view (`each()` in `lib/phpgacl/gacl_api.class.php:661`), translation management (`modules/system/translate.php:139`), contact vCard export (`count(null)` in `lib/PEAR/Contact_Vcard_Build.php`), project stats report (division by zero, `modules/projects/reports/stats.php:99`).
 - Pages request `/style/tasks.css`, which does not exist (404).
 
+All of these are fixed in PR #254 (`fix/php8-admin-pages`, based on `devel`), which also found that saving a role permission crashed (`each()` in `add_acl()`/`edit_acl()`).
+
 ### Phase 7b and later: Content-Security-Policy
 Owner decision 2026-10-15: implement the full CSP now, in several PRs. Inventory of active code: ~1,300 inline event handlers in ~430 files, ~1,200 `javascript:` URLs, ~300 inline `<script>` blocks; `eval`-style code in xajax, overlib and the timeplanning/monitoringandcontrol libraries.
-- **7b, groundwork:** per-request nonce, CSP in `Content-Security-Policy-Report-Only`, a report endpoint, and a shared delegated-event script (`data-` attributes) to replace inline handlers.
+- **7b, groundwork (DONE, 2026-10-15):** branch `security/phase7b-csp`, stacked on Phase 7a.
+  | Commit | Change |
+  |---|---|
+  | `3bb107a9` | `js/dp-actions.js`: delegated handling of `data-dp-*` attributes (call with JSON args, per-event calls, confirm, href, submit); `eval`/`Function`/`setTimeout`/`setInterval` refused; 22 Jest tests; `make js-test` in CI. |
+  | `be3eecfa` | `dPcspNonce()`, `dPcspPolicy()`, `Content-Security-Policy-Report-Only` on every `index.php` page; `csp-report.php` (POST only, 64 KB, log capped at 5 MB, URL reduced to `m`/`a`/`u`); `scripts/csp-report-summary.sh`; `dPaction()` builds escaped attributes. `report-uri` only: with `report-to` present Chrome ignores `report-uri`, and no Reporting API delivery arrived in testing. |
+  | `c5dca345` | `docs/csp.md`: conversion guide with before/after examples. |
+
+  First inventory (admin, 250 pages, 41 distinct `m`/`a`): 816 reports, 634 `script-src-elem` (inline scripts) and 182 `script-src-attr` (handlers, `javascript:` URLs). Chrome reports a repeated violation once per page, so these are lower bounds; the static counts above are the full size. Nothing blocked, no page errors.
 - **7c onwards:** convert core and themes, then the large modules (timeplanning, dotproject_plus, tasks, monitoringandcontrol, macroprojects, projects), then the rest; one PR per batch, checked in `docker/` and against the CSP reports.
 - **Last:** switch to an enforced `Content-Security-Policy`.
 - Choices: `style-src 'unsafe-inline'` stays (inline styles are low risk); `'unsafe-eval'` until xajax and overlib are replaced; vendored wireit docs/API pages are removed rather than converted; dormant modules are converted when revived (see below).

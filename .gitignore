@@ -20,3 +20,6 @@ includes/config.php
 
 # PHPStan result cache
 .phpstan-cache/
+
+# npm dependencies (Jest for js/tests)
+node_modules/

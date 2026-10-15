@@ -88,6 +88,19 @@ QS="docker compose exec -T -u ${DP_UID:-1000} -w /var/www/html web php queuescan
 check "queue scanner needs a base URL" "$($QS >/dev/null 2>&1; echo $?)" "2"
 check "queue scanner runs from the CLI" "$($QS --base-url=$B | tail -1 | grep -o '^Done')" "Done"
 
+# Phase 7b: report-only CSP with a fresh nonce, the report endpoint, dp-actions.js on every page
+H1=$(curl -s -D - -o /dev/null $U | grep -i '^content-security-policy-report-only:')
+H2=$(curl -s -D - -o /dev/null $U | grep -i '^content-security-policy-report-only:')
+check "report-only CSP sent" "$(grep -c "script-src 'self' 'nonce-" <<<"$H1")" "1"
+check "CSP nonce changes per request" "$([ -n "$H1" ] && [ "$H1" != "$H2" ] && echo yes)" "yes"
+check "CSP report endpoint refuses GET" "$(curl -s -o /dev/null -w '%{http_code}' $B/csp-report.php)" "405"
+docker compose exec -T web rm -f /var/www/html/files/temp/csp-reports.log
+check "CSP report accepted" "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/csp-report' --data '{"csp-report":{"document-uri":"http://x/index.php?m=smoke&token=SECRET","effective-directive":"script-src-attr","blocked-uri":"inline"}}' $B/csp-report.php)" "204"
+check "CSP report logged without query secrets" "$(docker compose exec -T web cat /var/www/html/files/temp/csp-reports.log | grep -c $'\tm=smoke\t')" "1"
+docker compose exec -T web rm -f /var/www/html/files/temp/csp-reports.log
+login admin passwd >/dev/null
+check "dp-actions.js loaded on pages" "$(curl -s -b "$CJ" "$U?m=companies" | grep -c 'js/dp-actions.js')" "1"
+
 # No PHP fatals during the run
 F=$(docker compose logs --since $(( $(date +%s) - START + 2 ))s web 2>&1 | grep -c 'PHP Fatal')
 check "no PHP fatals" "$F" "0"

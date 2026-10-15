@@ -1176,4 +1176,81 @@ function dPcheckLoginSystem()
 	$msg = '<span class="error">' . $AppUI->getMsg() . '</span>';
 	return $msg;
 }
+/**
+ * Per-request nonce for the Content-Security-Policy. Inline <script> blocks
+ * that must stay inline carry it: <script nonce="<?php echo dPcspNonce(); ?>">.
+ */
+function dPcspNonce()
+{
+	static $nonce = null;
+	if ($nonce === null) {
+		$nonce = base64_encode(random_bytes(16));
+	}
+	return $nonce;
+}
+
+/**
+ * The application's Content-Security-Policy (docs/deployment-security.md).
+ * Still Report-Only: browsers report violations to csp-report.php instead of
+ * blocking them, while the inline handlers are converted to js/dp-actions.js.
+ * 'unsafe-eval' stays until xajax and overlib no longer need it.
+ * report-uri only: when report-to is also present Chrome ignores report-uri, and
+ * its Reporting API delivery could not be verified (none arrived in testing).
+ */
+function dPcspPolicy()
+{
+	$base = rtrim(DP_BASE_URL, '/');
+	return implode('; ', array(
+		"default-src 'self'",
+		"script-src 'self' 'nonce-" . dPcspNonce() . "' 'unsafe-eval'",
+		"style-src 'self' 'unsafe-inline'",
+		"img-src 'self' data:",
+		"font-src 'self' data:",
+		"connect-src 'self'",
+		"frame-src 'self'",
+		"frame-ancestors 'self'",
+		"form-action 'self'",
+		"base-uri 'self'",
+		"object-src 'none'",
+		'report-uri ' . $base . '/csp-report.php',
+	));
+}
+
+/**
+ * HTML attributes for js/dp-actions.js, the replacement for inline handlers:
+ *   <a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
+ *   <select<?php echo dPaction('changeView', array('$value'), 'change', array('submit' => '')); ?>>
+ * Values are JSON-encoded and HTML-escaped here, so callers never build the
+ * attribute strings themselves. $extra adds data-dp-<key> attributes
+ * (confirm, href, submit, on).
+ */
+function dPaction($call, $args = array(), $on = null, $extra = array())
+{
+	$attrs = array();
+	if ($on !== null) {
+		$attrs['data-dp-on'] = $on;
+	}
+	if ($call !== null && $call !== '') {
+		$attrs['data-dp-call'] = $call;
+		if ($args) {
+			$attrs['data-dp-args'] = json_encode(array_values($args), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+		}
+	}
+	foreach ($extra as $key => $value) {
+		$attrs['data-dp-' . preg_replace('/[^a-z-]/', '', mb_strtolower($key))] = $value;
+	}
+	$html = '';
+	foreach ($attrs as $name => $value) {
+		$html .= ' ' . $name . '="' . htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8') . '"';
+	}
+	return $html;
+}
+
+function dPsendCspHeader()
+{
+	if (headers_sent()) {
+		return;
+	}
+	header('Content-Security-Policy-Report-Only: ' . dPcspPolicy());
+}
 ?>
