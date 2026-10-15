@@ -316,8 +316,7 @@ if ($do_report) {
 		if ($fp = fopen(($temp_dir . '/temp' . $AppUI->user_id . '.pdf'), 'wb')) {
 			fwrite($fp, $pdf->ezOutput());
 			fclose($fp);
-			echo ('<a href="' . DP_BASE_URL . '/files/temp/temp' . $AppUI->user_id 
-				  . '.pdf" target="pdf">' . $AppUI->_('View PDF File') . '</a>');
+			echo ('<a href="' . DP_BASE_URL . '/fileviewer.php?report=pdf" target="pdf">' . $AppUI->_('View PDF File') . '</a>');
 		} else {
 			echo 'Could not open file to save PDF.';
 			if (!(is_writable($temp_dir))) {

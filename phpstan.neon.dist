@@ -1,0 +1,59 @@
+# Static analysis of first-party code. Run: make phpstan (or see .github/workflows/ci.yml).
+# Existing findings are recorded in phpstan-baseline.neon; new code must not add any.
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 2
+    phpVersion: 80300
+    paths:
+        - base.php
+        - csp-report.php
+        - index.php
+        - fileviewer.php
+        - queuescanner.php
+        - classes
+        - db
+        - functions
+        - includes
+        - install
+        - misc
+        - modules
+    excludePaths:
+        analyseAndScan:
+            # Vendored third-party copies inside modules
+            - modules/holiday/PEAR/*
+            - modules/mantis/core/*
+            - modules/mantis/no.core/*
+            - modules/tracIntegration/xrlib/*
+            # Patched copies of dotProject 2.0.3 core files (dormant, to be redone)
+            - modules/unitcost/patch_203/*
+            # Classes whose method signatures are fatal on PHP 8 (they cannot be
+            # baselined). All are dormant or never loaded; fix them when each module is
+            # revived (docs/security-audit/ROADMAP.md, "Nice to have: dormant modules").
+            - modules/communication/communication.class.php
+            - modules/eventum/evlink/*
+            - modules/groups/modules/*
+            - modules/helpdesk/helpdesk.class.php
+            - modules/hosting/hosting.class.php
+            - modules/inventory/inventory.class.php
+            - modules/links/links.class.php
+            - modules/opportunities/opportunities.class.php
+            - modules/payments/payments.class.php
+            - modules/projectdesigner/projectdesigner.class.php
+            - modules/testing/testing.class.php
+            - modules/timeplanning/timeplanning.class.php
+            - modules/*/js/*
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    # Libraries and themes are only read to resolve classes and functions, not analysed.
+    scanDirectories:
+        - lib
+        - style
+        - vendor
+    # View files are included by index.php and use its variables ($AppUI, $m, ...),
+    # so "might not be defined" fires on almost every one. Definitely undefined
+    # variables are still reported.
+    checkMaybeUndefinedVariables: false
+    tmpDir: .phpstan-cache
+    reportUnmatchedIgnoredErrors: false

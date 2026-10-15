@@ -46,6 +46,14 @@ $baseDir = dirname(__FILE__);
 // Define to deprecate the global baseDir
 define('DP_BASE_DIR', $baseDir);
 
+// Security headers for every page (the installer sends the same ones, see
+// install/check_upgrade.php). The Content-Security-Policy comes separately.
+if (PHP_SAPI !== 'cli' && !headers_sent()) {
+  header('X-Content-Type-Options: nosniff');
+  header('X-Frame-Options: SAMEORIGIN');
+  header('Referrer-Policy: strict-origin-when-cross-origin');
+}
+
 require_once($baseDir . '/includes/dP_compat.php');
 
 // only rely on env variables if not using a apache handler
@@ -74,8 +82,11 @@ if (@$pathInfo) {
 
 $baseUrl = preg_replace('#/$#D', '', $baseUrl);
 
-// Define to deprecate the global baseUrl
-define('DP_BASE_URL', $baseUrl);
+// Define to deprecate the global baseUrl. Command-line scripts (queuescanner.php)
+// define it first from their --base-url option, since there is no request to read.
+if (!defined('DP_BASE_URL')) {
+  define('DP_BASE_URL', $baseUrl);
+}
 // And now we need to ensure we have a valid path for included pear libraries.
 // This dependency sucks, but if we don't do it we have no idea what versions we have
 $dpLib = DP_BASE_DIR . DIRECTORY_SEPARATOR . 'lib';

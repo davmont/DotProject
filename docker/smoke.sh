@@ -69,6 +69,38 @@ check "installer hides DB password" "$(curl -s -X POST $I/db.php -d mode=upgrade
 check "installer refuses wrong password" "$(curl -s -X POST $I/do_install_db.php -d "mode=upgrade&dobackup=1&$IC&dbpass=wrong" | grep -o '^Security Check')" "Security Check"
 check "installer upgrade runs" "$(curl -s -X POST $I/do_install_db.php -d "mode=upgrade&do_db=1&$IC&dbpass=dotproject" | grep -o 'Updating version information' | head -1)" "Updating version information"
 
+# Phase 7a hardening: files that must not answer over HTTP, security headers,
+# per-user PDF reports and the command-line queue scanner
+B=http://127.0.0.1:8089
+for p in modules/tasks/tasks.class.php lib/phpgacl/admin/acl_list.php vendor/autoload.php includes/config.php \
+         tests/run_tests.php docs/security-audit/ROADMAP.md docker/config.php files/ files/temp/temp1.pdf \
+         queuescanner.php composer.json install/docs/phpinfo.php; do
+  check "direct request refused: $p" "$(curl -s -o /dev/null -w '%{http_code}' "$B/$p" | grep -cE '^40[34]$')" "1"
+done
+check "module images still served" "$(curl -s -o /dev/null -w '%{http_code}' "$B/modules/projects/images/applet3-48.png")" "200"
+check "security headers sent" "$(curl -s -D - -o /dev/null $U | grep -ciE '^(x-content-type-options: nosniff|x-frame-options: sameorigin|referrer-policy: strict-origin-when-cross-origin)')" "3"
+rm -f "$CJ"
+check "report PDF needs login" "$(curl -s "$B/fileviewer.php?report=pdf" | grep -o 'name="password"' | head -1)" 'name="password"'
+login worker worker >/dev/null
+curl -s -c "$CJ" -b "$CJ" -o /dev/null "$U?m=projects&a=reports&project_id=0&report_type=tasklogs&do_report=submit&log_all=1&log_pdf=1"
+check "worker gets own report PDF" "$(curl -s -b "$CJ" "$B/fileviewer.php?report=pdf" | head -c 5)" "%PDF-"
+QS="docker compose exec -T -u ${DP_UID:-1000} -w /var/www/html web php queuescanner.php"
+check "queue scanner needs a base URL" "$($QS >/dev/null 2>&1; echo $?)" "2"
+check "queue scanner runs from the CLI" "$($QS --base-url=$B | tail -1 | grep -o '^Done')" "Done"
+
+# Phase 7b: report-only CSP with a fresh nonce, the report endpoint, dp-actions.js on every page
+H1=$(curl -s -D - -o /dev/null $U | grep -i '^content-security-policy-report-only:')
+H2=$(curl -s -D - -o /dev/null $U | grep -i '^content-security-policy-report-only:')
+check "report-only CSP sent" "$(grep -c "script-src 'self' 'nonce-" <<<"$H1")" "1"
+check "CSP nonce changes per request" "$([ -n "$H1" ] && [ "$H1" != "$H2" ] && echo yes)" "yes"
+check "CSP report endpoint refuses GET" "$(curl -s -o /dev/null -w '%{http_code}' $B/csp-report.php)" "405"
+docker compose exec -T web rm -f /var/www/html/files/temp/csp-reports.log
+check "CSP report accepted" "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/csp-report' --data '{"csp-report":{"document-uri":"http://x/index.php?m=smoke&token=SECRET","effective-directive":"script-src-attr","blocked-uri":"inline"}}' $B/csp-report.php)" "204"
+check "CSP report logged without query secrets" "$(docker compose exec -T web cat /var/www/html/files/temp/csp-reports.log | grep -c $'\tm=smoke\t')" "1"
+docker compose exec -T web rm -f /var/www/html/files/temp/csp-reports.log
+login admin passwd >/dev/null
+check "dp-actions.js loaded on pages" "$(curl -s -b "$CJ" "$U?m=companies" | grep -c 'js/dp-actions.js')" "1"
+
 # No PHP fatals during the run
 F=$(docker compose logs --since $(( $(date +%s) - START + 2 ))s web 2>&1 | grep -c 'PHP Fatal')
 check "no PHP fatals" "$F" "0"

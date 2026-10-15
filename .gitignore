@@ -17,3 +17,9 @@ SECURITY_AUDIT.md
 
 # Local configuration: written by the installer or copied from includes/config-dist.php
 includes/config.php
+
+# PHPStan result cache
+.phpstan-cache/
+
+# npm dependencies (Jest for js/tests)
+node_modules/

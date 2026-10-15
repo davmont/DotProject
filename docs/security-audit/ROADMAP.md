@@ -219,12 +219,41 @@ Checked and left as is:
 - Direct HTTP access: every one of the 1191 PHP files without a `DP_BASE_DIR` guard was requested in `docker/`. Apart from the removed jpgraph demos, each one dies on its first statements or prints static text (`public/index.php`), so no guards were added. Denying direct requests to `modules/**/*.php` at the web server is listed under Phase 7.
 - Root-level developer scripts that are tracked are CLI-only already (`3128031d`); `gen_locale*.php`, `find_missing_labels.php` and the label `.txt` files are untracked and git-ignored, so they are not deployed from the repository. `queuescanner.php` processes due queue events (reminder mails) for anyone who requests it over HTTP; it only runs them early. Restricting it to the CLI is listed under Phase 7, since a cron job may fetch it over HTTP.
 
-### Phase 7: hardening and regression safety
-- `Content-Security-Policy` header (start with `script-src 'self'` plus a nonce for inline blocks), `X-Content-Type-Options`, `X-Frame-Options`.
-- Web-server rule denying direct requests to `modules/**/*.php` and `lib/**/*.php` (every page is served through `index.php`; check AJAX endpoints first). Phase 6 found no file that does harm when requested directly, but path disclosure depends on the server's `display_errors`.
-- Decide whether `queuescanner.php` may run over HTTP (CLI-only guard like the developer scripts, or a shared token for cron jobs that fetch it).
-- PHPStan at level 2 with a baseline, in CI, to catch new raw `$_GET`/`$_POST` use via a custom rule or `grep` guard.
-- Keep `docker/` in the repo and add a `make audit-smoke` target that runs the login, CSRF and permission curl checks.
+### Phase 7a: hardening and regression safety (DONE, 2026-10-15)
+Branch `security/phase7a-hardening` from `devel`. Each change reproduced in `docker/` first; `make audit-smoke` passes (41 checks) and the admin crawl of 253 pages is identical to `devel`.
+
+| Commit | Change |
+|---|---|
+| `60b5a24f` | **Security:** PDF reports were written to `files/temp/temp<user_id>.pdf` and linked directly: on a host that ignores `.htaccess`, anyone could download another user's last report (`temp1.pdf` is the admin's). Reports are now served by `fileviewer.php?report=pdf` (login required, file chosen by the session user). `files/.htaccess` used `Options -All`, which Apache 2.4 refuses, so every link under `files/` was a 500. |
+| `90ad93c5` | `.htaccess` rules: included-only directories (`modules`, `lib`, `classes`, `functions`, `includes`, `style`, `locales`, `db`, `misc`, `xmlrpc`) refuse `.php`/`.inc`; `vendor`, `tests`, `docs`, `docker` refuse everything; root refuses `queuescanner.php`, developer scripts, manifests and Markdown. Before, `lib/phpgacl/admin` and `tests/` printed fatals with server paths, and `vendor/`, `docs/` (this audit) and `docker/` were readable. nginx equivalent in `docs/deployment-security.md`. No page, sub-request or AJAX call used a refused path (static scan, crawl, browser load of every page). |
+| `f47dafe3` | Removed `install/docs/phpinfo.php`: `phpinfo()` for anyone. |
+| `223bb2fb` | `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: strict-origin-when-cross-origin` on every entry point and the installer. |
+| `d10c1e31` | `CDate::isWorkingDay()` loaded the dormant holiday module's PEAR code (fatal on PHP 8), so task reminders and `next_working_day()` crashed; holidays now count only when that module is active. |
+| `cabed2fd` | `queuescanner.php` is CLI-only (404 over HTTP), takes the site URL from `--base-url`/`DP_BASE_URL` (reminder links were `http://./...` from cron) and skips overlapping runs with a lock. Cron line in `docs/deployment-security.md`. Owner decision: cron, never HTTP. |
+| `94ab0e41` | Forum "view PDF file" did not parse on PHP 8 (`=& new`), used an undefined `DB_BASE_URL` and unprefixed table names. |
+| `8b76a9d9` | PHPStan level 2, baseline of 1513 existing findings (`phpstan.neon.dist`, `phpstan-baseline.neon`). Classes whose signatures are fatal on PHP 8 (all dormant or never loaded) are excluded. |
+| `7195437b` | `scripts/check-raw-input.sh`: fails when a file indexes `$_GET`/`$_POST`/`$_REQUEST`/`$_COOKIE` more often than `scripts/raw-input-baseline.txt` records (1176 reads in 246 files today). |
+| `949aab75` | `make check` (lint, phpstan, raw-input) and `make audit-smoke`; `.github/workflows/ci.yml` runs all four on pushes and PRs to `devel` and `master`. |
+
+New items found during Phase 7a (pre-existing, unchanged by it):
+- HTTP 500 on core admin pages under PHP 8: custom fields add/edit (`arraySelect()` by-reference argument, `modules/system/custom_field_addedit.php:172`), role view (`each()` in `lib/phpgacl/gacl_api.class.php:661`), translation management (`modules/system/translate.php:139`), contact vCard export (`count(null)` in `lib/PEAR/Contact_Vcard_Build.php`), project stats report (division by zero, `modules/projects/reports/stats.php:99`).
+- Pages request `/style/tasks.css`, which does not exist (404).
+
+All of these are fixed in PR #254 (`fix/php8-admin-pages`, based on `devel`), which also found that saving a role permission crashed (`each()` in `add_acl()`/`edit_acl()`).
+
+### Phase 7b and later: Content-Security-Policy
+Owner decision 2026-10-15: implement the full CSP now, in several PRs. Inventory of active code: ~1,300 inline event handlers in ~430 files, ~1,200 `javascript:` URLs, ~300 inline `<script>` blocks; `eval`-style code in xajax, overlib and the timeplanning/monitoringandcontrol libraries.
+- **7b, groundwork (DONE, 2026-10-15):** branch `security/phase7b-csp`, stacked on Phase 7a.
+  | Commit | Change |
+  |---|---|
+  | `3bb107a9` | `js/dp-actions.js`: delegated handling of `data-dp-*` attributes (call with JSON args, per-event calls, confirm, href, submit); `eval`/`Function`/`setTimeout`/`setInterval` refused; 22 Jest tests; `make js-test` in CI. |
+  | `be3eecfa` | `dPcspNonce()`, `dPcspPolicy()`, `Content-Security-Policy-Report-Only` on every `index.php` page; `csp-report.php` (POST only, 64 KB, log capped at 5 MB, URL reduced to `m`/`a`/`u`); `scripts/csp-report-summary.sh`; `dPaction()` builds escaped attributes. `report-uri` only: with `report-to` present Chrome ignores `report-uri`, and no Reporting API delivery arrived in testing. |
+  | `c5dca345` | `docs/csp.md`: conversion guide with before/after examples. |
+
+  First inventory (admin, 250 pages, 41 distinct `m`/`a`): 816 reports, 634 `script-src-elem` (inline scripts) and 182 `script-src-attr` (handlers, `javascript:` URLs). Chrome reports a repeated violation once per page, so these are lower bounds; the static counts above are the full size. Nothing blocked, no page errors.
+- **7c onwards:** convert core and themes, then the large modules (timeplanning, dotproject_plus, tasks, monitoringandcontrol, macroprojects, projects), then the rest; one PR per batch, checked in `docker/` and against the CSP reports.
+- **Last:** switch to an enforced `Content-Security-Policy`.
+- Choices: `style-src 'unsafe-inline'` stays (inline styles are low risk); `'unsafe-eval'` until xajax and overlib are replaced; vendored wireit docs/API pages are removed rather than converted; dormant modules are converted when revived (see below).
 
 ### Nice to have: dormant modules (to be revived later)
 These modules do not run on PHP 8 today, so their remaining issues are not reachable. Fix them as part of each module's revival, before it is installed again:
@@ -239,6 +268,7 @@ These modules do not run on PHP 8 today, so their remaining issues are not reach
 - **communication**: every page fatals on `CCommunication::delete()` signature; `CCommunication` also has a PHP 4 constructor. `addedit_channel.php`/`addedit_frequency.php` delete on GET (Phase 3 note).
 - **reports** (billing/payroll): needs timetrack-era session state, so the billing report never runs; the `Tree` classes it builds have PHP 4 constructors.
 - **dotproject_plus instructional feedback**: `Feedback` has a PHP 4 constructor, `feedback/feedback_area.php` is not included anywhere and `do_show_feedback.php` stores a message nothing displays; `feedback_area.php` also echoes the raw query string into two attributes.
+- **CSP:** convert inline handlers, `javascript:` URLs and inline scripts as part of each revival, before the enforced CSP applies to the module.
 - **PHP 8 runtime errors in add-on modules that do run** (seen in the Phase 6 tab crawl): monitoringandcontrol quality tab (`count(null)` in `ControllerQuality::obterDadosGraficoPizza()`), a timeplanning task tab (`array_keys()` on a non-array), and undefined-variable warnings in monitoringandcontrol, timeplanning, human_resources and dotproject_plus tabs.
 
 ## 4. State of the remediation branch
