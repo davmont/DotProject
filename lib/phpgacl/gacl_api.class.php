@@ -413,7 +413,7 @@ class gacl_api extends gacl {
 		if (is_array($aro_array) AND count($aro_array) > 0) {
 			$this->debug_text("append_acl(): Appending ARO's");
 
-			while (list($aro_section_value,$aro_value_array) = @each($aro_array)) {
+			foreach ((array)$aro_array as $aro_section_value => $aro_value_array) {
 				foreach ($aro_value_array as $aro_value) {
 
 					if (!in_array($aro_value, $acl_array['aro'][$aro_section_value])) {
@@ -431,7 +431,7 @@ class gacl_api extends gacl {
 		if (is_array($aro_group_ids) AND count($aro_group_ids) > 0) {
 			$this->debug_text("append_acl(): Appending ARO_GROUP_ID's");
 
-			while (list(,$aro_group_id) = @each($aro_group_ids)) {
+			foreach ((array)$aro_group_ids as $aro_group_id) {
 				if (!is_array($acl_array['aro_groups']) OR !in_array($aro_group_id, $acl_array['aro_groups'])) {
 					$this->debug_text("append_acl(): ARO Group ID: $aro_group_id");
 					$acl_array['aro_groups'][] = $aro_group_id;
@@ -445,7 +445,7 @@ class gacl_api extends gacl {
 		if (is_array($axo_array) AND count($axo_array) > 0) {
 			$this->debug_text("append_acl(): Appending AXO's");
 
-			while (list($axo_section_value,$axo_value_array) = @each($axo_array)) {
+			foreach ((array)$axo_array as $axo_section_value => $axo_value_array) {
 				foreach ($axo_value_array as $axo_value) {
 					if (!in_array($axo_value, $acl_array['axo'][$axo_section_value])) {
 						$this->debug_text("append_acl(): AXO Section Value: $axo_section_value AXO VALUE: $axo_value");
@@ -461,7 +461,7 @@ class gacl_api extends gacl {
 
 		if (is_array($axo_group_ids) AND count($axo_group_ids) > 0) {
 			$this->debug_text("append_acl(): Appending AXO_GROUP_ID's");
-			while (list(,$axo_group_id) = @each($axo_group_ids)) {
+			foreach ((array)$axo_group_ids as $axo_group_id) {
 				if (!is_array($acl_array['axo_groups']) OR !in_array($axo_group_id, $acl_array['axo_groups'])) {
 					$this->debug_text("append_acl(): AXO Group ID: $axo_group_id");
 					$acl_array['axo_groups'][] = $axo_group_id;
@@ -475,7 +475,7 @@ class gacl_api extends gacl {
 		if (is_array($aco_array) AND count($aco_array) > 0) {
 			$this->debug_text("append_acl(): Appending ACO's");
 
-			while (list($aco_section_value,$aco_value_array) = @each($aco_array)) {
+			foreach ((array)$aco_array as $aco_section_value => $aco_value_array) {
 				foreach ($aco_value_array as $aco_value) {
 					if (!in_array($aco_value, $acl_array['aco'][$aco_section_value])) {
 						$this->debug_text("append_acl(): ACO Section Value: $aco_section_value ACO VALUE: $aco_value");
@@ -519,7 +519,7 @@ class gacl_api extends gacl {
 		if (is_array($aro_array) AND count($aro_array) > 0) {
 			$this->debug_text("shift_acl(): Removing ARO's");
 
-			while (list($aro_section_value,$aro_value_array) = @each($aro_array)) {
+			foreach ((array)$aro_array as $aro_section_value => $aro_value_array) {
 				foreach ($aro_value_array as $aro_value) {
 					$this->debug_text("shift_acl(): ARO Section Value: $aro_section_value ARO VALUE: $aro_value");
 					$aro_key = array_search($aro_value, $acl_array['aro'][$aro_section_value]);
@@ -539,7 +539,7 @@ class gacl_api extends gacl {
 		if (is_array($aro_group_ids) AND count($aro_group_ids) > 0) {
 			$this->debug_text("shift_acl(): Removing ARO_GROUP_ID's");
 
-			while (list(,$aro_group_id) = @each($aro_group_ids)) {
+			foreach ((array)$aro_group_ids as $aro_group_id) {
 				$this->debug_text("shift_acl(): ARO Group ID: $aro_group_id");
 				$aro_group_key = array_search($aro_group_id, $acl_array['aro_groups']);
 
@@ -556,7 +556,7 @@ class gacl_api extends gacl {
 		if (is_array($axo_array) AND count($axo_array) > 0) {
 			$this->debug_text("shift_acl(): Removing AXO's");
 
-			while (list($axo_section_value,$axo_value_array) = @each($axo_array)) {
+			foreach ((array)$axo_array as $axo_section_value => $axo_value_array) {
 				foreach ($axo_value_array as $axo_value) {
 					$this->debug_text("shift_acl(): AXO Section Value: $axo_section_value AXO VALUE: $axo_value");
 					$axo_key = array_search($axo_value, $acl_array['axo'][$axo_section_value]);
@@ -575,7 +575,7 @@ class gacl_api extends gacl {
 		if (is_array($axo_group_ids) AND count($axo_group_ids) > 0) {
 			$this->debug_text("shift_acl(): Removing AXO_GROUP_ID's");
 
-			while (list(,$axo_group_id) = @each($axo_group_ids)) {
+			foreach ((array)$axo_group_ids as $axo_group_id) {
 				$this->debug_text("shift_acl(): AXO Group ID: $axo_group_id");
 				$axo_group_key = array_search($axo_group_id, $acl_array['axo_groups']);
 
@@ -592,7 +592,7 @@ class gacl_api extends gacl {
 		if (is_array($aco_array) AND count($aco_array) > 0) {
 			$this->debug_text("shift_acl(): Removing ACO's");
 
-			while (list($aco_section_value,$aco_value_array) = @each($aco_array)) {
+			foreach ((array)$aco_array as $aco_section_value => $aco_value_array) {
 				foreach ($aco_value_array as $aco_value) {
 					$this->debug_text("shift_acl(): ACO Section Value: $aco_section_value ACO VALUE: $aco_value");
 					$aco_key = array_search($aco_value, $acl_array['aco'][$aco_section_value]);
@@ -658,7 +658,7 @@ class gacl_api extends gacl {
 		$rs = $this->db->Execute($query);
 		$rows = $rs->GetRows();
 
-		while (list(,$row) = @each($rows)) {
+		foreach ((array)$rows as $row) {
 			list($section_value, $value, $section, $aco) = $row;
 			$this->debug_text("Section Value: $section_value Value: $value Section: $section ACO: $aco");
 
@@ -673,7 +673,7 @@ class gacl_api extends gacl {
 		$rs = $this->db->Execute($query);
 		$rows = $rs->GetRows();
 
-		while (list(,$row) = @each($rows)) {
+		foreach ((array)$rows as $row) {
 			list($section_value, $value, $section, $aro) = $row;
 			$this->debug_text("Section Value: $section_value Value: $value Section: $section ARO: $aro");
 
@@ -688,7 +688,7 @@ class gacl_api extends gacl {
 		$rs = $this->db->Execute($query);
 		$rows = $rs->GetRows();
 
-		while (list(,$row) = @each($rows)) {
+		foreach ((array)$rows as $row) {
 			list($section_value, $value, $section, $axo) = $row;
 			$this->debug_text("Section Value: $section_value Value: $value Section: $section AXO: $axo");
 
