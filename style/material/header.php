@@ -27,7 +27,7 @@ else
 	<?php @$AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
 </head>
 
-<body onload="this.focus();">
+<body>
 	<table width="100%" cellpadding="0" cellspacing="0" border="0">
 		<tr>
 			<td>
@@ -94,7 +94,7 @@ else
 													}
 												}
 
-												echo arraySelect($newItem, 'm', 'style="font-size:10px" onChange="javascript:f=document.frm_new;mod=f.m.options[f.m.selectedIndex].value;if (mod) f.submit();"', '', true);
+												echo arraySelect($newItem, 'm', 'style="font-size:10px"' . dPaction('dpSubmitIfValue'), '', true);
 
 												echo "        <input type=\"hidden\" name=\"a\" value=\"addedit\" />\n";
 

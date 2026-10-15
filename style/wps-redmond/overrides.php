@@ -63,9 +63,9 @@ class CTabBox extends CTabBox_core {
 					$s .= ' background="./style/'.$uistyle.'/images/tab'.$sel.'Bg.png"';
 				$s .= '>&nbsp;<a href="';
 				if ($this->javascript)
-					$s .= "javascript:" . $this->javascript . "({$this->active}, $k)";
+					$s .= '#" data-dp-call="' . htmlspecialchars($this->javascript, ENT_QUOTES) . '" data-dp-args="[' . (int)$this->active . ',' . (int)$k . ']';
 				else if  ($js_tabs)
-					$s .= 'javascript:show_tab(' . $k . ')';
+					$s .= '#" data-dp-call="show_tab" data-dp-args="[' . (int)$k . ']';
 				else
 					$s .= $this->baseHRef.'tab='.$k;
 				$s .='">'.($v[2] ? $v[1] : $AppUI->_($v[1])).'</a>&nbsp;</td>';
@@ -86,16 +86,11 @@ class CTabBox extends CTabBox_core {
 			{
 				foreach( $this->tabs as $k => $v ) 
 				{
-					echo '<div class="tab" id="tab_'.$k.'">';
+					echo '<div class="tab" id="tab_' . $k . '"' . ($k == $this->active ? '' : ' style="display:none"') . '>';
 					$currentTabId = $k;
 					$currentTabName = $v[1];
 					require $this->baseInc.$v[0].'.php';
 					echo '</div>';
-					echo '<script language="JavaScript" type="text/javascript">
-<!--
-show_tab('.$this->active.');
-//-->
-</script>';
 
 				}
 			}

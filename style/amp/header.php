@@ -31,7 +31,7 @@
 			<div class="content"><?php echo $AppUI->_($module['mod_ui_name']); ?></div>
 		</li>
 		<?php } else { ?>
-		<li onclick="javascript:window.open('?m=<?php echo $module['mod_directory']; ?>','_self')">
+		<li<?php echo dPaction(null, array(), null, array('href' => '?m=' . $module['mod_directory'])); ?>>
 			<div class="content"><?php echo $AppUI->_($module['mod_ui_name']); ?></div>
 		</li>
 		<?php } } } ?>
@@ -39,7 +39,7 @@
 </div>
 <div id="container_new_item">
 	<form name="frm_new" method="get" action="./index.php">
-		<?php $newItem = array(""=>'- New Item -'); $newItem["companies"] = "Company"; $newItem["contacts"] = "Contact"; $newItem["calendar"] = "Event"; $newItem["files"] = "File"; $newItem["projects"] = "Project"; echo arraySelect($newItem,'m',' onchange="f=document.frm_new;mod=f.m.options[f.m.selectedIndex].value;if(mod) f.submit();"','',true); ?>
+		<?php $newItem = array(""=>'- New Item -'); $newItem["companies"] = "Company"; $newItem["contacts"] = "Contact"; $newItem["calendar"] = "Event"; $newItem["files"] = "File"; $newItem["projects"] = "Project"; echo arraySelect($newItem,'m',dPaction('dpSubmitIfValue'),'',true); ?>
 		<input type="hidden" name="a" value="addedit" />
 		<?php if(isset($company_id)) { ?>
 		<input type="hidden" name="company_id" value="<?php echo $company_id ?>" />
