@@ -60,6 +60,24 @@ describe('data-dp-call', () => {
 		expect(window.recorded[0]).toEqual({ self: window.ns, args: [1] });
 	});
 
+	test('window.open-style dotted names keep their owner as this', () => {
+		window.opener2 = { open: function (u) { window.recorded.push({ self: this, args: [u] }); } };
+		document.body.innerHTML = `<button data-dp-call="opener2.open" data-dp-args='["?m=help"]'>x</button>`;
+		click(document.querySelector('button'));
+		expect(window.recorded[0].self).toBe(window.opener2);
+	});
+
+	test('a link with href="#" does not follow it, even when the call returns nothing', () => {
+		document.body.innerHTML = `<a href="#" data-dp-call="record">x</a>`;
+		expect(click(document.querySelector('a')).defaultPrevented).toBe(true);
+		expect(window.recorded).toHaveLength(1);
+	});
+
+	test('a real link is followed when the call returns nothing', () => {
+		document.body.innerHTML = `<a href="?m=x" data-dp-call="record">x</a>`;
+		expect(click(document.querySelector('a')).defaultPrevented).toBe(false);
+	});
+
 	test.each(['eval', 'Function', 'setTimeout', 'setInterval', 'window.eval', 'alert(1)', 'a..b', 'notDefined'])(
 		'refuses %s', (name) => {
 			const err = jest.spyOn(console, 'error').mockImplementation(() => {});
