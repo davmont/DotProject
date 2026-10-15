@@ -16,7 +16,6 @@ $page_title = dPgetConfig('page_title', 'dotProject');
 	<title>
 		<?php echo $page_title; ?> :: Login
 	</title>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
 	<link rel="stylesheet" type="text/css" href="./style/<?php echo $uistyle; ?>/main.css" media="all" />
 	<link rel="shortcut icon" href="./style/<?php echo $uistyle; ?>/images/favicon.ico" type="image/ico" />
 	<style type="text/css">
