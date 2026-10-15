@@ -1201,7 +1201,8 @@ function dPcspPolicy()
 	$base = rtrim(DP_BASE_URL, '/');
 	return implode('; ', array(
 		"default-src 'self'",
-		"script-src 'self' 'nonce-" . dPcspNonce() . "' 'unsafe-eval'",
+		// 'report-sample' puts the first 40 characters of a blocked script in the report.
+		"script-src 'self' 'nonce-" . dPcspNonce() . "' 'unsafe-eval' 'report-sample'",
 		"style-src 'self' 'unsafe-inline'",
 		"img-src 'self' data:",
 		"font-src 'self' data:",
