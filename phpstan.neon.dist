@@ -8,6 +8,7 @@ parameters:
     phpVersion: 80300
     paths:
         - base.php
+        - csp-report.php
         - index.php
         - fileviewer.php
         - queuescanner.php
