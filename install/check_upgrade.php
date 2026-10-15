@@ -39,6 +39,12 @@ The full text of the GPL is in the COPYING file.
 
 $baseDir = dirname(dirname(__FILE__));
 define('DP_BASE_DIR', $baseDir);
+// Same security headers as base.php sends for the application pages.
+if (!headers_sent()) {
+	header('X-Content-Type-Options: nosniff');
+	header('X-Frame-Options: SAMEORIGIN');
+	header('Referrer-Policy: strict-origin-when-cross-origin');
+}
 // includes/config.php refers to DP_BASE_URL; base.php is not loaded here, so define it
 // the same way do_install_db.php computes the site URL.
 if (!defined('DP_BASE_URL')) {

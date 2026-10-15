@@ -2,3 +2,15 @@
 	order deny,allow
 	deny from all
 </Files>
+# Every dotProject page is served through index.php; the PHP files in this
+# directory are only included by it. Refuse direct requests to them so they
+# cannot run out of context (assets such as images, CSS and JS still load).
+<FilesMatch "\.(php|phtml|phar|inc)$">
+	<IfModule mod_authz_core.c>
+		Require all denied
+	</IfModule>
+	<IfModule !mod_authz_core.c>
+		Order allow,deny
+		Deny from all
+	</IfModule>
+</FilesMatch>

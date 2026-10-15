@@ -18,8 +18,9 @@ services:
     build: .
     security_opt: ["label:disable"]
     environment:
-      APACHE_RUN_USER: "#1000"
-      APACHE_RUN_GROUP: "#1000"
+      # Apache runs as the host user so it can write docker/files (CI runners are not uid 1000).
+      APACHE_RUN_USER: "#${DP_UID:-1000}"
+      APACHE_RUN_GROUP: "#${DP_GID:-1000}"
     ports: ["127.0.0.1:8089:80"]
     depends_on:
       db: { condition: service_healthy }
