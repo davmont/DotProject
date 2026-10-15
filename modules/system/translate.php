@@ -136,7 +136,7 @@ if ($lang == 'en') {
 		echo ('<input type="text" name="trans[' . $index . '][english]" value="' 
 		      . $langs['english'] . '" size="40" class="text" />');
 	} else {
-		$rows = round(mb_strlen($langs['english']/35)) +1 ;
+		$rows = round(mb_strlen($langs['english']) / 35) + 1;
 		echo ('<textarea name="trans[' . $index . '][english]" cols="40" class="small" rows="' 
 		      . $rows . '">' . $langs['english'] . '</textarea>');
 	}
