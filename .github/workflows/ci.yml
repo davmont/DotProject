@@ -4,8 +4,8 @@ name: CI
 on:
   push:
     branches: [devel, master]
+  # Every PR, including PRs stacked on another feature branch.
   pull_request:
-    branches: [devel, master]
 
 permissions:
   contents: read
