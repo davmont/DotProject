@@ -69,3 +69,11 @@ user, with the site's public URL so that the links in the mails work:
 
 Sites that fetched `queuescanner.php` over HTTP (`wget`/`curl` in a cron job)
 must switch to the command above.
+
+## Content-Security-Policy
+
+`index.php` sends a `Content-Security-Policy-Report-Only` header while the
+pages are converted (see `docs/csp.md`). Browsers post violations to
+`csp-report.php`, which appends them to `files/temp/csp-reports.log` (not
+served over HTTP; it stops growing at 5 MB, delete it to start over).
+`scripts/csp-report-summary.sh` groups the log. Nothing is blocked yet.

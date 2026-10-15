@@ -1,0 +1,82 @@
+# Content-Security-Policy
+
+Every application page (`index.php`) sends a Content-Security-Policy that
+allows only the site's own scripts plus inline `<script>` blocks carrying the
+per-request nonce. Inline event handlers (`onclick="..."`) and `javascript:`
+URLs are not allowed.
+
+The policy is **Report-Only** while the existing pages are converted
+(roadmap Phase 7c onwards): browsers report violations instead of blocking
+them. The last step switches it to an enforced `Content-Security-Policy`.
+
+| Piece | Where |
+|---|---|
+| Policy and header | `dPcspPolicy()`, `dPsendCspHeader()` in `includes/main_functions.php` |
+| Nonce | `dPcspNonce()` (same value for the whole request) |
+| Replacement for inline handlers | `js/dp-actions.js` (loaded on every page), attributes built with `dPaction()` |
+| Violation reports | `csp-report.php` writes `files/temp/csp-reports.log`; `scripts/csp-report-summary.sh` groups it |
+
+## Converting a page
+
+### Inline event handlers and `javascript:` URLs
+
+Replace the handler with `data-dp-*` attributes, written by `dPaction()` so the
+values are JSON-encoded and HTML-escaped. Never build these attributes by hand.
+
+| Before | After |
+|---|---|
+| `<a href="javascript:popCalendar('start')">` | `<a href="#"<?php echo dPaction('popCalendar', array('start')); ?>>` |
+| `<input type="button" onclick="submitIt(this.form)">` | `<input type="button"<?php echo dPaction('submitIt', array('$form')); ?>>` |
+| `<select onchange="this.form.submit()">` | `<select<?php echo dPaction(null, array(), null, array('submit' => '')); ?>>` |
+| `<select onchange="changeView(this.value)">` | `<select<?php echo dPaction('changeView', array('$value')); ?>>` |
+| `<a href="?m=x&del=1" onclick="return confirm('Sure?')">` | `<a href="?m=x&del=1"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Sure?'))); ?>>` |
+| `<input type="button" onclick="window.location='?m=x'">` | `<input type="button"<?php echo dPaction(null, array(), null, array('href' => '?m=x')); ?>>` |
+| `<form onsubmit="return check(this)">` | `<form<?php echo dPaction('check', array('$this'), 'submit'); ?>>` |
+| `<span onmouseover="return overlib('tip')" onmouseout="nd()">` | `<span data-dp-on="mouseover mouseout" data-dp-call-mouseover="overlib" data-dp-args-mouseover='["tip"]' data-dp-call-mouseout="nd">` (escape the JSON with `htmlspecialchars()`) |
+
+- `$this`, `$event`, `$form` and `$value` in the arguments stand for the
+  element, the event, its form and its value.
+- The called function runs with the element as `this`, like an inline handler;
+  returning `false` cancels the default action.
+- The default event is `change` for `<select>` and `click` for everything else;
+  `data-dp-on` (third argument of `dPaction()`) changes it.
+- Only named global functions can be called (`eval`, `Function`,
+  `setTimeout` and `setInterval` are refused). Code that was more than a
+  function call becomes a named function in the page's `.js` file.
+
+### Inline `<script>` blocks
+
+Prefer moving the code into the module's `.js` file (`modules/<m>/<a>.js` is
+loaded automatically). Data the script needs from PHP goes in a JSON data
+block, which is not executed and needs no nonce:
+
+```php
+<script type="application/json" id="task-data"><?php echo json_encode($data, JSON_HEX_TAG | JSON_HEX_AMP); ?></script>
+```
+
+```js
+var data = JSON.parse(document.getElementById('task-data').textContent);
+```
+
+A block that has to stay inline carries the nonce:
+
+```php
+<script nonce="<?php echo dPcspNonce(); ?>">
+```
+
+Never print the nonce into anything a user can influence, and never add it to
+a block that echoes request data.
+
+## Finding what is left
+
+In `docker/`, browse the pages (or run the crawl) and summarise the reports:
+
+```sh
+docker compose -f docker/compose.yml exec -T web rm -f /var/www/html/files/temp/csp-reports.log
+# ... browse ...
+scripts/csp-report-summary.sh docker/files/temp/csp-reports.log
+```
+
+`script-src-attr` lines are inline handlers or `javascript:` URLs;
+`script-src-elem` lines are inline `<script>` blocks without the nonce. The
+browser console also shows each violation, with the element.
