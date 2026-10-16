@@ -260,7 +260,7 @@ echo $project_id; ?>&sort=task_end_date">
 		</a>
 	</th>
 	<th width="60">
-		<input type="checkbox" name="toggleSelects" id="toggleSelects" onclick="toggleTasks();"/>
+		<input type="checkbox" name="toggleSelects" id="toggleSelects"<?php echo dPaction('toggleTasks'); ?>/>
 		<?php echo $AppUI->_('Select'); ?>
 	</th>
 </tr>
@@ -328,7 +328,7 @@ foreach ($tasks as $t) {
 </tr>
 <tr>
 	<td><?php echo arraySelect($actions, 'action', '', '0'); ?></td>
-	<td><?php echo arraySelect($projects, 'new_project', ' onchange="javascript:updateTasks();"', '0'); ?></td>
+	<td><?php echo arraySelect($projects, 'new_project', dPaction('updateTasks'), '0'); ?></td>
 	<td><?php echo ($ts)?arraySelect($ts, 'new_task', '', '0'):''; ?></td>
 	<td><input type="submit" class="button" value="<?php 
 echo $AppUI->_('update selected tasks'); ?>"></td>
@@ -354,7 +354,7 @@ echo $AppUI->_('update selected tasks'); ?>"></td>
 </tr>
 </table>
 
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function updateTasks() {
 		var proj = document.forms['form'].new_project.value;
 		var tasks = new Array();
