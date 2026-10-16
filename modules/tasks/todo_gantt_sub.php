@@ -25,7 +25,7 @@ $canDelete = getPermission($m, 'delete');
 		$q->clear();
 		echo $AppUI->_('Show Todo for:'); 
 ?>
-		<select name="show_user_todo" onchange="javascript:document.form_buttons.submit();">
+		<select name="show_user_todo"<?php echo dPaction(null, array(), null, array('submit' => 'form_buttons')); ?>>
 		<?php
 		if ($rows = db_loadList($usersql, NULL)) {
 			foreach ($rows as $row) {
