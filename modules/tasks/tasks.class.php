@@ -2723,7 +2723,7 @@ function showtask(
 				dPtoUtf8('<div><p>' . str_replace(
 					array("\r\n", "\n", "\r"),
 					'</p><p>',
-					$a['task_description']
+					dPhtml($a['task_description'])
 				) . '</p></div>'),
 				1, dPtoUtf8($AppUI->_('Description', UI_OUTPUT_RAW)), 7),
 				JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE),
@@ -2732,7 +2732,7 @@ function showtask(
 
 	if ($a['task_milestone'] > 0) {
 		$s .= ('&nbsp;<a href="./index.php?m=tasks&amp;a=view&amp;task_id=' . $a['task_id'] . '" '
-			. $alt . '>' . '<b>' . $a['task_name'] . '</b></a>'
+			. $alt . '>' . '<b>' . dPhtml($a['task_name']) . '</b></a>'
 			. '<img src="./images/icons/milestone.gif" border="0" alt="Milestone" /></td>');
 	} else if ($a['task_dynamic'] == 1 || count($task_obj->getChildren())) {
 		if (!($today_view || $hideOpenCloseLink)) {
@@ -2744,17 +2744,17 @@ function showtask(
 				. ' border="0" alt="" /></a>');
 		}
 		$s .= ('&nbsp;<a href="./index.php?m=tasks&amp;a=view&amp;task_id=' . $a['task_id'] . '" '
-			. $alt . '>' . (($a['task_dynamic'] == 1) ? '<b><i>' : '') . $a['task_name'] . (($a['task_dynamic'] == 1) ? '</i></b>' : '') . '</a></td>');
+			. $alt . '>' . (($a['task_dynamic'] == 1) ? '<b><i>' : '') . dPhtml($a['task_name']) . (($a['task_dynamic'] == 1) ? '</i></b>' : '') . '</a></td>');
 	} else {
 		$s .= ('&nbsp;<a href="./index.php?m=tasks&amp;a=view&amp;task_id=' . $a['task_id'] . '" '
-			. $alt . '>' . $a['task_name'] . '</a></td>');
+			. $alt . '>' . dPhtml($a['task_name']) . '</a></td>');
 	}
 
 	if ($today_view) { // Show the project name
 		$s .= ('<td width="50%"><a href="?m=projects&amp;a=view&amp;project_id='
 			. $a['task_project'] . '">' . '<span style="padding:2px;background-color:#'
 			. $a['project_color_identifier'] . ';color:'
-			. bestColor($a['project_color_identifier']) . '">' . $a['project_name'] . '</span>'
+			. bestColor($a['project_color_identifier']) . '">' . dPhtml($a['project_name']) . '</span>'
 			. '</a></td>');
 	}
 	// task owner
