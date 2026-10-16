@@ -80,3 +80,11 @@ scripts/csp-report-summary.sh docker/files/temp/csp-reports.log
 `script-src-attr` lines are inline handlers or `javascript:` URLs;
 `script-src-elem` lines are inline `<script>` blocks without the nonce. The
 browser console also shows each violation, with the element.
+
+Browsers report an inline handler or `javascript:` URL only when it runs
+(a click, a change), so a crawl that only loads pages misses most of them.
+Search the code as well:
+
+```sh
+grep -rnP '\son[a-z]+\s*=|javascript:|<script(?![^>]*\b(src|nonce)=)(?![^>]*application/json)' modules/<module>
+```

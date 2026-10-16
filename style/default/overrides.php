@@ -70,9 +70,9 @@ class CTabBox extends CTabBox_core {
 				$s .= '>&nbsp;<a href="';
 				
 				if ($this->javascript) {
-					$s .= "javascript:" . $this->javascript . "({$this->active}, $k)";
+					$s .= '#" data-dp-call="' . htmlspecialchars($this->javascript, ENT_QUOTES) . '" data-dp-args="[' . (int)$this->active . ',' . (int)$k . ']';
 				} else if ($js_tabs) {
-					$s .= 'javascript:show_tab(' . $k . ')';
+					$s .= '#" data-dp-call="show_tab" data-dp-args="[' . (int)$k . ']';
 				} else {
 					$s .= $this->baseHRef.'tab='.$k;
 				}
@@ -98,16 +98,11 @@ class CTabBox extends CTabBox_core {
 			{
 				foreach ($this->tabs as $k => $v) 
 				{
-					echo '<div class="tab" id="tab_'.$k.'">';
+					echo '<div class="tab" id="tab_' . $k . '"' . ($k == $this->active ? '' : ' style="display:none"') . '>';
 					$currentTabId = $k;
 					$currentTabName = $v[1];
 					require $this->baseInc.$v[0].'.php';
 					echo '</div>';
-					echo ('<script language="javascript" type="text/javascript">' . "\n" 
-						  . '//<!--' . "\n" 
-						  . 'show_tab('.$this->active.');' . "\n" 
-						  . '//-->' . "\n" 
-						  . '</script>');
 				}
 			}
 			echo '</td></tr>' . "\n" . '</table>' . "\n";

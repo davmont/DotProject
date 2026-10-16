@@ -532,34 +532,14 @@ class CAppUI
 	}
 
 	/**
-	 * Output a <meta> tag carrying the CSRF token plus a small inline script
-	 * that automatically appends the token to every POST form on submit.
+	 * Output a <meta> tag carrying the CSRF token. js/dp-ui.js reads it and adds
+	 * the token to POST forms built by JavaScript or sent with form.submit().
 	 * Call once from each theme's header.php, just before </head>.
 	 */
 	function getCsrfMeta()
 	{
 		$token = htmlspecialchars($this->getCsrfToken(), ENT_QUOTES, 'UTF-8');
-		// Adds the token to POST forms that injectCsrfToken() cannot see:
-		// forms built by JavaScript, and forms submitted with form.submit(),
-		// which does not fire the submit event.
-		return '<meta name="csrf-token" content="' . $token . '" />' . "\n"
-			. '<script type="text/javascript">' . "\n"
-			. '(function () {' . "\n"
-			. '	var meta = document.querySelector(\'meta[name="csrf-token"]\');' . "\n"
-			. '	if (!meta) { return; }' . "\n"
-			. '	var token = meta.getAttribute(\'content\');' . "\n"
-			. '	function addToken(f) {' . "\n"
-			. '		if (!f || String(f.getAttribute(\'method\') || \'\').toLowerCase() !== \'post\') { return; }' . "\n"
-			. '		if (f.querySelector(\'input[name="csrf_token"]\')) { return; }' . "\n"
-			. '		var i = document.createElement(\'input\');' . "\n"
-			. '		i.type = \'hidden\'; i.name = \'csrf_token\'; i.value = token;' . "\n"
-			. '		f.appendChild(i);' . "\n"
-			. '	}' . "\n"
-			. '	document.addEventListener(\'submit\', function (e) { addToken(e.target); }, true);' . "\n"
-			. '	var nativeSubmit = HTMLFormElement.prototype.submit;' . "\n"
-			. '	HTMLFormElement.prototype.submit = function () { addToken(this); return nativeSubmit.apply(this, arguments); };' . "\n"
-			. '})();' . "\n"
-			. '</script>';
+		return '<meta name="csrf-token" content="' . $token . '" />' . "\n";
 	}
 
 	/**
@@ -1227,9 +1207,9 @@ class CTabBox_core
 				$s .= '>';
 				$s .= "\n\t\t" . '<a href="';
 				if ($this->javascript) {
-					$s .= 'javascript:' . $this->javascript . '(' . $this->active . ', ' . $k . ')';
+					$s .= '#" data-dp-call="' . htmlspecialchars($this->javascript, ENT_QUOTES) . '" data-dp-args="[' . (int)$this->active . ',' . (int)$k . ']';
 				} else if ($js_tabs) {
-					$s .= 'javascript:show_tab(' . $k . ')';
+					$s .= '#" data-dp-call="show_tab" data-dp-args="[' . (int)$k . ']';
 				} else {
 					$s .= $this->baseHRef . 'tab=' . $k;
 				}
@@ -1253,7 +1233,7 @@ class CTabBox_core
 			}
 			if ($js_tabs) {
 				foreach ($this->tabs as $k => $v) {
-					echo '<div class="tab" id="tab_' . $k . '">';
+					echo '<div class="tab" id="tab_' . $k . '"' . ($k == $this->active ? '' : ' style="display:none"') . '>';
 					require $this->baseInc . $v[0] . '.php';
 					echo '</div>';
 				}
@@ -1404,13 +1384,13 @@ class CTitleBlock_core
 	{
 		global $AppUI;
 		$this->addCrumbRight('<table cellspacing="0" cellpadding="0" border="0"><tr><td>'
-			. '<a href="javascript:delIt()" title="'
+			. '<a href="#"' . dPaction('delIt') . ' title="'
 			. $AppUI->_($canDelete ? '' : $msg) . '">'
 			. dPshowImage('./images/icons/'
 				. (($canDelete) ? 'stock_delete-16.png'
 					: 'stock_trash_full-16.png'), '16', '16', '')
 			. '</a></td><td>&nbsp;'
-			. '<a href="javascript:delIt()" title="'
+			. '<a href="#"' . dPaction('delIt') . ' title="'
 			. $AppUI->_(($canDelete) ? '' : $msg)
 			. '">' . $AppUI->_($title) . '</a></td></tr></table>');
 	}
@@ -1446,11 +1426,9 @@ class CTitleBlock_core
 									. 'border="0" alt="'.$AppUI->_('Help').'" />'), 
 								   $this->helpref));
 			*/
-			$s .= ("\n\t" . '<a href="#' . $this->helpref
-				. '" onClick="javascript:window.open(\'?m=help&dialog=1&hid='
-				. $this->helpref
-				. "', 'contexthelp', 'width=400,height=400,left=50,top=50,scrollbars=yes,"
-				. 'resizable=yes\')" title="' . $AppUI->_('Help') . '">');
+			$s .= ("\n\t" . '<a href="#' . $this->helpref . '"'
+				. dPaction('window.open', array('?m=help&dialog=1&hid=' . $this->helpref, 'contexthelp', 'width=400,height=400,left=50,top=50,scrollbars=yes,resizable=yes'))
+				. ' title="' . $AppUI->_('Help') . '">');
 			$s .= "\n\t\t" . dPshowImage(
 				'./images/icons/stock_help-16.png',
 				'16',

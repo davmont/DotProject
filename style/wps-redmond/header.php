@@ -19,7 +19,7 @@ else
 	<?php @$AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
 </head>
 
-<body onload="this.focus();">
+<body>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
 	<td><table class="banner" width='100%' cellpadding="3" cellspacing="0" border="0" background="style/<?php echo $uistyle;?>/images/titlegrad.jpg"><tr>

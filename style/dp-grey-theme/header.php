@@ -29,45 +29,10 @@ echo $uistyle;?>/main.css";</style>
 echo $uistyle;?>/images/favicon.ico" type="image/ico" />
 	<?php 
 $AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
-	<script>
-	function gt_hide_tabs() {
-		var tabs = document.getElementsByTagName('td');
-		var i;
-		for (i = 0; i < tabs.length; i++) {
-			if (tabs[i].className == 'tabon')
-				tabs[i].className = 'taboff';
-		}
-		var divs = document.getElementsByTagName('div');
-		for (i = 0; i < divs.length; i++) {
-			if (divs[i].className == 'tab')
-				divs[i].style.display = 'none';
-		}
-		var imgs = document.getElementsByTagName('img');
-		for (i = 0; i < imgs.length; i++) {
-			if (imgs[i].id) {
-				if (imgs[i].id.substr(0,8) == 'lefttab_')
-					imgs[i].src = './style/<?php echo $uistyle;?>/images/bar_top_left.gif';
-				else if (imgs[i].id.substr(0,9) == 'righttab_')
-					imgs[i].src = './style/<?php echo $uistyle;?>/images/bar_top_right.gif';
-			}
-		}
-	}
-	function gt_show_tab(i) {
-		var tab = document.getElementById('tab_' + i);
-		tab.style.display = 'block';
-		tab = document.getElementById('toptab_' + i);
-		tab.className = 'tabon';
-		var img = document.getElementById('lefttab_' + i);
-		img.src = './style/<?php echo $uistyle;?>/images/bar_top_Selectedleft.gif';
-		img = document.getElementById('righttab_' + i);
-		img.src = './style/<?php echo $uistyle;?>/images/bar_top_Selectedright.gif';
-	}
-	hide_tab_function = gt_hide_tabs;
-	show_tab_function = gt_show_tab;
-</script>
+	<script type="text/javascript" src="./style/dp-grey-theme/tabs.js"></script>
 </head>
 
-<body onload="this.focus();">
+<body>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
 	<td><table width='100%' cellpadding="3" cellspacing="0" border="0"><tr>
@@ -128,7 +93,7 @@ echo $uistyle;?>/images/dp_icon.gif" border="0" /></a></th>
 		}
 	}
 
-	echo arraySelect($newItem, 'm', 'style="font-size:10px" onChange="javascript:f=document.frm_new;mod=f.m.options[f.m.selectedIndex].value;if (mod) f.submit();"', '', true);
+	echo arraySelect($newItem, 'm', 'style="font-size:10px"' . dPaction('dpSubmitIfValue'), '', true);
 
 	echo ('		<input type="hidden" name="a" value="addedit" />' . "\n");
 

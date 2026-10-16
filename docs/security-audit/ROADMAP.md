@@ -251,7 +251,22 @@ Owner decision 2026-10-15: implement the full CSP now, in several PRs. Inventory
   | `c5dca345` | `docs/csp.md`: conversion guide with before/after examples. |
 
   First inventory (admin, 250 pages, 41 distinct `m`/`a`): 816 reports, 634 `script-src-elem` (inline scripts) and 182 `script-src-attr` (handlers, `javascript:` URLs). Chrome reports a repeated violation once per page, so these are lower bounds; the static counts above are the full size. Nothing blocked, no page errors.
-- **7c onwards:** convert core and themes, then the large modules (timeplanning, dotproject_plus, tasks, monitoringandcontrol, macroprojects, projects), then the rest; one PR per batch, checked in `docker/` and against the CSP reports.
+- **7c, core and themes (DONE, 2026-10-16):** branch `security/phase7c-csp-core`.
+  | Commit | Change |
+  |---|---|
+  | `cd4dbb06` | **Security:** stored XSS in the Gantt charts (projects, tasks, macroprojects): frappe-gantt writes the task name with `innerHTML`, and names went in raw, so `<image href=x onerror=...>` ran on page load. Values are HTML-escaped and drawn from a JSON block by `js/dp-gantt.js`. |
+  | `e145ccb1` | `dp-actions.js`: `href="#"` links never jump; dotted names (`window.open`) keep their owner as `this`. |
+  | `e0908b0c` | Core and theme templates without inline JavaScript: CSRF helper moved to `js/dp-ui.js`; tabs choose the active panel on the server and link through `dPaction()` (CTabBox and the five theme overrides); title-block delete/help links; "New Item" selects; dp-grey-theme tab hooks in `tabs.js`; the `db_adodb.php` reload script carries the nonce. |
+  | `99d65ba5` | Login and lost-password pages (five themes): `autofocus`, and "forgot password" is a submit button (`formnovalidate`, after the login button). |
+  | `ef4b1307` | material theme no longer loads Roboto from Google Fonts (CSP, and each visitor's IP went to Google). |
+  | `7777835c` | `'report-sample'` in the policy; smoke test checks the login page has no inline JavaScript. |
+
+  Verified in `docker/` in all five themes (75 browser checks: tabs, help window, delete through `form.submit()` with the CSRF token, New Item, Gantt view buttons, login/lost-password, no CSP violation on those pages). Browser load of 240 admin pages: 816 reports before, 210 after, all from module pages. Browsers only report an inline handler when it runs, so the static count below is the real to-do list.
+
+- **What is left (static count, active modules, vendored libraries and docs excluded):** 545 inline handlers, 648 `javascript:` URLs and 210 inline `<script>` blocks in 33 modules. Largest: public 234 (selectors and calendar pop-ups), dotproject_plus 190, tasks 147, macroprojects 112, monitoringandcontrol 96, projects 92, finances 64, calendar 44, system 43, forums 41, files 41, timeplanning 37, admin 35.
+- **7d:** public and the core modules (admin, system, companies, contacts, departments, calendar, files, forums, history, smartsearch, resources, ticketsmith).
+- **7e:** tasks, projects, macroprojects.
+- **7f:** the dotproject_plus family (dotproject_plus, monitoringandcontrol, timeplanning, human_resources, initiating, closure, costs, finances, resource_m, igantt, risks and the small rest).
 - **Last:** switch to an enforced `Content-Security-Policy`.
 - Choices: `style-src 'unsafe-inline'` stays (inline styles are low risk); `'unsafe-eval'` until xajax and overlib are replaced; vendored wireit docs/API pages are removed rather than converted; dormant modules are converted when revived (see below).
 

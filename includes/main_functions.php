@@ -177,10 +177,9 @@ function breadCrumbs(&$arr)
 function dPcontextHelp($title, $link = '')
 {
 	global $AppUI;
-	return ('<a href="#' . $AppUI->___($link) . '" onClick="'
-		. "javascript:window.open('?m=help&dialog=1&hid=$link', 'contexthelp', "
-		. "'width=400, height=400, left=50, top=50, scrollbars=yes, resizable=yes')" . '">'
-		. $AppUI->_($title) . '</a>');
+	return ('<a href="#' . $AppUI->___($link) . '"'
+		. dPaction('window.open', array('?m=help&dialog=1&hid=' . $link, 'contexthelp', 'width=400,height=400,left=50,top=50,scrollbars=yes,resizable=yes'))
+		. '>' . $AppUI->_($title) . '</a>');
 }
 
 
@@ -1202,7 +1201,8 @@ function dPcspPolicy()
 	$base = rtrim(DP_BASE_URL, '/');
 	return implode('; ', array(
 		"default-src 'self'",
-		"script-src 'self' 'nonce-" . dPcspNonce() . "' 'unsafe-eval'",
+		// 'report-sample' puts the first 40 characters of a blocked script in the report.
+		"script-src 'self' 'nonce-" . dPcspNonce() . "' 'unsafe-eval' 'report-sample'",
 		"style-src 'self' 'unsafe-inline'",
 		"img-src 'self' data:",
 		"font-src 'self' data:",

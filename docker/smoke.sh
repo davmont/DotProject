@@ -100,6 +100,9 @@ check "CSP report logged without query secrets" "$(docker compose exec -T web ca
 docker compose exec -T web rm -f /var/www/html/files/temp/csp-reports.log
 login admin passwd >/dev/null
 check "dp-actions.js loaded on pages" "$(curl -s -b "$CJ" "$U?m=companies" | grep -c 'js/dp-actions.js')" "1"
+rm -f "$CJ"
+check "login page has no inline JavaScript" "$(curl -s $U | grep -ciE ' on[a-z]+=|javascript:|<script>|<script type="text/javascript">')" "0"
+login admin passwd >/dev/null
 
 # No PHP fatals during the run
 F=$(docker compose logs --since $(( $(date +%s) - START + 2 ))s web 2>&1 | grep -c 'PHP Fatal')

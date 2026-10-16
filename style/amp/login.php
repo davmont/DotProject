@@ -12,14 +12,14 @@
 </style>
 <link rel="shortcut icon" href="./style/<?php echo $uistyle;?>/img/favicon.ico" type="image/ico" />
 </head>
-<body bgcolor="#f0f0f0" onload="document.loginform.username.focus();">
+<body bgcolor="#f0f0f0">
 <center>
 <br />
 <br />
 <div class="company_name" style="padding:0px;"><a href="<?php echo $dPconfig['base_url'] ?>"><?php echo $dPconfig['company_name'] ?></a></div>
 </div>
 <br />
-<form method="post" action="<?php echo $loginFromPage; ?>" name="loginform">
+<form method="post" action="<?php echo $loginFromPage; ?>" name="loginform" id="loginform">
 	<table cellpadding="0" cellspacing="0" border="0" width="300px">
 	<tr>
 		<td><img src="style/<?php echo $uistyle;?>/img/tl.png" /></td>
@@ -34,7 +34,7 @@
 				<input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect, ENT_QUOTES);?>" />
 				<tr>
 					<td align="right" nowrap><?php echo $AppUI->_('Username');?>:</td>
-					<td align="left" nowrap><input type="text" size="25" maxlength="20" name="username" class="text" /></td>
+					<td align="left" nowrap><input type="text" size="25" maxlength="20" name="username" autofocus="autofocus" class="text" /></td>
 				</tr>
 				<tr>
 					<td align="right" nowrap><?php echo $AppUI->_('Password');?>:</td>
@@ -45,7 +45,7 @@
 					<td align="right" valign="bottom" nowrap><input type="submit" name="login" value="<?php echo $AppUI->_('login');?>" class="button" /></td>
 				</tr>
 				<tr>
-					<td colspan="2" align="center"><a href="#" onclick="f=document.loginform;f.lostpass.value=1;f.submit();"><?php echo $AppUI->_('forgotPassword');?></a></td>
+					<td colspan="2" align="center"><button type="submit" form="loginform" name="lostpass" value="1" formnovalidate="formnovalidate" style="background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer"><?php echo $AppUI->_('forgotPassword'); ?></button></td>
 				</tr>
 			</table>
 			<?php if (@$AppUI->getVersion()) { ?>

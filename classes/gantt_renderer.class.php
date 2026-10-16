@@ -30,10 +30,20 @@ class GanttRenderer {
             echo 'No items to display.</p>';
             return;
         }
-        $json  = json_encode(array_values($tasks), JSON_HEX_TAG | JSON_HEX_APOS);
-        $cid   = htmlspecialchars($containerId);
-        $jsVar = 'dpGantt_' . preg_replace('/[^a-zA-Z0-9]/', '_', $containerId);
-        $vm    = htmlspecialchars($viewMode);
+        // frappe-gantt writes the name into the bar label and the popup with
+        // innerHTML, so every value is HTML-escaped here. Before, a task named
+        // <image href=x onerror=...> ran its script when the chart was drawn.
+        $rows = array();
+        foreach ($tasks as $task) {
+            $row = array();
+            foreach ($task as $key => $value) {
+                $row[$key] = is_string($value) ? htmlspecialchars($value, ENT_QUOTES, 'UTF-8') : $value;
+            }
+            $rows[] = $row;
+        }
+        $json = json_encode($rows, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        $cid  = htmlspecialchars($containerId, ENT_QUOTES, 'UTF-8');
+        $vm   = htmlspecialchars($viewMode, ENT_QUOTES, 'UTF-8');
         ?>
 <?php if ($title): ?>
 <h3 style="margin:8px 0 4px;font-size:14px;"><?php echo htmlspecialchars($title); ?></h3>
@@ -41,29 +51,15 @@ class GanttRenderer {
 <div style="margin:0 0 4px;font-size:12px;">
   <strong><?php echo 'View:'; ?></strong>
   <?php foreach (['Day', 'Week', 'Month'] as $v): ?>
-  <button type="button" onclick="<?php echo $jsVar; ?>.change_view_mode('<?php echo $v; ?>')" style="margin:0 2px;padding:2px 8px;cursor:pointer;"><?php echo $v; ?></button>
+  <button type="button"<?php echo dPaction('dpGanttViewMode', array($containerId, $v)); ?> style="margin:0 2px;padding:2px 8px;cursor:pointer;"><?php echo $v; ?></button>
   <?php endforeach; ?>
-  &nbsp;&nbsp;<button type="button" onclick="window.print()" style="padding:2px 8px;cursor:pointer;">Print</button>
+  &nbsp;&nbsp;<button type="button"<?php echo dPaction('window.print'); ?> style="padding:2px 8px;cursor:pointer;">Print</button>
 </div>
 <div style="overflow-x:auto;background:#fff;padding:10px;border:1px solid #ccc;max-width:100%;">
   <svg id="<?php echo $cid; ?>"></svg>
 </div>
-<script>
-(function(){
-  var tasks = <?php echo $json; ?>;
-  var <?php echo $jsVar; ?> = new Gantt('#<?php echo $cid; ?>', tasks, {
-    view_mode: '<?php echo $vm; ?>',
-    date_format: 'YYYY-MM-DD',
-    custom_popup_html: function(task) {
-      return '<div style="padding:8px 10px;max-width:240px;">'
-        + '<strong>' + task.name + '</strong><br>'
-        + task.start + ' → ' + task.end + '<br>'
-        + task.progress + '% complete</div>';
-    }
-  });
-  window.<?php echo $jsVar; ?> = <?php echo $jsVar; ?>;
-}());
-</script>
+<?php // Drawn by js/dp-gantt.js; a JSON data block is not executed, so it needs no CSP nonce. ?>
+<script type="application/json" class="dp-gantt-data" data-target="<?php echo $cid; ?>" data-view-mode="<?php echo $vm; ?>"><?php echo $json; ?></script>
         <?php
     }
 }

@@ -106,7 +106,7 @@ if (!defined('DP_BASE_DIR')) {
 </style>
 </head>
 
-<body onload="document.lostpassform.checkusername.focus();">
+<body>
 	<div class="login-container">
 		<form method="post" name="lostpassform">
 			<input type="hidden" name="lostpass" value="1" />
@@ -117,7 +117,7 @@ if (!defined('DP_BASE_DIR')) {
 					<th colspan="2"><em><?php echo $dPconfig['company_name']; ?></em></th>
 				</tr>
 				<tr>
-					<td colspan="2"><input type="text" maxlength="20" name="checkusername" class="text"
+					<td colspan="2"><input type="text" maxlength="20" name="checkusername" autofocus="autofocus" class="text"
 							placeholder="<?php echo $AppUI->_('Username'); ?>" /></td>
 				</tr>
 				<tr>

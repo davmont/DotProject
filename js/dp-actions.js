@@ -22,6 +22,8 @@
  *   data-dp-submit               submit the element's form (or data-dp-submit="formName")
  *
  * Order: confirm, call, then href / submit (skipped when the call returned false).
+ * A link with href="#" (the replacement for href="javascript:...") never
+ * follows the "#".
  */
 (function () {
 	'use strict';
@@ -48,7 +50,7 @@
 			return null;
 		}
 		var fn = owner[last];
-		return typeof fn === 'function' ? { fn: fn, owner: owner } : null;
+		return typeof fn === 'function' ? { fn: fn, owner: owner, dotted: parts.length > 1 } : null;
 	}
 
 	function args(el, ev, json) {
@@ -102,12 +104,17 @@
 			var json = el.hasAttribute('data-dp-call-' + type)
 				? el.getAttribute('data-dp-args-' + type)
 				: el.getAttribute('data-dp-args');
-			// Called with the element as "this", like the inline handler it replaces.
-			var owner = target.owner === window ? el : target.owner;
+			// A plain name is called with the element as "this", like the inline handler
+			// it replaces; a dotted name on its owner (window.open needs window).
+			var owner = target.dotted ? target.owner : el;
 			if (target.fn.apply(owner, args(el, ev, json)) === false) {
 				ev.preventDefault();
 				return;
 			}
+		}
+		// <a href="#"> stands in for an old href="javascript:..." and must not jump.
+		if (el.tagName === 'A' && el.getAttribute('href') === '#') {
+			ev.preventDefault();
 		}
 		var href = el.getAttribute('data-dp-href');
 		if (href !== null) {

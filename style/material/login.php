@@ -16,7 +16,6 @@ $page_title = dPgetConfig('page_title', 'dotProject');
 	<title>
 		<?php echo $page_title; ?> :: Login
 	</title>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
 	<link rel="stylesheet" type="text/css" href="./style/<?php echo $uistyle; ?>/main.css" media="all" />
 	<link rel="shortcut icon" href="./style/<?php echo $uistyle; ?>/images/favicon.ico" type="image/ico" />
 	<style type="text/css">
@@ -147,7 +146,7 @@ $page_title = dPgetConfig('page_title', 'dotProject');
 	</style>
 </head>
 
-<body onload="document.loginform.username.focus();">
+<body>
 
 	<div class="login-card">
 		<div class="logo-area">
@@ -163,7 +162,7 @@ $page_title = dPgetConfig('page_title', 'dotProject');
 			<p>Sign in to your account</p>
 		</div>
 
-		<form method="post" action="<?php echo $loginFromPage; ?>" name="loginform">
+		<form method="post" action="<?php echo $loginFromPage; ?>" name="loginform" id="loginform">
 			<input type="hidden" name="login" value="login" />
 			<input type="hidden" name="lostpass" value="0" />
 			<input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect, ENT_QUOTES);?>" />
@@ -172,7 +171,7 @@ $page_title = dPgetConfig('page_title', 'dotProject');
 				<label for="username">
 					<?php echo $AppUI->_('Username'); ?>
 				</label>
-				<input type="text" id="username" name="username" maxlength="255" required>
+				<input type="text" id="username" name="username" autofocus="autofocus" maxlength="255" required>
 			</div>
 
 			<div class="form-group">
@@ -188,9 +187,7 @@ $page_title = dPgetConfig('page_title', 'dotProject');
 		</form>
 
 		<div class="login-footer">
-			<a href="javascript:void(0);" onclick="document.loginform.lostpass.value=1;document.loginform.submit();">
-				<?php echo $AppUI->_('forgotPassword'); ?>
-			</a>
+			<button type="submit" form="loginform" name="lostpass" value="1" formnovalidate="formnovalidate" style="background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer"><?php echo $AppUI->_('forgotPassword'); ?></button>
 		</div>
 
 		<div class="system-info">
