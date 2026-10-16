@@ -25,7 +25,7 @@ $sql = $q->prepare();
 $tasks = db_loadList($sql);
 ?>
 
-<script language="JavaScript">
+<script language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
 function loadTasks()
 {
   var tasks = new Array();
@@ -39,7 +39,7 @@ function loadTasks()
     foreach ($tasks as $task) {
       ++$i;
     ?>
-  sel.options[<?php echo $i; ?>] = new Option("<?php echo $task['task_name']; ?>", <?php echo $task['task_id']; ?>);
+  sel.options[<?php echo $i; ?>] = new Option(<?php echo dPjs($task['task_name']); ?>, <?php echo (int)$task['task_id']; ?>);
     <?php
     }
     ?>
