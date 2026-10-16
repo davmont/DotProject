@@ -414,7 +414,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 					<tr>
 						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('URL'); ?></td>
 						<td colspan="2">
-							<input type="text" name="macroproject_url" value='<?php echo @$row->macroproject_url; ?>'
+							<input type="text" name="macroproject_url" value='<?php echo dPformSafe(@$row->macroproject_url); ?>'
 								size="40" maxlength="255" class="text" />
 						</td>
 					</tr>
@@ -422,7 +422,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Staging URL'); ?></td>
 						<td colspan="2">
 							<input type="text" name="macroproject_demo_url"
-								value='<?php echo @$row->macroproject_demo_url; ?>' size="40" maxlength="255"
+								value='<?php echo dPformSafe(@$row->macroproject_demo_url); ?>' size="40" maxlength="255"
 								class="text" />
 						</td>
 					</tr>
@@ -458,7 +458,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Color Identifier'); ?></td>
 						<td nowrap="nowrap">
 							<input type="text" name="macroproject_color_identifier"
-								value="<?php echo (@$row->macroproject_color_identifier) ? @$row->macroproject_color_identifier : 'FFFFFF'; ?>"
+								value="<?php echo (@$row->macroproject_color_identifier) ? dPformSafe(@$row->macroproject_color_identifier) : 'FFFFFF'; ?>"
 								size="10" maxlength="6"<?php echo dPaction('setColor', array(), 'blur'); ?> class="text" /> *
 						</td>
 						<td nowrap="nowrap" align="right">
@@ -467,7 +467,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						</td>
 						<td nowrap="nowrap">
 							<span id="test" title="test"
-								style="background:#<?php echo (@$row->macroproject_color_identifier) ? @$row->macroproject_color_identifier : 'FFFFFF'; ?>;"><a
+								style="background:#<?php echo (@$row->macroproject_color_identifier) ? dPformSafe(@$row->macroproject_color_identifier) : 'FFFFFF'; ?>;"><a
 									href="#"
 									<?php echo dPaction('window.open', array('?m=public&a=color_selector&dialog=1&callback=setColor', 'calwin', 'width=320, height=300, scrollbars=no')); ?>><img
 										src="./images/shim.gif" border="1" width="40" height="20" alt="" /></a></span>

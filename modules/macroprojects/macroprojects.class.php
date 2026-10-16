@@ -67,6 +67,11 @@ class CMacroProject extends CDpObject
 		if (mb_strlen($this->macroproject_short_name) > 10) {
 			$this->macroproject_short_name = mb_substr($this->macroproject_short_name, 0, 10);
 		}
+		// The color is written unescaped into style attributes on many pages: hex digits only.
+		if ($this->macroproject_color_identifier !== null) {
+			$this->macroproject_color_identifier = mb_substr(preg_replace('/[^0-9A-Fa-f]/', '',
+				(string)$this->macroproject_color_identifier), 0, 6);
+		}
 		// Make sure empty dates are nulled.  Cannot save an empty date.
 		if (empty($this->macroproject_end_date)) {
 			$this->macroproject_end_date = null;
