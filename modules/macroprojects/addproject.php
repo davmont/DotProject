@@ -32,9 +32,13 @@ $company_id = intval(dPgetParam($_GET, 'company_id', 0));
 $company_internal_id = intval(dPgetParam($_GET, 'company_internal_id', 0));
 $contact_id = intval(dPgetParam($_GET, 'contact_id', 0));
 $macroproject_id = intval(dPgetParam($_REQUEST, 'macroproject_id', 0));
-$addShowOptions = dPgetParam($_REQUEST, 'addShowOptions', 0);
-$ownerFilter = dPgetParam($_REQUEST, 'ownerFilter', 0);
+$addShowOptions = dPgetIntParam($_REQUEST, 'addShowOptions', 0);
+$ownerFilter = dPgetIntParam($_REQUEST, 'ownerFilter', 0);
 $companyFilter = dPgetParam($_REQUEST, 'companyFilter', '0');
+// 'c<company id>' or a department id; it goes into SQL and into links.
+if (!is_string($companyFilter) || !preg_match('/^c?[0-9]+$/', $companyFilter)) {
+	$companyFilter = '0';
+}
 
 // check permissions for this record
 $canEdit = getPermission($m, 'edit', $macroproject_id);
@@ -176,7 +180,7 @@ if (isset($_GET['project']) and isset($_GET['add']))//si on vient d'ajouter un p
 	{	
 		$q->addTable('macroproject_project');
 		$q->addQuery('macroproject_id');
-		$q->addWhere('project_id = ' .$_GET['project']);
+		$q->addWhere('project_id = ' .(int)$_GET['project']);
 		$q->addWhere('macroproject_id = ' .$macroproject_id);
 		$existing_macroproject = $q->loadList();
 		if(!(count($existing_macroproject) != 0))//pour empecher d'ajouter plusieurs fois le même project
@@ -184,13 +188,13 @@ if (isset($_GET['project']) and isset($_GET['add']))//si on vient d'ajouter un p
 			$q->clear();
 			$q->addTable('macroproject_project');
 			$q->addInsert('macroproject_id', $macroproject_id);
-			$q->addInsert('project_id', $_GET['project']);
+			$q->addInsert('project_id', (int)$_GET['project']);
 		}
 	}
 	else
 	{
 		$q->setDelete('macroproject_project');
-		$q->addWhere('project_id = ' .$_GET['project']);
+		$q->addWhere('project_id = ' .(int)$_GET['project']);
 		$q->addWhere('macroproject_id = ' .$macroproject_id);
 	}
 	$q->exec();
@@ -402,7 +406,7 @@ if (isset($_GET['macroproject_son']) and isset($_GET['add']))//si on vient d'ajo
 	{	
 		$q->addTable('macroproject_macroproject');
 		$q->addQuery('macroproject_father');
-		$q->addWhere('macroproject_son = ' .$_GET['macroproject_son']);
+		$q->addWhere('macroproject_son = ' .(int)$_GET['macroproject_son']);
 		$q->addWhere('macroproject_father = ' .$macroproject_id);
 		$existing_macroproject = $q->loadList();
 		if(!(count($existing_macroproject) != 0))//pour empecher d'ajouter plusieurs fois le même macroproject
@@ -410,13 +414,13 @@ if (isset($_GET['macroproject_son']) and isset($_GET['add']))//si on vient d'ajo
 			$q->clear();
 			$q->addTable('macroproject_macroproject');
 			$q->addInsert('macroproject_father', $macroproject_id);
-			$q->addInsert('macroproject_son', $_GET['macroproject_son']);
+			$q->addInsert('macroproject_son', (int)$_GET['macroproject_son']);
 		}
 	}
 	else
 	{
 		$q->setDelete('macroproject_macroproject');
-		$q->addWhere('macroproject_son = ' .$_GET['macroproject_son']);
+		$q->addWhere('macroproject_son = ' .(int)$_GET['macroproject_son']);
 		$q->addWhere('macroproject_father = ' .$macroproject_id);
 	}
 	$q->exec();
