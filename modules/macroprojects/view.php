@@ -181,7 +181,7 @@ if (isset($_POST['searchtext'])) {
 $search_text = (($AppUI->getState('searchtext')) ? $AppUI->getState('searchtext'):'');
 $titleBlock->addCell($AppUI->_('Search') . ':');
 $titleBlock->addCell(('<input type="text" class="text" SIZE="10" name="searchtext"' 
-                      . ' onchange="javascript:document.searchfilter.submit();" value="' . $search_text . '"' 
+                      . dPaction(null, array(), 'change', array('submit' => 'searchfilter')) . ' value="' . $search_text . '"' 
                       . 'title="' . $AppUI->_('Search in name and description fields') 
                       . '"/><!--<input type="submit" class="button" value=">" title="' 
                       . $AppUI->_('Search in name and description fields') . '"/>-->'), '',
@@ -219,7 +219,7 @@ $titleBlock->addCrumb('?m=macroprojects&amp;a=reports&amp;macroproject_id=' . $m
 $titleBlock->show();
 updateMacroProjectPercentComplete($macroproject_id);
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 //security improvement:
 //some javascript functions may not appear on client side in case of user not having write permissions
@@ -256,7 +256,7 @@ function doDetails() {
 <tr>
 	<td style="border: outset #d1d1cd 1px;background-color:#<?php 
 echo $obj->macroproject_color_identifier; ?>" colspan="2">
-	<a href="?m=macroprojects&amp;a=addedit&amp;macroproject_id=<?php echo $macroproject_id; ?>"><img src="images/icons/pencil.gif"/></a><a href="javascript:doDetails()">
+	<a href="?m=macroprojects&amp;a=addedit&amp;macroproject_id=<?php echo $macroproject_id; ?>"><img src="images/icons/pencil.gif"/></a><a href="#"<?php echo dPaction('doDetails'); ?>>
 		<img border="0" align="middle" id="displayImg" alt="" src="images/icons/expand.gif" />
 	</a>
 	<?php
