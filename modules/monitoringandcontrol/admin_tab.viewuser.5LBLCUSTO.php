@@ -38,14 +38,14 @@ $controllerUtil = new ControllerUtil();
 						
 				?>										
 					<tr>
-						<td><?php echo  $controllerUtil -> formatDate($list[4]); ?> </td>
-						<td> <?php echo $controllerUtil -> formatDate($list[5]); ?> </td>
+						<td><?php echo dPhtml($controllerUtil -> formatDate($list[4])); ?> </td>
+						<td> <?php echo dPhtml($controllerUtil -> formatDate($list[5])); ?> </td>
 						<td> <?php echo number_format($list[2], 2, ',', '.'); ?> </td>
                        <td align="center">
  							 <form name="form_update" method="post" action="" enctype="multipart/form-data" >  
                                  <input  type="hidden" name="acao" value="update"  />
 								<input name="user_id" type="hidden" id="user_id" value="<?php echo $user_id; ?>">
-								<input name="cost_id" type="hidden" id="cost_id" value="<?php echo $list[0]; ?>">
+								<input name="cost_id" type="hidden" id="cost_id" value="<?php echo (int)$list[0]; ?>">
                                 <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />   
                               </form>
                         </td>                        <td align="center">
@@ -54,7 +54,7 @@ $controllerUtil = new ControllerUtil();
 								<input name="dosql" type="hidden" value="do_costs_aed" />	
                                 <input  type="hidden" name="acao" value="delete"  />
 								<input name="user_id" type="hidden" id="user_id" value="<?php echo $user_id; ?>">
-								<input name="cost_id" type="hidden" id="cost_id" value="<?php echo $id; ?>">
+								<input name="cost_id" type="hidden" id="cost_id" value="<?php echo (int)$id; ?>">
 								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
                                 </form>
                                 
@@ -75,7 +75,7 @@ $controllerUtil = new ControllerUtil();
     <form action="?m=monitoringandcontrol&a=do_costs_aed&user_id=<?php echo $user_id; ?>" method="post" name="form_updateRow" id="form_updateRow" enctype="multipart/form-data">
     	<input name="dosql" type="hidden" value="do_costs_aed" />		
 	<input name="user_id" type="hidden" id="user_id" value="<?php echo $user_id; ?>">
-    <input  type="hidden" name="cost_id" value="<?php echo $id; ?>"  />
+    <input  type="hidden" name="cost_id" value="<?php echo (int)$id; ?>"  />
     <input  type="hidden" name="acao" value="updateRow"  />
 	<br/>
 	<table width="70%" align="center">
@@ -140,11 +140,11 @@ $controllerUtil = new ControllerUtil();
 					
 			?>
 			    <td>  
-				   <input type="text" class="text"  name="dt_begin"  id="date_edit2" value="<?php echo $dt_ini ; ?>" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <input type="text" class="text"  name="dt_begin"  id="date_edit2" value="<?php echo dPhtml($dt_ini); ?>" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
 				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit2', 'dd/mm/yyyy', '$this')); ?> />     
                 </td>                 
                 <td>  
-				   <input type="text" class="text"  name="dt_end"  id="date_edit3"  value="<?php echo $dt_fim ; ?>" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <input type="text" class="text"  name="dt_end"  id="date_edit3"  value="<?php echo dPhtml($dt_fim); ?>" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
 				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit3', 'dd/mm/yyyy', '$this')); ?> />                 
                </td>
           		<td>  
