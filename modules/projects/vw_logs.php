@@ -83,7 +83,7 @@ function delIt2(id) {
 <input type="hidden" name="m" value="projects"/>
 <input type="hidden" name="a" value="view"/>
 <input type="hidden" name="project_id" value="<?php echo $project_id?>"/>
-<input type="hidden" name="tab" value="<?php echo $tab?>"/>
+<input type="hidden" name="tab" value="<?php echo (int)$tab; ?>"/>
 </form>
 </table>
 <table border="0" cellpadding="2" cellspacing="1" width="100%" class="tbl">
@@ -158,7 +158,8 @@ foreach ($logs as $row) {
 
 // dylan_cuthbert: auto-transation system in-progress, leave these lines
 	$transbrk = "\n[translation]\n";
-	$descrip = str_replace("\n", "<br />", $row['task_log_description']);
+	// The description is text: escape it, then turn line breaks into <br />.
+	$descrip = str_replace("\n", "<br />", dPhtml($row['task_log_description']));
 	$tranpos = mb_strpos($descrip, str_replace("\n", "<br />", $transbrk));
 	if ($tranpos === false) $s .= $descrip;
 	else
@@ -166,7 +167,7 @@ foreach ($logs as $row) {
 		$descrip = mb_substr($descrip, 0, $tranpos);
 		$tranpos = mb_strpos($row['task_log_description'], $transbrk);
 		$transla = mb_substr($row['task_log_description'], $tranpos + mb_strlen($transbrk));
-		$transla = trim(str_replace("'", '"', $transla));
+		$transla = htmlspecialchars(trim($transla), ENT_QUOTES);
 		$s .= $descrip."<div style='font-weight: bold; text-align: right'><a title='$transla' class='hilite'>[".$AppUI->_("translation")."]</a></div>";
 	}
 // end auto-translation code

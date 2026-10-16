@@ -380,13 +380,13 @@ function setDepartment(department_id_string) {
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('URL');?></td>
 			<td colspan="2">
-				<input type="text" name="project_url" value='<?php echo @$row->project_url;?>' size="40" maxlength="255" class="text" />
+				<input type="text" name="project_url" value='<?php echo htmlspecialchars((string)@$row->project_url, ENT_QUOTES);?>' size="40" maxlength="255" class="text" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Staging URL');?></td>
 			<td colspan="2">
-				<input type="text" name="project_demo_url" value='<?php echo @$row->project_demo_url;?>' size="40" maxlength="255" class="text" />
+				<input type="text" name="project_demo_url" value='<?php echo htmlspecialchars((string)@$row->project_demo_url, ENT_QUOTES);?>' size="40" maxlength="255" class="text" />
 			</td>
 		</tr>
 		<tr>

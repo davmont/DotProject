@@ -158,7 +158,7 @@ if(dPgetParam($_POST, 'edit', 0))
 				echo '<td class="tdDesc" style="background-color:#'.$mp->macroproject_color_identifier.';">'
 						.'<img src="./modules/projects/images/applet3-48.png" width="12px" height:"12px" />'
 						.'<b><a href="index.php?m=macroprojects&a=view&macroproject_id='.$mp->macroproject_id.'" style="color:' . bestColor($mp->macroproject_color_identifier) . ';">'
-						.$mp->macroproject_name.'</a></b>'
+						.dPhtml($mp->macroproject_name).'</a></b>'
 					.'</td>'
 					.'<td class="tdContentProject budget todo" rel="_ei"></td>'
 					.'<td class="tdContentProject budget todo" rel="_ii"></td>'
@@ -183,7 +183,7 @@ if(dPgetParam($_POST, 'edit', 0))
 							echo '<td class="tdDesc" style="background-color:#'.$project->project_color_identifier.';">'
 									.'<img src="./modules/projects/images/applet3-48.png" width="12px" height:"12px" />'
 									.'<a href="index.php?m=projects&a=view&project_id='.$project->project_id.'" style="color:' . bestColor($project->project_color_identifier) . ';">'
-									.$project->project_name.'</a>'
+									.dPhtml($project->project_name).'</a>'
 								.'</td>'
 								.'<td class="tdContentProject budget todo child-of-mp_'.$mp->macroproject_id.'_ei" rel="_ei"></td>'
 								.'<td class="tdContentProject budget todo child-of-mp_'.$mp->macroproject_id.'_ii" rel="_ii"></td>'
@@ -219,9 +219,9 @@ if(dPgetParam($_POST, 'edit', 0))
 						$start_date = new CDate($task->task_start_date);
 						$end_date = new CDate($task->task_end_date);
 						if ($task->task_dynamic == 1)
-							echo '<img src="./modules/finances/images/dyna.gif" width="10px" height:"10px" /><a title="'.$AppUI->_("Start Date").': '.$start_date->format("%d/%m/%Y").' - '.$AppUI->_("End Date").': '.$end_date->format("%d/%m/%Y").'" href="index.php?m=tasks&a=view&task_id='.$task->task_id.'">'.$task->task_name.'</a></td>';
+							echo '<img src="./modules/finances/images/dyna.gif" width="10px" height:"10px" /><a title="'.$AppUI->_("Start Date").': '.$start_date->format("%d/%m/%Y").' - '.$AppUI->_("End Date").': '.$end_date->format("%d/%m/%Y").'" href="index.php?m=tasks&a=view&task_id='.$task->task_id.'">'.dPhtml($task->task_name).'</a></td>';
 						else
-							echo '<a title="'.$AppUI->_("Start Date").': '.$start_date->format("%d/%m/%Y").' - '.$AppUI->_("End Date").': '.$end_date->format("%d/%m/%Y").'" href="index.php?m=tasks&a=view&task_id='.$task->task_id.'">'.$task->task_name.' ('.$budget->Tax.$AppUI->_("%").')</a></td>';
+							echo '<a title="'.$AppUI->_("Start Date").': '.$start_date->format("%d/%m/%Y").' - '.$AppUI->_("End Date").': '.$end_date->format("%d/%m/%Y").'" href="index.php?m=tasks&a=view&task_id='.$task->task_id.'">'.dPhtml($task->task_name).' ('.$budget->Tax.$AppUI->_("%").')</a></td>';
 
 						if(countChildren($task->task_id) == 0) {
 							// If the task don't have children, we can edit the budget ...

@@ -377,7 +377,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 							<?php echo $dPconfig['currency_symbol'] ?></td>
 						<td>
 							<input type="text" name="macroproject_target_budget"
-								value="<?php echo @$row->macroproject_target_budget; ?>" maxlength="10" class="text" />
+								value="<?php echo dPhtml(@$row->macroproject_target_budget); ?>" maxlength="10" class="text" />
 						</td>
 					</tr>
 					<tr>
@@ -402,7 +402,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 							<?php echo $dPconfig['currency_symbol'] ?></td>
 						<td>
 							<input type="text" name="macroproject_actual_budget"
-								value="<?php echo @$row->macroproject_actual_budget; ?>" size="10" maxlength="10"
+								value="<?php echo dPhtml(@$row->macroproject_actual_budget); ?>" size="10" maxlength="10"
 								class="text" />
 						</td>
 					</tr>

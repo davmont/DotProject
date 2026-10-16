@@ -53,7 +53,7 @@ function setCalendar(idate, fdate) {
 <input type="hidden" name="m" value="projects" />
 <input type="hidden" name="a" value="reports" />
 <input type="hidden" name="project_id" value="<?php echo $project_id;?>" />
-<input type="hidden" name="report_type" value="<?php echo $report_type;?>" />
+<input type="hidden" name="report_type" value="<?php echo htmlspecialchars((string)$report_type, ENT_QUOTES); ?>" />
 
 <table cellspacing="0" cellpadding="4" border="0" width="100%" class="std">
 <tr>

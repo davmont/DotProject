@@ -39,7 +39,7 @@ echo arraySelect($task_access, 'task_access', 'class="text"', intval($obj->task_
 ?>
 					<br /><?php echo $AppUI->_('Web Address'); ?>
 					<br /><input type="text" class="text" name="task_related_url" value="<?php 
-echo @$obj->task_related_url;?>" size="40" maxlength="255" />
+echo dPhtml(@$obj->task_related_url);?>" size="40" maxlength="255" />
 				</td>
 				<td valign='top'>
 					<?php echo $AppUI->_("Task Type"); ?><br />
@@ -85,7 +85,7 @@ echo $AppUI->_('None'); ?></option>
 				<td>
 					<?php echo $dPconfig['currency_symbol']; ?>
 					<input type="text" class="text" name="task_target_budget" value="<?php 
-echo @$obj->task_target_budget;?>" size="10" maxlength="10" />
+echo dPhtml(@$obj->task_target_budget);?>" size="10" maxlength="10" />
 				</td>
 			</tr><?php 
 if ($task_id > 0) { 
@@ -113,7 +113,7 @@ echo arraySelect($projects, 'new_task_project',
 			<?php echo $AppUI->_('Description');?>:
 			<br />
 			<textarea name="task_description" class="textarea" cols="60" rows="10" wrap="virtual" style="width: 100%; flex-grow: 1; box-sizing: border-box; min-height: 200px;"><?php 
-echo @$obj->task_description;?></textarea>
+echo dPhtml(@$obj->task_description);?></textarea>
 		</div><br />
 		<?php
 require_once($AppUI->getSystemClass('CustomFields'));

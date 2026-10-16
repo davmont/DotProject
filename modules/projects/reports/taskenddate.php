@@ -41,7 +41,7 @@ function setCalendar(idate, fdate) {
 
 <form name="editFrm" action="index.php?m=projects&a=reports" method="post">
 <input type="hidden" name="project_id" value="<?php echo $project_id;?>" />
-<input type="hidden" name="report_type" value="<?php echo $report_type;?>" />
+<input type="hidden" name="report_type" value="<?php echo htmlspecialchars((string)$report_type, ENT_QUOTES); ?>" />
 
 <table cellspacing="0" cellpadding="4" border="0" width="100%" class="std">
 

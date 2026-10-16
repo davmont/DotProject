@@ -36,7 +36,7 @@ echo db_error();
 for ($x=0; $x < $nums; $x++) {
 	$row = db_fetch_assoc($ptrc);
 	if ($row['macroproject_id'] == $macroproject_id) {
-		$display_macroproject_name='('.$row['macroproject_short_name'].') '.$row['macroproject_name'];
+		$display_macroproject_name='('.dPhtml($row['macroproject_short_name']).') '.dPhtml($row['macroproject_name']);
 	}
 	$macroproject_list[$row['macroproject_id']] = '('.$row['macroproject_short_name'].') '.$row['macroproject_name'];
 }
