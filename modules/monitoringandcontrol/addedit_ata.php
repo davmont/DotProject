@@ -79,7 +79,7 @@ $(document).ready(function() {
       		<td align="right"><?php echo $AppUI->_('LBL_PROJETO'); ?>:</td>
              <td>
              		<?php $project_name = $controllerUtil->getProjectName($project_id) ; ?>
-                 <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo  $project_name[0][0] ; ?> " />					
+                 <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name[0][0]); ?> " />					
             </td>
              <td ></td>
         </tr>
@@ -150,7 +150,7 @@ $(document).ready(function() {
 				$list = array();	
 				$list = $controllerUtil -> getUsers();
 					foreach($list as $row){		
-						  echo "<option value='$row[0]' >$row[1]</option>";						
+						  echo "<option value='" . (int)$row[0] . "' >" . dPhtml($row[1]) . "</option>";						
 					}?>     
                 </select>
          </td>
@@ -176,7 +176,7 @@ $(document).ready(function() {
 			                  <?php
 			  			   			 $mt_lista = $controllerAta-> getMeetingType();	
 			  					     foreach($mt_lista as $mt_row){
-			  							echo  "<option value='$mt_row[0]' >$mt_row[1]</option>";		
+			  							echo  "<option value='" . (int)$mt_row[0] . "' >" . dPhtml($mt_row[1]) . "</option>";		
 			  						}
 			    				?>  
               		</select> 
@@ -197,8 +197,8 @@ $(document).ready(function() {
                         	foreach($itens as $item){
 								?>
 									<tr>
-										<td width="95%"><?php echo $item[1]; ?>    
-                                         <input type="hidden" name="meeting_item_id[]" value="<?php echo $item[0]; ?>"   />                                  
+										<td width="95%"><?php echo dPhtml($item[1]); ?>    
+                                         <input type="hidden" name="meeting_item_id[]" value="<?php echo (int)$item[0]; ?>"   />                                  
                                         </td>
 										<td width="5%">                                         
 											<select name="item_select_status[]" size="1">
@@ -229,17 +229,17 @@ $(document).ready(function() {
 
 
 					<tr>
-						<td  align="left"><?php echo $task['task_name']; ?></td>
+						<td  align="left"><?php echo dPhtml($task['task_name']); ?></td>
 						<td  align="center"><?php echo $controllerUtil->formatDateTime($task['task_start_date']); ?></td>
 						<td  align="center"><?php echo $controllerUtil->formatDateTime($task['task_end_date']); ?></td>
-						<td  align="center"><?php echo $task['task_duration']; ?></td>		
+						<td  align="center"><?php echo dPhtml($task['task_duration']); ?></td>		
 						<td width="5%">                                         
 							<select name="item_select_status_entrega[]" size="1">
 								<option value="0" ><?php echo $AppUI->_('LBL_SIM'); ?></option>
 								<option value="1" ><?php echo $AppUI->_('LBL_NAO'); ?></option>
 							</select>
 						</td>
-						<input type="hidden" name="task_id_entrega[]" value="<?php echo $task['task_id']; ?>"   />
+						<input type="hidden" name="task_id_entrega[]" value="<?php echo (int)$task['task_id']; ?>"   />
 											
 					</tr>				
 				<?php } ?>	
@@ -278,23 +278,23 @@ $(document).ready(function() {
 				?>										
 					<tr>
 						<td  align="center"><?php echo number_format($cad['percentual'], 2, ',', '.'); ?></td>
-						<td  align="center"><?php echo $cad['tamanho']; ?> </td>
+						<td  align="center"><?php echo dPhtml($cad['tamanho']); ?> </td>
 						<td bgcolor="<?php echo $corIdc; ?>" align="center" ><?php echo number_format($cad['idc'], 2, ',', '.'); ?> </td>
 						<td bgcolor="<?php echo $corIdp; ?>" align="center" ><?php echo number_format($cad['idp'], 2, ',', '.'); ?> </td>	
 						
 						<td align="center" ><?php echo number_format($cad['vp'], 2, ',', '.'); ?> </td>
 						<td align="center" ><?php echo number_format($cad['va'], 2, ',', '.'); ?> </td>
 						<td align="center" ><?php echo number_format($cad['cr'], 2, ',', '.'); ?> </td>
-						<td align="center"><?php echo $cad['baseline']; ?> </td>								
+						<td align="center"><?php echo (int)$cad['baseline']; ?> </td>								
 						
-						<input type="hidden" name="percentual" value="<?php echo $cad['percentual']; ?>"   />
-						<input type="hidden" name="tamanho" value="<?php echo $cad['tamanho']; ?>"   />
-						<input type="hidden" name="idc" value="<?php echo $cad['idc']; ?>"   />
-						<input type="hidden" name="idp" value="<?php echo $cad['idp']; ?>"   />
-						<input type="hidden" name="va" value="<?php echo $cad['va']; ?>"   />
-						<input type="hidden" name="vp" value="<?php echo $cad['vp']; ?>"   />
-						<input type="hidden" name="cr" value="<?php echo $cad['cr']; ?>"   />
-						<input type="hidden" name="baseline" value="<?php echo $cad['baseline']; ?>"   />
+						<input type="hidden" name="percentual" value="<?php echo dPhtml($cad['percentual']); ?>"   />
+						<input type="hidden" name="tamanho" value="<?php echo dPhtml($cad['tamanho']); ?>"   />
+						<input type="hidden" name="idc" value="<?php echo dPhtml($cad['idc']); ?>"   />
+						<input type="hidden" name="idp" value="<?php echo dPhtml($cad['idp']); ?>"   />
+						<input type="hidden" name="va" value="<?php echo dPhtml($cad['va']); ?>"   />
+						<input type="hidden" name="vp" value="<?php echo dPhtml($cad['vp']); ?>"   />
+						<input type="hidden" name="cr" value="<?php echo dPhtml($cad['cr']); ?>"   />
+						<input type="hidden" name="baseline" value="<?php echo (int)$cad['baseline']; ?>"   />
 						  
 											
 			        </tr>				
