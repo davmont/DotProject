@@ -43,7 +43,7 @@ for ($x=0; $x < $nums; $x++) {
 
 if (! $suppressHeaders) {
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
                                                                                 
 function changeIt() {
         var f=document.changeMe;
@@ -81,7 +81,7 @@ if (!($suppressHeaders)) {
 ?>
 <form name="changeMe" action="./index.php?m=macroprojects&a=reports<?php echo $report_type_var; ?>" method="post">
 <?php echo $AppUI->_('MacroProjects') . ':';?>
-<?php echo arraySelect($macroproject_list, 'macroproject_id', 'size="1" class="text" onchange="changeIt();"', $macroproject_id, false);?>
+<?php echo arraySelect($macroproject_list, 'macroproject_id', 'size="1" class="text"' . dPaction('changeIt'), $macroproject_id, false);?>
 </form>
 
 <?php
