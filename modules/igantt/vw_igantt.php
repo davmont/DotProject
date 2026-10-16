@@ -8,7 +8,9 @@ $project_id = intval(dPgetParam($_GET, 'project_id', 0));
 
 // Check permissions
 $perms = new dPacl();
-$canView = $perms->checkModule('igantt', 'view') && $perms->checkModule('projects', 'view');
+// Module access is not enough: the chart lists the tasks of one project.
+$canView = $perms->checkModule('igantt', 'view') && $perms->checkModule('projects', 'view')
+	&& $project_id > 0 && $perms->checkModuleItem('projects', 'view', $project_id);
 if (!$canView) {
 	$AppUI->redirect("m=public&a=access_denied");
 }
@@ -25,8 +27,11 @@ $tasks = $q->loadList();
 $q->clear();
 
 // Fetch dependencies
-$q->addTable('task_dependencies');
-$q->addQuery('dependencies_task_id, dependencies_req_task_id');
+// Only this project's dependencies (it used to load every dependency in the system).
+$q->addTable('task_dependencies', 'td');
+$q->addJoin('tasks', 't', 't.task_id = td.dependencies_task_id');
+$q->addQuery('td.dependencies_task_id, td.dependencies_req_task_id');
+$q->addWhere("t.task_project = $project_id");
 $dependencies_list = $q->loadList();
 $dependencies = array();
 foreach ($dependencies_list as $dep) {
@@ -69,6 +74,7 @@ $json_tasks = json_encode($gantt_tasks, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_A
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<?php echo $AppUI->getCsrfMeta(); ?>
 	<title><?php echo $AppUI->_('Interactive Gantt chart'); ?></title>
 	<!-- Frappe Gantt CSS -->
 	<link rel="stylesheet" href="<?php echo DP_BASE_URL; ?>/lib/frappe-gantt/frappe-gantt.min.css" />
@@ -174,7 +180,12 @@ $json_tasks = json_encode($gantt_tasks, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_A
 					fetch('./index.php?m=igantt&a=update_task_dates&suppressHeaders=1', {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-						body: `task_id=${task.id}&start_date=${start.toISOString().split('T')[0]}&end_date=${endDate.toISOString().split('T')[0]}`
+						body: new URLSearchParams({
+							task_id: task.id,
+							start_date: start.toISOString().split('T')[0],
+							end_date: endDate.toISOString().split('T')[0],
+							csrf_token: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+						}).toString()
 					})
 						.then(response => response.json())
 						.then(data => {

@@ -4,15 +4,25 @@ if (!defined('DP_BASE_DIR')) {
     die('You should not access this file directly.');
 }
 
-// Ensure the user has the right permissions
-$perms = new dPacl();
-if (!$perms->checkModule('tasks', 'edit')) {
-    echo json_encode(['status' => 'error', 'message' => 'Permission denied.']);
+// A write: POST only, with the session's CSRF token (actions not named do_*
+// are not checked by index.php).
+if ($_SERVER['REQUEST_METHOD'] !== 'POST'
+    || !hash_equals($AppUI->getCsrfToken(), (string)dPgetParam($_POST, 'csrf_token', ''))) {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid or missing security token.']);
     exit;
 }
 
 // Retrieve data
 $task_id = intval(dPgetParam($_POST, 'task_id', 0));
+
+// Edit permission on this task, not just on the tasks module.
+$perms = new dPacl();
+if (!$perms->checkModule('tasks', 'edit') || $task_id <= 0 || !$perms->checkModuleItem('tasks', 'edit', $task_id)) {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Permission denied.']);
+    exit;
+}
 $start_date = dPgetParam($_POST, 'start_date', '');
 $end_date = dPgetParam($_POST, 'end_date', '');
 
