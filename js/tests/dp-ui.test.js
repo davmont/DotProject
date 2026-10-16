@@ -65,6 +65,17 @@ describe('dp-ui.js CSRF token', () => {
 		expect(token(f)).toBe('later');
 	});
 
+	test('dpPost submits a hidden POST form with the fields and the CSRF token', () => {
+		document.body.innerHTML = '';
+		window.dpPost('?m=x&a=y', { project: 5, add: 'true' });
+		expect(submitted).toHaveLength(1);
+		const f = submitted[0];
+		expect(f.getAttribute('method')).toBe('post');
+		expect(f.getAttribute('action')).toBe('?m=x&a=y');
+		const vals = Object.fromEntries(Array.from(f.querySelectorAll('input')).map((i) => [i.name, i.value]));
+		expect(vals).toEqual({ project: '5', add: 'true', csrf_token: 'tok123' });
+	});
+
 	test('dpSubmitIfValue submits only when a value is chosen', () => {
 		document.body.innerHTML = '<form method="get"><select name="m"><option value="">-</option><option value="x">x</option></select></form>';
 		const s = document.querySelector('select');

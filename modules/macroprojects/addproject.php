@@ -173,14 +173,16 @@ function doMenu(item) {
 </form>
 <?php if($addShowOptions == 0 || $addShowOptions == 1) {
 
-if (isset($_GET['project']) and isset($_GET['add']))//si on vient d'ajouter un projet
+// Adds or removes a link: POST with the CSRF token only (it was a GET link).
+if (isset($_POST['project']) and isset($_POST['add']) and $_SERVER['REQUEST_METHOD'] === 'POST')//si on vient d'ajouter un projet
 {
+	$AppUI->verifyCsrfToken();
 	$q->clear();
-	if($_GET['add'] == 'true')
+	if($_POST['add'] == 'true')
 	{	
 		$q->addTable('macroproject_project');
 		$q->addQuery('macroproject_id');
-		$q->addWhere('project_id = ' .(int)$_GET['project']);
+		$q->addWhere('project_id = ' .(int)$_POST['project']);
 		$q->addWhere('macroproject_id = ' .$macroproject_id);
 		$existing_macroproject = $q->loadList();
 		if(!(count($existing_macroproject) != 0))//pour empecher d'ajouter plusieurs fois le même project
@@ -188,13 +190,13 @@ if (isset($_GET['project']) and isset($_GET['add']))//si on vient d'ajouter un p
 			$q->clear();
 			$q->addTable('macroproject_project');
 			$q->addInsert('macroproject_id', $macroproject_id);
-			$q->addInsert('project_id', (int)$_GET['project']);
+			$q->addInsert('project_id', (int)$_POST['project']);
 		}
 	}
 	else
 	{
 		$q->setDelete('macroproject_project');
-		$q->addWhere('project_id = ' .(int)$_GET['project']);
+		$q->addWhere('project_id = ' .(int)$_POST['project']);
 		$q->addWhere('macroproject_id = ' .$macroproject_id);
 	}
 	$q->exec();
@@ -365,13 +367,13 @@ echo (htmlspecialchars($row['total_tasks'] . ($row['my_tasks'] ? ' ('.$row['my_t
 		$macroproject_list = $q->loadList();
 		if(count($macroproject_list) == 0){
 		?>
-		<a href="?m=macroprojects&amp;a=addproject&amp;macroproject_id=<?php echo $macroproject_id;?>&amp;project=<?php echo $row['project_id'];?>&amp;add=true&amp;addShowOptions=<?php echo $addShowOptions?>&amp;ownerFilter=<?php echo $ownerFilter?>&amp;companyFilter=<?php echo $companyFilter?>" class="hdr">
+		<a href="#" class="hdr"<?php echo dPaction('dpPost', array('?m=macroprojects&a=addproject&macroproject_id=' . (int)$macroproject_id . '&addShowOptions=' . (int)$addShowOptions . '&ownerFilter=' . (int)$ownerFilter . '&companyFilter=' . rawurlencode($companyFilter), array('project' => (int)$row['project_id'], 'add' => 'true'))); ?>>
 		<img border="0" alt=<?php echo $AppUI->_('Add');?> src="./modules/macroprojects/images/plus.png" />
 		<?php
 		}
 		else{
 		?>
-		<a href="?m=macroprojects&amp;a=addproject&amp;macroproject_id=<?php echo $macroproject_id;?>&amp;project=<?php echo $row['project_id'];?>&amp;add=false&amp;addShowOptions=<?php echo $addShowOptions?>&amp;ownerFilter=<?php echo $ownerFilter?>&amp;companyFilter=<?php echo $companyFilter?>" class="hdr">
+		<a href="#" class="hdr"<?php echo dPaction('dpPost', array('?m=macroprojects&a=addproject&macroproject_id=' . (int)$macroproject_id . '&addShowOptions=' . (int)$addShowOptions . '&ownerFilter=' . (int)$ownerFilter . '&companyFilter=' . rawurlencode($companyFilter), array('project' => (int)$row['project_id'], 'add' => 'false'))); ?>>
 		<img border="0" alt=<?php echo $AppUI->_('Del');?> src="./modules/macroprojects/images/minus.png" />
 		<?php
 		}
@@ -399,14 +401,16 @@ echo $AppUI->_('No projects available'); ?></td>
 ?>
 <?php if($addShowOptions == 0 || $addShowOptions == 2) {
 
-if (isset($_GET['macroproject_son']) and isset($_GET['add']))//si on vient d'ajouter un projet
+// Adds or removes a link: POST with the CSRF token only (it was a GET link).
+if (isset($_POST['macroproject_son']) and isset($_POST['add']) and $_SERVER['REQUEST_METHOD'] === 'POST')//si on vient d'ajouter un projet
 {
+	$AppUI->verifyCsrfToken();
 	$q->clear();
-	if($_GET['add'] == 'true')
+	if($_POST['add'] == 'true')
 	{	
 		$q->addTable('macroproject_macroproject');
 		$q->addQuery('macroproject_father');
-		$q->addWhere('macroproject_son = ' .(int)$_GET['macroproject_son']);
+		$q->addWhere('macroproject_son = ' .(int)$_POST['macroproject_son']);
 		$q->addWhere('macroproject_father = ' .$macroproject_id);
 		$existing_macroproject = $q->loadList();
 		if(!(count($existing_macroproject) != 0))//pour empecher d'ajouter plusieurs fois le même macroproject
@@ -414,13 +418,13 @@ if (isset($_GET['macroproject_son']) and isset($_GET['add']))//si on vient d'ajo
 			$q->clear();
 			$q->addTable('macroproject_macroproject');
 			$q->addInsert('macroproject_father', $macroproject_id);
-			$q->addInsert('macroproject_son', (int)$_GET['macroproject_son']);
+			$q->addInsert('macroproject_son', (int)$_POST['macroproject_son']);
 		}
 	}
 	else
 	{
 		$q->setDelete('macroproject_macroproject');
-		$q->addWhere('macroproject_son = ' .(int)$_GET['macroproject_son']);
+		$q->addWhere('macroproject_son = ' .(int)$_POST['macroproject_son']);
 		$q->addWhere('macroproject_father = ' .$macroproject_id);
 	}
 	$q->exec();
@@ -592,13 +596,13 @@ echo (htmlspecialchars($row['total_tasks'] . ($row['my_tasks'] ? ' ('.$row['my_t
 		$macroproject_list = $q->loadList();
 		if(count($macroproject_list) == 0){
 		?>
-		<a href="?m=macroprojects&amp;a=addproject&amp;macroproject_id=<?php echo $macroproject_id;?>&amp;macroproject_son=<?php echo $row['macroproject_id'];?>&amp;add=true&amp;addShowOptions=<?php echo $addShowOptions?>&amp;ownerFilter=<?php echo $ownerFilter?>&amp;companyFilter=<?php echo $companyFilter?>" class="hdr">
+		<a href="#" class="hdr"<?php echo dPaction('dpPost', array('?m=macroprojects&a=addproject&macroproject_id=' . (int)$macroproject_id . '&addShowOptions=' . (int)$addShowOptions . '&ownerFilter=' . (int)$ownerFilter . '&companyFilter=' . rawurlencode($companyFilter), array('macroproject_son' => (int)$row['macroproject_id'], 'add' => 'true'))); ?>>
 		<img border="0" alt=<?php echo $AppUI->_('Add');?> src="./modules/macroprojects/images/plus.png" />
 		<?php
 		}
 		else{
 		?>
-		<a href="?m=macroprojects&amp;a=addproject&amp;macroproject_id=<?php echo $macroproject_id;?>&amp;macroproject_son=<?php echo $row['macroproject_id'];?>&amp;add=false&amp;addShowOptions=<?php echo $addShowOptions?>&amp;ownerFilter=<?php echo $ownerFilter?>&amp;companyFilter=<?php echo $companyFilter?>" class="hdr">
+		<a href="#" class="hdr"<?php echo dPaction('dpPost', array('?m=macroprojects&a=addproject&macroproject_id=' . (int)$macroproject_id . '&addShowOptions=' . (int)$addShowOptions . '&ownerFilter=' . (int)$ownerFilter . '&companyFilter=' . rawurlencode($companyFilter), array('macroproject_son' => (int)$row['macroproject_id'], 'add' => 'false'))); ?>>
 		<img border="0" alt=<?php echo $AppUI->_('Del');?> src="./modules/macroprojects/images/minus.png" />
 		<?php
 		}
