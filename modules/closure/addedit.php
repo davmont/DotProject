@@ -314,7 +314,7 @@ var calWin = null;
 
 function popCalendar( field ){
 calendarField = field;
-idate = eval( 'document.editFrm.project_' + field + '.value' );
+idate = document.editFrm['project_' + field].value;
 window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=280, height=250, scrollbars=no' );
 }
 
@@ -323,8 +323,8 @@ window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date='
 *	@param string Formatted date
 */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.editFrm.project_' + calendarField );
-	fld_fdate = eval( 'document.editFrm.' + calendarField );
+	fld_date = document.editFrm['project_' + calendarField];
+	fld_fdate = document.editFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 
