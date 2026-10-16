@@ -178,7 +178,7 @@ if ($obj->canUserEditTimeInformation()) {
   <input type="hidden" name="task_log_task" value="<?php echo $log->task_log_task; ?>" />
   <input type="hidden" name="task_log_creator" value="<?php 
 echo(($log->task_log_creator == 0) ? $AppUI->user_id : $log->task_log_creator) ?>" />
-  <input type="hidden" name="task_log_name" value="Update :<?php echo $log->task_log_name; ?>" />
+  <input type="hidden" name="task_log_name" value="Update :<?php echo dPhtml($log->task_log_name); ?>" />
 <table cellspacing="1" cellpadding="2" border="0" width="100%">
 <tr>
   <td width='40%' valign='top' align='center'>
@@ -227,7 +227,7 @@ echo (($notify_own) ? ' checked="checked"' : ''); ?> />
         <td align="right"><?php echo $AppUI->_('Hours Worked'); ?></td>
         <td>
           <input type="text" class="text" name="task_log_hours" value="<?php 
-echo $log->task_log_hours; ?>" maxlength="8" size="6" /> 
+echo dPhtml($log->task_log_hours); ?>" maxlength="8" size="6" /> 
           <input type='button' class="button" value='<?php 
 echo $AppUI->_('Start'); ?>'<?php echo dPaction('timerStart'); ?> name='timerStartStopButton' />
           <input type='button' class="button" value='<?php 
@@ -243,7 +243,7 @@ echo arraySelect($task_log_costcodes, 'task_log_costcodes',
                  ('size="1" class="text"' . dPaction('setLogCostCode', array('$this'))), $log->task_log_costcode);
 ?>
            -&gt; <input type="text" class="text" name="task_log_costcode" value="<?php 
-echo $log->task_log_costcode; ?>" maxlength="8" size="8" />
+echo dPhtml($log->task_log_costcode); ?>" maxlength="8" size="8" />
         </td>
       </tr>
 <?php
@@ -277,7 +277,7 @@ if ($obj->canUserEditTimeInformation()) {
             <tr>
               <td align="left">
                 <input type="text" class="text" name="task_log_name" value="<?php 
-echo $log->task_log_name; ?>" maxlength="255" size="30" />
+echo dPhtml($log->task_log_name); ?>" maxlength="255" size="30" />
               </td>
               <td align="center">
                 <label for="task_log_problem"><?php echo $AppUI->_('Problem'); ?>:</label>
@@ -300,13 +300,13 @@ echo arraySelect($taskLogReference, 'task_log_reference', 'size="1" class="text"
       <tr>
         <td align="right"><?php echo $AppUI->_('URL'); ?>:</td>
         <td><input type="text" class="text" name="task_log_related_url" value="<?php 
-echo ($log->task_log_related_url); ?>" size="50" maxlength="255" title="<?php 
+echo dPhtml($log->task_log_related_url); ?>" size="50" maxlength="255" title="<?php 
 echo $AppUI->_('Must in general be entered with protocol name, e.g. http://...'); ?>" /></td>
       </tr>
       <tr>
         <td align="right" valign="top"><?php echo $AppUI->_('Description'); ?>:</td>
         <td><textarea name="task_log_description" class="textarea" cols="50" rows="6"><?php 
-echo $log->task_log_description; ?></textarea></td>
+echo dPhtml($log->task_log_description); ?></textarea></td>
       </tr>
       <tr>
         <td align="right" valign="top"><?php echo $AppUI->_('Email Log to'); ?>:</td>
