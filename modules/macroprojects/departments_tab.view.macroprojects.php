@@ -233,7 +233,7 @@ echo $row['macroproject_company']; ?>" title="<?php echo htmlspecialchars($row['
 		<a href="?m=macroprojects&amp;a=view&amp;macroproject_id=<?php 
 echo ($row['macroproject_id']); ?>"<?php 
 echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                $row['macroproject_description']) 
+                                                dPhtml($row['macroproject_description'])) 
                        . '</p></div>', $AppUI->_('Description', UI_OUTPUT_RAW)), 'mouseover mouseout', array('call-mouseout' => 'nd')); 
 ?>>
 		<?php echo htmlspecialchars($row['macroproject_name'], ENT_QUOTES); ?>
