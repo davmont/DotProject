@@ -95,7 +95,7 @@ if ($canDelete && $risk_id > 0) {
 }
 $titleBlock->show();
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
     function submitIt() {
         
         //    var f = document.uploadFrm;
@@ -280,10 +280,10 @@ $titleBlock->show();
         </tr>
         <tr>
             <td>
-                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('LBL_CANCEL'); ?>" onClick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {location.href = <?php echo dPjsAttr($href); ?>;}"/>
+                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('LBL_CANCEL'); ?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW), 'href' => $href)); ?>/>
             </td>
             <td align="right">
-                <input type="button" class="button" value="<?php echo $AppUI->_('LBL_SUBMIT'); ?>" onclick="submitIt()" />
+                <input type="button" class="button" value="<?php echo $AppUI->_('LBL_SUBMIT'); ?>"<?php echo dPaction('submitIt'); ?> />
             </td>
         </tr>
     </form>
