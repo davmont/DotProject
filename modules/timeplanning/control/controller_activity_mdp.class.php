@@ -90,6 +90,7 @@ class ControllerActivityMDP {
 
 		foreach($tasks as $task){
 			$taskId = $task[0];
+			$taskName = $task[1];
 			$x = -1;
 			$y = -1;
 			if (isset($posMap[$taskId])) {

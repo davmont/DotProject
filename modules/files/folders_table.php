@@ -144,7 +144,7 @@ function displayFolders($folder_id = 0, $level = 0)
 					. '<input type="hidden" name="del" value="1" />' . "\n"
 					. '<input type="hidden" name="file_folder_id" value="' . $folder_id
 					. '" />' . "\n"
-					. '<input type="hidden" name="redirect" value="' . $current_uri . '" />'
+					. '<input type="hidden" name="redirect" value="' . htmlspecialchars($current_uri, ENT_QUOTES) . '" />'
 					. "</form>\n");
 				echo ('<td align="right" width="64" nowrap="nowrap">' . "\n");
 				//edit folder

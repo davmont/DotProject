@@ -97,7 +97,7 @@ $titleBlock->addCell(
 		$company_id
 	),
 	'',
-	('<form action="' . $_SERVER['REQUEST_URI']
+	('<form action="' . htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES)
 		. '" method="post" name="pickCompany">'),
 	'</form>'
 );
@@ -111,7 +111,7 @@ $titleBlock->addCell(
 		true
 	),
 	'',
-	('<form action="' . $_SERVER['REQUEST_URI']
+	('<form action="' . htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES)
 		. '" method="post" name="pickFilter">'),
 	'</form>'
 );

@@ -1,10 +1,6 @@
 <?php
 require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 ?>
-<!-- include libraries for right click menu -->
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/milonic_src.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/mmenudom.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_activities.js"></script>
 
 <!-- calendar goodies -->
 <link type="text/css" rel="stylesheet"
@@ -13,7 +9,6 @@ require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 </link>
 <script type="text/javascript" src="./modules/timeplanning/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.js?random=20060118"></script>
 
-<a href="http://www.milonic.com/" style="display: none">DHTML JavaScript Menu By Milonic.com</a>
 
 <script nonce="<?php echo dPcspNonce(); ?>">
 

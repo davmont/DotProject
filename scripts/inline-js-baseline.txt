@@ -17,8 +17,6 @@ modules/dotproject_plus/changed_files_from_other_modules/companies_core/addedit.
 modules/dotproject_plus/changed_files_from_other_modules/companies_core/view.php:7
 modules/dotproject_plus/changed_files_from_other_modules/projects_core/addedit.php:21
 modules/dotproject_plus/changed_files_from_other_modules/projects_core/view.php:6
-modules/dotproject_plus/companies_tab.Projects.php:2
-modules/dotproject_plus/projects_tab.planning_and_monitoring.php:16
 modules/dotproject_plus/viewgantt.php:1
 modules/earnings/addedit.php:6
 modules/earnings/items.php:12

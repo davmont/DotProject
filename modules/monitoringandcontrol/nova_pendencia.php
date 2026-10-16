@@ -192,7 +192,7 @@ var desvio = document.formPendencia.description.value;
              		<?php 						
 							$project_name = $controllerUtil->getProjectName($project_id) ; 						
 					 ?>
-                 <input type="text" name="projeto" size="20" id="projeto" readonly="readonly" value="<?php echo  $project_name[0][0] ; ?> " />			
+                 <input type="text" name="projeto" size="20" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name[0][0]); ?> " />			
             <td colspan="2" style="width:45%">&nbsp;</td>
         </tr>
       	  <tr>
@@ -222,7 +222,7 @@ var desvio = document.formPendencia.description.value;
 									$list = $controllerUtil -> getUsers();
 									$i=0;
 									foreach($list as $row){	
-						  			echo "<option value='$row[0]' >$row[1]</option>";						
+						  			echo "<option value='" . (int)$row[0] . "' >" . dPhtml($row[1]) . "</option>";						
 									}
 						 ?>     
                 </select>

@@ -38,13 +38,13 @@ $titleBlock->addCell($AppUI->_('Company').':');
 $titleBlock->addCell(arraySelect($companies, 'company_id', 
 								 'class="text"' . dPaction(null, array(), null, array('submit' => 'pickCompany')), 
 								 $company_id), '',
-					 ('<form action="' . $_SERVER['REQUEST_URI'] 
+					 ('<form action="' . htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES) 
 					  . '" method="post" name="pickCompany">'), '</form>');
 $titleBlock->addCell($AppUI->_('Event Filter') . ':');
 $titleBlock->addCell(arraySelect($event_filter_list, 'event_filter', 
 								 'class="text"' . dPaction(null, array(), null, array('submit' => 'pickFilter')),
 								 $event_filter, true), '', 
-					 ('<form action="' . $_SERVER['REQUEST_URI'] 
+					 ('<form action="' . htmlspecialchars($_SERVER['REQUEST_URI'], ENT_QUOTES) 
 					  . '" method="post" name="pickFilter">'), '</form>');
 $titleBlock->show();
 ?>

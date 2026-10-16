@@ -37,8 +37,8 @@ $controllerReport = new ControllerReport();
 					if($row['idp'] < 0.8){$corIdp="#FF9FA5";}elseif ($row['idp'] < 1){$corIdp="#FFFFAE";}elseif ($row['idp'] > 1){$corIdp="#B7FFB7";} 						
 				?>										
 					<tr>
-						<td align="center"><a href="?m=projects&a=view&project_id=<?php echo $cad['id']; ?>">  <?php echo $cad['projeto']; ?> </a></td>
-						<td  align="center"><?php echo $cad['tamanho']; ?> </td>
+						<td align="center"><a href="?m=projects&a=view&project_id=<?php echo (int)$cad['id']; ?>">  <?php echo dPhtml($cad['projeto']); ?> </a></td>
+						<td  align="center"><?php echo dPhtml($cad['tamanho']); ?> </td>
 						<td  align="center"><?php echo number_format($cad['percentual'], 2, ',', '.'); ?></td>
 						<td bgcolor="<?php echo $corIdc; ?>" align="center" ><?php echo number_format($cad['idc'], 2, ',', '.'); ?> </td>
 						<td bgcolor="<?php echo $corIdp; ?>" align="center" ><?php echo number_format($cad['idp'], 2, ',', '.'); ?> </td>							
@@ -46,8 +46,8 @@ $controllerReport = new ControllerReport();
 						<td align="center" ><?php echo number_format($cad['vp'], 2, ',', '.'); ?> </td>
 						<td align="center" ><?php echo number_format($cad['va'], 2, ',', '.'); ?> </td>
 						<td align="center" ><?php echo number_format($cad['cr'], 2, ',', '.'); ?> </td>
-						<td align="center"><?php echo $cad['baseline']; ?> </td>	
-						<td align="center"><a href="?m=monitoringandcontrol&a=addedit_ata&project_id=<?php echo $cad['id']; ?>"><?php echo $AppUI->_('LBL_ATA');?></a></td>				
+						<td align="center"><?php echo (int)$cad['baseline']; ?> </td>	
+						<td align="center"><a href="?m=monitoringandcontrol&a=addedit_ata&project_id=<?php echo (int)$cad['id']; ?>"><?php echo $AppUI->_('LBL_ATA');?></a></td>				
 			        </tr>				
 				<?php } ?>	
 					<tr><td colspan='10'align="center">
