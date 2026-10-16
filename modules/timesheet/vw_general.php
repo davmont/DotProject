@@ -16,7 +16,7 @@ $on_break = isset($column_list[0]) ? $column_list[0] : null;
 if ($on_break == '00:00:00')
 	$on_break = 0;
 ?>
-<script language="Javascript" type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 
 	function updateTime() {
 
@@ -29,7 +29,7 @@ if ($on_break == '00:00:00')
 		var the_time = hours + ":" + minutes + ":" + seconds;
 		document.smallform.timer.value = the_time;
 
-		the_timeout = setTimeout('updateTime();', 1000);
+		the_timeout = setTimeout(updateTime, 1000);
 	}
 
 	function fixTime(val) {
