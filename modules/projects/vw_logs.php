@@ -52,7 +52,7 @@ $AppUI->setState('ProjectsTaskLogsHideComplete', (isset($_GET['hide_complete']) 
 $hide_complete = $AppUI->getState('ProjectsTaskLogsHideComplete');
 	
 ?>
-<script language="JavaScript">
+<script language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 // security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -71,13 +71,13 @@ function delIt2(id) {
 <form name="frmFilter" action="./index.php" method="get">
 <tr>
 	<td width="98%">&nbsp;</td>
-	<td width="1%" nowrap="nowrap"><input type="checkbox" name="hide_inactive" id="hide_inactive" <?php echo $hide_inactive?'checked="checked"':''?> onchange="document.frmFilter.submit()"><label for="hide_inactive"><?php echo $AppUI->_('Hide Inactive')?></label></td>
-	<td width="1%" nowrap="nowrap"><input type="checkbox" name="hide_complete" id="hide_complete" <?php echo $hide_complete?'checked="checked"':''?> onchange="document.frmFilter.submit()"><label for="hide_complete"><?php echo $AppUI->_('Hide 100% Complete')?></label></td>
+	<td width="1%" nowrap="nowrap"><input type="checkbox" name="hide_inactive" id="hide_inactive" <?php echo $hide_inactive?'checked="checked"':''?><?php echo dPaction(null, array(), 'change', array('submit' => 'frmFilter')); ?>><label for="hide_inactive"><?php echo $AppUI->_('Hide Inactive')?></label></td>
+	<td width="1%" nowrap="nowrap"><input type="checkbox" name="hide_complete" id="hide_complete" <?php echo $hide_complete?'checked="checked"':''?><?php echo dPaction(null, array(), 'change', array('submit' => 'frmFilter')); ?>><label for="hide_complete"><?php echo $AppUI->_('Hide 100% Complete')?></label></td>
 	<td width="1%" nowrap="nowrap"><?php echo $AppUI->_('User Filter')?></td>
-	<td width="1%"><?php echo arraySelect($users, 'user_id', 'size="1" class="text" id="medium" onchange="document.frmFilter.submit()"',
+	<td width="1%"><?php echo arraySelect($users, 'user_id', 'size="1" class="text" id="medium"' . dPaction(null, array(), null, array('submit' => 'frmFilter')),
                           $user_id)?></td>
 	<td width="1%" nowrap="nowrap"><?php echo $AppUI->_('Cost Code Filter')?></td>
-	<td width="1%"><?php echo arraySelect($task_log_costcodes, 'cost_code', 'size="1" class="text" onchange="document.frmFilter.submit()"',
+	<td width="1%"><?php echo arraySelect($task_log_costcodes, 'cost_code', 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => 'frmFilter')),
                           $cost_code)?></td>
 </tr>
 <input type="hidden" name="m" value="projects"/>
@@ -174,7 +174,7 @@ foreach ($logs as $row) {
 	$s .= '</td>';
 	$s .= "\n\t<td>";
 	if ($canDelete) {
-		$s .= ("\n\t\t" . '<a href="javascript:delIt2(' . $row['task_log_id'] . ');" title="' 
+		$s .= ("\n\t\t" . '<a href="#"' . dPaction('delIt2', array((int)$row['task_log_id'])) . ' title="' 
 			   . $AppUI->_('delete log') . '">' . "\n\t\t\t" 
 		       . dPshowImage('./images/icons/stock_delete-16.png', 16, 16, ''). "\n\t\t</a>");
 	}
