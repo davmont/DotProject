@@ -60,7 +60,7 @@ if ($tasks) {
 }
 
 // Convert tasks to JSON
-$json_tasks = json_encode($gantt_tasks);
+$json_tasks = json_encode($gantt_tasks, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
 ?>
 <!DOCTYPE html>
@@ -133,6 +133,12 @@ $json_tasks = json_encode($gantt_tasks);
 		// Inject JSON tasks from PHP
 		var tasks = <?php echo $json_tasks; ?>;
 
+		function escapeHtml(s) {
+			return String(s).replace(/[&<>"']/g, function (c) {
+				return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+			});
+		}
+
 		if (tasks.length === 0) {
 			document.getElementById('gantt').innerHTML = '<text x="20" y="40">No tasks found for this project.</text>';
 		} else {
@@ -153,7 +159,7 @@ $json_tasks = json_encode($gantt_tasks);
 					end_date.setDate(end_date.getDate() - 1); // Display exact day
 					return `
 					<div style="padding: 10px; background: rgba(0,0,0,0.8); color: white; border-radius: 4px;">
-						<strong>${task.name}</strong><br>
+						<strong>${escapeHtml(task.name)}</strong><br>
 						Expected to finish by ${end_date.toISOString().split('T')[0]}<br>
 						${task.progress}% completed!
 					</div>`;
