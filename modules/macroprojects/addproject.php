@@ -70,7 +70,7 @@ $q->addJoin('departments', 'dep', 'c.company_id = dep.dept_company');
 $q->addOrder('c.company_name, dep.dept_parent, dep.dept_name');
 $rows = $q->loadList();
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	document.editFrm.submit();
 }
@@ -79,10 +79,10 @@ function doMenu(item) {
 	col=document.getElementById("x" + item); 
 	if (obj.style.display=="none") {
 		obj.style.display="block";
-		col.innerHTML="<?php echo $AppUI->_('Hide Show Options'); ?>";
+		col.innerHTML="<?php echo $AppUI->_('Hide Show Options', UI_OUTPUT_JS); ?>";
 	} else {
 		obj.style.display="none"; 
-		col.innerHTML="<?php echo $AppUI->_('Show Options'); ?>"; 
+		col.innerHTML="<?php echo $AppUI->_('Show Options', UI_OUTPUT_JS); ?>"; 
 	}
 } 
 </script>
@@ -90,7 +90,7 @@ function doMenu(item) {
 		echo 'm=macroprojects&amp;a=addproject&amp;macroproject_id=' . $macroproject_id . '&amp;addShowOptions=' . $addShowOptions . '&amp;ownerFilter=' . $ownerFilter . '&amp;companyFilter=' . $companyFilter; ?>">
 		<br />
 		<em><?php echo $AppUI->_('Choose Show mode'); ?>:</em>
-		<select name="addShowOptions" id="addShowOptions" class="text" onchange="javascript:submitIt()" size="1">
+		<select name="addShowOptions" id="addShowOptions" class="text"<?php echo dPaction('submitIt'); ?> size="1">
 					<?php 						
 						echo '<option value="0"'
 								.(($addShowOptions ==  0) ? ' selected="selected">' : '>')
@@ -107,7 +107,7 @@ function doMenu(item) {
 					?>
 		</select>
 		<em><?php echo $AppUI->_('Owner'); ?>:</em>
-		<select name="ownerFilter" id="ownerFilter" class="text" onchange="javascript:submitIt()" size="1">
+		<select name="ownerFilter" id="ownerFilter" class="text"<?php echo dPaction('submitIt'); ?> size="1">
 					<?php
 						echo '<option value=0'
 									.(($ownerFilter ==  0) ? ' selected="selected">' : '>')
@@ -140,7 +140,7 @@ function doMenu(item) {
 					$rows = $q->loadList();
 					
 					//display the select list
-					$cBuffer = '<select name="companyFilter" id ="companyFilter" class="text" onchange="javascript:submitIt()" size="1">';
+					$cBuffer = '<select name="companyFilter" id ="companyFilter" class="text"' . dPaction('submitIt') . ' size="1">';
 					$cBuffer .= ('<option value="0" style="font-weight:bold;">' . $AppUI->_('All') 
 								 . '</option>'."\n");
 					$comp = '';
@@ -328,11 +328,10 @@ echo htmlspecialchars($row['company_description'], ENT_QUOTES); ?>">
 	<td width="100%">
 		<a href="?m=projects&amp;a=view&amp;project_id=<?php 
 echo htmlspecialchars($row['project_id']); ?>" <?php 
-if (!empty($row['project_description'])) { ?>onmouseover="return overlib('<?php 
-echo(htmlspecialchars(('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                addslashes($row['project_description'])) 
-                       . '</p></div>'), ENT_QUOTES)); ?>', CAPTION, '<?php 
-echo($AppUI->_('Description')); ?>', CENTER);" onmouseout="nd();"<?php } ?>>
+if (!empty($row['project_description'])) {
+echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
+                                                $row['project_description']) 
+                       . '</p></div>', $AppUI->_('Description', UI_OUTPUT_RAW)), 'mouseover mouseout', array('call-mouseout' => 'nd')); } ?>>
 		<?php echo (htmlspecialchars($row['project_name'], ENT_QUOTES)); ?>
 		</a>
 	</td>
@@ -556,11 +555,10 @@ echo htmlspecialchars($row['company_description'], ENT_QUOTES); ?>">
 	<td width="100%">
 		<a href="?m=macroprojects&amp;a=view&amp;macroproject_id=<?php 
 echo htmlspecialchars($row['macroproject_id']); ?>" <?php 
-if (!empty($row['macroproject_description'])) { ?>onmouseover="return overlib('<?php 
-echo(htmlspecialchars(('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                addslashes($row['macroproject_description'])) 
-                       . '</p></div>'), ENT_QUOTES)); ?>', CAPTION, '<?php 
-echo($AppUI->_('Description')); ?>', CENTER);" onmouseout="nd();"<?php } ?>>
+if (!empty($row['macroproject_description'])) {
+echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
+                                                $row['macroproject_description']) 
+                       . '</p></div>', $AppUI->_('Description', UI_OUTPUT_RAW)), 'mouseover mouseout', array('call-mouseout' => 'nd')); } ?>>
 		<?php echo (htmlspecialchars($row['macroproject_name'], ENT_QUOTES)); ?>
 		</a>
 	</td>
