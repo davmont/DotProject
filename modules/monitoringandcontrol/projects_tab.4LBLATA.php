@@ -57,7 +57,7 @@ $controllerUtil = new ControllerUtil();
                                 <input  type="hidden" name="acao" value="delete"  />
 								<input name="meeting_id" type="hidden" id="meeting_id" value="<?php echo (int)$row[0]; ?>">
 								<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
+								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('doDelete', UI_OUTPUT_RAW) . '?')); ?>  />
                                 </form>                                
                         </td>
                    </tr>						

@@ -61,7 +61,7 @@ $lstUser  = $controllerUtil-> getUsers();
                                 <input  type="hidden" name="acao" value="delete"  />
                                 <input  type="hidden" name="quality_id" value="<?php echo (int)$q_rec[0] ;?>"  />
 								<input name="task_id" type="hidden" id="task_id" value="<?php echo (int)$task_id; ?>">
-                                <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
+                                <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('doDelete', UI_OUTPUT_RAW) . '?')); ?>  />
                                 </form>                                
                         </td>
 				        </tr>						
