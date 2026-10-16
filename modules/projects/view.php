@@ -216,10 +216,11 @@ smartUpdateProjectPercentComplete($project_id);
 	if ($canEdit) {
 		?>
 		function delIt() {
-			var projectName = "<?php echo $obj->project_name; ?>";
-			var wroteName = prompt("<?php
-			echo ($AppUI->_('confirmDelete') . ' \"' . $obj->project_name . '\" \n' . $AppUI->_('writeProjectName')
-				. '\n' . $AppUI->_('canCopyPaste')); ?>", "<?php echo $AppUI->_('projectName') ?>");
+			var projectName = <?php echo dPjs($obj->project_name); ?>;
+			var wroteName = prompt(<?php
+			echo dPjs($AppUI->_('confirmDelete', UI_OUTPUT_RAW) . ' "' . $obj->project_name . '" ' . "\n"
+				. $AppUI->_('writeProjectName', UI_OUTPUT_RAW) . "\n" . $AppUI->_('canCopyPaste', UI_OUTPUT_RAW)); ?>, <?php
+			echo dPjs($AppUI->_('projectName', UI_OUTPUT_RAW)); ?>);
 			if (projectName == wroteName) {
 				document.frmDelete.submit();
 			}
@@ -266,7 +267,7 @@ smartUpdateProjectPercentComplete($project_id);
 			</a>
 			<?php
 			echo ('<span style="color:' . bestColor($obj->project_color_identifier) . '; font-weight:bold">'
-				. $obj->project_name . '</span>');
+				. dPhtml($obj->project_name) . '</span>');
 			?>
 		</td>
 	</tr>
