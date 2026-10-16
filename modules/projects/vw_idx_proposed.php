@@ -156,11 +156,13 @@ echo htmlspecialchars($row['company_description'], ENT_QUOTES); ?>">
 	<td width="100%">
 		<a href="?m=projects&amp;a=view&amp;project_id=<?php 
 echo htmlspecialchars($row['project_id']); ?>" <?php 
-if (!empty($row['project_description'])) { ?>onmouseover="return overlib('<?php 
-echo(htmlspecialchars(('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                addslashes($row['project_description'])) 
-                       . '</p></div>'), ENT_QUOTES)); ?>', CAPTION, '<?php 
-echo($AppUI->_('Description')); ?>', CENTER);" onmouseout="nd();"<?php } ?>>
+if (!empty($row['project_description'])) {
+	// overlib(tip, CAPTION, caption, CENTER); CAPTION is 1 and CENTER 7 in lib/overlib/overlib-shim.js
+	echo(dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
+	                                                         $row['project_description']) 
+	                                . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 
+	              'mouseover mouseout', array('call-mouseout' => 'nd')));
+} ?>>
 		<?php echo (htmlspecialchars($row['project_name'], ENT_QUOTES)); ?>
 		</a>
 	</td>

@@ -79,20 +79,20 @@ echo $tab; ?>" method="post" name="form_cb">
 	</td>
 	<td align="center" width="100%" nowrap="nowrap">&nbsp;</td>
 	<td align="right" nowrap="nowrap">
-		<input type="checkbox" name="add_pwoid" id="add_pwoid" onclick="document.form_cb.submit()" <?php 
+		<input type="checkbox" name="add_pwoid" id="add_pwoid"<?php echo dPaction(null, array(), null, array('submit' => 'form_cb')); ?> <?php 
 echo ($addPwOiD ? 'checked="checked"' : ''); ?> />
 		<label for="add_pwoid"><?php 
 echo $AppUI->_('Show Projects whose Owner is Member of the Dep.'); ?></label>
 	</td>
 	<td align="right" nowrap="nowrap">
-		<input type="checkbox" name="add_pwt" id="add_pwt" onclick="document.form_cb.submit()" <?php 
+		<input type="checkbox" name="add_pwt" id="add_pwt"<?php echo dPaction(null, array(), null, array('submit' => 'form_cb')); ?> <?php 
 echo $addPwT ? 'checked="checked"' : ''; ?> />
 		<label for="add_pwt"><?php echo $AppUI->_('Show Projects with assigned Tasks'); ?></label>
 	</td>
 	<td align="right" nowrap="nowrap">
 		<?php 
 echo arraySelect($projFilter, 'proFilter', 
-                 'size=1 class=text onChange="document.form_cb.submit()"', $proFilter, true); 
+                 'size=1 class=text' . dPaction(null, array(), null, array('submit' => 'form_cb')), $proFilter, true); 
 ?>
 	</td>
 </tr>
@@ -212,11 +212,13 @@ echo $row['project_company']; ?>" title="<?php echo htmlspecialchars($row['compa
 	</td>
 	<td width="100%">
 		<a href="?m=projects&amp;a=view&amp;project_id=<?php 
-echo ($row['project_id']); ?>" onmouseover="return overlib('<?php 
-echo htmlspecialchars(('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                addslashes($row['project_description'])) 
-                       . '</p></div>'), ENT_QUOTES); 
-?>', CAPTION, '<?php echo $AppUI->_('Description'); ?>', CENTER);" onmouseout="nd();">
+echo ($row['project_id']); ?>"<?php 
+// overlib(tip, CAPTION, caption, CENTER); CAPTION is 1 and CENTER 7 in lib/overlib/overlib-shim.js
+echo dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
+                                                         $row['project_description']) 
+                                . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 
+              'mouseover mouseout', array('call-mouseout' => 'nd')); 
+?>>
 		<?php echo htmlspecialchars($row['project_name'], ENT_QUOTES); ?>
 		</a>
 	</td>
