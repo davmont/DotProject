@@ -60,7 +60,7 @@ else
 	$newItem["files"] = "File";
 	$newItem["projects"] = "Project";
 
-	echo arraySelect( $newItem, 'm', 'style="font-size:10px" onChange="f=document.frm_new;mod=f.m.options[f.m.selectedIndex].value;if(mod) f.submit();"', '', true);
+	echo arraySelect( $newItem, 'm', 'style="font-size:10px"' . dPaction('dpSubmitIfValue'), '', true);
 
 	echo "</td>\n";
 	echo "        <input type=\"hidden\" name=\"a\" value=\"addedit\" />\n";
