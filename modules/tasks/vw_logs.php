@@ -15,7 +15,7 @@ $taskLogReference = dPgetSysVal('TaskLogReference');
 $taskLogReferenceImage = dPgetSysVal('TaskLogReferenceImage');
 
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 // security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -131,7 +131,7 @@ foreach ($logs as $row) {
 	$s .= '</td>';
 	$s .= "\n\t<td>";
 	if ($canDelete) {
-		$s .= ("\n\t\t" . '<a href="javascript:delIt2(' . $row['task_log_id'] . ');" title="' 
+		$s .= ("\n\t\t" . '<a href="#"' . dPaction('delIt2', array((int)$row['task_log_id'])) . ' title="' 
 		       . $AppUI->_('delete log') . '">' . "\n\t\t\t" 
 		       . dPshowImage('./images/icons/stock_delete-16.png', 16, 16, '') . "\n\t\t</a>");
 	}
