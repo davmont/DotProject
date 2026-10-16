@@ -234,7 +234,7 @@ if (!@$min_view) {
 	<br />
 	<form name="editFrm" method="post" action="?<?php
 	echo 'm=' . $m . '&amp;a=' . $a . '&amp;tab=' . $tab . '&amp;project_id=' . $project_id; ?>">
-		<input type="hidden" name="display_option" value="<?php echo $display_option; ?>" />
+		<input type="hidden" name="display_option" value="<?php echo dPhtml($display_option); ?>" />
 		<input type="hidden" name="caller" value="<?php echo $a; ?>" />
 		<table border="0" align="center" class="tbl" cellpadding="2" cellspacing="0" style="min-width:990px">
 			<tr>
