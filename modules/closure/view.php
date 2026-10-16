@@ -65,7 +65,7 @@ if ($canDelete) {
 <form name="frmDelete" action="./index.php?m=closure" method="post">
   <input type="hidden" name="dosql" value="do_closure_aed" />
   <input type="hidden" name="del" value="1" />
-  <input type="hidden" name="pma_id" value="<?php echo $pma_id;?>" />
+  <input type="hidden" name="pma_id" value="<?php echo (int)$pma_id;?>" />
 </form>
 <?php
 }
@@ -85,7 +85,7 @@ if ($canDelete) {
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Meeting Participants');?>:</td>
-			<td class="hilite"><?php echo $obj->participants;?></td>
+			<td class="hilite"><?php echo dPhtml($obj->participants);?></td>
 		</tr>
 
 		</table>
@@ -100,11 +100,11 @@ if ($canDelete) {
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Post Mortem ID');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->pma_id;?></td>
+			<td class="hilite" width="100%"><?php echo (int)$obj->pma_id;?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project Name');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->project_name;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->project_name);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project Start Date');?>:</td>
@@ -124,11 +124,11 @@ if ($canDelete) {
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project Budget');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->budget;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->budget);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project Planned Budget');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->planned_budget;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->planned_budget);?></td>
 		</tr>
 		</table>
 	</td>
@@ -149,7 +149,7 @@ if ($canDelete) {
 		<table cellspacing="0" cellpadding="2" border="0" width="100%">
 		<tr align="left">
 			<td class="hilite">
-				<?php echo str_replace( chr(10), "<br />", $obj->project_strength);?>&nbsp;
+				<?php echo str_replace( chr(10), "<br />", dPhtml($obj->project_strength));?>&nbsp;
 			</td>
 		</tr>
 
@@ -164,7 +164,7 @@ if ($canDelete) {
 		<table cellspacing="0" cellpadding="2" border="0" width="100%">
 		<tr align="left">
 			<td class="hilite">
-				<?php echo str_replace( chr(10), "<br />", $obj->project_weaknesses);?>&nbsp;
+				<?php echo str_replace( chr(10), "<br />", dPhtml($obj->project_weaknesses));?>&nbsp;
 			</td>
 		</tr>
 
@@ -179,7 +179,7 @@ if ($canDelete) {
 		<table cellspacing="0" cellpadding="2" border="0" width="100%">
 		<tr align="left">
 			<td class="hilite">
-				<?php echo str_replace( chr(10), "<br />", $obj->improvement_suggestions);?>&nbsp;
+				<?php echo str_replace( chr(10), "<br />", dPhtml($obj->improvement_suggestions));?>&nbsp;
 			</td>
 		</tr>
 
@@ -193,7 +193,7 @@ if ($canDelete) {
 		<table cellspacing="0" cellpadding="2" border="0" width="100%">
 		<tr align="left">
 			<td class="hilite">
-				<?php echo str_replace( chr(10), "<br />", $obj->conclusions);?>&nbsp;
+				<?php echo str_replace( chr(10), "<br />", dPhtml($obj->conclusions));?>&nbsp;
 			</td>
 		</tr>
 

@@ -6,7 +6,6 @@ if (!defined('DP_BASE_DIR')){
 $pma_id = dPgetParam($_GET, 'pma_id', 0);
 $project_name = dPgetParam($_GET, 'project_name', 0);
 
-$project_name = '"'.$project_name.'"';
 
 $perms =& $AppUI->acl();
 // check permissions for this record
@@ -29,7 +28,7 @@ if($pma_id == 0){
  $q  = new DBQuery;
  $q->addTable('projects');
  $q->addQuery('project_target_budget, project_start_date, project_end_date, project_name');
- $q->addWhere('project_name=' . $project_name);
+ $q->addWhere('project_name=' . $q->quote($project_name));
  $res =& $q->exec();
 
  $row->planned_budget = $res->fields['project_target_budget'];
@@ -118,7 +117,7 @@ for ($res; ! $res->EOF; $res->MoveNext()){
        if(array_search($contact_first_name, $pieces) === false){
 ?>
                 <option value = <?php echo $i;?> >
-                        <?php echo $contact_first_name; ?>
+                        <?php echo dPhtml($contact_first_name); ?>
                 </option>
 <?php
                 $i++;
@@ -142,7 +141,7 @@ for($i = 0; $i < $limit; $i++){
          $p2  = $p2.$pieces[$i];
 ?>
                 <option value = <?php echo $i;?> >
-                        <?php echo $pieces[$i]; ?>
+                        <?php echo dPhtml($pieces[$i]); ?>
                 </option>
  <?php
 }
@@ -150,7 +149,7 @@ for($i = 0; $i < $limit; $i++){
       if($participants){
       ?>
                 <option value = <?php echo $i;?> >
-                        <?php echo $participants; ?>
+                        <?php echo dPhtml($participants); ?>
                 </option>
                 <?php
       }
