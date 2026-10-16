@@ -39,12 +39,12 @@ if (!$log_start_date) {
 $end_date->setTime(23, 59, 59);
 ?>
 
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 
 function popCalendar(field) {
 	calendarField = field;
-	idate = eval('document.editFrm.log_' + field + '.value');
+	idate = document.editFrm['log_' + field].value;
 	window.open('index.php?m=public&'+'a=calendar&'+'dialog=1&'+'callback=setCalendar&'+'date='
 				+ idate, 'calwin', 'width=250, height=220, scrollbars=no, status=no');
 }
@@ -54,8 +54,8 @@ function popCalendar(field) {
  * @param string Formatted date
  */
 function setCalendar(idate, fdate) {
-	fld_date = eval('document.editFrm.log_' + calendarField);
-	fld_fdate = eval('document.editFrm.' + calendarField);
+	fld_date = document.editFrm['log_' + calendarField];
+	fld_fdate = document.editFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -66,7 +66,7 @@ function setCalendar(idate, fdate) {
 if ($canEdit) {
 ?>
 function checkAll(user_id) {
-	var f = eval("document.assFrm" + user_id);
+	var f = document["assFrm" + user_id];
 	var cFlag = f.master.checked ? false : true;
 	for (var i=0; i< f.elements.length; i++) {
 		var e = f.elements[i];
@@ -78,7 +78,7 @@ function checkAll(user_id) {
 }
 
 function chAssignment(user_id, rmUser, del) {
-	var f = eval("document.assFrm" + user_id);
+	var f = document["assFrm" + user_id];
 	var fl = f.add_users.length - 1;
 	var c = 0;
 	var a = 0;
@@ -126,7 +126,7 @@ function chAssignment(user_id, rmUser, del) {
 }
 
 function chPriority(user_id) {
-	var f = eval("document.assFrm" + user_id);
+	var f = document["assFrm" + user_id];
 	var c = 0;
 	
 	f.htasks.value = "";
@@ -167,7 +167,7 @@ function chPriority(user_id) {
 echo $start_date->format(FMT_TIMESTAMP_DATE); ?>" />
 		<input type="text" name="start_date" value="<?php 
 echo $start_date->format($df); ?>" class="text" disabled="disabled" />
-		<a href="#" onclick="javascript:popCalendar('start_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 echo $AppUI->_('Calendar'); ?>" border="0" />
 		</a>
@@ -177,7 +177,7 @@ echo $AppUI->_('Calendar'); ?>" border="0" />
 echo (($end_date) ? $end_date->format(FMT_TIMESTAMP_DATE) : ''); ?>" />
 		<input type="text" name="end_date" value="<?php 
 echo (($end_date) ? $end_date->format($df) : ''); ?>" class="text" disabled="disabled" />
-		<a href="#" onclick="javascript:popCalendar('end_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 echo ($AppUI->_('Calendar')); ?>" border="0" />
 		</a>
@@ -358,8 +358,8 @@ if ($do_report) {
 				<input type="hidden" name="user_id" value="<?php echo($user_id); ?>" />
 				<input type="hidden" name="hassign" />
 				<input type="hidden" name="htasks" />
-				<input onclick="javascript:checkAll('<?php 
-			echo($user_id); ?>');" type="checkbox" name="master" value="true"/>
+				<input<?php 
+			echo dPaction('checkAll', array((string)(int)$user_id)); ?> type="checkbox" name="master" value="true"/>
 			</td>
 			<td colspan="6" style="background: #D0D0D0;color: #000000;font-weight: bold;" nowrap="nowrap">
 				<a href="index.php?m=calendar&amp;a=day_view&amp;user_id=<?php 
@@ -376,17 +376,17 @@ if ($do_report) {
 			<td bgcolor="#D0D0D0">
 				<table width="100%"><tr>
 					<td align="left">
-						<a href="javascript:chAssignment(<?php echo($user_id); ?>, 0, 1);">
+						<a href="#"<?php echo dPaction('chAssignment', array((int)$user_id, 0, 1)); ?>>
 						<?php 
 			echo dPshowImage(dPfindImage('remove.png', 'tasks'), 16, 16, 'Unassign User', 
 			                'Unassign User from Task'); ?>
 						</a>&nbsp;
-						<a href="javascript:chAssignment(<?php echo($user_id); ?>, 1, 0);">
+						<a href="#"<?php echo dPaction('chAssignment', array((int)$user_id, 1, 0)); ?>>
 						<?php 
 			echo dPshowImage(dPfindImage('exchange.png', 'tasks'), 24, 16, 'Hand Over', 
 			                'Unassign User from Task and handing-over to selected Users'); ?>
 						</a>&nbsp;
-						<a href="javascript:chAssignment(<?php echo($user_id); ?>, 0, 0);">
+						<a href="#"<?php echo dPaction('chAssignment', array((int)$user_id, 0, 0)); ?>>
 						<?php 
 			echo dPshowImage(dPfindImage('add.png', 'tasks'), 16, 16, 'Assign Users', 
 			                'Assign selected Users to selected Tasks'); ?>
@@ -407,8 +407,8 @@ if ($do_report) {
 					<td align="center">
 						<?php 
 			echo arraySelect($taskPriority, 'user_task_priority', 
-			                 ('onchange="javascript:chPriority(' . $user_id 
-			                  . ');" size="1" class="text" title="' 
+			                 (dPaction('chPriority', array((int)$user_id)) 
+			                  . ' size="1" class="text" title="' 
 			                  . $AppUI->_('Change User specific Task Priority of selected Tasks') 
 			                  . '"'), 0, true); ?>
 					</td>
@@ -463,8 +463,8 @@ if ($do_report) {
 				<input type="hidden" name="user_id" value="<?php echo($user_id); ?>" />
 				<input type="hidden" name="hassign" />
 				<input type="hidden" name="htasks" />
-				<input onclick="javascript:checkAll('<?php 
-			echo($user_id); ?>');" type="checkbox" name="master" value="true"/>
+				<input<?php 
+			echo dPaction('checkAll', array((string)(int)$user_id)); ?> type="checkbox" name="master" value="true"/>
 			</td>
 			<td colspan="6" style="background: #D0D0D0;color: #000000;font-weight: bold;" nowrap="nowrap">
 				<a href="index.php?m=calendar&amp;a=day_view&amp;user_id=<?php 
@@ -479,7 +479,7 @@ if ($do_report) {
 			<td bgcolor="#D0D0D0">
 				<table width="100%"><tr>
 					<td align="left">
-						<a href="javascript:chAssignment(<?php echo($user_id); ?>, 0, 0);">
+						<a href="#"<?php echo dPaction('chAssignment', array((int)$user_id, 0, 0)); ?>>
 						<?php 
 			echo dPshowImage(dPfindImage('add.png', 'tasks'), 16, 16, 'Assign Users', 
 		    	            'Assign selected Users to selected Tasks'); ?>
@@ -500,8 +500,8 @@ if ($do_report) {
 					<td align="center">
 						<?php 
 			echo arraySelect($taskPriority, 'user_task_priority', 
-			                 ('onchange="javascript:chPriority(' . $user_id 
-			                  . ');" size="1" class="text" title="' 
+			                 (dPaction('chPriority', array((int)$user_id)) 
+			                  . ' size="1" class="text" title="' 
 			                  . $AppUI->_('Change User specific Task Priority of selected Tasks') 
 			                  . '"'), 0, true); ?>
 					</td>
@@ -657,8 +657,8 @@ function displayTask($list,$task,$level,$display_week_hours,$fromPeriod,$toPerio
 		
 		$tmp .= '<td valign="top" align="center" nowrap="nowrap" rowspan="' . $zm1 . '">';
 		$tmp .= ('<select name="add_users" style="width:200px" size="' . ($zz - 1) 
-		         . '" class="text" multiple="multiple" ondblclick="javascript:chAssignment(' 
-		         . $user_id . ', 0, false)">');
+		         . '" class="text" multiple="multiple"' 
+		         . dPaction('chAssignment', array((int)$user_id, 0, false), 'dblclick') . '>');
 		foreach ($userAlloc as $v => $u) {
 			$tmp .= ("\n\t" . '<option value="' . $u['user_id'] . '">' . dPformSafe($u['userFC']) 
 			         . '</option>');
