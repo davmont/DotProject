@@ -76,7 +76,7 @@ $titleBlock->addCrumb(('?m=calendar&amp;date=' . $this_day->format(FMT_TIMESTAMP
 $titleBlock->addCrumb(('?m=calendar&amp;a=week_view&amp;date=' . $this_week), 'week view');
 $titleBlock->addCell(($AppUI->_('Company') . ':'));
 $titleBlock->addCell(arraySelect($companies, 'company_id', 
-                                 'onchange="document.pickCompany.submit()" class="text"', 
+                                 'class="text"' . dPaction(null, array(), null, array('submit' => 'pickCompany')), 
                                  $company_id), '', 
                      ('<td><form method="post" name="pickCompany">' 
                       . '<table border="0" cellspacing="0" cellpadding="0"><tr>'), 
@@ -88,7 +88,7 @@ $titleBlock->addCell(('<input type="submit" class="button" value="' . $AppUI->_(
                      '</tr></table></form></td>');
 $titleBlock->show();
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function clickDay(idate, fdate) {
 		window.location = '?m=calendar&a=day_view&date='+idate+'&tab=0';
 }

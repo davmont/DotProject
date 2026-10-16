@@ -73,6 +73,12 @@ describe('data-dp-call', () => {
 		expect(window.recorded).toHaveLength(1);
 	});
 
+	test('an image-map <area href="#"> does not follow it either', () => {
+		document.body.innerHTML = `<map name="m"><area href="#" data-dp-call="record" coords="0,0,1,1"></map>`;
+		expect(click(document.querySelector('area')).defaultPrevented).toBe(true);
+		expect(window.recorded).toHaveLength(1);
+	});
+
 	test('a real link is followed when the call returns nothing', () => {
 		document.body.innerHTML = `<a href="?m=x" data-dp-call="record">x</a>`;
 		expect(click(document.querySelector('a')).defaultPrevented).toBe(false);
@@ -105,6 +111,21 @@ describe('events', () => {
 		s.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
 		s.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
 		expect(window.recorded.map((r) => r.args[0])).toEqual(['tip', 'off']);
+	});
+
+	test.each(['dblclick', 'keydown', 'keypress', 'keyup', 'mousedown', 'mouseup'])('data-dp-on="%s" is handled', (type) => {
+		document.body.innerHTML = `<input data-dp-on="${type}" data-dp-call="record">`;
+		const Ctor = /^key/.test(type) ? KeyboardEvent : MouseEvent;
+		document.querySelector('input').dispatchEvent(new Ctor(type, { bubbles: true }));
+		expect(window.recorded).toHaveLength(1);
+	});
+
+	test('focus and blur are delegated through focusin/focusout', () => {
+		document.body.innerHTML = `<input data-dp-on="focus blur" data-dp-call="record">`;
+		const i = document.querySelector('input');
+		i.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+		i.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+		expect(window.recorded).toHaveLength(2);
 	});
 
 	test('an element listening for click ignores mouseover', () => {

@@ -34,7 +34,7 @@ print("</table>\n");
 print("</form>\n");
 
 /* focus login */
-print('<script language="javascript" type="text/javascript">'."\n");
+print('<script language="javascript" type="text/javascript" nonce="' . dPcspNonce() . '">'."\n");
 print("\t".'document.form.login_attempt.focus();'."\n");
 print("</script>\n");
 ?>

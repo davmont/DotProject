@@ -52,7 +52,7 @@ if ($contact_id == 0 && $company_id > 0) {
 
 ?>
 
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 	echo "window.company_id=" . (int)dPgetParam($company_detail, 'company_id', 0) . ";\n";
 	echo "window.company_value=" . dPjs(dPgetCleanParam($company_detail, 'company_name', "")) . ";\n";
@@ -92,7 +92,7 @@ function popCompany() {
 //this bug does not occur if the window open occurs in an onclick event
 //this bug does NOT occur in Internet explorer
 //        window.open('./index.php?m=public&amp;a=selector&amp;dialog=1&amp;callback=setCompany&amp;table=companies', 'company','left=50,top=50,height=250,width=400,resizable');
-	window.open("?m=contacts&a=select_contact_company&dialog=1&table_name=companies&company_id=<?php echo $company_detail['company_id'];?>", "company", "left=50,top=50,height=250,width=400,resizable");
+	window.open("?m=contacts&a=select_contact_company&dialog=1&table_name=companies&company_id=<?php echo (int)$company_detail['company_id'];?>", "company", "left=50,top=50,height=250,width=400,resizable");
 }
 
 function setCompany(key, val) {
@@ -119,7 +119,7 @@ if ($userDeleteProtect) {
 ?>
 	var form = document.changecontact;
 	if (confirm("<?php echo $AppUI->_('contactsDelete', UI_OUTPUT_JS);?>")) {
-		form.del.value = "<?php echo $contact_id;?>";
+		form.del.value = "<?php echo (int)$contact_id;?>";
 		form.submit();
 	}
 <?php
@@ -166,8 +166,8 @@ function companyChange() {
 		<tr>
 			<td align="right">&nbsp;&nbsp;<?php echo $AppUI->_('Last Name');?>:</td>
 			<td>
-				<input type="text" class="text" size="25" name="contact_last_name" value="<?php echo dPhtml(@$row->contact_last_name);?>" maxlength="50" <?php if ($contact_id==0) {?> onblur="javascript:orderByName('name')"<?php }?> />
-				<a href="#" onclick="javascript:orderByName('name')">[<?php echo $AppUI->_('use in display');?>]</a>
+				<input type="text" class="text" size="25" name="contact_last_name" value="<?php echo dPhtml(@$row->contact_last_name);?>" maxlength="50" <?php if ($contact_id==0) { echo dPaction('orderByName', array('name'), 'blur'); }?> />
+				<a href="#"<?php echo dPaction('orderByName', array('name')); ?>>[<?php echo $AppUI->_('use in display');?>]</a>
 			</td>
 		</tr>
 		<tr>
@@ -200,9 +200,9 @@ function companyChange() {
 				<input type="text" class="text" name="contact_company_name" value="<?php 
 					echo dPhtml($company_detail['company_name']);
 					?>" maxlength="100" size="25" />
-				<input type="button" class="button" value="<?php echo $AppUI->_('select company...');?>..." onclick="popCompany()" />
+				<input type="button" class="button" value="<?php echo $AppUI->_('select company...');?>..."<?php echo dPaction('popCompany'); ?> />
 				<input type='hidden' name='contact_company' value="<?php echo $company_detail['company_id']; ?>" />
-				<a href="#" onclick="orderByName('company')">[<?php echo $AppUI->_('use in display');?>]</a>
+				<a href="#"<?php echo dPaction('orderByName', array('company')); ?>>[<?php echo $AppUI->_('use in display');?>]</a>
 				</td>
 		</tr>
 		<tr>
@@ -211,7 +211,7 @@ function companyChange() {
 				<input type="text" class="text" name="contact_department_name" value="<?php echo dPhtml($dept_detail['dept_name']);?>" maxlength="100" size="25" />
 
 				<input type='hidden' name='contact_department' value='<?php echo $dept_detail['dept_id'];?>' />
-				<input type="button" class="button" value="<?php echo $AppUI->_('select department...');?>" onclick="popDepartment()" />
+				<input type="button" class="button" value="<?php echo $AppUI->_('select department...');?>"<?php echo dPaction('popDepartment'); ?> />
 				</td>
 		</tr>
 		<tr>
@@ -333,10 +333,10 @@ function companyChange() {
 </tr>
 <tr>
 	<td>
-		<input type="button" value="<?php echo $AppUI->_('back');?>" class="button" onclick="javascript:window.location='./index.php?m=contacts';" />
+		<input type="button" value="<?php echo $AppUI->_('back');?>" class="button"<?php echo dPaction(null, array(), null, array('href' => './index.php?m=contacts')); ?> />
 	</td>
 	<td align="right">
-		<input type="button" value="<?php echo $AppUI->_('submit');?>" class="button" onclick="javascript:submitIt()" />
+		<input type="button" value="<?php echo $AppUI->_('submit');?>" class="button"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>
 </table>

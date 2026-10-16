@@ -19,7 +19,7 @@ if (dPgetParam($_POST, 'selected_contacts_id')) {
 // A comma-separated list of contact ids, written into JavaScript and links below.
 $selected_contacts_id = dPintList($selected_contacts_id);
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function setContactIDs(method, querystring) {
 		var URL = 'index.php?m=public&a=contact_selector';
 
@@ -83,11 +83,23 @@ $selected_contacts_id = dPintList($selected_contacts_id);
 		}
 	}
 
+	// Company drop-down: show that company's contacts, keeping the ticked ones.
+	function changeContactCompany() {
+		document.frmContactSelect.contacts_submited.value = 0;
+		setContactIDs();
+		document.frmContactSelect.submit();
+	}
+
+	// "View all allowed companies" link.
+	function viewAllContactCompanies(querystring) {
+		window.location.href = setContactIDs('GET', querystring);
+	}
+
 	<?php
 
 	if ($contacts_submited == 1) {
 		$call_back_string = ((!(is_null($call_back)))
-			? "window.opener.$call_back('$selected_contacts_id');" : '');
+			? 'dPopenerCall(' . dPjs($call_back) . ', [' . dPjs($selected_contacts_id) . ']);' : '');
 		echo $call_back_string
 			?>
 		self.close();
@@ -199,15 +211,14 @@ echo ((!is_null($call_back)) ? '&call_back=' . $call_back : '');
 	echo arraySelect(
 		$companies_names,
 		'company_id',
-		('onchange="document.frmContactSelect.contacts_submited.value=0; '
-			. 'setContactIDs(); document.frmContactSelect.submit();"'),
+		dPaction('changeContactCompany'),
 		0
 	);
 	?>
 
 	<br />
-	<h4><a href="#" onClick="window.location.href=setContactIDs('GET','dialog=1<?php
-	echo ((!is_null($call_back)) ? ('&call_back=' . $call_back) : ''); ?>&show_all=1');">
+	<h4><a href="#"<?php echo dPaction('viewAllContactCompanies', array('dialog=1'
+		. ((!is_null($call_back)) ? ('&call_back=' . $call_back) : '') . '&show_all=1')); ?>>
 			<?php echo $AppUI->_('View all allowed companies'); ?>
 		</a></h4>
 	<hr />
@@ -243,5 +254,5 @@ echo ((!is_null($call_back)) ? '&call_back=' . $call_back : '');
 	<input name="contacts_submited" type="hidden" value="1" />
 	<input name="selected_contacts_id" type="hidden" value="<?php echo $selected_contacts_id; ?>">
 	<input type="submit" value="<?php
-	echo $AppUI->_('Continue'); ?>" onClick="setContactIDs()" class="button" />
+	echo $AppUI->_('Continue'); ?>"<?php echo dPaction('setContactIDs'); ?> class="button" />
 </form>

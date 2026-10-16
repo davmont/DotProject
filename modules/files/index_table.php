@@ -234,7 +234,7 @@ $xpg_total_pages = ($xpg_totalrecs > $xpg_pagesize) ? ceil($xpg_totalrecs / $xpg
 shownavbar($xpg_totalrecs, $xpg_pagesize, $xpg_total_pages, $page);
 
 ?>
-<script type="text/JavaScript">
+<script type="text/JavaScript" nonce="<?php echo dPcspNonce(); ?>">
 function expand(id) {
   var element = document.getElementById(id);
   element.style.display = (element.style.display == '' || element.style.display == "none") ? "block" : "none";
@@ -395,7 +395,7 @@ function expand(id) {
 				echo $file_row['file_lastversion'];
 				if ($file_row['file_versions'] > 1) {
 					?>
-					<a href="#" onclick="javascript:expand('versions_<?php echo $latest_file['file_id']; ?>');">
+					<a href="#"<?php echo dPaction('expand', array('versions_' . $latest_file['file_id'])); ?>>
 						(<?php echo $file_row['file_versions']; ?>)
 					</a>
 				<?php

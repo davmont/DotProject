@@ -76,7 +76,7 @@ if (!db_loadHash($sql, $drow) && $dept_id > 0) {
 	$titleBlock->addCrumb("?m=companies&amp;a=view&amp;company_id=$company_id", "view this company");
 	$titleBlock->show();
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function testURL(x) {
 	var test = "document.editFrm.dept_url.value";
 	test = eval(test);
@@ -149,7 +149,7 @@ function submitIt() {
 	<td align="right"><?php echo $AppUI->_('URL');?><A name="x"></a></td>
 	<td>
 		<input type="text" class="text" value="<?php echo dPhtml(@$drow["dept_url"]);?>" name="dept_url" size="50" maxlength="255" />
-		<a href="#x" onclick="javascript:testURL('dept_url')">[<?php echo $AppUI->_('test');?>]</a>
+		<a href="#x"<?php echo dPaction('testURL', array('dept_url')); ?>>[<?php echo $AppUI->_('test');?>]</a>
 	</td>
 </tr>
 
@@ -185,10 +185,10 @@ if (count($depts)) {
 
 <tr>
 	<td>
-		<input type="button" value="<?php echo $AppUI->_('back');?>" class="button" onclick="javascript:history.back(-1);" />
+		<input type="button" value="<?php echo $AppUI->_('back');?>" class="button"<?php echo dPaction('history.back'); ?> />
 	</td>
 	<td align="right">
-		<input type="button" value="<?php echo $AppUI->_('submit');?>" class="button" onclick="javascript:submitIt()" />
+		<input type="button" value="<?php echo $AppUI->_('submit');?>" class="button"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>
 </form>

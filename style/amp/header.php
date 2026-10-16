@@ -18,7 +18,7 @@
 #container_content { top:160px; min-width:950px; } 
 </style>
 <div id="container_login">
-	<div class="content"> <?php echo $AppUI->_('Welcome'); ?> <strong><?php echo $AppUI->user_first_name."&nbsp;".$AppUI->user_last_name; ?></strong> &bull; <?php echo dPcontextHelp('Help'); ?> &bull; <a href="./index.php?m=admin&a=viewuser&user_id=<?php echo $AppUI->user_id; ?>"><?php echo $AppUI->_('My Info'); ?></a> &bull;
+	<div class="content"> <?php echo $AppUI->_('Welcome'); ?> <strong><?php echo htmlspecialchars($AppUI->user_first_name, ENT_QUOTES)."&nbsp;".htmlspecialchars($AppUI->user_last_name, ENT_QUOTES); ?></strong> &bull; <?php echo dPcontextHelp('Help'); ?> &bull; <a href="./index.php?m=admin&a=viewuser&user_id=<?php echo $AppUI->user_id; ?>"><?php echo $AppUI->_('My Info'); ?></a> &bull;
 		<?php if($perms->checkModule('calendar','access')) { $now = new CDate(); ?>
 		<b><a href="./index.php?m=tasks&a=todo"><?php echo $AppUI->_('Todo'); ?></a></b> &bull; <a href="./index.php?m=calendar&a=day_view&date=<?php echo $now->format(FMT_TIMESTAMP_DATE); ?>"><?php echo $AppUI->_('Today'); ?></a>
 		<?php } ?>

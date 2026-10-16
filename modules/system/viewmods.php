@@ -30,12 +30,8 @@ $modFiles = $AppUI->readDirs('modules');
 // instead of sending a GET request to domodsql.
 function modCmdLink($cmd, $mod_id, $mod_directory = '', $confirm = '')
 {
-	$js = "modCmd('" . $cmd . "', " . (int)$mod_id . ", '"
-		. htmlspecialchars(addslashes($mod_directory), ENT_QUOTES) . "');";
-	if ($confirm) {
-		$js = 'if (window.confirm(' . "'" . $confirm . "'" . ')) ' . $js;
-	}
-	return 'href="#" onclick="' . $js . ' return false;"';
+	return 'href="#"' . dPaction('modCmd', array($cmd, (int)$mod_id, (string)$mod_directory), null,
+		$confirm ? array('confirm' => $confirm) : array());
 }
 
 $titleBlock = new CTitleBlock('Modules', 'power-management.png', $m, $m . "." . $a);
@@ -97,8 +93,8 @@ foreach ($modules as $row) {
 	}
 	if ($row['mod_type'] != 'core' && $canEdit) {
 		$s .= (' | <a ' . modCmdLink('remove', $row['mod_id'], '', 
-		       $AppUI->_('This will delete all data associated with the module!') 
-		       . '\n\n' . $AppUI->_('Are you sure?') . '\n') . '>' 
+		       $AppUI->_('This will delete all data associated with the module!', UI_OUTPUT_RAW) 
+		       . "\n\n" . $AppUI->_('Are you sure?', UI_OUTPUT_RAW) . "\n") . '>' 
 		       . $AppUI->_('remove') . '</a>');
 	}
 
@@ -108,7 +104,7 @@ foreach ($modules as $row) {
 		include_once(DP_BASE_DIR . '/modules/' . $row['mod_directory'] . '/setup.php');
 	}
 	if ($ok && $config[ 'mod_version' ] != $row['mod_version'] && $canEdit) {
-		$s .= (' | <a ' . modCmdLink('upgrade', $row['mod_id'], '', $AppUI->_('Are you sure?')) 
+		$s .= (' | <a ' . modCmdLink('upgrade', $row['mod_id'], '', $AppUI->_('Are you sure?', UI_OUTPUT_RAW)) 
 		       . ' >' . $AppUI->_('upgrade') . '</a>');
 	}
 
@@ -169,7 +165,7 @@ foreach ($modFiles as $v) {
 	<input type="hidden" name="mod_id" value="" />
 	<input type="hidden" name="mod_directory" value="" />
 </form>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function modCmd(cmd, mod_id, mod_directory) {
 	var f = document.frmModCmd;
 	f.cmd.value = cmd;

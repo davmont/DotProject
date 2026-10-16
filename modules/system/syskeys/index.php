@@ -26,7 +26,7 @@ $titleBlock = new CTitleBlock('System Lookup Values', 'myevo-weather.png', $m, "
 $titleBlock->addCrumb("?m=system", "System Admin");
 $titleBlock->show();
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 // security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -84,7 +84,7 @@ function showRow($id=0, $key=0, $title='', $value='') {
 		$s .= '<td valign="top" colspan="2">'.htmlspecialchars($value, ENT_COMPAT, $locale_char_set).'</td>'.$CR;
 		$s .= '<td valign="top" width="16">';
 		if ($canEdit) {
-			$s .= '<a href="javascript:delIt('.$id.')" title="'.$AppUI->_('delete').'">'
+			$s .= '<a href="#"' . dPaction('delIt', array((int)$id)) . ' title="'.$AppUI->_('delete').'">'
 				. dPshowImage('./images/icons/stock_delete-16.png', 16, 16, '')
 				. '</a>';
 		}

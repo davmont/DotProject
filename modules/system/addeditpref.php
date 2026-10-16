@@ -30,7 +30,7 @@ if (getPermission('system', 'edit')) {
 }
 $titleBlock->show();
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var form = document.changeuser;
 	// Collate the checked states of the task log stuff
@@ -56,7 +56,7 @@ function submitIt() {
 <tr>
 	<th colspan="2"><?php echo $AppUI->_('User Preferences');?>:
 	<?php
-		echo $user_id ? "$user" : $AppUI->_("Default");
+		echo $user_id ? dPhtml($user) : $AppUI->_("Default");
 	?></th>
 </tr>
 
@@ -234,8 +234,8 @@ function submitIt() {
 </tr>
 
 <tr>
-	<td align="left"><input class="button"  type="button" value="<?php echo $AppUI->_('back');?>" onclick="javascript:history.back(-1);" /></td>
-	<td align="right"><input class="button" type="button" value="<?php echo $AppUI->_('submit');?>" onclick="javascript:submitIt()" /></td>
+	<td align="left"><input class="button"  type="button" value="<?php echo $AppUI->_('back');?>"<?php echo dPaction('history.back'); ?> /></td>
+	<td align="right"><input class="button" type="button" value="<?php echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> /></td>
 </tr>
 </table>
 </form>

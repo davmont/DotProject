@@ -75,12 +75,12 @@ $titleBlock = new CTitleBlock('Translation Management', 'rdf2.png', $m, "$m.$a")
 $titleBlock->addCell($AppUI->_('Module'), '',
                      '<form action="?m=system&amp;a=translate" method="post" name="modlang">', '');
 $titleBlock->addCell(arraySelect($modules, 'module', 
-                                 'size="1" class="text" onchange="javascript:document.modlang.submit();"', 
+                                 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => 'modlang')), 
                                  $module));
 $titleBlock->addCell($AppUI->_('Language'));
 $temp = $AppUI->setWarning(false);
 $titleBlock->addCell(arraySelect($locales, 'lang', 
-                                 'size="1" class="text" onchange="javascript:document.modlang.submit();"', 
+                                 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => 'modlang')), 
                                  $lang, true), 
                      '','', '</form>');
 $AppUI->setWarning($temp);

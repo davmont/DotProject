@@ -39,13 +39,13 @@ if ($user_id) {
 		}
 	} else {
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var f = document.frmEdit;
 	var msg = '';
 
-	if (f.new_pwd1.value.length < <?php echo dPgetConfig('password_min_len'); ?>) {
-        	msg += "<?php echo $AppUI->_('chgpwValidNew', UI_OUTPUT_JS);?>" + <?php echo dPgetConfig('password_min_len'); ?>;
+	if (f.new_pwd1.value.length < <?php echo (int)dPgetConfig('password_min_len'); ?>) {
+        	msg += "<?php echo $AppUI->_('chgpwValidNew', UI_OUTPUT_JS);?>" + <?php echo (int)dPgetConfig('password_min_len'); ?>;
 			f.new_pwd1.focus();
 	}
 	if (f.new_pwd1.value != f.new_pwd2.value) {
@@ -58,10 +58,14 @@ function submitIt() {
 		alert(msg);
 	}
 }
+// The form is only submitted by submitIt(); pressing Enter does nothing.
+function chpwdNoSubmit() {
+	return false;
+}
 </script>
 <h1><?php echo $AppUI->_('Change User Password');?></h1>
 <table width="100%" cellspacing="0" cellpadding="4" border="0" class="std">
-<form name="frmEdit" method="post" onsubmit="return false">
+<form name="frmEdit" method="post"<?php echo dPaction('chpwdNoSubmit', array(), 'submit'); ?>>
 <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
 <?php if ($AppUI->user_type != 1)
 {
@@ -81,7 +85,7 @@ function submitIt() {
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td align="right" nowrap="nowrap"><input type="button" value="<?php echo $AppUI->_('submit');?>" onclick="submitIt()" class="button"></td>
+	<td align="right" nowrap="nowrap"><input type="button" value="<?php echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> class="button"></td>
 </tr>
 </form>
 </table>

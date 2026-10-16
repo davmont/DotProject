@@ -128,13 +128,13 @@ $html .= ($AppUI->_('Event Filter') . ":"
 	. arraySelect(
 		$event_filter_list,
 		'event_filter',
-		'onchange="javascript:document.pickFilter.submit()" class="text"',
+		'class="text"' . dPaction(null, array(), null, array('submit' => 'pickFilter')),
 		$event_filter,
 		true
 	));
 if ($other_users) {
 	$html .= ($AppUI->_("Show Events for") . ":"
-		. '<select name="show_user_events" onchange="javascript:document.pickFilter.submit()"'
+		. '<select name="show_user_events"' . dPaction(null, array(), null, array('submit' => 'pickFilter'))
 		. ' class="text">');
 	$q = new DBQuery;
 	$q->addTable('users', 'u');

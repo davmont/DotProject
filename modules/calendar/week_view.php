@@ -93,7 +93,7 @@ $titleBlock->addCell(
 	arraySelect(
 		$companies,
 		'company_id',
-		'onchange="javascript:document.pickCompany.submit()" class="text"',
+		'class="text"' . dPaction(null, array(), null, array('submit' => 'pickCompany')),
 		$company_id
 	),
 	'',
@@ -106,7 +106,7 @@ $titleBlock->addCell(
 	arraySelect(
 		$event_filter_list,
 		'event_filter',
-		'onchange="javascript:document.pickFilter.submit()" class="text"',
+		'class="text"' . dPaction(null, array(), null, array('submit' => 'pickFilter')),
 		$event_filter,
 		true
 	),

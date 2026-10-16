@@ -4,6 +4,10 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 	$table_name = dPgetCleanParam($_GET, "table_name", "companies");
+	// Only the two tables below: the name goes into SQL and into the form action.
+	if ($table_name != "departments") {
+		$table_name = "companies";
+	}
 
 	switch($table_name) {
 		case "companies":
@@ -79,7 +83,7 @@ if (!defined('DP_BASE_DIR')) {
 			$data_update_script .= "opener.document.changecontact.$contact_field.value = " . dPjs($r_data[$record_field]) . ";\n";
 		}
 		?>
-			<script language='javascript' type="text/javascript">
+			<script language='javascript' type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 				<?php echo $data_update_script; ?>
 				self.close();
 			</script>
@@ -99,7 +103,7 @@ if (!defined('DP_BASE_DIR')) {
 			</tr>
 			<tr>
 				<td>
-					<input type="button" class="button" value="<?php echo $AppUI->_('cancel');?>" onclick="window.close()" />
+					<input type="button" class="button" value="<?php echo $AppUI->_('cancel');?>"<?php echo dPaction('window.close'); ?> />
 				</td>
 				<td align="right">
 					<input type="checkbox" name="overwrite_address" id="overwrite_address" /> <label for="overwrite_address"><?php echo $AppUI->_("Overwrite contact address information"); ?></label>

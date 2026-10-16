@@ -62,7 +62,7 @@ if ($message_parent > -1) {
 	$crumbs["?m=forums&amp;a=viewer&amp;forum_id=$forum_id&amp;message_id=$message_parent"] = 'this topic';
 }
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	<?php
 	// security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -85,7 +85,7 @@ if ($message_parent > -1) {
 		function delIt() {
 			var form = document.changeforum;
 			if (confirm("<?php echo $AppUI->_('forumDeletePost', UI_OUTPUT_JS); ?>")) {
-				form.del.value = "<?php echo $message_id; ?>";
+				form.del.value = "<?php echo (int)$message_id; ?>";
 				form.submit();
 			}
 		}
@@ -174,7 +174,7 @@ if ($message_parent > -1) {
 			<tr>
 				<td>
 					<input type="button" value="<?php echo $AppUI->_('back'); ?>" class=button
-						onclick="javascript:window.location=<?php echo htmlspecialchars(json_encode('?' . $back_url), ENT_QUOTES); ?>;">
+						<?php echo dPaction(null, array(), null, array('href' => '?' . $back_url)); ?>>
 				</td>
 				<td align="right">
 					<?php
@@ -188,7 +188,7 @@ if ($message_parent > -1) {
 					) {
 						echo '<input type="hidden" name="dosql" value="do_post_aed" />';
 						echo ('<input type="button" value="' . $AppUI->_('submit')
-							. '" class=button onclick="javascript:submitIt()" />');
+							. '" class=button' . dPaction('submitIt') . ' />');
 					}
 					?>
 				</td>

@@ -60,7 +60,7 @@ if ($company_id != 0) {
 $titleBlock->show();
 ?>
 
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function submitIt() {
 		var form = document.changeclient;
 		if (form.company_name.value.length < 3) {
@@ -164,7 +164,7 @@ $titleBlock->show();
 						<td><input type="text" class="text" value="<?php
 						echo dPformSafe(@$obj->company_primary_url);
 						?>" name="company_primary_url" size="50" maxlength="255" />
-							<a href="#x" onclick="testURL('CompanyURLOne')">[<?php echo $AppUI->_('test'); ?>]</a>
+							<a href="#x"<?php echo dPaction('testURL', array('CompanyURLOne')); ?>>[<?php echo $AppUI->_('test'); ?>]</a>
 						</td>
 					</tr>
 
@@ -212,9 +212,9 @@ $titleBlock->show();
 		</tr>
 		<tr>
 			<td><input type="button" value="<?php
-			echo $AppUI->_('back'); ?>" class="button" onclick="javascript:history.back(-1);" /></td>
+			echo $AppUI->_('back'); ?>" class="button"<?php echo dPaction('history.back'); ?> /></td>
 			<td align="right"><input type="button" value="<?php
-			echo $AppUI->_('submit'); ?>" class="button" onclick="javascript:submitIt()" /></td>
+			echo $AppUI->_('submit'); ?>" class="button"<?php echo dPaction('submitIt'); ?> /></td>
 		</tr>
 
 	</table>

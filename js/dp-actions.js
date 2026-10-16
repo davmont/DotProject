@@ -31,7 +31,10 @@
 	// Globals that would turn an attribute value into code execution.
 	var FORBIDDEN = { eval: 1, Function: 1, setTimeout: 1, setInterval: 1, execScript: 1 };
 	var NAME = /^[A-Za-z_$][\w$]*(\.[A-Za-z_$][\w$]*)*$/;
-	var EVENTS = ['click', 'change', 'input', 'submit', 'keyup', 'mouseover', 'mouseout', 'focusin', 'focusout'];
+	// Events that bubble (focus/blur are delegated as focusin/focusout). Not
+	// supported: load/unload, which do not bubble; run that code on DOMContentLoaded.
+	var EVENTS = ['click', 'dblclick', 'change', 'input', 'submit', 'reset', 'keydown', 'keyup', 'keypress',
+		'mousedown', 'mouseup', 'mouseover', 'mouseout', 'focusin', 'focusout'];
 
 	function resolve(name) {
 		if (!NAME.test(name)) {
@@ -112,8 +115,8 @@
 				return;
 			}
 		}
-		// <a href="#"> stands in for an old href="javascript:..." and must not jump.
-		if (el.tagName === 'A' && el.getAttribute('href') === '#') {
+		// <a href="#"> / <area href="#"> stand in for an old href="javascript:..." and must not jump.
+		if ((el.tagName === 'A' || el.tagName === 'AREA') && el.getAttribute('href') === '#') {
 			ev.preventDefault();
 		}
 		var href = el.getAttribute('data-dp-href');

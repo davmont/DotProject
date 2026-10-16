@@ -80,10 +80,9 @@ foreach ($rs as $c) {
 	$output .= '<tr>
 			<td class="item" width="20%">' . $AppUI->_($c['config_name'] . '_title') . '</td>
 					<td align="left">' . $entry . "\n\t" .
-		'<a href="#" onclick="javascript:window.open(' .
-		'\'?m=system&amp;a=systemconfig_help&amp;dialog=1&amp;cn='
-		. $c['config_name'] . "', 'contexthelp', "
-		. "'width=400, height=200, left=50, top=50, scrollbars=yes, resizable=yes')\" "
+		'<a href="#"' . dPaction('window.open', array(
+			'?m=system&a=systemconfig_help&dialog=1&cn=' . $c['config_name'], 'contexthelp',
+			'width=400, height=200, left=50, top=50, scrollbars=yes, resizable=yes')) . ' '
 		. $tooltip . '>(?)</a>
 				<input class="button" type="hidden"  name="dPcfgId[' . $c['config_name'] . ']" value="'
 		. $c['config_id'] . '" />

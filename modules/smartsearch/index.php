@@ -25,7 +25,7 @@ else {
 }
 
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 
 	function focusOnSearchBox() {
 		document.forms.frmSearch.keyword1.focus();
@@ -62,28 +62,29 @@ else {
 		}
 	}
 	
-	function selModAll() {
-		<?php
-$objarray = Array();
+	<?php
+$search_mods = array();
 foreach ($files as $tmp) {
-	$temp = mb_substr($tmp,0,-8);
-?>							
-		document.frmSearch.mod_<?php echo $temp ?>.checked=true;
-<?php
+	$search_mods[] = mb_substr($tmp,0,-8);
 }
 ?>
-	}		
+	var searchModules = <?php echo json_encode($search_mods, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+
+	function setAllModules(checked) {
+		for (var i = 0; i < searchModules.length; i++) {
+			var box = document.frmSearch['mod_' + searchModules[i]];
+			if (box) {
+				box.checked = checked;
+			}
+		}
+	}
+
+	function selModAll() {
+		setAllModules(true);
+	}
 
 	function deselModAll() {
-		<?php
-$objarray = Array();
-foreach ($files as $tmp) {
-	$temp = mb_substr($tmp,0,-8);
-?>							
-		document.frmSearch.mod_<?php echo $temp ?>.checked=false;
-<?php
-}
-?>
+		setAllModules(false);
 	}
 	
 	window.onload = focusOnSearchBox;
@@ -116,13 +117,13 @@ echo (($all_words == 'on') ? ' checked="checked"' : ''); ?> />
 	</td>
 	<td align="left">
 		<input name="modselection" id="modselection" type="checkbox" value="on"<?php 
-echo (($mod_selection == 'on') ? ' checked="checked"' : ''); ?> onclick="javascript:toggleModules(this)" />
+echo (($mod_selection == 'on') ? ' checked="checked"' : ''); ?><?php echo dPaction('toggleModules', array('$this')); ?> />
 		<label for="modselection"><?php 
 echo $AppUI->_('Modules selection');?></label>
 	</td>
 	<td align="left">
 		<input name="advancedsearch" id="advancedsearch" type="checkbox"<?php 
-echo (($advanced_search == 'on') ? ' checked="checked"' : ''); ?> onclick="javascript:toggleStatus(this)" />
+echo (($advanced_search == 'on') ? ' checked="checked"' : ''); ?><?php echo dPaction('toggleStatus', array('$this')); ?> />
 		<label for="advancedsearch"><?php echo $AppUI->_('Advanced search'); ?></label>
 	</td>
 </tr>
@@ -174,8 +175,8 @@ echo ($mod_selection == 'on' ? 'display:block' : 'display:none'); ?> ">
 <table cellspacing="0" cellpadding="0" border="0">
 <tr>
 	<td>
-		<a href="#" onclick="javascript:selModAll(this)"><?php echo $AppUI->_('Select all'); ?></a> | 
-		<a href="#" onclick="javascript:deselModAll(this)"><?php echo $AppUI->_('Deselect all'); ?></a>
+		<a href="#"<?php echo dPaction('selModAll', array('$this')); ?>><?php echo $AppUI->_('Select all'); ?></a> | 
+		<a href="#"<?php echo dPaction('deselModAll', array('$this')); ?>><?php echo $AppUI->_('Deselect all'); ?></a>
 	</td>
 </tr>
 <?php

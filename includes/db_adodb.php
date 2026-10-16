@@ -75,8 +75,8 @@ function db_exec($sql) {
 		// and it stops infinite loop.
 		$db->Execute($sql);
 		if (!(db_error())) {
-			$nonce = function_exists('dPcspNonce') ? ' nonce="' . dPcspNonce() . '"' : '';
-			echo '<script type="text/javascript"' . $nonce . '>location.reload();</script>';
+			$nonce = function_exists('dPcspNonce') ? dPcspNonce() : '';
+			echo '<script type="text/javascript" nonce="' . $nonce . '">location.reload();</script>';
 		}
 	}
 	if (!($qid) && preg_match('/^\<select\>/i', $sql)) {

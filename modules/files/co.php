@@ -67,7 +67,7 @@ $projects = $project->getAllowedRecords($AppUI->user_id, 'project_id,project_nam
 $projects = arrayMerge(array('0'=>$AppUI->_('All')), $projects);
 ?>
 
-<script type="text/javascript" language='javascript'>
+<script type="text/javascript" language='javascript' nonce="<?php echo dPcspNonce(); ?>">
 function popFile(params) {
     fileloader = window.open("fileviewer.php?"+params,"mywindow",
 	                         "location=1,status=1,scrollbars=0,width=80,height=80");
@@ -92,7 +92,7 @@ if ($file_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('File Name');?>:</td>
 			<td align="left" class="hilite"><?php 
-	echo mb_strlen($obj->file_name)== 0 ? "n/a" : $obj->file_name;?></td>
+	echo mb_strlen($obj->file_name)== 0 ? "n/a" : htmlspecialchars((string)$obj->file_name, ENT_QUOTES);?></td>
 		</tr>
 		<tr valign="top">
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Type');?>:</td>
@@ -112,7 +112,7 @@ if ($file_id) { ?>
 echo $AppUI->_(($co_cancel) ? 'CO Cancel Reason' : 'CO Reason'); ?>:</td>
 			<td align="left">
 				<textarea name="file_co_reason" class="textarea" style="width:270px"><?php 
-echo $obj->file_co_reason;?></textarea>
+echo htmlspecialchars((string)$obj->file_co_reason, ENT_QUOTES);?></textarea>
 			</td>
 		</tr>
 		<tr>
@@ -138,9 +138,9 @@ echo $AppUI->_('Notify Project and Task Contacts'); ?></label>
 <tr>
 	<td>
 		<input class="button" type="button" name="cancel" value="<?php 
-echo $AppUI->_('cancel');?>" onclick="javascript:if (confirm('<?php 
-echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); 
-?>')) {location.href = '?m=files';}" />
+echo $AppUI->_('cancel');?>"<?php
+echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW),
+                                         'href' => '?m=files')); ?> />
 	</td>
 	<td align="right">
 		<input type="submit" class="button" value="<?php echo $AppUI->_('submit');?>" />
