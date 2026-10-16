@@ -331,17 +331,38 @@ function dPhtml($str)
 }
 
 /**
+ * Converts a string from the page charset ($locale_char_set) to UTF-8. Several
+ * locales use ISO-8859 or Windows code pages, and mbstring does not know all of
+ * them (big5 and WINDOWS-1257 made mb_convert_encoding() throw), so iconv comes
+ * first. Unconvertible input is returned unchanged.
+ */
+function dPtoUtf8($value, $charset = null)
+{
+	global $locale_char_set;
+	$charset = $charset !== null ? $charset : $locale_char_set;
+	$value = (string)$value;
+	if (!$charset || mb_strtolower($charset) == 'utf-8' || $value === '') {
+		return $value;
+	}
+	$converted = function_exists('iconv') ? @iconv($charset, 'UTF-8', $value) : false;
+	if ($converted === false) {
+		try {
+			$converted = mb_convert_encoding($value, 'UTF-8', $charset);
+		} catch (ValueError $e) {
+			$converted = $value;
+		}
+	}
+	return $converted;
+}
+
+/**
  * Returns a value as a JavaScript string literal (with its quotes) that is safe anywhere in a
  * <script> block: quotes, <, > and & are \u-escaped. Use dPjsAttr() inside an onclick or
  * other event attribute.
  */
 function dPjs($value)
 {
-	global $locale_char_set;
-	$value = (string)$value;
-	if ($locale_char_set && mb_strtolower($locale_char_set) != 'utf-8') {
-		$value = mb_convert_encoding($value, 'UTF-8', $locale_char_set);
-	}
+	$value = dPtoUtf8($value);
 	return json_encode($value, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 		| JSON_INVALID_UTF8_SUBSTITUTE);
 }
@@ -1226,6 +1247,21 @@ function dPcspPolicy()
  */
 function dPaction($call, $args = array(), $on = null, $extra = array())
 {
+	global $locale_char_set;
+	// Pages are in the locale's charset (several locales are ISO-8859 or Windows
+	// code pages). Arguments become UTF-8 JSON with \u escapes, which is plain ASCII
+	// and so right in any charset; other values are escaped in the page's charset.
+	$page_charset = ($locale_char_set && mb_strtolower($locale_char_set) != 'utf-8') ? $locale_char_set : 'UTF-8';
+	$html_charset = in_array(mb_strtoupper($page_charset), array('UTF-8', 'ISO-8859-1', 'ISO-8859-5',
+		'ISO-8859-15', 'CP866', 'CP1251', 'CP1252', 'WINDOWS-1251', 'WINDOWS-1252', 'KOI8-R', 'BIG5',
+		'GB2312', 'BIG5-HKSCS', 'SHIFT_JIS', 'EUC-JP', 'MACROMAN'), true)
+		? $page_charset : 'ISO-8859-1'; // byte-transparent for other single-byte charsets
+	$to_utf8 = function ($value) use (&$to_utf8, $page_charset) {
+		if (is_array($value)) {
+			return array_map($to_utf8, $value);
+		}
+		return is_string($value) ? dPtoUtf8($value, $page_charset) : $value;
+	};
 	$attrs = array();
 	if ($on !== null) {
 		$attrs['data-dp-on'] = $on;
@@ -1233,7 +1269,8 @@ function dPaction($call, $args = array(), $on = null, $extra = array())
 	if ($call !== null && $call !== '') {
 		$attrs['data-dp-call'] = $call;
 		if ($args) {
-			$attrs['data-dp-args'] = json_encode(array_values($args), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+			$attrs['data-dp-args'] = json_encode($to_utf8(array_values($args)),
+				JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE);
 		}
 	}
 	foreach ($extra as $key => $value) {
@@ -1241,7 +1278,7 @@ function dPaction($call, $args = array(), $on = null, $extra = array())
 	}
 	$html = '';
 	foreach ($attrs as $name => $value) {
-		$html .= ' ' . $name . '="' . htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8') . '"';
+		$html .= ' ' . $name . '="' . htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, $html_charset) . '"';
 	}
 	return $html;
 }
