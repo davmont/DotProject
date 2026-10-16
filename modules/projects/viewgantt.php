@@ -119,12 +119,16 @@ function showFullProject() {
 <tr>
 	<td>
 		<form name="editFrm" method="post" action="?<?php
+$url_query_string = '';
 foreach ($_GET as $key => $val) {
-    $url_query_string .= (($url_query_string) ? '&amp;' : '') . $key . '=' . $val;
+    if (is_array($val)) {
+        continue;
+    }
+    $url_query_string .= (($url_query_string) ? '&amp;' : '') . rawurlencode($key) . '=' . rawurlencode($val);
 }
 echo ($url_query_string);
 ?>">
-		<input type="hidden" name="display_option" value="<?php echo $display_option; ?>" />
+		<input type="hidden" name="display_option" value="<?php echo dPhtml($display_option); ?>" />
 		<table border="0" cellpadding="4" cellspacing="0" class="tbl" summary="select dates for graphs">
 		<tr>
 			<td align="left" valign="top" width="20">
