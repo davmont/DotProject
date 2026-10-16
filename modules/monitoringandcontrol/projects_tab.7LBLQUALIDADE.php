@@ -19,7 +19,7 @@ global $AppUI;
     $qualityControl = new ControllerQuality();
     $controllerUtil = new ControllerUtil();
     
-    $user = $_POST['user'];
+    $user = dPgetIntParam($_POST, 'user', 0);
     //Tratamento para o grafico de pizza
     $arQualidadePie = $qualityControl->obterDadosGraficoPizza($project_id, $user); 
       

@@ -27,7 +27,7 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 	}else { 
 		$dtAtual = date('d/m/Y');
 	}
-	$cmbBaseline = dPgetParam($_POST,'cmbBaseline');
+	$cmbBaseline = dPgetIntParam($_POST, 'cmbBaseline', 0);
 
 ?>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/util.js"> </script>
