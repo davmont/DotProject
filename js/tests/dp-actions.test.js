@@ -113,6 +113,21 @@ describe('events', () => {
 		expect(window.recorded.map((r) => r.args[0])).toEqual(['tip', 'off']);
 	});
 
+	test.each(['dblclick', 'keydown', 'keypress', 'keyup', 'mousedown', 'mouseup'])('data-dp-on="%s" is handled', (type) => {
+		document.body.innerHTML = `<input data-dp-on="${type}" data-dp-call="record">`;
+		const Ctor = /^key/.test(type) ? KeyboardEvent : MouseEvent;
+		document.querySelector('input').dispatchEvent(new Ctor(type, { bubbles: true }));
+		expect(window.recorded).toHaveLength(1);
+	});
+
+	test('focus and blur are delegated through focusin/focusout', () => {
+		document.body.innerHTML = `<input data-dp-on="focus blur" data-dp-call="record">`;
+		const i = document.querySelector('input');
+		i.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+		i.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+		expect(window.recorded).toHaveLength(2);
+	});
+
 	test('an element listening for click ignores mouseover', () => {
 		document.body.innerHTML = `<button data-dp-call="record">x</button>`;
 		document.querySelector('button').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
