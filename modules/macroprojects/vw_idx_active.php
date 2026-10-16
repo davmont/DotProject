@@ -154,7 +154,7 @@ echo htmlspecialchars($row['company_description'], ENT_QUOTES); ?>">
 echo htmlspecialchars($row['macroproject_id']); ?>" <?php
 if (!empty($row['macroproject_description'])) {
 echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                $row['macroproject_description']) 
+                                                dPhtml($row['macroproject_description'])) 
                        . '</p></div>', $AppUI->_('Description', UI_OUTPUT_RAW)), 'mouseover mouseout', array('call-mouseout' => 'nd')); } ?>>
 		<?php echo (htmlspecialchars($row['macroproject_name'], ENT_QUOTES)); ?>
 		</a>
