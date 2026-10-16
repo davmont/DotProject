@@ -5,7 +5,7 @@ $padre = intval( dPgetParam( $_GET, 'padre', 0 ) );
 $accion = dPvalidateOrder( dPgetParam( $_GET, 'accion', "" ), array('newdocument', 'newdirectory', 'deldirectory', 'deldocument'), '' );
 $actual = intval( dPgetParam( $_GET, 'actual', 0 ) );
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var f = document.uploadFrm;
 	f.submit();
@@ -79,10 +79,10 @@ function submitIt() {
 ?>
 <tr>
 	<td>
-		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" onClick="javascript:if(confirm('<?php echo $AppUI->_('Are you sure you want to cancel?'); ?>')){location.href = './index.php?m=mngdocument';}" />
+		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW), 'href' => './index.php?m=mngdocument')); ?> />
 	</td>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_( 'submit' );?>" onclick="submitIt()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_( 'submit' );?>"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>
 </form>
