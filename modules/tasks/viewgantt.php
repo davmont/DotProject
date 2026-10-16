@@ -10,7 +10,7 @@ require_once DP_BASE_DIR . '/classes/gantt_renderer.class.php';
 $base_url = dPgetConfig('base_url');
 $min_view = defVal(@$min_view, false);
 
-$project_id = defVal(@$_GET['project_id'], 0);
+$project_id = (int)defVal(@$_GET['project_id'], 0);
 
 $sdate = dPgetParam($_POST, 'sdate', 0);
 $edate = dPgetParam($_POST, 'edate', 0);
