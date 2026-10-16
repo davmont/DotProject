@@ -123,7 +123,7 @@ else
 					<table cellspacing="0" cellpadding="3" border="0" width="100%">
 						<tr>
 							<td width="100%">
-								<?php echo $AppUI->_('Welcome') . ' ' . $AppUI->user_first_name . ' ' . $AppUI->user_last_name; ?>
+								<?php echo $AppUI->_('Welcome') . ' ' . htmlspecialchars($AppUI->user_first_name, ENT_QUOTES) . ' ' . htmlspecialchars($AppUI->user_last_name, ENT_QUOTES); ?>
 							</td>
 							<td nowrap="nowrap">
 								<?php echo dPcontextHelp('Help'); ?> |
