@@ -106,14 +106,14 @@ $taskDep = $q->loadHashList();
 			</tr>
 			<tr>
 				<td colspan="2" align="center">
-				<input type="button" class="button" value="&gt;" onclick="javascript:addTaskDependency(document.dependFrm, document.datesFrm)" />
-				<input type="text" size="4" value="+0" name="delay" onclick="this.select();"/><?php echo $AppUI->_('days'); ?>
-				<input type="button" class="button" value="&lt;" onclick="javascript:removeTaskDependency(document.dependFrm, document.datesFrm)" />
+				<input type="button" class="button" value="&gt;"<?php echo dPaction('addDependFrm'); ?> />
+				<input type="text" size="4" value="+0" name="delay"<?php echo dPaction('selectFieldText', array('$this')); ?>/><?php echo $AppUI->_('days'); ?>
+				<input type="button" class="button" value="&lt;"<?php echo dPaction('removeDependFrm'); ?> />
 				</td>
 			</tr>
 		</table>
 <input type="hidden" name="hdependencies" />
 </form>
-<script language="javascript">
-  subForm.push(new FormDefinition(<?php echo $currentTabId; ?>, document.dependFrm, checkDetail, saveDepend));
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
+  subForm.push(new FormDefinition(<?php echo (int)$currentTabId; ?>, document.dependFrm, checkDetail, saveDepend));
 </script>

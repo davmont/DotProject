@@ -63,11 +63,22 @@ function popContacts() {
 	window.open('?m=public&'+'a=contact_selector&'+'dialog=1&'+'call_back=setContacts&'+'selected_contacts_id='+selected_contacts_id, 'contacts','height=600,width=400,resizable,scrollbars=yes');
 }
 
+// "Import contacts from project" button of the Details tab.
+function importProjectContacts(button, contacts, label) {
+	selected_contacts_id = contacts;
+	button.value = label;
+}
+
 function popCalendar(field){
 	calendarField = field;
 	task_cal = document.getElementById('task_' + field.name);
 	idate = task_cal.value;
 	window.open('?m=public&'+'a=calendar&'+'dialog=1&'+'callback=setCalendar&'+'date=' + idate, 'calwin', 'top=250,left=250,width=251, height=220, scrollbars=no, status=no');
+}
+
+// Calendar links of the Dates tab: field is "start_date" or "end_date".
+function popDatesCalendar(field) {
+	popCalendar(document.datesFrm[field]);
 }
 
 /**
@@ -116,6 +127,11 @@ function submitIt(form){
 	}
 
 	form.submit();
+}
+
+// Save buttons of the add/edit page (above and below the tabs).
+function submitEditFrm() {
+	return submitIt(document.editFrm);
 }
 
 function addUser(form) {
@@ -228,6 +244,20 @@ function addTaskDependency(form, datesForm, dayStr) {
 	//Enables tracking of dependencies
 	document.getElementById('task_dynamic_on').checked="checked";
 	document.getElementById('set_task_start_date').checked="checked";
+}
+
+// Add / remove buttons of the Dependencies tab.
+function addDependFrm() {
+	addTaskDependency(document.dependFrm, document.datesFrm);
+}
+
+function removeDependFrm() {
+	removeTaskDependency(document.dependFrm, document.datesFrm);
+}
+
+// Selects the text of the delay field when it is clicked.
+function selectFieldText(field) {
+	field.select();
 }
 
 function changeDelay(form, datesForm, delay, dayStr) {

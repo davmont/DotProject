@@ -53,9 +53,11 @@ if ($AppUI->isActiveModule('contacts') && getPermission('contacts', 'access')) {
 	$project = new CProject();
 	$project->load($task_project);
 	echo '<input type="button" class="button" value="' . $AppUI->_('Select contacts...') 
-	      . '" onclick="javascript:popContacts();" />&nbsp;<input type="button" class="button" value="'.$AppUI->_('Import contacts from project').'" onClick="selected_contacts_id = \'';
-	echo (($project->project_contacts != '') ? $obj->task_contacts.$project->project_contacts : $project->project_contacts);
-	echo '\'; this.value = \''.$AppUI->_('Contacts imported').'\';" />';
+	      . '"' . dPaction('popContacts') . ' />&nbsp;<input type="button" class="button" value="'.$AppUI->_('Import contacts from project').'"';
+	echo dPaction('importProjectContacts', array('$this', 
+	              (string)(($project->project_contacts != '') ? $obj->task_contacts.$project->project_contacts : $project->project_contacts), 
+	              $AppUI->_('Contacts imported', UI_OUTPUT_RAW)));
+	echo ' />';
 }
 // Let's check if the actual company has departments registered
 if ($department_selection_list != '') {
@@ -97,7 +99,7 @@ if ($task_id > 0) {
 				<td>
 					<?php 
 echo arraySelect($projects, 'new_task_project', 
-                 'size="1" class="text" id="medium" onchange="submitIt(document.editFrm)"', 
+                 'size="1" class="text" id="medium"' . dPaction('submitEditFrm'), 
                  $task_project); 
 ?>
 				</td>
@@ -122,6 +124,6 @@ $custom_fields->printHTML();
 	</div>
 </div>
 </form>
-<script language="javascript">
- subForm.push(new FormDefinition(<?php echo $currentTabId;?>, document.detailFrm, checkDetail, saveDetail));
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
+ subForm.push(new FormDefinition(<?php echo (int)$currentTabId;?>, document.detailFrm, checkDetail, saveDetail));
 </script>

@@ -48,16 +48,16 @@ foreach ($assigned_perc as $user_id => $data) {
 }
 
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 echo "var projTasksWithEndDates=new Array();\n";
 $keys = array_keys($projTasksWithEndDates);
 for ($i = 1, $xi = sizeof($keys); $i < $xi; $i++) {
 	//array[task_is] = end_date, end_hour, end_minutes
-	echo ('projTasksWithEndDates[' . $keys[$i] . ']=new Array("' 
-	      . $projTasksWithEndDates[$keys[$i]][1] . '", "' 
-	      . $projTasksWithEndDates[$keys[$i]][2] . '", "' 
-	      . $projTasksWithEndDates[$keys[$i]][3] ."\");\n");
+	echo ('projTasksWithEndDates[' . (int)$keys[$i] . ']=new Array(' 
+	      . dPjs($projTasksWithEndDates[$keys[$i]][1]) . ', ' 
+	      . dPjs($projTasksWithEndDates[$keys[$i]][2]) . ', ' 
+	      . dPjs($projTasksWithEndDates[$keys[$i]][3]) . ");\n");
 }
 ?>
 </script>
@@ -88,7 +88,7 @@ for ($i = 1, $xi = sizeof($keys); $i < $xi; $i++) {
 				<td colspan="2" align="center">
 					<table>
 					<tr>
-						<td align="right"><input type="button" class="button" value="&gt;" onclick="javascript:addUser(document.resourceFrm)" /></td>
+						<td align="right"><input type="button" class="button" value="&gt;" <?php echo dPaction('addUser', array('$form')); ?> /></td>
 						<td>
 							<select name="percentage_assignment" class="text">
 							<?php 
@@ -99,7 +99,7 @@ for ($i = 1, $xi = sizeof($keys); $i < $xi; $i++) {
 							?>
 							</select>
 						</td>				
-						<td align="left"><input type="button" class="button" value="&lt;" onclick="javascript:removeUser(document.resourceFrm)" /></td>					
+						<td align="left"><input type="button" class="button" value="&lt;" <?php echo dPaction('removeUser', array('$form')); ?> /></td>					
 					</tr>
 					</table>
 				</td>
@@ -121,6 +121,6 @@ for ($i = 1, $xi = sizeof($keys); $i < $xi; $i++) {
 </table>
 <input type="hidden" name="hassign" />
 </form>
-<script language="javascript">
-  subForm.push(new FormDefinition(<?php echo $currentTabId; ?>, document.resourceFrm, checkResource, saveResource));
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
+  subForm.push(new FormDefinition(<?php echo (int)$currentTabId; ?>, document.resourceFrm, checkResource, saveResource));
 </script>

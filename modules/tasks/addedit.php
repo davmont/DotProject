@@ -242,20 +242,20 @@ $q->addOrder('project_name');
 $project->setAllowedSQL($AppUI->user_id, $q);
 $projects = $q->loadHashList();
 ?>
-<script type="text/javascript" language="JavaScript">
-var selected_contacts_id = "<?php echo $obj->task_contacts; ?>";
-var task_id = '<?php echo $obj->task_id; ?>';
+<script type="text/javascript" language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
+var selected_contacts_id = <?php echo dPjs((string)$obj->task_contacts); ?>;
+var task_id = '<?php echo (int)$obj->task_id; ?>';
 
 var check_task_dates = <?php
 echo ((isset($dPconfig['check_task_dates']) && $dPconfig['check_task_dates']) ? 'true' : 'false');
 ?>;
 var can_edit_time_information = <?php echo (($can_edit_time_information) ? 'true' : 'false'); ?>;
-var task_name_msg = "<?php echo $AppUI->_('taskName'); ?>";
-var task_start_msg = "<?php echo $AppUI->_('taskValidStartDate'); ?>";
-var task_end_msg = "<?php echo $AppUI->_('taskValidEndDate'); ?>";
-var workHours = <?php echo dPgetConfig('daily_working_hours'); ?>;
+var task_name_msg = "<?php echo $AppUI->_('taskName', UI_OUTPUT_JS); ?>";
+var task_start_msg = "<?php echo $AppUI->_('taskValidStartDate', UI_OUTPUT_JS); ?>";
+var task_end_msg = "<?php echo $AppUI->_('taskValidEndDate', UI_OUTPUT_JS); ?>";
+var workHours = <?php echo (float)dPgetConfig('daily_working_hours'); ?>;
 //working days array from config.php
-var working_days = new Array(<?php echo dPgetConfig('cal_working_days'); ?>);
+var working_days = new Array(<?php echo implode(',', array_map('intval', explode(',', (string)dPgetConfig('cal_working_days')))); ?>);
 var cal_day_start = <?php echo intval(dPgetConfig('cal_day_start')); ?>;
 var cal_day_end = <?php echo intval(dPgetConfig('cal_day_end')); ?>;
 var daily_working_hours = <?php echo intval(dPgetConfig('daily_working_hours')); ?>;
@@ -263,7 +263,9 @@ var projTasksWithEndDates = new Array();
 <?php
 foreach ($projTasksWithEndDates as $key => $val) {
 	if (is_array($val)) {
-		echo "projTasksWithEndDates[$key] = new Array(\"{$val[1]}\", \"{$val[2]}\", \"{$val[3]}\");\n";
+		echo 'projTasksWithEndDates[' . (int)$key . '] = new Array(' . dPjs($val[1]) . ', ' . dPjs($val[2])
+			. ', ' . dPjs($val[3]) . ");\n";
+
 	}
 }
 ?>
@@ -350,13 +352,13 @@ echo (($obj->task_milestone) ? ' checked="checked"' : ''); ?> />
 		<tr>
 			<td>
 				<input class="button" type="button" name="cancel" value="<?php 
-echo $AppUI->_('cancel'); ?>" onclick="javascript:if (confirm('<?php 
-echo $AppUI->_('taskCancel', UI_OUTPUT_JS); ?>')) {location.href = '?<?php 
-echo $AppUI->getPlace(); ?>';}" />
+echo $AppUI->_('cancel'); ?>"<?php 
+echo dPaction(null, array(), null, array('confirm' => $AppUI->_('taskCancel', UI_OUTPUT_RAW), 
+                                         'href' => '?' . $AppUI->getPlace())); ?> />
 			</td>
 			<td>
 				<input class="button" type="button" name="btnFuseAction" value="<?php 
-echo $AppUI->_('save'); ?>" onclick="javascript:submitIt(document.editFrm);" />
+echo $AppUI->_('save'); ?>"<?php echo dPaction('submitEditFrm'); ?> />
 			</td>
 		</tr>
 		</table>
@@ -390,13 +392,13 @@ $tabBox->show('', true);
 		<tr>
 			<td>
 				<input class="button" type="button" name="cancel2" value="<?php 
-echo $AppUI->_('cancel'); ?>" onclick="javascript:if (confirm('<?php 
-echo $AppUI->_('taskCancel', UI_OUTPUT_JS); ?>')) {location.href = '?<?php 
-echo $AppUI->getPlace(); ?>';}" />
+echo $AppUI->_('cancel'); ?>"<?php 
+echo dPaction(null, array(), null, array('confirm' => $AppUI->_('taskCancel', UI_OUTPUT_RAW), 
+                                         'href' => '?' . $AppUI->getPlace())); ?> />
 			</td>
 			<td>
 				<input class="button" type="button" name="btnFuseAction2" value="<?php 
-echo $AppUI->_('save'); ?>" onclick="javascript:submitIt(document.editFrm);" />
+echo $AppUI->_('save'); ?>"<?php echo dPaction('submitEditFrm'); ?> />
 			</td>
 		</tr>
 		</table>
