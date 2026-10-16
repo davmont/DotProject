@@ -169,6 +169,6 @@ document.getElementById("task_milestone").onchange=milestoneupdate;
 document.getElementById("task_milestone").onclick=milestoneupdate;
 getMainSaveButton().onclick=customSave;
 //setInterval("milestoneupdate()",2000);
-setTimeout("milestoneupdate()",500);
+setTimeout(milestoneupdate, 500);
 
 
