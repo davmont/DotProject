@@ -115,7 +115,7 @@ $userRows = array(0 => $AppUI->_('All Users', UI_OUTPUT_RAW)) + $q->loadHashList
 $bufferUser = arraySelect(
 	$userRows,
 	'show_owner',
-	'class="text" onchange="javascript:document.pickUser.submit()""',
+	'class="text"' . dPaction(null, array(), null, array('submit' => 'pickUser')),
 	$owner
 );
 

@@ -15,7 +15,7 @@ $taskLogReference = dPgetSysVal('TaskLogReference');
 $taskLogReferenceImage = dPgetSysVal('TaskLogReferenceImage');
 
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 // security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -99,22 +99,22 @@ foreach ($logs as $row) {
 		}
 	}
 	$s .= '<td align="center" valign="middle">' . $reference_image . '</td>';
-	$s .= '<td width="30%" style="'.$style.'">' . @$row['task_log_name'] . '</td>';
+	$s .= '<td width="30%" style="'.$style.'">' . dPhtml(@$row['task_log_name']) . '</td>';
 	$s .= ((!(empty($row['task_log_related_url']))) 
-	       ? ('<td><a href="'.@$row['task_log_related_url'] . '" title="' 
-	          . @$row['task_log_related_url'].'">' . $AppUI->_('URL') . '</a></td>') 
+	       ? ('<td><a href="'.dPhtml(dPsafeUrl(@$row['task_log_related_url'])) . '" title="' 
+	          . dPhtml(@$row['task_log_related_url']).'">' . $AppUI->_('URL') . '</a></td>') 
 	       : '<td></td>');
-	$s .= '<td width="100">' . $row['user_username'] . '</td>';
+	$s .= '<td width="100">' . dPhtml($row['user_username']) . '</td>';
 	$s .= '<td width="100" align="right">' . sprintf('%.2f', $row['task_log_hours']) . '<br />(';
 	$minutes = (int) (($row['task_log_hours'] - ((int) $row['task_log_hours'])) * 60);
 	$minutes = ((mb_strlen($minutes) == 1) ? ('0' . $minutes) : $minutes);
 	$s .= (int) $row['task_log_hours'] . ':' . $minutes . ')</td>';
-	$s .= '<td width="100">' . $row['task_log_costcode'] . '</td>';
+	$s .= '<td width="100">' . dPhtml($row['task_log_costcode']) . '</td>';
 	$s .= '<td><a name="tasklog' . @$row['task_log_id'] . '"></a>';
 
 // dylan_cuthbert: auto-transation system in-progress, leave these lines
 	$transbrk = "\n[translation]\n";
-	$descrip = str_replace("\n", '<br />', $row['task_log_description']);
+	$descrip = str_replace("\n", '<br />', dPhtml($row['task_log_description']));
 	$tranpos = mb_strpos($descrip, str_replace("\n", '<br />', $transbrk));
 	if ($tranpos === false) {
 		$s .= $descrip;
@@ -123,7 +123,7 @@ foreach ($logs as $row) {
 		$tranpos = mb_strpos($row['task_log_description'], $transbrk);
 		$transla = mb_substr($row['task_log_description'], $tranpos + mb_strlen($transbrk));
 		$transla = trim(str_replace("'", '"', $transla));
-		$s .= ($descrip.'<div style="font-weight: bold; text-align: right"><a title="' . $transla 
+		$s .= ($descrip.'<div style="font-weight: bold; text-align: right"><a title="' . dPhtml($transla) 
 		       . '" class="hilite">["' . $AppUI->_('translation') . '"]</a></div>');
 	}
 	// end auto-translation code
@@ -131,7 +131,7 @@ foreach ($logs as $row) {
 	$s .= '</td>';
 	$s .= "\n\t<td>";
 	if ($canDelete) {
-		$s .= ("\n\t\t" . '<a href="javascript:delIt2(' . $row['task_log_id'] . ');" title="' 
+		$s .= ("\n\t\t" . '<a href="#"' . dPaction('delIt2', array((int)$row['task_log_id'])) . ' title="' 
 		       . $AppUI->_('delete log') . '">' . "\n\t\t\t" 
 		       . dPshowImage('./images/icons/stock_delete-16.png', 16, 16, '') . "\n\t\t</a>");
 	}

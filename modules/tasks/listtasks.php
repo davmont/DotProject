@@ -12,6 +12,10 @@ $userFilter = (bool)dPgetParam($_GET, 'userFilter', false);
 $q = new DBQuery();
 $q->addQuery('t.task_id, t.task_name');
 $q->addTable('tasks', 't');
+// Only tasks of projects the user may see (it listed every project's tasks).
+require_once $AppUI->getModuleClass('projects');
+$project = new CProject();
+$project->setAllowedSQL($AppUI->user_id, $q, 't.task_project');
 
 if ($userFilter) {
 	$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
@@ -25,7 +29,7 @@ $sql = $q->prepare();
 $tasks = db_loadList($sql);
 ?>
 
-<script language="JavaScript">
+<script language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
 function loadTasks()
 {
   var tasks = new Array();
@@ -39,7 +43,7 @@ function loadTasks()
     foreach ($tasks as $task) {
       ++$i;
     ?>
-  sel.options[<?php echo $i; ?>] = new Option("<?php echo $task['task_name']; ?>", <?php echo $task['task_id']; ?>);
+  sel.options[<?php echo $i; ?>] = new Option(<?php echo dPjs($task['task_name']); ?>, <?php echo (int)$task['task_id']; ?>);
     <?php
     }
     ?>

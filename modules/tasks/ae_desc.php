@@ -39,7 +39,7 @@ echo arraySelect($task_access, 'task_access', 'class="text"', intval($obj->task_
 ?>
 					<br /><?php echo $AppUI->_('Web Address'); ?>
 					<br /><input type="text" class="text" name="task_related_url" value="<?php 
-echo @$obj->task_related_url;?>" size="40" maxlength="255" />
+echo dPhtml(@$obj->task_related_url);?>" size="40" maxlength="255" />
 				</td>
 				<td valign='top'>
 					<?php echo $AppUI->_("Task Type"); ?><br />
@@ -53,9 +53,11 @@ if ($AppUI->isActiveModule('contacts') && getPermission('contacts', 'access')) {
 	$project = new CProject();
 	$project->load($task_project);
 	echo '<input type="button" class="button" value="' . $AppUI->_('Select contacts...') 
-	      . '" onclick="javascript:popContacts();" />&nbsp;<input type="button" class="button" value="'.$AppUI->_('Import contacts from project').'" onClick="selected_contacts_id = \'';
-	echo (($project->project_contacts != '') ? $obj->task_contacts.$project->project_contacts : $project->project_contacts);
-	echo '\'; this.value = \''.$AppUI->_('Contacts imported').'\';" />';
+	      . '"' . dPaction('popContacts') . ' />&nbsp;<input type="button" class="button" value="'.$AppUI->_('Import contacts from project').'"';
+	echo dPaction('importProjectContacts', array('$this', 
+	              (string)(($project->project_contacts != '') ? $obj->task_contacts.$project->project_contacts : $project->project_contacts), 
+	              $AppUI->_('Contacts imported', UI_OUTPUT_RAW)));
+	echo ' />';
 }
 // Let's check if the actual company has departments registered
 if ($department_selection_list != '') {
@@ -83,7 +85,7 @@ echo $AppUI->_('None'); ?></option>
 				<td>
 					<?php echo $dPconfig['currency_symbol']; ?>
 					<input type="text" class="text" name="task_target_budget" value="<?php 
-echo @$obj->task_target_budget;?>" size="10" maxlength="10" />
+echo dPhtml(@$obj->task_target_budget);?>" size="10" maxlength="10" />
 				</td>
 			</tr><?php 
 if ($task_id > 0) { 
@@ -97,7 +99,7 @@ if ($task_id > 0) {
 				<td>
 					<?php 
 echo arraySelect($projects, 'new_task_project', 
-                 'size="1" class="text" id="medium" onchange="submitIt(document.editFrm)"', 
+                 'size="1" class="text" id="medium"' . dPaction('submitEditFrm'), 
                  $task_project); 
 ?>
 				</td>
@@ -111,7 +113,7 @@ echo arraySelect($projects, 'new_task_project',
 			<?php echo $AppUI->_('Description');?>:
 			<br />
 			<textarea name="task_description" class="textarea" cols="60" rows="10" wrap="virtual" style="width: 100%; flex-grow: 1; box-sizing: border-box; min-height: 200px;"><?php 
-echo @$obj->task_description;?></textarea>
+echo dPhtml(@$obj->task_description);?></textarea>
 		</div><br />
 		<?php
 require_once($AppUI->getSystemClass('CustomFields'));
@@ -122,6 +124,6 @@ $custom_fields->printHTML();
 	</div>
 </div>
 </form>
-<script language="javascript">
- subForm.push(new FormDefinition(<?php echo $currentTabId;?>, document.detailFrm, checkDetail, saveDetail));
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
+ subForm.push(new FormDefinition(<?php echo (int)$currentTabId;?>, document.detailFrm, checkDetail, saveDetail));
 </script>
