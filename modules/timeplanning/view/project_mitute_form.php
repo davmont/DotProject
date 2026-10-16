@@ -42,7 +42,7 @@ if (!defined('DP_BASE_DIR')) {
 					<td nowrap><?php echo $AppUI->_('LBL_DATE'); ?>:</td>
 					<td nowrap >
 						<input type="hidden" name="date" id="date">
-						<input type="text" class="text" disabled name="date_edit" value="<?php echo $date; ?>" id="date_edit">
+						<input type="text" class="text" disabled name="date_edit" value="<?php echo dPhtml($date); ?>" id="date_edit">
 						<img src="./modules/timeplanning/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)">
 						
 					</td>
@@ -117,7 +117,7 @@ if (!defined('DP_BASE_DIR')) {
 					<td valign="top" nowrap colspan="2" align="center">
 						<?php echo $AppUI->_('LBL_REPORT'); ?><br>
 						<input id="description" name="description" type="text" style="display:none" >
-						<textarea id="description_edit" name="description_edit" rows="25" cols="80" ><?php echo $description; ?></textarea>
+						<textarea id="description_edit" name="description_edit" rows="25" cols="80" ><?php echo dPhtml($description); ?></textarea>
 					</td>
 				</tr>
 				<tr>
