@@ -124,8 +124,8 @@ function displayFolders($folder_id = 0, $level = 0)
 		echo ((($m == 'files') ? '</a>' : '') . "\n");
 
 		if ($file_count > 0) {
-			echo ('<a href="#ff' . $folder_id . '" onclick="javascript:expand(' . "'files_"
-				. $folder_id . "'" . ')" class="has-files">(' . $file_count
+			echo ('<a href="#ff' . $folder_id . '"' . dPaction('expand', array('files_' . $folder_id))
+				. ' class="has-files">(' . $file_count
 				. ' files) +</a>' . "\n");
 		}
 
@@ -174,8 +174,7 @@ function displayFolders($folder_id = 0, $level = 0)
 				}
 				if ($canDelete_this) {
 					//remove folder
-					echo ('<a href="#" onclick="javascript:delCheck(' . "'" . $folder_id . "'"
-						. ')">' . dPshowImage(
+					echo ('<a href="#"' . dPaction('delCheck', array((string)$folder_id)) . '>' . dPshowImage(
 						DP_BASE_URL . '/modules/files/images/remove.png',
 						'16',
 						'16',
@@ -522,7 +521,7 @@ function displayFiles($folder_id)
 					echo $row['file_lastversion'];
 					if ($row['file_versions'] > 1) {
 						?>
-						<a href="#" onclick="javascript:expand('versions_<?php echo $row['file_id']; ?>');">
+						<a href="#"<?php echo dPaction('expand', array('versions_' . $row['file_id'])); ?>>
 							(<?php echo $row['file_versions']; ?>)
 						</a>
 						<?php
@@ -635,8 +634,8 @@ function displayFiles($folder_id)
 						// Duplicate File
 						if ($canAuthor || $row['project_owner'] == $AppUI->user_id) {
 							?>
-							<a href="#" onclick="javascript:document.frm_duplicate_file_<?php
-							echo $row['file_id']; ?>.submit()">
+							<a href="#"<?php
+							echo dPaction(null, array(), null, array('submit' => 'frm_duplicate_file_' . $row['file_id'])); ?>>
 								<?php
 								echo (dPshowImage(
 									DP_BASE_URL . '/modules/files/images/duplicate.png',
@@ -652,8 +651,9 @@ function displayFiles($folder_id)
 						// Delete File
 						if ($canDelete || $row['project_owner'] == $AppUI->user_id) {
 							?>
-							<a href="#" onclick="if (confirm('Are you sure you want to delete this file?')) {javascript:document.frm_remove_file_<?php
-							echo $row['file_id']; ?>.submit()}">
+							<a href="#"<?php
+							echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to delete this file?',
+							                                         'submit' => 'frm_remove_file_' . $row['file_id'])); ?>>
 								<?php
 								echo (dPshowImage(
 									DP_BASE_URL . '/modules/files/images/remove.png',
@@ -675,8 +675,7 @@ function displayFiles($folder_id)
 						(empty($row['file_checkout']) || $row['file_checkout'] == 'final')
 						&& ($canEdit || $row['project_owner'] == $AppUI->user_id)
 					) {
-						$bulk_op = ('onchange="javascript:(this.checked) ? addBulkComponent(' . $row['file_id']
-							. ') : removeBulkComponent(' . $row['file_id'] . ')"');
+						$bulk_op = dPaction('toggleBulkComponent', array('$this', (int)$row['file_id']), 'change');
 						?>
 						<input type="checkbox" <?php echo $bulk_op; ?> name="chk_sub_sel_file_<?php
 							echo $file_row['file_id']; ?>" />
@@ -788,8 +787,9 @@ function displayFiles($folder_id)
 												// Duplicate File
 												if ($canAuthor) {
 													?>
-													<a href="#" onclick="javascript:document.frm_duplicate_file_<?php echo $row['file_id'];
-													?>.submit()">
+													<a href="#"<?php
+													echo dPaction(null, array(), null, array('submit' => 'frm_duplicate_file_' . $row['file_id']));
+													?>>
 														<?php
 														echo (dPshowImage(
 															DP_BASE_URL . '/modules/files/images/duplicate.png',
@@ -809,9 +809,11 @@ function displayFiles($folder_id)
 														|| $file['file_co_reason'] == '')
 												) {
 													?>
-													<a href="#" onclick="if (confirm('<?php
-													echo $AppUI->_('Are you sure you want to delete this file?');
-													?>')) {javascript:document.frm_remove_file_<?php echo $row['file_id']; ?>.submit()}">
+													<a href="#"<?php
+													echo dPaction(null, array(), null, array(
+														'confirm' => $AppUI->_('Are you sure you want to delete this file?', UI_OUTPUT_RAW),
+														'submit' => 'frm_remove_file_' . $row['file_id']));
+													?>>
 														<?php
 														echo (dPshowImage(
 															DP_BASE_URL . '/modules/files/images/remove.png',
@@ -834,9 +836,7 @@ function displayFiles($folder_id)
 													|| $row['file_checkout'] == 'final')
 												&& ($canEdit || $row['project_owner'] == $AppUI->user_id)
 											) {
-												$bulk_op = ('onchange="javascript:(this.checked) ? addBulkComponent('
-													. $row['file_id'] . ') : removeBulkComponent('
-													. $row['file_id'] . ')"');
+												$bulk_op = dPaction('toggleBulkComponent', array('$this', (int)$row['file_id']), 'change');
 												?>
 												<input type="checkbox" <?php echo $bulk_op; ?> name="chk_sub_sel_file_<?php
 													echo $file_row['file_id']; ?>" />
@@ -882,7 +882,7 @@ if ($folder > 0) {
 ?>
 
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function expand(id) {
 		var element = document.getElementById(id);
 		element.style.display = (element.style.display == '' || element.style.display == "none") ? "block" : "none";
@@ -908,7 +908,7 @@ if ($folder > 0) {
 
 	function delCheck(ffid) {
 		<?php
-		$trans_del = $AppUI->_('Are you sure you want to delete this folder?');
+		$trans_del = $AppUI->_('Are you sure you want to delete this folder?', UI_OUTPUT_JS);
 		?>
 		if (confirm('<?php echo $trans_del; ?>')) {
 			var submit_me = document.getElementById('frm_remove_folder_' + ffid);
@@ -918,7 +918,7 @@ if ($folder > 0) {
 
 	function goCheck() {
 		<?php
-		$trans_go = $AppUI->_('Are you sure you wish to apply the options on the selected files?');
+		$trans_go = $AppUI->_('Are you sure you wish to apply the options on the selected files?', UI_OUTPUT_JS);
 		?>
 		if (confirm('<?php echo $trans_go; ?>')) {
 			document.frm_bulk.submit();
@@ -930,6 +930,14 @@ if ($folder > 0) {
 		var t = document.getElementById('tbl_bulk');
 		var old = document.getElementById('bulk_selected_file[' + li + ']');
 		t.removeChild(old);
+	}
+
+	function toggleBulkComponent(box, li) {
+		if (box.checked) {
+			addBulkComponent(li);
+		} else {
+			removeBulkComponent(li);
+		}
 	}
 </script>
 
@@ -1132,7 +1140,7 @@ if ($folder) {
 						</td>
 						<td align="right">
 							<input type="button" class="button" value="<?php echo $AppUI->_('Go'); ?>"
-								onclick="javascript:goCheck();" />
+								<?php echo dPaction('goCheck'); ?> />
 						</td>
 					</tr>
 				</table>

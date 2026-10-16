@@ -46,7 +46,7 @@ if ($canDelete_folder) {
 $titleBlock->show();
 
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var f = document.folderFrm;
 	var msg = '';
@@ -101,10 +101,10 @@ function delIt() {
 </tr>
 <tr>
 	<td>
-		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" onclick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?'); ?>')) {location.href = '?<?php echo $referrer; ?>';}" />
+		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" <?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW), 'href' => '?' . $referrer)); ?> />
 	</td>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('submit');?>" onclick="javascript:submitIt()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>
 </table>

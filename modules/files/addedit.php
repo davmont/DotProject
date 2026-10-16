@@ -117,7 +117,7 @@ $projects = arrayMerge(array('0'=>$AppUI->_('None', UI_OUTPUT_RAW)), $projects);
 
 $folders = getFolderSelectList();
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var f = document.uploadFrm;
 	f.submit();
@@ -239,7 +239,7 @@ if (!($file_id) || $ci || ($canAdmin && $obj->file_checkout == 'final')) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap">&nbsp;</td>
 			<td align="left">
-				<input type="checkbox" name="final_ci" id="final_ci" onclick="javascript:finalCI()" />
+				<input type="checkbox" name="final_ci" id="final_ci"<?php echo dPaction('finalCI'); ?> />
 				<label for="final_ci"><?php echo $AppUI->_('Final Version'); ?></label>
 			</td>		
 		</tr><?php 
@@ -272,13 +272,13 @@ echo $AppUI->_('Notify Project and Task Contacts'); ?></label>
 <tr>
 	<td>
 		<input class="button" type="button" name="cancel" value="<?php 
-echo $AppUI->_('cancel'); ?>" onclick="javascript:if (confirm('<?php 
-echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {location.href = '?<?php 
-echo $AppUI->getPlace(); ?>'; }" />
+echo $AppUI->_('cancel'); ?>"<?php
+echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW),
+                                         'href' => '?' . $AppUI->getPlace())); ?> />
 	</td>
 	<td align="right">
 		<input type="button" class="button" value="<?php 
-echo $AppUI->_('submit'); ?>" onclick="javascript:submitIt()" />
+echo $AppUI->_('submit'); ?>"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>
 </table>
@@ -322,7 +322,7 @@ function file_show_attr() {
     
     
 	$select_disabled=' ';  
-	$onclick_task=' onclick="javascript:popTask()" ';
+	$onclick_task=dPaction('popTask') . ' ';
 	if ($ci && $preserve) {
 		$select_disabled=' disabled ';  
         $onclick_task=' ';

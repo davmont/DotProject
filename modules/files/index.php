@@ -51,7 +51,7 @@ $canAccess_folders = getPermission('file_folders', 'access');
 $titleBlock = new CTitleBlock('Files', 'folder5.png', $m, $m . '.' . $a);
 $titleBlock->addCell($AppUI->_('Filter') . ':');
 $titleBlock->addCell(arraySelect($projects, 'project_id', 
-                                 'onchange="javascript:document.pickProject.submit()" size="1" class="text"', 
+                                 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => 'pickProject')),
                                  $project_id), 
                      '', '<form name="pickProject" action="?m=files" method="post">', '</form>');
 

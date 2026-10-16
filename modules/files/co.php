@@ -67,7 +67,7 @@ $projects = $project->getAllowedRecords($AppUI->user_id, 'project_id,project_nam
 $projects = arrayMerge(array('0'=>$AppUI->_('All')), $projects);
 ?>
 
-<script type="text/javascript" language='javascript'>
+<script type="text/javascript" language='javascript' nonce="<?php echo dPcspNonce(); ?>">
 function popFile(params) {
     fileloader = window.open("fileviewer.php?"+params,"mywindow",
 	                         "location=1,status=1,scrollbars=0,width=80,height=80");
@@ -138,9 +138,9 @@ echo $AppUI->_('Notify Project and Task Contacts'); ?></label>
 <tr>
 	<td>
 		<input class="button" type="button" name="cancel" value="<?php 
-echo $AppUI->_('cancel');?>" onclick="javascript:if (confirm('<?php 
-echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); 
-?>')) {location.href = '?m=files';}" />
+echo $AppUI->_('cancel');?>"<?php
+echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW),
+                                         'href' => '?m=files')); ?> />
 	</td>
 	<td align="right">
 		<input type="submit" class="button" value="<?php echo $AppUI->_('submit');?>" />
