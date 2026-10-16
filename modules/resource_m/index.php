@@ -71,8 +71,8 @@ $inOneMonth = $cinOneMonth->format(FMT_TIMESTAMP_DATE);
 $project_id = dPgetIntParam($_POST, 'project_id', 0); 								// Project filter 					Default: all(0)
 $company 	= dPgetParam($_POST, 'company_id', 0);								// Company/Department filter		Default: all(0)
 $contact_id = dPgetIntParam($_POST, 'contact_id', getContactId($AppUI->user_id));	// Contact filter					Default: user
-$aff_style 	= dPgetParam($_POST, 'aff_style', 1);								// 0 : % , 1 : daily assigned hours Default: daily assigned hours
-$dyna 		= dPgetParam($_POST, 'dyna', 0);									// 0 : show dynamic tasks, 1 : hide	Default: show dynamic tasks
+$aff_style 	= dPgetIntParam($_POST, 'aff_style', 1);								// 0 : % , 1 : daily assigned hours Default: daily assigned hours
+$dyna 		= dPgetIntParam($_POST, 'dyna', 0);									// 0 : show dynamic tasks, 1 : hide	Default: show dynamic tasks
 $start_date = dPgetParam($_POST, 'start_date', $today);							// Start Date filter 				Default: today
 $end_date 	= dPgetParam($_POST, 'end_date', $inOneMonth); 						// End Date filter					Default: today + 1 month
 $toExpand	= dPgetParam($_POST, 'expandedList', null);							// List of <tr> to re-expand		Default: none(null)
@@ -532,9 +532,9 @@ $titleBlock->show();
 									echo '<td class="tdRessource" '.$add.' onMouseOver="javascript:'.$over.'timer='.$fun.'" '
 											.'onMouseOut="javascript:'.$out.'hideTaskDetails(timer)">';
 									if ($task->task_dynamic == 1 || !$canEdit)
-										echo '<img src="./modules/resource_m/images/dyna.gif" width="10px" height:"10px" /> '.$task->task_name.'</td>';
+										echo '<img src="./modules/resource_m/images/dyna.gif" width="10px" height:"10px" /> '.dPhtml($task->task_name).'</td>';
 									else
-										echo '<a>'.$task->task_name.'</a></td>';
+										echo '<a>'.dPhtml($task->task_name).'</a></td>';
 									echo generateTdTasks($colCount, $start_date, 
 														$show, $task, $user->contact_id, 
 														$aff_style, $parent, $scale, $AppUI->_('Daily assigned hours'), $AppUI->_('%'))

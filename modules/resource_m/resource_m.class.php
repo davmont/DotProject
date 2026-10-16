@@ -729,7 +729,7 @@ function generateFilterLink($filter_name,$filter_id,$string,$color='auto') {
 			.'$(\'#submitButton\').click();" '
 			.'onmouseenter="javascript:$(this).append($(\'<img style=\\\'float:right;\\\' src=\\\'./modules/resource_m/images/filter.png\\\' height=\\\'12\\\' width=\\\'12\\\' />\'));" '
 			.'onMouseOut="$(this).find(\'img:last\').remove();" '
-			.'style="cursor: pointer; color: '.$color.';">'.$string.'</a>';
+			.'style="cursor: pointer; color: '.dPhtml($color).';">'.dPhtml($string).'</a>';
 	return $res;
 }
 
