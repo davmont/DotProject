@@ -69,6 +69,12 @@ a block that echoes request data.
 
 ## Finding what is left
 
+`scripts/check-inline-js.sh --list modules/<module>` prints every line that
+still has an event-handler attribute, a `javascript:` URL or an inline
+`<script>` without a nonce. The same script runs in CI (`make inline-js`) and
+fails when a file gains such lines; after converting, record the lower counts
+with `scripts/check-inline-js.sh --update`.
+
 In `docker/`, browse the pages (or run the crawl) and summarise the reports:
 
 ```sh
