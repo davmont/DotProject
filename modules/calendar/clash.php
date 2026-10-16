@@ -22,7 +22,7 @@ if (isset($_POST['clash_action'])) {
 } else {
 
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
   function set_clash_action(action) {
     var f = document.clash_form;
     f.clash_action.value = action;
@@ -48,12 +48,12 @@ if (isset($_POST['clash_action'])) {
 	}
 	echo "</table>\n";
 	$calurl = DP_BASE_URL.'/index.php?m=calendar&amp;a=clash&amp;event_id=' . $obj->event_id;
-	echo ('<a href="#" onclick="javascript:set_clash_action(\'suggest\');">' 
+	echo ('<a href="#"' . dPaction('set_clash_action', array('suggest')) . '>' 
 		  . $AppUI->_('Suggest Alternative') . '</a> : ');
-	echo '<a href="#" onclick="javascript:set_clash_action(\'cancel\');">' . $AppUI->_('Cancel') . '</a> : ';
-	echo ('<a href="#" onclick="javascript:set_clash_action(\'mail\');">' . $AppUI->_('Mail Request') 
+	echo '<a href="#"' . dPaction('set_clash_action', array('cancel')) . '>' . $AppUI->_('Cancel') . '</a> : ';
+	echo ('<a href="#"' . dPaction('set_clash_action', array('mail')) . '>' . $AppUI->_('Mail Request') 
 	      . '</a> : ');
-	echo ('<a href="#" onclick="javascript:set_clash_action(\'accept\');">' 
+	echo ('<a href="#"' . dPaction('set_clash_action', array('accept')) . '>' 
 		  . $AppUI->_('Book Event Despite Conflict') . "</a>\n");
 	echo '<form name="clash_form" method="post" action="' . $calurl . '">';
 	echo '<input type="hidden" name="clash_action" value="cancel" />';
@@ -106,7 +106,7 @@ function clash_suggest() {
 		$t->addSeconds($addMins);
 	}
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 
 function popCalendar(field) {
@@ -141,7 +141,7 @@ function set_clash_action(action) {
 echo $start_date->format(FMT_TIMESTAMP_DATE); ?>" />
     <input type="text" name="start_date" value="<?php 
 echo $start_date->format($df);?>" class="text" disabled="disabled" />
-      <a href="#" onclick="javascript:popCalendar('start_date')">
+      <a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
 	<img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 echo $AppUI->_('Calendar');?>" border="0" />
       </a>
@@ -154,7 +154,7 @@ echo $AppUI->_('Calendar');?>" border="0" />
 echo $end_date->format(FMT_TIMESTAMP_DATE); ?>" />
     <input type="text" name="end_date" value="<?php 
 echo $end_date->format($df);?>" class="text" disabled="disabled" />
-      <a href="#" onclick="javascript:popCalendar('end_date')">
+      <a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
 	<img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 echo $AppUI->_('Calendar');?>" border="0" />
       </a>
@@ -180,9 +180,9 @@ echo arraySelect($times, 'start_time', 'size="1" class="text"', $start_date->for
   </td>
 </tr>
 <tr>
-  <td><input type="button" value="<?php echo $AppUI->_('cancel'); ?>" class="button" onclick="javascript:set_clash_action('cancel');" /></td>
+  <td><input type="button" value="<?php echo $AppUI->_('cancel'); ?>" class="button"<?php echo dPaction('set_clash_action', array('cancel')); ?> /></td>
   <td align="right"><input type="button" value="<?php 
-echo $AppUI->_('submit'); ?>" class="button" onclick="javascript:set_clash_action('process')" /></td>
+echo $AppUI->_('submit'); ?>" class="button"<?php echo dPaction('set_clash_action', array('process')); ?> /></td>
 </tr>
 </table>
 <input type='hidden' name='clash_action' value='cancel'>

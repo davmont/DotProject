@@ -36,20 +36,20 @@ $companies = arrayMerge(array('0'=>$AppUI->_('All')), $companies);
 $titleBlock = new CTitleBlock('Monthly Calendar', 'myevo-appointments.png', $m, "$m.$a");
 $titleBlock->addCell($AppUI->_('Company').':');
 $titleBlock->addCell(arraySelect($companies, 'company_id', 
-								 'onchange="javascript:document.pickCompany.submit()" class="text"', 
+								 'class="text"' . dPaction(null, array(), null, array('submit' => 'pickCompany')), 
 								 $company_id), '',
 					 ('<form action="' . $_SERVER['REQUEST_URI'] 
 					  . '" method="post" name="pickCompany">'), '</form>');
 $titleBlock->addCell($AppUI->_('Event Filter') . ':');
 $titleBlock->addCell(arraySelect($event_filter_list, 'event_filter', 
-								 'onchange="javascript:document.pickFilter.submit()" class="text"',
+								 'class="text"' . dPaction(null, array(), null, array('submit' => 'pickFilter')),
 								 $event_filter, true), '', 
 					 ('<form action="' . $_SERVER['REQUEST_URI'] 
 					  . '" method="post" name="pickFilter">'), '</form>');
 $titleBlock->show();
 ?>
 
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function clickDay(uts, fdate) {
 	window.location = '?m=calendar&a=day_view&date='+uts+'&tab=0';
 }

@@ -167,7 +167,7 @@ for ($minutes=0; $minutes < $check; $minutes++) {
 }
 ?>
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var form = document.editFrm;
 	if (form.event_title.value.length < 1) {
@@ -326,7 +326,7 @@ echo (@$obj->event_private ? 'checked="checked"' : '');?> />
 echo (($start_date) ? $start_date->format(FMT_TIMESTAMP_DATE) : ''); ?>" />
 		<input type="text" name="start_date" value="<?php 
 echo (($start_date) ? $start_date->format($df) : ''); ?>" class="text" disabled="disabled" />
-		<a href="#" onclick="javascript:popCalendar('start_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 echo $AppUI->_('Calendar'); ?>" border="0" />
 		</a>
@@ -344,7 +344,7 @@ echo arraySelect($times, 'start_time', 'size="1" class="text"', $start_date->for
 echo (($end_date) ? $end_date->format(FMT_TIMESTAMP_DATE) : ''); ?>" />
 		<input type="text" name="end_date" value="<?php 
 echo (($end_date) ? $end_date->format($df) : ''); ?>" class="text" disabled="disabled" />
-		<a href="#" onclick="javascript:popCalendar('end_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 echo $AppUI->_('Calendar'); ?>" border="0" />
 		</a>
@@ -396,9 +396,9 @@ echo arraySelect($assigned, 'assigned',
 		<table>
 			<tr>
 				<td align="left"><input type="button" class="button" value="&gt;"
-				onclick="javascript:addUser()" /></td>
+				<?php echo dPaction('addUser'); ?> /></td>
 				<td align="right"><input type="button" class="button" value="&lt;"
-				onclick="javascript:removeUser()" /></td>
+				<?php echo dPaction('removeUser'); ?> /></td>
 			</tr>
 		</table>
 	</td>
@@ -426,11 +426,11 @@ $custom_fields->printHTML();
 <tr>
 	<td colspan="2">
 		<input type="button" value="<?php 
-echo $AppUI->_('back'); ?>" class="button" onclick="javascript:history.back();" />
+echo $AppUI->_('back'); ?>" class="button"<?php echo dPaction('history.back'); ?> />
 	</td>
 	<td align="right" colspan="2">
 		<input type="button" value="<?php 
-echo $AppUI->_('submit'); ?>" class="button" onClick="javascript:submitIt()" />
+echo $AppUI->_('submit'); ?>" class="button"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>
 </table>
