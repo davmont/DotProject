@@ -18,7 +18,7 @@ require_once (DP_BASE_DIR . "/modules/dotproject_plus/feedback/feedback_controll
                     <br /><br />
                     <form method="post" action="?m=dotproject_plus" name="feedback_preferences">
                         <input name="dosql" type="hidden" value="do_save_feedback_preferences" />
-                        <input type="hidden" name="url" value="<?php echo substr($_SERVER["REQUEST_URI"], strrpos($_SERVER["REQUEST_URI"], "?") + 1, strlen($_SERVER["REQUEST_URI"])); ?>" />
+                        <input type="hidden" name="url" value="<?php echo dPhtml(substr($_SERVER["REQUEST_URI"], strrpos($_SERVER["REQUEST_URI"], "?") + 1, strlen($_SERVER["REQUEST_URI"]))); ?>" />
                         
                             <?php echo $AppUI->_("LBL_SEE_GENERIC_FEEDBACK"); ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
                          
@@ -76,7 +76,7 @@ require_once (DP_BASE_DIR . "/modules/dotproject_plus/feedback/feedback_controll
                                                 <input name="dosql" type="hidden" value="do_show_feedback" />
 
                                                 <input type="hidden" name="feedback_id" value="<?php echo $feedback->getId() ?>" />
-                                                <input type="hidden" name="url" value="<?php echo substr($_SERVER["REQUEST_URI"], strrpos($_SERVER["REQUEST_URI"], "?") + 1, strlen($_SERVER["REQUEST_URI"])); ?>" />
+                                                <input type="hidden" name="url" value="<?php echo dPhtml(substr($_SERVER["REQUEST_URI"], strrpos($_SERVER["REQUEST_URI"], "?") + 1, strlen($_SERVER["REQUEST_URI"]))); ?>" />
                                             </form>
                                         </a>
                                         <br />
