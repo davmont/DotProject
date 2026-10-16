@@ -362,7 +362,7 @@ smartUpdateProjectPercentComplete($project_id);
 						<table cellspacing="0" cellpadding="2" border="0" width="100%">
 							<tr>
 								<td class="hilite">
-									<?php echo str_replace(chr(10), "<br>", $obj->project_description); ?>
+									<?php echo str_replace(chr(10), "<br>", dPhtml($obj->project_description)); ?>
 								</td>
 							</tr>
 						</table>

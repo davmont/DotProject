@@ -215,7 +215,7 @@ echo $row['project_company']; ?>" title="<?php echo htmlspecialchars($row['compa
 echo ($row['project_id']); ?>"<?php 
 // overlib(tip, CAPTION, caption, CENTER); CAPTION is 1 and CENTER 7 in lib/overlib/overlib-shim.js
 echo dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                         $row['project_description']) 
+                                                         dPhtml($row['project_description'])) 
                                 . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 
               'mouseover mouseout', array('call-mouseout' => 'nd')); 
 ?>>

@@ -142,7 +142,7 @@ echo htmlspecialchars($row['project_id']); ?>" <?php
 if (!empty($row['project_description'])) {
 	// overlib(tip, CAPTION, caption, CENTER); CAPTION is 1 and CENTER 7 in lib/overlib/overlib-shim.js
 	echo(dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-	                                                         $row['project_description']) 
+	                                                         dPhtml($row['project_description'])) 
 	                                . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 
 	              'mouseover mouseout', array('call-mouseout' => 'nd')));
 } ?>>

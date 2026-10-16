@@ -12,6 +12,10 @@ $userFilter = (bool)dPgetParam($_GET, 'userFilter', false);
 $q = new DBQuery();
 $q->addQuery('t.task_id, t.task_name');
 $q->addTable('tasks', 't');
+// Only tasks of projects the user may see (it listed every project's tasks).
+require_once $AppUI->getModuleClass('projects');
+$project = new CProject();
+$project->setAllowedSQL($AppUI->user_id, $q, 't.task_project');
 
 if ($userFilter) {
 	$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
