@@ -48,7 +48,7 @@ $perm_list = $perms->getPermissionList();
 
 ?>
 
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 // security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -66,7 +66,7 @@ function editPerm(id, gon, it, vl, nm) {
 */
 	var f = document.frmPerms;
 
-	f.sqlaction2.value = "<?php echo $AppUI->_('edit'); ?>";
+	f.sqlaction2.value = "<?php echo $AppUI->_('edit', UI_OUTPUT_JS); ?>";
 	
 	f.permission_id.value = id;
 	f.permission_item.value = it;
@@ -83,7 +83,7 @@ function editPerm(id, gon, it, vl, nm) {
  
 function clearIt() {
 	var f = document.frmPerms;
-	f.sqlaction2.value = "<?php echo $AppUI->_('add'); ?>";
+	f.sqlaction2.value = "<?php echo $AppUI->_('add', UI_OUTPUT_JS); ?>";
 	f.permission_id.value = 0;
 	f.permission_grant_on.selectedIndex = 0;
 }
@@ -101,7 +101,7 @@ var tables = new Array;
 <?php
 	foreach ($pgos as $key => $value) {
 		// Find the module id in the modules array
-		echo "tables['$key'] = '$value';\n";
+		echo 'tables[' . (int)$key . '] = ' . dPjs($value) . ";\n";
 	}
 ?>
 
@@ -209,7 +209,7 @@ foreach ($role_acls as $acl) {
 		$buf .= '<td>' . $AppUI->_($permission['allow'] ? 'allow' : 'deny') . '</td>';
 		$buf .= '<td nowrap>';
 		if ($canDelete) {
-			$buf .= ('<a href="javascript:delIt(' . $acl . ');" title="' . $AppUI->_('delete') 
+			$buf .= ('<a href="#"' . dPaction('delIt', array((int)$acl)) . ' title="' . $AppUI->_('delete') 
 					 . '">' . dPshowImage('./images/icons/stock_delete-16.png', 16, 16, '') 
 					 . '</a>');
 		}
@@ -247,7 +247,7 @@ foreach ($role_acls as $acl) {
 	<td nowrap align="right"><?php echo $AppUI->_('Item');?>:</td>
 	<td>
 		<input type="text" name="permission_item_name" class="text" size="30" value="all" disabled="disabled" />
-		<input type="button" name="permission_item_sel_button" class="text" value="..." onclick="javascript:popPermItem();" />
+		<input type="button" name="permission_item_sel_button" class="text" value="..."<?php echo dPaction('popPermItem'); ?> />
 	</td>
 </tr>
 <tr>
@@ -276,7 +276,7 @@ foreach ($role_acls as $acl) {
 <tr>
 	<td>
 		<input type="reset" value="<?php 
-echo $AppUI->_('clear');?>" class="button" name="sqlaction" onclick="javascript:clearIt();" />
+echo $AppUI->_('clear');?>" class="button" name="sqlaction"<?php echo dPaction('clearIt'); ?> />
 	</td>
 	<td align="right">
 		<input type="submit" value="<?php 
