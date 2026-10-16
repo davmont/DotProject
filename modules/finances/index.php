@@ -51,12 +51,12 @@ $contact	= new CContact();
 $contact->load($q->loadResult());
 $company 	= dPgetParam($_POST, 'company_id', 0);//($contact->contact_department != 0) ? $contact->contact_department : $company_prefix.$contact->contact_company );	// Company/Department filter			Default: current user company
 
-$currency 	= dPgetParam($_POST, 'currency', 0);										// 0: *1, 1: *1k, 2: *1M  				Default: *1
-$display 	= dPgetParam($_POST, 'display', 0);											// 0: details, 1: subTotal, 2: total	Default: details
-$tax 		= dPgetParam($_POST, 'tax', 1);												// 0: without, 1: with	 				Default: without
-$hideNull = dPgetParam($_POST, 'hideNull', 2);									// 0:all, 1:Only valued projects and tasks	2:valued projects 3:Only projects with null budget
-$project_status = dPgetParam($_POST, 'project_status', 0);      //
-$project_type = dPgetParam($_POST, 'project_type', 0);
+$currency 	= dPgetIntParam($_POST, 'currency', 0);										// 0: *1, 1: *1k, 2: *1M  				Default: *1
+$display 	= dPgetIntParam($_POST, 'display', 0);											// 0: details, 1: subTotal, 2: total	Default: details
+$tax 		= dPgetIntParam($_POST, 'tax', 1);												// 0: without, 1: with	 				Default: without
+$hideNull = dPgetIntParam($_POST, 'hideNull', 2);									// 0:all, 1:Only valued projects and tasks	2:valued projects 3:Only projects with null budget
+$project_status = dPgetIntParam($_POST, 'project_status', 0);      //
+$project_type = dPgetIntParam($_POST, 'project_type', 0);
 
 $default[0] = $today->getYear();														// Default array for $years
 $years 		= dPgetParam($_POST, 'years', $default);									// (array)Years to display 				Default: this year
@@ -95,9 +95,10 @@ if(dPgetParam($_POST, 'edit', 0))
 		<?php 
 		// Re-expand <tr> wich were expanded on last page
 		if(isset($_POST['expandedList'])) {
-			$expand = explode(',',$toExpand);
+			$expand = explode(',', (string)$toExpand);
 			foreach ($expand as $id) {
-				if ($id != '')
+				// Row ids are p_<n> / p_<n>_t_<n>; anything else is not one of ours.
+				if (preg_match('/^[A-Za-z0-9_]+$/', $id))
 					echo '$("tr#'.$id.'").expand();';
 			}
 		} ?>
