@@ -58,7 +58,7 @@ $q->addWhere("cost_type_id = '1' $whereProject");
 $q->addOrder('cost_description');
 $notHumanCost = $q->loadList();
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
     function submitIt() {
         var f = document.uploadFrm;
         f.submit();
@@ -348,8 +348,7 @@ $v = $q->exec();
 <table width="100%" border="0" cellpadding="3" cellspacing="3">
     <tr>
         <td>
-            <input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button"
-                onclick="javascript:history.back(-1);" />
+            <input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button"<?php echo dPaction('history.back'); ?> />
         </td>
     </tr>
 </table>

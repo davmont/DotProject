@@ -66,13 +66,19 @@ $titleBlock->show();
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo DP_BASE_URL; ?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+    // The Submit button: sumTotalValue, then submitIt().
+    function sumTotalAndSubmit() {
+        sumTotalValue();
+        submitIt();
+    }
+
     function submitIt() {
         
         var f = document.uploadFrm;
         //f.submit();
         
-        var trans = "<?php echo $dateEP; ?>";
+        var trans = <?php echo dPjs($dateEP); ?>;
         var str1 = String(trans);
         var str2 = document.getElementById("cost_date_end").value;
         
@@ -212,7 +218,7 @@ $titleBlock->show();
                             <!-- format(FMT_TIMESTAMP_DATE) -->
                             <input type="text" class="text" name="date_begin" id="date0" value="<?php echo (($date_begin) ? $date_begin->format($df) : ''); ?>" disabled="disabled" />
 
-                            <a href="#" onclick="popCalendar( 'date_begin', 'date_begin');">
+                            <a href="#"<?php echo dPaction('popCalendar', array('date_begin', 'date_begin')); ?>>
                                 <img src="./images/calendar.gif" width="24" height="12" alt="{dPtranslate word='Calendar'}" border="0" />
                             </a>
                         </td>
@@ -224,7 +230,7 @@ $titleBlock->show();
                             <!-- format(FMT_TIMESTAMP_DATE) -->
                             <input type="text" class="text" name="date_end" id="date1" value="<?php echo (($date_end) ? $date_end->format($df) : ''); ?>" disabled="disabled" />
 
-                            <a href="#" onclick="popCalendar( 'date_end', 'date_end');">
+                            <a href="#"<?php echo dPaction('popCalendar', array('date_end', 'date_end')); ?>>
                                 <img src="./images/calendar.gif" width="24" height="12" alt="{dPtranslate word='Calendar'}" border="0" />
                             </a>
                         </td>
@@ -255,10 +261,10 @@ $titleBlock->show();
         </tr>
         <tr>
             <td>
-                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('Cancel'); ?>" onClick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {history.back(-1);}"/>
+                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('Cancel'); ?>"<?php echo dPaction('history.back', array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW))); ?>/>
             </td>
             <td align="right">
-                <input type="button" class="button" value="<?php echo $AppUI->_('Submit'); ?>" onclick="sumTotalValue();submitIt()" />
+                <input type="button" class="button" value="<?php echo $AppUI->_('Submit'); ?>"<?php echo dPaction('sumTotalAndSubmit'); ?> />
             </td>
         </tr>
     </form>

@@ -45,15 +45,13 @@ $v = $q->loadList();
 if ($v == null) {
     ?>
     <div align="right">
-        <input class="button" type="button" name="new budget" value="new budget"
-            onclick="location.href = '?m=costs&amp;a=view_budget&amp;project_id=<?php echo $projectSelected ?>';" />
+        <input class="button" type="button" name="new budget" value="new budget"<?php echo dPaction(null, array(), null, array('href' => '?m=costs&a=view_budget&project_id=' . (int)$projectSelected)); ?> />
     </div>
     <?php
 } else {
     ?>
     <div align="right">
-        <input class="button" type="button" name="edit budget" value="edit budget"
-            onclick="location.href = '?m=costs&amp;a=view_budget&amp;project_id=<?php echo $projectSelected ?>&budget_id=<?php echo $projectSelected ?>';" />
+        <input class="button" type="button" name="edit budget" value="edit budget"<?php echo dPaction(null, array(), null, array('href' => '?m=costs&a=view_budget&project_id=' . (int)$projectSelected . '&budget_id=' . (int)$projectSelected)); ?> />
     </div>
     <?php
 }
