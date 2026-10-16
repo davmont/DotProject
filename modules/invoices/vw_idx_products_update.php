@@ -35,6 +35,14 @@ if ($canEdit) {
 		echo $AppUI->_( "Add Log" );
 	}
 ?>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+// Copies the chosen cost code and its name into the text fields (was an inline onchange).
+function invoiceSetCostcode(sel) {
+	var f = sel.form;
+	f.product_costcode.value = sel.options[sel.selectedIndex].value;
+	f.product_name.value = sel.options[sel.selectedIndex].text;
+}
+</script>
 <table cellspacing="1" cellpadding="2" border="0" width="100%">
 <form name="editFrm" action="?m=invoices&a=view&invoice_id=<?php echo $invoice_id;?>" method="post">
 	<input type="hidden" name="uniqueid" value="<?php echo uniqid("");?>" />
@@ -47,7 +55,7 @@ if ($canEdit) {
 	</td>
 	<td>
 <?php
-		echo arraySelect( $product_costcodes, 'product_costcodes', 'size="1" class="text" onchange="javascript:product_costcode.value = this.options[this.selectedIndex].value; product_name.value = this.options[this.selectedIndex].text;"', '' );
+		echo arraySelect( $product_costcodes, 'product_costcodes', 'size="1" class="text"' . dPaction('invoiceSetCostcode', array('$this')), '' );
 ?>
 		&nbsp;->&nbsp; <input type="text" class="text" name="product_costcode" value="<?php echo $log->product_costcode;?>" maxlength="8" size="8" />
 	</td>
@@ -76,7 +84,7 @@ if ($canEdit) {
 </tr>
 <tr>
 	<td colspan="2" valign="bottom" align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('update product');?>" onclick="updateProduct()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('update product');?>"<?php echo dPaction('updateProduct'); ?> />
 	</td>
 </tr>
 

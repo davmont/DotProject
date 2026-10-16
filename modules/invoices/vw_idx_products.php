@@ -5,9 +5,9 @@ if (!defined('DP_BASE_DIR')) {
 /* PRODUCT $Id: vw_idx_products.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
 global $AppUI, $invoice_id, $df, $canEdit;
 ?>
-<script language="JavaScript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function delIt2(id) {
-	if (confirm( "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('Products').'?';?>" )) {
+	if (confirm( "<?php echo $AppUI->_('doDelete', UI_OUTPUT_JS).' '.$AppUI->_('Products', UI_OUTPUT_JS).'?';?>" )) {
 		document.frmDelete2.product_id.value = id;
 		document.frmDelete2.submit();
 	}
@@ -62,7 +62,7 @@ foreach ($logs as $row) {
 	$s .= '<td nowrap="nowrap" align=right>'.sprintf("%01.2f",($row["product_price"] * $row["product_qty"])).'</td>';
 	$s .= "\n\t<td>";
 	if ($canEdit && (@$row['invoice_status'] == 0)) {
-		$s .= "\n\t\t<a href=\"javascript:delIt2({$row['product_id']});\" title=\"".$AppUI->_('delete product')."\">"
+		$s .= "\n\t\t<a href=\"#\"" . dPaction('delIt2', array((int)$row['product_id'])) . " title=\"".$AppUI->_('delete product')."\">"
 			. "\n\t\t\t". dPshowImage( './images/icons/stock_delete-16.png', 16, 16, '' )
 			. "\n\t\t</a>";
 	}

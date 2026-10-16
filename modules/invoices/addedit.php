@@ -69,16 +69,16 @@ $titleBlock->show();
 <!-- import the language module -->
 <script type="text/javascript" src="./lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function submitIt() {
 		var f = document.editFrm;
 		var msg = '';
 		if (f.invoice_company.options[f.invoice_company.selectedIndex].value < 1) {
-			msg += "\n<?php echo $AppUI->_('invoicesBadCompany'); ?>";
+			msg += "\n<?php echo $AppUI->_('invoicesBadCompany', UI_OUTPUT_JS); ?>";
 			f.invoice_company.focus();
 		}
 		if (f.invoice_due.value < f.invoice_date.value) {
-			msg += "\n<?php echo $AppUI->_('invoicesBadEndDate1'); ?>";
+			msg += "\n<?php echo $AppUI->_('invoicesBadEndDate1', UI_OUTPUT_JS); ?>";
 		}
 		if (msg.length < 1) {
 			f.submit();
@@ -110,7 +110,7 @@ $titleBlock->show();
 							<input type="text" class="text" name="invoice_date" id="date1"
 								value="<?php echo $invoice_date->format('%Y-%m-%d'); ?>" />
 
-							<a href="#" onClick="return showCalendar('date1', 'y-mm-dd');">
+							<a href="#"<?php echo dPaction('showCalendar', array('date1', 'y-mm-dd')); ?>>
 								<img src="./images/calendar.gif" width="24" height="12"
 									alt="<?php echo $AppUI->_('Calendar'); ?>" border="0" />
 							</a>
@@ -123,7 +123,7 @@ $titleBlock->show();
 							<input type="text" class="text" name="invoice_due" id="date2"
 								value="<?php echo $invoice_due->format('%Y-%m-%d'); ?>" />
 
-							<a href="#" onClick="return showCalendar('date2', 'y-mm-dd');">
+							<a href="#"<?php echo dPaction('showCalendar', array('date2', 'y-mm-dd')); ?>>
 								<img src="./images/calendar.gif" width="24" height="12"
 									alt="<?php echo $AppUI->_('Calendar'); ?>" border="0" />
 							</a>
@@ -147,11 +147,11 @@ $titleBlock->show();
 		<tr>
 			<td>
 				<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel'); ?>"
-					onClick="javascript:if(confirm('Are you sure you want to cancel.')){location.href = './index.php?m=invoices';}" />
+					<?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => './index.php?m=invoices')); ?> />
 			</td>
 			<td align="right">
 				<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('submit'); ?>"
-					onClick="submitIt();" />
+					<?php echo dPaction('submitIt'); ?> />
 			</td>
 		</tr>
 	</form>
