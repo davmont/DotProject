@@ -81,14 +81,14 @@ if ($journal["journal_project"]){
 <table border="0" cellpadding="4" cellspacing="0" width="98%">
 <tr>
 	<td width="50%" align="right">
-		<a href="javascript:delIt()"><img align="absmiddle" src="./images/icons/trash.gif" width="16" height="16" alt="" border="0"><?php echo $AppUI->_('delete journal');?></a>
+		<a href="#"<?php echo dPaction('delIt'); ?>><img align="absmiddle" src="./images/icons/trash.gif" width="16" height="16" alt="" border="0"><?php echo $AppUI->_('delete journal');?></a>
 	</td>
 </tr>
 </table>
 
 <table border="1" cellpadding="4" cellspacing="0" width="50%" class="std">
 	
-<script>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function delIt() {
 		AddEdit.action.value = "del";
 		AddEdit.submit();
@@ -125,10 +125,10 @@ echo arraySelect( $projects, 'journal_project', 'class="text"', $project_id );
 		<table>
 		<tr>
 			<td>
-				<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel'); ?>" onClick="javascript:if(confirm('Are you sure you want to cancel.')){location.href = '?<?php echo $AppUI->getPlace();?>';}">
+				<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel'); ?>"<?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => '?' . $AppUI->getPlace())); ?>>
 			</td>
 			<td>
-				<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>" onClick="submit()">
+				<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>"<?php echo dPaction(null, array(), null, array('submit' => '')); ?>>
 			</td>
 		</tr>
 		</table>
