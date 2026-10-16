@@ -155,9 +155,9 @@ function chPriority(user_id) {
 <?php } ?>
 </script>
 <form name="editFrm" action="index.php?m=tasks&a=tasksperuser" method="post">
-<input type="hidden" name="project_id" value="<?php echo $project_id; ?>" />
-<input type="hidden" name="company_id" value="<?php echo $company_id; ?>" />
-<input type="hidden" name="report_type" value="<?php echo $report_type; ?>" />
+<input type="hidden" name="project_id" value="<?php echo dPhtml($project_id); ?>" />
+<input type="hidden" name="company_id" value="<?php echo dPhtml($company_id); ?>" />
+<input type="hidden" name="report_type" value="<?php echo dPhtml($report_type); ?>" />
 
 <table cellspacing="0" cellpadding="4" border="0" width="100%" class="std">
 <tr>
@@ -194,7 +194,7 @@ echo "\n<br />\n";
 echo $AppUI->_('Levels to display'); 
 ?>
 		<input type="text" name="max_levels" size="10" maxlength="3" value="<?php 
-echo $max_levels; ?>" />
+echo dPhtml($max_levels); ?>" />
 	</td>
 	<td width="1%" nowrap="nowrap">
 		<input type="checkbox" name="display_week_hours" id="display_week_hours"<?php 
@@ -363,7 +363,7 @@ if ($do_report) {
 			</td>
 			<td colspan="6" style="background: #D0D0D0;color: #000000;font-weight: bold;" nowrap="nowrap">
 				<a href="index.php?m=calendar&amp;a=day_view&amp;user_id=<?php 
-			echo($user_id); ?>&tab=1"><?php echo($userAlloc[$user_id]['userFC']); ?></a>
+			echo($user_id); ?>&tab=1"><?php echo dPhtml($userAlloc[$user_id]['userFC']); ?></a>
 			</td>
 <?php 
 			$wx = (weekCells($display_week_hours, $sss, $sse));
@@ -590,7 +590,7 @@ function displayTask($list,$task,$level,$display_week_hours,$fromPeriod,$toPerio
 	if ($level >= 1) {
 		$tmp .=  dPshowImage(dPfindImage('corner-dots.gif', 'tasks'), 16, 12, 'Subtask')."&nbsp;";
 	}
-	$tmp .=  '<a href="?m=tasks&amp;a=view&amp;task_id=' . $task->task_id . '">' . $task->task_name . '</a>';
+	$tmp .=  '<a href="?m=tasks&amp;a=view&amp;task_id=' . $task->task_id . '">' . dPhtml($task->task_name) . '</a>';
 	if ($task->task_milestone == true) { 
 		$tmp .= '</strong>';
 	}
@@ -607,7 +607,7 @@ function displayTask($list,$task,$level,$display_week_hours,$fromPeriod,$toPerio
 	$tmp .=  ('<a href="?m=projects&amp;a=view&amp;project_id=' . $task->task_project 
 	        . '" style="background-color:#' . @$projects['project_color_identifier'] . '; color:' 
 	        . bestColor(@$projects['project_color_identifier']) . '">' 
-	        . $projects['project_short_name'] . '</a>');
+	        . dPhtml($projects['project_short_name']) . '</a>');
 	$tmp .= '</td>';
 	
 	$tmp .= '<td align="center" nowrap="nowrap">';
@@ -635,7 +635,7 @@ function displayTask($list,$task,$level,$display_week_hours,$fromPeriod,$toPerio
 	foreach ($users as $row) {
 		if ($row['user_id']) {
 			$us .= ($sep . '<a href="?m=admin&amp;a=viewuser&amp;user_id=' . $row[0] . '">' 
-			        . $row['contact_first_name'] . ' ' . $row['contact_last_name'] . '&nbsp;(' 
+			        . dPhtml($row['contact_first_name'] . ' ' . $row['contact_last_name']) . '&nbsp;(' 
 			        . $row['perc_assignment'] . '%)</a>');
 			$sep = ', ';
 		}
