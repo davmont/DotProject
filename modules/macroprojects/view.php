@@ -181,7 +181,7 @@ if (isset($_POST['searchtext'])) {
 $search_text = (($AppUI->getState('searchtext')) ? $AppUI->getState('searchtext'):'');
 $titleBlock->addCell($AppUI->_('Search') . ':');
 $titleBlock->addCell(('<input type="text" class="text" SIZE="10" name="searchtext"' 
-                      . dPaction(null, array(), 'change', array('submit' => 'searchfilter')) . ' value="' . $search_text . '"' 
+                      . dPaction(null, array(), 'change', array('submit' => 'searchfilter')) . ' value="' . dPformSafe($search_text) . '"' 
                       . 'title="' . $AppUI->_('Search in name and description fields') 
                       . '"/><!--<input type="submit" class="button" value=">" title="' 
                       . $AppUI->_('Search in name and description fields') . '"/>-->'), '',
@@ -261,7 +261,7 @@ echo $obj->macroproject_color_identifier; ?>" colspan="2">
 	</a>
 	<?php
 echo ('<span style="color:' . bestColor($obj->macroproject_color_identifier) . '; font-weight:bold">' 
-      . $obj->macroproject_name . '</span>');
+      . dPhtml($obj->macroproject_name) . '</span>');
 	?>
 	</td>
 </tr>
