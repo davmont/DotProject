@@ -4,13 +4,13 @@
 <script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_projects.js"></script>
 <script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/contextmenu.js"></script>
 <a href="http://www.milonic.com/" style="display: none">DHTML JavaScript Menu By Milonic.com</a>
-<script>
+<script nonce="<?php echo dPcspNonce(); ?>">
     with (milonic = new menuname("contextMenu")) {
         margin = 3;
         style = contextStyle;
         top = "offset=5";
-        aI("image=./images/icons/stock_ok-16.png;text=<?php echo $AppUI->_("LBL_MENU_ADD_PROJECT") ?>;url=javascript:rightClickMenuAddProject();");
-        aI("image=./images/icons/stock_edit-16.png;text=<?php echo $AppUI->_("LBL_MENU_EDIT_PROJECT") ?>;url=javascript:rightClickMenuEditProject();");
+        aI("image=./images/icons/stock_ok-16.png;text=<?php echo $AppUI->_("LBL_MENU_ADD_PROJECT", UI_OUTPUT_JS) ?>;url=javascript:rightClickMenuAddProject();");
+        aI("image=./images/icons/stock_edit-16.png;text=<?php echo $AppUI->_("LBL_MENU_EDIT_PROJECT", UI_OUTPUT_JS) ?>;url=javascript:rightClickMenuEditProject();");
     }
     drawMenus();
 
@@ -29,9 +29,9 @@ global $AppUI, $company_id, $pstatus, $dPconfig;
 $df = $AppUI->getPref('SHDATEFORMAT');
 ?>
 
-<script>
+<script nonce="<?php echo dPcspNonce(); ?>">
     function rightClickMenuAddProject() {
-        window.location = "index.php?m=projects&a=addedit&company_id=<?php echo $company_id; ?>";
+        window.location = "index.php?m=projects&a=addedit&company_id=<?php echo (int) $company_id; ?>";
     }
 
     function rightClickMenuEditProject() {
@@ -86,8 +86,9 @@ if (!($rows = $q->loadList())) {
         * <?php echo $AppUI->_("LBL_RIGHT_CLICK_CREATE_PROJECT"); ?><br />
     </span>
 
-    <table class="tbl" width="100%" align="center" onmouseover="setContextDisabled(false)"
-        onmouseout="setContextDisabled(true)">
+    <table class="tbl" width="100%" align="center"<?php echo dPaction(null, array(), 'mouseover mouseout', array(
+        'call-mouseover' => 'setContextDisabled', 'args-mouseover' => '[false]',
+        'call-mouseout' => 'setContextDisabled', 'args-mouseout' => '[true]')); ?>>
         <tr>
             <th> % <?php echo $AppUI->_("LBL_COMPLETE"); ?></th>
             <th> <?php echo $AppUI->_("Project"); ?> </th>
