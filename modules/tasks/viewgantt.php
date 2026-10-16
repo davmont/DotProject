@@ -320,7 +320,10 @@ if (!@$min_view) {
 									for ($i = 0; $i < count($filter_task_list); $i++) {
 										$filter_task_name  = $filter_task_list[$i][0]['task_name'];
 										$filter_task_level = $filter_task_list[$i][1];
-										$filter_task_name  = ((strlen($filter_task_name) > 71) ? substr($filter_task_name, 0, (68 - $filter_task_level)) . '...' : $filter_task_name);
+										// mb_strcut on UTF-8 pages: a split character would make dPhtml() return ''.
+										$filter_task_cut   = (strcasecmp((string)@$GLOBALS['locale_char_set'], 'utf-8') 
+										                      ? 'substr' : function ($s, $o, $l) { return mb_strcut($s, $o, $l, 'UTF-8'); });
+										$filter_task_name  = dPhtml((strlen($filter_task_name) > 71) ? $filter_task_cut($filter_task_name, 0, (68 - $filter_task_level)) . '...' : $filter_task_name);
 										for ($ii = 1; $ii <= $filter_task_level; $ii++) {
 											$filter_task_name = '&nbsp;&nbsp;' . $filter_task_name;
 										}
