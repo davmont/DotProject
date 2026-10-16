@@ -118,7 +118,7 @@ function create_selectbox($name, $options, $selected)
 {
 
     $output = "";
-    $output .= '<select name="' . $name . '" onchange="javascript:document.ticketform.submit()" class="text">' . "\n";
+    $output .= '<select name="' . $name . '"' . dPaction(null, array(), null, array('submit' => 'ticketform')) . ' class="text">' . "\n";
 
     foreach ($options as $key => $val) {
         $output .= "<option value=\"" . dPhtml($key) . "\"";

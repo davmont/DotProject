@@ -20,21 +20,21 @@ $titleBlock->show();
 
 ?>
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var f = document.ticketform;
 	var msg = '';
 	if (f.name.value.length < 3) {
-		msg += "\n- <?php echo $AppUI->_('a valid name'); ?>"
+		msg += "\n- <?php echo $AppUI->_('a valid name', UI_OUTPUT_JS); ?>"
 	}
 	if (f.email.value.length < 3) {
-		msg += "\n- <?php echo $AppUI->_('a valid email'); ?>";
+		msg += "\n- <?php echo $AppUI->_('a valid email', UI_OUTPUT_JS); ?>";
 	}
 	if (f.subject.value.length < 3) {
-		msg += "\n- <?php echo $AppUI->_('a valid subject'); ?>";
+		msg += "\n- <?php echo $AppUI->_('a valid subject', UI_OUTPUT_JS); ?>";
 	}
 	if (f.description.value.length < 3) {
-		msg += "\n- <?php echo $AppUI->_('a valid description'); ?>";
+		msg += "\n- <?php echo $AppUI->_('a valid description', UI_OUTPUT_JS); ?>";
 	}
 	if (msg.length < 1) {
 		f.submit();
@@ -122,8 +122,8 @@ function submitIt() {
 	</td>
 </tr>
 <tr>
-	<td><input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button" onclick="javascript:history.back(-1);" /></td>
-	<td align="right"><input type="button" value="<?php echo $AppUI->_('submit'); ?>" class="button" onclick="javascript:submitIt()" /></td>
+	<td><input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button"<?php echo dPaction('history.back', array(-1)); ?> /></td>
+	<td align="right"><input type="button" value="<?php echo $AppUI->_('submit'); ?>" class="button"<?php echo dPaction('submitIt'); ?> /></td>
 </tr>
 </table>
 </form>
