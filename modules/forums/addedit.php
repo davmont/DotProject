@@ -116,7 +116,7 @@ $titleBlock->show();
 						<td align="right" width="100"><?php echo $AppUI->_('Forum Name'); ?>:</td>
 						<td>
 							<input type="text" class="text" size="25" name="forum_name"
-								value="<?php echo @$forum_info["forum_name"]; ?>" maxlength="50" style="width:200px;" />
+								value="<?php echo htmlspecialchars((string)@$forum_info["forum_name"], ENT_QUOTES); ?>" maxlength="50" style="width:200px;" />
 						</td>
 					</tr>
 					<tr>
@@ -162,7 +162,7 @@ $titleBlock->show();
 			<td valign="top" width="50%">
 				<strong><?php echo $AppUI->_('Description'); ?></strong><br />
 				<textarea class="textarea" name="forum_description" style="height:150px;" rows="10"
-					cols="40"><?php echo @$forum_info["forum_description"]; ?></textarea>
+					cols="40"><?php echo htmlspecialchars((string)@$forum_info["forum_description"], ENT_QUOTES); ?></textarea>
 			</td>
 		</tr>
 
