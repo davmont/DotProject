@@ -79,13 +79,13 @@ echo $tab; ?>" method="post" name="form_cb">
 	</td>
 	<td align="center" width="100%" nowrap="nowrap">&nbsp;</td>
 	<td align="right" nowrap="nowrap">
-		<input type="checkbox" name="add_pwoid" id="add_pwoid"<?php echo dPaction(null, array(), null, array('submit' => 'form_cb')); ?> <?php 
+		<input type="checkbox" name="add_pwoid" id="add_pwoid"<?php echo dPaction(null, array(), 'change', array('submit' => 'form_cb')); ?> <?php 
 echo ($addPwOiD ? 'checked="checked"' : ''); ?> />
 		<label for="add_pwoid"><?php 
 echo $AppUI->_('Show Projects whose Owner is Member of the Dep.'); ?></label>
 	</td>
 	<td align="right" nowrap="nowrap">
-		<input type="checkbox" name="add_pwt" id="add_pwt"<?php echo dPaction(null, array(), null, array('submit' => 'form_cb')); ?> <?php 
+		<input type="checkbox" name="add_pwt" id="add_pwt"<?php echo dPaction(null, array(), 'change', array('submit' => 'form_cb')); ?> <?php 
 echo $addPwT ? 'checked="checked"' : ''; ?> />
 		<label for="add_pwt"><?php echo $AppUI->_('Show Projects with assigned Tasks'); ?></label>
 	</td>

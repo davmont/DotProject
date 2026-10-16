@@ -73,7 +73,7 @@ echo $tab; ?>" method="post" name="pickCompany">
 echo $AppUI->_('sort by'); ?>:</td>
 	<td align="center" width="100%" nowrap="nowrap" colspan="7">&nbsp;</td>
 	<td align="right" nowrap="nowrap">
-		<input type="checkbox" name="add_pwt" id="add_pwt"<?php echo dPaction(null, array(), null, array('submit' => 'pickCompany')); ?> <?php 
+		<input type="checkbox" name="add_pwt" id="add_pwt"<?php echo dPaction(null, array(), 'change', array('submit' => 'pickCompany')); ?> <?php 
 echo ($addPwT ? 'checked="checked"' : ''); ?> />
 		<label for="add_pwt"><?php 
 echo $AppUI->_('Show Projects with assigned Tasks'); ?></label>
