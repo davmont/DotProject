@@ -31,11 +31,11 @@ $controllerUtil = new ControllerUtil();
         </tr>
 </table>
 	<!--	  <form action="" method="post" name="form_ata" id="form_ata" enctype="multipart/form-data"> -->
-		  <form action="?m=monitoringandcontrol&a=do_acao_corretiva_aed&change_id=<?php echo $change_id; ?>" method="post" name="form_acao_corretiva" id="form_form_acao_corretiva" enctype="multipart/form-data">	    
+		  <form action="?m=monitoringandcontrol&a=do_acao_corretiva_aed&change_id=<?php echo (int)$change_id; ?>" method="post" name="form_acao_corretiva" id="form_form_acao_corretiva" enctype="multipart/form-data">	    
 	<input name="dosql" type="hidden" value="do_acao_corretiva_aed" />        
 	    <input  type="hidden" name="acao" value="updateRow"  />
-        <input  type="hidden" name="change_id" value="<?php echo $change_id; ?>" />
-		<input  type="hidden" name="project_id" value="<?php echo $project_id; ?>" /> 
+        <input  type="hidden" name="change_id" value="<?php echo (int)$change_id; ?>" />
+		<input  type="hidden" name="project_id" value="<?php echo (int)$project_id; ?>" /> 
 		
 		<br/>
 <table class="std" width="100%" cellspacing="0" cellpadding="4" border="0">
@@ -49,7 +49,7 @@ $controllerUtil = new ControllerUtil();
 					  		$records= $controllerAcaoCorretiva->getChangeRequestById($change_id);
 							$project_name = $controllerUtil->getProjectName($records['project_id']) ; 						
 					 ?>
-                 <input type="text" name="projeto" size="20" id="projeto" readonly="readonly" value="<?php echo  $project_name[0][0] ; ?> " />			
+                 <input type="text" name="projeto" size="20" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name[0][0]); ?> " />			
             </td>
                 <td colspan="5">&nbsp;
                 </td>
@@ -57,8 +57,8 @@ $controllerUtil = new ControllerUtil();
 	  <tr>
       		<td align="right" style="width:10%" ><?php echo $AppUI->_('LBL_TAREFA'); ?>:</td>
              <td  style="width:90%">
-                 <input type="text" name="tarefa" size="20" id="tarefa" readonly="readonly" value="<?php echo $records['task_name'] ; ?> " />	
-				 <input name="task_id" type="hidden" id="task_id" value="<?php echo $records['task_id']; ?>" /> 
+                 <input type="text" name="tarefa" size="20" id="tarefa" readonly="readonly" value="<?php echo dPhtml($records['task_name']); ?> " />	
+				 <input name="task_id" type="hidden" id="task_id" value="<?php echo (int)$records['task_id']; ?>" /> 
             </td>  
                <td colspan="5">&nbsp;</td>           
         </tr>
@@ -66,7 +66,7 @@ $controllerUtil = new ControllerUtil();
       		<td align="right" style="width:10%" ><?php echo $AppUI->_('LBL_IMPACTO'); ?> (<?php echo $AppUI->_('LBL_HORA'); ?>):</td>
              <td  style="width:90%" >
 
-                 <input name="impact" type="text" id="impact" size="3" maxlength="3"  value="<?php echo $records['change_impact']; ?>" />					
+                 <input name="impact" type="text" id="impact" size="3" maxlength="3"  value="<?php echo dPhtml($records['change_impact']); ?>" />					
             </td>
         <td colspan="5">&nbsp;</td>
         </tr> 
@@ -79,7 +79,7 @@ $controllerUtil = new ControllerUtil();
 						for($i=0;$i<count($select);$i++){
 							  if($records['change_status'] ==  $i){								 
 								  $option =  $select[$i];
-							     echo "<option value='".$records['change_status']."' selected>".$option."</option>";			 
+							     echo "<option value='".(int)$records['change_status']."' selected>".$option."</option>";			 
 							  }else
 						 		 echo "<option value='".$i."' >".$select[$i]."</option>";	
 						  }
@@ -88,15 +88,15 @@ $controllerUtil = new ControllerUtil();
          </td>
  	     	</tr>          
      		 <tr>
-                 <td align="right" ><?php echo $AppUI->_('LBL_DESCRICAO_DESVIO'); ?>:</td><td  colspan="6"><textarea  name="description" cols="60" rows="4" ><?php  echo $records['change_description'];	 ?></textarea></td>
+                 <td align="right" ><?php echo $AppUI->_('LBL_DESCRICAO_DESVIO'); ?>:</td><td  colspan="6"><textarea  name="description" cols="60" rows="4" ><?php  echo dPhtml($records['change_description']);	 ?></textarea></td>
            </tr>
           
           <tr>
-           		<td align="right" ><?php echo $AppUI->_('LBL_CAUSA'); ?>:</td><td  colspan="7"><textarea  name="cause" cols="60" rows="4" ><?php echo $records['change_cause']; ?></textarea></td>
+           		<td align="right" ><?php echo $AppUI->_('LBL_CAUSA'); ?>:</td><td  colspan="7"><textarea  name="cause" cols="60" rows="4" ><?php echo dPhtml($records['change_cause']); ?></textarea></td>
            </tr>
           
           <tr>
-           		<td align="right" ><?php echo $AppUI->_('LBL_ACAO_CORRETIVA'); ?>:</td><td  colspan="7"><textarea  name="acao_corretiva" cols="60" rows="4" ><?php echo $records['change_request']; ?></textarea></td>
+           		<td align="right" ><?php echo $AppUI->_('LBL_ACAO_CORRETIVA'); ?>:</td><td  colspan="7"><textarea  name="acao_corretiva" cols="60" rows="4" ><?php echo dPhtml($records['change_request']); ?></textarea></td>
            </tr>
 
       <tr>
@@ -109,9 +109,9 @@ $controllerUtil = new ControllerUtil();
 								$list = $controllerUtil -> getUsers();
 								foreach($list as $row){		
 									if($records['user_id'] == $row[0]){
-							    	  echo "<option value='".$records['user_id']."' selected>".$row[1]."</option>";	
+							    	  echo "<option value='".(int)$records['user_id']."' selected>".dPhtml($row[1])."</option>";	
 									}else{
-									  echo "<option value='".$row[0]."' >$row[1]</option>";		
+									  echo "<option value='".(int)$row[0]."' >" . dPhtml($row[1]) . "</option>";		
 									}
 								}
 						 ?>     
@@ -129,9 +129,9 @@ $controllerUtil = new ControllerUtil();
 							foreach($list as $row){								
 								  $data = $controllerUtil -> formatDate($row['dt_meeting_begin']); 								  
 									if($records['meeting_id'] == $row[0]){
-							    	  echo "<option value='".$records['meeting_id']."' selected>$data - $row[3]</option>";	
+							    	  echo "<option value='".(int)$records['meeting_id']."' selected>" . dPhtml($data) . " - " . dPhtml($row[3]) . "</option>";	
 									}else{
-									  echo " <option value='".$row['meeting_id']."' >$data - $row[dt_meeting_begin]</option>";	
+									  echo " <option value='".(int)$row['meeting_id']."' >" . dPhtml($data) . " - " . dPhtml($row['dt_meeting_begin']) . "</option>";	
 									}									
 							}							
 						 ?>     
@@ -142,7 +142,7 @@ $controllerUtil = new ControllerUtil();
              <td align="right" ><?php echo $AppUI->_('LBL_PRAZO'); ?>:</td>
 			 <td nowrap="nowrap" >   
              <?php	$date_limit =  $controllerUtil -> formatDate($records['change_date_limit']) 	?>              	  
-				   <input type="text" class="text"  name="date_limit"  id="date_edit"   value="<?php echo $date_limit ; ?>" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <input type="text" class="text"  name="date_limit"  id="date_edit"   value="<?php echo dPhtml($date_limit); ?>" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
 				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />     
                 </td>   
       </tr>      

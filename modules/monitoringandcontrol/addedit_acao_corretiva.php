@@ -34,7 +34,7 @@ $controllerUtil = new ControllerUtil();
 
         </tr>
 </table>
-	<form action="?m=monitoringandcontrol&a=do_acao_corretiva_aed&task_id=<?php echo $task_id; ?>" method="post" name="form_ata" id="form_ata" enctype="multipart/form-data">	    
+	<form action="?m=monitoringandcontrol&a=do_acao_corretiva_aed&task_id=<?php echo (int)$task_id; ?>" method="post" name="form_ata" id="form_ata" enctype="multipart/form-data">	    
 		<input name="dosql" type="hidden" value="do_acao_corretiva_aed" />    
     	<input  type="hidden" name="acao" value="insert"  />
 		<br/>
@@ -56,8 +56,8 @@ $controllerUtil = new ControllerUtil();
 					} 						
 					 						
 					 ?>
-                 <input type="text" name="projeto" size="20" id="projeto" readonly="readonly" value="<?php echo  $project_name ; ?> " />
-                    <input type="hidden" name="project_id" value="<?php echo  $project_id ; ?>" /> 			
+                 <input type="text" name="projeto" size="20" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name); ?> " />
+                    <input type="hidden" name="project_id" value="<?php echo (int)$project_id; ?>" /> 			
 					<input type="hidden" name="index" value="0" /> 	
             </td>
                 <td colspan="5">&nbsp;
@@ -73,8 +73,8 @@ $controllerUtil = new ControllerUtil();
              <?php if(isset($task_id)&& $task_id!=''){
 			 
 				$task_name = $controllerUtil->getTaskName($task_id) ; 						
-				 echo ' <input type="text" name="tarefa" size="40" id="tarefa" readonly="readonly" value="'.$task_name[0]['task_name'].'" />';
-				 echo ' <input type="hidden" name="task_id" size="40" id="task_id"  value="'.$task_id.'" />';				 
+				 echo ' <input type="text" name="tarefa" size="40" id="tarefa" readonly="readonly" value="'.dPhtml($task_name[0]['task_name']).'" />';
+				 echo ' <input type="hidden" name="task_id" size="40" id="task_id"  value="'.(int)$task_id.'" />';				 
 				 } else{ ?>
                     <select name="task_id" size="1"  >
    					<option value"0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
@@ -84,7 +84,7 @@ $controllerUtil = new ControllerUtil();
 				$task_records = $controllerAcaoCorretiva -> getTaskRecordsByProject($task_project);
 					foreach($task_records as $t_row){	
 					
-						  echo "<option value='$t_row[0]' >".$t_row[1] ."</option>";						
+						  echo "<option value='" . (int)$t_row[0] . "' >".dPhtml($t_row[1]) ."</option>";						
 					}
 						 ?>     
                 </select> 
@@ -132,7 +132,7 @@ $controllerUtil = new ControllerUtil();
 				$list = array();	
 				$list = $controllerUtil -> getUsers();
 					foreach($list as $row){		
-						  echo "<option value='".$row[0]."' >".$row[1]	."</option>";						
+						  echo "<option value='".(int)$row[0]."' >".dPhtml($row[1])	."</option>";						
 					}
 						 ?>     
                 </select>
@@ -148,7 +148,7 @@ $controllerUtil = new ControllerUtil();
 							foreach($lista as $line){	
 												
 							  $data = $controllerUtil -> formatDate($line['dt_meeting_begin']); 
-							  echo "<option value='".$line['meeting_id']."'>".$data." - ".$line['ds_title']."</option>";	
+							  echo "<option value='".(int)$line['meeting_id']."'>".dPhtml($data)." - ".dPhtml($line['ds_title'])."</option>";	
 							  }	
 						?>    
                 </select>
