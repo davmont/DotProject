@@ -69,9 +69,10 @@ if(dPgetParam($_POST, 'edit', 0))
 		<?php 
 		// Re-expand <tr> wich were expanded on last page
 		if(isset($_POST['expandedList'])) {
-			$expand = explode(',',$toExpand);
+			$expand = explode(',', (string)$toExpand);
 			foreach ($expand as $id) {
-				if ($id != '')
+				// Row ids are mp_<n>, mp_<n>_p_<n>, ...; anything else is not one of ours.
+				if (preg_match('/^[A-Za-z0-9_]+$/', $id))
 					echo '$("tr#'.$id.'").expand();';
 			}
 		} ?>
