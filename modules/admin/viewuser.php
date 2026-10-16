@@ -79,15 +79,14 @@ else {
 	if ($canEdit || $user_id == $AppUI->user_id) {
 		$titleBlock->addCrumb('?m=system&amp;a=addeditpref&amp;user_id=' . $user_id,
 			'edit preferences');
-		$titleBlock->addCrumbRight('<a href="#" onclick="popChgPwd();return false">'
+		$titleBlock->addCrumbRight('<a href="#"' . dPaction('popChgPwd') . '>'
 			. $AppUI->_('change password') . '</a>');
 		$titleBlock->addCell('<input type="button" class=button value="' . $AppUI->_('add user')
-			. '" onClick="javascript:window.location=\'./index.php'
-			. '?m=admin&amp;a=addedituser\';" />');
+			. '"' . dPaction(null, array(), null, array('href' => './index.php?m=admin&a=addedituser')) . ' />');
 	}
 	$titleBlock->show();
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 	// security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -95,7 +94,7 @@ else {
 	if ($canEdit || $user_id == $AppUI -> user_id) {
 ?>
 			function popChgPwd() {
-				window.open('./index.php?m=public&a=chpwd&dialog=1&user_id=<?php echo $user['user_id']; ?>', 'chpwd', 'top=250,left=250,width=450, height=300, scrollbars=no');
+				window.open('./index.php?m=public&a=chpwd&dialog=1&user_id=<?php echo (int)$user['user_id']; ?>', 'chpwd', 'top=250,left=250,width=450, height=300, scrollbars=no');
 			}
 			<?php
 	}?>

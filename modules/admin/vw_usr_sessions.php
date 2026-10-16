@@ -83,7 +83,7 @@ $q->clear();
 $tab = (int) dPgetParam($_REQUEST, 'tab', 0);
 
 ?>
-<script language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
     //<![CDATA[
     function logoutSession(sessionID, logID, userID, userName) {
         var frm;
@@ -134,16 +134,16 @@ $tab = (int) dPgetParam($_REQUEST, 'tab', 0);
         echo ('    <td align="center" nowrap="nowrap">' . "\n");
         if ($canEdit && $canDelete) {
             echo ('<input type="button" class="button" value="' . $AppUI->_('logout_session')
-                . '" onclick="javascript:logoutSession(\'' . $row['session_id'] . "', '"
-                . $row['user_access_log_id'] . "', '" . $row['u_user_id'] . "', "
-                . dPjsAttr($row['contact_first_name'] . ' ' . $row['contact_last_name']) . ');" />' . "\n");
+                . '"' . dPaction('logoutSession', array((string)$row['session_id'],
+                    (string)$row['user_access_log_id'], (string)$row['u_user_id'],
+                    $row['contact_first_name'] . ' ' . $row['contact_last_name'])) . ' />' . "\n");
         }
         echo ("    </td>\n");
         echo ('    <td align="center" nowrap="nowrap">' . "\n");
         if ($canEdit && $canDelete && $logoutUserFlag) {
             echo ('<input type="button" class="button" value="' . $AppUI->_('logout_user')
-                . '" onclick="javascript:logoutUser(\'' . $row['u_user_id'] . "', "
-                . dPjsAttr($row['contact_first_name'] . ' ' . $row['contact_last_name']) . ');" />' . "\n");
+                . '"' . dPaction('logoutUser', array((string)$row['u_user_id'],
+                    $row['contact_first_name'] . ' ' . $row['contact_last_name'])) . ' />' . "\n");
         }
         echo ("    </td>\n");
         echo ('    <td><a href="?m=admin&amp;a=viewuser&amp;user_id=' . $row['u_user_id']

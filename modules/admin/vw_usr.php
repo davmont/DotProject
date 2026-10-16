@@ -96,7 +96,7 @@ foreach ($users as $row) {
         $user_display = $row['user_username'];
 		}
 ?>
-				<a href="#" onclick="delMe(<?php echo (int)$row['user_id'];?>, <?php echo dPjsAttr($user_display);?>); return false;" title="<?php echo $AppUI->_('delete');?>">
+				<a href="#"<?php echo dPaction('delMe', array((int)$row['user_id'], $user_display)); ?> title="<?php echo $AppUI->_('delete');?>">
 					<?php echo dPshowImage('./images/icons/stock_delete-16.png', 16, 16, ''); ?>
 				</a>
 			</td>

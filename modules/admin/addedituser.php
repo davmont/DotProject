@@ -70,18 +70,18 @@ if (!db_loadHash($sql, $user) && $user_id > 0) {
 	}
 	$titleBlock->show();
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
     var form = document.editFrm;
-   if (form.user_username.value.length < <?php echo dPgetConfig('username_min_len'); ?> && form.user_username.value != '<?php echo dPgetConfig('admin_username'); ?>') {
-        alert("<?php echo $AppUI->_('adminValidUserName', UI_OUTPUT_JS)  ;?>"  + <?php echo dPgetConfig('username_min_len'); ?>);
+   if (form.user_username.value.length < <?php echo (int)dPgetConfig('username_min_len'); ?> && form.user_username.value != <?php echo dPjs(dPgetConfig('admin_username')); ?>) {
+        alert("<?php echo $AppUI->_('adminValidUserName', UI_OUTPUT_JS)  ;?>"  + <?php echo (int)dPgetConfig('username_min_len'); ?>);
         form.user_username.focus();
       <?php if ($canEdit && !$user_id) { ?>
     } else if (form.user_role.value <=0) {
         alert("<?php echo $AppUI->_('adminValidRole', UI_OUTPUT_JS);?>");
         form.user_role.focus();     <?php } ?>
-    } else if ((form.user_password.value.length > 0 || <?php echo $user_id ? 'false' : 'true'; ?>) && form.user_password.value.length < <?php echo dPgetConfig('password_min_len'); ?>) {
-        alert("<?php echo $AppUI->_('adminValidPassword', UI_OUTPUT_JS);?>" + <?php echo dPgetConfig('password_min_len'); ?>);
+    } else if ((form.user_password.value.length > 0 || <?php echo $user_id ? 'false' : 'true'; ?>) && form.user_password.value.length < <?php echo (int)dPgetConfig('password_min_len'); ?>) {
+        alert("<?php echo $AppUI->_('adminValidPassword', UI_OUTPUT_JS);?>" + <?php echo (int)dPgetConfig('password_min_len'); ?>);
         form.user_password.focus();
     } else if (form.user_password.value != form.password_check.value) {
         alert("<?php echo $AppUI->_('adminPasswordsDiffer', UI_OUTPUT_JS);?>");
@@ -229,7 +229,7 @@ echo @$user['contact_department'];?>" />
         <input type="text" class="text" name="dept_name" value="<?php 
 echo @$user['dept_name'];?>" size="40" disabled="disabled" />
         <input type="button" class="button" value="<?php 
-echo $AppUI->_('select dept');?>..." onclick="javascript:popDept()" />
+echo $AppUI->_('select dept');?>..." <?php echo dPaction('popDept'); ?> />
     </td>
 </tr>
 <tr>
@@ -255,7 +255,7 @@ echo $user['user_contact']; ?>"><?php echo $AppUI->_(array('edit', 'contact info
 </tr>
 <tr>
     <td align="left">
-        <input type="button" value="<?php echo $AppUI->_('back');?>" onclick="javascript:history.back(-1);" class="button" />
+        <input type="button" value="<?php echo $AppUI->_('back');?>"<?php echo dPaction('history.back'); ?> class="button" />
     </td>
     <td align="right">
     <?php if ($canEdit && !$user_id) { ?>
@@ -264,7 +264,7 @@ echo $AppUI->_('Inform new user of their account details?'); ?></label>
 	<input type="checkbox" value="1" name="send_user_mail" id="send_user_mail" />&nbsp;&nbsp;&nbsp;
 <?php } ?>
 	<input type="button" value="<?php 
-echo $AppUI->_('submit');?>" onclick="javascript:submitIt()" class="button" />
+echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> class="button" />
     </td>
 </tr>
 </table>
