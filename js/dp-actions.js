@@ -112,8 +112,8 @@
 				return;
 			}
 		}
-		// <a href="#"> stands in for an old href="javascript:..." and must not jump.
-		if (el.tagName === 'A' && el.getAttribute('href') === '#') {
+		// <a href="#"> / <area href="#"> stand in for an old href="javascript:..." and must not jump.
+		if ((el.tagName === 'A' || el.tagName === 'AREA') && el.getAttribute('href') === '#') {
 			ev.preventDefault();
 		}
 		var href = el.getAttribute('data-dp-href');

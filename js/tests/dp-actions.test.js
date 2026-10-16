@@ -73,6 +73,12 @@ describe('data-dp-call', () => {
 		expect(window.recorded).toHaveLength(1);
 	});
 
+	test('an image-map <area href="#"> does not follow it either', () => {
+		document.body.innerHTML = `<map name="m"><area href="#" data-dp-call="record" coords="0,0,1,1"></map>`;
+		expect(click(document.querySelector('area')).defaultPrevented).toBe(true);
+		expect(window.recorded).toHaveLength(1);
+	});
+
 	test('a real link is followed when the call returns nothing', () => {
 		document.body.innerHTML = `<a href="?m=x" data-dp-call="record">x</a>`;
 		expect(click(document.querySelector('a')).defaultPrevented).toBe(false);
