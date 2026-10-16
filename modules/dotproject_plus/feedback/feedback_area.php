@@ -24,7 +24,7 @@ require_once (DP_BASE_DIR . "/modules/dotproject_plus/feedback/feedback_controll
                          
 
                             <div class="onoffswitch" >
-                                 <input align="center" value="1" type="checkbox" name="generic_feedback" onclick="document.feedback_preferences.submit()" class="onoffswitch-checkbox" id="onoffswitch_generic" <?php echo $_SESSION["user_generic_feedback"] == 1 ? "checked" : "" ?>  />
+                                 <input align="center" value="1" type="checkbox" name="generic_feedback"<?php echo dPaction(null, array(), 'change', array('submit' => 'feedback_preferences')); ?> class="onoffswitch-checkbox" id="onoffswitch_generic" <?php echo $_SESSION["user_generic_feedback"] == 1 ? "checked" : "" ?>  />
                                  <label align="center" class="onoffswitch-label" for="onoffswitch_generic">
                                      <span class="onoffswitch-inner"></span>
                                      <span class="onoffswitch-switch"></span>
@@ -37,7 +37,7 @@ require_once (DP_BASE_DIR . "/modules/dotproject_plus/feedback/feedback_controll
                             <?php echo $AppUI->_("LBL_SEE_SPECIFIC_FEEDBACK"); ?><br />
                          
                             <div class="onoffswitch" >
-                                 <input align="center" value="1"  type="checkbox" name="especific_feedback" onclick="document.feedback_preferences.submit()" class="onoffswitch-checkbox" id="onoffswitch_especific" <?php echo $_SESSION["user_especific_feedback"] == 1 ? "checked" : "" ?>  />
+                                 <input align="center" value="1"  type="checkbox" name="especific_feedback"<?php echo dPaction(null, array(), 'change', array('submit' => 'feedback_preferences')); ?> class="onoffswitch-checkbox" id="onoffswitch_especific" <?php echo $_SESSION["user_especific_feedback"] == 1 ? "checked" : "" ?>  />
                                  <label align="center" class="onoffswitch-label" for="onoffswitch_especific">
                                      <span class="onoffswitch-inner"></span>
                                      <span class="onoffswitch-switch"></span>
@@ -59,7 +59,7 @@ require_once (DP_BASE_DIR . "/modules/dotproject_plus/feedback/feedback_controll
                                     ?>     
 
                                     <li>
-                                        <a  style="line-height: 120%" href="#" onclick="document.getElementById('show_feedback_<?php echo $feedback->getId() ?>').submit()">
+                                        <a  style="line-height: 120%" href="#"<?php echo dPaction(null, array(), null, array('submit' => 'show_feedback_' . $feedback->getId())); ?>>
                                             <form name="show_feedback_<?php echo $feedback->getId() ?>" id="show_feedback_<?php echo $feedback->getId() ?>" method="post" action="?m=dotproject_plus">
                                                 <img src="./style/dotproject_plus/img/feedback/<?php echo InstructionalFeebackManager::getIconByKnowledgeArea($feedback->getKnowledgeArea()) ?>.png" style="width:20px; height: 20px" />
                                                 <b><?php echo $feedback->getKnowledgeArea(); ?></b>
@@ -87,8 +87,8 @@ require_once (DP_BASE_DIR . "/modules/dotproject_plus/feedback/feedback_controll
                         }
                         if ($feedback_count>0){
                     ?>
-                                <script>
-                                    $("#feedback_count").html("&nbsp;<?php echo $feedback_count ?>&nbsp;");
+                                <script nonce="<?php echo dPcspNonce(); ?>">
+                                    $("#feedback_count").html("&nbsp;<?php echo (int) $feedback_count ?>&nbsp;");
                                 </script>
                     <?php
                     }

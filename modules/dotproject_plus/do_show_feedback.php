@@ -22,32 +22,21 @@ if(!$feedback_list[$feedback_id]->getGeneric()){
 $img.="</div><br />";
 $title="<b>:::: ". $AppUI->_("LBL_FEEDBACK_FOR_THE KNOWLEDGEAREA_OF") ." ". $feedback_list[$feedback_id]->getKnowledgeArea() ." :::: </b> <br /> <br />";
 
+$ratingAction = dPaction('saveRatingFeedbackEvaluation', array((int)$feedback_id), 'change');
 $rating= $AppUI->_("LBL_FEEDBACK_USEFUL")."<br />
-<script>
-function saveRatingFeedbackEvaluation(){
-    
-    var grade=$('input[name=star]:checked').val();
-    $.post('index.php?m=dotproject_plus', {
-        dosql: 'do_save_feedback_student_evaluation',
-        feedback_id: '" . (int)$feedback_id . "',
-        grade: grade,
-        csrf_token: $('meta[name=csrf-token]').attr('content')
-    });
-    
-}
-</script>
+<script src='./modules/dotproject_plus/feedback/user_feedback_evaluation/rating.js'></script>
 <link rel='stylesheet' href='./modules/dotproject_plus/feedback/user_feedback_evaluation/start_rating.css' />
 <form id='ratingsForm'>
 	<div class='stars'>
-		<input type='radio' name='star' class='star-1' value='1' id='star-1' onchange=saveRatingFeedbackEvaluation() />
+		<input type='radio' name='star' class='star-1' value='1' id='star-1'{$ratingAction} />
 		<label class='star-1' for='star-1'>1</label>
-		<input type='radio' name='star' class='star-2' value='2' id='star-2' onchange=saveRatingFeedbackEvaluation() />
+		<input type='radio' name='star' class='star-2' value='2' id='star-2'{$ratingAction} />
 		<label class='star-2' for='star-2'>2</label>
-		<input type='radio' name='star' class='star-3' value='3' id='star-3' onchange=saveRatingFeedbackEvaluation() />
+		<input type='radio' name='star' class='star-3' value='3' id='star-3'{$ratingAction} />
 		<label class='star-3' for='star-3'>3</label>
-		<input type='radio' name='star' class='star-4' value='4' id='star-4' onchange=saveRatingFeedbackEvaluation() />
+		<input type='radio' name='star' class='star-4' value='4' id='star-4'{$ratingAction} />
 		<label class='star-4' for='star-4'>4</label>
-		<input type='radio' name='star' class='star-5' value='5' id='star-5' onchange=saveRatingFeedbackEvaluation() />
+		<input type='radio' name='star' class='star-5' value='5' id='star-5'{$ratingAction} />
 		<label class='star-5' for='star-5'>5</label>
 		<span></span>
 	</div>
