@@ -11,26 +11,22 @@ require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 <?php
 require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 ?>
-<script type="text/javascript"
-    src="./modules/dotproject_plus/milonic_right_click_menu/contextmenu_activities_wbs.js"></script>
-<script type="text/javascript"
-    src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_activities.js"></script>
+<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/contextmenu_activities_wbs.js"></script>
+<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_activities.js"></script>
 <script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_wbs.js"></script>
-<script type="text/javascript"
-    src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_wbs_new_activity.js"></script>
-<script type="text/javascript"
-    src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_wbs_non_workpackage.js"></script>
+<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_wbs_new_activity.js"></script>
+<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_wbs_non_workpackage.js"></script>
 
 <!-- This script code  was moved to here due to translation reasons -->
-<script>
+<script nonce="<?php echo dPcspNonce(); ?>">
     with (milonic = new menuname("contextMenu")) {
         margin = 7;
         style = contextStyle;
         top = "offset=8";
-        aI("image=./modules/dotproject_plus/images/activities_details.png;text=<?php echo $AppUI->_("Details"); ?>;url=javascript:rightClickMenuShowActivity();");
-        aI("image=./modules/dotproject_plus/images/lapis.png;text=<?php echo $AppUI->_("Edit"); ?>;url=javascript:rightClickMenuEditActivity();");
-        aI("image=./modules/dotproject_plus/images/trash_small.gif;text=<?php echo $AppUI->_("LBL_EXCLUSION"); ?>;url=javascript:rightClickMenuExcludeActivity();");
-        aI("image=./modules/dotproject_plus/images/scope_declaration.jpg;text=<?php echo $AppUI->_("LBL_OPEN_ACTIVITY_FORM"); ?>;url=javascript:rightClickMenuOpenActivityForm();");
+        aI("image=./modules/dotproject_plus/images/activities_details.png;text=<?php echo $AppUI->_("Details", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuShowActivity();");
+        aI("image=./modules/dotproject_plus/images/lapis.png;text=<?php echo $AppUI->_("Edit", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuEditActivity();");
+        aI("image=./modules/dotproject_plus/images/trash_small.gif;text=<?php echo $AppUI->_("LBL_EXCLUSION", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuExcludeActivity();");
+        aI("image=./modules/dotproject_plus/images/scope_declaration.jpg;text=<?php echo $AppUI->_("LBL_OPEN_ACTIVITY_FORM", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuOpenActivityForm();");
 
     }
     drawMenus();
@@ -39,12 +35,12 @@ require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
         margin = 9;
         style = contextStyle;
         top = "offset=5";
-        aI("image=./modules/dotproject_plus/images/mais_azul.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_WBS_ITEM"); ?>;url=javascript:rightClickMenuNewEAPItem();");
-        aI("image=./modules/dotproject_plus/images/mais_verde.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_ACTIVITY"); ?>;url=javascript:rightClickMenuNewActivity();");
-        aI("image=./modules/dotproject_plus/images/lapis.png;text=<?php echo $AppUI->_("Edit"); ?>;url=javascript:rightClickMenuEditEAPItem();");
-        aI("image=./modules/dotproject_plus/images/trash_small.gif;text=<?php echo $AppUI->_("LBL_EXCLUSION"); ?>;url=javascript:rightClickMenuDeleteWBSItem();");
-        aI("image=./modules/dotproject_plus/images/scope_declaration.jpg?eee=5;text=<?php echo $AppUI->_("LBL_PROJECT_SCOPE_DECLARATION"); ?>;url=javascript:rightClickMenuShowScopeDeclaration();");
-        aI("image=./modules/dotproject_plus/images/dicionario.png?eee=5;text=<?php echo $AppUI->_("LBL_WBS_DICTIONARY"); ?>;url=javascript:rightClickMenuShowWBSDictionary();");
+        aI("image=./modules/dotproject_plus/images/mais_azul.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_WBS_ITEM", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuNewEAPItem();");
+        aI("image=./modules/dotproject_plus/images/mais_verde.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_ACTIVITY", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuNewActivity();");
+        aI("image=./modules/dotproject_plus/images/lapis.png;text=<?php echo $AppUI->_("Edit", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuEditEAPItem();");
+        aI("image=./modules/dotproject_plus/images/trash_small.gif;text=<?php echo $AppUI->_("LBL_EXCLUSION", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuDeleteWBSItem();");
+        aI("image=./modules/dotproject_plus/images/scope_declaration.jpg?eee=5;text=<?php echo $AppUI->_("LBL_PROJECT_SCOPE_DECLARATION", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuShowScopeDeclaration();");
+        aI("image=./modules/dotproject_plus/images/dicionario.png?eee=5;text=<?php echo $AppUI->_("LBL_WBS_DICTIONARY", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuShowWBSDictionary();");
     }
     drawMenus();
 
@@ -52,7 +48,7 @@ require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
         margin = 9;
         style = contextStyle;
         top = "offset=5";
-        aI("image=./modules/dotproject_plus/images/mais_verde.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_ACTIVITY"); ?>;url=javascript:rightClickMenuFirstActivity();");
+        aI("image=./modules/dotproject_plus/images/mais_verde.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_ACTIVITY", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuFirstActivity();");
     }
     drawMenus();
 
@@ -60,11 +56,11 @@ require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
         margin = 9;
         style = contextStyle;
         top = "offset=5";
-        aI("image=./modules/dotproject_plus/images/mais_azul.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_WBS_ITEM"); ?>;url=javascript:rightClickMenuNewEAPItem();");
-        aI("image=./modules/dotproject_plus/images/lapis.png;text=<?php echo $AppUI->_("Edit"); ?>;url=javascript:rightClickMenuEditEAPItem();");
-        aI("image=./modules/dotproject_plus/images/trash_small.gif;text=<?php echo $AppUI->_("LBL_EXCLUSION"); ?>;url=javascript:rightClickMenuDeleteWBSItem();");
-        aI("image=./modules/dotproject_plus/images/scope_declaration.jpg?eee=5;text=<?php echo $AppUI->_("LBL_PROJECT_SCOPE_DECLARATION"); ?>;url=javascript:rightClickMenuShowScopeDeclaration();");
-        aI("image=./modules/dotproject_plus/images/dicionario.png?eee=5;text=<?php echo $AppUI->_("LBL_WBS_DICTIONARY"); ?>;url=javascript:rightClickMenuShowWBSDictionary();");
+        aI("image=./modules/dotproject_plus/images/mais_azul.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_WBS_ITEM", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuNewEAPItem();");
+        aI("image=./modules/dotproject_plus/images/lapis.png;text=<?php echo $AppUI->_("Edit", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuEditEAPItem();");
+        aI("image=./modules/dotproject_plus/images/trash_small.gif;text=<?php echo $AppUI->_("LBL_EXCLUSION", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuDeleteWBSItem();");
+        aI("image=./modules/dotproject_plus/images/scope_declaration.jpg?eee=5;text=<?php echo $AppUI->_("LBL_PROJECT_SCOPE_DECLARATION", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuShowScopeDeclaration();");
+        aI("image=./modules/dotproject_plus/images/dicionario.png?eee=5;text=<?php echo $AppUI->_("LBL_WBS_DICTIONARY", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuShowWBSDictionary();");
     }
     drawMenus();
 
@@ -77,8 +73,7 @@ require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
     href="./modules/timeplanning/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.css?random=20051112"
     media="screen">
 </link>
-<script type="text/javascript"
-    src="./modules/timeplanning/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.js?random=20060118"></script>
+<script type="text/javascript" src="./modules/timeplanning/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.js?random=20060118"></script>
 <!-- include libraries for lightweight messages -->
 <link type="text/css" rel="stylesheet" href="./modules/timeplanning/js/jsLibraries/alertify/alertify.css"
     media="screen">
@@ -93,7 +88,7 @@ $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
 ?>
 
 
-<script>
+<script nonce="<?php echo dPcspNonce(); ?>">
     //Definition of messages as global variables
     var mensagem_1 = "<?php echo $AppUI->_("LBL_CREATE_ACTIVITIES_BEFORE_SEQUENCING", UI_OUTPUT_JS); ?>";
     var mensagem_2 = "<?php echo $AppUI->_("LBL_CONFIRM_WBS_ITEM_EXCLUSION", UI_OUTPUT_JS); ?>";
@@ -102,6 +97,27 @@ $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
     var message_4 = "<?php echo $AppUI->_("LBL_DATA_SUCCESSFULLY_PROCESSED", UI_OUTPUT_JS); ?>";
     var mensagem_5_WBS = "<?php echo $AppUI->_("LBL_CONFIRM_ITEM_CANCEL", UI_OUTPUT_JS); ?>";
     var mensagem_5 = "<?php echo $AppUI->_("LBL_CONFIRM_ITEM_CANCEL", UI_OUTPUT_JS); ?>";
+
+    // Date picker button of an activity date field.
+    function displayCalendarForField(fieldId, button) {
+        displayCalendar(document.getElementById(fieldId), 'dd/mm/yyyy', button);
+    }
+
+    // The WBS item rows (click) and activity rows (double click) used inline handlers on the <tr>.
+    // Listening on document, after js/dp-actions.js, keeps their behaviour: they also react when
+    // the click lands on an icon or button of the row that has its own action, and run after it.
+    document.addEventListener('click', function (e) {
+        var row = e.target.closest ? e.target.closest('tr[data-wbs-row-toggle]') : null;
+        if (row) {
+            expandControlWorkpackageActivities(row.getAttribute('data-wbs-row-toggle'));
+        }
+    });
+    document.addEventListener('dblclick', function (e) {
+        var row = e.target.closest ? e.target.closest('tr[data-activity-row]') : null;
+        if (row) {
+            showActivityDetails(row.getAttribute('data-activity-id'), row.getAttribute('data-wbs-id'));
+        }
+    });
 
     function showMessage(msg) {
         setAppMessage(msg, APP_MESSAGE_TYPE_INFO);
@@ -461,7 +477,7 @@ $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
     function saveActivity(activityId, wbsItemId) {
         var activityDescription = document.getElementById("activity_description_id_" + activityId);
         if (activityDescription !== null && activityDescription.value === "") {
-            alertify.error("<?php echo $AppUI->_("LBL_ACTIVITY_DESCRIPTION_VALIDATION_MESSAGE"); ?>", 5);
+            alertify.error("<?php echo $AppUI->_("LBL_ACTIVITY_DESCRIPTION_VALIDATION_MESSAGE", UI_OUTPUT_JS); ?>", 5);
             activityDescription.style.borderColor = "#ff1a1a";
             return false;
         }
@@ -649,7 +665,7 @@ $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
         removeButton.style.cursor = "pointer";
         removeButton.onclick = removeEstimatedRoleHR;
 
-        roleField.options[0] = new Option("<?php echo $AppUI->_("LBL_ROLE"); ?>", "");
+        roleField.options[0] = new Option("<?php echo $AppUI->_("LBL_ROLE", UI_OUTPUT_JS); ?>", "");
         for (i = 0; i < roleIds.length; i++) {
             roleField.options[i + 1] = new Option(roleNames[i], roleIds[i]);
             if (roleId == roleIds[i]) {
@@ -658,7 +674,7 @@ $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
             }
         }
 
-        hrField.options[0] = new Option("<?php echo $AppUI->_("Human Resource"); ?>", "");
+        hrField.options[0] = new Option("<?php echo $AppUI->_("Human Resource", UI_OUTPUT_JS); ?>", "");
 
         //set onchange evento to role select field
         roleField.onchange = function () {
@@ -730,7 +746,7 @@ $project_resources_filter = dPgetParam($_POST, "project_resources_filter", "");
 
             //include options and optgroups
             option = document.createElement("option");
-            option.text = "<?php echo $AppUI->_("Human Resource") ?>";
+            option.text = "<?php echo $AppUI->_("Human Resource", UI_OUTPUT_JS) ?>";
             option.value = "";
             hrSelectField.add(option);
             optGroup = document.createElement("optgroup");
@@ -877,7 +893,7 @@ foreach ($tasks_for_ids as $t) {
 
     $roles = $controllerCompanyRole->getCompanyRoles($project->project_company);
     ?>
-    <script>
+    <script nonce="<?php echo dPcspNonce(); ?>">
         var roleIds = new Array();
         var roleNames = new Array();
         var hrIds = new Array();
@@ -889,7 +905,7 @@ foreach ($tasks_for_ids as $t) {
             $roles[$role->getId()] = $role->getDescription();
             ?>
             roleNames[<?php echo $i ?>] = <?php echo dPjs($role->getDescription()) ?>;
-            roleIds[<?php echo $i ?>] = "<?php echo $role->getId() ?>";
+            roleIds[<?php echo $i ?>] = <?php echo dPjs($role->getId()) ?>;
             hrPerRole[<?php echo $i ?>] = new Array();
             <?php
             //start: build human resources list per role
@@ -932,7 +948,7 @@ foreach ($tasks_for_ids as $t) {
             $userNameByHRid[$record[1]] = $record[5] . " " . $record[4];
             ?>
             hrNames[<?php echo $i ?>] = <?php echo dPjs($record[5] . " " . $record[4]) ?>;
-            hrIds[<?php echo $i ?>] = "<?php echo $record[1] ?>";
+            hrIds[<?php echo $i ?>] = <?php echo dPjs($record[1]) ?>;
             <?php
             $i++;
         }
@@ -948,7 +964,7 @@ foreach ($tasks_for_ids as $t) {
     <div style="text-align:right">
         <form name="select_human_resource_filter_form" action="<?php echo dPhtml($currentPage) ?>" method="post">
             <span style="color:#000000"><?php echo $AppUI->_("LBL_FILTER"); ?>:</span>
-            <select id="project_resources_filter" name="project_resources_filter" onchange="filterActivitiesByUser()">
+            <select id="project_resources_filter" name="project_resources_filter"<?php echo dPaction('filterActivitiesByUser'); ?>>
                 <!-- Filter to select activities for just a resource -->
                 <option <?php echo $project_resources_filter == "" ? "selected" : "" ?> value="">
                     <?php echo $AppUI->_("All"); ?>
@@ -977,14 +993,14 @@ foreach ($tasks_for_ids as $t) {
             ?>
             <input type="hidden" name="activities_count" id="activities_count" value="<?php echo $activitiesCount ?>" />
             <input class="button" type="button" value="<?php echo $AppUI->_("LBL_PROJECT_PROJECT_SEQUENCING") ?>"
-                onclick="viewSequenceActivities()" /> <!-- Link to screen for sequencing activities -->
-            <!-- <input class="button" type="button" value="<?php echo $AppUI->_("LBL_WBS_DICTIONARY") ?>" onclick="window.location = 'index.php?a=view&m=projects&project_id=<?php echo $project_id ?>&tab=1&show_external_page=/modules/timeplanning/view/projects_wbs_dictionary.php#gqs_anchor';" /> -->
+               <?php echo dPaction('viewSequenceActivities'); ?> /> <!-- Link to screen for sequencing activities -->
+            <!-- <input class="button" type="button" value="<?php echo $AppUI->_("LBL_WBS_DICTIONARY") ?>"<?php echo dPaction(null, array(), null, array('href' => 'index.php?a=view&m=projects&project_id=' . (int) $project_id . '&tab=1&show_external_page=/modules/timeplanning/view/projects_wbs_dictionary.php#gqs_anchor')); ?> /> -->
             <input class="button" type="button" value="<?php echo $AppUI->_("LBL_NEED_FOR_TRAINING") ?>"
-                onclick="window.location = 'index.php?a=view&m=projects&project_id=<?php echo $project_id ?>&tab=1&show_external_page=/modules/timeplanning/view/need_for_training.php#gqs_anchor';" />
+               <?php echo dPaction(null, array(), null, array('href' => 'index.php?a=view&m=projects&project_id=' . (int) $project_id . '&tab=1&show_external_page=/modules/timeplanning/view/need_for_training.php#gqs_anchor')); ?> />
             <input class="button" type="button" value="<?php echo $AppUI->_("LBL_MINUTES_ESTIMATION_MEETINGS") ?>"
-                onclick="window.location = 'index.php?a=view&m=projects&project_id=<?php echo $project_id ?>&tab=1&show_external_page=/modules/timeplanning/view/projects_estimations_minutes.php#gqs_anchor';" />
+               <?php echo dPaction(null, array(), null, array('href' => 'index.php?a=view&m=projects&project_id=' . (int) $project_id . '&tab=1&show_external_page=/modules/timeplanning/view/projects_estimations_minutes.php#gqs_anchor')); ?> />
             <input class="button" type="button" value="<?php echo $AppUI->_("LBL_COPY_FROM_TEMPLATE") ?>"
-                onclick="dialogCopyProject.dialog('open')" />
+               <?php echo dPaction('dialogCopyProject.dialog', array('open')); ?> />
         </form>
     </div>
     <?php require_once(DP_BASE_DIR . "/modules/dotproject_plus/copy_project/copy_project_view.php"); ?>
@@ -994,8 +1010,7 @@ foreach ($tasks_for_ids as $t) {
     <span style="color:red">*</span>&nbsp;<span style="color:#000000">
         <?php echo $AppUI->_("LBL_RIGHT_CLICK_ADD_ACTIVITY"); ?> </span>
     <div id="div_eap_activities">
-        <table id="tb_eap" class="tbl" align="center" width="100%" border="0" onmouseover="setContextDisabled(false)"
-            onmouseout="setContextDisabled(true)">
+        <table id="tb_eap" class="tbl" align="center" width="100%" border="0">
             <tr>
                 <th style="width:40%" colspan="2">
                     <?php echo $AppUI->_("LBL_ACTIVITY"); ?>
@@ -1027,9 +1042,9 @@ foreach ($tasks_for_ids as $t) {
             if (count($items) == 0) {
                 ?>
                 <tr>
-                    <td colspan="9" onmouseover="setContextDisabled(false)">
+                    <td colspan="9">
                         * <?php echo $AppUI->_("LBL_CLICK") ?> <a href="#"
-                            onclick="createFirstWBSItem()"><b><u><?php echo $AppUI->_("LBL_HERE") ?></u></b></a>
+                           <?php echo dPaction('createFirstWBSItem'); ?>><b><u><?php echo $AppUI->_("LBL_HERE") ?></u></b></a>
                         <?php echo $AppUI->_("LBL_CREATE_NEW_WBS_ITEM") ?>
                         <form name="new_wbs_item_first" id="new_wbs_item_first" method="post" action="?m=dotproject_plus">
                             <input name="dosql" type="hidden" value="do_new_wbs_item" />
@@ -1047,7 +1062,7 @@ foreach ($tasks_for_ids as $t) {
             } else {
                 $wbs_items_order = 0;
                 ?>
-                <script>
+                <script nonce="<?php echo dPcspNonce(); ?>">
                     var wbsHasActivity = new Array();//stores WBS item id, and a boolean informing if it have or not activities
                 </script>
                 <?php
@@ -1136,7 +1151,7 @@ foreach ($tasks_for_ids as $t) {
                         $tasks = $ControllerWBSItemActivityRelationship->getActivitiesByWorkPackage($id);
                         $hasActivities = sizeof($tasks) > 0 ? true : false;
                         ?>
-                        <tr id="row_<?php echo $id ?>" onclick="expandControlWorkpackageActivities(<?php echo $id ?>)"
+                        <tr id="row_<?php echo $id ?>" data-wbs-row-toggle="<?php echo (int) $id ?>"
                             style="cursor:pointer">
 
                             <td style="background-color: #E8E8E8;height:  35px;min-width:50px; " colspan="7">
@@ -1146,11 +1161,11 @@ foreach ($tasks_for_ids as $t) {
                                     <?php echo strlen($identation) > 0 ? "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" : ""; ?>
                                     <span style="position: absolute;margin-top: -8px;">
                                         <img src="./modules/dotproject_plus/images/sort_icon_up.bmp"
-                                            onclick="sortWBSItem(-1, '<?php echo $id ?>');" id="sort_icon_<?php echo $id ?>"
+                                            <?php echo dPaction('sortWBSItem', array(-1, (string) $id)); ?> id="sort_icon_<?php echo $id ?>"
                                             style="cursor:pointer;" />
                                         <br />
                                         <img src="./modules/dotproject_plus/images/sort_icon_down.bmp"
-                                            onclick="sortWBSItem(1, '<?php echo $id ?>');" id="sort_icon_<?php echo $id ?>"
+                                            <?php echo dPaction('sortWBSItem', array(1, (string) $id)); ?> id="sort_icon_<?php echo $id ?>"
                                             style="cursor:pointer;" />
                                     </span>
                                     <span style="margin-left: 21px" id="div_numbering_<?php echo $id ?>">
@@ -1171,10 +1186,10 @@ foreach ($tasks_for_ids as $t) {
                                     <span style="display:<?php echo $hasActivities ? "inline" : "none" ?>">
 
                                         <img src="./modules/dotproject_plus/images/icone_seta.png"
-                                            onclick="collapseActivities(<?php echo $id ?>)" id="collapse_icon_<?php echo $id ?>"
+                                            <?php echo dPaction('collapseActivities', array((int) $id)); ?> id="collapse_icon_<?php echo $id ?>"
                                             style="cursor:pointer;display:none" />
                                         <img src="./modules/dotproject_plus/images/icone_seta_cima.png"
-                                            onclick="expandActivities(<?php echo $id ?>)" id="expand_icon_<?php echo $id ?>"
+                                            <?php echo dPaction('expandActivities', array((int) $id)); ?> id="expand_icon_<?php echo $id ?>"
                                             style="cursor:pointer" />
                                     </span>
 
@@ -1205,30 +1220,30 @@ foreach ($tasks_for_ids as $t) {
                                         <input type="text" class="text" name="estimated_size_unit_<?php echo $id ?>"
                                             id="estimated_size_unit_<?php echo $id ?>" maxlength="30" size="25"
                                             value="<?php echo dPhtml($eapItem->getSizeUnit()) ?>" />
-                                        <script>
-                                            $("#estimated_size_unit_<?php echo $id ?>").autocomplete({ source: workPackageSizeOptions });
+                                        <script nonce="<?php echo dPcspNonce(); ?>">
+                                            $("#estimated_size_unit_<?php echo (int) $id ?>").autocomplete({ source: workPackageSizeOptions });
                                         </script>
 
 
                                         <span style="text-align: right;width:100%">
                                             <input class="button" type="button" value="<?php echo $AppUI->_("LBL_SAVE"); ?>"
-                                                onclick="saveWBSItem(<?php echo $id ?>)" />
+                                                <?php echo dPaction('saveWBSItem', array((int) $id)); ?> />
                                             <input class="button" type="button" value="<?php echo ucfirst($AppUI->_("LBL_CANCEL")); ?>"
-                                                onclick="cancelSaveWBSItem(<?php echo $id ?>)" />
+                                                <?php echo dPaction('cancelSaveWBSItem', array((int) $id)); ?> />
                                         </span>
                                     </form>
                                 </span>
                             </td>
 
-                            <script>
-                                wbsHasActivity[<?php echo $id ?>] = <?php echo sizeof($tasks) > 0 ? "true" : "false" ?>;
+                            <script nonce="<?php echo dPcspNonce(); ?>">
+                                wbsHasActivity[<?php echo (int) $id ?>] = <?php echo sizeof($tasks) > 0 ? "true" : "false" ?>;
                             </script>
                             <?php
                             if ($activitiesCount == 0 && !$showFirstActivityCreation) {
                                 $showFirstActivityCreation = true;
                                 ?>
                             <tr>
-                                <td colspan="9" onmouseover="setContextDisabled(false)" id="new_activity_wbs_item_id_<?php echo $id ?>">
+                                <td colspan="9" id="new_activity_wbs_item_id_<?php echo $id ?>">
                                     <span style="color:red">*</span> <?php echo $AppUI->_("LBL_RIGHT_CLICK_NEW_ACTIVITY"); ?>
                                     <!-- createFirstActivity(<?php echo $id ?>) -->
                                     <form name="new_first_activity_for_an_wbs_id_<?php echo $id ?>"
@@ -1355,7 +1370,7 @@ foreach ($tasks_for_ids as $t) {
                                             <input type="hidden" name="activity_id" value="<?php echo $obj->task_id ?>" />
                                             <input type="hidden" name="tab" value="<?php echo (int) $_GET["tab"] ?>" />
 
-                                            <tr id="<?php echo $rowId; ?>" ondblclick="showActivityDetails(<?php echo $task_id ?>,<?php echo $id ?>)"
+                                            <tr id="<?php echo $rowId; ?>" data-activity-row="1" data-activity-id="<?php echo (int) $task_id ?>" data-wbs-id="<?php echo (int) $id ?>"
                                                 style="cursor:pointer;height:  30px">
                                                 <td style="width:200px;min-height: 30px;height: 30px" colspan="2">
                                                     <span
@@ -1366,14 +1381,14 @@ foreach ($tasks_for_ids as $t) {
                                                         <tr>
                                                             <td>
                                                                 <img src="./modules/dotproject_plus/images/sort_icon_up.bmp"
-                                                                    onclick="moveRow(-1, '<?php echo $rowId; ?>', '<?php echo $rowDetailsId ?>',<?php echo $task_id ?>);"
+                                                                    <?php echo dPaction('moveRow', array(-1, $rowId, $rowDetailsId, (int) $task_id)); ?>
                                                                     id="sort_icon_<?php echo $id ?>" style="cursor:pointer;" />
                                                             </td>
                                                         </tr>
                                                         <tr>
                                                             <td>
                                                                 <img src="./modules/dotproject_plus/images/sort_icon_down.bmp"
-                                                                    onclick="moveRow(1, '<?php echo $rowId; ?>', '<?php echo $rowDetailsId ?>',<?php echo $task_id ?>);"
+                                                                    <?php echo dPaction('moveRow', array(1, $rowId, $rowDetailsId, (int) $task_id)); ?>
                                                                     id="sort_icon_<?php echo $id ?>" style="cursor:pointer;" />
                                                             </td>
                                                         </tr>
@@ -1401,10 +1416,10 @@ foreach ($tasks_for_ids as $t) {
                                                         <input type="text" class="text" name="planned_start_date_activity_<?php echo $task_id ?>"
                                                             id="planned_start_date_activity_<?php echo $task_id ?>" placeholder="dd/mm/yyyy" size="12"
                                                             maxlength="10" value="<?php echo $startDateTxt ?>"
-                                                            onchange="updateActivityDateOnChange(<?php echo $task_id ?>, '/')" />
+                                                            <?php echo dPaction('updateActivityDateOnChange', array((int) $task_id, '/'), 'change'); ?> />
                                                         <img src="./modules/timeplanning/images/img.gif" id="calendar_trigger_1_<?php echo $task_id ?>"
                                                             style="cursor:pointer"
-                                                            onclick="displayCalendar(document.getElementById('planned_start_date_activity_<?php echo $task_id ?>'), 'dd/mm/yyyy', this)" />
+                                                            <?php echo dPaction('displayCalendarForField', array('planned_start_date_activity_' . $task_id, '$this')); ?> />
                                                     </span>
                                                 </td>
                                                 <td style="text-align: center" nowrap="nowrap">
@@ -1417,7 +1432,7 @@ foreach ($tasks_for_ids as $t) {
                                                             maxlength="10" value="<?php echo $endDateTxt ?>" />
                                                         <img src="./modules/timeplanning/images/img.gif" id="calendar_trigger_2_<?php echo $task_id ?>"
                                                             style="cursor:pointer"
-                                                            onclick="displayCalendar(document.getElementById('planned_end_date_activity_<?php echo $task_id ?>'), 'dd/mm/yyyy', this)" />
+                                                            <?php echo dPaction('displayCalendarForField', array('planned_end_date_activity_' . $task_id, '$this')); ?> />
                                                     </span>
                                                 </td>
                                                 <td style="text-align: center;width:100px"> <?php echo $duration ?> </td>
@@ -1476,7 +1491,7 @@ foreach ($tasks_for_ids as $t) {
                                                         </select>
                                                         &nbsp;
                                                         <input class="button" type="button" value="<?php echo $AppUI->_("LBL_SAVE"); ?>"
-                                                            onclick="saveActivity(<?php echo $task_id ?>, <?php echo $id ?>)" />
+                                                            <?php echo dPaction('saveActivity', array((int) $task_id, (int) $id)); ?> />
                                                         <?php
                                                     }
                                                     ?>
@@ -1534,7 +1549,7 @@ foreach ($tasks_for_ids as $t) {
                                                                     <input type="text" class="text" name="planned_effort_<?php echo $task_id ?>"
                                                                         id="planned_effort_<?php echo $task_id ?>"
                                                                         value="<?php echo $projectTaskEstimation->getEffort() ?>" size="8" maxlength="8"
-                                                                        onchange="enableDurationBasedOnEffort(<?php echo $task_id ?>);" />
+                                                                        <?php echo dPaction('enableDurationBasedOnEffort', array((int) $task_id), 'change'); ?> />
                                                                     <select class="text" name="planned_effort_unit_<?php echo $task_id ?>"
                                                                         id="planned_effort_unit_<?php echo $task_id ?>">
                                                                         <?php
@@ -1567,7 +1582,7 @@ foreach ($tasks_for_ids as $t) {
                                                                     }
                                                                     ?>
                                                                 </span>
-                                                                <script>enableDurationBasedOnEffort(<?php echo $task_id ?>);</script>
+                                                                <script nonce="<?php echo dPcspNonce(); ?>">enableDurationBasedOnEffort(<?php echo (int) $task_id ?>);</script>
                                                             </td>
                                                             <td nowrap="nowrap" style="vertical-align: top">
 
@@ -1592,11 +1607,11 @@ foreach ($tasks_for_ids as $t) {
                                                                             <td style="text-align: left;vertical-align: bottom; ">
                                                                                 <img src="./modules/dotproject_plus/images/mais_verde.png"
                                                                                     style="cursor:pointer;vertical-align: bottom;text-align: right;"
-                                                                                    onclick="addEstimatedRoleHR(<?php echo $task_id; ?>, '', '', 1);" />
+                                                                                    <?php echo dPaction('addEstimatedRoleHR', array((int) $task_id, '', '', 1)); ?> />
                                                                             </td>
                                                                         </tr>
                                                                     </table>
-                                                                    <script>
+                                                                    <script nonce="<?php echo dPcspNonce(); ?>">
                                                                         <?php
                                                                         $activity_has_estimated_resource = false; //to inclue an resource estimation entry, when none was created yet.
                                                                         foreach ($rolesNonGrouped as $role) {
@@ -1613,13 +1628,13 @@ foreach ($tasks_for_ids as $t) {
                                                                                 $allocated_hr_id = $record[0];
                                                                             }
                                                                             ?>
-                                                                            addEstimatedRoleHR(<?php echo $task_id ?>, <?php echo $role->getRoleId() ?>, "<?php echo $allocated_hr_id ?>", <?php echo $role->getQuantity() ?>);
+                                                                            addEstimatedRoleHR(<?php echo (int) $task_id ?>, <?php echo (int) $role->getRoleId() ?>, <?php echo dPjs($allocated_hr_id) ?>, <?php echo (int) $role->getQuantity() ?>);
                                                                             <?php
                                                                             $activity_has_estimated_resource = true;
                                                                         }
                                                                         if (!$activity_has_estimated_resource) {
                                                                             ?>
-                                                                            addEstimatedRoleHR(<?php echo $task_id; ?>, '', '', 1);//inclues the first resource estimation entry, when none was created yet.
+                                                                            addEstimatedRoleHR(<?php echo (int) $task_id; ?>, '', '', 1);//inclues the first resource estimation entry, when none was created yet.
                                                                             <?php
                                                                         }
                                                                         ?>
@@ -1635,10 +1650,10 @@ foreach ($tasks_for_ids as $t) {
                                                                     style="text-align: right;vertical-align: top;float: right">
                                                                     <br /><br />
                                                                     <input class="button" type="button" value="<?php echo $AppUI->_("LBL_SAVE"); ?>"
-                                                                        onclick="saveActivity(<?php echo $task_id ?>, <?php echo $id ?>)" />
+                                                                        <?php echo dPaction('saveActivity', array((int) $task_id, (int) $id)); ?> />
                                                                     <input class="button" type="button"
                                                                         value="<?php echo ucfirst($AppUI->_("LBL_CANCEL")); ?>"
-                                                                        onclick="cancelSaveActivity(<?php echo $task_id ?>, <?php echo $id ?>)" />
+                                                                        <?php echo dPaction('cancelSaveActivity', array((int) $task_id, (int) $id)); ?> />
                                                                 </span>
                                                             </td>
                                                         </tr>
@@ -1665,11 +1680,11 @@ foreach ($tasks_for_ids as $t) {
                                     <span style="position: absolute;margin-top: -8px">
                                         <?php if ($number != 1) { ?><!-- Do not include sort icons for EAP root item -->
                                             <img src="./modules/dotproject_plus/images/sort_icon_up.bmp"
-                                                onclick="sortWBSItem(-1, '<?php echo $id ?>');" id="sort_icon_<?php echo $id ?>"
+                                                <?php echo dPaction('sortWBSItem', array(-1, (string) $id)); ?> id="sort_icon_<?php echo $id ?>"
                                                 style="cursor:pointer" />
                                             <br />
                                             <img src="./modules/dotproject_plus/images/sort_icon_down.bmp"
-                                                onclick="sortWBSItem(1, '<?php echo $id ?>');" id="sort_icon_<?php echo $id ?>"
+                                                <?php echo dPaction('sortWBSItem', array(1, (string) $id)); ?> id="sort_icon_<?php echo $id ?>"
                                                 style="cursor:pointer" />
                                         <?php } ?>
                                     </span>
@@ -1702,9 +1717,9 @@ foreach ($tasks_for_ids as $t) {
                                             size="25" value="" />
                                         <span style="text-align: right;width:100%">
                                             <input class="button" type="button" value="<?php echo $AppUI->_("LBL_SAVE"); ?>"
-                                                onclick="saveWBSItem(<?php echo $id ?>)" />
+                                                <?php echo dPaction('saveWBSItem', array((int) $id)); ?> />
                                             <input class="button" type="button" value="<?php echo ucfirst($AppUI->_("LBL_CANCEL")); ?>"
-                                                onclick="cancelSaveWBSItem(<?php echo $id ?>)" />
+                                                <?php echo dPaction('cancelSaveWBSItem', array((int) $id)); ?> />
                                         </span>
                                     </form>
                                 </span>
@@ -1717,8 +1732,13 @@ foreach ($tasks_for_ids as $t) {
             ?>
         </table>
     </div>
-    <script>
+    <script nonce="<?php echo dPcspNonce(); ?>">
         updateEAPItemsNumbers();
+        (function () {
+            var table = document.getElementById("div_eap_activities").querySelector("#tb_eap");
+            table.addEventListener("mouseover", function () { setContextDisabled(false); });
+            table.addEventListener("mouseout", function () { setContextDisabled(true); });
+        })();
     </script>
     <br />
     <?php
@@ -1730,7 +1750,7 @@ foreach ($tasks_for_ids as $t) {
         if (!isset($_SESSION["new_eap_array"][$_GET["id_new_eap_item"] . "_" . $projectId])) {
             $_SESSION["new_eap_array"][$_GET["id_new_eap_item"] . "_" . $projectId] = true;
             ?>
-            <script>
+            <script nonce="<?php echo dPcspNonce(); ?>">
                 showWBSItemEdit(<?php echo (int) $_GET["id_new_eap_item"]; ?>);
             </script>
             <?php
@@ -1742,7 +1762,7 @@ foreach ($tasks_for_ids as $t) {
         if (!isset($_SESSION["new_activity_array"][$_GET["id_new_activity"] . "_" . $projectId])) {
             $_SESSION["new_activity_array"][$_GET["id_new_activity"] . "_" . $projectId] = true;
             ?>
-                <script>
+                <script nonce="<?php echo dPcspNonce(); ?>">
                     showActivityEdit(<?php echo (int) $_GET["id_new_activity"] ?>, <?php echo (int) $_GET["work_package_id"] ?>);
                     //addEstimatedRoleHR(<?php echo (int) $_GET["id_new_activity"] ?>, '', '', 1); // show HR for the new activities. Show to be unneeded.
                 </script>
