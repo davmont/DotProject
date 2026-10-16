@@ -386,7 +386,7 @@ if (!empty($all_task_ids)) {
 
 ?>
 
-<script type="text/javaScript" language="javascript">
+<script type="text/javaScript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function toggle_users(id) {
   var element = document.getElementById(id);
   element.style.display = (element.style.display == '' || element.style.display == "none") ? "inline" : "none";
@@ -494,7 +494,7 @@ if ($showEditCheckbox) {
 							<td><?php echo $AppUI->_('Show'); ?>:</td>
 							<td>
 								<input type="checkbox" name="show_incomplete" id="show_incomplete"
-									onclick="javascript:document.task_list_options.submit();" <?php echo $showIncomplete ? 'checked="checked"' : ''; ?> />
+									<?php echo dPaction(null, array(), 'change', array('submit' => 'task_list_options')); ?> <?php echo $showIncomplete ? 'checked="checked"' : ''; ?> />
 							</td>
 							<td><label for="show_incomplete"><?php echo $AppUI->_('Incomplete Tasks Only'); ?></label></td>
 						</tr>
@@ -597,7 +597,7 @@ if ($showEditCheckbox) {
 											$userAlloc = $tempoTask->getAllocation('user_id');
 											?>
 											<select name="add_users" multiple="multiple" class="multiselect"
-												ondblclick="javascript:chAssignment(<?php echo ($p['project_id']); ?>, 0, false)">
+												<?php echo dPaction('chAssignment', array((int) $p['project_id'], 0, false), 'dblclick'); ?>>
 												<?php
 												foreach ($userAlloc as $v => $u) {
 													echo ('	  <option value="' . $u['user_id'] . '">' . dPformSafe($u['userFC'])
@@ -608,7 +608,7 @@ if ($showEditCheckbox) {
 										</td>
 										<td align="center">
 											<?php
-											echo (' <a href="javascript:chAssignment(' . $p['project_id'] . ', 0, 0);">'
+											echo (' <a href="#"' . dPaction('chAssignment', array((int) $p['project_id'], 0, 0)) . '>'
 												. dPshowImage(
 													dPfindImage('add.png', 'tasks'),
 													16,
@@ -617,7 +617,7 @@ if ($showEditCheckbox) {
 													'Assign selected Users to selected Tasks'
 												) . "</a>\n");
 
-											echo (' <a href="javascript:chAssignment(' . $p['project_id'] . ', 1, 1);">'
+											echo (' <a href="#"' . dPaction('chAssignment', array((int) $p['project_id'], 1, 1)) . '>'
 												. dPshowImage(
 													dPfindImage('remove.png', 'tasks'),
 													16,
@@ -791,10 +791,10 @@ if ($showEditCheckbox) {
 							&nbsp;(<?php echo $AppUI->_('On Page'); ?>)&nbsp;
 							<!-- removed project-level report buttons per Mantis Report #2374
   <input type="button" class="button" value="<?php echo $AppUI->_('Reports'); ?>" 
-   onclick="javascript:window.location='index.php?m=projects&a=reports&project_id=<?php echo $k; ?>';" />
+  <?php echo dPaction(null, array(), null, array('href' => 'index.php?m=projects&a=reports&project_id=' . (int) $k)); ?> />
 -->
-							<input type="button" class="button" value="<?php echo $AppUI->_('Gantt Chart'); ?>" onclick="javascript:window.location='index.php?m=tasks&amp;a=viewgantt&amp;project_id=<?php
-							   echo $k; ?>';" />
+							<input type="button" class="button" value="<?php echo $AppUI->_('Gantt Chart'); ?>"<?php
+							   echo dPaction(null, array(), null, array('href' => 'index.php?m=tasks&a=viewgantt&project_id=' . (int) $k)); ?> />
 				</form>
 				</td>
 				</tr>
