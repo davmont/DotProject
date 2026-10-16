@@ -4,6 +4,10 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 	$table_name = dPgetCleanParam($_GET, "table_name", "companies");
+	// Only the two tables below: the name goes into SQL and into the form action.
+	if ($table_name != "departments") {
+		$table_name = "companies";
+	}
 
 	switch($table_name) {
 		case "companies":

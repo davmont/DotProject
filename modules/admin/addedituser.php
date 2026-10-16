@@ -165,11 +165,11 @@ function setDept(key, val) {
 <?php
 	if (@$user['user_username']) {
 		echo ('<input type="hidden" class="text" name="user_username" value="' 
-		      . $user['user_username'] . '" />');
-		echo '<strong>' . $user['user_username'] . '</strong>';
+		      . dPhtml($user['user_username']) . '" />');
+		echo '<strong>' . dPhtml($user['user_username']) . '</strong>';
 	} else {
 		echo ('<input type="text" class="text" name="user_username" value="' 
-		      . $user['user_username'] . '" maxlength="255" size="40" />');
+		      . dPhtml(@$user['user_username']) . '" maxlength="255" size="40" />');
 	}
 ?>
 	</td></tr>
@@ -207,9 +207,9 @@ function setDept(key, val) {
 <tr>
     <td align="right">* <?php echo $AppUI->_('Name');?>:</td>
     <td><input type="text" class="text" name="contact_first_name" value="<?php 
-echo $user['contact_first_name'];?>" maxlength="50" /> 
+echo dPhtml(@$user['contact_first_name']);?>" maxlength="50" /> 
     <input type="text" class="text" name="contact_last_name" value="<?php 
-echo $user['contact_last_name'];?>" maxlength="50" /></td>
+echo dPhtml(@$user['contact_last_name']);?>" maxlength="50" /></td>
 </tr>
 <?php if ($canEdit) { ?>
 <tr>
@@ -225,9 +225,9 @@ echo arraySelect($companies, 'contact_company', 'class="text" size="1"', $user['
     <td align="right"><?php echo $AppUI->_('Department');?>:</td>
     <td>
         <input type="hidden" name="contact_department" value="<?php 
-echo @$user['contact_department'];?>" />
+echo (int)@$user['contact_department'];?>" />
         <input type="text" class="text" name="dept_name" value="<?php 
-echo @$user['dept_name'];?>" size="40" disabled="disabled" />
+echo dPhtml(@$user['dept_name']);?>" size="40" disabled="disabled" />
         <input type="button" class="button" value="<?php 
 echo $AppUI->_('select dept');?>..." <?php echo dPaction('popDept'); ?> />
     </td>
@@ -235,17 +235,17 @@ echo $AppUI->_('select dept');?>..." <?php echo dPaction('popDept'); ?> />
 <tr>
     <td align="right">* <?php echo $AppUI->_('Email');?>:</td>
     <td><input type="text" class="text" name="contact_email" value="<?php 
-echo $user['contact_email'];?>" maxlength="255" size="40" /> </td>
+echo dPhtml(@$user['contact_email']);?>" maxlength="255" size="40" /> </td>
 </tr>
 <tr>
     <td align="right" valign="top"><?php echo $AppUI->_('Email').' '.$AppUI->_('Signature');?>:</td>
     <td><textarea class="text" cols="50" name="user_signature" style="height: 50px"><?php 
-echo @$user['user_signature'];?></textarea></td>
+echo dPhtml(@$user['user_signature']);?></textarea></td>
 </tr>
 <tr>
 	<td align="right"><?php if ($user['user_contact']) { ?>
 		<a href="?m=contacts&amp;a=addedit&amp;contact_id=<?php 
-echo $user['user_contact']; ?>"><?php echo $AppUI->_(array('edit', 'contact info')); ?></a>
+echo (int)$user['user_contact']; ?>"><?php echo $AppUI->_(array('edit', 'contact info')); ?></a>
 	<?php } ?></td>
 	<td>&nbsp;</td>
 </tr>

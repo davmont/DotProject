@@ -56,7 +56,7 @@ function submitIt() {
 <tr>
 	<th colspan="2"><?php echo $AppUI->_('User Preferences');?>:
 	<?php
-		echo $user_id ? "$user" : $AppUI->_("Default");
+		echo $user_id ? dPhtml($user) : $AppUI->_("Default");
 	?></th>
 </tr>
 

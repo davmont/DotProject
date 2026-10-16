@@ -146,8 +146,8 @@ function cleanFieldName(el) {
 <table class="std">
 	<th colspan="2">
 		<?php echo $edit_title?> <?php echo $AppUI->_($module)?> <?php echo $AppUI->_('Module') ?>
-		<input type="hidden" name="field_id" value="<?php echo $field_id; ?>" />
-		<input type="hidden" name="module" value="<?php echo $module?>" /> 
+		<input type="hidden" name="field_id" value="<?php echo htmlspecialchars((string)$field_id); ?>" />
+		<input type="hidden" name="module" value="<?php echo htmlspecialchars((string)$module)?>" /> 
 		<input type="hidden" name="dontdosql" id="dosql" value="do_custom_field_aed" />
 	</td></tr>
 	<tr><td>
@@ -191,7 +191,7 @@ echo arraySelect($html_types, 'field_htmltype',
 			<?php echo $AppUI->_('HTML Tag Options')?>:
 		</td>
 		<td>
-			<input type="text" name="field_extratags" value="<?php echo $field_extratags?>" />
+			<input type="text" name="field_extratags" value="<?php echo htmlspecialchars((string)$field_extratags)?>" />
 		</td></tr>
 	</td></tr>
 	<tr><td colspan="2">
