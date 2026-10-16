@@ -379,3 +379,148 @@ function setCalendar(idate, fdate) {
 	calendarField.value = idate;
 	document.getElementById( "show_"+calendarField.name ).value = fdate;
 }
+
+/**************************** HANDLERS CALLED THROUGH js/dp-actions.js **********************************/
+/* They replace the inline onclick/onmouseover/... attributes of index.php. The
+** global "timer" (declared in index.php) holds the pending details timeout.
+*/
+
+/* Calendar link of a filter field of mainFrm: start_date or end_date.
+** @param	string	name
+*/
+function rmPopCalendar(name)
+{
+	popCalendar(document.mainFrm.elements[name]);
+}
+
+/* Calendar link of the assignment edit form (aSDate or aEDate): switch the form
+** to "adapt assignment" mode, then open the calendar.
+** @param	string	name
+*/
+function rmAssignCalendar(name)
+{
+	switchTypeAA();
+	popCalendar(document.mainFrm.elements[name]);
+}
+
+/* Focus on a calendar link of the assignment edit form.
+** @param	string	id		aSDate or aEDate
+** @param	string	global	name of the global holding the original date ("start" or "end")
+*/
+function rmAssignCalendarFocus(id, global)
+{
+	if (document.getElementById(id).value == window[global])
+		switchTypeNull();
+}
+
+/* Change of the (hidden) assignment start date.
+*/
+function rmAssignStartChanged()
+{
+	document.getElementById('aPercent').disabled = 'disabled';
+	document.getElementById('aa').style.display = 'table-row';
+}
+
+/* Focus, blur and change of the assignment field. After a change, blur no longer
+** resets the form (the inline handler cleared its own onblur).
+*/
+function rmPercentFocus()
+{
+	switchTypeAD();
+	this.select();
+}
+
+function rmPercentBlur()
+{
+	switchTypeNull();
+}
+
+function rmPercentChange()
+{
+	this.removeAttribute('data-dp-call-blur');
+	switchTypeAD();
+}
+
+/* Close the assignment edit form.
+*/
+function rmHideAssignEdit()
+{
+	document.getElementById('assignEdit').style.display = 'none';
+}
+
+/* Date range links of the calendar header: set the range and submit.
+** @param	string	sdate	YYYYMMDD
+** @param	string	edate	YYYYMMDD
+*/
+function rmRange(sdate, edate)
+{
+	$('input#start_date').val(sdate);
+	$('input#end_date').val(edate);
+	$('#submitButton').click();
+}
+
+/* Hover details of a user, project or task line.
+*/
+function rmUserOver(ev, company, department)
+{
+	window.timer = displayUserDetails(ev, company, department);
+}
+
+function rmUserOut()
+{
+	hideUserDetails(window.timer);
+}
+
+function rmProjectOver(ev, owner, sdate, edate, company, department)
+{
+	window.timer = displayProjectDetails(ev, owner, sdate, edate, company, department);
+}
+
+function rmProjectOut()
+{
+	hideProjectDetails(window.timer);
+}
+
+/* @param	bool	editable	the task assignment can be edited: show the pencil icon
+*/
+function rmTaskOver(ev, editable, owner, percent, sdate, edate, disp)
+{
+	if (editable) {
+		$(this).append($("<img style='float:right;' src='./images/icons/pencil.gif' />"));
+		$(this).css('cursor', 'pointer');
+	}
+	window.timer = displayTaskDetails(ev, owner, percent, sdate, edate, disp);
+}
+
+function rmTaskOut(editable)
+{
+	if (editable) {
+		$(this).find('img:last').remove();
+		$(this).css('cursor', 'default');
+	}
+	hideTaskDetails(window.timer);
+}
+
+function rmAssignEdit(ev, user, task, project, taskid, userid, complete, sdate, edate, aPercent)
+{
+	displayAssignEdit(ev, user, task, project, taskid, userid, complete, sdate, edate, aPercent, window.timer);
+}
+
+/* Filter links (generateFilterLink(), class rmFilterLink): a click filters the page
+** on that user or project; hovering shows the filter icon. Bound with jQuery rather
+** than data-dp-* attributes so the hover details of the cell around the link
+** (rmUserOver/rmProjectOver) keep working: dp-actions only runs the nearest element.
+*/
+function rmFilter(name, id)
+{
+	$('select[name=' + name + '_id]').val(id);
+	$('#submitButton').click();
+}
+
+$('a.rmFilterLink').live('click', function () {
+	rmFilter($(this).attr('data-rm-filter'), $(this).attr('data-rm-id'));
+}).live('mouseenter', function () {
+	$(this).append($("<img style='float:right;' src='./modules/resource_m/images/filter.png' height='12' width='12' />"));
+}).live('mouseout', function () {
+	$(this).find('img:last').remove();
+});

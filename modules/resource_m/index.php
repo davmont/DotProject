@@ -139,7 +139,7 @@ $titleBlock->show();
 <script type="text/javascript" src="./modules/resource_m/js/jquery.ui.js"></script>
 <script type="text/javascript" src="./modules/resource_m/js/jquery.treeTable.js"></script>
 <script type="text/javascript" src="./modules/resource_m/js/resource_m.js"></script>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	var timer; 	// Will be used to delay the display of additionnal informations relative to user/project/task.
 	var start;	// Will be used to know if user have changed the start date during edition.
 	var end;	// Will be used to know if user have changed the end date during edition.
@@ -176,7 +176,7 @@ $titleBlock->show();
 				<td align="left" nowrap="nowrap">
 					<input type="hidden" id="start_date" name="start_date" value="<?php echo $start_date; ?>" />
 					<input type="text" class="text" id="show_start_date" value="<?php echo $cstart_date->format("%d/%m/%Y"); ?>" size="12" disabled="disabled" />
-					<a href="javascript:popCalendar(document.mainFrm.start_date)">
+					<a href="#"<?php echo dPaction('rmPopCalendar', array('start_date')); ?>>
 						<img src="./images/calendar.gif" width="24" height="12" alt="" border="0">
 					</a>
 				</td>
@@ -184,19 +184,19 @@ $titleBlock->show();
 				<td align="left" nowrap="nowrap">
 					<input type="hidden" id="end_date" name="end_date" value="<?php echo $end_date; ?>" />
 					<input type="text" class="text" id="show_end_date" value="<?php echo $cend_date->format("%d/%m/%Y"); ?>" size="12" disabled="disabled" />
-					<a href="javascript:popCalendar(document.mainFrm.end_date)">
+					<a href="#"<?php echo dPaction('rmPopCalendar', array('end_date')); ?>>
 						<img src="./images/calendar.gif" width="24" height="12" alt="" border="0">
 					</a>
 					<?php echo '  '.generateRangeLink($nsdate->format("%Y%m%d"), $nedate->format("%Y%m%d"),
 													'<img src="./images/next.gif" width="16" height="16" alt="'.$AppUI->_('next').'" border="0">');?>
 				</td>
-				<td align="left" nowrap><input type="button" onclick="javascript:submitWithExpandList(this);" class="button" id="submitButton" value="<?php echo $AppUI->_("Submit"); ?>" /></td>
+				<td align="left" nowrap><input type="button"<?php echo dPaction('submitWithExpandList', array('$this')); ?> class="button" id="submitButton" value="<?php echo $AppUI->_("Submit"); ?>" /></td>
 				<td align="right" nowrap><?php echo $AppUI->_("Display").':'; ?></td>
-				<td align="left" nowrap><?php echo $AppUI->_("%"); ?><input type="radio" name="aff_style" value=0 onChange="javascript:submitWithExpandList(this);" <?php if(!$aff_style) echo 'checked'; ?>/></td>
-				<td align="left" nowrap><?php echo $AppUI->_("Daily assigned hours"); ?><input type="radio" name="aff_style" value=1 onChange="javascript:submitWithExpandList(this);" <?php if($aff_style) echo 'checked'; ?>/></td>
+				<td align="left" nowrap><?php echo $AppUI->_("%"); ?><input type="radio" name="aff_style" value=0<?php echo dPaction('submitWithExpandList', array('$this'), 'change'); ?> <?php if(!$aff_style) echo 'checked'; ?>/></td>
+				<td align="left" nowrap><?php echo $AppUI->_("Daily assigned hours"); ?><input type="radio" name="aff_style" value=1<?php echo dPaction('submitWithExpandList', array('$this'), 'change'); ?> <?php if($aff_style) echo 'checked'; ?>/></td>
 				<td align="right" nowrap><?php echo $AppUI->_("Dynamic tasks").':'; ?></td>
-				<td align="left" nowrap><?php echo $AppUI->_("Show"); ?><input type="radio" name="dyna" value=0 onChange="javascript:submitWithExpandList(this);" <?php if(!$dyna) echo 'checked'; ?>/></td>
-				<td align="left" nowrap><?php echo $AppUI->_("Hide"); ?><input type="radio" name="dyna" value=1 onChange="javascript:submitWithExpandList(this);" <?php if($dyna) echo 'checked'; ?>/></td>
+				<td align="left" nowrap><?php echo $AppUI->_("Show"); ?><input type="radio" name="dyna" value=0<?php echo dPaction('submitWithExpandList', array('$this'), 'change'); ?> <?php if(!$dyna) echo 'checked'; ?>/></td>
+				<td align="left" nowrap><?php echo $AppUI->_("Hide"); ?><input type="radio" name="dyna" value=1<?php echo dPaction('submitWithExpandList', array('$this'), 'change'); ?> <?php if($dyna) echo 'checked'; ?>/></td>
 			</tr>
 			<tr> 
 				<td align="left" colspan=5 nowrap>
@@ -207,7 +207,7 @@ $titleBlock->show();
 					$q->addQuery('project_name AS label');
 					$q->addOrder('project_name');
 					$projectRows = array(0 => $AppUI->_('All Projects', UI_OUTPUT_RAW)) + $q->loadHashList();
-					echo arraySelect($projectRows, 'project_id', 'onChange="javascript:submitWithExpandList(this);" class="text"', $project_id); ?>
+					echo arraySelect($projectRows, 'project_id', 'class="text"' . dPaction('submitWithExpandList', array('$this')), $project_id); ?>
 				</td>
 				<td align="right" nowrap><?php echo $AppUI->_('Company').'/'.$AppUI->_('Division').':'; ?></td>
 				<td align="left" colspan=2 nowrap>
@@ -231,7 +231,7 @@ $titleBlock->show();
 					$rows = $q->loadList();
 					
 					//display the select list
-					$cBuffer = '<select name="company_id" onChange="javascript:submitWithExpandList(this);" class="text">';
+					$cBuffer = '<select name="company_id"' . dPaction('submitWithExpandList', array('$this')) . ' class="text">';
 					$cBuffer .= ('<option value="0" style="font-weight:bold;">' . $AppUI->_('All') 
 								 . '</option>'."\n");
 					$comp = '';
@@ -261,7 +261,7 @@ $titleBlock->show();
 					$q->addQuery("CONCAT(contact_last_name, ' ', contact_first_name) AS label");
 					$q->addOrder('contact_last_name, contact_first_name');
 					$userRows = array(0 => $AppUI->_('All Users', UI_OUTPUT_RAW)) + $q->loadHashList();
-					echo arraySelect($userRows, 'contact_id','onChange="javascript:submitWithExpandList(this);" class="text"', $contact_id); ?>
+					echo arraySelect($userRows, 'contact_id', 'class="text"' . dPaction('submitWithExpandList', array('$this')), $contact_id); ?>
 				</td>				
 			</tr>
 		</tbody>
@@ -418,9 +418,12 @@ $titleBlock->show();
 	foreach ($users as $user) { // Display a line by user
 		if(getPermission('contacts', 'view', $user->contact_id)) {
 			$dep	= $user->getDepartmentDetails();
-			$fun 	= 'displayUserDetails(event,\''.addslashes($user->getCompanyName()).'\',\''.addslashes($dep['dept_name']).'\');';
+			$hover	= dPaction(null, array(), 'mouseover mouseout', array(
+				'call-mouseover' => 'rmUserOver',
+				'args-mouseover' => json_encode(array('$event', (string)$user->getCompanyName(), (string)$dep['dept_name'])),
+				'call-mouseout' => 'rmUserOut'));
 			echo '<tr id="u_'.$user->contact_id.'" rel="u_'.$user->contact_id.'">'
-					.'<td class="tdRessource" style="font-weight:bold;" onMouseOver="timer='.$fun.'" onMouseOut="hideUserDetails(timer)">'
+					.'<td class="tdRessource" style="font-weight:bold;"'.$hover.'>'
 					.generateFilterLink('contact', $user->contact_id, $user->contact_last_name.' '.$user->contact_first_name)
 					.'</td>'
 					.generateTdUsers($colCount)
@@ -462,14 +465,14 @@ $titleBlock->show();
 					$company_name = $rel ? $rel['company_name'] : '';
 					$dept_name = $rel ? $rel['dept_name'] : '';
 
-					$fun 		= 'displayProjectDetails(event,\''
-														.$owner_first.' '.$owner_last.'\',\''
-														.$sdate->format('%d/%m/%Y').'\',\''
-														.$edate->format('%d/%m/%Y').'\',\''
-														.$company_name.'\',\''
-														.$dept_name.'\');';
+					$hover 		= dPaction(null, array(), 'mouseover mouseout', array(
+						'call-mouseover' => 'rmProjectOver',
+						'args-mouseover' => json_encode(array('$event', $owner_first.' '.$owner_last,
+							$sdate->format('%d/%m/%Y'), $edate->format('%d/%m/%Y'),
+							(string)$company_name, (string)$dept_name)),
+						'call-mouseout' => 'rmProjectOut'));
 					echo '<tr id="u_'.$user->contact_id.'_p_'.$project->project_id.'" class="child-of-u_'.$user->contact_id.'">'
-							.'<td class="tdRessource" onMouseOver="timer='.$fun.'" onMouseOut="hideProjectDetails(timer)" style="background-color: #'.$project->project_color_identifier.'; " >'
+							.'<td class="tdRessource"'.$hover.' style="background-color: #'.$project->project_color_identifier.'; " >'
 								.'<img src="./modules/projects/images/applet3-48.png" width="12px" height:"12px" /> '
 								.generateFilterLink('project', $project->project_id, $project->project_name,
 													bestColor($project->project_color_identifier))
@@ -497,40 +500,43 @@ $titleBlock->show();
 									$edate 		= new CDate($task->task_end_date);
 									$owner 		= new CContact();
 									$owner->load(getContactId($task->task_owner));
-									$fun 		= 'displayTaskDetails(event,\''
-																	.$owner->contact_first_name.' '.$owner->contact_last_name.'\',\''
-																	.$task->task_percent_complete.'%'.'\',\''
-																	.$sdate->format('%d/%m/%Y').'\',\''
-																	.$edate->format('%d/%m/%Y').'\',\''
-																	.($task->task_dynamic!=1 && $canEdit).'\');';
+									$taskDetails = array($owner->contact_first_name.' '.$owner->contact_last_name,
+																	$task->task_percent_complete.'%',
+																	$sdate->format('%d/%m/%Y'),
+																	$edate->format('%d/%m/%Y'),
+																	($task->task_dynamic!=1 && $canEdit) ? '1' : '');
+									$editable	= false;
+									$events		= array();
 									echo '<tr id="u_'.$user->contact_id.'_p_'.$project->project_id.'_t_'.$task->task_id.'" class="'.$parent.'">';
 									$add = '';
 									if($task->task_dynamic == 1) {
 										$add = 'style="font-weight:bold; font-size:80%;"';
-										$over= '';
-										$out = '';
 									} else if($canEdit) {
 										$aPercent = getUserTaskAssign($task->task_id, $user->contact_id)*$scale/100;
 										$aPercent = (round($aPercent*4)/4);
 										$aPercent = str_replace('.', '', $aPercent);
 										$aPercent = str_replace(',', '.', $aPercent);
-										$over 	  ='$(this).append($(\'<img style=\\\'float:right;\\\' src=\\\'./images/icons/pencil.gif\\\' />\'));'
-													.'$(this).css(\'cursor\', \'pointer\'); ';
-										$out      = '$(this).find(\'img:last\').remove();'
-													.'$(this).css(\'cursor\', \'default\'); ';
-										$add      = 'onClick="displayAssignEdit(event,\''
-																		.$user->contact_last_name.' '.$user->contact_first_name.'\',\''
-																		.addslashes($task->task_name).'\',\''
-																		.addslashes($project->project_name).'\',\''
-																		.$task->task_id.'\',\''
-																		.getUserId($user->contact_id).'\',\''
-																		.$task->task_percent_complete.'%'.'\',\''
-																		.$sdate->format('%d/%m/%Y').'\',\''
-																		.$edate->format('%d/%m/%Y').'\',\''
-																		.$aPercent.'\',timer);"';
+										// Pencil icon on hover, assignment edit form on click.
+										$editable = true;
+										$events   = array(
+											'call-click' => 'rmAssignEdit',
+											'args-click' => json_encode(array('$event',
+																		$user->contact_last_name.' '.$user->contact_first_name,
+																		(string)$task->task_name,
+																		(string)$project->project_name,
+																		(string)$task->task_id,
+																		(string)getUserId($user->contact_id),
+																		$task->task_percent_complete.'%',
+																		$sdate->format('%d/%m/%Y'),
+																		$edate->format('%d/%m/%Y'),
+																		(string)$aPercent)));
 									}
-									echo '<td class="tdRessource" '.$add.' onMouseOver="javascript:'.$over.'timer='.$fun.'" '
-											.'onMouseOut="javascript:'.$out.'hideTaskDetails(timer)">';
+									$events['call-mouseover'] = 'rmTaskOver';
+									$events['args-mouseover'] = json_encode(array_merge(array('$event', $editable), $taskDetails));
+									$events['call-mouseout'] = 'rmTaskOut';
+									$events['args-mouseout'] = json_encode(array($editable));
+									echo '<td class="tdRessource" '.$add
+											.dPaction(null, array(), ($editable ? 'click ' : '').'mouseover mouseout', $events).'>';
 									if ($task->task_dynamic == 1 || !$canEdit)
 										echo '<img src="./modules/resource_m/images/dyna.gif" width="10px" height:"10px" /> '.dPhtml($task->task_name).'</td>';
 									else
@@ -551,9 +557,9 @@ $titleBlock->show();
 	</tbody>
 </table>
 <div id="convert" style="display: none;"></div>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 // Run the js script to compute the table values
-completeTd(<?php echo $scale; ?>, "<?php echo ($aff_style) ? $AppUI->_('Daily assigned hours'): $AppUI->_('%'); ?>");
+completeTd(<?php echo (float)$scale; ?>, <?php echo dPjs(($aff_style) ? $AppUI->_('Daily assigned hours'): $AppUI->_('%')); ?>);
 mergeTd();
 </script>
 
@@ -642,7 +648,7 @@ mergeTd();
 		<table border="0" cellpadding="2" cellspacing="0" class="tbl" width="100%" >
 			<tr>
 			<td width="100%" align="center"><?php echo $AppUI->_("Task Edition"); ?></td>
-			<td onClick="document.getElementById('assignEdit').style.display='none';"><img src="./modules/resource_m/images/cancel.gif" width="14" height="14" border="0"></td>
+			<td<?php echo dPaction('rmHideAssignEdit'); ?>><img src="./modules/resource_m/images/cancel.gif" width="14" height="14" border="0"></td>
 			</tr>
 		</table>
 		</td>
@@ -666,12 +672,11 @@ mergeTd();
 	<tr>
 		<td align="right" class="hilite" valign="top" nowrap><?php echo $AppUI->_("Start date").':'; ?></td>
 		<td class="hilite" align="right" valign="top" nowrap>
-			<input type="hidden" id="aSDate" name="aSDate" value="" onChange="document.getElementById('aPercent').disabled='disabled';
-			document.getElementById('aa').style.display='table-row';"/>
+			<input type="hidden" id="aSDate" name="aSDate" value=""<?php echo dPaction('rmAssignStartChanged', array(), 'change'); ?>/>
 			<input type="text" class="text" id="show_aSDate" name="show_aSDate" value="" size="12" disabled="disabled" />
 		</td>
 		<td class="hilite" align="left" valign="top" id="aSCal" style="display:table-cell;" nowrap>
-			<a href="javascript:popCalendar(document.mainFrm.aSDate)" onClick="switchTypeAA();" onFocus="if (document.getElementById('aSDate').value == start) switchTypeNull();" >
+			<a href="#"<?php echo dPaction(null, array(), 'click focus', array('call-click' => 'rmAssignCalendar', 'args-click' => json_encode(array('aSDate')), 'call-focus' => 'rmAssignCalendarFocus', 'args-focus' => json_encode(array('aSDate', 'start')))); ?>>
 				<img src="./images/calendar.gif" width="24" height="12" alt="" border="0">
 			</a>
 		</td>
@@ -683,7 +688,7 @@ mergeTd();
 			<input type="text" class="text" id="show_aEDate" name="show_aEDate" value="" size="12" disabled="disabled" />
 		</td>
 		<td class="hilite" align="left" valign="top" id="aECal" style="display:table-cell;" nowrap>
-			<a href="javascript:popCalendar(document.mainFrm.aEDate)" onClick="switchTypeAA();" onFocus="if (document.getElementById('aEDate').value == end) switchTypeNull();" >
+			<a href="#"<?php echo dPaction(null, array(), 'click focus', array('call-click' => 'rmAssignCalendar', 'args-click' => json_encode(array('aEDate')), 'call-focus' => 'rmAssignCalendarFocus', 'args-focus' => json_encode(array('aEDate', 'end')))); ?>>
 				<img src="./images/calendar.gif" width="24" height="12" alt="" border="0">
 			</a>
 		</td>
@@ -691,7 +696,7 @@ mergeTd();
 	<tr>
 		<td align="right" class="hilite" valign="top" nowrap><?php echo $AppUI->_("Assignment").':'; ?></td>
 		<td class="hilite" align="right" valign="top" nowrap>
-			<input type="text" class="text" id="aPercent" name="aPercent" value="" size="7" maxlength="6" onFocus="switchTypeAD();this.select();" onBlur="switchTypeNull();" onChange="this.onblur='';switchTypeAD();" />
+			<input type="text" class="text" id="aPercent" name="aPercent" value="" size="7" maxlength="6" <?php echo dPaction(null, array(), 'focus blur change', array('call-focus' => 'rmPercentFocus', 'call-blur' => 'rmPercentBlur', 'call-change' => 'rmPercentChange')); ?> />
 		</td>
 		<td class="hilite" align="left" valign="top" nowrap><?php echo ($aff_style) ? $AppUI->_("Daily assigned hours") : $AppUI->_("%"); ?></td>
 	</tr>
@@ -710,7 +715,7 @@ mergeTd();
 	<tr id="editAssignBtn" >
 		<td colspan="3" align="right">
 			<input type="hidden" id="editType" name="editType" value ="" />
-			<input type="button" onclick="javascript:submitWithExpandList(this);" class="button" value="<?php echo $AppUI->_('Submit'); ?>" />
+			<input type="button"<?php echo dPaction('submitWithExpandList', array('$this')); ?> class="button" value="<?php echo $AppUI->_('Submit'); ?>" />
 		</td>
 	</tr>
 	</table>

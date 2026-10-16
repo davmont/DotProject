@@ -725,10 +725,8 @@ function generateTdUsers($colCount) {
 ** @return	string		html link
 */ 
 function generateFilterLink($filter_name,$filter_id,$string,$color='auto') {
-	$res  = '<a onclick="javascript:$(\'select[name='.$filter_name.'_id]\').val(\''.$filter_id.'\'); '
-			.'$(\'#submitButton\').click();" '
-			.'onmouseenter="javascript:$(this).append($(\'<img style=\\\'float:right;\\\' src=\\\'./modules/resource_m/images/filter.png\\\' height=\\\'12\\\' width=\\\'12\\\' />\'));" '
-			.'onMouseOut="$(this).find(\'img:last\').remove();" '
+	// Click and hover are bound in js/resource_m.js (a.rmFilterLink).
+	$res  = '<a class="rmFilterLink" data-rm-filter="'.dPhtml($filter_name).'" data-rm-id="'.dPhtml($filter_id).'" '
 			.'style="cursor: pointer; color: '.dPhtml($color).';">'.dPhtml($string).'</a>';
 	return $res;
 }
@@ -740,10 +738,8 @@ function generateFilterLink($filter_name,$filter_id,$string,$color='auto') {
 ** @return	string		html link
 */ 
 function generateRangeLink($sdate,$edate,$string) {
-	$res  = '<a onclick="javascript:$(\'input#start_date\').val(\''.$sdate.'\'); '
-			.'$(\'input#end_date\').val(\''.$edate.'\'); '
-			.'$(\'#submitButton\').click();" '
-			.'style="cursor: pointer;">'.$string.'</a>';
+	$res  = '<a'.dPaction('rmRange', array((string)$sdate, (string)$edate))
+			.' style="cursor: pointer;">'.$string.'</a>';
 	return $res;
 }
 ?>
