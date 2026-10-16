@@ -168,7 +168,7 @@ function setTask(key, val) {
 	<input type="hidden" name="del" value="0" />
 	<input type="hidden" name="file_id" value="<?php echo $file_id; ?>" />
 	<input type="hidden" name="file_version_id" value="<?php echo $obj->file_version_id; ?>" />
-	<input type="hidden" name="redirect" value="<?php echo $referrer; ?>" />
+	<input type="hidden" name="redirect" value="<?php echo htmlspecialchars((string)$referrer, ENT_QUOTES); ?>" />
 	<input type="hidden" name="file_helpdesk_item" value="<?php echo $file_helpdesk_item; ?>" />
 
 <table width="100%" border="0" cellpadding="3" cellspacing="3" class="std">
@@ -193,7 +193,7 @@ if ($file_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('File Name'); ?>:</td>
 			<td align="left" class="hilite"><?php 
-	echo mb_strlen($obj->file_name)== 0 ? "n/a" : $obj->file_name; ?></td>
+	echo mb_strlen($obj->file_name)== 0 ? "n/a" : htmlspecialchars((string)$obj->file_name, ENT_QUOTES); ?></td>
 			<td>
 				<a href="./fileviewer.php?file_id=<?php echo $obj->file_id; ?>"><?php 
 	echo dPshowImage(DP_BASE_URL . '/modules/files/images/filesaveas.png', '16', '16', 
@@ -218,7 +218,7 @@ echo file_show_attr(); ?>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Description'); ?>:</td>
 			<td align="left">
 				<textarea name="file_description" class="textarea" style="width:270px"><?php 
-echo $obj->file_description; ?></textarea>
+echo htmlspecialchars((string)$obj->file_description, ENT_QUOTES); ?></textarea>
 			</td>
 		</tr>
 		<tr>
@@ -347,7 +347,7 @@ function file_show_attr() {
 		$str_out .= ('<tr><td align="right" nowrap="nowrap">' . $AppUI->_('Helpdesk Item') 
 		             . ':</td>');
 		$str_out .= ('<td align="left"><b>' 
-		             . $hd_item->item_id . ' - ' . $hd_item->item_title . '</b></td></tr>');
+		             . (int)$hd_item->item_id . ' - ' . htmlspecialchars((string)$hd_item->item_title, ENT_QUOTES) . '</b></td></tr>');
 		// Project
 		$str_out .= '<input type="hidden" name="file_project" value="' .  $file_project . '" />';
         
@@ -367,7 +367,7 @@ function file_show_attr() {
 		$str_out .= ('<tr><td align="right" nowrap="nowrap">' . $AppUI->_('Task') . ':</td>' 
 		             . '<td align="left" colspan="2" valign="top">' 
 		             . '<input type="hidden" name="file_task" value="' . $file_task . '" />' 
-		             . '<input type="text" class="text" name="task_name" value="' . $task_name 
+		             . '<input type="text" class="text" name="task_name" value="' . htmlspecialchars((string)$task_name, ENT_QUOTES) 
 		             . '" size="40" disabled />' 
 		             . '<input type="button" class="button" value="' . $AppUI->_('select task') 
 		             . '..."' . $onclick_task . '/>' . '</td></tr>');

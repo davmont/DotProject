@@ -72,7 +72,7 @@ function delIt() {
 	<input type="hidden" name="dosql" value="do_folder_aed" />
 	<input type="hidden" name="del" value="0" />
 	<input type="hidden" name="file_folder_id" value="<?php echo $folder; ?>" />
-	<input type="hidden" name="redirect" value="<?php echo $referrer; ?>" />
+	<input type="hidden" name="redirect" value="<?php echo htmlspecialchars((string)$referrer, ENT_QUOTES); ?>" />
 
 <table width="100%" border="0" cellpadding="3" cellspacing="3" class="std">
 <tr>
@@ -88,12 +88,12 @@ function delIt() {
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Folder Name');?>:</td>
 			<td align="left"><input type="text" class="text" id="ffn" name="file_folder_name"
-                              value="<?php echo $obj->file_folder_name; ?>" maxlength="64" /></td>
+                              value="<?php echo htmlspecialchars((string)$obj->file_folder_name, ENT_QUOTES); ?>" maxlength="64" /></td>
 		</tr>
 		<tr>
 			<td align="right" valign="top" nowrap="nowrap"><?php echo $AppUI->_('Description');?>:</td>
 			<td align="left">
-				<textarea name="file_folder_description" class="textarea" rows="4" style="width:270px"><?php echo $obj->file_folder_description; ?></textarea>
+				<textarea name="file_folder_description" class="textarea" rows="4" style="width:270px"><?php echo htmlspecialchars((string)$obj->file_folder_description, ENT_QUOTES); ?></textarea>
 			</td>
 		</tr>
 		</table>
