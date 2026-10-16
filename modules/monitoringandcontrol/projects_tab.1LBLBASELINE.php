@@ -38,15 +38,15 @@ $controllerUtil = new ControllerUtil();
                foreach($list as $row){   				
             ?>		
                <tr>
-                  <td><?php echo $row['baseline_name']; ?> </td>
-                  <td><?php echo $row['baseline_version']; ?> </td>
+                  <td><?php echo dPhtml($row['baseline_name']); ?> </td>
+                  <td><?php echo dPhtml($row['baseline_version']); ?> </td>
                   <td><?php echo $controllerUtil->formatDateTime($row['baseline_date']);  ?> </td>
                         <td align="center">
                         
-                        <form name="form_update" method="post" action="?m=monitoringandcontrol&a=addedit_update_baseline&project_id=<?php echo $project_id; ?>&idBaseline=<?php echo $row['baseline_id'] ; ?>" enctype="multipart/form-data" >  
+                        <form name="form_update" method="post" action="?m=monitoringandcontrol&a=addedit_update_baseline&project_id=<?php echo $project_id; ?>&idBaseline=<?php echo (int)$row['baseline_id']; ?>" enctype="multipart/form-data" >  
                            <input  type="hidden" name="acao" value="update"  />
                            <input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-                           <input name="idBaseline" type="hidden" id="meeting_id" value="<?php echo $row['baseline_id']; ?>">
+                           <input name="idBaseline" type="hidden" id="meeting_id" value="<?php echo (int)$row['baseline_id']; ?>">
                            <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />                                 
                         </form>
                         </td>	
@@ -54,7 +54,7 @@ $controllerUtil = new ControllerUtil();
                         <form name="form_delete" method="post" action="?m=monitoringandcontrol&a=addedit_update_baseline&project_id=<?php echo $project_id; ?>" enctype="multipart/form-data" >
                            <input name="dosql" type="hidden" value="do_baseline_aed" />	                              
                            <input  type="hidden" name="acao" value="delete"  />
-                           <input name="idBaseline" type="hidden" id="idBaseline" value="<?php echo $row['baseline_id']; ?>">
+                           <input name="idBaseline" type="hidden" id="idBaseline" value="<?php echo (int)$row['baseline_id']; ?>">
                            <input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
                            <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
                         </form>                                

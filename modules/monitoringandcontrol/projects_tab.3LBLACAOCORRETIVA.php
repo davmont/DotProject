@@ -32,13 +32,13 @@ $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 					$task_id = $row[1];
 				?>		
 					<tr>
-						<td><?php echo $row['change_request']; ?> </td>
+						<td><?php echo dPhtml($row['change_request']); ?> </td>
 						<td>
 							<?php
 								$select = Array(0=>$AppUI->_('LBL_SELECIONE')."...",1=>$AppUI->_('LBL_ABERTO'),2=>$AppUI->_('LBL_FECHADO'),3=>$AppUI->_('LBL_DESENVOLVIMENTO'),4=>$AppUI->_('LBL_CANCELADO'));
 								for($i=0;$i<count($select);$i++){
 									  if($row['change_status'] ==  $i){								 
-										 echo "<option value='".$row['change_status']."' selected>".$select[$i]."</option>";	
+										 echo "<option value='".(int)$row['change_status']."' selected>".$select[$i]."</option>";	
 										 break;		 
 								      }
 								}	  
@@ -47,8 +47,8 @@ $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
                         <td align="center">
  							 <form name="form_update" method="post" action="?m=monitoringandcontrol&a=addedit_update_acao_corretiva&project_id=<?php echo $project_id ; ?>" enctype="multipart/form-data" >  
                                  <input  type="hidden" name="acao" value="update"  />
-								<input name="change_id" type="hidden" id="change_id" value="<?php echo  $row[0] ; ?>"> 
-								<input name="task_id" type="hidden" id="task_id" value="<?php echo $task_id; ?>">  
+								<input name="change_id" type="hidden" id="change_id" value="<?php echo (int)$row[0]; ?>"> 
+								<input name="task_id" type="hidden" id="task_id" value="<?php echo (int)$task_id; ?>">  
                                 <input name="project_id" type="hidden" id="project_id" value="<?php echo  $project_id ; ?>"> 
                                 <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />                                 
                               </form>
@@ -57,8 +57,8 @@ $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
                               <form name="form_delete" method="post" action="?m=monitoringandcontrol&a=do_acao_corretiva_aed&project_id=<?php echo $project_id; ?>" enctype="multipart/form-data" >
 							<input name="dosql" type="hidden" value="do_acao_corretiva_aed" />                              
                                 <input  type="hidden" name="acao" value="delete"  />                           
-								<input name="change_id" type="hidden" id="change_id" value="<?php echo $row[0] ; ?>">
-								<input name="task_id" type="hidden" id="task_id" value="<?php echo $task_id; ?>">  
+								<input name="change_id" type="hidden" id="change_id" value="<?php echo (int)$row[0]; ?>">
+								<input name="task_id" type="hidden" id="task_id" value="<?php echo (int)$task_id; ?>">  
                                 <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
                                 </form>                                
                         </td>

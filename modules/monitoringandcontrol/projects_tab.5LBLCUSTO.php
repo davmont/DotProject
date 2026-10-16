@@ -114,10 +114,10 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 						echo "<option value='0'>".$AppUI->_('LBL_POSICAO_ATUAL')."</option>";	
 						for($i=0;$i<count($lstBaseline);$i++){
 							  if($cmbBaseline ==  $lstBaseline[$i]['baseline_id']){								 
-								echo "<option value='".$lstBaseline[$i]['baseline_id']."' selected>".$lstBaseline[$i]['baseline_version']."</option>";
+								echo "<option value='".(int)$lstBaseline[$i]['baseline_id']."' selected>".dPhtml($lstBaseline[$i]['baseline_version'])."</option>";
 											 
 							  }else {
-								echo "<option value='".$lstBaseline[$i]['baseline_id']."' >".$lstBaseline[$i]['baseline_version']."</option>";
+								echo "<option value='".(int)$lstBaseline[$i]['baseline_id']."' >".dPhtml($lstBaseline[$i]['baseline_version'])."</option>";
 							  }						
 						}
 						 ?>          
@@ -127,7 +127,7 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 		<tr>			  
             <td align="right"><?php echo $AppUI->_('LBL_DATA');?></td> 
             <td nowrap="nowrap">   
-				 <input type="text" class="text"  name="date_edit"  id="date_edit"  size="15" maxlength="10" value="<?php echo  $dtAtual; ?>"  maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup change', array('call-change' => 'mcSubmitForm', 'args-change' => json_encode(array('$this')))); ?>/>
+				 <input type="text" class="text"  name="date_edit"  id="date_edit"  size="15" maxlength="10" value="<?php echo dPhtml($dtAtual); ?>"  maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup change', array('call-change' => 'mcSubmitForm', 'args-change' => json_encode(array('$this')))); ?>/>
 				 <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />   
             </td>
         </tr>

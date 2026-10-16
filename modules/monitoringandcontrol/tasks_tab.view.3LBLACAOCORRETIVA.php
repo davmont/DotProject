@@ -31,21 +31,21 @@ $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 					$task_id = $row[1];
 				?>		
 					<tr>
-						<td style="padding-left:15px"><?php echo $row[4]; ?> </td>
+						<td style="padding-left:15px"><?php echo dPhtml($row[4]); ?> </td>
                         <td align="center">
- 							 <form name="form_update" method="post" action="?m=monitoringandcontrol&a=addedit_update_acao_corretiva&task_id=<?php echo $task_id ; ?>" enctype="multipart/form-data" >  
+ 							 <form name="form_update" method="post" action="?m=monitoringandcontrol&a=addedit_update_acao_corretiva&task_id=<?php echo (int)$task_id; ?>" enctype="multipart/form-data" >  
                                  <input  type="hidden" name="acao" value="update"  />
-								<input name="change_id" type="hidden" id="change_id" value="<?php echo  $row[0] ; ?>"> 
-								<input name="task_id" type="hidden" id="change_id" value="<?php echo $task_id; ?>">  
+								<input name="change_id" type="hidden" id="change_id" value="<?php echo (int)$row[0]; ?>"> 
+								<input name="task_id" type="hidden" id="change_id" value="<?php echo (int)$task_id; ?>">  
                                 <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />                                 
                               </form>
                         </td>	
                         <td align="center">
-                              <form name="form_delete" method="post" action="?m=monitoringandcontrol&a=do_acao_corretiva_aed&task_id=<?php echo $task_id; ?>" enctype="multipart/form-data" >
+                              <form name="form_delete" method="post" action="?m=monitoringandcontrol&a=do_acao_corretiva_aed&task_id=<?php echo (int)$task_id; ?>" enctype="multipart/form-data" >
 							<input name="dosql" type="hidden" value="do_acao_corretiva_aed" />                              
                                 <input  type="hidden" name="acao" value="delete"  />                           
-								<input name="change_id" type="hidden" id="change_id" value="<?php echo $row[0] ; ?>">
-								<input name="task_id" type="hidden" id="change_id" value="<?php echo $task_id; ?>">  
+								<input name="change_id" type="hidden" id="change_id" value="<?php echo (int)$row[0]; ?>">
+								<input name="task_id" type="hidden" id="change_id" value="<?php echo (int)$task_id; ?>">  
 								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
                                 </form>                                
                         </td>
