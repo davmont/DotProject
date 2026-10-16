@@ -12,8 +12,8 @@ $titleBlock = new CTitleBlock("$titulo", 'graph-up.png', $m, $m . '.' . $a);
 $titleBlock->show();
 
 $AppUI->savePlace();
-$idBaseline = dPgetParam( $_GET, 'idBaseline', 0 );
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$idBaseline = dPgetIntParam( $_GET, 'idBaseline', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 
 $controllerBaseline = new ControllerBaseline();
 $controllerUtil = new ControllerUtil();

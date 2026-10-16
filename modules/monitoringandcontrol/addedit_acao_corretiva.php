@@ -4,8 +4,8 @@ if (!defined('DP_BASE_DIR')) {
 }
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
-$task_id = dPgetParam( $_GET, 'task_id', 0 );
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$task_id = dPgetIntParam( $_GET, 'task_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/translations.php");
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_acao_corretiva.class.php");

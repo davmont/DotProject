@@ -10,7 +10,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_at
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 header("Content-Type:text/html; charset=iso-8859-1",true);
  
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $titleBlock = new CTitleBlock('Ação Corretiva', 'graph-up.png', $m, $m . '.' . $a);
 $titleBlock->show();
 

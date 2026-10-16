@@ -9,7 +9,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_re
 header("Content-Type:text/html; charset=iso-8859-1",true);
 
 $AppUI->savePlace();
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $titulo = $AppUI->_('LBL_NOVA').' '.$AppUI->_('LBL_ATA_SEM_ACENTO');
 $titleBlock = new CTitleBlock($titulo, 'graph-up.png', $m, $m . '.' . $a);
 $titleBlock->show();

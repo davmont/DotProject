@@ -8,7 +8,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
 $tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $controllerResp = new ControllerProjectsResponsability();
 $controllerUtil = new ControllerUtil();    
 ?>
@@ -67,7 +67,7 @@ $controllerUtil = new ControllerUtil();
 
 <?php
 		if (isset($_POST['acao']) &&  $_POST['acao'] == 'update'){
-		 $id= $_POST['responsibility_id'];
+		 $id= dPgetIntParam($_POST, 'responsibility_id');
 	?>		
 
     <form action="?m=monitoringandcontrol&a=do_respons_aed&project_id=<?php echo $project_id; ?>" method="post" name="form_updateRow" id="form_updateRow" enctype="multipart/form-data">

@@ -8,7 +8,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_re
 
 $AppUI->savePlace();
 $tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
-$user_id = dPgetParam( $_GET, 'user_id' );
+$user_id = dPgetIntParam( $_GET, 'user_id' );
 $controllerResourceCost = new ControllerResourcesCosts();  
 $controllerUtil = new ControllerUtil();
 ?>
@@ -69,7 +69,7 @@ $controllerUtil = new ControllerUtil();
 
 <?php
 		if (isset($_POST['acao']) &&  $_POST['acao'] == 'update'){
-		 $id= $_POST['cost_id'];
+		 $id= dPgetIntParam($_POST, 'cost_id');
 	?>		
 
     <form action="?m=monitoringandcontrol&a=do_costs_aed&user_id=<?php echo $user_id; ?>" method="post" name="form_updateRow" id="form_updateRow" enctype="multipart/form-data">

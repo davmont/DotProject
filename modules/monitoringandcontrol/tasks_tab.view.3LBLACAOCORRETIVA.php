@@ -7,7 +7,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ac
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
 $tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
-$task_id = dPgetParam( $_GET, 'task_id', 0 );
+$task_id = dPgetIntParam( $_GET, 'task_id', 0 );
 $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 ?>
 <script src="./modules/monitoringandcontrol/js/respons.js"> </script>

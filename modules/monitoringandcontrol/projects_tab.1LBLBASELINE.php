@@ -8,7 +8,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ba
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 
 $tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $controllerBaseline= new ControllerBaseline();
 $controllerUtil = new ControllerUtil();
 

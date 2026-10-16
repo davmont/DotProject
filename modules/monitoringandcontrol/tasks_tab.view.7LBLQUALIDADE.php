@@ -8,7 +8,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_qu
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
-$task_id = dPgetParam( $_GET, 'task_id', 0 );
+$task_id = dPgetIntParam( $_GET, 'task_id', 0 );
 $controllerQuality = new ControllerQuality();
 $controllerUtil = new ControllerUtil();
 
@@ -71,7 +71,7 @@ $lstUser  = $controllerUtil-> getUsers();
 <!-- ***************** UPDATE  ****************************-->		
 <?php
 		if (isset($_POST['acao']) &&  $_POST['acao'] == 'update'){
-		 $id= $_POST['quality_id'];
+		 $id= dPgetIntParam($_POST, 'quality_id');
 	?>	
     <form action="?m=monitoringandcontrol&a=do_quality_aed&task_id=<?php echo $task_id; ?>" method="post" name="form_updateRow" id="form_updateRow" enctype="multipart/form-data">
     	<input name="dosql" type="hidden" value="do_quality_aed" />		

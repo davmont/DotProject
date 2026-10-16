@@ -4,9 +4,9 @@ if (!defined('DP_BASE_DIR')) {
 }
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
-$task_id = dPgetParam( $_GET, 'task_id', 0 );
-$change_id =  dPgetParam($_POST,'change_id');
-$project_id = dPgetParam( $_POST, 'project_id', 0 );
+$task_id = dPgetIntParam( $_GET, 'task_id', 0 );
+$change_id =  dPgetIntParam($_POST,'change_id');
+$project_id = dPgetIntParam( $_POST, 'project_id', 0 );
 
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_acao_corretiva.class.php");
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ata.class.php");
