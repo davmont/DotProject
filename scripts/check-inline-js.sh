@@ -13,7 +13,10 @@ cd "$(dirname "$0")/.."
 BASELINE=scripts/inline-js-baseline.txt
 EVENTS='click|dblclick|change|submit|reset|load|unload|beforeunload|error|resize|scroll|focus|blur|input|select|key(down|up|press)|mouse(down|up|over|out|move|enter|leave)|contextmenu|drag(start|end|over|enter|leave)?|drop'
 # Comment lines (//, #, /*, *) are skipped.
-PATTERN="^(?!\\s*(//|#|/\\*|\\*)).*(\\son($EVENTS)\\s*=|javascript:|<script(?![^>]*\\b(src|nonce)\\s*=)(?![^>]*application/json))"
+# Case-insensitive (onClick=, JavaScript:), and a handler may start an attribute
+# string ('onChange="..."' passed to arraySelect()), so "on" may follow a space,
+# a quote or the start of the line.
+PATTERN="(?i)^(?!\\s*(//|#|/\\*|\\*)).*((^|[\\s'\"])on($EVENTS)\\s*=|javascript:|<script(?![^>]*\\b(src|nonce)\\s*=)(?![^>]*application/json))"
 
 files() {
   git ls-files '*.php' '*.inc' '*.html' '*.htm' '*.js' \
