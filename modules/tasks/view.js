@@ -56,3 +56,13 @@ function updateEmailContacts() {
 function emailNumericCompare(a, b) {
 	return a - b;
 }
+
+// Cost code list of the log form: copies the chosen code into the text field.
+function setLogCostCode(select) {
+	select.form.task_log_costcode.value = select.options[select.selectedIndex].value;
+}
+
+// Contact checkboxes of the log form show the contact names in the status bar.
+function setWindowStatus(text) {
+	window.status = text;
+}
