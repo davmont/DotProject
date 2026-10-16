@@ -171,7 +171,7 @@ function notauthorizedIt() {
 	<table cellspacing="1" cellpadding="2" width="60%">
 		<tr>
 			<td align="right" nowrap="nowrap" ><?php echo $AppUI->_('Project Title');?>:</td>
-			<td align="left"><input type="text" class="text" name="initiating_title" size="55" maxlength="255" value="<?php echo $obj->initiating_title;?>"></td>
+			<td align="left"><input type="text" class="text" name="initiating_title" size="55" maxlength="255" value="<?php echo dPformSafe(@$obj->initiating_title);?>"></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project Manager'); ?>:</td>
