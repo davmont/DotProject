@@ -91,7 +91,7 @@ function popCalendar(field) {
 //this bug does not occur if the window open occurs in an onclick event
 //this bug does NOT occur in Internet explorer
 calendarField = field;
-idate = eval('document.uploadFrm.initiating_' + field + '.value');
+idate = document.uploadFrm['initiating_' + field].value;
 window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=280, height=250, scrollbars=no, status=no');
 }
 
@@ -100,8 +100,8 @@ window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' 
 *	@param string Formatted date
 */
 function setCalendar(idate, fdate) {
-	fld_date = eval('document.uploadFrm.initiating_' + calendarField);
-	fld_fdate = eval('document.uploadFrm.' + calendarField);
+	fld_date = document.uploadFrm['initiating_' + calendarField];
+	fld_fdate = document.uploadFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
