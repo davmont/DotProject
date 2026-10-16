@@ -58,9 +58,9 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 
 if ($canDelete) {
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
   can_delete = true;
-  delete_msg = "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('Post Mortem').'?';?>";
+  delete_msg = "<?php echo $AppUI->_('doDelete', UI_OUTPUT_JS).' '.$AppUI->_('Post Mortem', UI_OUTPUT_JS).'?';?>";
 </script>
 <form name="frmDelete" action="./index.php?m=closure" method="post">
   <input type="hidden" name="dosql" value="do_closure_aed" />
