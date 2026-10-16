@@ -25,7 +25,7 @@ $crumbs['?m=forums'] = "forums list";
 $crumbs["?m=forums&a=viewer&forum_id=$forum_id"] = "topics for this forum";
 $crumbs["?m=forums&a=view_pdf&forum_id=$forum_id&message_id=$message_id&sort=$sort&suppressHeaders=1"] = "view PDF file";
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 if ($viewtype != 'normal') {
 ?>
@@ -59,7 +59,7 @@ if ($canEdit) {
 ?>
 function delIt(id) {
 	var form = document.messageForm;
-	if (confirm("<?php echo $AppUI->_('forumsDelete');?>")) {
+	if (confirm("<?php echo $AppUI->_('forumsDelete', UI_OUTPUT_JS);?>")) {
 		form.del.value = 1;
 		form.message_id.value = id;
 		form.submit();
@@ -78,22 +78,22 @@ $thispage = "?m=$m&amp;a=viewer&amp;forum_id=$forum_id&amp;message_id=$message_i
 	<td>
 		<form action="<?php echo $thispage; ?>" method="post">
 		<?php echo $AppUI->_('View') ?>: 
-		<input type="radio" name="viewtype" value="normal" <?php echo ($viewtype == 'normal')?'checked="checked"':'';?> onclick="javascript:this.form.submit();" /><?php echo $AppUI->_('Normal') ?>
-		<input type="radio" name="viewtype" value="short" <?php echo ($viewtype == 'short')?'checked="checked"':'';?> onclick="javascript:this.form.submit();" /><?php echo $AppUI->_('Collapsed') ?>
-		<input type="radio" name="viewtype" value="single" <?php echo ($viewtype == 'single')?'checked="checked"':'';?> onclick="javascript:this.form.submit();" /><?php echo $AppUI->_('Single Message at a time') ?>
+		<input type="radio" name="viewtype" value="normal" <?php echo ($viewtype == 'normal')?'checked="checked"':'';?><?php echo dPaction(null, array(), null, array('submit' => '')); ?> /><?php echo $AppUI->_('Normal') ?>
+		<input type="radio" name="viewtype" value="short" <?php echo ($viewtype == 'short')?'checked="checked"':'';?><?php echo dPaction(null, array(), null, array('submit' => '')); ?> /><?php echo $AppUI->_('Collapsed') ?>
+		<input type="radio" name="viewtype" value="single" <?php echo ($viewtype == 'single')?'checked="checked"':'';?><?php echo dPaction(null, array(), null, array('submit' => '')); ?> /><?php echo $AppUI->_('Single Message at a time') ?>
 		</form>
 	</td>
 	<td align="right">
 		<?php $sort = ($sort == 'asc')?'desc':'asc'; ?>
-		<input type="button" class="button" value="<?php echo $AppUI->_('Sort By Date') . ' (' . $AppUI->_($sort) . ')'; ?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_id=<?php echo $message_id;?>&amp;sort=<?php echo $sort; ?>'" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('Sort By Date') . ' (' . $AppUI->_($sort) . ')'; ?>"<?php echo dPaction(null, array(), null, array('href' => './index.php?m=forums&a=viewer&forum_id=' . (int)$forum_id . '&message_id=' . (int)$message_id . '&sort=' . $sort)); ?> />
 	<?php 
 if ($canEdit && ($AppUI->user_id == $forum['forum_moderated'] 
                  || (isset($messages[0]) && $AppUI->user_id == $messages[0]['message_author']) 
                  || getPermission('project', 'edit', $forum['forum_project']) 
                  || !($forum['forum_project']))) { 
 ?>
-		<input type="button" class="button" value="<?php echo $AppUI->_('Post Reply');?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_parent=<?php echo $message_id;?>&amp;post_message=1';" />
-		<input type="button" class="button" value="<?php echo $AppUI->_('New Topic');?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_id=0&amp;post_message=1';" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('Post Reply');?>"<?php echo dPaction(null, array(), null, array('href' => './index.php?m=forums&a=viewer&forum_id=' . (int)$forum_id . '&message_parent=' . (int)$message_id . '&post_message=1')); ?> />
+		<input type="button" class="button" value="<?php echo $AppUI->_('New Topic');?>"<?php echo dPaction(null, array(), null, array('href' => './index.php?m=forums&a=viewer&forum_id=' . (int)$forum_id . '&message_id=0&post_message=1')); ?> />
 	<?php 
 } 
 ?>
@@ -204,7 +204,7 @@ foreach ($messages as $row) {
 			$s .= dPshowImage('./images/icons/stock_edit-16.png', '16', '16');
 			$s .= '</td><td>';
 			// delete message
-			$s .= '<a href="javascript:delIt(' . $row['message_id'] . ')" title="' . $AppUI->_('delete') . '">';
+			$s .= '<a href="#"' . dPaction('delIt', array((int)$row['message_id'])) . ' title="' . $AppUI->_('delete') . '">';
 			$s .= dPshowImage('./images/icons/stock_delete-16.png', '16', '16');
 			$s .= '</a>';
 			$s .= '</td></tr></table>';
@@ -224,8 +224,8 @@ foreach ($messages as $row) {
 			$s .= ('<font size="1">' . dPhtml($editor[0]['contact_first_name'] . ' ' . $editor[0]['contact_last_name']) 
 			       . '</font></a>');
         }
-		$s .= ('<a name="' . $row['message_id'] . '" href="#' . $row['message_id'] . '" onclick="javascript:toggle(' 
-		       . $row['message_id'] . ')">');
+		$s .= ('<a name="' . $row['message_id'] . '" href="#' . $row['message_id'] . '"' 
+		       . dPaction('toggle', array((int)$row['message_id'])) . '>');
         $s .= '<span size="2"><strong>' . $AppUI->___($row['message_title']) . '</strong></span></a>';
         $s .= '<div class="message" id="' . $row['message_id'] . '" style="display: none">';
         $s .= nl2br($AppUI->___($row['message_body']));
@@ -246,7 +246,7 @@ foreach ($messages as $row) {
 			$s .= ('<font size="1">' . $AppUI->___($editor[0]['contact_first_name']) . ' ' . $AppUI->___($editor[0]['contact_last_name']) 
 			       . '</font></a>');
         }
-		$s .= '<a href="#" onclick="javascript:toggle(' . $row['message_id'] . ')">';
+		$s .= '<a href="#"' . dPaction('toggle', array((int)$row['message_id'])) . '>';
         $s .= '<span size="2"><strong>' . dPhtml($row['message_title']) . '</strong></span></a>';
         $side .= '<div class="message" id="' . $row['message_id'] . '" style="display: none">';
         $side .= nl2br($AppUI->___($row['message_body']));
@@ -276,15 +276,15 @@ if ($viewtype == 'single') {
 <tr>
 	<td><?php echo breadCrumbs($crumbs);?></td>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('Sort By Date') . ' (' . $AppUI->_($sort) . ')'; ?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_id=<?php echo $message_id;?>&amp;sort=<?php echo $sort; ?>'" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('Sort By Date') . ' (' . $AppUI->_($sort) . ')'; ?>"<?php echo dPaction(null, array(), null, array('href' => './index.php?m=forums&a=viewer&forum_id=' . (int)$forum_id . '&message_id=' . (int)$message_id . '&sort=' . $sort)); ?> />
 		<?php 
 if ($canEdit && ($AppUI->user_id == $forum['forum_moderated'] 
                  || (isset($messages[0]) && $AppUI->user_id == $messages[0]['message_author']) 
                  || getPermission('project', 'edit', $forum['forum_project']) 
                  || !($forum['forum_project']))) { 
 ?>
-		<input type="button" class="button" value="<?php echo $AppUI->_('Post Reply');?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_parent=<?php echo $message_id;?>&amp;post_message=1';" />
-		<input type="button" class="button" value="<?php echo $AppUI->_('New Topic');?>" onclick="javascript:window.location='./index.php?m=forums&amp;a=viewer&amp;forum_id=<?php echo $forum_id;?>&amp;message_id=0&amp;post_message=1';" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('Post Reply');?>"<?php echo dPaction(null, array(), null, array('href' => './index.php?m=forums&a=viewer&forum_id=' . (int)$forum_id . '&message_parent=' . (int)$message_id . '&post_message=1')); ?> />
+		<input type="button" class="button" value="<?php echo $AppUI->_('New Topic');?>"<?php echo dPaction(null, array(), null, array('href' => './index.php?m=forums&a=viewer&forum_id=' . (int)$forum_id . '&message_id=0&post_message=1')); ?> />
 	<?php } ?>
 	</td>
 </tr>

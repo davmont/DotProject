@@ -62,13 +62,13 @@ $titleBlock = new CTitleBlock($ttl, 'support.png', $m, "$m.$a");
 $titleBlock->addCrumb("?m=forums", "forums list");
 if ($canDelete) {
 	$titleBlock->addCrumbRight(
-		'<a href="javascript:delIt()"><img align="middle" src="' . dPfindImage('stock_delete-16.png', $m) . '" width="16" height="16" alt="" border="0" />&nbsp;' . $AppUI->_('delete forum')
+		'<a href="#"' . dPaction('delIt') . '><img align="middle" src="' . dPfindImage('stock_delete-16.png', $m) . '" width="16" height="16" alt="" border="0" />&nbsp;' . $AppUI->_('delete forum')
 		. '</a>'
 	);
 }
 $titleBlock->show();
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function submitIt() {
 		var form = document.changeforum;
 		if (form.forum_name.value.search(/^\s*$/) >= 0) {
@@ -88,7 +88,7 @@ $titleBlock->show();
 	function delIt() {
 		var form = document.changeforum;
 		if (confirm("<?php echo $AppUI->_('forumDeleteForum', UI_OUTPUT_JS); ?>")) {
-			form.del.value = "<?php echo $forum_id; ?>";
+			form.del.value = "<?php echo (int)$forum_id; ?>";
 			form.submit();
 		}
 	}
@@ -170,11 +170,11 @@ $titleBlock->show();
 		<tr>
 			<td align="left">
 				<input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button"
-					onclick="javascript:window.location='?m=forums';" />
+					<?php echo dPaction(null, array(), null, array('href' => '?m=forums')); ?> />
 			</td>
 			<td align="right" colspan="2"><?php
 			if ($AppUI->user_id == (isset($forum_info["forum_owner"]) ? $forum_info["forum_owner"] : '') || $forum_id == 0) {
-				echo '<input type="button" value="' . $AppUI->_('submit') . '" class="button" onclick="javascript:submitIt()" />';
+				echo '<input type="button" value="' . $AppUI->_('submit') . '" class="button"' . dPaction('submitIt') . ' />';
 			} ?></td>
 		</tr>
 	</table>

@@ -63,8 +63,8 @@ if ($canEdit) {
 ?>
 		<input type="button" class=button style="width:120;" value="<?php 
 echo $AppUI->_('start a new topic'); 
-?>" onclick="javascript:window.location='?m=forums&amp;a=viewer&amp;forum_id=<?php 
-echo $forum_id; ?>&amp;post_message=1';" />
+?>"<?php 
+echo dPaction(null, array(), null, array('href' => '?m=forums&a=viewer&forum_id=' . (int)$forum_id . '&post_message=1')); ?> />
 	<?php 
 }
 ?>

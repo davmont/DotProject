@@ -42,7 +42,7 @@ $start_date = intval($forum["forum_create_date"]) ? new CDate($forum["forum_crea
 // setup the title block
 $titleBlock = new CTitleBlock('Forum', 'support.png', $m, "$m.$a");
 $titleBlock->addCell(
-	arraySelect($filters, 'f', 'size="1" class="text" onchange="javascript:document.filterFrm.submit();"', $f , true), '',
+	arraySelect($filters, 'f', 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => 'filterFrm')), $f , true), '',
 	'<form action="?m=forums&amp;a=viewer&amp;forum_id='.$forum_id.'" method="post" name="filterFrm">', '</form>'
 );
 $titleBlock->show();
