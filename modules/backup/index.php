@@ -26,7 +26,7 @@ $title = new CTitleBlock('Backup Database', 'companies.gif', $m, $m . '.' . $a);
 $title->addCrumb('index.php?m=backup&a=restore', 'restore xml file');
 $title->show();
 ?>
-<script>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function check_backup_options() {
 		var f = document.frmBackup;
 		if (f.export_what.options[f.export_what.selectedIndex].value == 'data') {
@@ -40,7 +40,7 @@ $title->show();
 </script>
 
 <table cellspacing="0" cellpadding="4" border="0" width="100%" class="std">
-	<form onclick="check_backup_options()" name="frmBackup"
+	<form<?php echo dPaction('check_backup_options'); ?> name="frmBackup"
 		action="<?php echo "$baseUrl/index.php?m=backup&a=do_backup&suppressHeaders=1"; ?>" method="post">
 		<tr>
 			<td align="right" valign="top" nowrap="nowrap">
