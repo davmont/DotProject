@@ -38,7 +38,7 @@ inline-js:
 
 # Jest tests for js/ (js/tests/*.test.js), in the node image so no local Node is needed.
 js-test:
-	$(DOCKER_RUN) -e HOME=/tmp node:22 sh -c 'npm ci --no-audit --no-fund --silent && npx jest js/tests'
+	$(DOCKER_RUN) -e HOME=/tmp node:22 sh -c 'npm ci --no-audit --no-fund --silent && npx jest --roots js/tests'
 
 audit-smoke:
 	docker/up.sh
