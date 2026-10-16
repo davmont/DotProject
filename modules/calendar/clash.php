@@ -44,7 +44,7 @@ if (isset($_POST['clash_action'])) {
 	
 	echo '<table width="100%" summary="Attendee Clash" class="std"><tr><td><b>' . $AppUI->_('clashEvent') . '</b></tr></tr>';
 	foreach ($clash as $user) {
-		echo '<tr><td>' . $user . "</td></tr>\n";
+		echo '<tr><td>' . htmlspecialchars((string)$user, ENT_QUOTES) . "</td></tr>\n";
 	}
 	echo "</table>\n";
 	$calurl = DP_BASE_URL.'/index.php?m=calendar&amp;a=clash&amp;event_id=' . $obj->event_id;
