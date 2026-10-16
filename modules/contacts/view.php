@@ -64,11 +64,11 @@ $titleBlock->show();
 	<input type="hidden" name="contact_owner"
 		value="<?php echo $row->contact_owner ? $row->contact_owner : $AppUI->user_id; ?>" />
 </form>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function delIt() {
 		var form = document.changecontact;
 		if (confirm("<?php echo $AppUI->_('contactsDelete', UI_OUTPUT_JS); ?>")) {
-			form.del.value = "<?php echo $contact_id; ?>";
+			form.del.value = "<?php echo (int)$contact_id; ?>";
 			form.submit();
 		}
 	}
@@ -139,10 +139,10 @@ $titleBlock->show();
 				<tr>
 					<td align="right" width="100"><?php echo $AppUI->_('Map Address'); ?>:</td>
 					<td class="hilite"><input type="image" src="./images/googlemaps.gif" style="width:55px;height:22px;"
-							alt="Find It on Google" onclick="window.open('http://maps.google.com/maps?q=<?php
-							echo rawurlencode(@$row->contact_address1); ?>+<?php echo rawurlencode(@$row->contact_address2); ?>+<?php
-							   echo rawurlencode(@$row->contact_city); ?>+<?php echo rawurlencode(@$row->contact_state); ?>+<?php
-								  echo rawurlencode(@$row->contact_zip); ?>+<?php echo rawurlencode(@$row->contact_country); ?>')" />
+							alt="Find It on Google"<?php echo dPaction('window.open', array('http://maps.google.com/maps?q='
+							. rawurlencode(@$row->contact_address1) . '+' . rawurlencode(@$row->contact_address2) . '+'
+							. rawurlencode(@$row->contact_city) . '+' . rawurlencode(@$row->contact_state) . '+'
+							. rawurlencode(@$row->contact_zip) . '+' . rawurlencode(@$row->contact_country))); ?> />
 					</td>
 				</tr>
 				<tr>
@@ -217,7 +217,7 @@ $titleBlock->show();
 	<tr>
 		<td>
 			<input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button"
-				onclick="javascript:window.location='./index.php?m=contacts';" />
+				<?php echo dPaction(null, array(), null, array('href' => './index.php?m=contacts')); ?> />
 		</td>
 	</tr>
 </table>

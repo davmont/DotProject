@@ -176,7 +176,7 @@ if ($canAuthor) {
 $titleBlock->show();
 
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	// Callback function for the generic selector
 	function goProject(key, val) {
 		var f = document.modProjects;
@@ -228,11 +228,10 @@ $titleBlock->show();
 				<?php
 				$projects_contact = isset($project_counts[$contactid]) ? $project_counts[$contactid] : 0;
 				if ($projects_contact > 0) {
-					echo ('<a href="" onclick="javascript:window.open('
-						. "'?m=public&amp;a=selector&amp;dialog=1&amp;callback=goProject&amp;table=projects"
-						. '&user_id=' . $contactid
-						. "', 'selector', 'left=50,top=50,height=250,width=400,resizable');"
-						. 'return false;">' . $AppUI->_('Projects') . '</a>');
+					echo ('<a href="#"' . dPaction('window.open', array(
+						'?m=public&a=selector&dialog=1&callback=goProject&table=projects&user_id=' . (int)$contactid,
+						'selector', 'left=50,top=50,height=250,width=400,resizable'))
+						. '>' . $AppUI->_('Projects') . '</a>');
 				}
 				?>
 			</td>
