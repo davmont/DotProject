@@ -21,7 +21,7 @@ $this_month = new CDate($date);
 
 $uistyle = $AppUI->getPref('UISTYLE') ? $AppUI->getPref('UISTYLE') : dPgetConfig('host_style');
 ?>
-<a href="javascript: void(0);" onClick="clickDay('', '');"><?php 
+<a href="#"<?php echo dPaction('clickDay', array('', '')); ?>><?php 
 echo $AppUI->_('clear date'); ?></a>
 <?php
 $cal = new CMonthCalendar($this_month);
@@ -40,13 +40,13 @@ if (isset($prev_date)) {
 
 echo $cal->show();
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 /**
  *	@param string Input date in the format YYYYMMDD
  *	@param string Formatted date
  */
 	function clickDay(idate, fdate) {
-		window.opener.<?php echo $callback;?>(idate,fdate);
+		dPopenerCall(<?php echo dPjs($callback); ?>, [idate, fdate]);
 		window.close();
 	}
 </script>

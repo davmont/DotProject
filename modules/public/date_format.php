@@ -11,8 +11,11 @@ $field = preg_replace('/[^A-Za-z0-9_.]/', '', dPgetCleanParam($_GET,'field'));
 $this_day = new CDate($date);
 $formatted_date = $this_day->format($df);
 ?>
-<script language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <!--
-	window.parent.document.<?php echo $field; ?>.value = <?php echo dPjs($formatted_date); ?>;
+	(function () {
+		var target = dPpublicLookup(window.parent.document, <?php echo dPjs($field); ?>);
+		target.owner[target.name].value = <?php echo dPjs($formatted_date); ?>;
+	})();
 //-->
 </script>

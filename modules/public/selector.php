@@ -172,9 +172,9 @@ if (!$ok) {
 	                   ((!(empty($query_result))) ? $query_result : $q->loadHashList()));
 	echo db_error();
 ?>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function setClose(key, val) {
-	window.opener.<?php echo $callback;?>(key,val);
+	dPopenerCall(<?php echo dPjs($callback); ?>, [key, val]);
 	window.close();
 }
 
@@ -209,8 +209,8 @@ selector.style.height = (wh - count - 5) + "px";
 		<?php
 if (count($list) > 1) {
 	foreach ($list as $key => $val) {
-		echo ('<li>' . $html_disp_offset[$key] . '<a href="#" onclick="setClose(' . dPjsAttr($key) . ', '
-		      . dPjsAttr($val) . '); return false;">' . $AppUI->___($val) 
+		echo ('<li>' . $html_disp_offset[$key] . '<a href="#"'
+		      . dPaction('setClose', array((string)$key, (string)$val)) . '>' . $AppUI->___($val) 
 		      . "</a></li>\n");
 	}
 } else {
@@ -222,7 +222,7 @@ if (count($list) > 1) {
 	</td>
 	<td valign="bottom">
 		<input type="button" class="button" value="<?php 
-echo $AppUI->_('cancel');?>" onclick="window.close()" />
+echo $AppUI->_('cancel');?>"<?php echo dPaction('window.close'); ?> />
 	</td>
 </tr>
 </table>
