@@ -12,8 +12,8 @@ $titleBlock = new CTitleBlock("$titulo", 'graph-up.png', $m, $m . '.' . $a);
 $titleBlock->show();
 
 $AppUI->savePlace();
-$idBaseline = dPgetParam( $_GET, 'idBaseline', 0 );
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$idBaseline = dPgetIntParam( $_GET, 'idBaseline', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 
 $controllerBaseline = new ControllerBaseline();
 $controllerUtil = new ControllerUtil();
@@ -72,7 +72,7 @@ $record = $controllerBaseline->getBaselineRequestById($idBaseline);
 		</tr>		
 	  <tr>	  
 		<tr>
-			<td colspan="8"><input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button" onClick="javascript:location.href='?m=projects&a=view&project_id=<?php echo $project_id; ?>' ;" /></td>
+			<td colspan="8"><input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button"<?php echo dPaction(null, array(), null, array('href' => '?m=projects&a=view&project_id=' . (int)$project_id)); ?> /></td>
 			<td align="right"><input type="submit" value="<?php echo $AppUI->_('Gravar');?>" class="button"  /></td>
 			
 		</tr>

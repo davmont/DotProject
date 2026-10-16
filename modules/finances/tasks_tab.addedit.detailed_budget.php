@@ -48,14 +48,14 @@ if($budget->loadFromTask($task_id) != -1) { // If task is not dynamic
 			<table cellspacing="0" cellpadding="3" border="1">
 				<tr align="center">
 					<td colspan="4"> 
-						<?php echo $AppUI->_("Tax"); ?>: 	&#37;<input type="text" class="text" name="TVA" id="TVA" value="<?php echo ($task_id) ? $budget->Tax : mostCommonTax();?>" onchange="updateBudget();"/>
+						<?php echo $AppUI->_("Tax"); ?>: 	&#37;<input type="text" class="text" name="TVA" id="TVA" value="<?php echo ($task_id) ? $budget->Tax : mostCommonTax();?>"<?php echo dPaction('updateBudget', array(), 'change'); ?>/>
 					</td>
 				</tr>
 				<tr align="center">
 					<td colspan="4"> 
 						<?php echo $AppUI->_("Amounts"); ?>: 	
-						<label for="tax0"><input type="radio" name="display_tax" id="tax0" value=0 onChange="javascript:updateBudget()" <?php if($budget->display_tax == 0) echo "checked"; ?> /><?php echo $AppUI->_("without tax"); ?></label>
-						<label for="tax1"><input type="radio" name="display_tax" id="tax1" value=1 onChange="javascript:updateBudget()" <?php if($budget->display_tax == 1) echo "checked"; ?> /><?php echo $AppUI->_("with tax"); ?></label>
+						<label for="tax0"><input type="radio" name="display_tax" id="tax0" value=0<?php echo dPaction('updateBudget', array(), 'change'); ?> <?php if($budget->display_tax == 0) echo "checked"; ?> /><?php echo $AppUI->_("without tax"); ?></label>
+						<label for="tax1"><input type="radio" name="display_tax" id="tax1" value=1<?php echo dPaction('updateBudget', array(), 'change'); ?> <?php if($budget->display_tax == 1) echo "checked"; ?> /><?php echo $AppUI->_("with tax"); ?></label>
 					</td>
 				</tr>
 				<tr align="center">
@@ -70,31 +70,31 @@ if($budget->loadFromTask($task_id) != -1) { // If task is not dynamic
 				<tr align="right">
 					<td><?php echo $AppUI->_('Equipment'); ?>: </td>
 					<td class="hilite" width="150px"><?php echo $dPconfig['currency_symbol']; ?>
-						<input type="text" class="text" name="equipment_investment" id="equipment_investment" value="<?php echo $budget->get_equipment_investment();?>" onchange="javascript:updateBudget();"/>
+						<input type="text" class="text" name="equipment_investment" id="equipment_investment" value="<?php echo $budget->get_equipment_investment();?>"<?php echo dPaction('updateBudget', array(), 'change'); ?>/>
 					</td>
 					<td><?php echo $AppUI->_('Equipment'); ?>: </td>
 					<td class="hilite" width="150px"><?php echo $dPconfig['currency_symbol']; ?>
-						<input type="text" class="text" name="equipment_operation" id="equipment_operation" value="<?php echo $budget->get_equipment_operation();?>" onchange="javascript:updateBudget();"/>
+						<input type="text" class="text" name="equipment_operation" id="equipment_operation" value="<?php echo $budget->get_equipment_operation();?>"<?php echo dPaction('updateBudget', array(), 'change'); ?>/>
 					</td>
 				</tr>
 				<tr align="right">
 					<td><?php echo $AppUI->_('Intangible'); ?>: </td>
 					<td class="hilite" width="150px"><?php echo $dPconfig['currency_symbol']; ?>
-						<input type="text" class="text" name="intangible_investment" id="intangible_investment" value="<?php echo $budget->get_intangible_investment();?>" onchange="javascript:updateBudget();"/>
+						<input type="text" class="text" name="intangible_investment" id="intangible_investment" value="<?php echo $budget->get_intangible_investment();?>"<?php echo dPaction('updateBudget', array(), 'change'); ?>/>
 					</td>
 					<td><?php echo $AppUI->_('Intangible'); ?>: </td>
 					<td class="hilite" width="150px"><?php echo $dPconfig['currency_symbol']; ?>
-						<input type="text" class="text" name="intangible_operation" id="intangible_operation" value="<?php echo $budget->get_intangible_operation();?>" onchange="javascript:updateBudget();"/>
+						<input type="text" class="text" name="intangible_operation" id="intangible_operation" value="<?php echo $budget->get_intangible_operation();?>"<?php echo dPaction('updateBudget', array(), 'change'); ?>/>
 					</td>
 				</tr>
 				<tr align="right">
 					<td><?php echo $AppUI->_('Service'); ?>: </td>
 					<td class="hilite" width="150px"><?php echo $dPconfig['currency_symbol']; ?>
-						<input type="text" class="text" name="service_investment" id="service_investment" value="<?php echo $budget->get_service_investment();?>" onchange="javascript:updateBudget();"/>
+						<input type="text" class="text" name="service_investment" id="service_investment" value="<?php echo $budget->get_service_investment();?>"<?php echo dPaction('updateBudget', array(), 'change'); ?>/>
 					</td>
 					<td><?php echo $AppUI->_('Service'); ?>: </td>
 					<td class="hilite" width="150px"><?php echo $dPconfig['currency_symbol']; ?>
-						<input type="text" class="text" name="service_operation" id="service_operation" value="<?php echo $budget->get_service_operation();?>" onchange="javascript:updateBudget();"/>
+						<input type="text" class="text" name="service_operation" id="service_operation" value="<?php echo $budget->get_service_operation();?>"<?php echo dPaction('updateBudget', array(), 'change'); ?>/>
 					</td>
 				</tr>
 				<tr align="center">
@@ -115,7 +115,7 @@ if($budget->loadFromTask($task_id) != -1) { // If task is not dynamic
 	</tr>
 	</table>
 	</form>
-	<script language="javascript" type="text/javascript">
+	<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	updateBudget();
 	// Definition of local function that need PHP
 	function checkAmount(id){
@@ -151,7 +151,7 @@ if($budget->loadFromTask($task_id) != -1) { // If task is not dynamic
 	function checkBudget(form, id) { return true; }	
 	function saveBudget(form, id) { return true; }
 	
-	subForm.push(new FormDefinition(<?php echo $tab; ?>, document.budgetFrm, checkBudget, saveBudget));
+	subForm.push(new FormDefinition(<?php echo (int)$tab; ?>, document.budgetFrm, checkBudget, saveBudget));
 	</script>
 <?php
 } else echo '<center>'.$AppUI->_('You can not set the budget of a dynamic task').'</center>';

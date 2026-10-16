@@ -34,7 +34,8 @@ class WBSItem {
 	}
 	
 	public function getIdentation(){
-		return $this->identation;
+		// Only the &nbsp; runs the pages add: the value is written into the page as HTML.
+		return str_repeat('&nbsp;', substr_count((string)$this->identation, '&nbsp;'));
 	}
 	
 	public function getSortOrder(){
@@ -45,6 +46,7 @@ class WBSItem {
 	}
 	
 	function store($projectId,$description,$number,$sortOrder,$isLeaf,$identation,$id) {
+		$identation = str_repeat('&nbsp;', substr_count(is_string($identation) ? $identation : '', '&nbsp;')); // written into pages as HTML
 		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('id');

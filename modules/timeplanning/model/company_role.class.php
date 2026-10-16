@@ -28,7 +28,8 @@ class CompanyRole {
 	}
 	
 	public function getIdentation(){
-		return $this->identation;
+		// Only the &nbsp; runs the pages add: the value is written into the page as HTML.
+		return str_repeat('&nbsp;', substr_count((string)$this->identation, '&nbsp;'));
 	}
 	
 	public function setIdentation($identation){
@@ -47,6 +48,7 @@ class CompanyRole {
 	}
 	
 	function store($company_id,$description,$identation,$id,$sort_order) {
+		$identation = str_repeat('&nbsp;', substr_count(is_string($identation) ? $identation : '', '&nbsp;')); // written into pages as HTML
 		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('id');

@@ -88,7 +88,7 @@ if ($projectSelected == null) {
 }
 $titleBlock->show();
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
     function submitIt() {
         var f = document.uploadFrm;
         f.submit();
@@ -212,7 +212,7 @@ $titleBlock->show();
         </tr>
         <tr>
             <td align="center">
-                <input type="button" class="button" value="<?php echo $AppUI->_('LBL_RETURN'); ?>" onclick="{location.href = <?php echo dPjsAttr($href); ?>;}"/>
+                <input type="button" class="button" value="<?php echo $AppUI->_('LBL_RETURN'); ?>"<?php echo dPaction(null, array(), null, array('href' => $href)); ?>/>
             </td>
         </tr>
     </form>

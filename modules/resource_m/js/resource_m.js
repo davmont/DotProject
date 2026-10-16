@@ -142,8 +142,8 @@ function dispUserDetails(ev, company, department)
 	}
 	div.style.left=xPos+9+"px";
 	div.style.top=yPos+15+"px";
-	document.getElementById("uCompany").innerHTML=company;
-	document.getElementById("uDepartment").innerHTML=department;
+	document.getElementById("uCompany").textContent=company;
+	document.getElementById("uDepartment").textContent=department;
 	div.style.display = "block";
 	
 }
@@ -193,11 +193,11 @@ function dispProjectDetails(ev, owner, sdate, edate, company, department)
 	}
 	div.style.left=xPos+9+"px";
 	div.style.top=yPos+15+"px";
-	document.getElementById("pOwner").innerHTML=owner;
-	document.getElementById("pSDate").innerHTML=sdate;
-	document.getElementById("pEDate").innerHTML=edate;
-	document.getElementById("pCompany").innerHTML=company;
-	document.getElementById("pDepartment").innerHTML=department;
+	document.getElementById("pOwner").textContent=owner;
+	document.getElementById("pSDate").textContent=sdate;
+	document.getElementById("pEDate").textContent=edate;
+	document.getElementById("pCompany").textContent=company;
+	document.getElementById("pDepartment").textContent=department;
 	div.style.display = "block";
 	
 }
@@ -251,10 +251,10 @@ function dispTaskDetails(ev, owner, percent, sdate, edate, disp)
 		document.getElementById("trDyna").style.visibility="visible";
 	else
 		document.getElementById("trDyna").style.visibility="hidden";
-	document.getElementById("tOwner").innerHTML=owner;
-	document.getElementById("tPercent").innerHTML=percent;
-	document.getElementById("tSDate").innerHTML=sdate;
-	document.getElementById("tEDate").innerHTML=edate;
+	document.getElementById("tOwner").textContent=owner;
+	document.getElementById("tPercent").textContent=percent;
+	document.getElementById("tSDate").textContent=sdate;
+	document.getElementById("tEDate").textContent=edate;
 	div.style.display = "block";
 	
 }
@@ -296,12 +296,12 @@ function displayAssignEdit(ev, user, task, project, taskid, userid, complete, sd
 	}
 	div.style.left=xPos+9+"px";
 	div.style.top=yPos+15+"px";
-	document.getElementById("aUser").innerHTML		= user;
-	document.getElementById("aTask").innerHTML		= task;
-	document.getElementById("aProject").innerHTML	= project;
+	document.getElementById("aUser").textContent		= user;
+	document.getElementById("aTask").textContent		= task;
+	document.getElementById("aProject").textContent	= project;
 	document.getElementById("aTId").value			= taskid;
 	document.getElementById("aUId").value			= userid;
-	document.getElementById("aComplete").innerHTML	= complete;
+	document.getElementById("aComplete").textContent	= complete;
 	document.getElementById("show_aSDate").value	= sdate;
 	document.getElementById("show_aEDate").value	= edate;
 	var start 										= sdate.substr(6)+sdate.substr(3,2)+sdate.substr(0,2);
@@ -379,3 +379,148 @@ function setCalendar(idate, fdate) {
 	calendarField.value = idate;
 	document.getElementById( "show_"+calendarField.name ).value = fdate;
 }
+
+/**************************** HANDLERS CALLED THROUGH js/dp-actions.js **********************************/
+/* They replace the inline onclick/onmouseover/... attributes of index.php. The
+** global "timer" (declared in index.php) holds the pending details timeout.
+*/
+
+/* Calendar link of a filter field of mainFrm: start_date or end_date.
+** @param	string	name
+*/
+function rmPopCalendar(name)
+{
+	popCalendar(document.mainFrm.elements[name]);
+}
+
+/* Calendar link of the assignment edit form (aSDate or aEDate): switch the form
+** to "adapt assignment" mode, then open the calendar.
+** @param	string	name
+*/
+function rmAssignCalendar(name)
+{
+	switchTypeAA();
+	popCalendar(document.mainFrm.elements[name]);
+}
+
+/* Focus on a calendar link of the assignment edit form.
+** @param	string	id		aSDate or aEDate
+** @param	string	global	name of the global holding the original date ("start" or "end")
+*/
+function rmAssignCalendarFocus(id, global)
+{
+	if (document.getElementById(id).value == window[global])
+		switchTypeNull();
+}
+
+/* Change of the (hidden) assignment start date.
+*/
+function rmAssignStartChanged()
+{
+	document.getElementById('aPercent').disabled = 'disabled';
+	document.getElementById('aa').style.display = 'table-row';
+}
+
+/* Focus, blur and change of the assignment field. After a change, blur no longer
+** resets the form (the inline handler cleared its own onblur).
+*/
+function rmPercentFocus()
+{
+	switchTypeAD();
+	this.select();
+}
+
+function rmPercentBlur()
+{
+	switchTypeNull();
+}
+
+function rmPercentChange()
+{
+	this.removeAttribute('data-dp-call-blur');
+	switchTypeAD();
+}
+
+/* Close the assignment edit form.
+*/
+function rmHideAssignEdit()
+{
+	document.getElementById('assignEdit').style.display = 'none';
+}
+
+/* Date range links of the calendar header: set the range and submit.
+** @param	string	sdate	YYYYMMDD
+** @param	string	edate	YYYYMMDD
+*/
+function rmRange(sdate, edate)
+{
+	$('input#start_date').val(sdate);
+	$('input#end_date').val(edate);
+	$('#submitButton').click();
+}
+
+/* Hover details of a user, project or task line.
+*/
+function rmUserOver(ev, company, department)
+{
+	window.timer = displayUserDetails(ev, company, department);
+}
+
+function rmUserOut()
+{
+	hideUserDetails(window.timer);
+}
+
+function rmProjectOver(ev, owner, sdate, edate, company, department)
+{
+	window.timer = displayProjectDetails(ev, owner, sdate, edate, company, department);
+}
+
+function rmProjectOut()
+{
+	hideProjectDetails(window.timer);
+}
+
+/* @param	bool	editable	the task assignment can be edited: show the pencil icon
+*/
+function rmTaskOver(ev, editable, owner, percent, sdate, edate, disp)
+{
+	if (editable) {
+		$(this).append($("<img style='float:right;' src='./images/icons/pencil.gif' />"));
+		$(this).css('cursor', 'pointer');
+	}
+	window.timer = displayTaskDetails(ev, owner, percent, sdate, edate, disp);
+}
+
+function rmTaskOut(editable)
+{
+	if (editable) {
+		$(this).find('img:last').remove();
+		$(this).css('cursor', 'default');
+	}
+	hideTaskDetails(window.timer);
+}
+
+function rmAssignEdit(ev, user, task, project, taskid, userid, complete, sdate, edate, aPercent)
+{
+	displayAssignEdit(ev, user, task, project, taskid, userid, complete, sdate, edate, aPercent, window.timer);
+}
+
+/* Filter links (generateFilterLink(), class rmFilterLink): a click filters the page
+** on that user or project; hovering shows the filter icon. Bound with jQuery rather
+** than data-dp-* attributes so the hover details of the cell around the link
+** (rmUserOver/rmProjectOver) keep working: dp-actions only runs the nearest element.
+*/
+function rmFilter(name, id)
+{
+	$('select[name=' + name + '_id]').val(id);
+	$('#submitButton').click();
+}
+
+$('a.rmFilterLink').live('click', function () {
+	rmFilter($(this).attr('data-rm-filter'), $(this).attr('data-rm-id'));
+}).live('mouseenter', function () {
+	$(this).append($("<img style='float:right;' src='./modules/resource_m/images/filter.png' height='12' width='12' />"));
+}).live('mouseout', function () {
+	$(this).find('img:last').remove();
+});

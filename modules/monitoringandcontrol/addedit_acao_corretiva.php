@@ -4,8 +4,8 @@ if (!defined('DP_BASE_DIR')) {
 }
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
-$task_id = dPgetParam( $_GET, 'task_id', 0 );
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$task_id = dPgetIntParam( $_GET, 'task_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/translations.php");
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_acao_corretiva.class.php");
@@ -157,8 +157,8 @@ $controllerUtil = new ControllerUtil();
       <tr>
              <td align="right" ><?php echo $AppUI->_('LBL_PRAZO'); ?>:</td>
 			 <td nowrap="nowrap" >                 	  
-				   <input type="text" class="text"  name="date_limit[]"  id="date_edit" maxlength="10" onkeyup="formatadata(this,event)"/>
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)" />     
+				   <input type="text" class="text"  name="date_limit[]"  id="date_edit" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />     
                 </td>   
       </tr>      
 	  <tr>
@@ -167,7 +167,7 @@ $controllerUtil = new ControllerUtil();
            </td>
 		<tr>
 			<td colspan="7">
-				<input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button" onClick="javascript:history.back(-1);" /></td>
-			<td align="right"><input type="button" value="<?php echo $AppUI->_('Gravar');?>" class="button" onclick="validateChangeRequest();"  /></td>
+				<input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button"<?php echo dPaction('history.back', array(-1)); ?> /></td>
+			<td align="right"><input type="button" value="<?php echo $AppUI->_('Gravar');?>" class="button"<?php echo dPaction('validateChangeRequest'); ?>  /></td>
 		</tr>
 </table>

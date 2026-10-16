@@ -32,7 +32,7 @@ if (!defined('DP_BASE_DIR')) {
 	
 ?>
 
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
     function updateRecipientCombo(user_id){
         document.frmComposeMessage.recipient_user_id.value = user_id;
     }
@@ -50,10 +50,10 @@ if (!defined('DP_BASE_DIR')) {
 				<th><?php echo $AppUI->_("Recipient"); ?></th>
 				<td>
 				    <?php 
-				        echo arraySelect($user_list, "recipient_user_id", "class='text' onchange='javascript:updateQuickSelect(this.value);'", $default_recipient_id); 
+				        echo arraySelect($user_list, "recipient_user_id", "class='text'" . dPaction('updateQuickSelect', array('$value')), $default_recipient_id); 
 				        echo $AppUI->_("Quick Recipient");
 				    ?>
-				    <input type='text' class='text' name='user_id_quick_select' onchange='javascrip:updateRecipientCombo(this.value);' size='4' style='text-align:center' />
+				    <input type='text' class='text' name='user_id_quick_select'<?php echo dPaction('updateRecipientCombo', array('$value'), 'change'); ?> size='4' style='text-align:center' />
 				</td>
 			</tr>
 			
@@ -84,7 +84,7 @@ if (!defined('DP_BASE_DIR')) {
 	</form>
 </center>
 
-<script language='javascript'>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
     function addLoadEvent(func) {
         var oldonload = window.onload;
         if (typeof window.onload != 'function') {

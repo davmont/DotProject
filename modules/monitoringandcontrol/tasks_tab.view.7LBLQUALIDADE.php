@@ -8,7 +8,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_qu
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
-$task_id = dPgetParam( $_GET, 'task_id', 0 );
+$task_id = dPgetIntParam( $_GET, 'task_id', 0 );
 $controllerQuality = new ControllerQuality();
 $controllerUtil = new ControllerUtil();
 
@@ -53,7 +53,7 @@ $lstUser  = $controllerUtil-> getUsers();
                                  <input  type="hidden" name="acao" value="update"  />
                                 <input  type="hidden" name="quality_id" value="<?php echo $id ;?>"  />
 								<input name="task_id" type="hidden" id="task_id" value="<?php echo $task_id; ?>">
-                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar" onclick="updateRow();"  />   
+                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />   
                               </form>
                         </td>                       <td align="center">
                               <form name="form_delete" method="post" action="?m=monitoringandcontrol&a=do_quality_aed&task_id=<?php echo $task_id; ?>" enctype="multipart/form-data" >
@@ -61,7 +61,7 @@ $lstUser  = $controllerUtil-> getUsers();
                                 <input  type="hidden" name="acao" value="delete"  />
                                 <input  type="hidden" name="quality_id" value="<?php echo $q_rec[0] ;?>"  />
 								<input name="task_id" type="hidden" id="task_id" value="<?php echo $task_id; ?>">
-                                <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar" onclick="deleteRow();"  />
+                                <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
                                 </form>                                
                         </td>
 				        </tr>						
@@ -71,7 +71,7 @@ $lstUser  = $controllerUtil-> getUsers();
 <!-- ***************** UPDATE  ****************************-->		
 <?php
 		if (isset($_POST['acao']) &&  $_POST['acao'] == 'update'){
-		 $id= $_POST['quality_id'];
+		 $id= dPgetIntParam($_POST, 'quality_id');
 	?>	
     <form action="?m=monitoringandcontrol&a=do_quality_aed&task_id=<?php echo $task_id; ?>" method="post" name="form_updateRow" id="form_updateRow" enctype="multipart/form-data">
     	<input name="dosql" type="hidden" value="do_quality_aed" />		
@@ -142,15 +142,15 @@ $lstUser  = $controllerUtil-> getUsers();
 			    
                </td>      
           		<td>  
-				   <input type="text" class="text"  name="date_end"  id="date_edit" maxlength="10" value="<?php echo $dt_end; ?>" onkeyup="formatadata(this,event)"/>
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)"  />     
+				   <input type="text" class="text"  name="date_end"  id="date_edit" maxlength="10" value="<?php echo $dt_end; ?>" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?>  />     
                </td>  
 		</tr>        
 	</table>
 	<table width="70%" align="center">
 		<tr>
 			<td>				
-				<input type="submit" class="button"  onclick="return validateUpdateFields();" value="Atualizar"   />
+				<input type="submit" class="button" <?php echo dPaction('validateUpdateFields'); ?> value="Atualizar"   />
 			</td>
 		</tr>
 	</table>
@@ -211,15 +211,15 @@ $lstUser  = $controllerUtil-> getUsers();
 			    
                </td>      
           		<td>  
-				   <input type="text" class="text"  name="date_end"  id="date_edit" maxlength="10" onkeyup="formatadata(this,event)" />
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)" />     
+				   <input type="text" class="text"  name="date_end"  id="date_edit" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?> />
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />     
                </td>  
 		</tr>        
 	</table>
 	<table width="70%" align="center">
 		<tr>
 			<td>				
-				<input type="submit" class="button" onClick=" return validateQualityFields();" value="Save" />
+				<input type="submit" class="button"<?php echo dPaction('validateQualityFields'); ?> value="Save" />
 			</td>
 		</tr>
 	</table>

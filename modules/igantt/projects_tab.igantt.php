@@ -25,12 +25,12 @@ global $project_id;
 You are using : <span id="browserName"></span><br />
 <span><?php echo $AppUI->_("wrongBrowser"); ?></span> 
 </div>
-<script language="javascript" >
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 document.getElementById("browserName").innerHTML=navigator.appName;
 if ( navigator.appName == "Microsoft Internet Explorer" ) {
 	document.getElementById("divAlert").style.display="block";
 } else {
-	window.open("index.php?m=igantt&a=vw_igantt&suppressHeaders=1&project_id=<?php echo $project_id; ?>", "Interactive_Gantt_chart", "fullscreen=yes,resizable=yes,scrollbars=yes");
+	window.open("index.php?m=igantt&a=vw_igantt&suppressHeaders=1&project_id=<?php echo (int)$project_id; ?>", "Interactive_Gantt_chart", "fullscreen=yes,resizable=yes,scrollbars=yes");
 }
 </script>
 <form id="updateTasks" name="updateTasks" action="./index.php?m=igantt" method="post" >

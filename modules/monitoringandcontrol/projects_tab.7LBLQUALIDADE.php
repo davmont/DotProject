@@ -9,7 +9,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 
 $AppUI->savePlace();
 $tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
-$project_id = dPgetParam( $_GET, 'project_id', 0 ); 
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 ); 
 
  ini_set('max_execution_time', 180);
  ini_set('memory_limit', $dPconfig['reset_memory_limit']);
@@ -41,7 +41,7 @@ global $AppUI;
         <tr>
         
             <td colspan="2">
-                <select name="user" size="1"  id="user" onchange="submit();">
+                <select name="user" size="1"  id="user" <?php echo dPaction(null, array(), null, array('submit' => '')); ?>>
                     <option value"0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
                     <?php		   		
                     $list = array();	
@@ -65,18 +65,18 @@ global $AppUI;
   $pieData   = array_column($arQualidadePie, 'quantity');
 ?>
 <canvas id="dp-quality-pie" width="580" height="250" style="max-width:100%;"></canvas>
-<script>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 (function(){
   var ctx = document.getElementById('dp-quality-pie').getContext('2d');
   new Chart(ctx, {
     type: 'pie',
     data: {
-      labels: <?php echo json_encode($pieLabels); ?>,
-      datasets: [{ data: <?php echo json_encode($pieData); ?>, borderWidth: 1 }]
+      labels: <?php echo json_encode($pieLabels, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+      datasets: [{ data: <?php echo json_encode($pieData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>, borderWidth: 1 }]
     },
     options: {
       responsive: false,
-      plugins: { title: { display: true, text: <?php echo json_encode((string)$titGraficoPizza); ?> } }
+      plugins: { title: { display: true, text: <?php echo json_encode((string)$titGraficoPizza, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?> } }
     }
   });
 }());
@@ -91,18 +91,18 @@ global $AppUI;
   }
 ?>
 <canvas id="dp-quality-bar" width="580" height="250" style="max-width:100%;"></canvas>
-<script>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 (function(){
   var ctx = document.getElementById('dp-quality-bar').getContext('2d');
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: <?php echo json_encode(array_values((array)$arLabelBar)); ?>,
-      datasets: <?php echo json_encode($barDatasets); ?>
+      labels: <?php echo json_encode(array_values((array)$arLabelBar), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+      datasets: <?php echo json_encode($barDatasets, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>
     },
     options: {
       responsive: false,
-      plugins: { title: { display: true, text: <?php echo json_encode((string)$titGraficoBarra); ?> } }
+      plugins: { title: { display: true, text: <?php echo json_encode((string)$titGraficoBarra, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?> } }
     }
   });
 }());

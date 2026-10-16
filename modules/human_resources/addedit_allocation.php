@@ -186,7 +186,7 @@ if($allocated_user_id || $human_resource_allocation_id) {
 </tr>
 <td align="right">
     <input type="button" value="<?php echo $AppUI->_('submit');?>"
-    class="button" onclick="submitAllocation(document.editfrm);" />
+    class="button"<?php echo dPaction('submitAllocation', array('$form')); ?> />
 </td>
 </table>
 </form>
@@ -392,7 +392,7 @@ for ($i = 0; $i < count($ordered_hrs); $i++) {
   if($hr->human_resource_lattes_url) {
   ?>
   <td style=<?php echo $style;?> align='center'>
-	<a href="#" onclick="window.open(<?php echo dPjsAttr(dPsafeUrl($hr->human_resource_lattes_url)); ?>); return false;"><?php echo dPshowImage( './modules/human_resources/images/lattes.png', 16, 16, '' ); ?>
+	<a href="#"<?php echo dPaction('window.open', array(dPsafeUrl($hr->human_resource_lattes_url))); ?>><?php echo dPshowImage( './modules/human_resources/images/lattes.png', 16, 16, '' ); ?>
 	</a>
   </td>
   <?php
@@ -420,6 +420,6 @@ for ($i = 0; $i < count($ordered_hrs); $i++) {
 <tr>
   <td>
     <input type="button" value="<?php echo $AppUI->_('back');?>"
-    class="button" onclick="javascript:history.back(-1);" />
+    class="button"<?php echo dPaction('history.back'); ?> />
   </td>
 </tr>

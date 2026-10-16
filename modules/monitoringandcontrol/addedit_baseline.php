@@ -4,7 +4,7 @@ if (!defined('DP_BASE_DIR')) {
 }
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 
 $titleBlock = new CTitleBlock('Nova Baseline', 'graph-up.png', $m, $m . '.' . $a);
 $titleBlock->show();
@@ -57,8 +57,8 @@ $controllerUtil = new ControllerUtil();
 		</tr>		
 	  <tr>	  
 		<tr>
-			<td colspan="8"><input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button" onClick="javascript:location.href='?m=projects&a=view&project_id=<?php echo $project_id; ?>' ;" /></td>
-			<td align="right"><input type="button" value="<?php echo $AppUI->_('Gravar');?>" class="button" onclick="validateBaseline();"  /></td>
+			<td colspan="8"><input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button"<?php echo dPaction(null, array(), null, array('href' => '?m=projects&a=view&project_id=' . (int)$project_id)); ?> /></td>
+			<td align="right"><input type="button" value="<?php echo $AppUI->_('Gravar');?>" class="button"<?php echo dPaction('validateBaseline'); ?>  /></td>
 			
 		</tr>
 </table>

@@ -30,7 +30,7 @@ foreach ($roles as $role) {
 	<td align='left'><input type='text' id="<?php echo dPhtml($role['human_resources_role_id']); ?>" value="<?php echo dPhtml($role['human_resources_role_name']); ?>" />
 	</td>
 	<td>
-	<a href="#" onclick="deleteRole(<?php echo dPjsAttr($role['human_resources_role_id']);?>, <?php echo dPjsAttr($role['human_resources_role_name']);?>); return false;" title="<?php echo $AppUI->_('delete'); ?>">
+	<a href="#"<?php echo dPaction('deleteRole', array((string)$role['human_resources_role_id'], (string)$role['human_resources_role_name'])); ?> title="<?php echo $AppUI->_('delete'); ?>">
 	<?php echo dPshowImage('./images/icons/stock_delete-16.png', 16, 16, ''); ?></a>
 	</td>
 	</tr>
@@ -56,7 +56,7 @@ foreach($company_roles as $company_role) {
 }
 ?>
 
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function deleteRole(roleId, roleName) {
 	var option = document.createElement('option');
 	option.name = roleName;
@@ -86,7 +86,7 @@ function addRole() {
 	link.href = '#';
 	link.title = 'delete';
 	link.onclick = function() { deleteRole(roleId, roleName); return false; };
-	link.innerHTML = '<?php echo dPshowImage("./images/icons/stock_delete-16.png", 16, 16, ""); ?>';
+	link.innerHTML = <?php echo dPjs(dPshowImage("./images/icons/stock_delete-16.png", 16, 16, "")); ?>;
 	td2.appendChild(link);
 	roleCombo.remove(roleCombo.selectedIndex);
 }
@@ -115,7 +115,7 @@ function addRole() {
 </tr>
 <tr>
 	<td align="right">
-		<input type="button" value="<?php echo $AppUI->_('add');?>" class="button" onclick="addRole();">
+		<input type="button" value="<?php echo $AppUI->_('add');?>" class="button"<?php echo dPaction('addRole'); ?>>
 	</td>
 </tr>
 </table>

@@ -70,5 +70,5 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 </td></tr>
 </table>
 <div align="right">
-<input class="button" type="button" name="new post mortem" value="<?php echo 'new post mortem'; ?>" onclick="location.href = <?php echo htmlspecialchars(json_encode('?m=closure&a=addedit&project_name=' . urlencode($project_name)), ENT_QUOTES); ?>;" />
+<input class="button" type="button" name="new post mortem" value="<?php echo 'new post mortem'; ?>"<?php echo dPaction(null, array(), null, array('href' => '?m=closure&a=addedit&project_name=' . urlencode($project_name))); ?> />
 </div>

@@ -1,5 +1,10 @@
 
 
+// Calendar button added by milestoneupdate() (run through js/dp-actions.js).
+function tpDisplayCalendar(fieldId, format, button) {
+	displayCalendar(document.getElementById(fieldId), format, button);
+}
+
 function milestoneupdate(){
 	
 	
@@ -23,7 +28,7 @@ function milestoneupdate(){
 			var value=document.getElementById("end_date").value;
 			var dateFieldName="milestone_date";
 			td.innerHTML="Data *<br><input type='text' class='text' id='"+dateFieldName+"' name='"+dateFieldName+"' size='11' disabled value='"+value+"'>";
-			td.innerHTML+="<img src='/dotproject/modules/time_planning_UBPS/images/img.gif' style='cursor:pointer' onclick=displayCalendar(document.getElementById('"+dateFieldName+"'),'dd/mm/yyyy',this)>";
+			td.innerHTML+="<img src='/dotproject/modules/time_planning_UBPS/images/img.gif' style='cursor:pointer' data-dp-call='tpDisplayCalendar' data-dp-args='"+JSON.stringify([dateFieldName, "dd/mm/yyyy", "$this"]).replace(/&/g, "&amp;").replace(/'/g, "&#39;")+"'>";
 			row.insertCell(1);
 		}else{
 			row.style.display="";

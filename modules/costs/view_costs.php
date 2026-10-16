@@ -157,7 +157,7 @@ $notHumanCost = getResources("Non-Human", $whereProject);
 <tr>
     <td>
         <input type="button" value="<?php echo $AppUI->_('back'); ?>"
-               class="button" onclick="javascript:history.back(-1);" />
+               class="button"<?php echo dPaction('history.back'); ?> />
     </td>
 </tr>
 

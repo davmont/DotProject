@@ -7,8 +7,8 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ac
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
 $tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
-$task_id = dPgetParam( $_GET, 'task_id', 0 );
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$task_id = dPgetIntParam( $_GET, 'task_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 ?>
 <script src="./modules/monitoringandcontrol/js/respons.js"> </script>
@@ -16,7 +16,7 @@ $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 <!-- ***************** LISTA AÇÃO CORRETIVA ****************************-->	
 	<br/>
     <p align="right" style="width:85%"> 
-           <input type="button" class="button" value="<?php echo $AppUI->_('LBL_NOVA').' '.$AppUI->_('LBL_ACAO_CORRETIVA'); ?>"  onclick="window.location='?m=monitoringandcontrol&a=addedit_acao_corretiva&project_id=<?php echo $project_id ; ?>' "/>   
+           <input type="button" class="button" value="<?php echo $AppUI->_('LBL_NOVA').' '.$AppUI->_('LBL_ACAO_CORRETIVA'); ?>" <?php echo dPaction(null, array(), null, array('href' => '?m=monitoringandcontrol&a=addedit_acao_corretiva&project_id=' . (int)$project_id)); ?>/>   
     </p>
 	<table class="std"  width="60%" align="center" style="border-radius:6px">	
 		<caption> <b> <?php echo $AppUI->_('LBL_ACAO_CORRETIVA'); ?></b></caption>       
@@ -50,7 +50,7 @@ $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 								<input name="change_id" type="hidden" id="change_id" value="<?php echo  $row[0] ; ?>"> 
 								<input name="task_id" type="hidden" id="task_id" value="<?php echo $task_id; ?>">  
                                 <input name="project_id" type="hidden" id="project_id" value="<?php echo  $project_id ; ?>"> 
-                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar" onclick="updateRow();"  />                                 
+                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />                                 
                               </form>
                         </td>	
                         <td align="center">
@@ -59,7 +59,7 @@ $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
                                 <input  type="hidden" name="acao" value="delete"  />                           
 								<input name="change_id" type="hidden" id="change_id" value="<?php echo $row[0] ; ?>">
 								<input name="task_id" type="hidden" id="task_id" value="<?php echo $task_id; ?>">  
-                                <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar" onclick="deleteRow(excluir);"  />
+                                <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
                                 </form>                                
                         </td>
                   </tr>						

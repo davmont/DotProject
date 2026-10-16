@@ -56,7 +56,7 @@ if(dPgetParam($_POST, 'edit', 0))
 <script type="text/javascript" src="./modules/finances/js/jquery.ui.js"></script>
 <script type="text/javascript" src="./modules/finances/js/jquery.treeTable.js"></script>
 <script type="text/javascript" src="./modules/finances/js/finances.js"></script>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	$(document).ready(function() {
 		$(".treeTable").treeTable({
 			initialState: "expanded"	 	// can be changed for "collapsed"
@@ -70,24 +70,24 @@ if(dPgetParam($_POST, 'edit', 0))
 		<tbody>
 			<tr>
 				<td align="right" rowspan="2"  nowrap><?php echo $AppUI->_("Display").': '; ?></td>
-				<td align="left" nowrap><label for="currency0"><input type="radio" name="currency" id="currency0" value="0" onChange="javascript:this.form.submit();" <?php if($currency == "0") echo 'checked'; ?> /><?php echo $dPconfig['currency_symbol']; ?></label>
-				<label for="currency1"><input type="radio" name="currency" id="currency1" value="1" onChange="javascript:this.form.submit();" <?php if($currency == "1") echo 'checked'; ?> /><?php echo "k".$dPconfig['currency_symbol']; ?></label>
-				<label for="currency2"><input type="radio" name="currency" id="currency2" value="2" onChange="javascript:this.form.submit();" <?php if($currency == "2") echo 'checked'; ?> /><?php echo "M".$dPconfig['currency_symbol']; ?></label></td>
+				<td align="left" nowrap><label for="currency0"><input type="radio" name="currency" id="currency0" value="0"<?php echo dPaction(null, array(), 'change', array('submit' => '')); ?> <?php if($currency == "0") echo 'checked'; ?> /><?php echo $dPconfig['currency_symbol']; ?></label>
+				<label for="currency1"><input type="radio" name="currency" id="currency1" value="1"<?php echo dPaction(null, array(), 'change', array('submit' => '')); ?> <?php if($currency == "1") echo 'checked'; ?> /><?php echo "k".$dPconfig['currency_symbol']; ?></label>
+				<label for="currency2"><input type="radio" name="currency" id="currency2" value="2"<?php echo dPaction(null, array(), 'change', array('submit' => '')); ?> <?php if($currency == "2") echo 'checked'; ?> /><?php echo "M".$dPconfig['currency_symbol']; ?></label></td>
 			</tr>
 			<tr>
-				<td align="left" nowrap><label for="display0"><input type="radio" name="display" id="display0" value="0" onClick="javascript:$('.subTotal').hide();$('.total').hide();$('.budget').show()" /><?php echo $AppUI->_('Detail'); ?></label>
-				<label for="display1"><input type="radio" name="display" id="display1" value="1" onClick="javascript:$('.budget').hide();$('.total').hide();$('.subTotal').show()" /><?php echo $AppUI->_('Sub Total'); ?></label>
-				<label for="display2"><input type="radio" name="display" id="display2" value="2" onClick="javascript:$('.budget').hide();$('.subTotal').hide();$('.total').show()" /><?php echo $AppUI->_('Total'); ?></label></td>
+				<td align="left" nowrap><label for="display0"><input type="radio" name="display" id="display0" value="0"<?php echo dPaction('financesShowDisplay', array(0)); ?> /><?php echo $AppUI->_('Detail'); ?></label>
+				<label for="display1"><input type="radio" name="display" id="display1" value="1"<?php echo dPaction('financesShowDisplay', array(1)); ?> /><?php echo $AppUI->_('Sub Total'); ?></label>
+				<label for="display2"><input type="radio" name="display" id="display2" value="2"<?php echo dPaction('financesShowDisplay', array(2)); ?> /><?php echo $AppUI->_('Total'); ?></label></td>
 			</tr>
 			<tr>
 				<td align="right" nowrap><?php echo $AppUI->_("Amounts").': '; ?></td>	
-				<td align="left" nowrap><label for="tax0"><input type="radio" name="tax" id="tax0" value="0" onChange="javascript:this.form.submit();" <?php if($tax == "0") echo 'checked'; ?> /><?php echo $AppUI->_("without tax"); ?></label>
-				<label for="tax1"><input type="radio" name="tax" id="tax1" value="1" onChange="javascript:this.form.submit();" <?php if($tax == "1") echo 'checked'; ?> /><?php echo $AppUI->_("with tax"); ?></label></td>
+				<td align="left" nowrap><label for="tax0"><input type="radio" name="tax" id="tax0" value="0"<?php echo dPaction(null, array(), 'change', array('submit' => '')); ?> <?php if($tax == "0") echo 'checked'; ?> /><?php echo $AppUI->_("without tax"); ?></label>
+				<label for="tax1"><input type="radio" name="tax" id="tax1" value="1"<?php echo dPaction(null, array(), 'change', array('submit' => '')); ?> <?php if($tax == "1") echo 'checked'; ?> /><?php echo $AppUI->_("with tax"); ?></label></td>
 			</tr>
 		</tbody>
 	</table>
 <div style="text-align: center; padding: 5px;">
-	<input type="button" id="saveButton" value="<?php echo $AppUI->_('Save Changes');?>" onclick="javascript:submitWithExpandList(this);" />
+	<input type="button" id="saveButton" value="<?php echo $AppUI->_('Save Changes');?>"<?php echo dPaction('submitWithExpandList', array('$this')); ?> />
 </div>
 <!-- Main table -->
 <table class="treeTable" cellspacing="0" cellpadding="0" border="1">
@@ -304,15 +304,15 @@ if(dPgetParam($_POST, 'edit', 0))
 	</tfoot>
 </table>
 </form>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 // Definition of function that need PHP
 function getCurrency(){
 	var radios = document.getElementsByName("currency");
 	if(radios[2].checked)
-		return "M<?php echo $dPconfig['currency_symbol']; ?>";
+		return "M" + <?php echo dPjs($dPconfig['currency_symbol']); ?>;
 	if(radios[1].checked)
-		return "k<?php echo $dPconfig['currency_symbol']; ?>";
-	return "<?php echo $dPconfig['currency_symbol']; ?>";
+		return "k" + <?php echo dPjs($dPconfig['currency_symbol']); ?>;
+	return <?php echo dPjs($dPconfig['currency_symbol']); ?>;
 }
 
 function tdClick(){
@@ -320,7 +320,7 @@ function tdClick(){
 	$(this).addClass("edit");
 	var name = $(this).parent().attr('id')+$(this).attr('rel');
 	name = name.substr(name.indexOf('_p_')+1);
-	$(this).html('<?php echo $dPconfig['currency_symbol']; ?><input name="'+name+'" style="width: 85%;" type="text" value="'+ $(this).attr('val')+'"/>');
+	$(this).html(<?php echo dPjs($dPconfig['currency_symbol']); ?> + '<input name="'+name+'" style="width: 85%;" type="text" value="'+ $(this).attr('val')+'"/>');
 	$(this).children().focus();
 }
 

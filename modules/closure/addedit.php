@@ -6,7 +6,6 @@ if (!defined('DP_BASE_DIR')){
 $pma_id = dPgetParam($_GET, 'pma_id', 0);
 $project_name = dPgetParam($_GET, 'project_name', 0);
 
-$project_name = '"'.$project_name.'"';
 
 $perms =& $AppUI->acl();
 // check permissions for this record
@@ -29,7 +28,7 @@ if($pma_id == 0){
  $q  = new DBQuery;
  $q->addTable('projects');
  $q->addQuery('project_target_budget, project_start_date, project_end_date, project_name');
- $q->addWhere('project_name=' . $project_name);
+ $q->addWhere('project_name=' . $q->quote($project_name));
  $res =& $q->exec();
 
  $row->planned_budget = $res->fields['project_target_budget'];
@@ -118,7 +117,7 @@ for ($res; ! $res->EOF; $res->MoveNext()){
        if(array_search($contact_first_name, $pieces) === false){
 ?>
                 <option value = <?php echo $i;?> >
-                        <?php echo $contact_first_name; ?>
+                        <?php echo dPhtml($contact_first_name); ?>
                 </option>
 <?php
                 $i++;
@@ -128,8 +127,8 @@ for ($res; ! $res->EOF; $res->MoveNext()){
 </select>
 </td>
 <td align='left'>
-<input type="button" onClick="move(this.form.list2,this.form.list1)" value="<<"/>
-<input type="button" onClick="move(this.form.list1,this.form.list2)" value=">>"/>
+<input type="button"<?php echo dPaction('closureMoveLeft', array('$form')); ?> value="<<"/>
+<input type="button"<?php echo dPaction('closureMoveRight', array('$form')); ?> value=">>"/>
 
 <select multiple size="10" valign="left" name="list2" style="width:150">
 <?php
@@ -142,7 +141,7 @@ for($i = 0; $i < $limit; $i++){
          $p2  = $p2.$pieces[$i];
 ?>
                 <option value = <?php echo $i;?> >
-                        <?php echo $pieces[$i]; ?>
+                        <?php echo dPhtml($pieces[$i]); ?>
                 </option>
  <?php
 }
@@ -150,7 +149,7 @@ for($i = 0; $i < $limit; $i++){
       if($participants){
       ?>
                 <option value = <?php echo $i;?> >
-                        <?php echo $participants; ?>
+                        <?php echo dPhtml($participants); ?>
                 </option>
                 <?php
       }
@@ -169,7 +168,7 @@ for($i = 0; $i < $limit; $i++){
 				<input type="text" class="text" name="meeting_date" id="date0" value="<?php
 	echo (($meeting_date) ? $meeting_date->format($df) : ''); ?>" disabled="disabled" />
 
-				<a href="#" onclick="popCalendar( 'meeting_date', 'meeting_date');">
+				<a href="#"<?php echo dPaction('popCalendar', array('meeting_date', 'meeting_date')); ?>>
 					<img src="./images/calendar.gif" width="24" height="12" alt="{dPtranslate word='Calendar'}" border="0" />
 				</a>
 			</td>
@@ -196,7 +195,7 @@ echo arraySelect($projects, 'project_name', 'size="1" class="text"', $row->proje
 				<input type="text" class="text" name="planned_start_date" id="date1" value="<?php
 	echo (($start_date) ? $start_date->format($df) : ''); ?>" disabled="disabled" />
 
-				<a href="#" onclick="popCalendar( 'planned_start_date', 'planned_start_date');">
+				<a href="#"<?php echo dPaction('popCalendar', array('planned_start_date', 'planned_start_date')); ?>>
 					<img src="./images/calendar.gif" width="24" height="12" alt="{dPtranslate word='Calendar'}" border="0" />
 				</a>
 			</td>
@@ -208,7 +207,7 @@ echo arraySelect($projects, 'project_name', 'size="1" class="text"', $row->proje
 			<!-- format(FMT_TIMESTAMP_DATE) -->
 				<input type="text" class="text" name="start_date" id="date2" value="<?php
 	echo (($actual_start_date) ? $actual_start_date->format($df) : '');?>" disabled="disabled" />
-				<a href="#" onclick="popCalendar( 'start_date', 'start_date');">
+				<a href="#"<?php echo dPaction('popCalendar', array('start_date', 'start_date')); ?>>
 					<img src="./images/calendar.gif" width="24" height="12" alt="{dPtranslate word='Calendar'}" border="0" />
 				</a>
 			</td>
@@ -225,7 +224,7 @@ echo arraySelect($projects, 'project_name', 'size="1" class="text"', $row->proje
 				<input type="text" class="text" name="planned_end_date" id="date3" value="<?php
 	echo (($end_date) ? $end_date->format($df) : ''); ?>" disabled="disabled" />
 
-				<a href="#" onclick="popCalendar( 'planned_end_date', 'planned_end_date');">
+				<a href="#"<?php echo dPaction('popCalendar', array('planned_end_date', 'planned_end_date')); ?>>
 					<img src="./images/calendar.gif" width="24" height="12" alt="{dPtranslate word='Calendar'}" border="0" />
 				</a>
 			</td>
@@ -238,7 +237,7 @@ echo arraySelect($projects, 'project_name', 'size="1" class="text"', $row->proje
 				<input type="text" class="text" name="end_date" id="date4" value="<?php
 	echo (($actual_end_date) ? $actual_end_date->format($df) : '');?>" disabled="disabled" />
 
-				<a href="#" onclick="popCalendar( 'end_date', 'end_date');">
+				<a href="#"<?php echo dPaction('popCalendar', array('end_date', 'end_date')); ?>>
 					<img src="./images/calendar.gif" width="24" height="12" alt="{dPtranslate word='Calendar'}" border="0" />
 				</a>
 			</td>
@@ -281,11 +280,11 @@ echo arraySelect($projects, 'project_name', 'size="1" class="text"', $row->proje
 <tr>
   <td>
     <input type="button" value="<?php echo $AppUI->_('back');?>"
-    class="button" onclick="javascript:history.back(-1);" />
+    class="button"<?php echo dPaction('history.back'); ?> />
   </td>
   <td align="right">
     <input type="button" value="<?php echo $AppUI->_('submit');?>"
-    class="button" onclick="move(editFrm.list1,editFrm.list2);submitItHere();" />
+    class="button"<?php echo dPaction('closureSubmit'); ?> />
   </td>
 
 </tr>
@@ -297,7 +296,7 @@ echo arraySelect($projects, 'project_name', 'size="1" class="text"', $row->proje
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo DP_BASE_URL;?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 
 function setShort() {
 var f = document.editFrm;
@@ -315,7 +314,7 @@ var calWin = null;
 
 function popCalendar( field ){
 calendarField = field;
-idate = eval( 'document.editFrm.project_' + field + '.value' );
+idate = document.editFrm['project_' + field].value;
 window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=280, height=250, scrollbars=no' );
 }
 
@@ -324,8 +323,8 @@ window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date='
 *	@param string Formatted date
 */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.editFrm.project_' + calendarField );
-	fld_fdate = eval( 'document.editFrm.' + calendarField );
+	fld_date = document.editFrm['project_' + calendarField];
+	fld_fdate = document.editFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 
@@ -341,6 +340,20 @@ function setCalendar( idate, fdate ) {
 function submitItHere() {
    var f = document.editFrm;
 	 f.submit();
+}
+
+// Buttons of the participants lists and the submit button (were inline handlers).
+function closureMoveLeft(form) {
+	move(form.list2, form.list1);
+}
+
+function closureMoveRight(form) {
+	move(form.list1, form.list2);
+}
+
+function closureSubmit() {
+	move(document.editFrm.list1, document.editFrm.list2);
+	submitItHere();
 }
 
 

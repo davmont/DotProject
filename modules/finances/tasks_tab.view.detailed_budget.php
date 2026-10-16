@@ -32,12 +32,12 @@ $budget->loadFromTask($task_id);
 <tr>
 	<td valign="top" align="center">
 		<?php echo $AppUI->_("Display"); ?>: 
-		<label for="currency0"><input type="radio" name="currency" id="currency0" value=0 onChange="javascript:updateBudget()" <?php if($budget->bestCurrency() == 0) echo "checked"; ?>/><?php echo $dPconfig['currency_symbol']; ?></label>
-		<label for="currency1"><input type="radio" name="currency" id="currency1" value=1 onChange="javascript:updateBudget()" <?php if($budget->bestCurrency() == 1) echo "checked"; ?>/><?php echo "k".$dPconfig['currency_symbol']; ?></label>
-		<label for="currency2"><input type="radio" name="currency" id="currency2" value=2 onChange="javascript:updateBudget()" <?php if($budget->bestCurrency() == 2) echo "checked"; ?>/><?php echo "M".$dPconfig['currency_symbol']; ?></label>
+		<label for="currency0"><input type="radio" name="currency" id="currency0" value=0<?php echo dPaction('updateBudget', array(), 'change'); ?> <?php if($budget->bestCurrency() == 0) echo "checked"; ?>/><?php echo $dPconfig['currency_symbol']; ?></label>
+		<label for="currency1"><input type="radio" name="currency" id="currency1" value=1<?php echo dPaction('updateBudget', array(), 'change'); ?> <?php if($budget->bestCurrency() == 1) echo "checked"; ?>/><?php echo "k".$dPconfig['currency_symbol']; ?></label>
+		<label for="currency2"><input type="radio" name="currency" id="currency2" value=2<?php echo dPaction('updateBudget', array(), 'change'); ?> <?php if($budget->bestCurrency() == 2) echo "checked"; ?>/><?php echo "M".$dPconfig['currency_symbol']; ?></label>
 		<br/><?php echo $AppUI->_("Amounts"); ?>: 	
-		<label for="tax0"><input type="radio" name="tax" id="tax0" value=0 onChange="javascript:updateBudget()" <?php if($budget->display_tax == 0) echo "checked"; ?> /><?php echo $AppUI->_("without tax"); ?></label>
-		<label for="tax1"><input type="radio" name="tax" id="tax1" value=1 onChange="javascript:updateBudget()" <?php if($budget->display_tax == 1) echo "checked"; ?> /><?php echo $AppUI->_("with tax"); ?></label>
+		<label for="tax0"><input type="radio" name="tax" id="tax0" value=0<?php echo dPaction('updateBudget', array(), 'change'); ?> <?php if($budget->display_tax == 0) echo "checked"; ?> /><?php echo $AppUI->_("without tax"); ?></label>
+		<label for="tax1"><input type="radio" name="tax" id="tax1" value=1<?php echo dPaction('updateBudget', array(), 'change'); ?> <?php if($budget->display_tax == 1) echo "checked"; ?> /><?php echo $AppUI->_("with tax"); ?></label>
 		<input type="hidden" id="hequipment_investment" value="<?php echo $budget->equipment_investment;?>"/>
 		<input type="hidden" id="hequipment_operation" value="<?php echo $budget->equipment_operation;?>"/>
 		<input type="hidden" id="hintangible_investment" value="<?php echo $budget->intangible_investment;?>"/>
@@ -86,15 +86,15 @@ $budget->loadFromTask($task_id);
 	</td>
 </tr>
 </table>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 // Definition of function that need PHP
 function getCurrency(){
 	var radios = document.getElementsByName("currency");
 	if(radios[2].checked)
-		return "M<?php echo $dPconfig['currency_symbol']; ?>";
+		return "M" + <?php echo dPjs($dPconfig['currency_symbol']); ?>;
 	if(radios[1].checked)
-		return "k<?php echo $dPconfig['currency_symbol']; ?>";
-	return "<?php echo $dPconfig['currency_symbol']; ?>";
+		return "k" + <?php echo dPjs($dPconfig['currency_symbol']); ?>;
+	return <?php echo dPjs($dPconfig['currency_symbol']); ?>;
 }
 function checkAmount(id){
 	var radios = document.getElementsByName("currency");
@@ -103,7 +103,7 @@ function checkAmount(id){
 	var val = parseFloat(document.getElementById("h"+id).value.replace(/ /g,''))
 	var tax = document.getElementsByName("tax");
 	if(tax[1].checked)
-		val *= <?php echo str_replace(",",".",1+$budget->Tax/100); ?>;
+		val *= <?php echo (float)(1 + (float)$budget->Tax / 100); ?>;
 	var radios = document.getElementsByName("currency");
 	if(radios[2].checked)
 		document.getElementById(id).innerHTML = addThousandsSep((parseFloat(val)/1000000).toFixed(2),' ')+getCurrency();

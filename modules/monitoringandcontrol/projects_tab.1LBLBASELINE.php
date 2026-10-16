@@ -8,7 +8,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ba
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 
 $tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $controllerBaseline= new ControllerBaseline();
 $controllerUtil = new ControllerUtil();
 
@@ -47,7 +47,7 @@ $controllerUtil = new ControllerUtil();
                            <input  type="hidden" name="acao" value="update"  />
                            <input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
                            <input name="idBaseline" type="hidden" id="meeting_id" value="<?php echo $row['baseline_id']; ?>">
-                           <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar" onclick="updateRow();"  />                                 
+                           <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />                                 
                         </form>
                         </td>	
                         <td align="center">
@@ -56,7 +56,7 @@ $controllerUtil = new ControllerUtil();
                            <input  type="hidden" name="acao" value="delete"  />
                            <input name="idBaseline" type="hidden" id="idBaseline" value="<?php echo $row['baseline_id']; ?>">
                            <input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-                           <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar" onclick="deleteRow(excluir);"  />
+                           <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
                         </form>                                
                         </td>
                    </tr>						

@@ -105,9 +105,9 @@ $query->addWhere('u.user_id = ' . $user_id);
 $res =& $query->exec();
 ?>
 <script src="./modules/human_resources/view_hr.js"></script>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	can_delete = true;
-	delete_msg = "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('Human Resource').'?';?>";
+	delete_msg = "<?php echo $AppUI->_('doDelete', UI_OUTPUT_JS).' '.$AppUI->_('Human Resource', UI_OUTPUT_JS).'?';?>";
 </script>
 <form name="frmDelete" action="?m=human_resources" method="post">
   <input type="hidden" name="dosql" value="do_hr_aed" />
@@ -180,6 +180,6 @@ $query->clear();
 <tr>
   <td>
     <input type="button" value="<?php echo $AppUI->_('back');?>"
-    class="button" onclick="javascript:history.back(-1);" />
+    class="button"<?php echo dPaction('history.back'); ?> />
   </td>
 </tr>

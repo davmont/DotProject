@@ -9,7 +9,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_re
 header("Content-Type:text/html; charset=iso-8859-1",true);
 
 $AppUI->savePlace();
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $titulo = $AppUI->_('LBL_NOVA').' '.$AppUI->_('LBL_ATA_SEM_ACENTO');
 $titleBlock = new CTitleBlock($titulo, 'graph-up.png', $m, $m . '.' . $a);
 $titleBlock->show();
@@ -21,7 +21,7 @@ $controllerReport = new ControllerReport();
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/ata.js" ></script>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/jquery.js" ></script>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/util.js"> </script>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 $(document).ready(function() {	
         $('#meeting_type').bind('change', function() {
 		    var optionValue = $("#meeting_type").val();		
@@ -86,8 +86,8 @@ $(document).ready(function() {
 	  <tr>
       		<td align="right" width="15%"><?php echo $AppUI->_('LBL_DATA'); ?>:</td>
 			 <td nowrap="nowrap" width="15%">                 	  
-				   <input type="text" class="text"  name="dt_begin"  id="date_edit" maxlength="10" onkeyup="formatadata(this,event)"/>
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)" />     
+				   <input type="text" class="text"  name="dt_begin"  id="date_edit" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />     
                 </td>   
       		<td align="right" width="5%"><?php echo $AppUI->_('LBL_HORA'); ?>:</td>
             <td width="5%">
@@ -155,8 +155,8 @@ $(document).ready(function() {
                 </select>
          </td>
                      <td align="center" valign="middle">
-                <input type="button" onClick="move(this.form.participants,this.form.users)" value="<<">
-                <input type="button" onClick="move(this.form.users,this.form.participants)" value=">>">
+                <input type="button"<?php echo dPaction('mcMoveOptions', array('$this', 'participants', 'users')); ?> value="<<">
+                <input type="button"<?php echo dPaction('mcMoveOptions', array('$this', 'users', 'participants')); ?> value=">>">
             </td>
 	        <td colspan="4">            
                 <select name="participants[]" size="4" multiple="multiple" id="participants" style="width:190px">
@@ -313,8 +313,8 @@ $(document).ready(function() {
                   </td>                    
            </tr>
 		<tr>
-			<td colspan="8"><input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button" onClick="javascript:location.href='?m=projects&a=view&project_id=<?php echo $project_id; ?>' ;" /></td>
-			<td align="right"><input type="button" value="<?php echo $AppUI->_('Gravar');?>" class="button" onclick="validateMeeting();"  /></td>
+			<td colspan="8"><input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button"<?php echo dPaction(null, array(), null, array('href' => '?m=projects&a=view&project_id=' . (int)$project_id)); ?> /></td>
+			<td align="right"><input type="button" value="<?php echo $AppUI->_('Gravar');?>" class="button"<?php echo dPaction('validateMeeting'); ?>  /></td>
 		</tr>
 </table>
 
@@ -327,7 +327,7 @@ $(document).ready(function() {
 				<a href="?m=monitoringandcontrol&amp;a=addedit_ata&amp;project_id=<?php echo $project_id; ?>">
 					tabbed
 				</a>
-			      : <a href="javascript:void();">
+			      : <a href="#"<?php echo dPaction(null, array(), 'click'); ?>>
 					flat
 				</a>
 			</td>
@@ -337,7 +337,7 @@ $(document).ready(function() {
 <table width="100%" cellspacing="0" cellpadding="0" border="0" summary="tabbed view">  
 	<tbody> 
     	<tr> <!-- tabs-->
-<script>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function alteraTab_0(){	
 	document.getElementById("pendencias_ata").style.display = "block";	
 	document.getElementById('toptab_0').style.background = "url(style/default/images/tabSelectedBg.png)";
@@ -355,7 +355,7 @@ function alteraTab_0(){
 				<img border="0" alt="" id="lefttab_0" src="./style/default/images/tabSelectedLeft.png">
 			</td>
 			<td nowrap="nowrap" valign="middle" style="background: url(style/default/images/tabSelectedBg.png);" id="toptab_0">&nbsp;
-				<a href=" #" onclick="alteraTab_0();" ><?php echo $AppUI->_('LBL_ACAO_CORRETIVA'); ?></a>&nbsp;
+				<a href=" #"<?php echo dPaction('alteraTab_0'); ?> ><?php echo $AppUI->_('LBL_ACAO_CORRETIVA'); ?></a>&nbsp;
 			</td>
 			<td valign="middle">
 				<img border="0" alt="" src="./style/default/images/tabSelectedRight.png" id="righttab_0">
@@ -374,9 +374,9 @@ function alteraTab_0(){
             
 <div id="pendencias_ata" style="display:block">  <!--toptab_0-->
 
-<script>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function popNovaPendencia() {	 															 
-	window.open("?m=monitoringandcontrol&a=nova_pendencia&dialog=1&project_id=<?php echo $project_id;?>", "pendencia", "left=300,top=50,height=790,width=700");
+	window.open("?m=monitoringandcontrol&a=nova_pendencia&dialog=1&project_id=<?php echo (int)$project_id;?>", "pendencia", "left=300,top=50,height=790,width=700");
 }
 function deleteRole(rowId){
 	var id=rowId;
@@ -390,7 +390,7 @@ function deleteRole(rowId){
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/pendencias.js"   ></script>
 
     <p align="left" style="width:85%"> 
-   <input type="button" class="button" value="<?php echo $AppUI->_('LBL_CADASTRAR'); ?>"  onclick="popNovaPendencia()"  />
+   <input type="button" class="button" value="<?php echo $AppUI->_('LBL_CADASTRAR'); ?>" <?php echo dPaction('popNovaPendencia'); ?>  />
     </p>   
     
     

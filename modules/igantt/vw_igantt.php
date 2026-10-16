@@ -60,7 +60,7 @@ if ($tasks) {
 }
 
 // Convert tasks to JSON
-$json_tasks = json_encode($gantt_tasks);
+$json_tasks = json_encode($gantt_tasks, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
 ?>
 <!DOCTYPE html>
@@ -115,11 +115,11 @@ $json_tasks = json_encode($gantt_tasks);
 	<div class="header">
 		<h2><?php echo $AppUI->_('Interactive Gantt chart'); ?></h2>
 		<div class="controls">
-			<button onclick="changeViewMode('Quarter Day')">Quarter Day</button>
-			<button onclick="changeViewMode('Half Day')">Half Day</button>
-			<button onclick="changeViewMode('Day')">Day</button>
-			<button onclick="changeViewMode('Week')">Week</button>
-			<button onclick="changeViewMode('Month')">Month</button>
+			<button type="button"<?php echo dPaction('changeViewMode', array('Quarter Day')); ?>>Quarter Day</button>
+			<button type="button"<?php echo dPaction('changeViewMode', array('Half Day')); ?>>Half Day</button>
+			<button type="button"<?php echo dPaction('changeViewMode', array('Day')); ?>>Day</button>
+			<button type="button"<?php echo dPaction('changeViewMode', array('Week')); ?>>Week</button>
+			<button type="button"<?php echo dPaction('changeViewMode', array('Month')); ?>>Month</button>
 		</div>
 	</div>
 
@@ -129,9 +129,16 @@ $json_tasks = json_encode($gantt_tasks);
 
 	<!-- Frappe Gantt JS -->
 	<script src="<?php echo DP_BASE_URL; ?>/lib/frappe-gantt/frappe-gantt.min.js"></script>
-	<script>
+	<script src="<?php echo DP_BASE_URL; ?>/js/dp-actions.js"></script>
+	<script nonce="<?php echo dPcspNonce(); ?>">
 		// Inject JSON tasks from PHP
 		var tasks = <?php echo $json_tasks; ?>;
+
+		function escapeHtml(s) {
+			return String(s).replace(/[&<>"']/g, function (c) {
+				return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+			});
+		}
 
 		if (tasks.length === 0) {
 			document.getElementById('gantt').innerHTML = '<text x="20" y="40">No tasks found for this project.</text>';
@@ -153,7 +160,7 @@ $json_tasks = json_encode($gantt_tasks);
 					end_date.setDate(end_date.getDate() - 1); // Display exact day
 					return `
 					<div style="padding: 10px; background: rgba(0,0,0,0.8); color: white; border-radius: 4px;">
-						<strong>${task.name}</strong><br>
+						<strong>${escapeHtml(task.name)}</strong><br>
 						Expected to finish by ${end_date.toISOString().split('T')[0]}<br>
 						${task.progress}% completed!
 					</div>`;

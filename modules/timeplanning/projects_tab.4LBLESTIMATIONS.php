@@ -39,7 +39,7 @@ if($minuteId!='-1' && $minuteId!=""){
 		<table align="center" width="80%">
 			<tr>
 				<td>
-					<input type="button" class="button" value="<?php echo $AppUI->_('LBL_CREATE_MINUTE'); ?>" onclick=openEstimationReport()>
+					<input type="button" class="button" value="<?php echo $AppUI->_('LBL_CREATE_MINUTE'); ?>"<?php echo dPaction('openEstimationReport'); ?>>
 				</td>
 			</tr>
 		</table>
@@ -82,8 +82,8 @@ if($minuteId!='-1' && $minuteId!=""){
 						<td valign='top'><?php echo $id;?></td>
 						<td valign='top'><?php echo dPhtml($date);?></td>
 						<td valign='top'><?php echo dPhtml(strip_tags($description));?></td>
-						<td valign='top'> <img src="./modules/timeplanning/images/view_icon.gif" style="cursor:pointer" onclick="openReport('<?php echo $id;?>')"></td>
-						<td><input type="button" name="Deletar" value="<?php echo $AppUI->_('LBL_EXCLUSION'); ?>" onclick=deleteReport('<?php echo $id;?>') class="button"></td>
+						<td valign='top'> <img src="./modules/timeplanning/images/view_icon.gif" style="cursor:pointer"<?php echo dPaction('openReport', array((int)$id)); ?>></td>
+						<td><input type="button" name="Deletar" value="<?php echo $AppUI->_('LBL_EXCLUSION'); ?>"<?php echo dPaction('deleteReport', array((int)$id)); ?> class="button"></td>
 					</tr>
 			<?php } ?>
 		

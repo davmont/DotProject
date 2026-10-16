@@ -20,7 +20,7 @@ $controllerWBSItem= new ControllerWBSItem();
 	<table width="70%" align="center">
 		<tr>
 			<td>
-				<input type="button" class="button" value="<?php echo $AppUI->__('LBL_ADD'); ?>" onclick=addItem('','','','');>
+				<input type="button" class="button" value="<?php echo $AppUI->__('LBL_ADD'); ?>"<?php echo dPaction('addItem', array('', '', '', '')); ?>>
 			</td>
 		</tr>
 	</table>
@@ -39,7 +39,7 @@ $controllerWBSItem= new ControllerWBSItem();
 	<table width="70%" align="center">
 		<tr>
 			<td>
-				<input type="button" class="button" onclick=saveEAP() value="<?php echo $AppUI->_('LBL_SAVE'); ?>" />
+				<input type="button" class="button"<?php echo dPaction('saveEAP'); ?> value="<?php echo $AppUI->_('LBL_SAVE'); ?>" />
 			</td>
 		</tr>
 	</table>
@@ -48,6 +48,6 @@ $controllerWBSItem= new ControllerWBSItem();
 <?php 
 	$items = $controllerWBSItem->getWBSItems($project_id);
     foreach ($items as $item) {
-		echo '<script>addItem('.$item->getId().','. dPjs($item->getName()) .',0,'.dPjs($item->getIdentation()).');</script>';
+		echo '<script type="text/javascript" nonce="' . dPcspNonce() . '">addItem(' . (int)$item->getId() . ',' . dPjs($item->getName()) . ',0,' . dPjs($item->getIdentation()) . ');</script>';
     }
  ?>

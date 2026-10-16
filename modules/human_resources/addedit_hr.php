@@ -129,11 +129,11 @@ require_once DP_BASE_DIR."/modules/human_resources/view_hr_roles.php";
 <tr>
   <td>
     <input type="button" value="<?php echo $AppUI->_('back');?>"
-    class="button" onclick="javascript:history.back(-1);" />
+    class="button"<?php echo dPaction('history.back'); ?> />
   </td>
   <td align="right">
     <input type="button" value="<?php echo $AppUI->_('submit');?>"
-    class="button" onclick="submitHumanResource(document.editfrm);" />
+    class="button"<?php echo dPaction('submitHumanResourceForm'); ?> />
   </td>
 </tr>
 

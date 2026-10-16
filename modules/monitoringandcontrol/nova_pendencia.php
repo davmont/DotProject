@@ -10,7 +10,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_at
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 header("Content-Type:text/html; charset=iso-8859-1",true);
  
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $titleBlock = new CTitleBlock('Ação Corretiva', 'graph-up.png', $m, $m . '.' . $a);
 $titleBlock->show();
 
@@ -20,7 +20,7 @@ $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 
 ?>
 <?php
-	  echo "<script>
+	  echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>
 			   globalUserNameList= new Array();
 			   globalUserIdList= new Array();
 		      </script>";		
@@ -29,14 +29,14 @@ $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 			   $list = $controllerUtil -> getUsers();
 			   $i=0;
 			   foreach($list as $row){	
-				  echo "<script>	
-							 globalUserNameList[$i] = '$row[1]';
-					   		 globalUserIdList[$i] = '$row[0]';
+				  echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>
+							 globalUserNameList[" . (int)$i . "] = " . dPjs($row[1]) . ";
+					   		 globalUserIdList[" . (int)$i . "] = " . dPjs($row[0]) . ";
 							</script>";
 			       			 $i++;								
 			   }
 ?>
-<script>	
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">	
 // hidden fields: change_impact,  change_description, change_cause,
 
 var nextId = 1000;
@@ -152,7 +152,16 @@ var desvio = document.formPendencia.description.value;
 	td.noWrap=true;
 	div=field=document.createElement("div");
 	div.style.textAlign ="center";
-	div.innerHTML="<input type='image' alt='./images/icons/stock_delete-16.png'  src='./images/icons/stock_delete-16.png' title='Deletar' name='deletar' value='deletar' onclick=deleteRole('"+row.id+"')>";
+	var del=document.createElement("input");
+	del.type="image";
+	del.alt="./images/icons/stock_delete-16.png";
+	del.src="./images/icons/stock_delete-16.png";
+	del.title="Deletar";
+	del.name="deletar";
+	del.value="deletar";
+	del.setAttribute("data-dp-call", "deleteRole");
+	del.setAttribute("data-dp-args", JSON.stringify([row.id]));
+	div.appendChild(del);
   	td.appendChild(div);	
 	
 	window.opener.document.tbl_pendencias;
@@ -161,6 +170,7 @@ var desvio = document.formPendencia.description.value;
 
 </script>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/ata.js"   ></script>
+<script type="text/javascript" src="./modules/monitoringandcontrol/js/util.js"></script>
 <!--  calendar  -->
 	<link type="text/css" rel="stylesheet" href="./modules/monitoringandcontrol/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.css" media="screen" />
 	<script type="text/javascript" src="./modules/monitoringandcontrol/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.js"   ></script>
@@ -220,7 +230,7 @@ var desvio = document.formPendencia.description.value;
              <td align="right" >Prazo:</td>
 			 <td nowrap="nowrap" >                 	  
 				   <input type="text" class="text"  name="date_limit"  id="date_edit" />
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)" />     
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />     
                 </td>  
 	  <tr>
       		<td colspan="4">&nbsp;</td>
@@ -255,8 +265,8 @@ var desvio = document.formPendencia.description.value;
 
 		<tr>
 			<td colspan="4">
-				<input type="button" value="<?php echo $AppUI->_('Fechar');?>" class="button" onClick="javascript:top.close();" /></td>
-			<td align="right"><input type="button" value="<?php echo $AppUI->_('Salvar');?>" class="button"  onclick="retorna('');" /></td>
+				<input type="button" value="<?php echo $AppUI->_('Fechar');?>" class="button"<?php echo dPaction('top.close'); ?> /></td>
+			<td align="right"><input type="button" value="<?php echo $AppUI->_('Salvar');?>" class="button" <?php echo dPaction('retorna', array('')); ?> /></td>
 		</tr>
 </table>		
 </form>				

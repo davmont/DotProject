@@ -11,7 +11,7 @@
         ?>
     </form>
 </div>
-<script>
+<script nonce="<?php echo dPcspNonce(); ?>">
     function copyProject(){
         $("#copy_project_form").submit();
     }
@@ -21,7 +21,7 @@
         width: 500,
         modal: true,
         buttons: {
-            "<?php echo $AppUI->_("LBL_COPY") ?>": copyProject,
+            "<?php echo $AppUI->_("LBL_COPY", UI_OUTPUT_JS) ?>": copyProject,
             Cancel: function () {
                 dialogCopyProject.dialog("close");
             }

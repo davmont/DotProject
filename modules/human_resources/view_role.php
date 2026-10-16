@@ -52,11 +52,11 @@ if($edit || !$human_resources_role_id) {
 <tr>
   <td>
     <input type="button" value="<?php echo $AppUI->_('back');?>" 
-    class="button" onclick="javascript:history.back(-1);" />
+    class="button"<?php echo dPaction('history.back'); ?> />
   </td>
   <td align="right">
     <input type="button" value="<?php echo $AppUI->_('submit');?>" 
-    class="button" onclick="submitRole(document.editfrm);" />
+    class="button"<?php echo dPaction('submitRole', array('$form')); ?> />
   </td>
 </tr>
 </table>
@@ -92,7 +92,7 @@ else {
 <tr>
   <td>
     <input type="button" value="<?php echo $AppUI->_('back');?>"
-    class="button" onclick="javascript:history.back(-1);" />
+    class="button"<?php echo dPaction('history.back'); ?> />
   </td>
 </tr>
 <?php

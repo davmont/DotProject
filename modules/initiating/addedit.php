@@ -80,7 +80,7 @@ $titleBlock->show();
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo DP_BASE_URL;?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 
 var calendarField = '';
 var calWin = null;
@@ -91,7 +91,7 @@ function popCalendar(field) {
 //this bug does not occur if the window open occurs in an onclick event
 //this bug does NOT occur in Internet explorer
 calendarField = field;
-idate = eval('document.uploadFrm.initiating_' + field + '.value');
+idate = document.uploadFrm['initiating_' + field].value;
 window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=280, height=250, scrollbars=no, status=no');
 }
 
@@ -100,8 +100,8 @@ window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' 
 *	@param string Formatted date
 */
 function setCalendar(idate, fdate) {
-	fld_date = eval('document.uploadFrm.initiating_' + calendarField);
-	fld_fdate = eval('document.uploadFrm.' + calendarField);
+	fld_date = document.uploadFrm['initiating_' + calendarField];
+	fld_fdate = document.uploadFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -171,7 +171,7 @@ function notauthorizedIt() {
 	<table cellspacing="1" cellpadding="2" width="60%">
 		<tr>
 			<td align="right" nowrap="nowrap" ><?php echo $AppUI->_('Project Title');?>:</td>
-			<td align="left"><input type="text" class="text" name="initiating_title" size="55" maxlength="255" value="<?php echo $obj->initiating_title;?>"></td>
+			<td align="left"><input type="text" class="text" name="initiating_title" size="55" maxlength="255" value="<?php echo dPformSafe(@$obj->initiating_title);?>"></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project Manager'); ?>:</td>
@@ -239,7 +239,7 @@ if ($initiating_id) { ?>
 			<td nowrap="nowrap"><input type="hidden" name="initiating_start_date" value="<?php echo $start_date->format(FMT_TIMESTAMP_DATE);?>" />
 				<input type="text" class="text" name="start_date" id="date1" value="<?php echo $start_date->format($df);?>" class="text" disabled="disabled" />
 	
-				<a href="#" onclick="javascript:popCalendar('start_date', 'start_date');">
+				<a href="#"<?php echo dPaction('popCalendar', array('start_date', 'start_date')); ?>>
 					<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 				</a>
 			</td>
@@ -249,7 +249,7 @@ if ($initiating_id) { ?>
 			<td nowrap="nowrap"><input type="hidden" name="initiating_end_date" value="<?php echo $end_date->format(FMT_TIMESTAMP_DATE);?>" />
 				<input type="text" class="text" name="end_date" id="date1" value="<?php echo $end_date->format($df);?>" class="text" disabled="disabled" />
 	
-				<a href="#" onclick="javascript:popCalendar('end_date', 'end_date');">
+				<a href="#"<?php echo dPaction('popCalendar', array('end_date', 'end_date')); ?>>
 					<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 				</a>
 			</td>
@@ -297,7 +297,7 @@ if ($initiating_id) { ?>
 }?>
 <tr>
 	<td>
-		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" onClick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {location.href = './index.php?m=initiating';}" />
+		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW), 'href' => './index.php?m=initiating')); ?> />
 	</td>
 	<td align="right">
 		<?php 
@@ -306,28 +306,28 @@ if ($initiating_id) { ?>
 	</td><?php 
 if ($initiating_id && !$initiating_completed) { ?>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('completed');?>" onclick="completedIt()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('completed');?>"<?php echo dPaction('completedIt'); ?> />
 	</td>
 <?php 
 } if ($initiating_completed && !$initiating_approved) { ?>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('approved');?>" onclick="approvedIt()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('approved');?>"<?php echo dPaction('approvedIt'); ?> />
 	</td>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('not approved');?>" onclick="notapprovedIt()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('not approved');?>"<?php echo dPaction('notapprovedIt'); ?> />
 	</td>
 <?php 
 } if ($initiating_approved && !$initiating_authorized) { ?>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('authorized');?>" onclick="authorizedIt()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('authorized');?>"<?php echo dPaction('authorizedIt'); ?> />
 	</td>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('not authorized');?>" onclick="notauthorizedIt()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('not authorized');?>"<?php echo dPaction('notauthorizedIt'); ?> />
 	</td>
 <?php 
 }?>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('submit');?>" onclick="submitIt()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>
 </form>

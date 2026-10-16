@@ -205,7 +205,7 @@ if (!@$min_view) {
 	$titleBlock->show();
 }
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	// <![CDATA[
 	var calendarField = "";
 
@@ -233,8 +233,8 @@ if (!@$min_view) {
 		$new_end = new CDate($end_date);
 		$new_start->addMonths(-$scroll_date);
 		$new_end->addMonths(-$scroll_date);
-		echo ('f.sdate.value="' . $new_start->format(FMT_TIMESTAMP_DATE) . '";');
-		echo ('f.edate.value="' . $new_end->format(FMT_TIMESTAMP_DATE) . '";');
+		echo ('f.sdate.value=' . dPjs($new_start->format(FMT_TIMESTAMP_DATE)) . ';');
+		echo ('f.edate.value=' . dPjs($new_end->format(FMT_TIMESTAMP_DATE)) . ';');
 		?>
 		document.editFrm.display_option.value = "custom";
 		f.submit()
@@ -247,13 +247,18 @@ if (!@$min_view) {
 		$new_end = new CDate($end_date);
 		$new_start->addMonths($scroll_date);
 		$new_end->addMonths($scroll_date);
-		echo ('f.sdate.value="' . $new_start->format(FMT_TIMESTAMP_DATE) . '";');
-		echo ('f.edate.value="' . $new_end->format(FMT_TIMESTAMP_DATE) . '";');
+		echo ('f.sdate.value=' . dPjs($new_start->format(FMT_TIMESTAMP_DATE)) . ';');
+		echo ('f.edate.value=' . dPjs($new_end->format(FMT_TIMESTAMP_DATE)) . ';');
 		?>
 		document.editFrm.display_option.value = "custom";
 		document.editFrm.printpdf.value = "0";
 		document.editFrm.printpdfhr.value = "0";
 		f.submit()
+	}
+	function submitCustomDate() {
+		document.editFrm.display_option.value = "custom";
+		document.editFrm.printpdf.value = "0";
+		document.editFrm.submit();
 	}
 	function showThisMonth() {
 		document.editFrm.display_option.value = "this_month";
@@ -329,7 +334,7 @@ if (!@$min_view) {
 						<tr>
 							<td align="left" valign="top" width="20">
 								<?php if ($display_option != "all") { ?>
-									<a href="javascript:scrollPrev()">
+									<a href="#"<?php echo dPaction('scrollPrev'); ?>>
 										<img src="./images/prev.gif" width="16" height="16"
 											alt="<?php echo $AppUI->_('previous'); ?>" border="0" />
 									</a>
@@ -342,7 +347,7 @@ if (!@$min_view) {
 									value="<?php echo $start_date->format(FMT_TIMESTAMP_DATE); ?>" />
 								<input type="text" class="text" name="show_sdate"
 									value="<?php echo $start_date->format($df); ?>" size="12" disabled="disabled" />
-								<a href="javascript:popCalendar('sdate')">
+								<a href="#"<?php echo dPaction('popCalendar', array('sdate')); ?>>
 									<img src="./images/calendar.gif" width="24" height="12" alt="" border="0" />
 								</a>
 							</td>
@@ -353,19 +358,19 @@ if (!@$min_view) {
 									value="<?php echo $end_date->format(FMT_TIMESTAMP_DATE); ?>" />
 								<input type="text" class="text" name="show_edate"
 									value="<?php echo $end_date->format($df); ?>" size="12" disabled="disabled" />
-								<a href="javascript:popCalendar('edate')">
+								<a href="#"<?php echo dPaction('popCalendar', array('edate')); ?>>
 									<img src="./images/calendar.gif" width="24" height="12" alt="" border="0" />
 								</a>
 							</td>
 							<td align="left">
 								<input type="button" class="button"
 									value="<?php echo $AppUI->_('submit custom date'); ?>"
-									onclick='document.editFrm.display_option.value="custom";document.editFrm.printpdf.value="0";submit();' />
+								<?php echo dPaction('submitCustomDate'); ?> />
 							</td>
 
 							<td align="right" valign="top" width="20">
 								<?php if ($display_option != "all") { ?>
-									<a href="javascript:scrollNext()">
+									<a href="#"<?php echo dPaction('scrollNext'); ?>>
 										<img src="./images/next.gif" width="16" height="16"
 											alt="<?php echo $AppUI->_('next'); ?>" border="0" />
 									</a>
@@ -381,13 +386,13 @@ if (!@$min_view) {
 							<td align="right">
 								<input type="button" style="width: 110px;" class="button"
 									value="<?php echo $AppUI->_('show this month'); ?>"
-									onclick='javascript:showThisMonth()' />
+								<?php echo dPaction('showThisMonth'); ?> />
 								&nbsp;
 							</td>
 							<td align="right">
 								<input type="button" style="width: 110px;" class="button"
 									value="<?php echo $AppUI->_('show full project'); ?>"
-									onclick='javascript:showFullProject()' />
+								<?php echo dPaction('showFullProject'); ?> />
 								&nbsp;
 							</td>
 						</tr>
@@ -405,14 +410,14 @@ if (!@$min_view) {
 							<td width="210">
 								<!--		<label for="ganttTaskFilter"><?php //echo $AppUI->_('Filter:') ?></label>&nbsp;-->
 								<select name="ganttTaskFilter" id="ganttTaskFilter" class="text"
-									onchange="javascript:submitIt()" size="1">
+								<?php echo dPaction('submitIt'); ?> size="1">
 									<?php
 									echo '<option value="0" ' . (($ganttTaskFilter == '' OR $ganttTaskFilter == 0) ? ' selected="selected">' : '>') . '&lt;Show all tasks&gt; </option>';
 									echo "\n";
 									for ($i = 0; $i < count($filter_task_list); $i++) {
 										$filter_task_name = $filter_task_list[$i][0]['task_name'];
 										$filter_task_level = $filter_task_list[$i][1];
-										$filter_task_name = ((strlen($filter_task_name) > 71) ? substr($filter_task_name, 0, (68 - $filter_task_level)) . '...' : $filter_task_name);
+										$filter_task_name = dPhtml((strlen($filter_task_name) > 71) ? substr($filter_task_name, 0, (68 - $filter_task_level)) . '...' : $filter_task_name);
 										for ($ii = 1; $ii <= $filter_task_level; $ii++) {
 											$filter_task_name = '&nbsp;&nbsp;' . $filter_task_name;
 										}
@@ -435,13 +440,13 @@ if (!@$min_view) {
 						<tr>
 							<td align="right">
 								<input type="button" style="width: 110px;" class="button"
-									value="<?php echo $AppUI->_('low resolution'); ?>" onclick='javascript:printPDF()' />
+									value="<?php echo $AppUI->_('low resolution'); ?>"<?php echo dPaction('printPDF'); ?> />
 								&nbsp;
 							</td>
 							<td align="right">
 								<input type="button" style="width: 110px;" class="button"
 									value="<?php echo $AppUI->_('high resolution'); ?>"
-									onclick='javascript:printPDFHR()' />
+								<?php echo dPaction('printPDFHR'); ?> />
 								&nbsp;
 							</td>
 						</tr>
@@ -451,7 +456,7 @@ if (!@$min_view) {
 			</tr>
 
 			<tr align="left"> <!--  Additional Gantt FOrmatting options go in this row. (show/hide behaviour) -->
-				<th colspan="4" align="left"><em><a style="color: white" href="javascript:doMenu('ganttoptions')"
+				<th colspan="4" align="left"><em><a style="color: white" href="#"<?php echo dPaction('doMenu', array('ganttoptions')); ?>
 							id="xganttoptions">Show Additional Gantt Options</a></em></th>
 			</tr>
 			<tr align="left">
@@ -493,7 +498,7 @@ if (!@$min_view) {
 										<td colspan=2 rowspan=2 valign="middle">&nbsp;<input type="button"
 												style="float: right; width: 110px;" class="button"
 												value="<?php echo $AppUI->_('submit'); ?>"
-												onclick='javascript:submitIt()' /> </td>
+											<?php echo dPaction('submitIt'); ?> /> </td>
 									</tr>
 									<tr class="tbl">
 										<td>&nbsp;Other&nbsp;:</td>
@@ -529,7 +534,7 @@ if (!@$min_view) {
 											<!--				<label for="showWork_days"><?php //echo $AppUI->_('Show work instead of duration (Days)'); ?></label>-->
 										</td>
 										<!--				<td class="alternate" align="right">
-					&nbsp;&nbsp;<input type="button" style="width: 110px;" class="button" value="<?php echo $AppUI->_('submit'); ?>" onclick='javascript:submitIt()' />
+					&nbsp;&nbsp;<input type="button" style="width: 110px;" class="button" value="<?php echo $AppUI->_('submit'); ?>"<?php echo dPaction('submitIt'); ?> />
 				</td>
 			</tr>
 -->
@@ -657,7 +662,7 @@ if (!@$min_view) {
 					. '&amp;showhgrid=' . $showhgrid . '&amp;showPinned=' . $showPinned
 					. '&amp;showArcProjs=' . $showArcProjs . '&amp;showHoldProjs=' . $showHoldProjs
 					. '&amp;showDynTasks=' . $showDynTasks . '&amp;showLowTasks=' . $showLowTasks
-					. '&amp;caller=' . $a . '&amp;user_id=' . $user_id
+					. '&amp;caller=' . $a . '&amp;user_id=' . rawurlencode((string) $user_id)
 					. '&amp;printpdf=' . $printpdf . '&amp;showNoMilestones=' . $showNoMilestones
 					. '&amp;addLinksToGantt=' . $addLinksToGantt . '&amp;ganttTaskFilter=' . $ganttTaskFilter
 					. '&amp;monospacefont=' . $monospacefont . '&amp;showWork_days=' . $showWork_days);
@@ -670,8 +675,7 @@ if (!@$min_view) {
 					<?php
 				} else {
 					?>
-					<script language="javascript"
-						type="text/javascript"> document.write('<img alt="Please wait while the Gantt chart is generated... (this might take a minute or two)" src="<?php echo $src; ?>" />') </script>
+					<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>"> document.write('<img alt="Please wait while the Gantt chart is generated... (this might take a minute or two)" src="<?php echo $src; ?>" />') </script>
 					<?php
 				}
 

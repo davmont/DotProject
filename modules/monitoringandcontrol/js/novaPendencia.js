@@ -153,7 +153,16 @@ var acao_corretiva = document.formPendencia.acao_corretiva;
 	td.noWrap=true;
 	div=field=document.createElement("div");
 	div.style.textAlign ="center";
-	div.innerHTML="<input type='image' alt='./images/icons/stock_delete-16.png'  src='./images/icons/stock_delete-16.png' title='Deletar' name='deletar' value='deletar' onclick=deleteRole('"+row.id+"')>";
+	var del=document.createElement("input");
+	del.type="image";
+	del.alt="./images/icons/stock_delete-16.png";
+	del.src="./images/icons/stock_delete-16.png";
+	del.title="Deletar";
+	del.name="deletar";
+	del.value="deletar";
+	del.setAttribute("data-dp-call", "deleteRole");
+	del.setAttribute("data-dp-args", JSON.stringify([row.id]));
+	div.appendChild(del);
   	td.appendChild(div);	
 	
 	window.opener.document.tbl_pendencias;

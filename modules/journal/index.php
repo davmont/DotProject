@@ -53,13 +53,13 @@ $journal = array();
 				$q->addQuery('project_id,project_name');
 				$q->addOrder('project_name');
 				$projects = arrayMerge(array(0 => '(' . $AppUI->_('All') . ')'), $q->loadHashList());
-				echo arraySelect($projects, 'project_id', ' onChange=document.pickCompany.submit() class=text', $project_id);
+				echo arraySelect($projects, 'project_id', 'class=text' . dPaction(null, array(), null, array('submit' => 'pickCompany')), $project_id);
 				echo "</form></td>";
 			}
 			?>
 
 			<td align="right"><input class="button" type="button" value="<?php echo $AppUI->_('Add note'); ?>"
-					onclick="window.location='?m=journal&a=addedit&project_id=<?php echo $project_id ?>'"></td>
+					<?php echo dPaction(null, array(), null, array('href' => '?m=journal&a=addedit&project_id=' . (int)$project_id)); ?>></td>
 </table>
 
 <table width="100%" border="0" cellpadding="3" cellspacing="1" class="tbl">
