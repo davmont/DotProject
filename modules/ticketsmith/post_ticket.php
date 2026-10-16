@@ -55,11 +55,11 @@ function submitIt() {
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('Name'); ?>:</td>
-	<td><input type="text" class="text" name="name" value="<?php echo $AppUI->user_first_name . ' ' . $AppUI->user_last_name; ?>" size=50 maxlength="255" /> <span class="smallNorm">(<?php echo $AppUI->_('required'); ?>)</span></td>
+	<td><input type="text" class="text" name="name" value="<?php echo htmlspecialchars($AppUI->user_first_name . ' ' . $AppUI->user_last_name, ENT_QUOTES); ?>" size=50 maxlength="255" /> <span class="smallNorm">(<?php echo $AppUI->_('required'); ?>)</span></td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('E-Mail'); ?>:</td>
-	<td><input type="text" class="text" name="email" value="<?php echo $AppUI->user_email; ?>" size="50" maxlength="50" /> <span class="smallNorm">(<?php echo $AppUI->_('required'); ?>)</span></td>
+	<td><input type="text" class="text" name="email" value="<?php echo htmlspecialchars((string)$AppUI->user_email, ENT_QUOTES); ?>" size="50" maxlength="50" /> <span class="smallNorm">(<?php echo $AppUI->_('required'); ?>)</span></td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('Subject'); ?>:</td>
