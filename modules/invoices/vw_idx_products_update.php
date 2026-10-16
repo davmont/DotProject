@@ -47,8 +47,8 @@ function invoiceSetCostcode(sel) {
 <form name="editFrm" action="?m=invoices&a=view&invoice_id=<?php echo $invoice_id;?>" method="post">
 	<input type="hidden" name="uniqueid" value="<?php echo uniqid("");?>" />
 	<input type="hidden" name="dosql" value="do_updateproduct" />
-	<input type="hidden" name="product_id" value="<?php echo $log->product_id;?>" />
-	<input type="hidden" name="product_invoice" value="<?php echo $log->product_invoice;?>" />
+	<input type="hidden" name="product_id" value="<?php echo (int)$log->product_id;?>" />
+	<input type="hidden" name="product_invoice" value="<?php echo (int)$log->product_invoice;?>" />
 <tr>
 	<td align="right">
 		<?php echo $AppUI->_('Cost Code');?>
@@ -57,13 +57,13 @@ function invoiceSetCostcode(sel) {
 <?php
 		echo arraySelect( $product_costcodes, 'product_costcodes', 'size="1" class="text"' . dPaction('invoiceSetCostcode', array('$this')), '' );
 ?>
-		&nbsp;->&nbsp; <input type="text" class="text" name="product_costcode" value="<?php echo $log->product_costcode;?>" maxlength="8" size="8" />
+		&nbsp;->&nbsp; <input type="text" class="text" name="product_costcode" value="<?php echo dPformSafe($log->product_costcode);?>" maxlength="8" size="8" />
 	</td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('Description');?></td>
 	<td>
-		<input type="text" class="text" name="product_name" value="<?php echo $log->product_name;?>" maxlength="255" size="30" />
+		<input type="text" class="text" name="product_name" value="<?php echo dPformSafe($log->product_name);?>" maxlength="255" size="30" />
 	</td>
 </tr>
 <tr>
@@ -71,7 +71,7 @@ function invoiceSetCostcode(sel) {
 		<?php echo $AppUI->_('Qty');?>
 	</td>
 	<td>
-		<input type="text" class="text" name="product_qty" value="<?php echo $log->product_qty;?>" maxlength="8" size="6" />
+		<input type="text" class="text" name="product_qty" value="<?php echo dPformSafe($log->product_qty);?>" maxlength="8" size="6" />
 	</td>
 </tr>
 <tr>
@@ -79,7 +79,7 @@ function invoiceSetCostcode(sel) {
 		<?php echo $AppUI->_('Rate');?>
 	</td>
 	<td>
-		<input type="text" class="text" name="product_price" value="<?php echo $log->product_price;?>" maxlength="8" size="6" />
+		<input type="text" class="text" name="product_price" value="<?php echo dPformSafe($log->product_price);?>" maxlength="8" size="6" />
 	</td>
 </tr>
 <tr>

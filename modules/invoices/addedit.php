@@ -135,7 +135,7 @@ $titleBlock->show();
 						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Terms'); ?></td>
 						<td>
 							<input type="text" name="invoice_terms"
-								value="<?php echo @$row->invoice_terms == null ? 'Net 30' : $row->invoice_terms; ?>"
+								value="<?php echo @$row->invoice_terms == null ? 'Net 30' : dPformSafe($row->invoice_terms); ?>"
 								size="40" maxlength="255" class="text" />
 						</td>
 					</tr>
