@@ -26,8 +26,8 @@ $callback = preg_replace('/[^A-Za-z0-9_.]/', '', dPgetCleanParam($_GET,'callback
 		foreach ($colors as $key=>$value) {
 	?>
 	<tr>
-		<td style="background-color:#<?php echo $value?>; border: 1px solid black;cursor: pointer;" width="30"<?php echo dPaction('setClose', array($value)); ?>>&nbsp;</td>
-		<td width="300"><a href="#"<?php echo dPaction('setClose', array($value)); ?>><?php echo $key?></a></td>
+		<td style="background-color:#<?php echo preg_replace('/[^0-9A-Fa-f]/', '', $value); ?>; border: 1px solid black;cursor: pointer;" width="30"<?php echo dPaction('setClose', array($value)); ?>>&nbsp;</td>
+		<td width="300"><a href="#"<?php echo dPaction('setClose', array($value)); ?>><?php echo htmlspecialchars($key, ENT_QUOTES); ?></a></td>
 	</tr>
 	<?php
 		}
@@ -47,7 +47,7 @@ $callback = preg_replace('/[^A-Za-z0-9_.]/', '', dPgetCleanParam($_GET,'callback
 				<option value="0">- - <?php echo $AppUI->_('Preset');?> - -</option>
 <?php
 				foreach ($colors as $key=>$value) {
-					echo '<option value="' . $value . '">' . $key . "</option>\n";
+					echo '<option value="' . htmlspecialchars($value, ENT_QUOTES) . '">' . htmlspecialchars($key, ENT_QUOTES) . "</option>\n";
 				}
 ?>
 			</select>
