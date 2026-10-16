@@ -156,19 +156,19 @@ if (!@$min_view) {
     $titleBlock->show();
 }
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	// <![CDATA[
 	var calendarField = "";
 
 	function popCalendar(field) {
 		calendarField = field;
-		idate = eval("document.editFrm." + field + ".value");
+		idate = document.editFrm[field].value;
 		window.open('?m=public&' + 'a=calendar&' + 'dialog=1&' + 'callback=setCalendar&' + 'date=' + idate,
 			"calwin", "width=250, height=230, scrollbars=no, status=no");
 	}
 	function setCalendar(idate, fdate) {
-		fld_date = eval("document.editFrm." + calendarField);
-		fld_fdate = eval("document.editFrm.show_" + calendarField);
+		fld_date = document.editFrm[calendarField];
+		fld_fdate = document.editFrm["show_" + calendarField];
 		fld_date.value = idate;
 		fld_fdate.value = fdate;
 	}
@@ -180,8 +180,8 @@ if (!@$min_view) {
 		$new_end = new CDate($end_date);
 		$new_start->addMonths(-$scroll_date);
 		$new_end->addMonths(-$scroll_date);
-		echo ('f.sdate.value="' . $new_start->format(FMT_TIMESTAMP_DATE) . '";');
-		echo ('f.edate.value="' . $new_end->format(FMT_TIMESTAMP_DATE) . '";');
+		echo ('f.sdate.value=' . dPjs($new_start->format(FMT_TIMESTAMP_DATE)) . ';');
+		echo ('f.edate.value=' . dPjs($new_end->format(FMT_TIMESTAMP_DATE)) . ';');
 		?>
 		document.editFrm.display_option.value = "custom";
 		f.submit()
@@ -194,11 +194,15 @@ if (!@$min_view) {
 		$new_end = new CDate($end_date);
 		$new_start->addMonths($scroll_date);
 		$new_end->addMonths($scroll_date);
-		echo ('f.sdate.value="' . $new_start->format(FMT_TIMESTAMP_DATE) . '";');
-		echo ('f.edate.value="' . $new_end->format(FMT_TIMESTAMP_DATE) . '";');
+		echo ('f.sdate.value=' . dPjs($new_start->format(FMT_TIMESTAMP_DATE)) . ';');
+		echo ('f.edate.value=' . dPjs($new_end->format(FMT_TIMESTAMP_DATE)) . ';');
 		?>
 		document.editFrm.display_option.value = "custom";
 		f.submit()
+	}
+	function submitCustomDate() {
+		document.editFrm.display_option.value = "custom";
+		document.editFrm.submit();
 	}
 	function showThisMonth() {
 		document.editFrm.display_option.value = "this_month";
@@ -244,7 +248,7 @@ if (!@$min_view) {
 						<tr>
 							<td align="left" valign="top" width="20">
 								<?php if ($display_option != "all") { ?>
-									<a href="javascript:scrollPrev()">
+									<a href="#"<?php echo dPaction('scrollPrev'); ?>>
 										<img src="./images/prev.gif" width="16" height="16"
 											alt="<?php echo $AppUI->_('previous'); ?>" border="0" />
 									</a>
@@ -256,7 +260,7 @@ if (!@$min_view) {
 									value="<?php echo $start_date->format(FMT_TIMESTAMP_DATE); ?>" />
 								<input type="text" class="text" name="show_sdate"
 									value="<?php echo $start_date->format($df); ?>" size="12" disabled="disabled" />
-								<a href="javascript:popCalendar('sdate')">
+								<a href="#"<?php echo dPaction('popCalendar', array('sdate')); ?>>
 									<img src="./images/calendar.gif" width="24" height="12" alt="" border="0" />
 								</a>
 							</td>
@@ -266,18 +270,18 @@ if (!@$min_view) {
 									value="<?php echo $end_date->format(FMT_TIMESTAMP_DATE); ?>" />
 								<input type="text" class="text" name="show_edate"
 									value="<?php echo $end_date->format($df); ?>" size="12" disabled="disabled" />
-								<a href="javascript:popCalendar('edate')">
+								<a href="#"<?php echo dPaction('popCalendar', array('edate')); ?>>
 									<img src="./images/calendar.gif" width="24" height="12" alt="" border="0" />
 								</a>
 							</td>
 							<td align="left">
 								<input type="button" class="button"
 									value="<?php echo $AppUI->_('submit custom date'); ?>"
-									onclick='document.editFrm.display_option.value="custom";document.editFrm.submit();' />
+									<?php echo dPaction('submitCustomDate'); ?> />
 							</td>
 							<td align="right" valign="top" width="20">
 								<?php if ($display_option != "all") { ?>
-									<a href="javascript:scrollNext()">
+									<a href="#"<?php echo dPaction('scrollNext'); ?>>
 										<img src="./images/next.gif" width="16" height="16"
 											alt="<?php echo $AppUI->_('next'); ?>" border="0" />
 									</a>
@@ -293,13 +297,13 @@ if (!@$min_view) {
 							<td align="right">
 								<input type="button" style="width: 110px;" class="button"
 									value="<?php echo $AppUI->_('show this month'); ?>"
-									onclick='javascript:showThisMonth()' />
+									<?php echo dPaction('showThisMonth'); ?> />
 								&nbsp;
 							</td>
 							<td align="right">
 								<input type="button" style="width: 110px;" class="button"
 									value="<?php echo $AppUI->_('show full project'); ?>"
-									onclick='javascript:showFullProject()' />
+									<?php echo dPaction('showFullProject'); ?> />
 								&nbsp;
 							</td>
 						</tr>
@@ -314,7 +318,7 @@ if (!@$min_view) {
 						<tr>
 							<td width="210">
 								<select name="ganttTaskFilter" id="ganttTaskFilter" class="text"
-									onchange="javascript:submitIt()" size="1">
+									<?php echo dPaction('submitIt'); ?> size="1">
 									<?php
 									echo '<option value="0" ' . (($ganttTaskFilter == '' || $ganttTaskFilter == 0) ? ' selected="selected">' : '>') . '&lt;Show all tasks&gt; </option>';
 									for ($i = 0; $i < count($filter_task_list); $i++) {
@@ -340,7 +344,7 @@ if (!@$min_view) {
 			</tr>
 
 			<tr align="left">
-				<th colspan="4" align="left"><em><a style="color: white" href="javascript:doMenu('ganttoptions')"
+				<th colspan="4" align="left"><em><a style="color: white" href="#"<?php echo dPaction('doMenu', array('ganttoptions')); ?>
 							id="xganttoptions">Show Additional Gantt Options</a></em></th>
 			</tr>
 			<tr align="left">
@@ -362,7 +366,7 @@ if (!@$min_view) {
 										<td colspan="2" valign="middle">&nbsp;
 											<input type="button" style="float:right;width:110px;" class="button"
 												value="<?php echo $AppUI->_('submit'); ?>"
-												onclick='javascript:submitIt()' />
+												<?php echo dPaction('submitIt'); ?> />
 										</td>
 									</tr>
 									<?php if ($a == 'todo') { ?>
