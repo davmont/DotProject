@@ -59,15 +59,15 @@ if ($loadFromTab && isset($_SESSION['tasks_subform']['hresource_assign'])) {
 
 $AppUI->getModuleJS('resources', 'tabs');
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 echo "var projTasksWithEndDates=new Array();\n";
 $keys = array_keys($projTasksWithEndDates);
 for ($i = 1, $sz=sizeof($keys); $i < $sz; $i++) {
 	//array[task_is] = end_date, end_hour, end_minutes
-	echo ('projTasksWithEndDates[' . $keys[$i] . ']=new Array("' 
-	      . $projTasksWithEndDates[$keys[$i]][1] . '", "' . $projTasksWithEndDates[$keys[$i]][2] 
-	      . '", "' . $projTasksWithEndDates[$keys[$i]][3] . '");' . "\n");
+	echo ('projTasksWithEndDates[' . (int)$keys[$i] . ']=new Array(' 
+	      . dPjs($projTasksWithEndDates[$keys[$i]][1]) . ', ' . dPjs($projTasksWithEndDates[$keys[$i]][2]) 
+	      . ', ' . dPjs($projTasksWithEndDates[$keys[$i]][3]) . ');' . "\n");
 }
 ?>
 </script>
@@ -97,7 +97,7 @@ for ($i = 1, $sz=sizeof($keys); $i < $sz; $i++) {
 				<td colspan="2" align="center">
 					<table>
 					<tr>
-						<td align="right"><input type="button" class="button" value="&gt;" onclick="javascript:addResource(document.otherFrm)" /></td>
+						<td align="right"><input type="button" class="button" value="&gt;"<?php echo dPaction('addResource', array('$form')); ?> /></td>
 						<td>
 							<select name="resource_assignment" class="text">
 							<?php 
@@ -108,7 +108,7 @@ for ($i = 5; $i <= 100; $i+=5) {
 ?>
 							</select>
 						</td>				
-						<td align="left"><input type="button" class="button" value="&lt;" onclick="javascript:removeResource(document.otherFrm)" /></td>					
+						<td align="left"><input type="button" class="button" value="&lt;"<?php echo dPaction('removeResource', array('$form')); ?> /></td>					
 					</tr>
 					</table>
 				</td>
@@ -124,6 +124,6 @@ for ($i = 5; $i <= 100; $i+=5) {
 </tr>
 </table>
 </form>
-<script language="javascript" type="text/javascript">
-  subForm.push(new FormDefinition(<?php echo $tab; ?>, document.otherFrm, checkOther, saveOther));
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+  subForm.push(new FormDefinition(<?php echo (int)$tab; ?>, document.otherFrm, checkOther, saveOther));
 </script>

@@ -48,9 +48,9 @@ $titleBlock->show();
 
 if ($canDelete) {
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	can_delete = true;
-	delete_msg = "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('Resource').'?';?>";
+	delete_msg = <?php echo dPjs($AppUI->_('doDelete', UI_OUTPUT_RAW) . ' ' . $AppUI->_('Resource', UI_OUTPUT_RAW) . '?');?>;
 </script>
 <form name="frmDelete" action="?m=resources" method="post">
   <input type="hidden" name="dosql" value="do_resource_aed" />
