@@ -61,7 +61,7 @@ $companies = arrayMerge(array('0' => $AppUI->_('All')), $companies);
 $titleBlock = new CTitleBlock('Invoices', 'applet3-48.png', $m, "$m.$a");
 $titleBlock->addCell($AppUI->_('Company') . ':');
 $titleBlock->addCell(
-	arraySelect($companies, 'company_id', 'onChange="document.pickCompany.submit()" class="text"', $company_id),
+	arraySelect($companies, 'company_id', 'class="text"' . dPaction(null, array(), null, array('submit' => 'pickCompany')), $company_id),
 	'',
 	'<form action="?m=invoices" method="post" name="pickCompany">',
 	'</form>'
