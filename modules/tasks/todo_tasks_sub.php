@@ -36,7 +36,7 @@ echo "m=$m&a=$a&date=$date"; ?>">
 						foreach ($rows as $row) {
 							echo ('<option value="' . $row['user_id'] . '"'
 								. (($user_id == $row["user_id"]) ? ' selected="selected"' : '') . ' />'
-								. $row['contact_last_name'] . ', ' . $row["contact_first_name"]);
+								. dPhtml($row['contact_last_name'] . ', ' . $row["contact_first_name"]));
 						}
 					}
 				}

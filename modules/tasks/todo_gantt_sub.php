@@ -31,7 +31,7 @@ $canDelete = getPermission($m, 'delete');
 			foreach ($rows as $row) {
 				$selected = (($user_id == $row['user_id']) ? ' selected="selected"' : '');
 				echo ('<option value="' . $row['user_id'] . '"' . $selected . '>' 
-				      . $row['contact_last_name'] . ', ' . $row['contact_first_name'] 
+				      . dPhtml($row['contact_last_name'] . ', ' . $row['contact_first_name']) 
 				      . '</option>' . "\n");
 				
 			}
