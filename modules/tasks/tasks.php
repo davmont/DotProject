@@ -548,7 +548,7 @@ if ($showEditCheckbox) {
 
 					<tr>
 						<td>
-							<a href="index.php?m=tasks&amp;f=<?php echo $f; ?>&amp;project_id=<?php echo $project_id ? 0 : $k; ?>">
+							<a href="index.php?m=tasks&amp;f=<?php echo rawurlencode((string)$f); ?>&amp;project_id=<?php echo $project_id ? 0 : $k; ?>">
 								<img src="./images/icons/<?php
 								echo (($project_id) ? 'expand.gif' : 'collapse.gif');
 								?>" width="16" height="16" border="0" alt="<?php
