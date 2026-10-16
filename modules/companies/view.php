@@ -82,7 +82,7 @@ if ($canEdit) {
 }
 $titleBlock->show();
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	<?php
 	// security improvement:
 // some javascript functions may not appear on client side
@@ -91,7 +91,7 @@ $titleBlock->show();
 	if ($canDelete) {
 		?>
 		function delIt() {
-			if (confirm("<?php echo ($AppUI->_('doDelete') . ' ' . $AppUI->_('Company') . '?'); ?>")) {
+			if (confirm("<?php echo ($AppUI->_('doDelete', UI_OUTPUT_JS) . ' ' . $AppUI->_('Company', UI_OUTPUT_JS) . '?'); ?>")) {
 				document.frmDelete.submit();
 			}
 		}

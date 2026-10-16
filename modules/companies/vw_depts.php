@@ -78,8 +78,8 @@ echo ('<tr><td colspan="3" nowrap="nowrap" rowspan="99" align="right" valign="to
       . ' style="background-color:#ffffff">');
 if ($canEdit) {
 	echo ('<input type="button" class="button" value="' . $AppUI->_('new department') 
-	      . '" onclick="javascript:window.location=' 
-		  . '\'./index.php?m=departments&amp;a=addedit&amp;company_id=' . $company_id . '\';" />');
+	      . '"' . dPaction(null, array(), null, array('href' => './index.php?m=departments&a=addedit&company_id='
+		  . (int)$company_id)) . ' />');
 }
 echo '</td></tr></table>';
 ?>
