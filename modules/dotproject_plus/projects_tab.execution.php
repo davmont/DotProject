@@ -4,20 +4,18 @@ require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 <!-- include libraries for right click menu -->
 <script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/milonic_src.js"></script>
 <script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/mmenudom.js"></script>
-<script type="text/javascript"
-    src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_activities.js"></script>
+<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_activities.js"></script>
 
 <!-- calendar goodies -->
 <link type="text/css" rel="stylesheet"
     href="./modules/timeplanning/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.css?random=20051112"
     media="screen">
 </link>
-<script type="text/javascript"
-    src="./modules/timeplanning/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.js?random=20060118"></script>
+<script type="text/javascript" src="./modules/timeplanning/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.js?random=20060118"></script>
 
 <a href="http://www.milonic.com/" style="display: none">DHTML JavaScript Menu By Milonic.com</a>
 
-<script>
+<script nonce="<?php echo dPcspNonce(); ?>">
 
     function displayActivityLogPanel(activityId) {
         //document.getElementById("new_activity_log_div_"+activityId).style.display="block";
@@ -200,7 +198,7 @@ foreach ($tasks_for_ids as $t) {
     <div style="text-align:right">
         <form name="select_human_resource_filter_form" action="<?php echo dPhtml($currentPage) ?>" method="post">
             <span style="color:#000000"><?php echo $AppUI->_("LBL_FILTER"); ?>:</span>
-            <select id="project_resources_filter" name="project_resources_filter" onchange="filterActivitiesByUser()">
+            <select id="project_resources_filter" name="project_resources_filter"<?php echo dPaction('filterActivitiesByUser'); ?>>
                 <!-- Filter to select activities for just a resource -->
                 <option <?php echo $project_resources_filter == "" ? "selected" : "" ?> value="">
                     <?php echo $AppUI->_("All"); ?>
@@ -229,7 +227,7 @@ foreach ($tasks_for_ids as $t) {
             ?>
             <input type="hidden" name="activities_count" id="activities_count" value="<?php echo $activitiesCount ?>" />
 
-            <!-- <input class="button" type="button" value="<?php echo $AppUI->_("LBL_PROJECT_PROJECT_SEQUENCING") ?>" onclick="viewSequenceActivities()" />  -->
+            <!-- <input class="button" type="button" value="<?php echo $AppUI->_("LBL_PROJECT_PROJECT_SEQUENCING") ?>"<?php echo dPaction('viewSequenceActivities'); ?> />  -->
         </form>
     </div>
     <br />
@@ -268,7 +266,7 @@ foreach ($tasks_for_ids as $t) {
         if (count($items) > 0) {
             $wbs_items_order = 0;
             ?>
-            <script>
+            <script nonce="<?php echo dPcspNonce(); ?>">
                 var wbsHasActivity = new Array();//stores WBS item id, and a boolean informing if it have or not activities
             </script>
             <?php
@@ -302,7 +300,7 @@ foreach ($tasks_for_ids as $t) {
                     $tasks = $ControllerWBSItemActivityRelationship->getActivitiesByWorkPackage($id);
                     $hasActivities = sizeof($tasks) > 0 ? true : false;
                     ?>
-                    <tr id="row_<?php echo $id ?>" ondblclick="expandControlWorkpackageActivities(<?php echo $id ?>)"
+                    <tr id="row_<?php echo $id ?>"<?php echo dPaction('expandControlWorkpackageActivities', array((int) $id), 'dblclick'); ?>
                         style="cursor:pointer">
 
                         <td style="background-color: #E8E8E8;height:  35px;min-width:50px; " colspan="7">
@@ -319,17 +317,17 @@ foreach ($tasks_for_ids as $t) {
                                     (<?php echo sizeof($tasks) ?>)
                                     &nbsp;&nbsp;&nbsp;
                                     <img src="./modules/dotproject_plus/images/icone_seta.png"
-                                        onclick="collapseActivities(<?php echo $id ?>)" id="collapse_icon_<?php echo $id ?>"
+                                        <?php echo dPaction('collapseActivities', array((int) $id), null, array('call-dblclick' => 'expandControlWorkpackageActivities', 'args-dblclick' => json_encode(array((int) $id)))); ?> id="collapse_icon_<?php echo $id ?>"
                                         style="cursor:pointer;display:none" />
                                     <img src="./modules/dotproject_plus/images/icone_seta_cima.png"
-                                        onclick="expandActivities(<?php echo $id ?>)" id="expand_icon_<?php echo $id ?>"
+                                        <?php echo dPaction('expandActivities', array((int) $id), null, array('call-dblclick' => 'expandControlWorkpackageActivities', 'args-dblclick' => json_encode(array((int) $id)))); ?> id="expand_icon_<?php echo $id ?>"
                                         style="cursor:pointer" />
                                 </span>
                             </span>
 
                         </td>
-                        <script>
-                            wbsHasActivity[<?php echo $id ?>] = <?php echo sizeof($tasks) > 0 ? "true" : "false" ?>;
+                        <script nonce="<?php echo dPcspNonce(); ?>">
+                            wbsHasActivity[<?php echo (int) $id ?>] = <?php echo sizeof($tasks) > 0 ? "true" : "false" ?>;
                         </script>
                         <?php
                         if ($activitiesCount == 0 && !$showFirstActivityCreation) {
@@ -461,7 +459,7 @@ foreach ($tasks_for_ids as $t) {
 
                                             <span style="color:#008000">+</span> <span style="font-size: 8px;font-style: italic;cursor:pointer"
                                                 id="new_activity_log_link_<?php echo $task_id ?>"
-                                                onclick="displayActivityLogPanel(<?php echo $task_id; ?>)"><?php echo $AppUI->_("LBL_NEW_ACTVITY_LOG"); ?></span>
+                                                <?php echo dPaction('displayActivityLogPanel', array((int) $task_id)); ?>><?php echo $AppUI->_("LBL_NEW_ACTVITY_LOG"); ?></span>
                                             <div id="new_activity_log_div_<?php echo $task_id ?>"
                                                 style="border:1px solid #f0f5f5;width: fit-content;display:none">
 
@@ -514,10 +512,10 @@ foreach ($tasks_for_ids as $t) {
                                                             <td colspan="2" style="text-align: right">
                                                                 <br />
                                                                 <input class="button" type="button" value="<?php echo $AppUI->_("LBL_SAVE"); ?>"
-                                                                    onclick="validateActivityLog(<?php echo $task_id ?>);" />
+                                                                    <?php echo dPaction('validateActivityLog', array((int) $task_id)); ?> />
                                                                 <input class="button" type="button"
                                                                     value="<?php echo ucfirst($AppUI->_("LBL_CANCEL")); ?>"
-                                                                    onclick="closeActivityLogPanel(<?php echo $task_id ?>);" />
+                                                                    <?php echo dPaction('closeActivityLogPanel', array((int) $task_id)); ?> />
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -533,7 +531,7 @@ foreach ($tasks_for_ids as $t) {
                                                 ?>
                                                 <br />
                                                 <span style="color:#008000">*</span> <span style="font-size: 8px;font-style: italic;cursor:pointer"
-                                                    onclick="displayActivityLogList(<?php echo $task_id; ?>)"><?php echo $AppUI->_("LBL_ACTIVITY_LOG_LIST") ?>
+                                                    <?php echo dPaction('displayActivityLogList', array((int) $task_id)); ?>><?php echo $AppUI->_("LBL_ACTIVITY_LOG_LIST") ?>
                                                     (<?php echo sizeof($resultSet) ?>)</span>
 
                                                 <div id="list_activity_logs_<?php echo $task_id ?>" style="display:none">
@@ -567,7 +565,7 @@ foreach ($tasks_for_ids as $t) {
                                                                         <input type="hidden" name="tab" value="<?php echo (int) $_GET["tab"] ?>" />
                                                                         <input type="hidden" name="task_log_id" value="<?php echo $record[0] ?>">
                                                                         <img src="./modules/dotproject_plus/images/trash_small.gif"
-                                                                            onclick="document.form_activity_log_delete_<?php echo $record[0] ?>.submit();"
+                                                                            <?php echo dPaction(null, array(), null, array('submit' => 'form_activity_log_delete_' . $record[0])); ?>
                                                                             style="cursor:pointer" />
                                                                     </form>
                                                                 </td>
