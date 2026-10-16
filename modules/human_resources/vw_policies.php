@@ -66,7 +66,7 @@ if ($edit || !$company_policies_id) {
 			<tr>
 				<td align="right">
 					<input type="button" value="<?php echo $AppUI->_('submit'); ?>" class="button"
-						onclick="submitPolicies(document.editfrm);" />
+						<?php echo dPaction('submitPolicies', array('$form')); ?> />
 				</td>
 			</tr>
 		</table>
@@ -101,6 +101,6 @@ if ($edit || !$company_policies_id) {
 <tr>
 	<td>
 		<input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button"
-			onclick="javascript:history.back(-1);" />
+			<?php echo dPaction('history.back'); ?> />
 	</td>
 </tr>

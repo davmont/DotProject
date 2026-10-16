@@ -74,9 +74,9 @@ else {
 $titleBlock->show();
 
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	can_delete = true;
-	delete_msg = "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('Allocation').'?';?>";
+	delete_msg = "<?php echo $AppUI->_('doDelete', UI_OUTPUT_JS).' '.$AppUI->_('Allocation', UI_OUTPUT_JS).'?';?>";
 </script>
 <form name="frmDelete" action="?m=human_resources" method="post">
   <input type="hidden" name="dosql" value="do_allocation_aed" />
@@ -137,6 +137,6 @@ $titleBlock->show();
 <tr>
   <td>
     <input type="button" value="<?php echo $AppUI->_('back');?>"
-    class="button" onclick="javascript:history.back(-1);" />
+    class="button"<?php echo dPaction('history.back'); ?> />
   </td>
 </tr>
