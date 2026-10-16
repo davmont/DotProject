@@ -20,7 +20,7 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 
    // se a data não estiver setada pega atual senão usa a passada
 	if (isset($_POST['date_edit']) 
-	&& eregi("^[0-9]{2}/[0-9]{2}/[0-9]{4}$", $_POST['date_edit']) 
+	&& preg_match('#^[0-9]{2}/[0-9]{2}/[0-9]{4}$#', (string)$_POST['date_edit']) 
 	&& checkdate(substr($_POST['date_edit'], 3, 2),  substr($_POST['date_edit'], 0, 2),  substr($_POST['date_edit'], 7, 4)) ) 
 	{		 
 	    $dtAtual = $_POST['date_edit'];
