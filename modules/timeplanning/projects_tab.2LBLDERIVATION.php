@@ -55,7 +55,7 @@
 				$is_leaf=$item->isLeaf();
 				if($is_leaf=="1"){
 					echo "<tr id='id_$id' bgcolor='#E8E8E8' title='is_wbs_item'>";
-					echo "<td colspan='9'><b>" . dPhtml($number) . " - " . dPhtml($name) . "</b><br><input type='button' value='+' class='button' onclick=addLine('','','','','','','','','','','',$id);></td>";			
+					echo "<td colspan='9'><b>" . dPhtml($number) . " - " . dPhtml($name) . "</b><br><input type='button' value='+' class='button'" . dPaction('addLine', array('', '', '', '', '', '', '', '', '', '', '', (int)$id)) . "></td>";			
 				}else{
 					echo "<tr id='id_$id' title='is_wbs_item'>";
 					echo "<td colspan='4'>" . dPhtml($number) . " - " . dPhtml($name) . "</td>";
@@ -71,12 +71,12 @@
 						$activities[$obj->task_id]=true;//just inform this activity was used 
 						$hasActivities=true;
 						$task_name=$obj->task_name;
-						echo "<script>addLine(" . dPjs($task_name) . ",'','','','','','". $obj->task_id ."','','','','',$id);</script>";
+						echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>addLine(" . dPjs($task_name) . ",'','','','','','" . (int)$obj->task_id . "','','','',''," . (int)$id . ");</script>";
 					}
 					//end: code to filter workpackages activities		
 					if(!$hasActivities){
 						//add a first activity when there is no related activity for this eap item
-						echo "<script>addLine('','','','','','','','','','','',$id);</script>";
+						echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>addLine('','','','','','','','','','',''," . (int)$id . ");</script>";
 					}
 				}
 			}
@@ -85,7 +85,7 @@
 		<table border="0" align="center" width="600">
 			<tr>
 				<td>
-					<input type='button' value='<?php echo $AppUI->_('LBL_SAVE'); ?>' class="button"  onclick="salvarCronograma()">
+					<input type='button' value='<?php echo $AppUI->_('LBL_SAVE'); ?>' class="button" <?php echo dPaction('salvarCronograma'); ?>>
 				</td>
 			</tr>
 		</table>
@@ -97,7 +97,7 @@
 		if($activities[$task->task_id]==null){
 			$taskDescription=$task->task_name;
 			$taskId=$task->task_id;
-			echo "<script>addLine(" . dPjs($taskDescription) . ",'','','','','',$taskId,'','','','',$id);</script>";
+			echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>addLine(" . dPjs($taskDescription) . ",'','','','',''," . (int)$taskId . ",'','','',''," . (int)$id . ");</script>";
 			//$startDate=$task['task_start_date'];
 			//$endDate=$task['task_end_date'];
 			//$startDateObj=new DateTime($startDate);

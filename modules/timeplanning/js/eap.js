@@ -1,5 +1,16 @@
 var nextId =1000;
 
+// A button that runs window[call](args...) through js/dp-actions.js (no inline handler).
+function tpActionButton(value, call, args) {
+	var button = document.createElement("input");
+	button.type = "button";
+	button.className = "button";
+	button.value = value;
+	button.setAttribute("data-dp-call", call);
+	button.setAttribute("data-dp-args", JSON.stringify(args));
+	return button;
+}
+
 /*
 Array.prototype.remove = function(start, end) {
     this.splice(start, end);
@@ -65,15 +76,15 @@ function addItem(id,itemName,index,identation){
 	var td = row.insertCell(1);
 	td.noWrap=true;
 	var div=document.createElement("div");
-	div.innerHTML="<input type='button' value='&uarr;' class='button' onclick=moveRow(-1,'"+ row.id +"')>";
-	div.innerHTML+="<input type='button' class='button' value='&darr;' onclick=moveRow(1,'"+ row.id +"')>";
+	div.appendChild(tpActionButton("\u2191", "moveRow", [-1, row.id]));
+	div.appendChild(tpActionButton("\u2193", "moveRow", [1, row.id]));
 	td.appendChild(div);
 	//Identation
 	var td = row.insertCell(2);
 	td.noWrap=true;
 	var div=document.createElement("div");
-	div.innerHTML="<input type='button' value='&#8592;' class='button' onclick=identation('"+id+"',-1)>";
-	div.innerHTML=div.innerHTML+"<input type='button' class='button' value='&#8594;' onclick=identation("+id+",1)>";
+	div.appendChild(tpActionButton("\u2190", "identation", [String(id), -1]));
+	div.appendChild(tpActionButton("\u2192", "identation", [id, 1]));
 	td.appendChild(div);
 	//Identation inputs
 	var td = row.insertCell(3);
@@ -102,7 +113,7 @@ function addItem(id,itemName,index,identation){
 	td = row.insertCell(4);
 	td.noWrap=true;
 	div=field=document.createElement("div");
-	div.innerHTML="<input type='button' class='button' value='X' onclick=deleteRole('"+row.id+"')>";
+	div.appendChild(tpActionButton("X", "deleteRole", [row.id]));
 	td.appendChild(div);
 	
 	updateEAPItemsNumbers();

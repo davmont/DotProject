@@ -19,8 +19,18 @@ $query->clear();
 $roles = db_loadList($sql);
 //$roles = $crole->getRoles();
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 var nextId=1000;
+// A button that runs window[call](args...) through js/dp-actions.js (no inline handler).
+function tpActionButton(value, call, args) {
+	var button = document.createElement("input");
+	button.type = "button";
+	button.className = "button";
+	button.value = value;
+	button.setAttribute("data-dp-call", call);
+	button.setAttribute("data-dp-args", JSON.stringify(args));
+	return button;
+}
 
 function addRole(id,roleName,index,identation){
 	nextId++;
@@ -36,15 +46,15 @@ function addRole(id,roleName,index,identation){
 	var td = row.insertCell(0);
 	td.noWrap=true;
 	var div=document.createElement("div");
-	div.innerHTML="<input type='button' value='&uarr;' class='button' onclick=moveRow(-1,'"+ row.id +"')>";
-	div.innerHTML=div.innerHTML+"<input type='button' class='button' value='&darr;' onclick=moveRow(1,'"+ row.id +"')>";
+	div.appendChild(tpActionButton("\u2191", "moveRow", [-1, row.id]));
+	div.appendChild(tpActionButton("\u2193", "moveRow", [1, row.id]));
 	td.appendChild(div);
 	//Identation
 	var td = row.insertCell(1);
 	td.noWrap=true;
 	var div=document.createElement("div");
-	div.innerHTML="<input type='button' value='&#8592;' class='button' onclick=identation('"+id+"',-1)>";
-	div.innerHTML=div.innerHTML+"<input type='button' class='button' value='&#8594;' onclick=identation("+id+",1)>";
+	div.appendChild(tpActionButton("\u2190", "identation", [String(id), -1]));
+	div.appendChild(tpActionButton("\u2192", "identation", [id, 1]));
 	td.appendChild(div);
 	//Identation inputs
 	var td = row.insertCell(2);
@@ -100,7 +110,7 @@ function addRole(id,roleName,index,identation){
 	td = row.insertCell(3);
 	td.noWrap=true;
 	div=field=document.createElement("div");
-	div.innerHTML="<input type='button' class='button' value='X' onclick=deleteRole('"+row.id+"','"+id+"')>";
+	div.appendChild(tpActionButton("X", "deleteRole", [row.id, String(id)]));
 	td.appendChild(div);
 }
 
@@ -178,7 +188,7 @@ function saveOrgonogram(){
 	<input name="dosql" type="hidden" value="do_company_aed" />
 	<input name="roles_ids" id="roles_ids" type="hidden" value="">
 	<input name="roles_ids_to_delete" id="roles_ids_to_delete" type="hidden" value="">
-	<table width="70%" align="center"><tr><td> <input type="button" class="button" value="<?php echo $AppUI->_('LBL_ADD'); ?>" onclick=addRole('','','','');> </td></tr></table>
+	<table width="70%" align="center"><tr><td> <input type="button" class="button" value="<?php echo $AppUI->_('LBL_ADD'); ?>" <?php echo dPaction('addRole', array('', '', '', '')); ?>> </td></tr></table>
 	<table class="std" id="tb_orgonogram" width="70%" align="center" style='border-radius: 10px'>
 		<caption> <b><?php echo $AppUI->_('LBL_ORGONOGRAM'); ?> </b></caption>
 		<tr>
@@ -188,7 +198,7 @@ function saveOrgonogram(){
 			<th><?php echo $AppUI->_('LBL_EXCLUSION'); ?></th>
 		</tr>
 	</table>
-	<table width="70%" align="center"><tr><td> <input type="button" class="button" onclick=saveOrgonogram() value="<?php echo $AppUI->_('LBL_SAVE'); ?>" /> </td></tr></table>
+	<table width="70%" align="center"><tr><td> <input type="button" class="button"<?php echo dPaction('saveOrgonogram'); ?> value="<?php echo $AppUI->_('LBL_SAVE'); ?>" /> </td></tr></table>
 </form>
 
 <?php 
@@ -197,6 +207,6 @@ function saveOrgonogram(){
 		$id = $role->getId();
 		$name = $role->getDescription();
 		$identation= $role->getIdentation();
-		echo '<script>addRole('.$id.','.dPjs($name).',0,'.dPjs($identation).');</script>';
+		echo '<script type="text/javascript" nonce="' . dPcspNonce() . '">addRole(' . (int)$id . ',' . dPjs($name) . ',0,' . dPjs($identation) . ');</script>';
     }
    ?>

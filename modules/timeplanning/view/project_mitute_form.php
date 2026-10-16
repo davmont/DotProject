@@ -7,7 +7,11 @@ if (!defined('DP_BASE_DIR')) {
 	<div id="ata_div" width="100%" style="display:<?php echo $actionEstimation=="read"?'block':'none'; ?>">
 		<!-- TinyMCE -->
 		<script type="text/javascript" src="./modules/timeplanning/js/jsLibraries/tiny_mce/tiny_mce.js"></script>
-		<script type="text/javascript">
+		<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+			// Calendar button below (run through js/dp-actions.js).
+			function tpDisplayCalendar(fieldId, format, button) {
+				displayCalendar(document.getElementById(fieldId), format, button);
+			}
 			tinyMCE.init({
 				mode : "textareas",
 				theme : "advanced",
@@ -43,7 +47,7 @@ if (!defined('DP_BASE_DIR')) {
 					<td nowrap >
 						<input type="hidden" name="date" id="date">
 						<input type="text" class="text" disabled name="date_edit" value="<?php echo dPhtml($date); ?>" id="date_edit">
-						<img src="./modules/timeplanning/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)">
+						<img src="./modules/timeplanning/images/img.gif" id="calendar_trigger" style="cursor:pointer"<?php echo dPaction('tpDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?>>
 						
 					</td>
 					
@@ -101,8 +105,8 @@ if (!defined('DP_BASE_DIR')) {
 												<td colspan="2" align="center">
 													<table>
 														<tr>
-															<td align="right"><input type="button" class="button" value="&gt;" onclick="addMember('minute_form','all_members','selected_members')" /></td>	
-															<td align="left"><input type="button" class="button" value="&lt;" onclick="removeMember('minute_form','all_members','selected_members')" /></td>					
+															<td align="right"><input type="button" class="button" value="&gt;"<?php echo dPaction('addMember', array('minute_form', 'all_members', 'selected_members')); ?> /></td>	
+															<td align="left"><input type="button" class="button" value="&lt;"<?php echo dPaction('removeMember', array('minute_form', 'all_members', 'selected_members')); ?> /></td>					
 														</tr>
 													</table>
 												</td>
@@ -122,8 +126,8 @@ if (!defined('DP_BASE_DIR')) {
 				</tr>
 				<tr>
 					<td colspan="2" align="center">
-						<input type="button" name="Salvar" value="<?php echo $AppUI->_('LBL_SAVE'); ?>" onclick=saveReport() class="button">
-						<input type="button" name="Fechar" value="<?php echo $AppUI->_('LBL_CLOSE'); ?>" onclick=closeReport() class="button">
+						<input type="button" name="Salvar" value="<?php echo $AppUI->_('LBL_SAVE'); ?>"<?php echo dPaction('saveReport'); ?> class="button">
+						<input type="button" name="Fechar" value="<?php echo $AppUI->_('LBL_CLOSE'); ?>"<?php echo dPaction('closeReport'); ?> class="button">
 					</td>
 				</tr>
 			</table>

@@ -12,10 +12,10 @@
 		//start: build the roles list
 		$roles = $controllerCompanyRole->getCompanyRoles($obj->project_company);
 		$i=0;
-		echo "<script>var roleIds=new Array();roleNames=new Array();";
+		echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>var roleIds=new Array();roleNames=new Array();";
 		foreach ($roles as $role) {
 			$roles[$role->getId()]=$role->getDescription();
-			echo "roleNames[$i]=".dPjs($role->getDescription()).";roleIds[$i]='".$role->getId()."';";
+			echo "roleNames[" . (int)$i . "]=" . dPjs($role->getDescription()) . ";roleIds[" . (int)$i . "]='" . (int)$role->getId() . "';";
 			$i++;		
 		}
 		echo "</script>";
@@ -113,14 +113,14 @@
 							echo  "</select></td>";
 							echo "<td valign='top' nowrap><input type='text' class='text' size='8' name='planned_duration_$task_id' value='".$projectTaskEstimation->getDuration()."'></td>";
 							echo "<td valign='top' nowrap>
-									  <input type='button' value='+' onclick=addEstimatedRole('$task_id','',1) class='button' />
+									  <input type='button' value='+'" . dPaction('addEstimatedRole', array((string)(int)$task_id, '', 1)) . " class='button' />
 									  <div id='div_res_$task_id'></div>
 									  <input type='hidden' value='0' name='roles_num_$task_id' id='roles_num_$task_id'>
 									  <input type='hidden' value='' name='estimatedRolesExcluded_$task_id' id='estimatedRolesExcluded_$task_id'>
 								  </td>";
 							echo "</tr>";
 							foreach($projectTaskEstimation->getRoles() as $role){
-								echo "<script>addEstimatedRole('$task_id','".$role->getRoleId()."',".$role->getQuantity().");</script>";
+								echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>addEstimatedRole('" . (int)$task_id . "','" . (int)$role->getRoleId() . "'," . (float)$role->getQuantity() . ");</script>";
 							}
 							//end: build line for task
 						}			
@@ -131,5 +131,5 @@
 				}
 			}
 			?>
-	   	<tr><td colspan="8" align="center"><input type="button" class="button" value="<?php echo $AppUI->_('LBL_SAVE') . " ". $AppUI->_('LBL_ESTIMATIONS'); ?>" onclick="saveEstimationsData()"></td></tr>
+	   	<tr><td colspan="8" align="center"><input type="button" class="button" value="<?php echo $AppUI->_('LBL_SAVE') . " ". $AppUI->_('LBL_ESTIMATIONS'); ?>"<?php echo dPaction('saveEstimationsData'); ?>></td></tr>
 	   </table>
