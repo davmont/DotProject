@@ -412,7 +412,7 @@ if (!@$min_view) {
 									for ($i = 0; $i < count($filter_task_list); $i++) {
 										$filter_task_name = $filter_task_list[$i][0]['task_name'];
 										$filter_task_level = $filter_task_list[$i][1];
-										$filter_task_name = ((strlen($filter_task_name) > 71) ? substr($filter_task_name, 0, (68 - $filter_task_level)) . '...' : $filter_task_name);
+										$filter_task_name = dPhtml((strlen($filter_task_name) > 71) ? substr($filter_task_name, 0, (68 - $filter_task_level)) . '...' : $filter_task_name);
 										for ($ii = 1; $ii <= $filter_task_level; $ii++) {
 											$filter_task_name = '&nbsp;&nbsp;' . $filter_task_name;
 										}
