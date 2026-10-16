@@ -196,7 +196,7 @@ $last_page = (($pages > $max_pages) ? min(($first_page + $max_pages - 1), $pages
 	<td nowrap align="right">
 	  <form name="filter" action="?m=history" method="post" >
 	  <?php echo $AppUI->_('Changes to'); ?>:
-		<select name="filter" onchange="javascript:document.filter.submit()">
+		<select name="filter"<?php echo dPaction(null, array(), null, array('submit' => 'filter')); ?>>
 		  <option value=""><?php echo $AppUI->_('Show all'); ?></option>
 <?php
 foreach ($filter_options as $mod => $mod_data) {
@@ -229,7 +229,7 @@ if ($pages > 1) {
 	  </form>
 	</td>
 	<td align="right"><input class="button" type="button" value="<?php 
-echo $AppUI->_('Add history'); ?>" onclick="window.location='?m=history&amp;a=addedit'"></td>
+echo $AppUI->_('Add history'); ?>"<?php echo dPaction(null, array(), null, array('href' => '?m=history&a=addedit')); ?>></td>
   </tr>
 </table>
 
