@@ -1,3 +1,9 @@
+// Calendar icons: <img data-dp-call="mcDisplayCalendar" data-dp-args='["date_edit","dd/mm/yyyy","$this"]'> (js/dp-actions.js).
+function mcDisplayCalendar(fieldId, format, button)
+{
+	displayCalendar(document.getElementById(fieldId), format, button);
+}
+
 function formatadata(Campo, teclapres)
 {
 	var tecla = teclapres.keyCode;
