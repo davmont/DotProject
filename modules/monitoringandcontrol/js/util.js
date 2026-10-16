@@ -4,6 +4,12 @@ function mcDisplayCalendar(fieldId, format, button)
 	displayCalendar(document.getElementById(fieldId), format, button);
 }
 
+// The date fields of the cost and schedule tabs submit their form when changed (js/dp-actions.js).
+function mcSubmitForm(field)
+{
+	field.form.submit();
+}
+
 function formatadata(Campo, teclapres)
 {
 	var tecla = teclapres.keyCode;

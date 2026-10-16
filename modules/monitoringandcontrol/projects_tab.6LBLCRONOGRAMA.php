@@ -105,7 +105,7 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 		<tr>			  
 			<td align="right"><?php echo $AppUI->_('LBL_BASELINE');?></td> 
 			<td nowrap="nowrap">   
-					<select name="cmbBaseline" size="1" id="cmbBaseline" onchange="submit();"> 		
+					<select name="cmbBaseline" size="1" id="cmbBaseline" <?php echo dPaction(null, array(), null, array('submit' => '')); ?>> 		
 						 <?php	
 						 $controllerBaseline= new ControllerBaseline();
 						 $lstBaseline = $controllerBaseline->listBaseline($project_id);
@@ -126,8 +126,8 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 		<tr>			  
             <td align="right"><?php echo $AppUI->_('LBL_DATA');?></td> 
             <td nowrap="nowrap">   
-				 <input type="text" class="text"  name="date_edit"  id="date_edit"  size="15" value="<?php echo  $dtAtual; ?>"  onchange="submit();" maxlength="10" onkeyup="formatadata(this,event)"/>
-				 <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)" />   
+				 <input type="text" class="text"  name="date_edit"  id="date_edit"  size="15" value="<?php echo  $dtAtual; ?>"  maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup change', array('call-change' => 'mcSubmitForm', 'args-change' => json_encode(array('$this')))); ?>/>
+				 <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />   
             </td>
         </tr>
         </form>					
@@ -164,23 +164,23 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 <?php if ((!empty($vlPlanejado) && is_array($vlPlanejado)) || (!empty($vlAgregado) && is_array($vlAgregado))): ?>
 <script src="<?php echo DP_BASE_URL; ?>/lib/chartjs/chart.umd.min.js"></script>
 <canvas id="dp-schedule-chart" width="650" height="280" style="max-width:100%;"></canvas>
-<script>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 (function(){
   var ctx = document.getElementById('dp-schedule-chart').getContext('2d');
   new Chart(ctx, {
     type: 'line',
     data: {
-      labels: <?php echo json_encode(array_values((array)$dtConsultaArray)); ?>,
+      labels: <?php echo json_encode(array_values((array)$dtConsultaArray), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
       datasets: [
         {
-          label: <?php echo json_encode((string)$titVP); ?>,
-          data: <?php echo json_encode(array_values((array)$vlPlanejado)); ?>,
+          label: <?php echo json_encode((string)$titVP, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+          data: <?php echo json_encode(array_values((array)$vlPlanejado), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
           borderColor: '#55bbdd', backgroundColor: 'rgba(85,187,221,0.1)',
           pointStyle: 'circle', tension: 0.1
         },
         {
-          label: <?php echo json_encode((string)$titVA); ?>,
-          data: <?php echo json_encode(array_values((array)$vlAgregado)); ?>,
+          label: <?php echo json_encode((string)$titVA, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+          data: <?php echo json_encode(array_values((array)$vlAgregado), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
           borderColor: '#aaaaaa', backgroundColor: 'rgba(170,170,170,0.1)',
           pointStyle: 'triangle', tension: 0.1
         }
@@ -188,7 +188,7 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
     },
     options: {
       responsive: false,
-      plugins: { title: { display: true, text: <?php echo json_encode((string)$titGrafico); ?> } },
+      plugins: { title: { display: true, text: <?php echo json_encode((string)$titGrafico, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?> } },
       scales: { x: { ticks: { maxRotation: 55 } } }
     }
   });

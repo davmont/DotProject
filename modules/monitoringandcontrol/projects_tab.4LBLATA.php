@@ -16,7 +16,7 @@ $controllerUtil = new ControllerUtil();
 <!-- ***************** LISTA ATAS ****************************-->	
 	<br/>
     <p align="right" style="width:85%">     		
-           <input type="button" class="button" value="<?php echo $AppUI->_('LBL_NOVA').' '.$AppUI->_('LBL_ATA');?>"  onclick="window.location='?m=monitoringandcontrol&a=addedit_ata&project_id=<?php echo $project_id ; ?>' "/>
+           <input type="button" class="button" value="<?php echo $AppUI->_('LBL_NOVA').' '.$AppUI->_('LBL_ATA');?>" <?php echo dPaction(null, array(), null, array('href' => '?m=monitoringandcontrol&a=addedit_ata&project_id=' . (int)$project_id)); ?>/>
     </p>
 
 	<table class="std"  width="70%" align="center" style="border-radius:6px">	
@@ -48,7 +48,7 @@ $controllerUtil = new ControllerUtil();
                                  <input  type="hidden" name="acao" value="update"  />
 								<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
 								<input name="meeting_id" type="hidden" id="meeting_id" value="<?php echo $row[0]; ?>">
-                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar" onclick="updateRow();"  />                                 
+                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />                                 
                               </form>
                         </td>	
                         <td align="center">
@@ -57,7 +57,7 @@ $controllerUtil = new ControllerUtil();
                                 <input  type="hidden" name="acao" value="delete"  />
 								<input name="meeting_id" type="hidden" id="meeting_id" value="<?php echo $row[0]; ?>">
 								<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar" onclick="deleteRow(excluir);"  />
+								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
                                 </form>                                
                         </td>
                    </tr>						

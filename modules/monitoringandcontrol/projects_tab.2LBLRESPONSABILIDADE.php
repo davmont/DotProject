@@ -44,7 +44,7 @@ $controllerUtil = new ControllerUtil();
                                  <input  type="hidden" name="acao" value="update"  />
                                 <input  type="hidden" name="responsibility_id" value="<?php echo $id ;?>"  />
 								<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar" onclick="updateRow();"  />   
+                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />   
                               </form>
                         </td>                        
                         <td align="center">
@@ -53,7 +53,7 @@ $controllerUtil = new ControllerUtil();
                                 <input  type="hidden" name="acao" value="delete"  />
                                 <input  type="hidden" name="responsibility_id" value="<?php echo $cad[0] ;?>"  />
 								<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar" onclick="deleteRow(excluir);"  />
+								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
                                 </form>
                                 
                         </td>
@@ -182,7 +182,7 @@ $controllerUtil = new ControllerUtil();
 	<table width="70%" align="center">
 		<tr>
 			<td>				
-				<input type="button" class="button" onClick="updateRecords();" value="Atualizar" />
+				<input type="button" class="button"<?php echo dPaction('updateRecords'); ?> value="Atualizar" />
 			</td>
 		</tr>
 	</table>
@@ -199,7 +199,7 @@ $controllerUtil = new ControllerUtil();
 	<table width="70%" align="center">
 		<tr>
 			<td>            
-				<input type="button" class="button" value="Add" onclick="addRow('');">
+				<input type="button" class="button" value="Add"<?php echo dPaction('addRow', array('')); ?>>
 			</td>
 		</tr>
 	</table>	
@@ -217,7 +217,7 @@ $controllerUtil = new ControllerUtil();
        </tr>		
 		  <tr id="1000">
 		<?php
-                echo "<script>
+                echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>
 							 globalUserNameList= new Array();
 							 globalUserIdList= new Array();
 						</script>";
@@ -227,9 +227,9 @@ $controllerUtil = new ControllerUtil();
 				$i= 0;
 					foreach($list as $row){		
 						echo "
-							<script>	
-								 globalUserNameList[$i] = '$row[1]';
-						   		 globalUserIdList[$i] = '$row[0]';
+							<script type='text/javascript' nonce='" . dPcspNonce() . "'>	
+								 globalUserNameList[" . (int)$i . "] = " . dPjs($row[1]) . ";
+						   		 globalUserIdList[" . (int)$i . "] = " . dPjs($row[0]) . ";
 							</script>";
 							$i++;
 					}
@@ -240,7 +240,7 @@ $controllerUtil = new ControllerUtil();
                 </td>
                 <td>  
 					<select name="consultation[]" size="1" id="consultation"></select>
-			    	<script>	
+			    	<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">	
 						var sel = document.form_resp.consultation.options;
 						sel[0] = new Option("Selecione...","0")
 						var opt ; 
@@ -253,7 +253,7 @@ $controllerUtil = new ControllerUtil();
                </td>
           		<td>  
 					<select name="execut[]" size="1" id="execut"></select>
-			    	<script>	
+			    	<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">	
 						var sel = document.form_resp.execut.options;
 						sel[0] = new Option("Selecione...","0")
 						var opt ; 
@@ -266,7 +266,7 @@ $controllerUtil = new ControllerUtil();
                </td>            
           		<td>  
 					<select name="support[]" size="1" id="support"></select>
-			    	<script>	
+			    	<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">	
 						var sel = document.form_resp.support.options;
 						sel[0] = new Option("Selecione...","0")
 						var opt ; 
@@ -279,7 +279,7 @@ $controllerUtil = new ControllerUtil();
                </td>      
           		<td>  
 					<select name="approve[]" size="1" id="approve"></select>
-			    	<script>	
+			    	<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">	
 						var sel = document.form_resp.approve.options;
 						sel[0] = new Option("Selecione...","0")
 						var opt ; 
@@ -295,7 +295,7 @@ $controllerUtil = new ControllerUtil();
 	<table width="70%" align="center">
 		<tr>
 			<td>				
-				<input type="button" class="button" onClick="saveRecords();" value="Save" />
+				<input type="button" class="button"<?php echo dPaction('saveRecords'); ?> value="Save" />
 			</td>
 		</tr>
 	</table>
