@@ -1211,9 +1211,8 @@ function dPcspNonce()
 
 /**
  * The application's Content-Security-Policy (docs/deployment-security.md).
- * Still Report-Only: browsers report violations to csp-report.php instead of
- * blocking them, while the inline handlers are converted to js/dp-actions.js.
- * 'unsafe-eval' stays until xajax and overlib no longer need it.
+ * Enforced (see dPsendCspHeader()); violations are reported to csp-report.php.
+ * No 'unsafe-eval': nothing loaded by the active modules needs it.
  * report-uri only: when report-to is also present Chrome ignores report-uri, and
  * its Reporting API delivery could not be verified (none arrived in testing).
  */
@@ -1223,7 +1222,7 @@ function dPcspPolicy()
 	return implode('; ', array(
 		"default-src 'self'",
 		// 'report-sample' puts the first 40 characters of a blocked script in the report.
-		"script-src 'self' 'nonce-" . dPcspNonce() . "' 'unsafe-eval' 'report-sample'",
+		"script-src 'self' 'nonce-" . dPcspNonce() . "' 'report-sample'",
 		"style-src 'self' 'unsafe-inline'",
 		"img-src 'self' data:",
 		"font-src 'self' data:",
@@ -1283,11 +1282,16 @@ function dPaction($call, $args = array(), $on = null, $extra = array())
 	return $html;
 }
 
+/**
+ * Sends the policy, enforced unless $dPconfig['csp_report_only'] is true
+ * (a rollback switch for a page that breaks: violations are then only reported).
+ */
 function dPsendCspHeader()
 {
 	if (headers_sent()) {
 		return;
 	}
-	header('Content-Security-Policy-Report-Only: ' . dPcspPolicy());
+	$name = dPgetConfig('csp_report_only') ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
+	header($name . ': ' . dPcspPolicy());
 }
 ?>
