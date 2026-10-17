@@ -98,7 +98,7 @@ for ($req; !($req->EOF); $req->MoveNext()) {
 ?>
 
 <!-- TIMER RELATED SCRIPTS -->
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	// please keep these lines on when you copy the source
 	// made by: Nicolas - http://www.javascript-page.com
 	// adapted by: Juan Carlos Gonzalez jcgonz@users.sourceforge.net
@@ -116,23 +116,23 @@ for ($req; !($req->EOF); $req->MoveNext()) {
 		// One minute has passed
 		total_minutes = total_minutes+1;
 		
-		document.getElementById("timerStatus").innerHTML = "("+total_minutes+" <?php 
-echo $AppUI->_('minutes elapsed'); ?>)";
+		document.getElementById("timerStatus").innerHTML = "("+total_minutes+" " + <?php 
+echo dPjs($AppUI->_('minutes elapsed')); ?> + ")";
 
 		// Lets round hours to two decimals
 		var total_hours   = Math.round((total_minutes / 60) * 100) / 100;
 		document.editFrm.task_log_hours.value = total_hours;
 		
-		timerID = setTimeout("UpdateTimer()", 60000);
+		timerID = setTimeout(UpdateTimer, 60000);
 	}
 	
 	function timerStart() {
 		if (!timerID) { // this means that it needs to be started
 			timerSet();
-			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Stop'); ?>";
+			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Stop', UI_OUTPUT_JS); ?>";
 			UpdateTimer();
 		} else { // timer must be stoped
-			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Start'); ?>";
+			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Start', UI_OUTPUT_JS); ?>";
 			document.getElementById("timerStatus").innerHTML = "";
 			timerStop();
 		}
@@ -159,7 +159,7 @@ if ($obj->canUserEditTimeInformation()) {
 ?>
 	function popCalendar(field) {
 		calendarField = field;
-		idate = eval('document.editFrm.task_' + field + '.value');
+		idate = document.editFrm['task_' + field].value;
 		window.open('index.php?m=public&'+'a=calendar&'+'dialog=1&'+'callback=setCalendar&'+'date='
 					+ idate, 'calwin', 'width=251, height=220, scrollbars=no, status=no');
 	}
@@ -171,14 +171,14 @@ if ($obj->canUserEditTimeInformation()) {
 
 <a name="log"></a>
 <form name="editFrm" action="?m=tasks&amp;a=view&amp;task_id=<?php echo $task_id; ?>" method="post"
-  onsubmit='javascript:updateEmailContacts();'>
+  <?php echo dPaction('updateEmailContacts', array(), 'submit'); ?>>
   <input type="hidden" name="uniqueid" value="<?php echo uniqid(""); ?>" />
   <input type="hidden" name="dosql" value="do_updatetask" />
   <input type="hidden" name="task_log_id" value="<?php echo $log->task_log_id; ?>" />
   <input type="hidden" name="task_log_task" value="<?php echo $log->task_log_task; ?>" />
   <input type="hidden" name="task_log_creator" value="<?php 
 echo(($log->task_log_creator == 0) ? $AppUI->user_id : $log->task_log_creator) ?>" />
-  <input type="hidden" name="task_log_name" value="Update :<?php echo $log->task_log_name; ?>" />
+  <input type="hidden" name="task_log_name" value="Update :<?php echo dPhtml($log->task_log_name); ?>" />
 <table cellspacing="1" cellpadding="2" border="0" width="100%">
 <tr>
   <td width='40%' valign='top' align='center'>
@@ -190,7 +190,7 @@ echo(($log->task_log_creator == 0) ? $AppUI->user_id : $log->task_log_creator) ?
 echo $log_date->format(FMT_DATETIME_MYSQL); ?>" />
           <input type="text" name="log_date" value="<?php 
 echo $log_date->format($df); ?>" class="text" disabled="disabled" />
-		<a href="#" onclick="javascript:popCalendar('log_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('log_date')); ?>>
           <img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 echo $AppUI->_('Calendar'); ?>" border="0" />
           </a>
@@ -227,11 +227,11 @@ echo (($notify_own) ? ' checked="checked"' : ''); ?> />
         <td align="right"><?php echo $AppUI->_('Hours Worked'); ?></td>
         <td>
           <input type="text" class="text" name="task_log_hours" value="<?php 
-echo $log->task_log_hours; ?>" maxlength="8" size="6" /> 
+echo dPhtml($log->task_log_hours); ?>" maxlength="8" size="6" /> 
           <input type='button' class="button" value='<?php 
-echo $AppUI->_('Start'); ?>' onclick='javascript:timerStart()' name='timerStartStopButton' />
+echo $AppUI->_('Start'); ?>'<?php echo dPaction('timerStart'); ?> name='timerStartStopButton' />
           <input type='button' class="button" value='<?php 
-echo $AppUI->_('Reset'); ?>' onclick="javascript:timerReset()" name='timerResetButton' /> 
+echo $AppUI->_('Reset'); ?>'<?php echo dPaction('timerReset'); ?> name='timerResetButton' /> 
           <span id='timerStatus'></span>
         </td>
       </tr>
@@ -240,11 +240,10 @@ echo $AppUI->_('Reset'); ?>' onclick="javascript:timerReset()" name='timerResetB
         <td>
           <?php
 echo arraySelect($task_log_costcodes, 'task_log_costcodes', 
-                 ('size="1" class="text" onchange="javascript:task_log_costcode.value' 
-                  . ' = this.options[this.selectedIndex].value;"'), $log->task_log_costcode);
+                 ('size="1" class="text"' . dPaction('setLogCostCode', array('$this'))), $log->task_log_costcode);
 ?>
            -&gt; <input type="text" class="text" name="task_log_costcode" value="<?php 
-echo $log->task_log_costcode; ?>" maxlength="8" size="8" />
+echo dPhtml($log->task_log_costcode); ?>" maxlength="8" size="8" />
         </td>
       </tr>
 <?php
@@ -258,7 +257,7 @@ if ($obj->canUserEditTimeInformation()) {
 	echo (($end_date) ? $end_date->format(FMT_TIMESTAMP) : ''); ?>" />
           <input type="text" name="end_date" value="<?php 
 	echo (($end_date) ? $end_date->format($df) : ''); ?>" class="text" disabled="disabled" />
-			<a href="#" onclick="javascript:popCalendar('end_date')">
+			<a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
           <img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 	echo $AppUI->_('Calendar'); ?>" border="0" />
           </a>
@@ -278,7 +277,7 @@ if ($obj->canUserEditTimeInformation()) {
             <tr>
               <td align="left">
                 <input type="text" class="text" name="task_log_name" value="<?php 
-echo $log->task_log_name; ?>" maxlength="255" size="30" />
+echo dPhtml($log->task_log_name); ?>" maxlength="255" size="30" />
               </td>
               <td align="center">
                 <label for="task_log_problem"><?php echo $AppUI->_('Problem'); ?>:</label>
@@ -301,13 +300,13 @@ echo arraySelect($taskLogReference, 'task_log_reference', 'size="1" class="text"
       <tr>
         <td align="right"><?php echo $AppUI->_('URL'); ?>:</td>
         <td><input type="text" class="text" name="task_log_related_url" value="<?php 
-echo ($log->task_log_related_url); ?>" size="50" maxlength="255" title="<?php 
+echo dPhtml($log->task_log_related_url); ?>" size="50" maxlength="255" title="<?php 
 echo $AppUI->_('Must in general be entered with protocol name, e.g. http://...'); ?>" /></td>
       </tr>
       <tr>
         <td align="right" valign="top"><?php echo $AppUI->_('Description'); ?>:</td>
         <td><textarea name="task_log_description" class="textarea" cols="50" rows="6"><?php 
-echo $log->task_log_description; ?></textarea></td>
+echo dPhtml($log->task_log_description); ?></textarea></td>
       </tr>
       <tr>
         <td align="right" valign="top"><?php echo $AppUI->_('Email Log to'); ?>:</td>
@@ -317,16 +316,22 @@ echo (($ta) ? ' checked="checked"' : ''); ?> />
           <label for="email_assignees"><?php echo $AppUI->_('Task Assignees'); ?></label>
           <input type="hidden" name="email_task_list" id="email_task_list" value="<?php 
 echo implode(',', $cid); ?>" />
-          <input type="checkbox" onmouseover="javascript:window.status = '<?php 
-echo addslashes(implode(',',$task_email_title)); 
-?>';" onmouseout="javascript:window.status = '';" name="email_task_contacts" id="email_task_contacts"<?php
+          <input type="checkbox"<?php 
+echo dPaction(null, array(), 'mouseover mouseout', array('call-mouseover' => 'setWindowStatus', 
+              'args-mouseover' => json_encode(array(dPtoUtf8(implode(',', $task_email_title))), 
+                                              JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE), 
+              'call-mouseout' => 'setWindowStatus', 'args-mouseout' => '[""]')); 
+?> name="email_task_contacts" id="email_task_contacts"<?php
 echo (($tt) ? ' checked="checked"' : ''); ?> />
           <label for="email_task_contacts"><?php echo $AppUI->_('Task Contacts'); ?></label>
           <input type="hidden" name="email_project_list" id="email_project_list" value="<?php 
 echo implode(',', $cid); ?>" />
-          <input type="checkbox" onmouseover="javascript:window.status = '<?php 
-echo addslashes(implode(',', $proj_email_title)); 
-?>';" onmouseout="javascript:window.status = '';" name="email_project_contacts" id="email_project_contacts" <?php 
+          <input type="checkbox"<?php 
+echo dPaction(null, array(), 'mouseover mouseout', array('call-mouseover' => 'setWindowStatus', 
+              'args-mouseover' => json_encode(array(dPtoUtf8(implode(',', $proj_email_title))), 
+                                              JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE), 
+              'call-mouseout' => 'setWindowStatus', 'args-mouseout' => '[""]')); 
+?> name="email_project_contacts" id="email_project_contacts" <?php 
 echo (($tp) ? ' checked="checked"' : ''); ?> />
           <label for="email_project_contacts"><?php echo $AppUI->_('Project Contacts'); ?></label>
           <input type='hidden' name='email_others' id='email_others' value='' />
@@ -334,7 +339,7 @@ echo (($tp) ? ' checked="checked"' : ''); ?> />
 if ($AppUI->isActiveModule('contacts') && getPermission('contacts', 'view')) {
 ?>
           <input type='button' class='button' value='<?php 
-	echo $AppUI->_('Other Contacts...'); ?>' onclick='javascript:popEmailContacts();' />
+	echo $AppUI->_('Other Contacts...'); ?>'<?php echo dPaction('popEmailContacts'); ?> />
 <?php 
 }
 ?>
@@ -347,7 +352,7 @@ if ($AppUI->isActiveModule('contacts') && getPermission('contacts', 'view')) {
       <tr>
         <td colspan="2" valign="bottom" align="right">
           <input type="button" class="button" value="<?php 
-echo $AppUI->_('update task'); ?>" onclick="updateTask()" />
+echo $AppUI->_('update task'); ?>"<?php echo dPaction('updateTask'); ?> />
         </td>
       </tr>
     </table>

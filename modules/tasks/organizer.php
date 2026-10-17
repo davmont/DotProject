@@ -592,15 +592,15 @@ if ($set_dynamic) {
 			echo '<input type="hidden" name="do" value="' . ($do == "ask" ? "fixate" : "ask") . '" />';
 			if ($do == "ask") {
 				echo '<font size="2"><strong>' . $AppUI->_('Do you want to accept this changes?') . '</strong></font><br />';
-				echo '<input type="button" value="accept" class="button" onclick="javascript:document.form.submit()" />';
+				echo '<input type="button" value="accept" class="button"' . dPaction(null, array(), null, array('submit' => 'form')) . ' />';
 			} else if ($do == "fixate") {
 				echo '<font size="2"><strong>' . $AppUI->_('Tasks has been reorganized') . '</strong></font><br />';
 			} else if ($do == "conf") {
-				echo '<input type="button" value="' . $AppUI->_('start') . '" class="button" onclick="javascript:document.form.submit()" />';
+				echo '<input type="button" value="' . $AppUI->_('start') . '" class="button"' . dPaction(null, array(), null, array('submit' => 'form')) . ' />';
 			}
 		} else {
 			echo '<font size="2"><strong>' . $AppUI->_('Please correct the above errors') . '</strong></font><br />';
-			echo '<input type="button" value="submit" class="button" onclick="javascript:document.form.submit()" />';
+			echo '<input type="button" value="submit" class="button"' . dPaction(null, array(), null, array('submit' => 'form')) . ' />';
 		}
 	}
 	?>

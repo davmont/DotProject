@@ -77,6 +77,12 @@ require_once ($AppUI->getModuleClass('macroprojects'));
 // collect the full macroprojects list data via function in macroprojects.class.php
 macroprojects_list_data($user_id);
 ?>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+// Shown inside another module's page, where macroprojects.module.js is not loaded.
+function macroprojectsTip(html, caption) {
+	return overlib(html, CAPTION, caption, CENTER);
+}
+</script>
 
 
 <form action="<?php echo $headerGet; ?>&amp;tab=<?php 
@@ -88,7 +94,7 @@ echo $tab; ?>" method="post" name="pickCompany">
 echo $AppUI->_('sort by'); ?>:</td>
 	<td align="center" width="100%" nowrap="nowrap" colspan="7">&nbsp;</td>
 	<td align="right" nowrap="nowrap">
-		<input type="checkbox" name="add_pwt" id="add_pwt" onclick="document.pickCompany.submit()" <?php 
+		<input type="checkbox" name="add_pwt" id="add_pwt"<?php echo dPaction(null, array(), 'change', array('submit' => 'pickCompany')); ?> <?php 
 echo ($addPwT ? 'checked="checked"' : ''); ?> />
 		<label for="add_pwt"><?php 
 echo $AppUI->_('Show MacroProjects with assigned Tasks'); ?></label>
@@ -100,7 +106,7 @@ echo $tab; ?>" method="post" name="pickCompany">
 		</form>
 	</td>
 	<td align="right" nowrap="nowrap">
-			<?php echo arraySelect($macroprojFilter, 'macroproFilter', 'size=1 class=text onChange="document.pickCompany.submit()"', $macroproFilter, true); ?>
+			<?php echo arraySelect($macroprojFilter, 'macroproFilter', 'size=1 class=text' . dPaction(null, array(), null, array('submit' => 'pickCompany')), $macroproFilter, true); ?>
 		</form>
 	</td>
 </tr>
@@ -219,11 +225,11 @@ echo $row['macroproject_company']; ?>" title="<?php echo htmlspecialchars($row['
 	</td>
 	<td width="100%">
 		<a href="?m=macroprojects&amp;a=view&amp;macroproject_id=<?php 
-echo ($row['macroproject_id']); ?>" onmouseover="return overlib('<?php 
-echo htmlspecialchars(('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                addslashes($row['macroproject_description'])) 
-                       . '</p></div>'), ENT_QUOTES); 
-?>', CAPTION, '<?php echo $AppUI->_('Description'); ?>', CENTER);" onmouseout="nd();">
+echo ($row['macroproject_id']); ?>"<?php 
+echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
+                                                dPhtml($row['macroproject_description'])) 
+                       . '</p></div>', $AppUI->_('Description', UI_OUTPUT_RAW)), 'mouseover mouseout', array('call-mouseout' => 'nd')); 
+?>>
 		<?php echo htmlspecialchars($row['macroproject_name'], ENT_QUOTES); ?>
 		</a>
 	</td>
