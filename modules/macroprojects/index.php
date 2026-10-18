@@ -111,7 +111,7 @@ $q->addQuery("CONCAT(contact_last_name, ', ', contact_first_name, ' (', user_use
 $q->addOrder('contact_last_name, contact_first_name, user_username');
 $userRows = array(0 => $AppUI->_('All Users', UI_OUTPUT_RAW)) + $q->loadHashList();
 $bufferUser = arraySelect($userRows, 'show_owner', 
-                          'class="text" onchange="javascript:document.pickUser.submit()""', $owner);
+                          'class="text"' . dPaction(null, array(), null, array('submit' => 'pickUser')), $owner);
 
 /* setting this to filter macroproject_list_data function below
  0 = undefined

@@ -43,3 +43,28 @@ function dpSubmitIfValue() {
 		this.form.submit();
 	}
 }
+
+/**
+ * Sends a POST request by submitting a hidden form, for links that change data
+ * (they used to be GET links, which other sites can trigger). The CSRF token is
+ * added by the submit hook above. Used as
+ * data-dp-call="dpPost" data-dp-args='["?m=x&a=y", {"field": "value"}]'.
+ */
+function dpPost(url, fields) {
+	var form = document.createElement('form');
+	form.method = 'post';
+	form.action = url;
+	form.style.display = 'none';
+	for (var name in (fields || {})) {
+		if (Object.prototype.hasOwnProperty.call(fields, name)) {
+			var input = document.createElement('input');
+			input.type = 'hidden';
+			input.name = name;
+			input.value = fields[name];
+			form.appendChild(input);
+		}
+	}
+	document.body.appendChild(form);
+	form.submit();
+	return false;
+}

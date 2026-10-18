@@ -6,7 +6,7 @@ if (!defined('DP_BASE_DIR')) {
 	require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_resources_costs.class.php");
 	$resCost = new ControllerResourcesCosts();  
 	
-	$id = dPgetParam($_POST,'cost_id');
+	$id = dPgetIntParam($_POST, 'cost_id', 0);
 	// Cost rates belong to user accounts: only user administrators may change them.
 	if (!getPermission('admin', 'edit')) {
 		$AppUI->redirect('m=public&a=access_denied');
@@ -15,7 +15,7 @@ if (!defined('DP_BASE_DIR')) {
 	$use_cost = dPgetParam($_POST,'use_cost');
 	$dt_begin = dPgetParam($_POST,'dt_begin');
 	$dt_end = dPgetParam($_POST,'dt_end');
-	$user_id = dPgetParam($_POST,'user_id');	
+	$user_id = dPgetIntParam($_POST, 'user_id', 0);	
 	
 	if (isset($_POST['acao']) && $_POST['acao']=='insert'){	
 		

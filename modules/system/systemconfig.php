@@ -51,7 +51,7 @@ foreach ($rs as $c) {
 			// Find the detail relating to this entry.
 			$children = $dPcfg->getChildren($c['config_id']);
 			foreach ($children as $child) {
-				$entry .= '<option value="' . $child['config_list_name'] . '"';
+				$entry .= '<option value="' . htmlspecialchars($child['config_list_name'], ENT_QUOTES) . '"';
 				if ($child['config_list_name'] == $c['config_value'])
 					$entry .= ' selected="selected"';
 				$entry .= '>' . $AppUI->_($child['config_list_name'] . '_item_title') . '</option>' . "\n";
@@ -69,7 +69,7 @@ foreach ($rs as $c) {
 			$input_class = in_array($c['config_type'], array('text', 'password')) ? 'text' : 'button';
 			if ($c['config_type'] == 'checkbox')
 				$input_class = '';
-			$entry = '<input class="' . $input_class . '" type="' . $c['config_type'] . '" name="dPcfg[' . $c['config_name'] . ']" value="' . $value . '" ' . $tooltip . ' ' . $extra . '/>';
+			$entry = '<input class="' . $input_class . '" type="' . $c['config_type'] . '" name="dPcfg[' . $c['config_name'] . ']" value="' . htmlspecialchars((string)$value, ENT_QUOTES) . '" ' . $tooltip . ' ' . $extra . '/>';
 			break;
 	}
 

@@ -19,7 +19,7 @@ global $AppUI;
     $qualityControl = new ControllerQuality();
     $controllerUtil = new ControllerUtil();
     
-    $user = $_POST['user'];
+    $user = dPgetIntParam($_POST, 'user', 0);
     //Tratamento para o grafico de pizza
     $arQualidadePie = $qualityControl->obterDadosGraficoPizza($project_id, $user); 
       
@@ -48,9 +48,9 @@ global $AppUI;
                     $list = $qualityControl -> obterUsuarioDeTarefa($project_id);
                     foreach($list as $row){		
                       if($user ==  $row['user_id']){			
-                        echo "<option value='$row[user_id]' selected>$row[user_username]</option>";					 
+                        echo "<option value='" . (int)$row['user_id'] . "' selected>" . dPhtml($row['user_username']) . "</option>";					 
                       }else {
-                        echo "<option value='$row[user_id]'>$row[user_username]</option>";
+                        echo "<option value='" . (int)$row['user_id'] . "'>" . dPhtml($row['user_username']) . "</option>";
                       }	                          					
                     }
                      ?>     

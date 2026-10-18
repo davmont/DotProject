@@ -33,16 +33,16 @@ $controllerUtil = new ControllerUtil();
 						
 				?>										
 					<tr>
-						<td><?php echo $cad[1]; ?> </td>
-						<td> <?php echo $controllerUtil -> getUsername($cad[2]); ?> </td>
-						<td> <?php echo $controllerUtil -> getUsername($cad[3]); ?> </td>
-						<td> <?php echo $controllerUtil -> getUsername($cad[4]); ?> </td>
-						<td> <?php echo $controllerUtil -> getUsername($cad[5]); ?> </td>
+						<td><?php echo dPhtml($cad[1]); ?> </td>
+						<td> <?php echo dPhtml($controllerUtil -> getUsername($cad[2])); ?> </td>
+						<td> <?php echo dPhtml($controllerUtil -> getUsername($cad[3])); ?> </td>
+						<td> <?php echo dPhtml($controllerUtil -> getUsername($cad[4])); ?> </td>
+						<td> <?php echo dPhtml($controllerUtil -> getUsername($cad[5])); ?> </td>
                         <td align="center">
                                 <form name="form_update" method="post" action="" enctype="multipart/form-data" >
 								     <?php  $id =  $cad[0];  ?>                          
                                  <input  type="hidden" name="acao" value="update"  />
-                                <input  type="hidden" name="responsibility_id" value="<?php echo $id ;?>"  />
+                                <input  type="hidden" name="responsibility_id" value="<?php echo (int)$id ;?>"  />
 								<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
                                 <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />   
                               </form>
@@ -51,9 +51,9 @@ $controllerUtil = new ControllerUtil();
                               <form name="form_delete" method="post" action="?m=monitoringandcontrol&a=do_respons_aed&project_id=<?php echo $project_id; ?>" enctype="multipart/form-data" >
 								<input name="dosql" type="hidden" value="do_respons_aed" />	                              
                                 <input  type="hidden" name="acao" value="delete"  />
-                                <input  type="hidden" name="responsibility_id" value="<?php echo $cad[0] ;?>"  />
+                                <input  type="hidden" name="responsibility_id" value="<?php echo (int)$cad[0] ;?>"  />
 								<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"  />
+								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('doDelete', UI_OUTPUT_RAW) . '?')); ?>  />
                                 </form>
                                 
                         </td>
@@ -74,7 +74,7 @@ $controllerUtil = new ControllerUtil();
     
     	<input name="dosql" type="hidden" value="do_respons_aed" />		
 	<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-    <input  type="hidden" name="responsibility_id" value="<?php echo $id; ?>"  />
+    <input  type="hidden" name="responsibility_id" value="<?php echo (int)$id; ?>"  />
     <input  type="hidden" name="acao" value="updateRow"  />
 	<br/>
 	<table width="70%" align="center">
@@ -107,7 +107,7 @@ $controllerUtil = new ControllerUtil();
 		  ?> 
           
                 <td>          
-            			<input type="text" name="description[]" id="description" size="32" value="<?php echo  $rec[1]; ?>" />
+            			<input type="text" name="description[]" id="description" size="32" value="<?php echo dPhtml($rec[1]); ?>" />
 						<input type="hidden" name="index" value="0" />                  
                 </td>
                 <td>	                 
@@ -117,9 +117,9 @@ $controllerUtil = new ControllerUtil();
 						$i= 0;
 						foreach($list as $row){							 
 								 if ($rec[2]==$row[0]){								 
-							  echo "<option value=' $rec[2] ' selected>".$controllerUtil -> getUsername($rec[2])."</option>";			 
+							  echo "<option value=' " . (int)$rec[2] . " ' selected>".dPhtml($controllerUtil -> getUsername($rec[2]))."</option>";			 
 							 }else {
-							  echo "<option value=' $row[0]'>$row[1]</option>";	
+							  echo "<option value=' " . (int)$row[0] . "'>" . dPhtml($row[1]) . "</option>";	
 						}	
 						 		$i++;
 						}
@@ -133,9 +133,9 @@ $controllerUtil = new ControllerUtil();
 						$j= 0;
 						foreach($list as $row){				
 								 if ($rec[3]==$row[0]){
-									  echo "<option value=' $rec[3] ' selected='selected'>".$controllerUtil -> getUsername($rec[3])."</option>";			 
+									  echo "<option value=' " . (int)$rec[3] . " ' selected='selected'>".dPhtml($controllerUtil -> getUsername($rec[3]))."</option>";			 
 								 }else {
-							  echo "<option value=' $row[0]'>$row[1]</option>";	
+							  echo "<option value=' " . (int)$row[0] . "'>" . dPhtml($row[1]) . "</option>";	
 								}	
 								$j++;
 							}
@@ -150,9 +150,9 @@ $controllerUtil = new ControllerUtil();
 						$m= 0;
 						foreach($list as $row){				
 								 if ($rec[4]==$row[0]){
-									  echo "<option value=' $rec[4] ' selected>".$controllerUtil -> getUsername($rec[4])."</option>";			 
+									  echo "<option value=' " . (int)$rec[4] . " ' selected>".dPhtml($controllerUtil -> getUsername($rec[4]))."</option>";			 
 								 }else {
-							  echo "<option value=' $row[0]'>$row[1]</option>";	
+							  echo "<option value=' " . (int)$row[0] . "'>" . dPhtml($row[1]) . "</option>";	
 								}	
 								$m++;
 							}
@@ -167,9 +167,9 @@ $controllerUtil = new ControllerUtil();
 						$n= 0;
 						foreach($list as $row){				
 								 if ($rec[5]==$row[0]){
-									  echo "<option value=' $rec[5] ' selected>".$controllerUtil -> getUsername($rec[5])."</option>";			 
+									  echo "<option value=' " . (int)$rec[5] . " ' selected>".dPhtml($controllerUtil -> getUsername($rec[5]))."</option>";			 
 								 }else {
-							  echo "<option value=' $row[0]'>$row[1]</option>";	
+							  echo "<option value=' " . (int)$row[0] . "'>" . dPhtml($row[1]) . "</option>";	
 								}	
 								$n++;
 							}

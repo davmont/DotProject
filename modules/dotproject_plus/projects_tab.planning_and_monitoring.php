@@ -5,69 +5,58 @@ require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 <script src="./modules/timeplanning/js/eap.js"></script>
 <script src="./modules/timeplanning/js/ajax_service_activator.js"></script>
 
-<!-- include libraries for right click menu -->
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/milonic_src.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/mmenudom.js"></script>
-<?php
-require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
-?>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/contextmenu_activities_wbs.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_activities.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_wbs.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_wbs_new_activity.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_wbs_non_workpackage.js"></script>
+<!-- Right-click menus: js/dp-contextmenu.js (replaces the Milonic menu) -->
 
 <!-- This script code  was moved to here due to translation reasons -->
 <script nonce="<?php echo dPcspNonce(); ?>">
-    with (milonic = new menuname("contextMenu")) {
-        margin = 7;
-        style = contextStyle;
-        top = "offset=8";
-        aI("image=./modules/dotproject_plus/images/activities_details.png;text=<?php echo $AppUI->_("Details", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuShowActivity();");
-        aI("image=./modules/dotproject_plus/images/lapis.png;text=<?php echo $AppUI->_("Edit", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuEditActivity();");
-        aI("image=./modules/dotproject_plus/images/trash_small.gif;text=<?php echo $AppUI->_("LBL_EXCLUSION", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuExcludeActivity();");
-        aI("image=./modules/dotproject_plus/images/scope_declaration.jpg;text=<?php echo $AppUI->_("LBL_OPEN_ACTIVITY_FORM", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuOpenActivityForm();");
+    dpContextMenu.define('contextMenu', [
+        {image: './modules/dotproject_plus/images/activities_details.png', text: <?php echo dPjs($AppUI->_("Details", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuShowActivity'},
+        {image: './modules/dotproject_plus/images/lapis.png', text: <?php echo dPjs($AppUI->_("Edit", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuEditActivity'},
+        {image: './modules/dotproject_plus/images/trash_small.gif', text: <?php echo dPjs($AppUI->_("LBL_EXCLUSION", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuExcludeActivity'},
+        {image: './modules/dotproject_plus/images/scope_declaration.jpg', text: <?php echo dPjs($AppUI->_("LBL_OPEN_ACTIVITY_FORM", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuOpenActivityForm'}
+    ]);
 
-    }
-    drawMenus();
+    dpContextMenu.define('contextMenuWBS', [
+        {image: './modules/dotproject_plus/images/mais_azul.png', text: <?php echo dPjs($AppUI->_("LBL_MENU_NEW_WBS_ITEM", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuNewEAPItem'},
+        {image: './modules/dotproject_plus/images/mais_verde.png', text: <?php echo dPjs($AppUI->_("LBL_MENU_NEW_ACTIVITY", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuNewActivity'},
+        {image: './modules/dotproject_plus/images/lapis.png', text: <?php echo dPjs($AppUI->_("Edit", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuEditEAPItem'},
+        {image: './modules/dotproject_plus/images/trash_small.gif', text: <?php echo dPjs($AppUI->_("LBL_EXCLUSION", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuDeleteWBSItem'},
+        {image: './modules/dotproject_plus/images/scope_declaration.jpg?eee=5', text: <?php echo dPjs($AppUI->_("LBL_PROJECT_SCOPE_DECLARATION", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuShowScopeDeclaration'},
+        {image: './modules/dotproject_plus/images/dicionario.png?eee=5', text: <?php echo dPjs($AppUI->_("LBL_WBS_DICTIONARY", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuShowWBSDictionary'}
+    ]);
 
-    with (milonic = new menuname("contextMenuWBS")) {
-        margin = 9;
-        style = contextStyle;
-        top = "offset=5";
-        aI("image=./modules/dotproject_plus/images/mais_azul.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_WBS_ITEM", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuNewEAPItem();");
-        aI("image=./modules/dotproject_plus/images/mais_verde.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_ACTIVITY", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuNewActivity();");
-        aI("image=./modules/dotproject_plus/images/lapis.png;text=<?php echo $AppUI->_("Edit", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuEditEAPItem();");
-        aI("image=./modules/dotproject_plus/images/trash_small.gif;text=<?php echo $AppUI->_("LBL_EXCLUSION", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuDeleteWBSItem();");
-        aI("image=./modules/dotproject_plus/images/scope_declaration.jpg?eee=5;text=<?php echo $AppUI->_("LBL_PROJECT_SCOPE_DECLARATION", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuShowScopeDeclaration();");
-        aI("image=./modules/dotproject_plus/images/dicionario.png?eee=5;text=<?php echo $AppUI->_("LBL_WBS_DICTIONARY", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuShowWBSDictionary();");
-    }
-    drawMenus();
+    dpContextMenu.define('contextMenuWBSNewActivity', [
+        {image: './modules/dotproject_plus/images/mais_verde.png', text: <?php echo dPjs($AppUI->_("LBL_MENU_NEW_ACTIVITY", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuFirstActivity'}
+    ]);
 
-    with (milonic = new menuname("contextMenuWBSNewActivity")) {
-        margin = 9;
-        style = contextStyle;
-        top = "offset=5";
-        aI("image=./modules/dotproject_plus/images/mais_verde.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_ACTIVITY", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuFirstActivity();");
-    }
-    drawMenus();
+    dpContextMenu.define('contextMenuWBSNonWorkPackage', [
+        {image: './modules/dotproject_plus/images/mais_azul.png', text: <?php echo dPjs($AppUI->_("LBL_MENU_NEW_WBS_ITEM", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuNewEAPItem'},
+        {image: './modules/dotproject_plus/images/lapis.png', text: <?php echo dPjs($AppUI->_("Edit", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuEditEAPItem'},
+        {image: './modules/dotproject_plus/images/trash_small.gif', text: <?php echo dPjs($AppUI->_("LBL_EXCLUSION", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuDeleteWBSItem'},
+        {image: './modules/dotproject_plus/images/scope_declaration.jpg?eee=5', text: <?php echo dPjs($AppUI->_("LBL_PROJECT_SCOPE_DECLARATION", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuShowScopeDeclaration'},
+        {image: './modules/dotproject_plus/images/dicionario.png?eee=5', text: <?php echo dPjs($AppUI->_("LBL_WBS_DICTIONARY", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuShowWBSDictionary'}
+    ]);
 
-    with (milonic = new menuname("contextMenuWBSNonWorkPackage")) {
-        margin = 9;
-        style = contextStyle;
-        top = "offset=5";
-        aI("image=./modules/dotproject_plus/images/mais_azul.png;text=<?php echo $AppUI->_("LBL_MENU_NEW_WBS_ITEM", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuNewEAPItem();");
-        aI("image=./modules/dotproject_plus/images/lapis.png;text=<?php echo $AppUI->_("Edit", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuEditEAPItem();");
-        aI("image=./modules/dotproject_plus/images/trash_small.gif;text=<?php echo $AppUI->_("LBL_EXCLUSION", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuDeleteWBSItem();");
-        aI("image=./modules/dotproject_plus/images/scope_declaration.jpg?eee=5;text=<?php echo $AppUI->_("LBL_PROJECT_SCOPE_DECLARATION", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuShowScopeDeclaration();");
-        aI("image=./modules/dotproject_plus/images/dicionario.png?eee=5;text=<?php echo $AppUI->_("LBL_WBS_DICTIONARY", UI_OUTPUT_JS); ?>;url=javascript:rightClickMenuShowWBSDictionary();");
-    }
-    drawMenus();
+    // Which menu a right click opens (was rclick() in contextmenu_activities_wbs.js).
+    dpContextMenu.choose = function (target) {
+        var parent = target.parentNode, grand = parent ? parent.parentNode : null;
+        var id = function (el) { return el && el.id ? String(el.id) : ''; };
+        if (id(parent).indexOf("row_") != -1 || id(grand).indexOf("row_") != -1) {
+            return (parent.title == "non_leaf" || (grand && grand.title == "non_leaf"))
+                ? "contextMenuWBSNonWorkPackage" : "contextMenuWBS";
+        }
+        if (id(parent).indexOf("activity_id_") != -1 || id(grand).indexOf("activity_id_") != -1) {
+            return "contextMenu";
+        }
+        if (id(target).indexOf("new_activity") != -1) {
+            return "contextMenuWBSNewActivity";
+        }
+        return null;
+    };
 
 </script>
 
 
-<a href="http://www.milonic.com/" style="display: none">DHTML JavaScript Menu By Milonic.com</a>
 <!-- include libraries for calendar goodies -->
 <link type="text/css" rel="stylesheet"
     href="./modules/timeplanning/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.css?random=20051112"
@@ -1733,12 +1722,14 @@ foreach ($tasks_for_ids as $t) {
         </table>
     </div>
     <script nonce="<?php echo dPcspNonce(); ?>">
-        updateEAPItemsNumbers();
+        // The right-click menu is enabled over the table; attached first, so an
+        // error in updateEAPItemsNumbers() cannot leave it disabled.
         (function () {
             var table = document.getElementById("div_eap_activities").querySelector("#tb_eap");
             table.addEventListener("mouseover", function () { setContextDisabled(false); });
             table.addEventListener("mouseout", function () { setContextDisabled(true); });
         })();
+        updateEAPItemsNumbers();
     </script>
     <br />
     <?php

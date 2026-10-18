@@ -23,14 +23,14 @@ echo db_error();
 for ($x=0; $x < $nums; $x++) {
 	$row = db_fetch_assoc($ptrc);
 	if ($row['project_id'] == $project_id) {
-		$display_project_name='('.$row['project_short_name'].') '.$row['project_name'];
+		$display_project_name = $AppUI->___('('.$row['project_short_name'].') '.$row['project_name']);
 	}
 	$project_list[$row['project_id']] = '('.$row['project_short_name'].') '.$row['project_name'];
 }
 
 if (! $suppressHeaders) {
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
                                                                                 
 function changeIt() {
         var f=document.changeMe;
@@ -79,7 +79,7 @@ if (! $suppressHeaders) {
 ?>
 <form name="changeMe" action="./index.php?m=projects&a=reports<?php echo $report_type_var; ?>" method="post">
 <?php echo $AppUI->_('Projects') . ':';?>
-<?php echo arraySelect($project_list, 'project_id', 'size="1" class="text" onchange="changeIt();"', $project_id, false);?>
+<?php echo arraySelect($project_list, 'project_id', 'size="1" class="text"' . dPaction('changeIt'), $project_id, false);?>
 </form>
 
 <?php

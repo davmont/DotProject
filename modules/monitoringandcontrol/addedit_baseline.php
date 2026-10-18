@@ -32,7 +32,7 @@ $controllerUtil = new ControllerUtil();
 	  <tr>
 			<td align="right"><?php echo $AppUI->_('LBL_PROJETO'); ?>:</td>
 			 <td><?php $project_name = $controllerUtil->getProjectName($project_id) ; ?>
-				 <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo  $project_name[0][0] ; ?> " />					
+				 <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name[0][0]); ?> " />					
 			</td>
 		</tr>
 	  <tr>

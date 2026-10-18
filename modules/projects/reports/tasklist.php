@@ -60,13 +60,13 @@ if (!$list_start_date) {
 $end_date->setTime(23, 59, 59);
 
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 
 var calendarField = '';
 
 function popCalendar(field) {
 	calendarField = field;
-	idate = eval('document.editFrm.list_' + field + '.value');
+	idate = document.editFrm['list_' + field].value;
 	window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 
 	           'calwin', 'width=250, height=220, scrollbars=no, status=no');
 }
@@ -76,8 +76,8 @@ function popCalendar(field) {
  *	@param string Formatted date
  */
 function setCalendar(idate, fdate) {
-	fld_date = eval('document.editFrm.list_' + calendarField);
-	fld_fdate = eval('document.editFrm.' + calendarField);
+	fld_date = document.editFrm['list_' + calendarField];
+	fld_fdate = document.editFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -88,7 +88,7 @@ function setCalendar(idate, fdate) {
 <form name="editFrm" action="index.php?m=projects&a=reports" method="post">
 <div>
 <input type="hidden" name="project_id" value="<?php echo $project_id; ?>" />
-<input type="hidden" name="report_type" value="<?php echo $report_type; ?>" />
+<input type="hidden" name="report_type" value="<?php echo htmlspecialchars((string)$report_type, ENT_QUOTES); ?>" />
 </div>
 <table cellspacing="0" cellpadding="4" border="0" width="100%" class="std">
   <tr>
@@ -110,13 +110,13 @@ echo $AppUI->_('Next Month'); ?>" />
     </td>
 <!--
     <td><input class="button" type="submit" name="do_report" value="<?php 
-echo $AppUI->_('Previous Month'); ?>" onClick="set(-30)" /></td>
+echo $AppUI->_('Previous Month'); ?>"<?php echo dPaction('set', array(-30)); ?> /></td>
     <td><input class="button" type="submit" name="do_report" value="<?php 
-echo $AppUI->_('Previous Week'); ?>" onClick="set(-7)" /></td>
+echo $AppUI->_('Previous Week'); ?>"<?php echo dPaction('set', array(-7)); ?> /></td>
     <td><input class="button" type="submit" name="do_report" value="<?php 
-echo $AppUI->_('Next Week'); ?>" onClick="set(7)" /></td>
+echo $AppUI->_('Next Week'); ?>"<?php echo dPaction('set', array(7)); ?> /></td>
     <td><input class="button" type="submit" name="do_report" value="<?php 
-echo $AppUI->_('Next Month'); ?>" onClick="set(30)" /></td>
+echo $AppUI->_('Next Month'); ?>"<?php echo dPaction('set', array(30)); ?> /></td>
 -->
   </tr>
   <tr>
@@ -126,7 +126,7 @@ echo $AppUI->_('Next Month'); ?>" onClick="set(30)" /></td>
 echo $start_date->format(FMT_TIMESTAMP_DATE); ?>" />
       <input type="text" name="start_date" value="<?php 
 echo $start_date->format($df); ?>" class="text" disabled="disabled" />
-      <a href="#" onclick="popCalendar('start_date')">
+      <a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
         <img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 echo $AppUI->_('Calendar'); ?>" border="0" />
       </a>
@@ -134,7 +134,7 @@ echo $AppUI->_('Calendar'); ?>" border="0" />
 echo (($end_date) ? $end_date->format(FMT_TIMESTAMP_DATE) : ''); ?>" />
       <input type="text" name="end_date" value="<?php 
 echo (($end_date) ? $end_date->format($df) : ''); ?>" class="text" disabled="disabled" />
-      <a href="#" onclick="popCalendar('end_date')">
+      <a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
         <img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 echo $AppUI->_('Calendar'); ?>" border="0" />
       </a>

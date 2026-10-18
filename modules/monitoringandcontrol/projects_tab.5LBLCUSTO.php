@@ -20,14 +20,14 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 
    // se a data não estiver setada pega atual senão usa a passada
 	if (isset($_POST['date_edit']) 
-	&& eregi("^[0-9]{2}/[0-9]{2}/[0-9]{4}$", $_POST['date_edit']) 
+	&& preg_match('#^[0-9]{2}/[0-9]{2}/[0-9]{4}$#', (string)$_POST['date_edit']) 
 	&& checkdate(substr($_POST['date_edit'], 3, 2),  substr($_POST['date_edit'], 0, 2),  substr($_POST['date_edit'], 7, 4)) ) 
 	{		 
 	    $dtAtual = $_POST['date_edit'];
 	}else { 
 		$dtAtual = date('d/m/Y');
 	}
-	$cmbBaseline = dPgetParam($_POST,'cmbBaseline');
+	$cmbBaseline = dPgetIntParam($_POST, 'cmbBaseline', 0);
 
 ?>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/util.js"> </script>
@@ -114,10 +114,10 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 						echo "<option value='0'>".$AppUI->_('LBL_POSICAO_ATUAL')."</option>";	
 						for($i=0;$i<count($lstBaseline);$i++){
 							  if($cmbBaseline ==  $lstBaseline[$i]['baseline_id']){								 
-								echo "<option value='".$lstBaseline[$i]['baseline_id']."' selected>".$lstBaseline[$i]['baseline_version']."</option>";
+								echo "<option value='".(int)$lstBaseline[$i]['baseline_id']."' selected>".dPhtml($lstBaseline[$i]['baseline_version'])."</option>";
 											 
 							  }else {
-								echo "<option value='".$lstBaseline[$i]['baseline_id']."' >".$lstBaseline[$i]['baseline_version']."</option>";
+								echo "<option value='".(int)$lstBaseline[$i]['baseline_id']."' >".dPhtml($lstBaseline[$i]['baseline_version'])."</option>";
 							  }						
 						}
 						 ?>          
@@ -127,7 +127,7 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 		<tr>			  
             <td align="right"><?php echo $AppUI->_('LBL_DATA');?></td> 
             <td nowrap="nowrap">   
-				 <input type="text" class="text"  name="date_edit"  id="date_edit"  size="15" maxlength="10" value="<?php echo  $dtAtual; ?>"  maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup change', array('call-change' => 'mcSubmitForm', 'args-change' => json_encode(array('$this')))); ?>/>
+				 <input type="text" class="text"  name="date_edit"  id="date_edit"  size="15" maxlength="10" value="<?php echo dPhtml($dtAtual); ?>"  maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup change', array('call-change' => 'mcSubmitForm', 'args-change' => json_encode(array('$this')))); ?>/>
 				 <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />   
             </td>
         </tr>

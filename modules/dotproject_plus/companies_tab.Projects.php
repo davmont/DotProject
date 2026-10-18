@@ -1,20 +1,9 @@
-<!-- include libraries for right click menu -->
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/milonic_src.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/mmenudom.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_projects.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/contextmenu.js"></script>
-<a href="http://www.milonic.com/" style="display: none">DHTML JavaScript Menu By Milonic.com</a>
+<!-- Right-click menu: js/dp-contextmenu.js (replaces the Milonic menu) -->
 <script nonce="<?php echo dPcspNonce(); ?>">
-    with (milonic = new menuname("contextMenu")) {
-        margin = 3;
-        style = contextStyle;
-        top = "offset=5";
-        aI("image=./images/icons/stock_ok-16.png;text=<?php echo $AppUI->_("LBL_MENU_ADD_PROJECT", UI_OUTPUT_JS) ?>;url=javascript:rightClickMenuAddProject();");
-        aI("image=./images/icons/stock_edit-16.png;text=<?php echo $AppUI->_("LBL_MENU_EDIT_PROJECT", UI_OUTPUT_JS) ?>;url=javascript:rightClickMenuEditProject();");
-    }
-    drawMenus();
-
-
+    dpContextMenu.define('contextMenu', [
+        {image: './images/icons/stock_ok-16.png', text: <?php echo dPjs($AppUI->_("LBL_MENU_ADD_PROJECT", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuAddProject'},
+        {image: './images/icons/stock_edit-16.png', text: <?php echo dPjs($AppUI->_("LBL_MENU_EDIT_PROJECT", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuEditProject'}
+    ]);
 </script>
 <?php
 if (!defined("DP_BASE_DIR")) {

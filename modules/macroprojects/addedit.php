@@ -125,7 +125,7 @@ if ($department_selection_list != '' || $macroproject_id) {
 } else {
 	$department_selection_list = ('<input type="button" class="button" value="'
 		. $AppUI->_('Select department...')
-		. '" onclick="javascript:popDepartment();" />'
+		. '"' . dPaction('popDepartment') . ' />'
 		. '<input type="hidden" name="macroproject_departments"');
 }
 
@@ -154,10 +154,9 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 <!-- import the calendar script -->
 <script type="text/javascript" src="<?php echo DP_BASE_URL; ?>/lib/calendar/calendar.js"></script>
 <!-- import the language module -->
-<script type="text/javascript"
-	src="<?php echo DP_BASE_URL; ?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
+<script type="text/javascript" src="<?php echo DP_BASE_URL; ?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function setColor(color) {
 		var f = document.editFrm;
 		if (color) {
@@ -187,7 +186,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 		//this bug does not occur if the window open occurs in an onclick event
 		//this bug does NOT occur in Internet explorer
 		calendarField = field;
-		idate = eval('document.editFrm.macroproject_' + field + '.value');
+		idate = document.editFrm['macroproject_' + field].value;
 		window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=280, height=250, scrollbars=no, status=no');
 	}
 
@@ -196,8 +195,8 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 	*	@param string Formatted date
 	*/
 	function setCalendar(idate, fdate) {
-		fld_date = eval('document.editFrm.macroproject_' + calendarField);
-		fld_fdate = eval('document.editFrm.' + calendarField);
+		fld_date = document.editFrm['macroproject_' + calendarField];
+		fld_fdate = document.editFrm[calendarField];
 		fld_date.value = idate;
 		fld_fdate.value = fdate;
 
@@ -216,10 +215,10 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 
 	/*
 	if (f.project_end_date.value > 0 && f.project_end_date.value < f.project_start_date.value) {
-		msg += "\n<?php echo $AppUI->_('projectsBadEndDate1'); ?>";
+		msg += "\n<?php echo $AppUI->_('projectsBadEndDate1', UI_OUTPUT_JS); ?>";
 	}
 	if (f.project_actual_end_date.value > 0 && f.project_actual_end_date.value < f.project_start_date.value) {
-		msg += "\n<?php echo $AppUI->_('projectsBadEndDate2'); ?>";
+		msg += "\n<?php echo $AppUI->_('projectsBadEndDate2', UI_OUTPUT_JS); ?>";
 	}
 	*/
 
@@ -238,7 +237,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 	}
 }
 
-	var selected_contacts_id = "<?php echo implode(',', $selected_contacts); ?>";
+	var selected_contacts_id = <?php echo dPjs(implode(',', array_map('intval', $selected_contacts))); ?>;
 
 	// See above note re firefox bug and window.open
 	function popContacts() {
@@ -254,7 +253,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 		selected_contacts_id = contact_id_string;
 	}
 
-	var selected_departments_id = "<?php echo implode(',', $selected_departments); ?>";
+	var selected_departments_id = <?php echo dPjs(implode(',', array_map('intval', $selected_departments))); ?>;
 
 	function popDepartment() {
 		//due to a bug in Firefox (where window.open, when in a function, does not properly unescape a url)
@@ -292,11 +291,11 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 		<tr>
 			<td>
 				<input class="button" type="button" name="cancel2" value="<?php echo $AppUI->_('cancel'); ?>"
-					onclick="javascript:if (confirm('Are you sure you want to cancel.')) {location.href = '?m=macroprojects';}" />
+					<?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => '?m=macroprojects')); ?> />
 			</td>
 			<td align="right">
 				<input class="button" type="button" name="btnFuseAction2" value="<?php echo $AppUI->_('submit'); ?>"
-					onclick="javascript:submitIt();" />
+					<?php echo dPaction('submitIt'); ?> />
 			</td>
 		</tr>
 		<tr>
@@ -307,7 +306,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						<td width="100%" colspan="2">
 							<input type="text" name="macroproject_name"
 								value="<?php echo dPformSafe($row->macroproject_name); ?>" size="25" maxlength="50"
-								onblur="javascript:setShort();" class="text" /> *
+								<?php echo dPaction('setShort', array(), 'blur'); ?> class="text" /> *
 						</td>
 					</tr>
 					<tr>
@@ -339,7 +338,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 							<input type="text" class="text" name="start_date" id="date1"
 								value="<?php echo $start_date->format($df); ?>" class="text" disabled="disabled" />
 
-							<a href="#" onclick="javascript:popCalendar('start_date', 'start_date');">
+							<a href="#"<?php echo dPaction('popCalendar', array('start_date', 'start_date')); ?>>
 								<img src="./images/calendar.gif" width="24" height="12"
 									alt="<?php echo $AppUI->_('Calendar'); ?>" border="0" />
 							</a>
@@ -347,7 +346,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						<td rowspan="6" valign="top">
 							<?php
 							if ($AppUI->isActiveModule('contacts') && getPermission('contacts', 'view')) {
-								echo '<input type="button" class="button" value="' . $AppUI->_("Select contacts...") . '" onclick="javascript:popContacts();" />';
+								echo '<input type="button" class="button" value="' . $AppUI->_("Select contacts...") . '"' . dPaction('popContacts') . ' />';
 							}
 							// Let's check if the actual company has departments registered
 							if ($department_selection_list != "") {
@@ -367,7 +366,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 								value="<?php echo $end_date ? $end_date->format($df) : ''; ?>" class="text"
 								disabled="disabled" />
 
-							<a href="#" onclick="javascript:popCalendar('end_date', 'end_date');">
+							<a href="#"<?php echo dPaction('popCalendar', array('end_date', 'end_date')); ?>>
 								<img src="./images/calendar.gif" width="24" height="12"
 									alt="<?php echo $AppUI->_('Calendar'); ?>" border="0" />
 							</a>
@@ -378,7 +377,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 							<?php echo $dPconfig['currency_symbol'] ?></td>
 						<td>
 							<input type="text" name="macroproject_target_budget"
-								value="<?php echo @$row->macroproject_target_budget; ?>" maxlength="10" class="text" />
+								value="<?php echo dPhtml(@$row->macroproject_target_budget); ?>" maxlength="10" class="text" />
 						</td>
 					</tr>
 					<tr>
@@ -403,7 +402,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 							<?php echo $dPconfig['currency_symbol'] ?></td>
 						<td>
 							<input type="text" name="macroproject_actual_budget"
-								value="<?php echo @$row->macroproject_actual_budget; ?>" size="10" maxlength="10"
+								value="<?php echo dPhtml(@$row->macroproject_actual_budget); ?>" size="10" maxlength="10"
 								class="text" />
 						</td>
 					</tr>
@@ -415,7 +414,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 					<tr>
 						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('URL'); ?></td>
 						<td colspan="2">
-							<input type="text" name="macroproject_url" value='<?php echo @$row->macroproject_url; ?>'
+							<input type="text" name="macroproject_url" value='<?php echo dPformSafe(@$row->macroproject_url); ?>'
 								size="40" maxlength="255" class="text" />
 						</td>
 					</tr>
@@ -423,7 +422,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Staging URL'); ?></td>
 						<td colspan="2">
 							<input type="text" name="macroproject_demo_url"
-								value='<?php echo @$row->macroproject_demo_url; ?>' size="40" maxlength="255"
+								value='<?php echo dPformSafe(@$row->macroproject_demo_url); ?>' size="40" maxlength="255"
 								class="text" />
 						</td>
 					</tr>
@@ -459,18 +458,18 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Color Identifier'); ?></td>
 						<td nowrap="nowrap">
 							<input type="text" name="macroproject_color_identifier"
-								value="<?php echo (@$row->macroproject_color_identifier) ? @$row->macroproject_color_identifier : 'FFFFFF'; ?>"
-								size="10" maxlength="6" onblur="javascript:setColor();" class="text" /> *
+								value="<?php echo (@$row->macroproject_color_identifier) ? dPformSafe(@$row->macroproject_color_identifier) : 'FFFFFF'; ?>"
+								size="10" maxlength="6"<?php echo dPaction('setColor', array(), 'blur'); ?> class="text" /> *
 						</td>
 						<td nowrap="nowrap" align="right">
 							<a href="#"
-								onclick="javascript:newwin=window.open('?m=public&a=color_selector&dialog=1&callback=setColor', 'calwin', 'width=320, height=300, scrollbars=no');"><?php echo $AppUI->_('change color'); ?></a>
+								<?php echo dPaction('window.open', array('?m=public&a=color_selector&dialog=1&callback=setColor', 'calwin', 'width=320, height=300, scrollbars=no')); ?>><?php echo $AppUI->_('change color'); ?></a>
 						</td>
 						<td nowrap="nowrap">
 							<span id="test" title="test"
-								style="background:#<?php echo (@$row->macroproject_color_identifier) ? @$row->macroproject_color_identifier : 'FFFFFF'; ?>;"><a
+								style="background:#<?php echo (@$row->macroproject_color_identifier) ? dPformSafe(@$row->macroproject_color_identifier) : 'FFFFFF'; ?>;"><a
 									href="#"
-									onclick="javascript:newwin=window.open('?m=public&a=color_selector&dialog=1&callback=setColor', 'calwin', 'width=320, height=300, scrollbars=no');"><img
+									<?php echo dPaction('window.open', array('?m=public&a=color_selector&dialog=1&callback=setColor', 'calwin', 'width=320, height=300, scrollbars=no')); ?>><img
 										src="./images/shim.gif" border="1" width="40" height="20" alt="" /></a></span>
 						</td>
 					</tr>
@@ -530,11 +529,11 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 		<tr>
 			<td>
 				<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel'); ?>"
-					onclick="javascript:if (confirm('Are you sure you want to cancel.')) {location.href = '?m=macroprojects';}" />
+					<?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => '?m=macroprojects')); ?> />
 			</td>
 			<td align="right">
 				<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('submit'); ?>"
-					onclick="javascript:submitIt();" />
+					<?php echo dPaction('submitIt'); ?> />
 			</td>
 		</tr>
 	</table>

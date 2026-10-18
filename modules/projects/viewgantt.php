@@ -64,17 +64,17 @@ if (!@$min_view) {
 }
 ?>
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 
 function popCalendar(field) {
 	calendarField = field;
-	idate = eval('document.editFrm.' + field + '.value');
+	idate = document.editFrm[field].value;
 	window.open('?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=250, height=220, scrollbars=no, status=no');
 }
 function setCalendar(idate, fdate) {
-	fld_date = eval('document.editFrm.' + calendarField);
-	fld_fdate = eval('document.editFrm.show_' + calendarField);
+	fld_date = document.editFrm[calendarField];
+	fld_fdate = document.editFrm['show_' + calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -114,22 +114,30 @@ function showFullProject() {
 	document.editFrm.display_option.value = "all";
 	document.editFrm.submit();
 }
+function showCustomPeriod() {
+	document.editFrm.display_option.value = "custom";
+	document.editFrm.submit();
+}
 </script>
 <table class="tbl" width="100%" border="0" cellpadding="4" cellspacing="0" summary="projects view gantt">
 <tr>
 	<td>
 		<form name="editFrm" method="post" action="?<?php
+$url_query_string = '';
 foreach ($_GET as $key => $val) {
-    $url_query_string .= (($url_query_string) ? '&amp;' : '') . $key . '=' . $val;
+    if (is_array($val)) {
+        continue;
+    }
+    $url_query_string .= (($url_query_string) ? '&amp;' : '') . rawurlencode($key) . '=' . rawurlencode($val);
 }
 echo ($url_query_string);
 ?>">
-		<input type="hidden" name="display_option" value="<?php echo $display_option; ?>" />
+		<input type="hidden" name="display_option" value="<?php echo dPhtml($display_option); ?>" />
 		<table border="0" cellpadding="4" cellspacing="0" class="tbl" summary="select dates for graphs">
 		<tr>
 			<td align="left" valign="top" width="20">
 <?php if ($display_option != "all") { ?>
-				<a href="javascript:scrollPrev()">
+				<a href="#"<?php echo dPaction('scrollPrev'); ?>>
 				<img src="./images/prev.gif" width="16" height="16" alt="<?php
     echo $AppUI->_('previous'); ?>" border="0" />
 				</a>
@@ -141,7 +149,7 @@ echo ($url_query_string);
 echo $start_date->format(FMT_TIMESTAMP_DATE); ?>" />
 				<input type="text" class="text" name="show_sdate" value="<?php
 echo $start_date->format($df); ?>" size="12" disabled="disabled" />
-				<a href="javascript:popCalendar('sdate')">
+				<a href="#"<?php echo dPaction('popCalendar', array('sdate')); ?>>
 				<img src="./images/calendar.gif" width="24" height="12" alt="" border="0" />
 				</a>
 			</td>
@@ -151,7 +159,7 @@ echo $start_date->format($df); ?>" size="12" disabled="disabled" />
 echo $end_date->format(FMT_TIMESTAMP_DATE); ?>" />
 				<input type="text" class="text" name="show_edate" value="<?php
 echo $end_date->format($df); ?>" size="12" disabled="disabled" />
-				<a href="javascript:popCalendar('edate')">
+				<a href="#"<?php echo dPaction('popCalendar', array('edate')); ?>>
 				<img src="./images/calendar.gif" width="24" height="12" alt="" border="0" />
 				</a>
 			</td>
@@ -176,11 +184,11 @@ echo $AppUI->_('Sort Tasks By Name'); ?></label>
 			</td>
 			<td align="left">
 				<input type="button" class="button" value="<?php
-echo $AppUI->_('submit'); ?>" onclick='document.editFrm.display_option.value="custom";submit();' />
+echo $AppUI->_('submit'); ?>"<?php echo dPaction('showCustomPeriod'); ?> />
 			</td>
 			<td align="right" valign="top" width="20">
 <?php if ($display_option != "all") { ?>
-			<a href="javascript:scrollNext()">
+			<a href="#"<?php echo dPaction('scrollNext'); ?>>
 				<img src="./images/next.gif" width="16" height="16" alt="<?php
 echo $AppUI->_('next'); ?>" border="0" />
 			</a>
@@ -190,8 +198,8 @@ echo $AppUI->_('next'); ?>" border="0" />
 		<tr>
 			<td align="center" valign="bottom" colspan="12">
 				<?php
-echo ("<a href='javascript:showThisMonth()'>" . $AppUI->_('show this month')
-    . "</a> : <a href='javascript:showFullProject()'>" . $AppUI->_('show all') . "</a><br />");
+echo ('<a href="#"' . dPaction('showThisMonth') . '>' . $AppUI->_('show this month')
+    . '</a> : <a href="#"' . dPaction('showFullProject') . '>' . $AppUI->_('show all') . '</a><br />');
 ?>
 			</td>
 		</tr>

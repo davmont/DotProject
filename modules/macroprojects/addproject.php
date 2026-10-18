@@ -32,9 +32,13 @@ $company_id = intval(dPgetParam($_GET, 'company_id', 0));
 $company_internal_id = intval(dPgetParam($_GET, 'company_internal_id', 0));
 $contact_id = intval(dPgetParam($_GET, 'contact_id', 0));
 $macroproject_id = intval(dPgetParam($_REQUEST, 'macroproject_id', 0));
-$addShowOptions = dPgetParam($_REQUEST, 'addShowOptions', 0);
-$ownerFilter = dPgetParam($_REQUEST, 'ownerFilter', 0);
+$addShowOptions = dPgetIntParam($_REQUEST, 'addShowOptions', 0);
+$ownerFilter = dPgetIntParam($_REQUEST, 'ownerFilter', 0);
 $companyFilter = dPgetParam($_REQUEST, 'companyFilter', '0');
+// 'c<company id>' or a department id; it goes into SQL and into links.
+if (!is_string($companyFilter) || !preg_match('/^c?[0-9]+$/', $companyFilter)) {
+	$companyFilter = '0';
+}
 
 // check permissions for this record
 $canEdit = getPermission($m, 'edit', $macroproject_id);
@@ -70,7 +74,7 @@ $q->addJoin('departments', 'dep', 'c.company_id = dep.dept_company');
 $q->addOrder('c.company_name, dep.dept_parent, dep.dept_name');
 $rows = $q->loadList();
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	document.editFrm.submit();
 }
@@ -79,10 +83,10 @@ function doMenu(item) {
 	col=document.getElementById("x" + item); 
 	if (obj.style.display=="none") {
 		obj.style.display="block";
-		col.innerHTML="<?php echo $AppUI->_('Hide Show Options'); ?>";
+		col.innerHTML="<?php echo $AppUI->_('Hide Show Options', UI_OUTPUT_JS); ?>";
 	} else {
 		obj.style.display="none"; 
-		col.innerHTML="<?php echo $AppUI->_('Show Options'); ?>"; 
+		col.innerHTML="<?php echo $AppUI->_('Show Options', UI_OUTPUT_JS); ?>"; 
 	}
 } 
 </script>
@@ -90,7 +94,7 @@ function doMenu(item) {
 		echo 'm=macroprojects&amp;a=addproject&amp;macroproject_id=' . $macroproject_id . '&amp;addShowOptions=' . $addShowOptions . '&amp;ownerFilter=' . $ownerFilter . '&amp;companyFilter=' . $companyFilter; ?>">
 		<br />
 		<em><?php echo $AppUI->_('Choose Show mode'); ?>:</em>
-		<select name="addShowOptions" id="addShowOptions" class="text" onchange="javascript:submitIt()" size="1">
+		<select name="addShowOptions" id="addShowOptions" class="text"<?php echo dPaction('submitIt'); ?> size="1">
 					<?php 						
 						echo '<option value="0"'
 								.(($addShowOptions ==  0) ? ' selected="selected">' : '>')
@@ -107,7 +111,7 @@ function doMenu(item) {
 					?>
 		</select>
 		<em><?php echo $AppUI->_('Owner'); ?>:</em>
-		<select name="ownerFilter" id="ownerFilter" class="text" onchange="javascript:submitIt()" size="1">
+		<select name="ownerFilter" id="ownerFilter" class="text"<?php echo dPaction('submitIt'); ?> size="1">
 					<?php
 						echo '<option value=0'
 									.(($ownerFilter ==  0) ? ' selected="selected">' : '>')
@@ -140,7 +144,7 @@ function doMenu(item) {
 					$rows = $q->loadList();
 					
 					//display the select list
-					$cBuffer = '<select name="companyFilter" id ="companyFilter" class="text" onchange="javascript:submitIt()" size="1">';
+					$cBuffer = '<select name="companyFilter" id ="companyFilter" class="text"' . dPaction('submitIt') . ' size="1">';
 					$cBuffer .= ('<option value="0" style="font-weight:bold;">' . $AppUI->_('All') 
 								 . '</option>'."\n");
 					$comp = '';
@@ -169,14 +173,16 @@ function doMenu(item) {
 </form>
 <?php if($addShowOptions == 0 || $addShowOptions == 1) {
 
-if (isset($_GET['project']) and isset($_GET['add']))//si on vient d'ajouter un projet
+// Adds or removes a link: POST with the CSRF token only (it was a GET link).
+if (isset($_POST['project']) and isset($_POST['add']) and $_SERVER['REQUEST_METHOD'] === 'POST')//si on vient d'ajouter un projet
 {
+	$AppUI->verifyCsrfToken();
 	$q->clear();
-	if($_GET['add'] == 'true')
+	if($_POST['add'] == 'true')
 	{	
 		$q->addTable('macroproject_project');
 		$q->addQuery('macroproject_id');
-		$q->addWhere('project_id = ' .$_GET['project']);
+		$q->addWhere('project_id = ' .(int)$_POST['project']);
 		$q->addWhere('macroproject_id = ' .$macroproject_id);
 		$existing_macroproject = $q->loadList();
 		if(!(count($existing_macroproject) != 0))//pour empecher d'ajouter plusieurs fois le même project
@@ -184,13 +190,13 @@ if (isset($_GET['project']) and isset($_GET['add']))//si on vient d'ajouter un p
 			$q->clear();
 			$q->addTable('macroproject_project');
 			$q->addInsert('macroproject_id', $macroproject_id);
-			$q->addInsert('project_id', $_GET['project']);
+			$q->addInsert('project_id', (int)$_POST['project']);
 		}
 	}
 	else
 	{
 		$q->setDelete('macroproject_project');
-		$q->addWhere('project_id = ' .$_GET['project']);
+		$q->addWhere('project_id = ' .(int)$_POST['project']);
 		$q->addWhere('macroproject_id = ' .$macroproject_id);
 	}
 	$q->exec();
@@ -328,11 +334,10 @@ echo htmlspecialchars($row['company_description'], ENT_QUOTES); ?>">
 	<td width="100%">
 		<a href="?m=projects&amp;a=view&amp;project_id=<?php 
 echo htmlspecialchars($row['project_id']); ?>" <?php 
-if (!empty($row['project_description'])) { ?>onmouseover="return overlib('<?php 
-echo(htmlspecialchars(('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                addslashes($row['project_description'])) 
-                       . '</p></div>'), ENT_QUOTES)); ?>', CAPTION, '<?php 
-echo($AppUI->_('Description')); ?>', CENTER);" onmouseout="nd();"<?php } ?>>
+if (!empty($row['project_description'])) {
+echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
+                                                dPhtml($row['project_description'])) 
+                       . '</p></div>', $AppUI->_('Description', UI_OUTPUT_RAW)), 'mouseover mouseout', array('call-mouseout' => 'nd')); } ?>>
 		<?php echo (htmlspecialchars($row['project_name'], ENT_QUOTES)); ?>
 		</a>
 	</td>
@@ -362,13 +367,13 @@ echo (htmlspecialchars($row['total_tasks'] . ($row['my_tasks'] ? ' ('.$row['my_t
 		$macroproject_list = $q->loadList();
 		if(count($macroproject_list) == 0){
 		?>
-		<a href="?m=macroprojects&amp;a=addproject&amp;macroproject_id=<?php echo $macroproject_id;?>&amp;project=<?php echo $row['project_id'];?>&amp;add=true&amp;addShowOptions=<?php echo $addShowOptions?>&amp;ownerFilter=<?php echo $ownerFilter?>&amp;companyFilter=<?php echo $companyFilter?>" class="hdr">
+		<a href="#" class="hdr"<?php echo dPaction('dpPost', array('?m=macroprojects&a=addproject&macroproject_id=' . (int)$macroproject_id . '&addShowOptions=' . (int)$addShowOptions . '&ownerFilter=' . (int)$ownerFilter . '&companyFilter=' . rawurlencode($companyFilter), array('project' => (int)$row['project_id'], 'add' => 'true'))); ?>>
 		<img border="0" alt=<?php echo $AppUI->_('Add');?> src="./modules/macroprojects/images/plus.png" />
 		<?php
 		}
 		else{
 		?>
-		<a href="?m=macroprojects&amp;a=addproject&amp;macroproject_id=<?php echo $macroproject_id;?>&amp;project=<?php echo $row['project_id'];?>&amp;add=false&amp;addShowOptions=<?php echo $addShowOptions?>&amp;ownerFilter=<?php echo $ownerFilter?>&amp;companyFilter=<?php echo $companyFilter?>" class="hdr">
+		<a href="#" class="hdr"<?php echo dPaction('dpPost', array('?m=macroprojects&a=addproject&macroproject_id=' . (int)$macroproject_id . '&addShowOptions=' . (int)$addShowOptions . '&ownerFilter=' . (int)$ownerFilter . '&companyFilter=' . rawurlencode($companyFilter), array('project' => (int)$row['project_id'], 'add' => 'false'))); ?>>
 		<img border="0" alt=<?php echo $AppUI->_('Del');?> src="./modules/macroprojects/images/minus.png" />
 		<?php
 		}
@@ -396,14 +401,16 @@ echo $AppUI->_('No projects available'); ?></td>
 ?>
 <?php if($addShowOptions == 0 || $addShowOptions == 2) {
 
-if (isset($_GET['macroproject_son']) and isset($_GET['add']))//si on vient d'ajouter un projet
+// Adds or removes a link: POST with the CSRF token only (it was a GET link).
+if (isset($_POST['macroproject_son']) and isset($_POST['add']) and $_SERVER['REQUEST_METHOD'] === 'POST')//si on vient d'ajouter un projet
 {
+	$AppUI->verifyCsrfToken();
 	$q->clear();
-	if($_GET['add'] == 'true')
+	if($_POST['add'] == 'true')
 	{	
 		$q->addTable('macroproject_macroproject');
 		$q->addQuery('macroproject_father');
-		$q->addWhere('macroproject_son = ' .$_GET['macroproject_son']);
+		$q->addWhere('macroproject_son = ' .(int)$_POST['macroproject_son']);
 		$q->addWhere('macroproject_father = ' .$macroproject_id);
 		$existing_macroproject = $q->loadList();
 		if(!(count($existing_macroproject) != 0))//pour empecher d'ajouter plusieurs fois le même macroproject
@@ -411,13 +418,13 @@ if (isset($_GET['macroproject_son']) and isset($_GET['add']))//si on vient d'ajo
 			$q->clear();
 			$q->addTable('macroproject_macroproject');
 			$q->addInsert('macroproject_father', $macroproject_id);
-			$q->addInsert('macroproject_son', $_GET['macroproject_son']);
+			$q->addInsert('macroproject_son', (int)$_POST['macroproject_son']);
 		}
 	}
 	else
 	{
 		$q->setDelete('macroproject_macroproject');
-		$q->addWhere('macroproject_son = ' .$_GET['macroproject_son']);
+		$q->addWhere('macroproject_son = ' .(int)$_POST['macroproject_son']);
 		$q->addWhere('macroproject_father = ' .$macroproject_id);
 	}
 	$q->exec();
@@ -556,11 +563,10 @@ echo htmlspecialchars($row['company_description'], ENT_QUOTES); ?>">
 	<td width="100%">
 		<a href="?m=macroprojects&amp;a=view&amp;macroproject_id=<?php 
 echo htmlspecialchars($row['macroproject_id']); ?>" <?php 
-if (!empty($row['macroproject_description'])) { ?>onmouseover="return overlib('<?php 
-echo(htmlspecialchars(('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                addslashes($row['macroproject_description'])) 
-                       . '</p></div>'), ENT_QUOTES)); ?>', CAPTION, '<?php 
-echo($AppUI->_('Description')); ?>', CENTER);" onmouseout="nd();"<?php } ?>>
+if (!empty($row['macroproject_description'])) {
+echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
+                                                dPhtml($row['macroproject_description'])) 
+                       . '</p></div>', $AppUI->_('Description', UI_OUTPUT_RAW)), 'mouseover mouseout', array('call-mouseout' => 'nd')); } ?>>
 		<?php echo (htmlspecialchars($row['macroproject_name'], ENT_QUOTES)); ?>
 		</a>
 	</td>
@@ -590,13 +596,13 @@ echo (htmlspecialchars($row['total_tasks'] . ($row['my_tasks'] ? ' ('.$row['my_t
 		$macroproject_list = $q->loadList();
 		if(count($macroproject_list) == 0){
 		?>
-		<a href="?m=macroprojects&amp;a=addproject&amp;macroproject_id=<?php echo $macroproject_id;?>&amp;macroproject_son=<?php echo $row['macroproject_id'];?>&amp;add=true&amp;addShowOptions=<?php echo $addShowOptions?>&amp;ownerFilter=<?php echo $ownerFilter?>&amp;companyFilter=<?php echo $companyFilter?>" class="hdr">
+		<a href="#" class="hdr"<?php echo dPaction('dpPost', array('?m=macroprojects&a=addproject&macroproject_id=' . (int)$macroproject_id . '&addShowOptions=' . (int)$addShowOptions . '&ownerFilter=' . (int)$ownerFilter . '&companyFilter=' . rawurlencode($companyFilter), array('macroproject_son' => (int)$row['macroproject_id'], 'add' => 'true'))); ?>>
 		<img border="0" alt=<?php echo $AppUI->_('Add');?> src="./modules/macroprojects/images/plus.png" />
 		<?php
 		}
 		else{
 		?>
-		<a href="?m=macroprojects&amp;a=addproject&amp;macroproject_id=<?php echo $macroproject_id;?>&amp;macroproject_son=<?php echo $row['macroproject_id'];?>&amp;add=false&amp;addShowOptions=<?php echo $addShowOptions?>&amp;ownerFilter=<?php echo $ownerFilter?>&amp;companyFilter=<?php echo $companyFilter?>" class="hdr">
+		<a href="#" class="hdr"<?php echo dPaction('dpPost', array('?m=macroprojects&a=addproject&macroproject_id=' . (int)$macroproject_id . '&addShowOptions=' . (int)$addShowOptions . '&ownerFilter=' . (int)$ownerFilter . '&companyFilter=' . rawurlencode($companyFilter), array('macroproject_son' => (int)$row['macroproject_id'], 'add' => 'false'))); ?>>
 		<img border="0" alt=<?php echo $AppUI->_('Del');?> src="./modules/macroprojects/images/minus.png" />
 		<?php
 		}

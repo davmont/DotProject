@@ -166,7 +166,7 @@ $search_text = (($AppUI->getState('searchtext')) ? $AppUI->getState('searchtext'
 $titleBlock->addCell($AppUI->_('Search') . ':');
 $titleBlock->addCell(
 	('<input type="text" class="text" SIZE="10" name="searchtext"'
-		. ' onchange="javascript:document.searchfilter.submit();" value="' . dPhtml($search_text) . '" '
+		. dPaction(null, array(), 'change', array('submit' => 'searchfilter')) . ' value="' . dPhtml($search_text) . '" '
 		. 'title="' . $AppUI->_('Search in name and description fields')
 		. '"/><!--<input type="submit" class="button" value=">" title="'
 		. $AppUI->_('Search in name and description fields') . '"/>-->'),
@@ -208,7 +208,7 @@ $titleBlock->show();
 //update project_percent_complete in db of this project if change have been made
 smartUpdateProjectPercentComplete($project_id);
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	<?php
 	//security improvement:
 //some javascript functions may not appear on client side in case of user not having write permissions
@@ -216,10 +216,11 @@ smartUpdateProjectPercentComplete($project_id);
 	if ($canEdit) {
 		?>
 		function delIt() {
-			var projectName = "<?php echo $obj->project_name; ?>";
-			var wroteName = prompt("<?php
-			echo ($AppUI->_('confirmDelete') . ' \"' . $obj->project_name . '\" \n' . $AppUI->_('writeProjectName')
-				. '\n' . $AppUI->_('canCopyPaste')); ?>", "<?php echo $AppUI->_('projectName') ?>");
+			var projectName = <?php echo dPjs($obj->project_name); ?>;
+			var wroteName = prompt(<?php
+			echo dPjs($AppUI->_('confirmDelete', UI_OUTPUT_RAW) . ' "' . $obj->project_name . '" ' . "\n"
+				. $AppUI->_('writeProjectName', UI_OUTPUT_RAW) . "\n" . $AppUI->_('canCopyPaste', UI_OUTPUT_RAW)); ?>, <?php
+			echo dPjs($AppUI->_('projectName', UI_OUTPUT_RAW)); ?>);
 			if (projectName == wroteName) {
 				document.frmDelete.submit();
 			}
@@ -261,12 +262,12 @@ smartUpdateProjectPercentComplete($project_id);
 					<img src="images/icons/pencil.gif" title="<?php echo $AppUI->_("edit this project"); ?>" />
 				</a>
 			<?php } ?>
-			<a href="javascript:doDetails()">
+			<a href="#"<?php echo dPaction('doDetails'); ?>>
 				<img border="0" align="middle" id="displayImg" alt="" src="images/icons/expand.gif" />
 			</a>
 			<?php
 			echo ('<span style="color:' . bestColor($obj->project_color_identifier) . '; font-weight:bold">'
-				. $obj->project_name . '</span>');
+				. dPhtml($obj->project_name) . '</span>');
 			?>
 		</td>
 	</tr>
@@ -361,7 +362,7 @@ smartUpdateProjectPercentComplete($project_id);
 						<table cellspacing="0" cellpadding="2" border="0" width="100%">
 							<tr>
 								<td class="hilite">
-									<?php echo str_replace(chr(10), "<br>", $obj->project_description); ?>
+									<?php echo str_replace(chr(10), "<br>", dPhtml($obj->project_description)); ?>
 								</td>
 							</tr>
 						</table>
