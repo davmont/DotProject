@@ -44,13 +44,13 @@ $q -> addOrder('p.project_name, t.task_name');
 $res = $q -> exec();
 echo db_error();
 $tasks = array();
-$project = array();
+$projects = array();
 $companies = array( '0'=>'' );
 while ($row = db_fetch_assoc( $res )) {
 // collect tasks in js format
-	$tasks[] = "[{$row['task_project']},{$row['task_id']}," . dPjs($row['task_name']) . "]";
+	$tasks[] = '[' . (int)$row['task_project'] . ',' . (int)$row['task_id'] . ',' . dPjs($row['task_name']) . "]";
 // collect projects in js format
-	$projects[] = "[{$row['project_company']},{$row['task_project']}," . dPjs($row['project_name']) . "]";
+	$projects[] = '[' . (int)$row['project_company'] . ',' . (int)$row['task_project'] . ',' . dPjs($row['project_name']) . "]";
 // collect companies in normal format
 	$companies[$row['project_company']] = $row['company_name'];
 };
@@ -65,7 +65,7 @@ $crumbs["?m=timetrack&a=view&timesheet_id=$timesheet_id"] = "view this timesheet
 ##
 ## Set up JavaScript arrays
 ##
-$ua = $_SERVER['HTTP_USER_AGENT'];
+$ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 $isMoz = strpos( $ua, 'Gecko' ) !== false;
 
 $projects = array_unique( $projects );
