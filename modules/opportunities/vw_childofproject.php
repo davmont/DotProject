@@ -208,7 +208,7 @@ if ($save=="1") {
 	</colgroup>
 	
 	<tr>
-		<th colspan="10"> <?php echo $OpportunityName.' <br>'.$AppUI->_(' is Child of Project(s):'); ?> </th>
+		<th colspan="10"> <?php echo dPhtml($OpportunityName).' <br>'.$AppUI->_(' is Child of Project(s):'); ?> </th>
 	</tr>
 	
 	<tr>
@@ -250,7 +250,7 @@ if ($save=="1") {
 				
 				echo '<tr>';
 				// Project Color and Progress
-					echo '<td style="border: outset #eeeeee 2px;background-color:#'.$p['project_color_identifier'].';"><center>';
+					echo '<td style="border: outset #eeeeee 2px;background-color:#'.dPhtml($p['project_color_identifier']).';"><center>';
 					$inserted=0;
 					foreach ($aComplete as $c) {
 						if ($c['task_project'] == $p['project_id']) {
@@ -263,23 +263,23 @@ if ($save=="1") {
 					echo '</center></td>';
 				// END Project Color and Progress
 
-					echo '<td>'.$p['company_name'].'</td>';		// Show Company Name
+					echo '<td>'.dPhtml($p['company_name']).'</td>';		// Show Company Name
 					//echo '<td>'.$p['project_name'].'</td>';		// Show Project Name
 
-					echo '<td><a href="?m=projects&a=view&project_id='.$p['project_id'].'"'
+					echo '<td><a href="?m=projects&a=view&project_id='.(int)$p['project_id'].'"'
 					   . dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($p['project_description'])) . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 'mouseover mouseout', array('call-mouseout' => 'nd'))
 					   . '>'.dPFormSafe( $p['project_name'] ).'</a></td>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 
 					echo ($p['opportunity_project_description']) ? 	//Description of relation available ??
-						'<td><textarea name="description'.$p['project_id'].'" style="width:99%" rows="1" wrap="physical">' . 
+						'<td><textarea name="description'.(int)$p['project_id'].'" style="width:99%" rows="1" wrap="physical">' . 
 														dPFormSafe($p['opportunity_project_description']).'</textarea></td>' 
 								: 
-						'<td><textarea name="description'.$p['project_id'].'" style="width:99%" rows="1" wrap="physical">&nbsp;</textarea></td>' ;
+						'<td><textarea name="description'.(int)$p['project_id'].'" style="width:99%" rows="1" wrap="physical">&nbsp;</textarea></td>' ;
 					echo ($p['project_start_date']) ? '<td>'.$start_date->format( $df ).'</td>' : '<td>&nbsp;</td>' ;	//Start Date
 					echo ($p['project_end_date'])   ? '<td>'.$end_date->format( $df ).'</td>'   : '<td>&nbsp;</td>' ;	// End Date
-					echo '<td>'.$p['contact_last_name'].', '.substr($p['contact_first_name'],0,1).'.'.'</td>';	//Usernames
-					echo '<td>'.$ProjectStatus[$p['project_status']].'</td>';	//The Project States
-					echo '<td><center><input type="CHECKBOX" name="Proj'.$p['project_id'].'" value="1" '.$checked.'></center></td>';	//Related ??
+					echo '<td>'.dPhtml($p['contact_last_name']).', '.dPhtml(substr($p['contact_first_name'],0,1)).'.'.'</td>';	//Usernames
+					echo '<td>'.dPhtml(@$ProjectStatus[$p['project_status']]).'</td>';	//The Project States
+					echo '<td><center><input type="CHECKBOX" name="Proj'.(int)$p['project_id'].'" value="1" '.$checked.'></center></td>';	//Related ??
 				echo '</tr>';
 			}
 		?>
