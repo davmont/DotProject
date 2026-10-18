@@ -15,7 +15,7 @@ class CFeedbackEvaluation extends CDpObject {
         var $grade=NULL;
          
 	function __construct() {
-            $this->CDpObject('feedback_evaluation', 'id');
+            parent::__construct('feedback_evaluation', 'id');
 	}
         
         public function store($updateNulls = false){

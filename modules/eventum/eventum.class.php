@@ -221,7 +221,7 @@ class CEventumContract extends CDpObject
 
 	function __construct($company_id = NULL)
 	{
-		$this->CDpObject('companies_contracts', 'company_id');
+		parent::__construct('companies_contracts', 'company_id');
 		if (isset($company_id))
 			$this->company_id = $company_id;
 	}
@@ -261,7 +261,7 @@ class CEventumSupportLevel extends CDpObject
 
 	function __construct()
 	{
-		$this->CDpObject('companies_support_levels', 'support_level_id');
+		parent::__construct('companies_support_levels', 'support_level_id');
 	}
 
 	function check()

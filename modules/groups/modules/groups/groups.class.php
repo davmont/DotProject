@@ -29,7 +29,7 @@ class CGroup extends CDpObject {
 	var $group_company = NULL;
 
 	function __construct() {
-		$this->CDpObject( 'groups', 'group_id' );
+		parent::__construct( 'groups', 'group_id' );
 	}
 
 	function updateGroupsContacts( $cslist ) {

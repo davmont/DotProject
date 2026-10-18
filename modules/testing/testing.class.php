@@ -33,7 +33,7 @@ class CTesting extends CDpObject {
 
 	// the constructor of the CEinstein class, always combined with the table name and the unique key of the table
 	function __construct() {
-		$this->CDpObject( 'unittest', 'unittest_id' );
+		parent::__construct( 'unittest', 'unittest_id' );
 	}
 
 	// overload the delete method of the parent class for adaptation for einstein's needs

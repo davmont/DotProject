@@ -24,7 +24,7 @@ class CCommunication extends CDpObject {
 
     function __construct() {
 
-        $this->CDpObject('communication', 'communication_id');
+        parent::__construct('communication', 'communication_id');
     }
 
     function check() {

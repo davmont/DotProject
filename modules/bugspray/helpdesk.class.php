@@ -71,7 +71,7 @@ class CHelpDeskItem extends CDpObject {
   var $item_modified = NULL;
 
   function CHelpDeskItem() {
-    $this->CDpObject( 'helpdesk_items', 'item_id' );
+    parent::__construct( 'helpdesk_items', 'item_id' );
   }
 
   function check() {
@@ -379,7 +379,7 @@ class CTaskLog extends CDpObject {
   var $task_log_costcode = NULL;
 
   function __construct() {
-    $this->CDpObject( 'task_log', 'task_log_id' );
+    parent::__construct( 'task_log', 'task_log_id' );
   }
 
   // overload check method

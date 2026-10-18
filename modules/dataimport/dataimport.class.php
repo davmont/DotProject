@@ -15,7 +15,7 @@ class CDataImport extends CDpObject {
 
   function __construct() 
   {
-    $this->CDpObject('dataimport_config', 'diconfig_id');
+    parent::__construct('dataimport_config', 'diconfig_id');
   }
 
   function check()
