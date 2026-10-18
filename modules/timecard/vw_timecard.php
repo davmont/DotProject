@@ -108,7 +108,7 @@ if (!defined('DP_BASE_DIR')) {
 		if($show_other_worksheets){
 	?>
 			<td align="right">
-					<select name="user_id" onChange="document.user_select.submit();">
+					<select name="user_id"<?php echo dPaction(null, array(), null, array('submit' => 'user_select')); ?>>
 	<?php
 		//$sql = "SELECT user_id, user_username, user_last_name 
 		//FROM users WHERE user_id=".$AppUI->user_id." or (".getPermsWhereClause("companies", "user_company").") ORDER BY user_last_name, user_first_name";

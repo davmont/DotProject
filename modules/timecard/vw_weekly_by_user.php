@@ -152,7 +152,7 @@ if (!defined('DP_BASE_DIR')) {
 	<input type="hidden" name="tab" value="<?php echo $tab?>">
 	<table cellspacing="1" cellpadding="2" border="0" width="100%">
 	<tr>
-		<td width="95%"><?php echo arraySelect( $companies, 'company_id', 'size="1" class="text" id="medium" onchange="document.frmCompanySelect.submit()"',
+		<td width="95%"><?php echo arraySelect( $companies, 'company_id', 'size="1" class="text" id="medium"' . dPaction(null, array(), null, array('submit' => 'frmCompanySelect')),
                           $company_id )?></td>
                 <?php
                 	$prev_url = "?m=timecard&tab=$tab&report_type=weekly_by_user&start_date=".urlencode($start_day->getDate());
