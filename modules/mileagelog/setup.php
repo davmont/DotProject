@@ -54,7 +54,7 @@ class CSetupMileageLog {
 			  `mileage_log_od_end` int(11) NOT NULL default '0',
 			  `mileage_log_miles` int(11) NOT NULL default '0',
 			  PRIMARY KEY (mileage_log_id)
-			) TYPE=MyISAM";
+			) ENGINE=MyISAM";
 
 		$bulk_sql[] = "
 			CREATE TABLE mileage_log_purpose (
@@ -64,7 +64,7 @@ class CSetupMileageLog {
 			  `mileage_log_purpose_relation_type` int(11) NOT NULL default '0',
 			  `mileage_log_purpose_note` varchar(255) NOT NULL default '',
 			  PRIMARY KEY (mileage_log_purpose_id)
-			) TYPE=MyISAM";
+			) ENGINE=MyISAM";
 
     foreach ($bulk_sql as $s) {
       db_exec($s);

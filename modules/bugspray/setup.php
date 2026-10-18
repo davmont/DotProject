@@ -21,7 +21,7 @@ if (@$a == 'setup') {
 	echo dPshowModuleConfig( $config );
 }
 
-require_once( $AppUI->cfg['root_dir'].'/modules/system/syskeys/syskeys.class.php');
+require_once(DP_BASE_DIR . '/modules/system/syskeys/syskeys.class.php');
 
 class CSetupHelpDesk {
 	function install() {
@@ -53,7 +53,7 @@ class CSetupHelpDesk {
 			  `item_project_id` int(11) NOT NULL default '0',
 			  `item_company_id` int(11) NOT NULL default '0',
 			  PRIMARY KEY (item_id)
-			) TYPE=MyISAM";
+			) ENGINE=MyISAM";
 
 		$bulk_sql[] = "
       ALTER TABLE `task_log`

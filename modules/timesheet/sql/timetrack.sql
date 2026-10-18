@@ -25,7 +25,7 @@ CREATE TABLE timetrack_data (
   tt_data_change_date timestamp(14) NOT NULL,
   tt_data_note varchar(255) default NULL,
   PRIMARY KEY  (tt_data_id)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 #
 # Table structure for table `timetrack_idx`
@@ -46,4 +46,4 @@ CREATE TABLE timetrack_idx (
   tt_approve_note varchar(80) default NULL,
   tt_approve_note_date date NOT NULL default '0000-00-00',
   PRIMARY KEY  (tt_id)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;

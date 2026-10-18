@@ -36,13 +36,13 @@ class CSetupGroups {
 		   "group_owner int(11) NOT NULL default '0'," .
 		   "group_company int(11) NOT NULL default '0'," .
 		   "PRIMARY KEY  (group_id)" .
-		   ") TYPE=MyISAM";
+		   ") ENGINE=MyISAM";
 		db_exec( $sql );
 		$sql2 = "CREATE TABLE groups_contacts ( " .
 		   "contact_id int(11) NOT NULL default '0'," .
 		   "group_id int(11) NOT NULL default '0'," .
 		   "KEY contact_id (contact_id,group_id)" .
-		   ") TYPE=MyISAM";
+		   ") ENGINE=MyISAM";
 		db_exec( $sql2 );
 		return null;
 	}
