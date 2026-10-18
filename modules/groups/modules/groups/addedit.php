@@ -137,7 +137,7 @@ function checkall(form) {
 <tr>
 	<td align="right"><?php echo $AppUI->_('Group Name');?>:</td>
 	<td>
-		<input type="text" class="text" name="group_name" value="<?php echo @$obj->group_name;?>" size="50" maxlength="255" /> (<?php echo $AppUI->_('required');?>)
+		<input type="text" class="text" name="group_name" value="<?php echo dPformSafe(@$obj->group_name);?>" size="50" maxlength="255" /> (<?php echo $AppUI->_('required');?>)
 	</td>
 </tr>
 <tr>
@@ -152,13 +152,13 @@ function checkall(form) {
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Company');?></td>
 			<td>
 <?php
-		echo arraySelect( $companies, 'group_company', 'class="text" size="1"', $row->group_company );
+		echo arraySelect( $companies, 'group_company', 'class="text" size="1"', @$obj->group_company );
 ?> </td>
 		</tr>
 <tr>
 	<td align="right" valign=top><?php echo $AppUI->_('Description');?>:</td>
 	<td align="left">
-		<textarea cols="70" rows="10" class="textarea" name="group_description"><?php echo @$obj->group_description;?></textarea>
+		<textarea cols="70" rows="10" class="textarea" name="group_description"><?php echo dPformSafe(@$obj->group_description);?></textarea>
 	</td>
 </tr>
 </table>
@@ -180,10 +180,10 @@ function checkall(form) {
 		<table width="100%" cellspacing="1" cellpadding="1">
 		<tr>
 			<td align="left">
-				<a href="./index.php?m=contacts&a=addedit&contact_id=<?php echo $carr[$z][$x]["contact_id"];?>"><strong><?php echo $carr[$z][$x]["contact_order_by"];?></strong></a>
+				<a href="./index.php?m=contacts&a=addedit&contact_id=<?php echo (int)$carr[$z][$x]["contact_id"];?>"><strong><?php echo dPhtml($carr[$z][$x]["contact_order_by"]);?></strong></a>
 			</td>
 	                <td align="right">
-	<input type=checkbox name="contact_list[]" value="<?php echo $carr[$z][$x]["contact_id"]; ?>" 
+	<input type=checkbox name="contact_list[]" value="<?php echo (int)$carr[$z][$x]["contact_id"]; ?>" 
 	<?php 
 	if(isset($selected)) {
 	  if(in_array($carr[$z][$x]["contact_id"], $selected)) { echo " checked"; } 
@@ -193,7 +193,7 @@ function checkall(form) {
 		</tr>
 		<tr>
 			<td class="hilite" colspan="2">
-	                        <?php echo $carr[$z][$x]["contact_company"]; ?>
+	                        <?php echo dPhtml($carr[$z][$x]["contact_company"]); ?>
 			</td>
 		</tr>
 		</table>
