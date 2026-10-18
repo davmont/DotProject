@@ -144,28 +144,28 @@ $titleBlock->show();
 // some javaScript code to submit the form and set the delete object flag for the form processing
 ?>
 <form name="editRelProj" method="POST" action="index.php?m=opportunities&a=vw_childofproject">
-	<input type="hidden" name="opportunity_id" value="<?php echo $opportunity_id; ?>">
+	<input type="hidden" name="opportunity_id" value="<?php echo (int)$opportunity_id; ?>">
 </form>
 <form name="ChangedValuesDummy" method="POST">	<!-- dummy to use the values in java also -->
-	<input type="hidden" name="opportunity_orig" 		value="<?php echo $obj->opportunity_orig; ?>" >
+	<input type="hidden" name="opportunity_orig" 		value="<?php echo dPformSafe($obj->opportunity_orig); ?>" >
 	<input type="hidden" name="opportunity_desc" value="<?php echo dPformSafe($obj->opportunity_desc); ?>" >
-	<input type="hidden" name="opportunity_must" 	value="<?php echo $obj->opportunity_must; ?>" >
-	<input type="hidden" name="opportunity_must_rationale" 	value="<?php echo $obj->opportunity_must_rationale; ?>" >
+	<input type="hidden" name="opportunity_must" 	value="<?php echo dPformSafe($obj->opportunity_must); ?>" >
+	<input type="hidden" name="opportunity_must_rationale" 	value="<?php echo dPformSafe($obj->opportunity_must_rationale); ?>" >
 	<input type="hidden" name="opportunity_boundaries" 	value="<?php echo dPformSafe($obj->opportunity_boundaries); ?>" >
 	<input type="hidden" name="opportunity_curway" 		value="<?php echo dPformSafe($obj->opportunity_curway); ?>" >
-	<input type="hidden" name="opportunity_preyn" 		value="<?php echo $obj->opportunity_preyn; ?>" >
-	<input type="hidden" name="opportunity_precost" 	value="<?php echo $obj->opportunity_precost; ?>" >
-	<input type="hidden" name="opportunity_preout" 		value="<?php echo $obj->opportunity_preout; ?>" >
-	<input type="hidden" name="opportunity_comments" 	value="<?php echo $obj->opportunity_comments; ?>" >
-	<input type="hidden" name="opportunity_strategy" 	value="<?php echo $obj->opportunity_strategy; ?>" >
-	<input type="hidden" name="opportunity_sholders" 	value="<?php echo $obj->opportunity_sholders; ?>" >
-	<input type="hidden" name="opportunity_risks" 		value="<?php echo $obj->opportunity_risks; ?>" >
-	<input type="hidden" name="opportunity_sizing" 		value="<?php echo $obj->opportunity_sizing; ?>" >
-	<input type="hidden" name="opportunity_horizontality" value="<?php echo $obj->opportunity_horizontality; ?>" >
-	<input type="hidden" name="opportunity_costbenefit" value="<?php echo $obj->opportunity_costbenefit; ?>" >
-	<input type="hidden" name="opportunity_status" 		value="<?php echo $obj->opportunity_status; ?>" >
-	<input type="hidden" name="opportunity_owner" 		value="<?php echo $obj->opportunity_owner; ?>" >
-	<input type="hidden" name="opportunity_sponsor" 	value="<?php echo $obj->opportunity_sponsor; ?>" >
+	<input type="hidden" name="opportunity_preyn" 		value="<?php echo dPformSafe($obj->opportunity_preyn); ?>" >
+	<input type="hidden" name="opportunity_precost" 	value="<?php echo dPformSafe($obj->opportunity_precost); ?>" >
+	<input type="hidden" name="opportunity_preout" 		value="<?php echo dPformSafe($obj->opportunity_preout); ?>" >
+	<input type="hidden" name="opportunity_comments" 	value="<?php echo dPformSafe($obj->opportunity_comments); ?>" >
+	<input type="hidden" name="opportunity_strategy" 	value="<?php echo dPformSafe($obj->opportunity_strategy); ?>" >
+	<input type="hidden" name="opportunity_sholders" 	value="<?php echo dPformSafe($obj->opportunity_sholders); ?>" >
+	<input type="hidden" name="opportunity_risks" 		value="<?php echo dPformSafe($obj->opportunity_risks); ?>" >
+	<input type="hidden" name="opportunity_sizing" 		value="<?php echo dPformSafe($obj->opportunity_sizing); ?>" >
+	<input type="hidden" name="opportunity_horizontality" value="<?php echo dPformSafe($obj->opportunity_horizontality); ?>" >
+	<input type="hidden" name="opportunity_costbenefit" value="<?php echo dPformSafe($obj->opportunity_costbenefit); ?>" >
+	<input type="hidden" name="opportunity_status" 		value="<?php echo dPformSafe($obj->opportunity_status); ?>" >
+	<input type="hidden" name="opportunity_owner" 		value="<?php echo dPformSafe($obj->opportunity_owner); ?>" >
+	<input type="hidden" name="opportunity_sponsor" 	value="<?php echo dPformSafe($obj->opportunity_sponsor); ?>" >
 	<input type="hidden" name="opportunity_rationale" 	value="<?php echo dPformSafe($obj->opportunity_rationale); ?>" >
 	<input type="hidden" name="opportunity_background" 	value="<?php echo dPformSafe($obj->opportunity_background); ?>" >
 </form>
@@ -252,12 +252,12 @@ $titleBlock->show();
 <!-- main Table and Overview -->
 <!-- Here comes the fields off all features of an Opportunity -->
 <table cellspacing="0" cellpadding="4" border="0" width="100%" class="std">
-<form name="editFrm" action="./index.php?m=opportunities&a=addedit&show_owner_id=<?php echo $show_owner_id; ?>&opportunity_id=<?php echo $obj->opportunity_id; ?>" method="post">
+<form name="editFrm" action="./index.php?m=opportunities&a=addedit&show_owner_id=<?php echo $show_owner_id; ?>&opportunity_id=<?php echo (int)$obj->opportunity_id; ?>" method="post">
 	<input type="hidden" name="something_changed" value="0" />
 	<input type="hidden" name="show_owner_id" value="<?php echo $show_owner_id; ?>" />
 	<input type="hidden" name="dosql" value="do_opportunities_aed" />
 	<input type="hidden" name="del" value="0" />
-	<input type="hidden" name="opportunity_id" value="<?php echo $opportunity_id;?>" />
+	<input type="hidden" name="opportunity_id" value="<?php echo (int)$opportunity_id;?>" />
 	<tr>
 		<td>
 			<input class="button" type="button" name="canceltop" value="<?php echo $AppUI->_('cancel');?>"<?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => './index.php?m=opportunities&show_owner_id=' . (int)$show_owner_id)); ?> />
@@ -490,12 +490,12 @@ $titleBlock->show();
 					$didselect = 0;									
 					foreach ($multisystemselect as $m) {
 						if ($m == $key) {
-							echo '<option value="'.$key.'" selected>'.$value.'</option>';
+							echo '<option value="'.dPhtml($key).'" selected>'.dPhtml($value).'</option>';
 							$didselect = 1;
 							continue 2;				
 						}
 					}
-					if ($didselect == 0) echo '<option value="'.$key.'">'.$value.'</option>';
+					if ($didselect == 0) echo '<option value="'.dPhtml($key).'">'.dPhtml($value).'</option>';
 				}
 				echo '</select>'; 
 				
@@ -684,7 +684,7 @@ if ($opportunity_id) {
 			if ($p['opportunity_project_projects']) {
 				echo '<tr>';
 				// The Project color and progress	
-					echo '<td bgcolor=#'.$p['project_color_identifier'].'><center>';	
+					echo '<td bgcolor="#'.dPhtml($p['project_color_identifier']).'"><center>';	
 						$inserted=0;
 						foreach ($aComplete as $c) {
 							if ($c['task_project'] == $p['project_id']) {
@@ -698,14 +698,14 @@ if ($opportunity_id) {
 				//End Color & Progress
 				// the company names with link and description:
 					echo '<td>';
-						echo '<a href="?m=companies&a=view&company_id='.$p['company_id'].'"'
+						echo '<a href="?m=companies&a=view&company_id='.(int)$p['company_id'].'"'
 						   . dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($p['company_description'])) . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 'mouseover mouseout', array('call-mouseout' => 'nd'))
 						   . '>'.dPFormSafe( $p['company_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 					echo '</td>';				
 
 				// the projects with link and description			
 					echo '<td>';
-						echo '<a href="?m=projects&a=view&project_id='.$p['project_id'].'"'
+						echo '<a href="?m=projects&a=view&project_id='.(int)$p['project_id'].'"'
 						   . dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($p['project_description'])) . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 'mouseover mouseout', array('call-mouseout' => 'nd'))
 						   . '>'.dPFormSafe( $p['project_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 					echo '</td>';
@@ -720,8 +720,8 @@ if ($opportunity_id) {
 
 					echo ($p['project_start_date']) ? '<td>'.$start_date->format( $df ).'</td>' : '<td>&nbsp;</td>' ;
 					echo ($p['project_end_date'])   ? '<td>'.$end_date->format( $df ).'</td>'   : '<td>&nbsp;</td>' ;
-					echo '<td>'.$p['contact_last_name'].', '.substr($p['contact_first_name'],0,1).'.'.'</td>';
-					echo '<td>'.$ProjectStatus[$p['project_status']].'</td>';
+					echo '<td>'.dPhtml($p['contact_last_name']).', '.dPhtml(substr($p['contact_first_name'],0,1)).'.'.'</td>';
+					echo '<td>'.dPhtml(@$ProjectStatus[$p['project_status']]).'</td>';
 				echo '</tr>';
 			}
 		}
