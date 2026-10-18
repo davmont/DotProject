@@ -250,9 +250,9 @@ function selectList( listName, target ) {
   <input type="hidden" name="dosql" value="do_item_aed" />
   <input name="del" type="hidden" value="0" />
   <input type="hidden" name="item_id" value="<?=$item_id?>" />
-  <input type="hidden" name="item_requestor_type" value="<?=@$hditem["item_requestor_type"]?>" />
-  <input type="hidden" name="item_requestor_id" value="<?=@$hditem["item_requestor_id"]?>" />
-  <input type="hidden" name="item_created" value="<?=@$hditem["item_created"]?>" />
+  <input type="hidden" name="item_requestor_type" value="<?php echo (int)@$hditem["item_requestor_type"]; ?>" />
+  <input type="hidden" name="item_requestor_id" value="<?php echo (int)@$hditem["item_requestor_id"]; ?>" />
+  <input type="hidden" name="item_created" value="<?php echo dPhtml(@$hditem["item_created"]); ?>" />
   <?php if(!$item_id){ ?>
   <input type="hidden" name="item_created_by" value="<?=$AppUI->user_id?>" />
   <?php } ?>
@@ -269,14 +269,14 @@ function selectList( listName, target ) {
     <tr>
       <td align="right"><font color="red"><label for="it"><?=$AppUI->_('* Title')?>:</label></font></td>
       <td valign="top"><input type="text" class="text" id="it" name="item_title"
-                              value="<?=@$hditem["item_title"]?>" maxlength="64" /></td>
+                              value="<?php echo dPhtml(@$hditem["item_title"]); ?>" maxlength="64" /></td>
     </tr>
 
     <tr>
       <td align="right" nowrap><font color="red"><label for="ir">* <?=$AppUI->_('Requestor Name');?>:</label></font></td>
       <td valign="top" nowrap>
         <input type="text" class="text" id="ir" name="item_requestor"
-        value="<?=@$hditem["item_requestor"]?>" maxlength="64"
+        value="<?php echo dPhtml(@$hditem["item_requestor"]); ?>" maxlength="64"
         <?php echo dPaction('requestorChanged', array('$this'), 'change'); ?> />
       <input type="button" class="button" value="Users"<?php echo dPaction('popUserDialog'); ?> />
       <input type="button" class="button" value="Contacts"<?php echo dPaction('popContactDialog'); ?> />
@@ -287,7 +287,7 @@ function selectList( listName, target ) {
       <td align="right" nowrap><label for="ire">&dagger; <?=$AppUI->_('Requestor E-mail');?>:</label></td>
       <td valign="top"><input type="text" class="text" id="ire"
                               name="item_requestor_email"
-                              value="<?=@$hditem["item_requestor_email"]?>"
+                              value="<?php echo dPhtml(@$hditem["item_requestor_email"]); ?>"
                               maxlength="64" /></td>
     </tr>
 
@@ -295,7 +295,7 @@ function selectList( listName, target ) {
       <td align="right" nowrap><label for="irp">&dagger; <?=$AppUI->_('Requestor Phone');?>:</label></td>
       <td valign="top"><input type="text" class="text" id="irp"
                               name="item_requestor_phone"
-                              value="<?=@$hditem["item_requestor_phone"]?>"
+                              value="<?php echo dPhtml(@$hditem["item_requestor_phone"]); ?>"
                               maxlength="30" /></td>
     </tr>
 
@@ -387,7 +387,7 @@ function selectList( listName, target ) {
 <tr>
   <td colspan="2" align="left">
     <textarea id="summary" cols="90" rows="15" class="textarea"
-              name="item_summary"><?=@$hditem["item_summary"]?></textarea>
+              name="item_summary"><?php echo dPhtml(@$hditem["item_summary"]); ?></textarea>
   </td>
 </tr>
 

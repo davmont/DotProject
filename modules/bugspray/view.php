@@ -131,43 +131,43 @@ function toggle_comments(id){
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Item Number')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["item_id"]?></td>
+			<td class="hilite" width="100%"><?php echo (int)$hditem["item_id"]; ?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Title')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["item_title"]?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($hditem["item_title"]); ?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Requestor')?>:</td>
 			<td class="hilite" width="100%"><?php
         print $hditem["item_requestor_email"] ? 
-          "<a href=\"mailto:".$hditem["item_requestor_email"]."\">".$hditem['item_requestor']."</a>" :
-          $hditem['item_requestor'];?></td>
+          "<a href=\"mailto:".dPhtml($hditem["item_requestor_email"])."\">".dPhtml($hditem['item_requestor'])."</a>" :
+          dPhtml($hditem['item_requestor']);?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Requestor Phone')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["item_requestor_phone"]?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($hditem["item_requestor_phone"]); ?></td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?=$AppUI->_('Assigned To')?>:</td>
 			<td class="hilite" width="100%"><?php
         print $assigned_email ?
-          "<a href=\"mailto:$assigned_email\">$assigned_to_name</a>" :
-          $assigned_to_name;?></td>
+          "<a href=\"mailto:".dPhtml($assigned_email)."\">".dPhtml($assigned_to_name)."</a>" :
+          dPhtml($assigned_to_name);?></td>
 		</tr>
 
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Company')?>:</td>
-			<td class="hilite" width="100%"><?=$hditem["company_name"]?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($hditem["company_name"]); ?></td>
     </tr>
 
     <tr>
       <td align="right" nowrap="nowrap"><?=$AppUI->_('Project')?>:</td>
-      <td class="hilite" width="100%" style="background-color: #<?=$hditem['project_color_identifier']?>;"><a href="./index.php?m=projects&a=view&project_id=<?=$hditem["project_id"]?>"><?=$hditem["project_name"]?></a></td>
+      <td class="hilite" width="100%" style="background-color: #<?php echo dPhtml($hditem['project_color_identifier']); ?>;"><a href="./index.php?m=projects&a=view&project_id=<?php echo (int)$hditem["project_id"]; ?>"><?php echo dPhtml($hditem["project_name"]); ?></a></td>
     </tr>
 
 		<tr>
@@ -211,7 +211,7 @@ function toggle_comments(id){
 		<strong><?=$AppUI->_('Summary')?></strong>
 		<table cellspacing="0" cellpadding="2" border="0" width="100%">
 		<tr>
-			<td class="hilite"><?=str_replace( chr(10), "<br />", $hditem["item_summary"])?>&nbsp;</td>
+			<td class="hilite"><?php echo str_replace( chr(10), "<br />", dPhtml($hditem["item_summary"])); ?>&nbsp;</td>
 		</tr>
 		</table>
 
@@ -259,7 +259,7 @@ $tabBox->show();
       ?>
       <tr>
         <td class="hilite" nowrap="nowrap" width="1%"><?=$time?></td>
-        <td class="hilite" nowrap="nowrap" width="1%"><?=($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
+        <td class="hilite" nowrap="nowrap" width="1%"><?php echo ($log['email']?"<a href=\"mailto: ".dPhtml($log['email'])."\">".dPhtml($log['modified_by'])."</a>":dPhtml($log['modified_by'])); ?></td>
         <td class="hilite" width="98%"><?php
         	if($log['status_code']==0 || $log['status_code']==17){
             // Created or Deleted
@@ -270,16 +270,16 @@ $tabBox->show();
                 . dPshowImage (dPfindImage( 'toggle.png', $m ), 16, 16, '')
                 . "</a>";
 
-            print "<span style='display: inline' id='{$log['status_id']}_short'> "
+            print "<span style='display: inline' id='" . (int)$log['status_id'] . "_short'> "
                 . "{$isa[$log['status_code']]} "
-                . htmlspecialchars(substr($log['status_comment'],0,8))
-                . "</span><span style='display: none' id='{$log['status_id']}_long'> "
+                . dPhtml(substr($log['status_comment'],0,8))
+                . "</span><span style='display: none' id='" . (int)$log['status_id'] . "_long'> "
                 . "{$isa[$log['status_code']]} "
-                . htmlspecialchars($log['status_comment'])
+                . dPhtml($log['status_comment'])
                 . "</span>";
         	} else {
-            // Everything else
-        		print $isa[$log['status_code']]." ".$log['status_comment'];
+            // Everything else (the comment holds the old and new field values)
+        		print $isa[$log['status_code']]." ".dPhtml($log['status_comment']);
         	}
         ?></td>
       </tr>

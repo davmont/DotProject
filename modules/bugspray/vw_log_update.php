@@ -107,10 +107,10 @@ if ($canEdit) {
 	<input type="hidden" name="dosql" value="do_item_aed" />
 	<input type="hidden" name="item_id" value="<?php echo $item_id;?>" />
 	<input type="hidden" name="task_log" value="1" />
-	<input type="hidden" name="task_log_id" value="<?php echo $log->task_log_id;?>" />
+	<input type="hidden" name="task_log_id" value="<?php echo (int)$log->task_log_id;?>" />
 	<input type="hidden" name="task_log_help_desk_id" value="<?php echo $item_id;?>" />
 	<input type="hidden" name="task_log_creator" value="<?php echo $AppUI->user_id;?>" />
-	<input type="hidden" name="task_log_name" value="Update :<?php echo $log->task_log_name;?>" />
+	<input type="hidden" name="task_log_name" value="Update :<?php echo dPhtml($log->task_log_name);?>" />
 <tr>
 	<td nowrap="nowrap">
 		<?php echo $AppUI->_('Date');?><br>
@@ -123,20 +123,20 @@ if ($canEdit) {
 		</a>
 	</td>
 	<td><?php echo $AppUI->_('Summary');?>:<br>
-		<input type="text" class="text" name="task_log_name" value="<?php echo $log->task_log_name;?>" maxlength="255" size="30" />
+		<input type="text" class="text" name="task_log_name" value="<?php echo dPhtml($log->task_log_name);?>" maxlength="255" size="30" />
 	</td>
 </tr>
 <tr>
       <td><?=$AppUI->_('Status')?>:<br><?=arraySelect( $ist, 'item_status', 'size="1" class="text" id="medium"',@$hditem["item_status"] )?></td>
 	<td rowspan="3">
 	<?php echo $AppUI->_('Description');?>:<br>
-		<textarea name="task_log_description" class="textarea" cols="30" rows="6"><?php echo $log->task_log_description;?></textarea>
+		<textarea name="task_log_description" class="textarea" cols="30" rows="6"><?php echo dPhtml($log->task_log_description);?></textarea>
 	</td>
 </tr>
 <tr>
 	<td>
 		<?php echo $AppUI->_('Hours Worked');?><br>
-		<input type="text" class="text" name="task_log_hours" value="<?php echo $log->task_log_hours;?>" maxlength="8" size="6" /> 
+		<input type="text" class="text" name="task_log_hours" value="<?php echo dPhtml($log->task_log_hours);?>" maxlength="8" size="6" /> 
 		<input type='button' class="button" value='<?php echo $AppUI->_('Start');?>'<?php echo dPaction('timerStart'); ?> name='timerStartStopButton' />
 		<input type='button' class="button" value='<?php echo $AppUI->_('Reset'); ?>'<?php echo dPaction('timerReset'); ?> name='timerResetButton' /> 
 		<span id='timerStatus'></span>
@@ -148,7 +148,7 @@ if ($canEdit) {
 <?php
 		echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text"' . dPaction('setLogCostCode', array('$this')), '' );
 ?>
-		&nbsp;->&nbsp; <input type="text" class="text" name="task_log_costcode" value="<?php echo $log->task_log_costcode;?>" maxlength="8" size="8" />
+		&nbsp;->&nbsp; <input type="text" class="text" name="task_log_costcode" value="<?php echo dPhtml($log->task_log_costcode);?>" maxlength="8" size="8" />
 	</td>
 </tr>
 <tr>

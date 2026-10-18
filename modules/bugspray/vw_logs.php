@@ -52,21 +52,21 @@ foreach ($logs as $row) {
 	$s .= '<tr bgcolor="white" valign="top">';
 	$s .= "\n\t<td>";
 	if (!getDenyEdit($m, $item_id) ) {
-		$s .= "\n\t\t<a href=\"?m=helpdesk&a=view&item_id=$item_id&tab=1&task_log_id=".@$row['task_log_id']."\">"
+		$s .= "\n\t\t<a href=\"?m=helpdesk&a=view&item_id=$item_id&tab=1&task_log_id=".(int)@$row['task_log_id']."\">"
 			. "\n\t\t\t". dPshowImage( './images/icons/stock_edit-16.png', 16, 16, '' )
 			. "\n\t\t</a>";
 	}
 	$s .= "\n\t</td>";
 	$s .= '<td nowrap="nowrap">'.($task_log_date ? $task_log_date->format( $df ) : '-').'</td>';
-	$s .= '<td width="30%">'.@$row["task_log_name"].'</td>';
-	$s .= '<td width="100">'.$row["user_username"].'</td>';
+	$s .= '<td width="30%">'.dPhtml(@$row["task_log_name"]).'</td>';
+	$s .= '<td width="100">'.dPhtml($row["user_username"]).'</td>';
 	$s .= '<td width="100" align="right">'.sprintf( "%.2f", $row["task_log_hours"] ) . '</td>';
-	$s .= '<td width="100">'.$row["task_log_costcode"].'</td>';
+	$s .= '<td width="100">'.dPhtml($row["task_log_costcode"]).'</td>';
 	$s .= '<td>';
 
 // dylan_cuthbert: auto-transation system in-progress, leave these lines
 	$transbrk = "\n[translation]\n";
-	$descrip = str_replace( "\n", "<br />", $row['task_log_description'] );
+	$descrip = str_replace( "\n", "<br />", dPhtml($row['task_log_description']) );
 	$tranpos = strpos( $descrip, str_replace( "\n", "<br />", $transbrk ) );
 	if ( $tranpos === false) $s .= $descrip;
 	else
@@ -75,7 +75,7 @@ foreach ($logs as $row) {
 		$tranpos = strpos( $row['task_log_description'], $transbrk );
 		$transla = substr( $row['task_log_description'], $tranpos + strlen( $transbrk ) );
 		$transla = trim( str_replace( "'", '"', $transla ) );
-		$s .= $descrip."<div style='font-weight: bold; text-align: right'><a title='$transla' class='hilite'>[".$AppUI->_("translation")."]</a></div>";
+		$s .= $descrip."<div style='font-weight: bold; text-align: right'><a title='".dPhtml($transla)."' class='hilite'>[".$AppUI->_("translation")."]</a></div>";
 	}
 // end auto-translation code
 			
