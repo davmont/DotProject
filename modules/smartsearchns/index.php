@@ -34,7 +34,7 @@ else {
 }
 
 ?>
-<script language="JavaScript">
+<script language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
 
 	function focusOnSearchBox() {
 		document.forms.frmSearch.keyword.focus();
@@ -113,8 +113,8 @@ else {
 					<td align="left"><INPUT class="text" size="18" type="text" id="keyword" name="keyword" value="<?php echo dPformSafe(@stripslashes($_POST['keyword'])); ?>"></td>
 					<td align="left"><input class="button" type="submit" value="<?php echo $AppUI->_('Search');?>"></td>
 					<td align="left"><input  name="allwords" id="allwords" type="checkbox"  <?php  echo ($ssearch['all_words']=="on" ? 'checked="checked"':""); ?>  > <?php echo $AppUI->_('All words');?></td>
-					<td align="left"><input  name="modselection" id="modselection" type="checkbox"  <?php  echo ($ssearch['mod_selection']=="on" ? 'checked="checked"':""); ?> onclick="toggleModules(this)" > <?php echo $AppUI->_('Modules selection');?></td>
-					<td align="left"><input name="advancedsearch" id="advancedsearch" type="checkbox" <?php  echo ($ssearch['advanced_search']=="on" ? 'checked="checked"':""); ?> onclick="toggleStatus(this)" > <?php echo $AppUI->_('Advanced search');?></td>
+					<td align="left"><input  name="modselection" id="modselection" type="checkbox"  <?php  echo ($ssearch['mod_selection']=="on" ? 'checked="checked"':""); ?><?php echo dPaction('toggleModules', array('$this')); ?> > <?php echo $AppUI->_('Modules selection');?></td>
+					<td align="left"><input name="advancedsearch" id="advancedsearch" type="checkbox" <?php  echo ($ssearch['advanced_search']=="on" ? 'checked="checked"':""); ?><?php echo dPaction('toggleStatus', array('$this')); ?> > <?php echo $AppUI->_('Advanced search');?></td>
 				</tr>
 			</table>
 			<div id="div_advancedsearch" name="div_advancedsearch"  style="<?php  echo ($ssearch['advanced_search']=="on" ? 'display:block':'display:none'); ?> ">
@@ -133,7 +133,7 @@ else {
 			</div>
 			<div id="div_selmodules" name="div_selmodules"  style="<?php  echo ($ssearch['mod_selection']=="on" ? 'display:block':'display:none'); ?> ">
 				<table cellspacing="0" cellpadding="0" border="0">
-				<tr><td><a href="#" onclick="selModAll(this)"><?php echo $AppUI->_('Select all'); ?></a> | <a href="#" onclick="deselModAll(this)"><?php echo $AppUI->_('Deselect all'); ?></a></td></tr>
+				<tr><td><a href="#"<?php echo dPaction('selModAll'); ?>><?php echo $AppUI->_('Select all'); ?></a> | <a href="#"<?php echo dPaction('deselModAll'); ?>><?php echo $AppUI->_('Deselect all'); ?></a></td></tr>
 						<?php
 						$objarray = Array();
 						foreach ($files as $tmp){
