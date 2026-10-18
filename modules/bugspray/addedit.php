@@ -91,7 +91,7 @@ if ($item_id) {
 $tc = isset($tsc) ? date( "m/d/y g:i a", $tsc ) : null;
 
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
   var f   = document.frmHelpDeskItem;
   var msg = 'You must enter the following value(s):';
@@ -173,6 +173,18 @@ function updateStatus(obj){
   }
 }
 
+// A typed requestor name is no longer the user or contact picked before
+function requestorChanged(input) {
+  if (input.value != oldRequestor) {
+    document.frmHelpDeskItem.item_requestor_id.value = 0;
+    oldRequestor = input.value;
+  }
+}
+
+function changeCompany(select) {
+  changeList('item_project_id', projects, select.options[select.selectedIndex].value);
+}
+
 <?php 
 $ua = $_SERVER['HTTP_USER_AGENT'];
 $isMoz = strpos( $ua, 'Gecko' ) !== false;
@@ -204,8 +216,8 @@ function addToList( list, text, value ) {
 
 function changeList( listName, source, target ) {
   var f = document.frmHelpDeskItem;
-  var list = eval( 'f.'+listName );
-  
+  var list = f[listName];
+
   // Clear the options
   emptyList( list );
   
@@ -222,7 +234,7 @@ function changeList( listName, source, target ) {
 // Select an item in the list by target value
 function selectList( listName, target ) {
   var f = document.frmHelpDeskItem;
-  var list = eval( 'f.'+listName );
+  var list = f[listName];
 
   for (var i=0, n = list.options.length; i < n; i++) {
     if( list.options[i].value == target ) {
@@ -265,12 +277,9 @@ function selectList( listName, target ) {
       <td valign="top" nowrap>
         <input type="text" class="text" id="ir" name="item_requestor"
         value="<?=@$hditem["item_requestor"]?>" maxlength="64"
-        onChange="if (this.value!=oldRequestor) {
-                    document.frmHelpDeskItem.item_requestor_id.value = 0;
-                    oldRequestor = this.value;
-                  }" />
-      <input type="button" class="button" value="Users" onclick="popUserDialog();" />
-      <input type="button" class="button" value="Contacts" onclick="popContactDialog();" />
+        <?php echo dPaction('requestorChanged', array('$this'), 'change'); ?> />
+      <input type="button" class="button" value="Users"<?php echo dPaction('popUserDialog'); ?> />
+      <input type="button" class="button" value="Contacts"<?php echo dPaction('popContactDialog'); ?> />
       </td>
     </tr>
 
@@ -292,7 +301,7 @@ function selectList( listName, target ) {
 
     <tr>
       <td align="right" nowrap><label for="iat"><?=$AppUI->_('Assigned To')?>:</label></td>
-      <td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
+      <td><?=arraySelect( $users, 'item_assigned_to', 'size="1" class="text" id="iat"' . dPaction('updateStatus', array('$this')),
                           @$hditem["item_assigned_to"] )?>
         <input type="checkbox" name="item_notify" value="1" id="in"
         <?php 
@@ -312,7 +321,7 @@ function selectList( listName, target ) {
 
     <tr>
       <td align="right"><label for="c"><?=$AppUI->_('Company')?>:</label></td>
-      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="c" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
+      <td><?=arraySelect( $companies, 'item_company_id', 'size="1" class="text" id="c"' . dPaction('changeCompany', array('$this')),
                           @$hditem["item_company_id"] )?></td>
     </tr>
 
@@ -396,8 +405,8 @@ function selectList( listName, target ) {
 </tr>
 
 <tr>
-  <td><input type="button" value="<?=$AppUI->_('Back')?>" class="button" onClick="javascript:history.back(-1);" /></td>
-  <td align="right"><input type="button" value="<?=$AppUI->_('Submit')?>" class="button" onClick="submitIt()" /></td>
+  <td><input type="button" value="<?=$AppUI->_('Back')?>" class="button"<?php echo dPaction('history.back'); ?> /></td>
+  <td align="right"><input type="button" value="<?=$AppUI->_('Submit')?>" class="button"<?php echo dPaction('submitIt'); ?> /></td>
 </tr>
 
 </form>
@@ -421,8 +430,8 @@ function selectList( listName, target ) {
   $select = @$hditem['item_project_id'] ? $hditem['item_project_id'] : 0;
 ?>
 
-<script language="javascript">
-selectList('item_company_id',<?=$target?>);
-changeList('item_project_id', projects, <?=$target?>);
-selectList('item_project_id',<?=$select?>);
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+selectList('item_company_id',<?php echo (int)$target; ?>);
+changeList('item_project_id', projects, <?php echo (int)$target; ?>);
+selectList('item_project_id',<?php echo (int)$select; ?>);
 </script>

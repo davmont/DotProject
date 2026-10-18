@@ -7,9 +7,9 @@ global $AppUI, $df, $m;
 $item_id = dPgetIntParam( $_GET, 'item_id', 0 );
 
 ?>
-<script language="JavaScript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function delIt2(id) {
-	if (confirm( "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('Task Log').'?';?>" )) {
+	if (confirm( <?php echo dPjs($AppUI->_('doDelete').' '.$AppUI->_('Task Log').'?');?> )) {
 		document.frmDelete2.task_log_id.value = id;
 		document.frmDelete2.submit();
 	}
@@ -82,7 +82,7 @@ foreach ($logs as $row) {
 	$s .= '</td>';
 	$s .= "\n\t<td>";
 //	if ($canEdit) {
-		$s .= "\n\t\t<a href=\"javascript:delIt2({$row['task_log_id']});\" title=\"".$AppUI->_('delete log')."\">"
+		$s .= "\n\t\t<a href=\"#\"" . dPaction('delIt2', array((int)$row['task_log_id'])) . " title=\"".$AppUI->_('delete log')."\">"
 			. "\n\t\t\t". dPshowImage( './images/icons/stock_delete-16.png', 16, 16, '' )
 			. "\n\t\t</a>";
 //	}

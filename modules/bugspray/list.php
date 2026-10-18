@@ -227,7 +227,7 @@ $titleBlock->addCrumb( "?m=helpdesk&a=list", "List" );
 $titleBlock->show();
 
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function changeList() {
 	document.filterFrm.submit();
 }
@@ -242,54 +242,54 @@ function changeList() {
     <td><input type="text" name="search" class="text" value="<?=$search;?>" size="12"></td>
     <td align="right" nowrap><?=$AppUI->_('Call Type')?>:</td>
     <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ict ), 'item_calltype',
-                                           'size="1" class="text" onchange="changeList()"',
+                                           'size="1" class="text"' . dPaction('changeList'),
                                            $calltype )?></td>
     <td align="right"><?=$AppUI->_('Company')?>:</td>
     <td colspan="2"><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $company_list ), 'company',
-                                                       'size="1" class="text" onchange="changeList()"',
+                                                       'size="1" class="text"' . dPaction('changeList'),
                                                        $company )?></td>
   </tr>
   <tr>
     <td align="right"><?=$AppUI->_('Status')?>:</td>
     <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ist ), 'item_status',
-                                           'size="1" class="text" onchange="changeList()"',
+                                           'size="1" class="text"' . dPaction('changeList'),
                                            $status )?></td>
     <td align="right" nowrap><?=$AppUI->_('Call Source')?>:</td>
     <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ics ), 'item_source',
-                                           'size="1" class="text" onchange="changeList()"',
+                                           'size="1" class="text"' . dPaction('changeList'),
                                            $item_source )?></td>
     <td align="right"><?=$AppUI->_('Project')?>:</td>
     <td colspan="2"><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $project_list ), 'project',
-                                                       'size="1" class="text" onchange="changeList()"',
+                                                       'size="1" class="text"' . dPaction('changeList'),
                                                        $project )?></td>
   </tr>
   <tr>
     <td align="right" nowrap><?=$AppUI->_('Assigned To')?>:</td>
     <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $assigned_to_list ), 'assigned_to',
-                                           'size="1" class="text" onchange="changeList()"',
+                                           'size="1" class="text"' . dPaction('changeList'),
                                            $assigned_to )?></td>
     <td align="right"><?=$AppUI->_('Priority')?>:</td>
     <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ipr ), 'item_priority',
-                                           'size="1" class="text" onchange="changeList()"',
+                                           'size="1" class="text"' . dPaction('changeList'),
                                            $priority )?></td>
     <td align="right"><?=$AppUI->_('Application')?>:</td>
     <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $iap ), 'item_application',
-                                           'size="1" class="text" onchange="changeList()"',
+                                           'size="1" class="text"' . dPaction('changeList'),
                                            $item_application )?></td>
     <td align="right" rowspan="2" valign="bottom"><input type="submit" value="<?=$AppUI->_('Search')?>" class="button" /></td>
   </tr>
   <tr>
     <td align="right"><?=$AppUI->_('Requestor')?>:</td>
     <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $requestor_list ), 'requestor',
-                                           'size="1" class="text" onchange="changeList()"',
+                                           'size="1" class="text"' . dPaction('changeList'),
                                            $requestor )?></td>
     <td align="right"><?=$AppUI->_('Severity')?>:</td>
     <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $isv ), 'item_severity',
-                                           'size="1" class="text" onchange="changeList()"',
+                                           'size="1" class="text"' . dPaction('changeList'),
                                            $item_severity )?></td>
     <td align="right"><?=$AppUI->_('OS')?>:</td>
     <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ios ), 'item_os',
-                                           'size="1" class="text" onchange="changeList()"',
+                                           'size="1" class="text"' . dPaction('changeList'),
                                            $item_os )?></td>
   </tr> 
   </form>

@@ -126,13 +126,9 @@ if (!$ok) {
 	$list = arrayMerge( array( 0=>''), db_loadHashList( $sql ) );
 	echo db_error();
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function setClose(key, val){
-		window.opener.<?php echo $callback;?>(key,val);
-		window.close();
-	}
-	function setHeight(){
-		window.opener.<?php echo $callback;?>(key,val);
+		window.opener[<?php echo dPjs($callback);?>](key,val);
 		window.close();
 	}
 </script>
@@ -144,14 +140,14 @@ if (!$ok) {
 	if (count( $list ) > 1) {
 		echo $AppUI->_( 'Select' ).' '.$AppUI->_( $title ).':<br />';
 		foreach ($list as $key => $val) {
-			echo "<a href=\"javascript:setClose('$key','$val');\">$val</a><br>\n";
+			echo '<a href="#"' . dPaction('setClose', array((string)$key, (string)$val)) . '>' . dPhtml($val) . "</a><br>\n";
 		}
 ?>
 	</td>
 </tr>
 <tr>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_( 'cancel' );?>" onclick="window.close()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_( 'cancel' );?>"<?php echo dPaction('window.close'); ?> />
 <?php
 	} else {
 		echo $AppUI->_( "no$table" );

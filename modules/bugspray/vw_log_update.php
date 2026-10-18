@@ -42,7 +42,7 @@ if ($canEdit) {
 ?>
 
 <!-- TIMER RELATED SCRIPTS -->
-<script language="JavaScript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	// please keep these lines on when you copy the source
 	// made by: Nicolas - http://www.javascript-page.com
 	// adapted by: Juan Carlos Gonzalez jcgonz@users.sourceforge.net
@@ -60,21 +60,21 @@ if ($canEdit) {
        // One minute has passed
        total_minutes = total_minutes+1;
 	   
-	   document.getElementById("timerStatus").innerHTML = "( "+total_minutes+" <?php echo $AppUI->_('minutes elapsed'); ?> )";
+	   document.getElementById("timerStatus").innerHTML = "( "+total_minutes+" " + <?php echo dPjs($AppUI->_('minutes elapsed')); ?> + " )";
 
 	   // Lets round hours to two decimals
 	   var total_hours   = Math.round( (total_minutes / 60) * 100) / 100;
 	   document.editFrm.task_log_hours.value = total_hours;
 	   
-	   timerID = setTimeout("UpdateTimer()", 60000);
+	   timerID = setTimeout(UpdateTimer, 60000);
 	}
 	
 	function timerStart() {
 		if(!timerID){ // this means that it needs to be started
-			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Stop');?>";
+			document.editFrm.timerStartStopButton.value = <?php echo dPjs($AppUI->_('Stop'));?>;
             UpdateTimer();
 		} else { // timer must be stoped
-			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Start');?>";
+			document.editFrm.timerStartStopButton.value = <?php echo dPjs($AppUI->_('Start'));?>;
 			document.getElementById("timerStatus").innerHTML = "";
 			timerStop();
 		}
@@ -92,7 +92,11 @@ if ($canEdit) {
 		document.editFrm.task_log_hours.value = "0.00";
         total_minutes = -1;
 	}
-	
+
+	function setLogCostCode(select) {
+		select.form.task_log_costcode.value = select.options[select.selectedIndex].text;
+	}
+
 </script>
 <!-- END OF TIMER RELATED SCRIPTS -->
 
@@ -114,7 +118,7 @@ if ($canEdit) {
 		<input type="hidden" name="task_log_date" value="<?php echo $log_date->format( FMT_DATETIME_MYSQL );?>">
 	<!-- end patch #890841 -->
 		<input type="text" name="log_date" value="<?php echo $log_date->format( $df );?>" class="text" disabled="disabled">
-		<a href="#" onClick="popCalendar('log_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('log_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
@@ -133,8 +137,8 @@ if ($canEdit) {
 	<td>
 		<?php echo $AppUI->_('Hours Worked');?><br>
 		<input type="text" class="text" name="task_log_hours" value="<?php echo $log->task_log_hours;?>" maxlength="8" size="6" /> 
-		<input type='button' class="button" value='<?php echo $AppUI->_('Start');?>' onclick='javascript:timerStart()' name='timerStartStopButton' />
-		<input type='button' class="button" value='<?php echo $AppUI->_('Reset'); ?>' onclick="javascript:timerReset()" name='timerResetButton' /> 
+		<input type='button' class="button" value='<?php echo $AppUI->_('Start');?>'<?php echo dPaction('timerStart'); ?> name='timerStartStopButton' />
+		<input type='button' class="button" value='<?php echo $AppUI->_('Reset'); ?>'<?php echo dPaction('timerReset'); ?> name='timerResetButton' /> 
 		<span id='timerStatus'></span>
 	</td>
 </tr>
@@ -142,14 +146,14 @@ if ($canEdit) {
 	<td>
 		<?php echo $AppUI->_('Cost Code');?>:<br>
 <?php
-		echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text" onchange="javascript:task_log_costcode.value = this.options[this.selectedIndex].text;"', '' );
+		echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text"' . dPaction('setLogCostCode', array('$this')), '' );
 ?>
 		&nbsp;->&nbsp; <input type="text" class="text" name="task_log_costcode" value="<?php echo $log->task_log_costcode;?>" maxlength="8" size="8" />
 	</td>
 </tr>
 <tr>
 	<td colspan="2" valign="bottom" align="right">
-		<input type="submit" class="button" value="<?php echo $AppUI->_($task_log_id?'update task log':'create task log');?>" onclick="" />
+		<input type="submit" class="button" value="<?php echo $AppUI->_($task_log_id?'update task log':'create task log');?>" />
 	</td>
 </tr>
 

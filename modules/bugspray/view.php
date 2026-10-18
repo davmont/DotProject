@@ -102,9 +102,9 @@ if (!db_loadHash( $sql, $hditem )) {
 	}
 	$titleBlock->show();
 ?>
-<script language="JavaScript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function delIt() {
-  if (confirm( "<?php print $AppUI->_('doDelete').' '.$AppUI->_('item').'?';?>" )) {
+  if (confirm( <?php print dPjs($AppUI->_('doDelete').' '.$AppUI->_('item').'?');?> )) {
     document.frmDelete.submit();
   }
 }
@@ -112,6 +112,12 @@ function delIt() {
 function toggle_comment(id){
    var element = document.getElementById(id)
    element.style.display = (element.style.display == '' || element.style.display == "none") ? "inline" : "none"
+}
+
+// Shows the full comment of a status log entry instead of its first characters, or back
+function toggle_comments(id){
+   toggle_comment(id + '_short');
+   toggle_comment(id + '_long');
 }
 </script>
 
@@ -260,9 +266,7 @@ $tabBox->show();
         		print $isa[$log['status_code']];
           } else if ($log['status_code'] == 16) {
             // Comment
-            print "<a href=\"javascript:void(0);\"
-                      onClick=\"toggle_comment('{$log['status_id']}_short');
-                                toggle_comment('{$log['status_id']}_long');\">"
+            print '<a href="#"' . dPaction('toggle_comments', array((string)(int)$log['status_id'])) . '>'
                 . dPshowImage (dPfindImage( 'toggle.png', $m ), 16, 16, '')
                 . "</a>";
 
