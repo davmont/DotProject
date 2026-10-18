@@ -77,7 +77,7 @@ if ( $AppUI->user_type != 7 && !$timecard) {
 }
 $titleBlock->show();
 ?>
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 
 function remInvItems(){
@@ -151,7 +151,7 @@ function postPaid() {
 
 function popCalendar( field ){
 	calendarField = field;
-	idate = eval( 'document.frmAdHoc.' + field + '.value' );
+	idate = document.frmAdHoc[field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
@@ -172,8 +172,8 @@ function unselAllItems() {
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.frmAdHoc.' + calendarField );
-	fld_fdate = eval( 'document.frmAdHoc.' + calendarField + '_formatted' );
+	fld_date = document.frmAdHoc[calendarField];
+	fld_fdate = document.frmAdHoc[calendarField + '_formatted'];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -282,7 +282,7 @@ function delIt() {
 		</tr>
 		<tr>
 			<td></td>
-			<td valign="top"><input type="text" name="earning_submitted_comment" value="<?php echo dPhtml(stripslashes($obj->earning_submitted_comment)); ?>" size="30" maxlength="250">&nbsp;<input type="button" name="btnPostSubmit" value=" submit " onClick="javascript:postSubmit();"></form></td>
+			<td valign="top"><input type="text" name="earning_submitted_comment" value="<?php echo dPhtml(stripslashes($obj->earning_submitted_comment)); ?>" size="30" maxlength="250">&nbsp;<input type="button" name="btnPostSubmit" value=" submit " <?php echo dPaction('postSubmit'); ?>></form></td>
 		</tr>
 		<?php } else { ?>
 		<tr>
@@ -315,8 +315,8 @@ function delIt() {
 		<tr>
 			<td></td>
 			<td valign="top"><input type="text" name="earning_approved_comment" value="<?php echo dPhtml(stripslashes($obj->earning_approved_comment)); ?>" size="30" maxlength="250">&nbsp;
-				<input type="button" name="btnPostApprove" value=" yes " onClick="javascript:postApprove();">&nbsp;
-				<input type="button" name="btnPostDecline" value=" no " onClick="javascript:postDecline();">
+				<input type="button" name="btnPostApprove" value=" yes " <?php echo dPaction('postApprove'); ?>>&nbsp;
+				<input type="button" name="btnPostDecline" value=" no " <?php echo dPaction('postDecline'); ?>>
 				</form>
 			</td>
 		</tr>
@@ -357,7 +357,7 @@ function delIt() {
 			</tr>
 			<tr>
 				<td></td>
-				<td valign="top"><input type="text" name="earning_paid_comment" value="<?php echo dPhtml(stripslashes($obj->earning_paid_comment)); ?>" size="30" maxlength="250">&nbsp;<input type="button" name="btnPostPaid" value=" mark paid " onClick="javascript:postPaid();"></form></td>
+				<td valign="top"><input type="text" name="earning_paid_comment" value="<?php echo dPhtml(stripslashes($obj->earning_paid_comment)); ?>" size="30" maxlength="250">&nbsp;<input type="button" name="btnPostPaid" value=" mark paid " <?php echo dPaction('postPaid'); ?>></form></td>
 			</tr>
 			<?php } else { ?>
 			<tr>
