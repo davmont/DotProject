@@ -28,8 +28,8 @@ class ControllerResourcesCosts{
 			$data_f =  $controllerUtil->date_to_hours($dt_end);				
 			if($dt_end != null || $dt_end !=""){    
 				if($data_i > $data_f){   // compara 
-					$msg = "<script> alert('A data Início Vigencia deve ser inferior a data Fim Vigencia.');</script>";
-					$AppUI ->redirect('m=admin&a=viewuser&user_id='.$user_id);
+					$AppUI->setMsg('A data Início Vigencia deve ser inferior a data Fim Vigencia.', UI_MSG_ERROR);
+					$AppUI->redirect('m=admin&a=viewuser&user_id=' . (int)$user_id);
 				}
 			}
 			
@@ -44,8 +44,8 @@ class ControllerResourcesCosts{
 				$dt_endPrev =  $controllerUtil -> formatDate($dt_endPrev);
 				$dt_endPrev =  $controllerUtil-> date_to_hours($dt_endPrev);			
 					if($data_i < $dt_endPrev){  
-						$msg = "<script> alert('Alteração inválida.A data Início de Vigencia atual deve ser posterior a data Fim de Vigencia anterior.');</script>";
-						$AppUI ->redirect('m=admin&a=viewuser&user_id='.$user_id.'&msg='.$msg);
+						$AppUI->setMsg('Alteração inválida. A data Início de Vigencia atual deve ser posterior a data Fim de Vigencia anterior.', UI_MSG_ERROR);
+						$AppUI->redirect('m=admin&a=viewuser&user_id=' . (int)$user_id);
 					}					
 			}
 		
@@ -53,8 +53,8 @@ class ControllerResourcesCosts{
 				$dt_iniNext =  $controllerUtil -> formatDate($dt_iniNext);
 				$dt_iniNext =  $controllerUtil-> date_to_hours($dt_iniNext);
 					if($data_f > $dt_iniNext){   
-						$msg = "<script>alert('Alteração inválida.A data Fim de Vigencia atual deve ser anterior ao próximo Início de Vigencia .');</script>";
-						$AppUI ->redirect('m=admin&a=viewuser&user_id='.$user_id.'&msg='.$msg);
+						$AppUI->setMsg('Alteração inválida. A data Fim de Vigencia atual deve ser anterior ao próximo Início de Vigencia.', UI_MSG_ERROR);
+						$AppUI->redirect('m=admin&a=viewuser&user_id=' . (int)$user_id);
 					}			
 			}
 			
@@ -133,8 +133,8 @@ class ControllerResourcesCosts{
 						$prev_dt =  $controllerUtil-> formatDate($prev_dt);																											
 						$prev_dt =  $controllerUtil-> date_to_hours($prev_dt);
 							if($prev_dt >$data_i){
-								$msg = "<script> alert('A data início de vigência deve ser posterior ao fim da vigência anterior.');</script>";
-								$AppUI ->redirect('m=admin&a=viewuser&user_id='.$user_id.'&msg='.$msg);
+								$AppUI->setMsg('A data início de vigência deve ser posterior ao fim da vigência anterior.', UI_MSG_ERROR);
+								$AppUI->redirect('m=admin&a=viewuser&user_id=' . (int)$user_id);
 							}else
 								$result = true ;
 				}
