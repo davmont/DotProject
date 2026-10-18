@@ -126,7 +126,7 @@ function getCompanies(){
 	$rows = $q->loadList();
 
 	//display the select list
-	$buffer = '<select name="company_id" onChange="document.pickCompany.submit()" class="text">';
+	$buffer = '<select name="company_id"' . dPaction(null, array(), null, array('submit' => 'pickCompany')) . ' class="text">';
 	$buffer .= '<option value="company_0" style="font-weight:bold;">'.$AppUI->_('All').'</option>'."\n";
 	$company = '';
 	foreach ($rows as $row) {
