@@ -33,16 +33,16 @@ $frequencies->addTable('communication_frequency', 'f');
 $frequencies = $frequencies->loadList();
 
 ?>
- <script language="javascript"> 
+ <script nonce="<?php echo dPcspNonce(); ?>">
         var showdate = false;
-        function submitIt(frequency){
-            window.location = ('?m=communication&a=addedit_frequency&communication_frequency='+frequency+'&showdate='+showdate)
+        function submitIt(form){
+            window.location = ('?m=communication&a=addedit_frequency&communication_frequency='+encodeURIComponent(form.communication_frequency.value)+'&showdate='+showdate)
         }
-         function DelFrequency(id_frequency){
-            window.location = ('?m=communication&a=addedit_frequency&communication_frequency_id='+id_frequency)    
+         function DelFrequency(form){
+            window.location = ('?m=communication&a=addedit_frequency&communication_frequency_id='+encodeURIComponent(form.frequency.value))
         }
-        function SetShowDate(showdateValue){
-           showdate = showdateValue;     
+        function SetShowDate(box){
+           showdate = box.checked;
         }
 </script>
 
@@ -61,17 +61,15 @@ $frequencies = $frequencies->loadList();
                         </td>
                         </td>
                         <td>
-                            <input type="button" class="button" value="<?php echo $AppUI->_("LBL_SUBMIT") ?>" onclick="submitIt(communication_frequency.value)" />
+                            <input type="button" class="button" value="<?php echo $AppUI->_("LBL_SUBMIT") ?>"<?php echo dPaction('submitIt', array('$form')); ?> />
                         </td>
                         <td>
-                            <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_("LBL_CANCEL") ?>" 
-                                   onClick="javascript:if (confirm('<?php echo $AppUI->_("LBL_ANSWER_CANCEL", UI_OUTPUT_JS); ?>')) 
-                                   {location.href ='./index.php?m=communication';}" />
+                            <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_("LBL_CANCEL") ?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('LBL_ANSWER_CANCEL', UI_OUTPUT_RAW), 'href' => './index.php?m=communication')); ?> />
                         </td>
                     <tr>
                         <td style="min-width:120px"></td>
                         <td style="min-width:120px">
-                            <input type="checkbox" align="left" name="communication_frequency_showdate" onchange="SetShowDate(this.checked)"><?php echo $AppUI->_("LBL_SHOW_DATE")?></input>
+                            <input type="checkbox" align="left" name="communication_frequency_showdate"<?php echo dPaction('SetShowDate', array('$this'), 'change'); ?>><?php echo $AppUI->_("LBL_SHOW_DATE")?></input>
                         </td>
                     </tr>
                     </tr>
@@ -86,7 +84,7 @@ $frequencies = $frequencies->loadList();
                                 }
                                 ?>
                             </select>
-                            <td><input type="button" value="x" style="color: #aa0000; font-weight: bold" onclick="DelFrequency(frequency.value)"/></td>
+                            <td><input type="button" value="x" style="color: #aa0000; font-weight: bold"<?php echo dPaction('DelFrequency', array('$form')); ?>/></td>
                         </td>
                     </tr>
                 </table>
