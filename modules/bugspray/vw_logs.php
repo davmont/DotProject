@@ -4,7 +4,7 @@ if (!defined('DP_BASE_DIR')) {
 }
 /* HELPDESK $Id: vw_logs.php,v 1.1 2004/05/07 22:28:40 uodeltasig Exp $ */
 global $AppUI, $df, $m;
-$item_id = dPgetParam( $_GET, 'item_id', 0 );
+$item_id = dPgetIntParam( $_GET, 'item_id', 0 );
 
 ?>
 <script language="JavaScript">

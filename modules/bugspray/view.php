@@ -4,7 +4,7 @@ if (!defined('DP_BASE_DIR')) {
 }
 /* HELPDESK $Id: view.php,v 1.1 2004/05/07 22:28:40 uodeltasig Exp $ */
 
-$item_id = dPgetParam( $_GET, 'item_id', 0 );
+$item_id = dPgetIntParam( $_GET, 'item_id', 0 );
 
 // check permissions for this record
 $canReadModule = !getDenyRead( $m );

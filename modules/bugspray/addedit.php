@@ -3,7 +3,7 @@ if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 /* HELPDESK $Id: addedit.php,v 1.1 2004/05/07 22:28:40 uodeltasig Exp $ */
-$item_id = dPgetParam($_GET, 'item_id', 0);
+$item_id = dPgetIntParam($_GET, 'item_id', 0);
 
 // check permissions for this module
 $canReadModule = !getDenyRead( $m );
@@ -57,9 +57,9 @@ $company_project_list = db_loadList( $sql );
 /* Build array of company/projects for output to javascript
    Adding slashes in case special characters exist */
 foreach($company_project_list as $row){
-  $projects[] = "[{$row['company_id']},{$row['project_id']},'"
-              . addslashes($row['project_name'])
-              . "']";
+  $projects[] = "[" . (int)$row['company_id'] . "," . (int)$row['project_id'] . ","
+              . dPjs($row['project_name'])
+              . "]";
   $reverse[$row['project_id']] = $row['company_id'];
 }
 
