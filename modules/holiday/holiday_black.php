@@ -52,6 +52,6 @@ while ($row = db_fetch_assoc( $prc )) {
 <table width="100%" border="0" cellpadding="3" cellspacing="1">
         <tr valign="top">
                 <td align="left"><?php echo $AppUI->_('Blacklist items allows you to ignore holidays not viable in your region');?>.</td>
-                <td align="right"><input class="button" type="button" value="<?php echo $AppUI->_('Add workday');?>" onclick="window.location='?m=holiday&a=addedit&white=0&'"></td>
+                <td align="right"><input class="button" type="button" value="<?php echo $AppUI->_('Add workday');?>" <?php echo dPaction(null, array(), null, array('href' => '?m=holiday&a=addedit&white=0')); ?>></td>
         </tr>
 </table>
