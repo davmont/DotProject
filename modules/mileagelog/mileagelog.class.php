@@ -85,7 +85,7 @@ class CMileageLog {
 		// empty constructor
 	}
 
-	function load( $mileage_log_id ) {
+	function load( $mileage_log_id = null, $strip = true ) {
 		$q = new DBQuery;
 		$q->addTable('mileage_log');
 		$q->addWhere('mileage_log_id = ' . intval($mileage_log_id));
@@ -109,7 +109,7 @@ class CMileageLog {
 		return NULL; // object is ok
 	}
 
-	function store() {
+	function store($updateNulls = false) {
 		if( !$this ) {
 			return get_class( $this )."::store-check failed";
 		}
@@ -124,7 +124,7 @@ class CMileageLog {
 			return NULL;
 		}
 	}
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0) {
 		$q = new DBQuery;
 		$q->setDelete('mileage_log');
 		$q->addWhere('mileage_log_id = ' . intval($this->mileage_log_id));
@@ -148,7 +148,7 @@ class CMileageLogPurpose {
 		// empty constructor
 	}
 
-	function load( $mileage_log_purpose_id ) {
+	function load( $mileage_log_purpose_id = null, $strip = true ) {
 		$q = new DBQuery;
 		$q->addTable('mileage_log_purpose');
 		$q->addWhere('mileage_log_purpose_id = ' . intval($mileage_log_purpose_id));
@@ -172,7 +172,7 @@ class CMileageLogPurpose {
 		return NULL; // object is ok
 	}
 
-	function store() {
+	function store($updateNulls = false) {
 		if( !$this ) {
 			return get_class( $this )."::store-check failed";
 		}
@@ -187,7 +187,7 @@ class CMileageLogPurpose {
 			return NULL;
 		}
 	}
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0) {
 		$q = new DBQuery;
 		$q->setDelete('mileage_log_purpose');
 		$q->addWhere('mileage_log_purpose_id = ' . intval($this->mileage_log_purpose_id));

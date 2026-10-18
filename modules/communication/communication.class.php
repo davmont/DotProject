@@ -33,7 +33,7 @@ class CCommunication extends CDpObject {
         return NULL; // object is ok
     }
 
-    function delete() {
+    function delete($oid = null, $history_desc = '', $history_proj = 0) {
         global $dPconfig;
         $this->_message = "deleted";
 // delete the main table reference

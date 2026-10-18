@@ -63,7 +63,7 @@ class COpportunities extends CDpObject {
 	}
 
 	// overload the delete method of the parent class for adaptation for opportunities's needs
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0) {
 		$q = new DBQuery();
 		$q -> setDelete('opportunities');
 		$q -> addWhere('opportunity_id = '.$this->opportunity_id);

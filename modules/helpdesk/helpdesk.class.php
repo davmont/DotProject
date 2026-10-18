@@ -111,7 +111,7 @@ function check() {
 	return NULL;
 }
 
-function store() {
+function store($updateNulls = false) {
   global $AppUI;
 	// Update the last modified time and user
 	// Pretty much duplicates the item_updated field, will keep for now.
@@ -163,7 +163,7 @@ function store() {
 	}
 }
 
-  function delete() {
+  function delete($oid = null, $history_desc = '', $history_proj = 0) {
 	  
 		// This section will grant every request to delete an HDitem
 		$k = $this->_tbl_key;

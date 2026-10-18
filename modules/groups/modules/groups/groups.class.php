@@ -68,7 +68,7 @@ class CGroup extends CDpObject {
 	}
 
 // overload canDelete
-	function canDelete( &$msg, $oid=null ) {
+	function canDelete( &$msg, $oid=null, $joins=null ) {
 		$tables[] = array( 'label' => 'Group Contacts', 'name' => 'groups_contacts', 'idfield' => 'contact_id', 'joinfield' => 'group_id' );
 	// call the parent class method to assign the oid
 		return CDpObject::canDelete( $msg, $oid, $tables );

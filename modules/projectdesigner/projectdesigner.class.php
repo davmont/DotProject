@@ -28,7 +28,7 @@ class CProjectDesignerOptions extends CDpObject {
 		function __construct() {
                 parent::__construct( 'project_designer_options', 'pd_option_id' );
         } 
-        function store() {
+        function store($updateNulls = false) {
                   $q = new DBQuery;
                   $q->addTable('project_designer_options');
                   $q->addReplace('pd_option_user',$this->pd_option_user);

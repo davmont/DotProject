@@ -26,7 +26,7 @@ class CTimeSheet {
 		// empty constructor
 	}
 
-	function load( $oid ) {
+	function load( $oid = null, $strip = true ) {
                 $obj=null;
                 $q = new DBQuery();
                 $q -> addTable('timetrack_idx');
@@ -53,7 +53,7 @@ class CTimeSheet {
 		return NULL; // object is ok
 	}
 
-	function store() {
+	function store($updateNulls = false) {
 		$msg = $this->check();
 		if( $msg ) {
 			return get_class( $this )."::store-check failed";
@@ -69,7 +69,7 @@ class CTimeSheet {
 			return NULL;
 		}
 	}
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0) {
                 $q = new DBQuery();
                 $q -> addTable('timetrack_data');
                 $q -> addQuery('tt_data_timesheet_id');
@@ -106,7 +106,7 @@ class CTimeData {
 		// empty constructor
 	}
 
-	function load( $oid ) {
+	function load( $oid = null, $strip = true ) {
                 $q = new DBQuery();
                 $q -> addTable('timetrack_data');
                 $q -> addQuery('*');
@@ -132,7 +132,7 @@ class CTimeData {
 		return NULL; // object is ok
 	}
 
-	function store() {
+	function store($updateNulls = false) {
 		$msg = $this->check();
 		if( $msg ) {
 			return get_class( $this )."::store-check failed";
@@ -148,7 +148,7 @@ class CTimeData {
 			return NULL;
 		}
 	}
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0) {
                 $ok=1;
                 $q = new DBQuery();
                 $q -> setDelete('timetrack_data');

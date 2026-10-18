@@ -67,7 +67,7 @@ class CPayment extends CDpObject {
 	}
 
 // overload canDelete
-	function canDelete( &$msg, $oid=null ) {
+	function canDelete( &$msg, $oid=null, $joins=null ) {
 		$tables[] = array( 'label' => 'Payment Invoices', 'name' => 'invoice_payment', 'idfield' => 'invoice_id', 'joinfield' => 'payment_id' );
 	// call the parent class method to assign the oid
 		return parent::canDelete( $msg, $oid, $tables );
