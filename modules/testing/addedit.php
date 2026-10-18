@@ -50,7 +50,7 @@ $titleBlock->show();
 
 // some javaScript code to submit the form and set the delete object flag for the form processing
 ?>
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 	function submitIt() {
 		var f = document.editFrm;
 		f.submit();
@@ -169,7 +169,7 @@ if ($obj->test_task) {
 		</td>
 		</tr>
 <?php
-$onclick_task=' onclick="popTask()" ';
+$onclick_task = dPaction('popTask');
 $str_out .= "<tr>" .
             '<td align="right" nowrap="nowrap">' . $AppUI->_( 'Task' ) . ':</td>'.
 			      '<td align="left" colspan="2" valign="top">' .
@@ -188,7 +188,7 @@ $str_out .= "<tr>" .
 </tr>
 <tr>
 	<td>
-		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" onClick="javascript:if(confirm('Are you sure you want to cancel.')){location.href = './index.php?m=testing';}" />
+		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" <?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => './index.php?m=testing')); ?> />
 	</td>
 	<td align="right">
 		<input class="button" type="submit" name="btnFuseAction" value="<?php echo $AppUI->_('submit');?>"/>

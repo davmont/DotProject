@@ -90,6 +90,14 @@ function setCalendar( idate, fdate ) {
 	}
 }
 
+/**
+ * popCalendar() for the named field of the named form (data-dp-call cannot
+ * pass an element other than its own).
+ */
+function popCalendarField(formName, fieldName) {
+	popCalendar(document.forms[formName].elements[fieldName]);
+}
+
 function setContacts(contact_id_string){
 	if(!contact_id_string){
 		contact_id_string = "";

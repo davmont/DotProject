@@ -59,7 +59,7 @@ $titleBlock->show();
 
 // some javaScript code to submit the form and set the delete object flag for the form processing
 ?>
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 	function submitIt() {
 		var f = document.editFrm;
 		f.submit();
@@ -176,7 +176,7 @@ function build_date_list(&$date_array, $row) {
 			<td nowrap="nowrap">
 		<input type="hidden" name="unittest_lasttested" id="unittest_lasttested" value="<?php echo $lasttested ? $lasttested->format( FMT_TIMESTAMP_DATE ) : "" ;?>" />
 		<input type="text" name="lasttested" id="lasttested" value="<?php echo $lasttested ? $lasttested->format( $df ) : "" ;?>" class="text" disabled="disabled" />
-				<a href="#" onClick="popCalendar(document.editFrm.lasttested)">
+				<a href="#"<?php echo dPaction('popCalendarField', array('editFrm', 'lasttested')); ?>>
 								<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0">
 							</a>
 			</td>
@@ -186,7 +186,7 @@ function build_date_list(&$date_array, $row) {
 </tr>
 <tr>
 	<td>
-		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" onClick="javascript:if(confirm('Are you sure you want to cancel.')){location.href = './index.php?m=testing';}" />
+		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" <?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => './index.php?m=testing')); ?> />
 	</td>
 	<td align="right">
 		<input class="button" type="submit" name="btnFuseAction" value="<?php echo $AppUI->_('submit');?>"/>

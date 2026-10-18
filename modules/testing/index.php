@@ -44,7 +44,7 @@ $projects = arrayMerge( array( '0'=>$AppUI->_('All', UI_OUTPUT_RAW) ), $projects
 
 $titleBlock->addCell( $AppUI->_('Filter') . ':' );
 $titleBlock->addCell(
-	arraySelect( $projects, 'project_id', 'onChange="document.pickProject.submit()" size="1" class="text"', $project_id ), '',
+	arraySelect( $projects, 'project_id', 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => '')), $project_id ), '',
 	'<form name="pickProject" action="?m=testing" method="post">', '</form>'
 );
 
