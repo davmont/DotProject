@@ -9,6 +9,7 @@ if (!defined('DP_BASE_DIR')) {
 // (at your option) any later version.
 
 // Check permissions first
+$perms =& $AppUI->acl();
 if (! $perms->checkModule($m, 'view'))
   $AppUI->redirect('m=public&a=access_denied');
 

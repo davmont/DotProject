@@ -54,7 +54,7 @@ if ( isset( $_GET["earning_id"] ) ) {
 	// Add Mode
 	$form_mode = 0;
 	// Create $obj with blank values
-	$obj = null;
+	$obj = new stdClass();
 	$obj->earning_date=date("Ymd");
 	$obj->earning_num='';
 	$obj->earning_submit_contact='Manager';

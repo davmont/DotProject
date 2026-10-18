@@ -1,4 +1,14 @@
 <?php
+// Also defined by the other informer view; flat tab view includes both.
+if (!function_exists('printSum')) {
+function printSum( $float ) {
+	$float = str_replace( '.',',',(string) $float );
+	$pos = strpos( $float,',' );
+	if( $pos === false ) return $float .',00';
+	if( strlen( substr( $float,$pos + 1 ) ) == 1 ) return $float.'0';
+	return $float;
+}
+}
 if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
@@ -186,11 +196,5 @@ if (!defined('DP_BASE_DIR')) {
 </table>
 
 <?php
-function printSum( $float ) {
-	$float = str_replace( '.',',',(string) $float );
-	$pos = strpos( $float,',' );
-	if( $pos === false ) return $float .',00';
-	if( strlen( substr( $float,$pos + 1 ) ) == 1 ) return $float.'0';
-	return $float;
-}
+
 ?>
