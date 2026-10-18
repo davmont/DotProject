@@ -1,6 +1,10 @@
 <?php
 require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 ?>
+<!-- jQuery and jQuery UI: the WBS save/delete/sort calls, the size autocomplete and the copy dialog need them -->
+<link type="text/css" rel="stylesheet" href="./modules/dotproject_plus/css/jquery-ui.min.css" />
+<script src="./modules/dotproject_plus/js/jquery-1.12.3.min.js"></script>
+<script src="./modules/dotproject_plus/js/jquery-ui.js"></script>
 <script src="./modules/timeplanning/js/estimations.js"></script>
 <script src="./modules/timeplanning/js/eap.js"></script>
 <script src="./modules/timeplanning/js/ajax_service_activator.js"></script>
@@ -63,11 +67,8 @@ require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
     media="screen">
 </link>
 <script type="text/javascript" src="./modules/timeplanning/js/jsLibraries/dhtmlgoodies_calendar/dhtmlgoodies_calendar.js?random=20060118"></script>
-<!-- include libraries for lightweight messages -->
-<link type="text/css" rel="stylesheet" href="./modules/timeplanning/js/jsLibraries/alertify/alertify.css"
-    media="screen">
-</link>
-<script type="text/javascript" src="./modules/timeplanning/js/jsLibraries/alertify/alertify.js"></script>
+<!-- lightweight messages (alertify-compatible calls, setAppMessage) -->
+<script src="./modules/dotproject_plus/js/app_messages.js"></script>
 
 
 <?php

@@ -1,6 +1,10 @@
 <?php
 require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 ?>
+<!-- jQuery and jQuery UI: the WBS save/delete/sort calls, the size autocomplete and the copy dialog need them -->
+<link type="text/css" rel="stylesheet" href="./modules/dotproject_plus/css/jquery-ui.min.css" />
+<script src="./modules/dotproject_plus/js/jquery-1.12.3.min.js"></script>
+<script src="./modules/dotproject_plus/js/jquery-ui.js"></script>
 
 <!-- calendar goodies -->
 <link type="text/css" rel="stylesheet"
