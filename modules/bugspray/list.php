@@ -99,11 +99,27 @@ if (isset( $_GET['requestor'] )) {
 }
 $requestor = $AppUI->getState( 'HelpDeskRequestor' ) !== null ? $AppUI->getState( 'HelpDeskRequestor' ) : -1;
 
+// The numeric filters come from the request (via the saved state): force them to integers.
+$calltype = (int)$calltype;
+$status = (int)$status;
+$priority = (int)$priority;
+$item_severity = (int)$item_severity;
+$item_source = (int)$item_source;
+$company = (int)$company;
+$project = (int)$project;
+$assigned_to = (int)$assigned_to;
+// Only a plain column name may be used to sort.
+if (!preg_match('/^[a-z_]+$/', (string)$orderby)) {
+	$orderby = 'item_id';
+}
+
 $tarr = array();
+$q = new DBQuery;
 
 if (isset($search)  && strlen($search)>0) {
-	$tarr[] = "(lower(hi.item_title) LIKE lower('%$search%')
-              OR lower(hi.item_summary) LIKE lower('%$search%'))";
+	$search_like = $q->quote('%' . addcslashes($search, '%_\\') . '%');
+	$tarr[] = "(lower(hi.item_title) LIKE lower($search_like)
+              OR lower(hi.item_summary) LIKE lower($search_like))";
 }
 
 if ($calltype >= 0) {
@@ -123,11 +139,11 @@ if ($item_severity >= 0) {
 }
 
 if (isset($item_os)  && strlen($item_os)>0 && $item_os!='-1') {
-	$tarr[] = "hi.item_os='$item_os'";
+	$tarr[] = "hi.item_os=" . $q->quote($item_os);
 }
 
 if (isset($item_application)  && strlen($item_application)>0 && $item_application!='-1') {
-	$tarr[] = "hi.item_application='$item_application'";
+	$tarr[] = "hi.item_application=" . $q->quote($item_application);
 }
 
 if ($item_source >= 0) {
@@ -147,7 +163,7 @@ if ($assigned_to >= 0) {
 }
 
 if (isset($requestor)  && strlen($requestor)>0 && $requestor!='-1') {
-	$tarr[] = "hi.item_requestor='$requestor'";
+	$tarr[] = "hi.item_requestor=" . $q->quote($requestor);
 }
 
 //pull in permitted companies
@@ -239,7 +255,7 @@ function changeList() {
   <input type="hidden" name="a" value="<?=$a?>" />
   <tr>
     <td align="right"><?=$AppUI->_('Search')?>:</td>
-    <td><input type="text" name="search" class="text" value="<?=$search;?>" size="12"></td>
+    <td><input type="text" name="search" class="text" value="<?php echo dPhtml($search); ?>" size="12"></td>
     <td align="right" nowrap><?=$AppUI->_('Call Type')?>:</td>
     <td><?=arraySelect( arrayMerge( array( '-1'=>'All' ), $ict ), 'item_calltype',
                                            'size="1" class="text"' . dPaction('changeList'),
@@ -338,35 +354,35 @@ foreach ($rows as $row) {
 
 	$s .= $CR . "<td nowrap align=\"center\">";
 	if ($row["item_requestor_email"]) {
-		$s .= $CR . "<a href=\"mailto:".$row["item_requestor_email"]."\">"
-              . $row['item_requestor']
+		$s .= $CR . "<a href=\"mailto:".dPhtml($row["item_requestor_email"])."\">"
+              . dPhtml($row['item_requestor'])
               . "</a>";
 	} else {
-		$s .= $CR . $row['item_requestor'];
+		$s .= $CR . dPhtml($row['item_requestor']);
 	}
 	$s .= $CR . "</td>";
 
 	$s .= $CR . '<td width="80%"><a href="?m=helpdesk&a=view&item_id='
-            . $row["item_id"]
+            . (int)$row["item_id"]
             . '">'
-		        . $row["item_title"]
+		        . dPhtml($row["item_title"])
             . '</a></td>';
 	$s .= $CR . "<td nowrap align=\"center\">";
 	if ($row["assigned_email"]) {
-		$s .= $CR . "<a href=\"mailto:".$row["assigned_email"]."\">"
-              . $row['assigned_fullname']
+		$s .= $CR . "<a href=\"mailto:".dPhtml($row["assigned_email"])."\">"
+              . dPhtml($row['assigned_fullname'])
               . "</a>";
 	} else {
-		$s .= $CR . $row['assigned_fullname'];
+		$s .= $CR . dPhtml($row['assigned_fullname']);
 	}
 	$s .= $CR . "</td>";
 	$s .= $CR . '<td align="center" nowrap>' . $ist[@$row["item_status"]] . '</td>';
 	$s .= $CR . '<td align="center" nowrap>' . $ipr[@$row["item_priority"]] . '</td>';
 	if($row['project_id']){
 		$s .= $CR . '<td align="center" style="background-color: #'
-		    . $row['project_color_identifier']
+		    . dPhtml($row['project_color_identifier'])
 		    . ';" nowrap><a href="./index.php?m=projects&a=view&project_id='
-		    . $row['project_id'].'">'.$row['project_name'].'</a></td>';
+		    . (int)$row['project_id'].'">'.dPhtml($row['project_name']).'</a></td>';
 	} else {
 		$s .= $CR . '<td align="center">-</td>';
 	}
