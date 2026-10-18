@@ -129,7 +129,7 @@ $proj->load($obj->task_project);
 $sql = "SELECT billingcode_id, billingcode_name
 FROM billingcode
 WHERE billingcode_status=0
-AND company_id='$proj->project_company'
+AND company_id=" . (int)$proj->project_company . "
 ORDER BY billingcode_name";
 
 $task_log_costcodes[0]="None";
@@ -299,7 +299,7 @@ function setLogCostCode( select ) {
 	if ($tid)
 	{
 		// maintain existing creator
-		echo "<input type='hidden' name='task_log_creator' value=".$task['task_log_creator']."/>";
+		echo "<input type='hidden' name='task_log_creator' value='".(int)$task['task_log_creator']."' />";
 	}
 	else
 	{
@@ -332,7 +332,7 @@ function setLogCostCode( select ) {
 ?>
 	<td align="right" nowrap="nowrap">Task Description:</td>
 	<td>
-		<input type="text" name="task_log_name" value="<?php echo @$task['task_log_name'] ;?>" class="text"> * The company, project or task that this time was logged against has been deleted.
+		<input type="text" name="task_log_name" value="<?php echo dPhtml(@$task['task_log_name']) ;?>" class="text"> * The company, project or task that this time was logged against has been deleted.
 	</td>
 <?php
 	} else {
@@ -378,14 +378,14 @@ function setLogCostCode( select ) {
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Hours');?>* :</td>
 	<td>
-		<input type="text" name="task_log_hours" value="<?php echo (($tid > 0) ? $task["task_log_hours"] : "");?>" class="text" size="4" maxlength="10">
+		<input type="text" name="task_log_hours" value="<?php echo (($tid > 0) ? dPhtml($task["task_log_hours"]) : "");?>" class="text" size="4" maxlength="10">
 	</td>
 
 </tr>
 <tr>
 	<td align="right" valign="top" nowrap="nowrap"><?php echo $AppUI->_('Description');?>* :</td>
 	<td align="left">
-		<textarea name="task_log_description" cols="60" rows="6" wrap="virtual" class="textarea"><?php echo (($tid > 0) ? $task["task_log_description"] : "");?></textarea>
+		<textarea name="task_log_description" cols="60" rows="6" wrap="virtual" class="textarea"><?php echo (($tid > 0) ? dPhtml($task["task_log_description"]) : "");?></textarea>
 	</td>
 </tr>
 <tr>
@@ -394,7 +394,7 @@ function setLogCostCode( select ) {
 		<?php
 			echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text"' . dPaction('setLogCostCode', array('$this')), '' );
 		?>
-		&nbsp;->&nbsp;<input type="text" class="text" name="task_log_costcode" value="<?php echo $task["task_log_costcode"]//$log->task_log_costcode;?>" maxlength="8" size="8" />
+		&nbsp;->&nbsp;<input type="text" class="text" name="task_log_costcode" value="<?php echo dPhtml(@$task["task_log_costcode"]);?>" maxlength="8" size="8" />
 	</td>
 </tr>
 <tr>

@@ -45,7 +45,7 @@ $proj->load($obj->task_project);
 $sql = "SELECT billingcode_id, billingcode_name
         FROM billingcode
         WHERE billingcode_status=0
-        AND (company_id='$proj->project_company' OR company_id = 0)
+        AND (company_id=" . (int)$proj->project_company . " OR company_id = 0)
         ORDER BY billingcode_name";
 
 $task_log_costcodes[0] = '';
@@ -137,14 +137,14 @@ $taskLogReference = dPgetSysVal( 'TaskLogReference' );
 <!-- END OF TIMER RELATED SCRIPTS -->
 
 <a name="log"></a>
-<form name="editFrm" action="?m=tasks&a=view&task_id=<?php echo $task_id;?>" method="post"
+<form name="editFrm" action="?m=tasks&a=view&task_id=<?php echo (int)$task_id;?>" method="post"
   <?php echo dPaction('updateEmailContacts', array(), 'submit'); ?>>
 	<input type="hidden" name="uniqueid" value="<?php echo uniqid("");?>" />
 	<input type="hidden" name="dosql" value="do_updatetask" />
-	<input type="hidden" name="task_log_id" value="<?php echo $log->task_log_id;?>" />
-	<input type="hidden" name="task_log_task" value="<?php echo $log->task_log_task;?>" />
+	<input type="hidden" name="task_log_id" value="<?php echo (int)$log->task_log_id;?>" />
+	<input type="hidden" name="task_log_task" value="<?php echo (int)$log->task_log_task;?>" />
 	<input type="hidden" name="task_log_creator" value="<?php echo $AppUI->user_id;?>" />
-	<input type="hidden" name="task_log_name" value="Update :<?php echo $log->task_log_name;?>" />
+	<input type="hidden" name="task_log_name" value="Update :<?php echo dPhtml($log->task_log_name);?>" />
 <table cellspacing="1" cellpadding="2" border="0" width="100%">
 <tr>
     <td width='40%' valign='top' align='center'>
@@ -190,7 +190,7 @@ $taskLogReference = dPgetSysVal( 'TaskLogReference' );
 		<?php echo $AppUI->_('Hours Worked');?>
 	</td>
 	<td>
-		<input type="text" class="text" name="task_log_hours" value="<?php echo $log->task_log_hours;?>" maxlength="8" size="6" /> 
+		<input type="text" class="text" name="task_log_hours" value="<?php echo dPhtml($log->task_log_hours);?>" maxlength="8" size="6" /> 
 		<input type='button' class="button" value='<?php echo $AppUI->_('Start');?>'<?php echo dPaction('timerStart'); ?> name='timerStartStopButton' />
 		<input type='button' class="button" value='<?php echo $AppUI->_('Reset'); ?>'<?php echo dPaction('timerReset'); ?> name='timerResetButton' /> 
 		<span id='timerStatus'></span>
@@ -204,7 +204,7 @@ $taskLogReference = dPgetSysVal( 'TaskLogReference' );
 <?php
 		echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text"' . dPaction('setLogCostCode', array('$this')), $log->task_log_costcode );
 ?>
-		&nbsp;->&nbsp; <input type="text" class="text" name="task_log_costcode" value="<?php echo $log->task_log_costcode;?>" maxlength="8" size="8" />
+		&nbsp;->&nbsp; <input type="text" class="text" name="task_log_costcode" value="<?php echo dPhtml($log->task_log_costcode);?>" maxlength="8" size="8" />
 	</td>
 </tr>
 
@@ -246,7 +246,7 @@ $taskLogReference = dPgetSysVal( 'TaskLogReference' );
                 <table width="100%">
                         <tr>
                                 <td align="left">
-                                        <input type="text" class="text" name="task_log_name" value="<?php echo $log->task_log_name;?>" maxlength="255" size="30" />
+                                        <input type="text" class="text" name="task_log_name" value="<?php echo dPhtml($log->task_log_name);?>" maxlength="255" size="30" />
                                 </td>
                                 <td align="center"><?php echo $AppUI->_('Problem');?>:
                                         <input type="checkbox" value="1" name="task_log_problem" <?php if($log->task_log_problem){?>checked="checked"<?php }?> />
@@ -266,13 +266,13 @@ $taskLogReference = dPgetSysVal( 'TaskLogReference' );
 		<?php echo $AppUI->_('URL');?>:
 	</td>
         <td>
-                <input type="text" class="text" name="task_log_related_url" value="<?php echo ($log->task_log_related_url);?>" size="50" maxlength="255" title="<?php echo $AppUI->_('Must in general be entered with protocol name, e.g. http://...');?>"/>
+                <input type="text" class="text" name="task_log_related_url" value="<?php echo dPhtml($log->task_log_related_url);?>" size="50" maxlength="255" title="<?php echo $AppUI->_('Must in general be entered with protocol name, e.g. http://...');?>"/>
         </td>
 </tr>
 <tr>
 	<td align="right" valign="top"><?php echo $AppUI->_('Description');?>:</td>
 	<td>
-		<textarea name="task_log_description" class="textarea" cols="50" rows="6"><?php echo $log->task_log_description;?></textarea>
+		<textarea name="task_log_description" class="textarea" cols="50" rows="6"><?php echo dPhtml($log->task_log_description);?></textarea>
 	</td>
 </tr>
 <tr>
@@ -294,7 +294,7 @@ $taskLogReference = dPgetSysVal( 'TaskLogReference' );
 				$q = new DBQuery;
 				$q->addTable('task_contacts', 'tc');
 				$q->leftJoin('contacts', 'c', 'c.contact_id = tc.contact_id');
-				$q->addWhere("tc.task_id = '$task_id'");
+				$q->addWhere("tc.task_id = " . (int)$task_id);
 				$q->addQuery('tc.contact_id');
 				$q->addQuery('c.contact_first_name, c.contact_last_name');
 				$req =& $q->exec();
@@ -318,7 +318,7 @@ $taskLogReference = dPgetSysVal( 'TaskLogReference' );
 				$q->clear();
 				$q->addTable('project_contacts', 'pc');
 				$q->leftJoin('contacts', 'c', 'c.contact_id = pc.contact_id');
-				$q->addWhere("pc.project_id = '$obj->task_project'");
+				$q->addWhere("pc.project_id = " . (int)$obj->task_project);
 				$q->addQuery('pc.contact_id');
 				$q->addQuery('c.contact_first_name, c.contact_last_name');
 				$req =& $q->exec();
