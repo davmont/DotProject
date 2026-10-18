@@ -116,7 +116,7 @@ function setCalendar( idate, fdate ) {
 				
 					foreach ($result as $employee) {
 						$selected = ($employee['user_id'] == $selectMe) ? " selected" : "";
-						echo "\t\t\t\t<option value=\"" . $employee['user_id'] . "\"" . $selected . " />" . $employee['contact_last_name'] . ", " . $employee['contact_first_name'] . "\n";
+						echo "\t\t\t\t<option value=\"" . (int)$employee['user_id'] . "\"" . $selected . " />" . dPhtml($employee['contact_last_name']) . ", " . dPhtml($employee['contact_first_name']) . "\n";
 					}
 				echo "\t\t\t</select>\n";
 			echo "\t\t</td>\n";
