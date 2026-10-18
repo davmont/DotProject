@@ -19,12 +19,12 @@ $order_by = dPvalidateOrder(dPgetParam( $_GET, 'order_by', 'register_start_date'
 <?php
  echo "<td>";
  $register_format=dPgetsysVal('RegisterCode');
- echo $AppUI->_('Filter') ." : " .arraySelect( $register_format, 'filter', 'size="1" class="text" onChange="document.filterView.submit();"',$filter, false );
+ echo $AppUI->_('Filter') ." : " .arraySelect( $register_format, 'filter', 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => '')),$filter, false );
  echo "</td>";
  echo "<td align=\"right\">";
  echo $AppUI->_('Order by') ." : ";
  $list=array("register_start_date"=>"Start Date","register_code"=>"Code","register_client"=>"Client","register_project"=>"Project");
- echo arraySelect ($list,'order_by','size="1" class="text" onChange="document.filterView.submit();"',$order_by, false );
+ echo arraySelect ($list,'order_by','size="1" class="text"' . dPaction(null, array(), null, array('submit' => '')),$order_by, false );
 /* echo "<select name=\"oder_by\" class=\"text\">";
  echo "<option></option>";
  echo "</select>";

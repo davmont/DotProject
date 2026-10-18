@@ -12,7 +12,7 @@ if ($register_id) {
 }
 ?>
 
-<script>
+<script nonce="<?php echo dPcspNonce(); ?>">
  function ViewField()
  {
   with (document.editFrm)
@@ -119,7 +119,7 @@ if ($register_id) {
 	<td>
 <?php
  $register_format=dPgetsysVal('RegisterCode');
- echo arraySelect( $register_format, 'register_format', 'size="1" class="text" onChange="ViewField();"',0, false );
+ echo arraySelect( $register_format, 'register_format', 'size="1" class="text"' . dPaction('ViewField'),0, false );
 ?>
 	</td>
 </tr>
@@ -178,7 +178,7 @@ if ($register_id) {
 ?>
 	</td>
 	<td colspan="4" valign="bottom" align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('Insert Register');?>" onClick="document.editFrm.submit();return false;"/>
+		<input type="button" class="button" value="<?php echo $AppUI->_('Insert Register');?>" <?php echo dPaction(null, array(), null, array('submit' => 'editFrm')); ?>/>
 	</td>
 
 </tr>
