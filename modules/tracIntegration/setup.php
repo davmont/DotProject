@@ -36,8 +36,7 @@ class CSetupTrac {
 		$this->_runBasicInstall($q);
 		$this->_addTicketTable($q);
 		$this->_addHost2ProjectTable($q);
-		// install()/upgrade() must return true on success; db_error() is '' then.
-		return db_error() ? false : true;
+		return db_error();
 	}
 
 	/**
@@ -80,8 +79,7 @@ class CSetupTrac {
 		$q->dropTable('trac_ticket');
 		$q->exec();
 		$q->clear();
-		// install()/upgrade() must return true on success; db_error() is '' then.
-		return db_error() ? false : true;
+		return db_error();
 	}
 	
 	public function upgrade($old_version) {
