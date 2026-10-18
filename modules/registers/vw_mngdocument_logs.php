@@ -63,8 +63,8 @@ foreach ($logs as $row) {
 	$s .= '<tr bgcolor="white" valign="top">';
 	$s .= '<td width="100">'.dPhtml($row["SGD_Logs_document_name"]).'</td>';
 	$s .= '<td width="100">'.dPhtml($users[$row["SGD_Logs_user_id"]]) .'</td>';
-	$s .= '<td width="100">'.$row["SGD_Logs_date"] .'</td>';
-	$s .= '<td width="100">'.$row["SGD_Logs_action"] .'</td>';
+	$s .= '<td width="100">'.dPhtml($row["SGD_Logs_date"]) .'</td>';
+	$s .= '<td width="100">'.dPhtml($row["SGD_Logs_action"]) .'</td>';
 	$s .= '</tr>';
 }
 echo $s;

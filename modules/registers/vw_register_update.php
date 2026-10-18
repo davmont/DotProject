@@ -133,7 +133,7 @@ if ($register_id) {
 
 	<td rowspan="3" align="right" valign="top"><?php echo $AppUI->_('Description');?>:</td>
 	<td rowspan="3">
-		<textarea name="register_description" class="textarea" cols="50" rows="6"><?php echo $register->register_description;?></textarea>
+		<textarea name="register_description" class="textarea" cols="50" rows="6"><?php echo dPhtml($register->register_description);?></textarea>
 	</td>
 </tr>
 <tr>
