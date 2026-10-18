@@ -156,7 +156,7 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
         </tr>		        
 		<tr>
 			<td align="right"><?php echo $AppUI->_('LBL_INDICE_PRAZO');?> (<?php echo $AppUI->_('LBL_IDP');?>)</td>
-            <td><input type="text" class="text" name="idp" size="15" readonly="readonly" value="<?php echo round($vlIndiceDesempenho, 2) ;?>"></td>
+            <td><input type="text" class="text" name="idp" size="15" readonly="readonly" value="<?php echo round((float)$vlIndiceDesempenho, 2) ;?>"></td>
         </tr>	
 		<tr>
 			<td colspan="2">&nbsp;</td>
