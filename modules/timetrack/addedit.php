@@ -2,7 +2,8 @@
 if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
-$tid = isset($HTTP_GET_VARS['tid']) ? (int) $HTTP_GET_VARS['tid'] : 0;
+$tid = dPgetIntParam($_GET, 'tid', 0);
+$timesheet_id = dPgetIntParam($_GET, 'timesheet_id', 0);
 
 // check permissions
 $denyEdit = getDenyEdit( $m );
@@ -181,7 +182,7 @@ function changeListFrom( select, listName, sourceName ) {
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 <form name="AddEdit" action="./index.php?m=timetrack&a=dosql" method="post">
 <input type="hidden" name="del" value="0">
-<?php echo ((isset($addrow)) ? "<input type=\"hidden\" name=\"addrow\" value=\"$addrow\">" : ""); ?>
+<?php echo ((isset($_GET['addrow'])) ? '<input type="hidden" name="addrow" value="' . dPgetIntParam($_GET, 'addrow', 0) . '">' : ""); ?>
 <input type="hidden" name="tt_data_timesheet_id" value="<?php echo $timesheet_id;?>">
 <input type="hidden" name="tt_data_id" value="<?php echo (($tid > 0) ? $tid : "0"); ?>">
 
