@@ -246,7 +246,7 @@ function selectCompany(companyID) {
 			<?php } else { ?>
 			<td align="right" nowrap><?php echo $AppUI->_('Terms');?></td>
 			<td>
-				<input type="text" name="earning_terms" value="<?php echo $obj->earning_terms; ?>">&nbsp;<i>Purely for your notations.</i>
+				<input type="text" name="earning_terms" value="<?php echo dPformSafe($obj->earning_terms); ?>">&nbsp;<i>Purely for your notations.</i>
 			</td>
 			<?php } ?>
 		</tr>
