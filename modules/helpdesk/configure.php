@@ -415,7 +415,7 @@ foreach ($config_options as $key=>$value){
           <?php
           break;
         case 'text': ?>
-          <input type="text" name="<?php echo $key?>" value="<?php echo $value['value']?>" size=32>
+          <input type="text" name="<?php echo $key?>" value="<?php echo dPhtml($value['value'])?>" size=32>
           <?php
           break;
         case 'select': 
@@ -435,7 +435,7 @@ foreach ($config_options as $key=>$value){
             // organize string '118,72,2,68' into array 
             $selected=explode(',',$value['value']);
             foreach ( $value["list"] as $k => $v ) {
-                echo "\n\t<option value=\"".$k."\"".(in_array($k, $selected) ? " selected=\"selected\"" : '').">" .  $v  . "</option>";
+                echo "\n\t<option value=\"".dPhtml($k)."\"".(in_array($k, $selected) ? " selected=\"selected\"" : '').">" .  dPhtml($v)  . "</option>";
                 //echo "\n\t<option value=\"".$k."\"".($k == $selected ? " selected=\"selected\"" : '').">" .  $v  . "</option>";
             }
           ?>

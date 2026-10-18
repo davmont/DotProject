@@ -108,11 +108,11 @@ if (!isset($display_company_name)) {
 	if (!isset($display_project_name)) {
 		$display_project_name = "None";
 	} else {
-		echo $AppUI->_('Selected Project') . ": <b>".$display_project_name."</b>"; 
+		echo $AppUI->_('Selected Project') . ": <b>".dPhtml($display_project_name)."</b>"; 
 		$display_company_name = "None";
 	}
 } else {
-	echo $AppUI->_('Selected Company') . ": <b>".$display_company_name."</b>";
+	echo $AppUI->_('Selected Company') . ": <b>".dPhtml($display_company_name)."</b>";
 }
 ?>
 <form name="changeMe" action="./index.php?m=helpdesk&a=reports<?php echo $report_type_var; ?>" method="post">
