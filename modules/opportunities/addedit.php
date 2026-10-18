@@ -502,11 +502,15 @@ $titleBlock->show();
 				//echo arraySelect( $ba, 'multisystemselect[]', 'class="text" size="4" multiple="multiple"', $multisystemselect );
 			// The selection for related Projects
 				// get all related projects:
-					$sql = "SELECT * FROM opportunities_projects WHERE opportunity_project_opportunities = ".$opportunity_id;
-					$aRelated = mysql_query( $sql );
+					$q->clear();
+					$q->addTable('opportunities_projects');
+					$q->addQuery('opportunity_project_projects');
+					$q->addWhere('opportunity_project_opportunities = ' . (int)$opportunity_id);
+					$aRelated = $q->loadList();
+					$q->clear();
 				$i = 0;
 				echo '<select type="TEXT" name="EmptyName" size="7" style="width:360px; color: #A0A0A0; " MULTIPLE="MULTIPLE"' . dPaction('CheckForInputRelProjs', array(), 'click') . '>';
-					while ( $r = mysql_fetch_assoc( $aRelated )) {
+					foreach ($aRelated as $r) {
 						echo '<option value="'.(int)$r['opportunity_project_projects'].'">'.dPhtml(@$projects[$r['opportunity_project_projects']]).'</option>';
 						$i++;
 					}
