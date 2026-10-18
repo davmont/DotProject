@@ -194,7 +194,7 @@ var $_canMove = true;
 
 /******************************************* CLASS PUBLIC METHODS **************************************/
 
-function iGanttResponse( $start, $end, $width = 800, $working_days = true ) {
+function __construct( $start, $end, $width = 800, $working_days = true ) {
 /**
 * 	Class constructor
 *		@param	=> scale start date

@@ -2,7 +2,7 @@
 require_once (DP_BASE_DIR . "/modules/timeplanning/model/company_role.class.php");
 class ControllerCompanyRole {
 	
-	function ControllerCompanyRole()	{
+	function __construct()	{
 	}
 	
 	function insert($company_id,$description,$identation,$id,$sort_order) {

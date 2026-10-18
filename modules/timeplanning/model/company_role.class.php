@@ -44,7 +44,7 @@ class CompanyRole {
 		$this->companyId=$companyId;
 	}
 	
-	function CompanyRole()	{
+	function __construct()	{
 	}
 	
 	function store($company_id,$description,$identation,$id,$sort_order) {

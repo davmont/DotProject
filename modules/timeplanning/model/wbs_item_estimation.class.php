@@ -21,7 +21,7 @@ class WBSItemEstimation {
 		return $this->sizeUnit;
 	}
 	
-	function WBSItemEstimation (){
+	function __construct (){
 	}
 	
 	function store($idValue,$sizeValue,$sizeUnitValue) {

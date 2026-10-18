@@ -2,7 +2,7 @@
 require_once (DP_BASE_DIR . "/modules/timeplanning/model/wbs_item.class.php");
 class ControllerWBSItem {
 	
-	function ControllerWBSItem(){
+	function __construct(){
 	}
 	
 	function insert($projectId,$description,$number,$sortOrder,$isLeaf,$identation,$id) {

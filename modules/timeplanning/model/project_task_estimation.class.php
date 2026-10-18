@@ -54,7 +54,7 @@ class ProjectTaskEstimation
 		return $roles;
 	}
 
-	function ProjectTaskEstimation()
+	function __construct()
 	{
 	}
 
@@ -147,7 +147,7 @@ class EstimatedRole
 		return $this->quantity;
 	}
 
-	function EstimatedRole($roleIdValue, $quantityValue)
+	function __construct($roleIdValue, $quantityValue)
 	{
 		$this->roleId = $roleIdValue;
 		$this->quantity = $quantityValue;

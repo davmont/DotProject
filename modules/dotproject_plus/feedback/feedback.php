@@ -15,7 +15,7 @@ class Feedback {
     private $isTriggerDeterministic=false;
 
     
-    function Feedback($id, $short,$description, $generic, $knowledgeArea,$isTriggerDeterministic){
+    function __construct($id, $short,$description, $generic, $knowledgeArea,$isTriggerDeterministic){
         $this->id=$id;
         $this->short=$short;
         $this->description=$description;

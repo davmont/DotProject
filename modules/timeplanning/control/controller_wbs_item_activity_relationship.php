@@ -3,7 +3,7 @@ require_once (DP_BASE_DIR . "/modules/timeplanning/model/wbs_item_activity_relat
 require_once (DP_BASE_DIR . '/modules/tasks/tasks.class.php');
 class ControllerWBSItemActivityRelationship{
 	
-	function ControllerWBSItemActivityRelationship(){
+	function __construct(){
 	}
 	
 	function insert($id,$description,$work_package,$project_id) {
