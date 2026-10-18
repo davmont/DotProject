@@ -57,7 +57,7 @@ $crumbs = array();
 $crumbs["?m=timetrack&timesheet_id=$timesheet_id"] = "timesheets list";
 #################################### [ view section UI code ] ########################
 ?>
-<script language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function sendIt() {
 	if (confirm( "Is all the information and time on this timesheet correct and accurate?\n" )) {
 		var form = document.TIDedit;
@@ -169,7 +169,7 @@ if ($tg_data['tt_active'] > 0 ) {
 ?>
 <tr bgcolor="#FFFFFF">
 	<td colspan="8" bgcolor="#FFFFFF" align="right">
-	<input class="button" type="Button" value="Send In" onClick="sendIt();">
+	<input class="button" type="Button" value="Send In"<?php echo dPaction('sendIt'); ?>>
 	</td>
 </tr>
 <?php } ?>
