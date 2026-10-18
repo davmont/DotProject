@@ -76,7 +76,7 @@ $s = "\nvar tasks = new Array(".implode( ",\n", $tasks ).")";
 $s .= "\nvar projects = new Array(".implode( ",\n", $projects ).")";
 $s .= "\nvar employees = new Array(".implode( ",\n", $employees ).")";
 
-echo "<script language=\"javascript\">$s</script>";
+echo '<script language="javascript" nonce="' . dPcspNonce() . '">' . $s . '</script>';
 
 
 $qu -> clear();
@@ -90,7 +90,7 @@ $result = $qu -> loadList();
 
 ?>
 
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function setColor(color) {
 	var f = document.editFrm;
 	if (color) {
@@ -137,7 +137,7 @@ function addToList( list, text, value ) {
 function changeList( listName, source, target ) {
 //	alert(listName+'  -,-  '+source+'  -,-  '+target);return;
 	var f = document.reportForm;
-	var list = eval( 'f.'+listName );
+	var list = f[listName];
 
 // clear the options
 
@@ -157,7 +157,7 @@ function changeList( listName, source, target ) {
 // select an item in the list by target value
 function selectList( listName, target ) {
 	var f = document.reportForm;
-	var list = eval( 'f.'+listName );
+	var list = f[listName];
 
 	for (var i=0, n = list.options.length; i < n; i++) {
 //alert(listName+','+target+','+list.options[i].value);
@@ -189,6 +189,11 @@ function checkBillingFields() {
 	
 }
 
+// Refills a dependent list from the value of the select that changed.
+function changeListFrom( select, listName, sourceName ) {
+	changeList( listName, window[sourceName], select.options[select.selectedIndex].value );
+}
+
 function runCalendar(element) {
 	return popCalendar(element);
 }
@@ -197,7 +202,7 @@ var calendarField = '';
 	
 function popCalendar( field ){
 	calendarField = field;
-	idate = eval( 'document.reportForm.format_' + field + '.value' );
+	idate = document.reportForm['format_' + field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
@@ -206,15 +211,15 @@ function popCalendar( field ){
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.reportForm.format_' + calendarField );
-	fld_fdate = eval( 'document.reportForm.' + calendarField );
+	fld_date = document.reportForm['format_' + calendarField];
+	fld_fdate = document.reportForm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
 
 </script>
 
-<form name="reportForm" action="index.php?m=reports" method="post" onsubmit="return checkBillingFields()">
+<form name="reportForm" action="index.php?m=reports" method="post"<?php echo dPaction('checkBillingFields', array(), 'submit'); ?>>
 
 <table border="0" width="600">
 	<tr>
@@ -229,7 +234,7 @@ function setCalendar( idate, fdate ) {
 			
 			<input type="hidden" name="format_start_date_billing" value="<?php echo $fmt_start_date->format( FMT_TIMESTAMP_DATE );?>">
 			<input type="text" class="text" name="start_date_billing" id="date1_billing" disabled="disabled" value="<?php echo $view_start_date_billing ?>">
-			<a href="#" onClick="return popCalendar('start_date_billing');">
+			<a href="#"<?php echo dPaction('popCalendar', array('start_date_billing')); ?>>
 				<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 			</a>
 			&nbsp;&nbsp;
@@ -237,7 +242,7 @@ function setCalendar( idate, fdate ) {
 			&nbsp;&nbsp;
 			<input type="hidden" name="format_end_date_billing" value="<?php echo $fmt_end_date->format( FMT_TIMESTAMP_DATE );?>">
 			<input type="text" class="text" name="end_date_billing" id="date2_billing" disabled="disabled" value="<?php echo $view_end_date_billing ?>">
-			<a href="#" onClick="return popCalendar('end_date_billing');">
+			<a href="#"<?php echo dPaction('popCalendar', array('end_date_billing')); ?>>
 				<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 			</a>
 		</td>
@@ -265,7 +270,7 @@ function setCalendar( idate, fdate ) {
 					</td>
 					<td width="150">
 						<?php 
-						$params = "size=\"1\" style=\"width:150px;\" class=\"text\" onChange=\"changeList('project',projects, this.options[this.selectedIndex].value)\"";
+						$params = "size=\"1\" style=\"width:150px;\" class=\"text\"" . dPaction('changeListFrom', array('$this', 'project', 'projects'));
 						
 						echo arraySelect( $companies, 'company', $params, @$AppUI->getState('billing_report_company'));
 						?>
@@ -278,7 +283,7 @@ function setCalendar( idate, fdate ) {
 						<input type="checkbox" name="listByProject" value="1"<?php echo $projectChecked ?>> List By Project
 					</td>
 					<td>
-						<select name="project" size="1" style="width:150px;" class="text" onChange="changeList('task',tasks, this.options[this.selectedIndex].value)">
+						<select name="project" size="1" style="width:150px;" class="text"<?php echo dPaction('changeListFrom', array('$this', 'task', 'tasks')); ?>>
 						</select>
 					</td>
 				</tr>
@@ -307,7 +312,7 @@ function setCalendar( idate, fdate ) {
 						echo "\t\t\t\t\t</td>\n";
 						echo "\t\t\t\t\t<td>\n";
 							
-							$params = "size=\"1\" style=\"width:150px;\" class=\"text\" onChange=\"changeList('employee',employees, this.options[this.selectedIndex].value)\"";
+							$params = "size=\"1\" style=\"width:150px;\" class=\"text\"" . dPaction('changeListFrom', array('$this', 'employee', 'employees'));
 							
 							echo arraySelect( $departments, 'department', $params, @$AppUI->getState('billing_report_department'));
 						echo "\t\t\t\t\t</td>\n";
@@ -353,15 +358,15 @@ function setCalendar( idate, fdate ) {
 
 </form>
 
-<script language="javascript">
-	changeList('project', projects, <?php echo $AppUI->getState('billing_report_company') ? $AppUI->getState('billing_report_company') : 0;?>);
-	changeList('task', tasks, <?php echo $AppUI->getState('billing_report_project') ? $AppUI->getState('billing_report_project') : 0;?>);
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
+	changeList('project', projects, <?php echo (int)$AppUI->getState('billing_report_company');?>);
+	changeList('task', tasks, <?php echo (int)$AppUI->getState('billing_report_project');?>);
 	<?php if ($AppUI->user_type > 0 and $AppUI->user_type < 7) {?>
-	changeList('employee', employees, <?php echo $AppUI->getState('billing_report_department') ? $AppUI->getState('billing_report_department') : 0;?>);
+	changeList('employee', employees, <?php echo (int)$AppUI->getState('billing_report_department');?>);
 	<?php } ?>
-	selectList( 'project', <?php echo $AppUI->getState('billing_report_project') ? $AppUI->getState('billing_report_project') : 0;?> );
-	selectList( 'task', <?php echo $AppUI->getState('billing_report_task') ? $AppUI->getState('billing_report_task') : 0;?> );
+	selectList( 'project', <?php echo (int)$AppUI->getState('billing_report_project');?> );
+	selectList( 'task', <?php echo (int)$AppUI->getState('billing_report_task');?> );
 	<?php if ($AppUI->user_type > 0 and $AppUI->user_type < 7) {?>
-	selectList( 'employee', <?php echo $AppUI->getState('billing_report_employee') ? $AppUI->getState('billing_report_employee') : 0;?> );
+	selectList( 'employee', <?php echo (int)$AppUI->getState('billing_report_employee');?> );
 	<?php } ?>
 </script>
