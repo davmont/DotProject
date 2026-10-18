@@ -879,7 +879,7 @@ function issue_list_data($user_id = false) {
 		$buffer .= ('<option value="' . $company_prefix . $row['company_id'] 
 					. '" style="font-weight:bold;"' 
 					. (($company_id == $row['company_id']) ? 'selected="selected"' : '') 
-					. '>' . $row['company_name'] . '</option>' . "\n");
+					. '>' . dPhtml($row['company_name']) . '</option>' . "\n");
 		
 	}
 	$buffer .= '</select>';

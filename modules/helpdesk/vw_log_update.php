@@ -140,7 +140,7 @@ for ($x=0; $x < $nums; $x++) {
     var f = document.editFrm;
     if(obj.options[obj.selectedIndex].value>0){
       if(f.item_status.selectedIndex==0){
-    	f.item_status.selectedIndex=<?php echo $HELPDESK_CONFIG['assigned_status_id'];?>;
+    	f.item_status.selectedIndex=<?php echo (int)$HELPDESK_CONFIG['assigned_status_id'];?>;
       }
     }
   }	

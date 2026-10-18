@@ -335,7 +335,7 @@ function submitIt() {
 function popUserDialog() {
 //	var target='./index.php?m=helpdesk&a=selector&callback=setUserRequestor&table=users&dialog=1';
 //TODO: FIX UPDATE - FIXED?  Test with a null company
-	var target='./index.php?m=helpdesk&a=selector&callback=setUserRequestor&table=users&dialog=1&comp=<?php echo $compId; ?>';
+	var target='./index.php?m=helpdesk&a=selector&callback=setUserRequestor&table=users&dialog=1&comp=<?php echo (int)$compId; ?>';
 	window.open(target, 'selector', 'left=50,top=50,height=400,width=400,resizable,scrollbars=yes');
 }
 
@@ -345,7 +345,7 @@ function popContactDialog() {
 }
 
 function popClientContactDialog() {
-	var target='./index.php?m=helpdesk&a=selector&callback=setContactRequestor&table=contacts&dialog=1&comp=<?php echo $compId; ?>';
+	var target='./index.php?m=helpdesk&a=selector&callback=setContactRequestor&table=contacts&dialog=1&comp=<?php echo (int)$compId; ?>';
 	window.open(target, 'selector', 'left=50,top=50,height=300,width=400,resizable,scrollbars=yes');
 }
 
@@ -376,8 +376,6 @@ function setUserRequestor( key, val ) {
     document.getElementById("ire").disabled=true;
     document.getElementById("irp").disabled=true;
 // Always pulls the values when page was loaded		TODO: Fix it & remove workaround below
-//    document.getElementById("ire").value = "<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 1); ?>";
-//    document.getElementById("irp").value = "<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 2); ?>";
     document.getElementById("ire").value = "Filled upon submission"
     document.getElementById("irp").value = "Filled upon submission"
   }
@@ -392,8 +390,6 @@ function setContactRequestor( key, val ) {
     document.getElementById("ire").disabled=true;
     document.getElementById("irp").disabled=true;
 // Always pulls the values when page was loaded		TODO: Fix it & remove workaround below
-//    document.getElementById("ire").value = "<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 1); ?>";
-//    document.getElementById("irp").value = "<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 2); ?>";
     document.getElementById("ire").value = "Filled upon submission"
     document.getElementById("irp").value = "Filled upon submission"
   }
@@ -403,8 +399,8 @@ function updateStatus(obj){
   var f = document.frmHelpDeskItem;
   
   if(obj.options[obj.selectedIndex].value>0){
-    if(f.item_status.selectedIndex <= <?php echo $HELPDESK_CONFIG['assigned_status_id']?>){
-    	f.item_status.selectedIndex = <?php echo $HELPDESK_CONFIG['assigned_status_id']?>;
+    if(f.item_status.selectedIndex <= <?php echo (int)$HELPDESK_CONFIG['assigned_status_id']?>){
+    	f.item_status.selectedIndex = <?php echo (int)$HELPDESK_CONFIG['assigned_status_id']?>;
     }
   } else {
     f.item_status.selectedIndex=0;
