@@ -143,8 +143,7 @@ modules/mileagelog/configure.php:3
 modules/mileagelog/do_mileagelog_aed.php:13
 modules/mileagelog/index.php:2
 modules/mileagelog/vw_mileagelog.php:11
-modules/monitoringandcontrol/addedit_update_ata.php:1
-modules/monitoringandcontrol/admin_tab.viewuser.5LBLCUSTO.php:2
+modules/monitoringandcontrol/admin_tab.viewuser.5LBLCUSTO.php:1
 modules/monitoringandcontrol/do_acao_corretiva_aed.php:3
 modules/monitoringandcontrol/do_ata_aed.php:4
 modules/monitoringandcontrol/do_baseline_aed.php:3
@@ -152,11 +151,10 @@ modules/monitoringandcontrol/do_costs_aed.php:3
 modules/monitoringandcontrol/do_pendencias.php:1
 modules/monitoringandcontrol/do_quality_aed.php:3
 modules/monitoringandcontrol/do_respons_aed.php:3
-modules/monitoringandcontrol/projects_tab.2LBLRESPONSABILIDADE.php:2
+modules/monitoringandcontrol/projects_tab.2LBLRESPONSABILIDADE.php:1
 modules/monitoringandcontrol/projects_tab.5LBLCUSTO.php:4
 modules/monitoringandcontrol/projects_tab.6LBLCRONOGRAMA.php:4
-modules/monitoringandcontrol/projects_tab.7LBLQUALIDADE.php:1
-modules/monitoringandcontrol/tasks_tab.view.7LBLQUALIDADE.php:2
+modules/monitoringandcontrol/tasks_tab.view.7LBLQUALIDADE.php:1
 modules/opportunities/addedit.php:2
 modules/opportunities/do_opportunities_aed.php:2
 modules/opportunities/index.php:4

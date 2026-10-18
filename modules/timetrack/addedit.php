@@ -182,7 +182,7 @@ function changeListFrom( select, listName, sourceName ) {
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 <form name="AddEdit" action="./index.php?m=timetrack&a=dosql" method="post">
 <input type="hidden" name="del" value="0">
-<?php echo ((isset($_GET['addrow'])) ? '<input type="hidden" name="addrow" value="' . dPgetIntParam($_GET, 'addrow', 0) . '">' : ""); ?>
+<?php echo ((dPgetParam($_GET, 'addrow', null) !== null) ? '<input type="hidden" name="addrow" value="' . dPgetIntParam($_GET, 'addrow', 0) . '">' : ""); ?>
 <input type="hidden" name="tt_data_timesheet_id" value="<?php echo $timesheet_id;?>">
 <input type="hidden" name="tt_data_id" value="<?php echo (($tid > 0) ? $tid : "0"); ?>">
 
