@@ -151,7 +151,7 @@ $groups = arrayMerge(array('0' => $AppUI->_('Select A Group')), $groups);
 $titleBlock = new CTitleBlock('Contacts', 'monkeychat-48.png', $m, "$m.$a");
 $titleBlock->addCell($AppUI->_('Group') . ':');
 $titleBlock->addCell(
-	arraySelect($groups, 'group_id', 'onChange="document.pickGroup.submit()" class="text"', $group_id),
+	arraySelect($groups, 'group_id', 'class="text"' . dPaction(null, array(), null, array('submit' => '')), $group_id),
 	'',
 	'<form action="?m=contacts&search_string=" method="post" name="pickGroup">',
 	'</form>'

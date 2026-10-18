@@ -103,7 +103,7 @@ if($rn > 0) {
 }
 ?>
 
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var form = document.changeclient;
 	if (form.group_name.value.length < 3) {
@@ -117,6 +117,9 @@ function submitIt() {
 var isCheck = true;
 
 function checkall(form) {
+  if (typeof form === 'string') {
+    form = document.forms[form];
+  }
   for (var i = 0; true; i++){
     if(form.elements[i] == null)
       break;
@@ -162,7 +165,7 @@ function checkall(form) {
 
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
 <tr><td align="left"><b>Select Contacts:</b></td>
-<td align="right"><a href="#" onClick="checkall(document.changeclient); return false;">Check All</a></td></tr>
+<td align="right"><a href="#"<?php echo dPaction('checkall', array('changeclient')); ?>>Check All</a></td></tr>
 </table>
 
 <table width="100%" border="0" cellpadding="1" cellspacing="1" height="400" class="contacts">
@@ -203,8 +206,8 @@ function checkall(form) {
 
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
 <tr>
-	<td><input type="button" value="<?php echo $AppUI->_('back');?>" class="button" onClick="javascript:history.back(-1);" /></td>
-	<td align="right"><input type="button" value="<?php echo $AppUI->_('submit');?>" class="button" onClick="submitIt()" /></td>
+	<td><input type="button" value="<?php echo $AppUI->_('back');?>" class="button"<?php echo dPaction('history.back'); ?> /></td>
+	<td align="right"><input type="button" value="<?php echo $AppUI->_('submit');?>" class="button"<?php echo dPaction('submitIt'); ?> /></td>
 </tr>
 </form>
 </table>
