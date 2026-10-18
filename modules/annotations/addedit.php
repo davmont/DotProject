@@ -304,7 +304,7 @@ if ($obj->annotation_time == "") $obj->annotation_time=0;
 				
 			<!-- --------------- the headlines -------------- -->	
 			<th align="left"><?php echo $AppUI->_('Project'); ?> : <?php echo dPhtml($project_name); ?></th>
-			<th align="left"><?php echo $AppUI->_('Project Owner'); ?> : <?php echo $project_owner_name; ?></th>
+			<th align="left"><?php echo $AppUI->_('Project Owner'); ?> : <?php echo dPhtml($project_owner_name); ?></th>
 			<th align="left"><?php echo $AppUI->_('Shown Date'); ?> : <?php echo $oDate->format( $df )." ".$show_time; ?></th>
 		<?php
 		} else {	// We are in "Add New" mode, so make the project, owner and date selectable

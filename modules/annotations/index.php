@@ -321,7 +321,7 @@ foreach ($aProject as $v) {
 			echo '<td nowrap="nowrap"><center>'; 
 			// overlib(tip, CAPTION, caption, CENTER); CAPTION is 1 and CENTER 7 in lib/overlib/overlib-shim.js
 			echo '<a href="?m=projects&a=view&project_id='.$v['project_id'].'"' .
-				dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', $v['project_description'])
+				dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($v['project_description']))
 		                        . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7),
 				'mouseover mouseout', array('call-mouseout' => 'nd'));
 				echo '>'.dPFormSafe( $v['project_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
