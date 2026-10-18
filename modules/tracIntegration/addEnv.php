@@ -167,7 +167,7 @@ if ($canAdd) {
 	<form action="?m=trac&a=addEnv" method="post" name="addNewEnv">
 	<table style="border: 1px solid navy; background: skyblue url(style/default/images/titlegrad.jpg) repeat scroll 0% 50%; width: 50%; color: white;">
 	<thead><tr><th>Name</th></tr></thead><tbody>
-	<tr><td><label for="project">Project</label></td><td><select id="projects" name="project_id" onchange=""/>
+	<tr><td><label for="project">Project</label></td><td><select id="projects" name="project_id">
 	<?php
 		// @TODO 0.3: if the selected project already has an attributed environment, 
 		// change the button to "edit" and 
