@@ -34,7 +34,7 @@ $projects = arrayMerge(array('0'=>$AppUI->_('All', UI_OUTPUT_JS)), $projects);
 $titleBlock = new CTitleBlock('Links', 'folder5.png', $m, "$m.$a");
 $titleBlock->addCell($AppUI->_('Search') . ':');
 $titleBlock->addCell(
-        '<input type="text" class="text" size="10" name="search"' . dPaction(null, array(), 'change', array('submit' => '')) . ' value=' . "'$search'" .         'title="'. $AppUI->_('Search in name and description fields', UI_OUTPUT_JS) . '"/>'
+        '<input type="text" class="text" size="10" name="search"' . dPaction(null, array(), 'change', array('submit' => '')) . ' value="' . dPhtml(dPgetCleanParam($_REQUEST, 'search', '')) . '" title="' . $AppUI->_('Search in name and description fields') . '"/>'
  ,'',       '<form action="?m=links" method="post" id="searchfilter">', '</form>'
 );
 $titleBlock->addCell($AppUI->_('Filter') . ':');
