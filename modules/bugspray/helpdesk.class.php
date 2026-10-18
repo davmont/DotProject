@@ -230,7 +230,7 @@ class CHelpDeskItem extends CDpObject {
       $hditem->load( dPgetParam( $_POST, "item_id") );
 
       foreach($field_event_map as $key => $value){
-        if(!eval("return \$hditem->$value == \$this->$value;")){
+        if(!($hditem->$value == $this->$value)){
           $old = $new = "";
           $q = new DBQuery();
           switch($value){
