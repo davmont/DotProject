@@ -13,10 +13,6 @@ modules/communication/addedit.php:10
 modules/communication/index.php:1
 modules/dataimport/config.php:3
 modules/dataimport/dataimport.class.php:1
-modules/dotproject_plus/changed_files_from_other_modules/companies_core/addedit.php:4
-modules/dotproject_plus/changed_files_from_other_modules/companies_core/view.php:7
-modules/dotproject_plus/changed_files_from_other_modules/projects_core/addedit.php:21
-modules/dotproject_plus/changed_files_from_other_modules/projects_core/view.php:6
 modules/dotproject_plus/viewgantt.php:1
 modules/earnings/addedit.php:6
 modules/earnings/items.php:12

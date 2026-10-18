@@ -46,8 +46,6 @@ modules/costs/index.php:2
 modules/departments/do_dept_aed.php:2
 modules/departments/index.php:4
 modules/departments/view.php:3
-modules/dotproject_plus/changed_files_from_other_modules/companies_core/view.php:3
-modules/dotproject_plus/changed_files_from_other_modules/projects_core/view.php:6
 modules/dotproject_plus/copy_project/CopyProjectViewHelper.php:1
 modules/dotproject_plus/do_copy_project.php:2
 modules/dotproject_plus/do_delete_activity_log.php:1
