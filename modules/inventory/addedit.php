@@ -303,7 +303,7 @@ function submitIt()
 						<?php
 							foreach ($brand_list as $brand)
 							{
-								echo "<OPTION VALUE='".$brand["inventory_brand_id"].(($brand['inventory_brand_id']==$obj->inventory_brand)?"' SELECTED>":"'>").$brand["inventory_brand_name"]."</OPTION>";
+								echo "<OPTION VALUE='".$brand["inventory_brand_id"].(($brand['inventory_brand_id']==$obj->inventory_brand)?"' SELECTED>":"'>").dPhtml($brand["inventory_brand_name"])."</OPTION>";
 							}
 						?>
 						<OPTION VALUE='-1'>&lt;<?php echo $AppUI->_("New Brand"); ?>&gt;</OPTION>
@@ -318,7 +318,7 @@ function submitIt()
 						<?php
 							foreach ($category_list as $category)
 							{
-								echo "<OPTION VALUE='".$category["inventory_category_id"].(($category['inventory_category_id']==$obj->inventory_category)?"' SELECTED>":"'>").$category["inventory_category_name"]."</OPTION>";
+								echo "<OPTION VALUE='".$category["inventory_category_id"].(($category['inventory_category_id']==$obj->inventory_category)?"' SELECTED>":"'>").dPhtml($category["inventory_category_name"])."</OPTION>";
 							}
 						?>
 						<OPTION VALUE='-1'>&lt;<?php echo $AppUI->_( "New Category" ); ?>&gt;</OPTION>
@@ -406,7 +406,7 @@ function submitIt()
 						foreach( $company_list as $row )
 						{
 							$compname = $row["company_name"];
-							echo "<OPTION VALUE='".$row["company_id"].(($row[ "company_id" ] == $obj->inventory_company ) ? "' SELECTED>" : "'>" ).$compname;
+							echo "<OPTION VALUE='".$row["company_id"].(($row[ "company_id" ] == $obj->inventory_company ) ? "' SELECTED>" : "'>" ).dPhtml($compname);
 						}
 					?>
 					</SELECT>
@@ -442,7 +442,7 @@ function submitIt()
 								if ( !getDenyRead( "projects", $row[ 'project_id' ] ) )
 								{
 									$project_list[ $row[ "project_id" ] ] = $row;
-									echo "<OPTION VALUE='".$row["project_id"].(($row[ "project_id" ] == $obj->inventory_project ) ? "' SELECTED>":"'>")."(".$row["project_short_name"].") ".$row["project_name"];
+									echo "<OPTION VALUE='".$row["project_id"].(($row[ "project_id" ] == $obj->inventory_project ) ? "' SELECTED>":"'>")."(".dPhtml($row["project_short_name"]).") ".dPhtml($row["project_name"]);
 								}
 							}
 						}
@@ -466,7 +466,7 @@ function submitIt()
 							foreach ($rows as $row)
 							{
 								$username = $row["user_first_name"]." ".$row["user_last_name"];
-								echo "<OPTION VALUE='".$row["user_id"].(($row[ "user_id" ] == $obj->inventory_user ) ? "' SELECTED>" : "'>" ).$username;
+								echo "<OPTION VALUE='".$row["user_id"].(($row[ "user_id" ] == $obj->inventory_user ) ? "' SELECTED>" : "'>" ).dPhtml($username);
 							}
 						}
 
@@ -510,7 +510,7 @@ function submitIt()
 	<TD COLSPAN="2">
 		<HR />
 		<?php echo $AppUI->_( 'Notes' ); ?>: <BR />
-		<TEXTAREA CLASS="textarea" NAME="inventory_description" wrap="virtual" ROWS="10" COLS="60"><?php echo $obj->inventory_description; ?></TEXTAREA>
+		<TEXTAREA CLASS="textarea" NAME="inventory_description" wrap="virtual" ROWS="10" COLS="60"><?php echo dPformSafe( $obj->inventory_description ); ?></TEXTAREA>
 	</TD>
 </TR>
 <TR>

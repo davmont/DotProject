@@ -149,7 +149,7 @@ function generateJSarray( $prefix, $table, $specify_company = 0, $namefield = "n
 	$sql -> addQuery($prefix.'_id AS id, '.$prefix.'_'.$namefield.' AS name, '.$prefix.'_company AS company');
 	$sql -> addTable($table);
 
-	if ( $specify_company ) $sql -> addWhere($prefix.'_company = '.$specify_company);
+	if ( $specify_company ) $sql -> addWhere($prefix.'_company = '.(int)$specify_company);
 
 	if (($sql_list = $sql -> loadList()))
 	{
@@ -177,7 +177,7 @@ function generateJSarray( $prefix, $table, $specify_company = 0, $namefield = "n
 		{
 			if ( !isset($company_list[ $key ] ) ) continue;
 
-			echo $prefix."_lists[ ".$key." ] = new Array( ";
+			echo $prefix."_lists[ ".(int)$key." ] = new Array( ";
 
 			$nametext  = "new Array( ";
 			$valuetext = "new Array( ";
@@ -189,8 +189,8 @@ function generateJSarray( $prefix, $table, $specify_company = 0, $namefield = "n
 
 			foreach( $company as $id )
 			{
-				$nametext .= '"'.$elem_list[ $id ][ "name" ].'"';
-				$valuetext .= '"'.$id.'"';
+				$nametext .= dPjs($elem_list[ $id ][ "name" ]);
+				$valuetext .= '"'.(int)$id.'"';
 				if ( $lastval != $id )
 				{
 					$nametext .= ", ";

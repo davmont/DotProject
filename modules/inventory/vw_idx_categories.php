@@ -70,7 +70,7 @@ function renameWindow( _id, _name, _type )
 						echo "</A>";
 					}
 					echo "</TD><TD WIDTH='100%'>";
-					echo $category[ 'inventory_category_name' ];
+					echo dPhtml($category[ 'inventory_category_name' ]);
 					echo "</TD><TD ALIGN='center'>";
 					echo '<INPUT TYPE="CHECKBOX" NAME="category_'.$category['inventory_category_id'].'">';
 					echo "</TD></TR>";
@@ -100,7 +100,7 @@ function renameWindow( _id, _name, _type )
 						echo "</A>";
 					}
 					echo "</TD><TD WIDTH='100%'>";
-					echo $brand[ 'inventory_brand_name' ];
+					echo dPhtml($brand[ 'inventory_brand_name' ]);
 					echo "</TD><TD ALIGN='center'>";
 					echo '<INPUT TYPE="CHECKBOX" NAME="brand_'.$brand['inventory_brand_id'].'">';
 					echo "</TD></TR>";

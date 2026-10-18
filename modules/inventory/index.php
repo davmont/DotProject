@@ -92,7 +92,7 @@ $f3 = $AppUI->getState( 'InventoryIdxFilterIndex' ) ? $AppUI->getState( 'Invento
 $f4 = $AppUI->getState( 'InventoryIdxFilterSearch' ) ? $AppUI->getState( 'InventoryIdxFilterSearch' ) : '';
 
 global $specify_company;
-$specify_company = $f1;
+$specify_company = (int)$f1;
 
 // set up filters list
 
@@ -126,7 +126,7 @@ $titleBlock->addCrumbRight(
 
 
 		. '<TD><form action="?m=inventory" method="post" id="itemFilter3" name="itemFilter3">'
-		. "<INPUT TYPE='text' size='10' name='f4'" . dPaction(null, array(), 'change', array('submit' => '')) . " value='$f4'>"
+		. "<INPUT TYPE='text' size='10' name='f4'" . dPaction(null, array(), 'change', array('submit' => '')) . " value='" . htmlspecialchars((string)$f4, ENT_QUOTES) . "'>"
 		. '<INPUT TYPE="button" name="clear" value="<--'.$AppUI->_('Clear')
 		  . '"' . dPaction('inventoryClearFilter', array('$form', 'f4', '')) . '>'
 		. '</FORM></TD>'
@@ -170,7 +170,7 @@ function inventoryClearFilter( form, field, value )
 if ( $f3 != 'na' )
 {
 	echo 'changeListByType( "itemList1", "itemList2", "itemList3", '
-		.(( $f3 && $f3 != "choose" ) ? $f3 : "0").", ".dPjs($AppUI->_( "Choose...", UI_OUTPUT_RAW ))." );";
+		.dPjs(( $f3 && $f3 != "choose" ) ? (string)$f3 : "0").", ".dPjs($AppUI->_( "Choose...", UI_OUTPUT_RAW ))." );";
 }
 
 ?>
