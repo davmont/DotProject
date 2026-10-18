@@ -10,7 +10,7 @@ if (!defined('DP_BASE_DIR')) {
 
 	$support_levels = evGetSupportLevels();
 
-	$company_id = dPGetParam( $_GET, "company_id", 0 );
+	$company_id = dPgetIntParam($_GET, "company_id", 0);
 	$isNew = true;
 	if ($company_id > 0)
 	{
@@ -36,7 +36,7 @@ if (!defined('DP_BASE_DIR')) {
 <tr><td align="right">
 	<?php echo $AppUI->_('Company Name'); ?>:
 	</td><td class="hilite">
-	<?php echo $company->company_name; ?>
+	<?php echo dPhtml($company->company_name); ?>
 </td></tr>
 <tr><td align="right">
 	<?php echo $AppUI->_('Contract Start'); ?>:

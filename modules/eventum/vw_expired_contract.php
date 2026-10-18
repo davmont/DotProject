@@ -22,7 +22,7 @@ if (!defined('DP_BASE_DIR')) {
 	{
 		$dt = new CDate($row['contract_finish_date']);
 		$html = '<tr>';
-		$html .= '<td class="hilite">'.$row['company_name'].'</td>';
+		$html .= '<td class="hilite">'.dPhtml($row['company_name']).'</td>';
 		$html .= '<td class="hilite">'.$dt->format($df).'</td>';
 		$html .= '<td class="hilite"><input class="button" type="button" value="';
 		$html .= $AppUI->_('new support contract');

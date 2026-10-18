@@ -54,7 +54,7 @@ $titleBlock->show();
   <input type="hidden" name="project_id" value="<?php echo $project_id; ?>" />
   <tr>
     <td align="right" width="50%"><?php echo $AppUI->_('dotProject Project'); ?>:</td>
-    <td align="left" width="50%"><?php echo $prj->project_name; ?></td>
+    <td align="left" width="50%"><?php echo dPhtml($prj->project_name); ?></td>
   </tr>
 
   <tr>

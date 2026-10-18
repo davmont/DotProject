@@ -65,7 +65,7 @@
     <td colspan="5" class="default">
       <ul>
       {section name="y" loop=$results[i].contacts}
-      <li><a title="select this contact" class="link" href="#" data-evdp-action="select-contact" data-customer-id="{$results[i].customer_id|escape:"html"}" data-customer-name="{$results[i].customer_name|escape:"html"}" data-contact-id="{$results[i].contacts[y].contact_id|escape:"html"}" data-last-name="{$results[i].contacts[y].last_name|escape:"html"}" data-first-name="{$results[i].contacts[y].first_name|escape:"html"}" data-email="{$results[i].contacts[y].email|escape:"html"}" data-phone="{$results[i].contacts[y].phone|escape:"html"}">{$results[i].contacts[y].first_name} {$results[i].contacts[y].last_name} - {$results[i].contacts[y].email}</a></li>
+      <li><a title="select this contact" class="link" href="#" data-evdp-action="select-contact" data-customer-id="{$results[i].customer_id|escape:"html"}" data-customer-name="{$results[i].customer_name|escape:"html"}" data-contact-id="{$results[i].contacts[y].contact_id|escape:"html"}" data-last-name="{$results[i].contacts[y].last_name|escape:"html"}" data-first-name="{$results[i].contacts[y].first_name|escape:"html"}" data-email="{$results[i].contacts[y].email|escape:"html"}" data-phone="{$results[i].contacts[y].phone|escape:"html"}">{$results[i].contacts[y].first_name|escape:"html"} {$results[i].contacts[y].last_name|escape:"html"} - {$results[i].contacts[y].email|escape:"html"}</a></li>
       {/section}
       </ul>
     </td>

@@ -40,12 +40,12 @@ if (!defined('DP_BASE_DIR')) {
 		$start = new CDate($row['contract_start_date']);
 		$end = new CDate($row['contract_finish_date']);
 		$html = '<tr>';
-		$html .= '<td class="hilite">'.$row['company_name'].'</td>';
+		$html .= '<td class="hilite">'.dPhtml($row['company_name']).'</td>';
 		$html .= '<td class="hilite">'.$start->format($df).'</td>';
 		$html .= '<td class="hilite">'.$end->format($df).'</td>';
-		$html .= '<td class="hilite">'.$row['support_level_desc'].'</td>';
-		$html .= '<td class="hilite">'.$row['support_minresponse_hrs'].' hr(s)</td>';
-		$html .= '<td class="hilite">'.$row['support_maxresponse_hrs'].' hr(s)</td>';
+		$html .= '<td class="hilite">'.dPhtml($row['support_level_desc']).'</td>';
+		$html .= '<td class="hilite">'.dPhtml($row['support_minresponse_hrs']).' hr(s)</td>';
+		$html .= '<td class="hilite">'.dPhtml($row['support_maxresponse_hrs']).' hr(s)</td>';
 		$html .= '<td class="hilite"><input class="button" type="button" value="';
 		$html .= $AppUI->_('edit');
 		$html .= '"' . dPaction(null, array(), null, array('href' => '?m=eventum&a=addedit&company_id=' . (int)$row['company_id'])) . ' />';
