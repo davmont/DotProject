@@ -595,7 +595,7 @@ var working_days = new Array(<?php echo dPgetConfig( 'cal_working_days' );?>);
 var cal_day_start = <?php echo intval(dPgetConfig( 'cal_day_start' ));?>;
 var cal_day_end = <?php echo intval(dPgetConfig( 'cal_day_end' ));?>;
 var daily_working_hours = <?php echo intval(dPgetConfig('daily_working_hours')); ?>;
-var oldProj = "<?php echo $obj->project_name.':';?>";
+var oldProj = <?php echo dPjs($obj->project_name.':');?>;
 </script>
 
 
@@ -617,7 +617,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
            	?>
             	<?php
             		echo '<font color="' . bestColor( $obj->project_color_identifier ) . '"><strong>'
-            			. $AppUI->_('Project') . ': ' . $obj->project_name .'<strong></font>';
+            			. $AppUI->_('Project') . ': ' . dPhtml($obj->project_name) .'<strong></font>';
             	?>
            	<?php
                   echo '</a>'

@@ -306,7 +306,7 @@ function showtask_pd( &$a, $level=0, $is_opened = true, $today_view = false) {
                         $s .= $assigned_users[0]['contact_first_name'] . ' ' . $assigned_users[0]['contact_last_name'] .' (' . $assigned_users[0]['perc_assignment'] .'%)</a>';
                         if($a['assignee_count']>1){
                         $id = $a['task_id'];
-                        $s .= " <a href=\"javascript: void(0);\"  onClick=\"toggle_users('users_$id');\" title=\"" . join ( ', ', $a_u_tmp_array ) ."\">(+". ($a['assignee_count']-1) .")</a>";
+                        $s .= " <a href=\"javascript: void(0);\"  onClick=\"toggle_users('users_$id');\" title=\"" . dPhtml(join ( ', ', $a_u_tmp_array )) ."\">(+". ($a['assignee_count']-1) .")</a>";
 
                         $s .= '<span style="display: none" id="users_' . $id . '">';
 
