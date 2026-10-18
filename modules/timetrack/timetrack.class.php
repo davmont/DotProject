@@ -22,7 +22,7 @@ class CTimeSheet {
 	var $tt_approve_note = NULL;
 	var $tt_approve_note_date = NULL;
 
-	function CTimeSheet() {
+	function __construct() {
 		// empty constructor
 	}
 
@@ -102,7 +102,7 @@ class CTimeData {
 	var $tt_data_change_date = NULL;
 	var $tt_data_note = NULL;
 
-	function CTimeData() {
+	function __construct() {
 		// empty constructor
 	}
 

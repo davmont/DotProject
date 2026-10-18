@@ -22,7 +22,7 @@ class CCommunication extends CDpObject {
     var $communication_date = NULL;
     var $communication_responsible_authorization = NULL;
 
-    function CCommunication() {
+    function __construct() {
 
         $this->CDpObject('communication', 'communication_id');
     }

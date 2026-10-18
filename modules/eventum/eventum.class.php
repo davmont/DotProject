@@ -24,7 +24,7 @@ class CEventumConfig
 	var $_tbl = 'eventum_integration_config';
 	var $_db;
 
-	function CEventumConfig()
+	function __construct()
 	{
 		$q = new DBQuery;
 		$q->addTable($this->_tbl);
@@ -219,7 +219,7 @@ class CEventumContract extends CDpObject
 	var $contract_start_date;
 	var $contract_finish_date;
 
-	function CEventumContract($company_id = NULL)
+	function __construct($company_id = NULL)
 	{
 		$this->CDpObject('companies_contracts', 'company_id');
 		if (isset($company_id))
@@ -259,7 +259,7 @@ class CEventumSupportLevel extends CDpObject
 	var $support_minresponse_hrs = NULL;
 	var $support_maxresponse_hrs = NULL;
 
-	function CEventumSupportLevel()
+	function __construct()
 	{
 		$this->CDpObject('companies_support_levels', 'support_level_id');
 	}

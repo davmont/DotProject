@@ -28,7 +28,7 @@ class CGroup extends CDpObject {
 /** @var string */
 	var $group_company = NULL;
 
-	function CGroup() {
+	function __construct() {
 		$this->CDpObject( 'groups', 'group_id' );
 	}
 

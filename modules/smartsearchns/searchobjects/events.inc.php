@@ -17,7 +17,7 @@ class events extends smartsearchns {
 	var $search_fields = array ("event_title","event_description","event_start_date","event_end_date");
 	var $display_fields = array ("event_title","event_description","event_start_date","event_end_date");
 
-	function events (){
+	function __construct (){
 	      global $AppUI;
 	      $this->table_extra = '(event_private = 0 or event_owner = '.$AppUI->user_id.')';	
 	}

@@ -378,7 +378,7 @@ class CTaskLog extends CDpObject {
   var $task_log_date = NULL;
   var $task_log_costcode = NULL;
 
-  function CTaskLog() {
+  function __construct() {
     $this->CDpObject( 'task_log', 'task_log_id' );
   }
 

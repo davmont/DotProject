@@ -94,7 +94,7 @@ class CHelpDeskItem extends CDpObject {
   var $item_updated = NULL;
   var $item_deadline = NULL;
   
-function CHelpDeskItem() {
+function __construct() {
 	$this->CDpObject( 'helpdesk_items', 'item_id' );
 }
 
@@ -835,7 +835,7 @@ class CHDTaskLog extends CDpObject {
   var $task_log_costcode = NULL;
   var $task_log_reference = NULL;	//ANDY added
 
-  function CHDTaskLog() {
+  function __construct() {
     $this->CDpObject( 'task_log', 'task_log_id' );
   }
 

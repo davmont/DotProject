@@ -32,7 +32,7 @@ class CTesting extends CDpObject {
 	var $unittest_actualresult = NULL;
 
 	// the constructor of the CEinstein class, always combined with the table name and the unique key of the table
-	function CTesting() {
+	function __construct() {
 		$this->CDpObject( 'unittest', 'unittest_id' );
 	}
 

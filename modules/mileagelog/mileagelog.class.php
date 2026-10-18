@@ -81,7 +81,7 @@ class CMileageLog {
 	var $mileage_log_od_end = NULL;
 	var $mileage_log_miles = NULL;
 	
-	function CMileageLog () {
+	function __construct () {
 		// empty constructor
 	}
 
@@ -144,7 +144,7 @@ class CMileageLogPurpose {
 	var $mileage_log_purpose_relation_type = NULL;
 	var $mileage_log_purpose_note = NULL;
 	
-	function CMileageLogPurpose () {
+	function __construct () {
 		// empty constructor
 	}
 

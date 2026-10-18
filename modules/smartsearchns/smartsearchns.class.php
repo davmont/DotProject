@@ -31,7 +31,7 @@ class smartsearchns  {
 //	$search_options['all_words']==""			any of the words	/default/
 //	$search_options['all_words']=="on"			match all words	 	
 
-	function smartsearchns(){
+	function __construct(){
 		return null;
 	}
 	

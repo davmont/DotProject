@@ -13,7 +13,7 @@ class CDataImport extends CDpObject {
   var $diconfig_quote_char = null;
   var $diconfig_default = null;
 
-  function CDataImport() 
+  function __construct() 
   {
     $this->CDpObject('dataimport_config', 'diconfig_id');
   }
