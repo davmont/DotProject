@@ -145,13 +145,19 @@ if (!$ok) {
 	}
 	echo db_error();
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
+	// Calls window.opener.<callback>(key, val); the callback may be a dotted path.
 	function setClose(key, val){
-		window.opener.<?php echo $callback;?>(key,val);
-		window.close();
-	}
-	function setHeight(){
-		window.opener.<?php echo $callback;?>(key,val);
+		var parts = <?php echo dPjs($callback); ?>.split('.');
+		var owner = window.opener;
+		for (var i = 0; owner && i < parts.length - 1; i++) {
+			owner = owner[parts[i]];
+		}
+		var name = parts[parts.length - 1];
+		if (!owner || typeof owner[name] !== 'function') {
+			throw new Error('No callback function in the opener window');
+		}
+		owner[name].call(owner, key, val);
 		window.close();
 	}
 </script>
@@ -163,14 +169,14 @@ if (!$ok) {
 	if (count( $list ) > 1) {
 		echo $AppUI->_( 'Select' ).' '.$AppUI->_( $title ).':<br />';
 		foreach ($list as $key => $val) {
-			echo "<a href=\"#\" onclick=\"setClose(".dPjsAttr((string)$key).",".dPjsAttr($val)."); return false;\">".dPhtml($val)."</a><br>\n";
+			echo '<a href="#"' . dPaction('setClose', array((string)$key, (string)$val)) . '>' . dPhtml($val) . "</a><br>\n";
 		}
 ?>
 	</td>
 </tr>
 <tr>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_( 'cancel' );?>" onclick="window.close()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_( 'cancel' );?>"<?php echo dPaction('window.close'); ?> />
 <?php
 	} else {
 		echo $AppUI->_( "no$table" );

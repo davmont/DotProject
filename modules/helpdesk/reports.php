@@ -63,7 +63,7 @@ $q->clear();
 
 if (! $suppressHeaders) {
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
                                                                                 
 function changeIt(obj) {
         var f=document.changeMe;
@@ -119,11 +119,11 @@ if (!isset($display_company_name)) {
 <table>
 <tr>
 <td><?php echo $AppUI->_('Companies') . ':';?></td>
-<td><?php echo arraySelect( $company_list, 'company_id', 'size="1" class="text" onchange="changeIt(this);"', $company_id, false );?></td>
+<td><?php echo arraySelect( $company_list, 'company_id', 'size="1" class="text"' . dPaction('changeIt', array('$this')), $company_id, false );?></td>
 </tr>
 <tr>
 <td><?php echo $AppUI->_('Projects') . ':';?></td>
-<td><?php echo arraySelect( $project_list, 'project_id', 'size="1" class="text" onchange="changeIt(this);"', $project_id, false );?></td>
+<td><?php echo arraySelect( $project_list, 'project_id', 'size="1" class="text"' . dPaction('changeIt', array('$this')), $project_id, false );?></td>
 </tr>
 </form>
 

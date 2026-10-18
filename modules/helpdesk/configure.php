@@ -378,7 +378,7 @@ if (!$HELPDESK_CONFIG['notity_email_address']['value']) {
 }
 
 ?>
-<script language = 'javascript' type='text/javascript'>
+<script language = 'javascript' type='text/javascript' nonce="<?php echo dPcspNonce(); ?>">
   function enableWatcherList(show){
       var useDefWatcher=document.getElementById('default_watcher');
       var WatcherList=document.getElementById('default_watcher_list[]');
@@ -452,7 +452,7 @@ foreach ($config_options as $key=>$value){
                                     /*if($v) $useDefWatcher=1;
                                     else $useDefWatcher=0;*/
                                ?> 
-                        <?php echo (($value['value'] == $v)?"checked":""); ?> <?php echo $value['events']; ?> onClick=enableWatcherList(<?php echo $v; ?>)> <?php echo $n;?></label> 
+                        <?php echo (($value['value'] == $v)?"checked":""); ?> <?php echo $value['events']; ?><?php echo dPaction('enableWatcherList', array((int)$v)); ?>> <?php echo $n;?></label> 
             <?php }
             else {?>
                 <label><input type="radio" name="<?php echo $key; ?>" id="<?php echo $key; ?>" value=<?php echo $v; ?> <?php echo (($value['value'] == $v)?"checked":""); ?> <?php echo $value['events']; ?>> <?php echo $n;?></label>

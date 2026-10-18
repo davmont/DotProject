@@ -872,7 +872,7 @@ function issue_list_data($user_id = false) {
 	$q->clear();
 	
 	//display the select list
-	$buffer = '<select name="department" onChange="document.pickCompany.submit()" class="text">';
+	$buffer = '<select name="department"' . dPaction(null, array(), null, array('submit' => 'pickCompany')) . ' class="text">';
 	$buffer .= ('<option value="company_0" style="font-weight:bold;">' . $AppUI->_('All') 
 	            . '</option>'."\n");
 	foreach ($rows as $row) {

@@ -57,7 +57,7 @@ $titleBlock = new CTitleBlock( 'Issue Management', 'helpdesk.png', $m, 'ID_HELP_
 issue_list_data();
 $titleBlock->addCell($AppUI->_('Company') . ':');
 $titleBlock->addCell(arraySelect($filters2, 'f2', 
-                                 'size=1 class=text onChange="document.companyFilter.submit();"', 
+                                 'size=1 class=text' . dPaction(null, array(), null, array('submit' => '')), 
                                  $company_id, false), '', 
                      '<form action="?m=helpdesk" method="post" name="companyFilter">', '</form>');
 

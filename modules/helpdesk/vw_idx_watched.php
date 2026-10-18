@@ -20,7 +20,7 @@ if (!defined('DP_BASE_DIR')) {
   $rows = $q->loadList();
 
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function changeList() {
 	document.filterFrm.submit();
 }
