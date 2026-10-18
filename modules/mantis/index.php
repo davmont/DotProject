@@ -74,7 +74,7 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 	$titleBlock->show();
 
 	// get project_id if any
-	$project_id = ( empty($_REQUEST['project_id']) ) ? 0 : $_REQUEST['project_id'];
+	$project_id = ( empty($_REQUEST['project_id']) ) ? 0 : (int)$_REQUEST['project_id'];
 
 	// get username, password (a hash value only) and email of the currently browsing user
 	$sql = new DBQuery();
@@ -93,7 +93,7 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 	$sql -> addQuery('project_name, project_id');
 
 	if ( $project_id != 0 ){
-          $sql -> addWhere('project_id='. (int) mysql_real_escape_string($project_id));
+          $sql -> addWhere('project_id='. (int)$project_id);
 	}
 	$res = $sql -> exec();
 	while ( $row = $sql ->fetchRow() ) {
@@ -303,16 +303,16 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 					<tbody>
 						<tr>
 							<td align="right" valign="top"><a href="<?php echo 'http://'. $cnf['mantishost'].'/'.$cnf['mantisuri'] .'view.php?id='. (int) $bugid; ?>" target="_blank" ><?php echo $bugid; ?></a></td>							
-							<td align="left" valign="top"><?php echo $bugprojname; ?></td>
-							<td align="left" valign="top"><?php echo $buguser; ?></td>
-							<td align="left" valign="top"><?php echo $bugsev; ?>
-							<td align="left" valign="top"><?php echo $bugpri; ?>
-							<td align="left" style="background-color:<?php echo $status_color; ?>" valign="top"><strong><b><?php echo $bugstat ?></b></strong></td>
-							<td align="left" valign="top"><?php echo $bugrep; ?>							
-							<td align="left" valign="top"><?php echo $bugres; ?>
+							<td align="left" valign="top"><?php echo dPhtml($bugprojname); ?></td>
+							<td align="left" valign="top"><?php echo dPhtml($buguser); ?></td>
+							<td align="left" valign="top"><?php echo dPhtml($bugsev); ?>
+							<td align="left" valign="top"><?php echo dPhtml($bugpri); ?>
+							<td align="left" style="background-color:<?php echo $status_color; ?>" valign="top"><strong><b><?php echo dPhtml($bugstat); ?></b></strong></td>
+							<td align="left" valign="top"><?php echo dPhtml($bugrep); ?>							
+							<td align="left" valign="top"><?php echo dPhtml($bugres); ?>
 							<?php if( $bool ) { ?>
 								<td align="center" valign="top">
-									<input type="hidden" name="bugstatus[]" value="<?php echo $bugstat; ?>" />
+									<input type="hidden" name="bugstatus[]" value="<?php echo dPhtml($bugstat); ?>" />
 									<input type="checkbox" name="bugs[]" value="<?php echo $bugid ?>"<?php echo dPaction('toggle_chckBoxes', array('$this')); ?>>
 								</td>
 							<?php } ?>
