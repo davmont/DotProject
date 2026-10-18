@@ -45,7 +45,7 @@ $q = new DBQuery();
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
 <tr><td colspan="13"><?php
 			echo '<form name="pickOwner" action="?m=opportunities&tab='.$tab.'" method="POST">';
-			echo $AppUI->_('Show Opportunities for').' : '.arraySelect($pm,'show_owner_id','size=1 class=text onChange="document.pickOwner.submit();"', $show_owner_id ) ;
+			echo $AppUI->_('Show Opportunities for').' : '.arraySelect($pm,'show_owner_id','size=1 class=text' . dPaction(null, array(), null, array('submit' => '')), $show_owner_id ) ;
 			echo '</form>';
 ?></td></tr>
 
@@ -105,9 +105,7 @@ foreach ($opps as $row) {		//parse the array of opportunities quotes
 	<?php
 
 			echo '<a href="?m=opportunities&a=addedit&show_owner_id='.$show_owner_id.'&opportunity_id='.$row['opportunity_id'].'"' .
-				'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes(dPhtml($row['opportunity_desc']))) 
-		                        . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
-		       . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"';
+				dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($row['opportunity_desc'])) . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 'mouseover mouseout', array('call-mouseout' => 'nd'));
 				echo '>'.dPFormSafe( $row['opportunity_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 
 

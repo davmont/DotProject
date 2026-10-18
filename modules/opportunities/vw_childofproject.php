@@ -189,7 +189,7 @@ if ($save=="1") {
 </form>
 <form name="pickUser" action="./index.php?m=opportunities&a=vw_childofproject&show_owner_id=<?php echo $show_owner_id; ?>&save=0&opportunity_id=<?php echo $opportunity_id; ?>" method="POST" name="frmpickUser">
 <?php 	echo $AppUI->_('Show Projects of ').':';
-		echo arraySelect( $users, 'showuser', 'size=1 onchange="document.pickUser.submit();"', $showuser); ?>
+		echo arraySelect( $users, 'showuser', 'size=1' . dPaction(null, array(), null, array('submit' => '')), $showuser); ?>
 </form>
 <!--   Main Table -->
 <form action="./index.php?m=opportunities&a=vw_childofproject&show_owner_id=<?php echo $show_owner_id; ?>&save=1&opportunity_id=<?php echo $opportunity_id; ?>" method="POST" name="frmEditChilds">
@@ -226,7 +226,7 @@ if ($save=="1") {
 		<tr>
 			<td border="0">
 				<div align="center">
-					<input  class="button" type="button" onclick="document.frmCancel.submit();" value="<?php echo $AppUI->_(' Cancel '); ?>">
+					<input  class="button" type="button"<?php echo dPaction(null, array(), null, array('submit' => 'frmCancel')); ?> value="<?php echo $AppUI->_(' Cancel '); ?>">
 				</div>
 			</td>
 		<td colspan="7" >&nbsp;</td>
@@ -267,9 +267,7 @@ if ($save=="1") {
 					//echo '<td>'.$p['project_name'].'</td>';		// Show Project Name
 
 					echo '<td><a href="?m=projects&a=view&project_id='.$p['project_id'].'"'
-					   . 'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes(dPhtml($p['project_description']))) 
-					   . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
-					   . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"'
+					   . dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($p['project_description'])) . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 'mouseover mouseout', array('call-mouseout' => 'nd'))
 					   . '>'.dPFormSafe( $p['project_name'] ).'</a></td>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 
 					echo ($p['opportunity_project_description']) ? 	//Description of relation available ??
@@ -295,7 +293,7 @@ if ($save=="1") {
 		<td colspan="7" >&nbsp;</td>
 			<td border="0">
 				<div align="center">
-					<input  class="button" type="button" onclick="document.frmCancel.submit();" value="<?php echo $AppUI->_(' Cancel '); ?>">
+					<input  class="button" type="button"<?php echo dPaction(null, array(), null, array('submit' => 'frmCancel')); ?> value="<?php echo $AppUI->_(' Cancel '); ?>">
 				</div>
 			</td>
 		</tr>

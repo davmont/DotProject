@@ -79,9 +79,7 @@ if ($project_id) {
 							//Opportunity with description
 								echo '<td>';
 									echo '<a href="?m=opportunities&a=addedit&opportunity_id='.$p['opportunity_id'].'"'
-									   . 'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes(dPhtml($p['opportunity_desc']))) 
-					                   . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
-									   . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"'
+									   . dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($p['opportunity_desc'])) . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 'mouseover mouseout', array('call-mouseout' => 'nd'))
 									   . '>'.dPFormSafe( $p['opportunity_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 								echo '</td>';				
 

@@ -169,7 +169,7 @@ $titleBlock->show();
 	<input type="hidden" name="opportunity_rationale" 	value="<?php echo dPformSafe($obj->opportunity_rationale); ?>" >
 	<input type="hidden" name="opportunity_background" 	value="<?php echo dPformSafe($obj->opportunity_background); ?>" >
 </form>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	var error=0;
 	var answer=false;	
 
@@ -201,7 +201,7 @@ $titleBlock->show();
 	}
 
 	function delIt() {
-		if (confirm( "<?php echo $AppUI->_('Really delete this object?');?>" )) {	// notice that we prepare for translation here
+		if (confirm( <?php echo dPjs($AppUI->_('Really delete this object?', UI_OUTPUT_RAW)); ?> )) {	// notice that we prepare for translation here
 			var f = document.editFrm;
 			f.del.value='1';
 			f.submit();
@@ -209,7 +209,7 @@ $titleBlock->show();
 	}
 
 	function IsNumeric() {
-		if (isNaN(editFrm.opportunity_precost.value)) {
+		if (isNaN(document.editFrm.opportunity_precost.value)) {
 			document.editFrm.opportunity_precost.select();
 			alert('Must be a Number');
 		}
@@ -260,10 +260,10 @@ $titleBlock->show();
 	<input type="hidden" name="opportunity_id" value="<?php echo $opportunity_id;?>" />
 	<tr>
 		<td>
-			<input class="button" type="button" name="canceltop" value="<?php echo $AppUI->_('cancel');?>" onClick="javascript:if(confirm('Are you sure you want to cancel.')){location.href = './index.php?m=opportunities&show_owner_id=<?php echo $show_owner_id; ?>';}" />
+			<input class="button" type="button" name="canceltop" value="<?php echo $AppUI->_('cancel');?>"<?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => './index.php?m=opportunities&show_owner_id=' . (int)$show_owner_id)); ?> />
 		</td>
 		<td align="right">
-			<input class="button" type="button" name="btnFuseActiontop" value="<?php echo $AppUI->_('submit');?>" onClick="javascript:submitIt();"/>
+			<input class="button" type="button" name="btnFuseActiontop" value="<?php echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> />
 		</td>
 	</tr>
 <tr>
@@ -282,7 +282,7 @@ $titleBlock->show();
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Opportunity');?></td>
 			<td width="100%">
-			<input type="text" name="opportunity_name" value="<?php echo dPformSafe($obj->opportunity_name);?>" size="60" maxlength="60" onBlur="setShort();" class="text" />
+			<input type="text" name="opportunity_name" value="<?php echo dPformSafe($obj->opportunity_name);?>" size="60" maxlength="60" class="text" />
 			</td>
 		</tr>
 		<tr>
@@ -405,44 +405,32 @@ $titleBlock->show();
 		<tr><td>&nbsp;</td><td><table><tr>
 		<?php
 			include '6Vexplanation.php';
-			echo '<td width="100%" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['strategy'])) 
-	                        . '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-				. $AppUI->_('Description') . '\', CENTER, WIDTH, 400);" onmouseout="nd();">';			
+			echo '<td width="100%" nowrap="nowrap"' . dPaction('overlib', array('<p>' . str_replace(array("\r\n"), '<br>', $explanation['strategy']) . '</p>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7, 8, 400), 'mouseover mouseout', array('call-mouseout' => 'nd')) . '>';			
 				echo $AppUI->_('Strategy');
 				echo arraySelect( $points, 'opportunity_strategy', 'class="text" size="1"', array_search($obj->opportunity_strategy, $points) );
 			echo '</td>';
 			
-			echo '<td width="100%" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['sholders'])) 
-	                        . '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-				. $AppUI->_('Description') . '\', CENTER, WIDTH, 400);" onmouseout="nd();">';
+			echo '<td width="100%" nowrap="nowrap"' . dPaction('overlib', array('<p>' . str_replace(array("\r\n"), '<br>', $explanation['sholders']) . '</p>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7, 8, 400), 'mouseover mouseout', array('call-mouseout' => 'nd')) . '>';
 				echo $AppUI->_('Sholders');
 				echo arraySelect( $points, 'opportunity_sholders', 'class="text" size="1"', array_search($obj->opportunity_sholders, $points) );
 			echo '</td>';
 			
-			echo '<td width="100%" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['risks'])) 
-	                        . '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-				. $AppUI->_('Description') . '\', CENTER, WIDTH, 350);" onmouseout="nd();">';
+			echo '<td width="100%" nowrap="nowrap"' . dPaction('overlib', array('<p>' . str_replace(array("\r\n"), '<br>', $explanation['risks']) . '</p>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7, 8, 350), 'mouseover mouseout', array('call-mouseout' => 'nd')) . '>';
 				echo $AppUI->_('Risks');
 				echo arraySelect( $points, 'opportunity_risks', 'class="text" size="1"', array_search($obj->opportunity_risks, $points) );			
 			echo '</td>';
 
-			echo '<td width="100%" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['sizing'])) 
-	                        . '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-				. $AppUI->_('Description') . '\', LEFT, WIDTH, 350);" onmouseout="nd();">';
+			echo '<td width="100%" nowrap="nowrap"' . dPaction('overlib', array('<p>' . str_replace(array("\r\n"), '<br>', $explanation['sizing']) . '</p>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 5, 8, 350), 'mouseover mouseout', array('call-mouseout' => 'nd')) . '>';
 				echo $AppUI->_('Size');
 				echo arraySelect( $points, 'opportunity_sizing', 'class="text" size="1"', array_search($obj->opportunity_sizing, $points) );
 			echo '</td>';
 			
-			echo '<td width="100%" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['horizontality'])) 
-	                        . '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-				. $AppUI->_('Description') . '\', LEFT, WIDTH, 350);" onmouseout="nd();">';
+			echo '<td width="100%" nowrap="nowrap"' . dPaction('overlib', array('<p>' . str_replace(array("\r\n"), '<br>', $explanation['horizontality']) . '</p>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 5, 8, 350), 'mouseover mouseout', array('call-mouseout' => 'nd')) . '>';
 				echo $AppUI->_('Horiz');
 				echo arraySelect( $points, 'opportunity_horizontality', 'class="text" size="1"', array_search($obj->opportunity_horizontality, $points) );
 			echo '</td>';
 			
-			echo '<td width="100%" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['costbenefit'])) 
-	                        . '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-				. $AppUI->_('Description') . '\', LEFT, WIDTH, 350);" onmouseout="nd();">';
+			echo '<td width="100%" nowrap="nowrap"' . dPaction('overlib', array('<p>' . str_replace(array("\r\n"), '<br>', $explanation['costbenefit']) . '</p>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 5, 8, 350), 'mouseover mouseout', array('call-mouseout' => 'nd')) . '>';
 				echo $AppUI->_('Benefit/Cost');
 				echo arraySelect( $points, 'opportunity_costbenefit', 'class="text" size="1"', array_search($obj->opportunity_costbenefit, $points) );
 			echo '</td>';
@@ -474,7 +462,7 @@ $titleBlock->show();
 			echo arraySelect( $yesno, 'opportunity_preyn', 'class="text" size="1"', $obj->opportunity_preyn );
 			echo $AppUI->_('Engaged cost');
 			?>
-			<input type="text" name="opportunity_precost" value="<?php echo dPformSafe($obj->opportunity_precost);?>" size="30" maxlength="30" onBlur="IsNumeric();" class="text" />
+			<input type="text" name="opportunity_precost" value="<?php echo dPformSafe($obj->opportunity_precost);?>" size="30" maxlength="30"<?php echo dPaction('IsNumeric', array(), 'blur'); ?> class="text" />
 			</td>
 		</tr>
 		<tr>
@@ -517,7 +505,7 @@ $titleBlock->show();
 					$sql = "SELECT * FROM opportunities_projects WHERE opportunity_project_opportunities = ".$opportunity_id;
 					$aRelated = mysql_query( $sql );
 				$i = 0;
-				echo '<select type="TEXT" name="EmptyName" size="7" style="width:360px; color: #A0A0A0; " MULTIPLE="MULTIPLE" onclick="javascript:CheckForInputRelProjs();">';
+				echo '<select type="TEXT" name="EmptyName" size="7" style="width:360px; color: #A0A0A0; " MULTIPLE="MULTIPLE"' . dPaction('CheckForInputRelProjs', array(), 'click') . '>';
 					while ( $r = mysql_fetch_assoc( $aRelated )) {
 						echo '<option value="'.(int)$r['opportunity_project_projects'].'">'.dPhtml(@$projects[$r['opportunity_project_projects']]).'</option>';
 						$i++;
@@ -564,15 +552,15 @@ $titleBlock->show();
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Creation Date');?></td>
 			<td width="100%">
 			<?php $CreationDate= ($opportunity_id=="0") ? new CDate(date('Ymd')) : new CDate($obj->opportunity_created); ?>
-			<input type="hidden" name="opportunity_created" value="<?php echo $CreationDate->format( FMT_TIMESTAMP_DATE );?>" size="25" maxlength="25" onBlur="setShort();" class="text" />
-			<input style="text-align:center;" type="text" disabled="disabled" name="opportunity_created_only_to_show_here" value="<?php echo $CreationDate->format( $df );?>" size="25" maxlength="25" onBlur="setShort();" class="text" />
+			<input type="hidden" name="opportunity_created" value="<?php echo $CreationDate->format( FMT_TIMESTAMP_DATE );?>" size="25" maxlength="25" class="text" />
+			<input style="text-align:center;" type="text" disabled="disabled" name="opportunity_created_only_to_show_here" value="<?php echo $CreationDate->format( $df );?>" size="25" maxlength="25" class="text" />
 			<?php echo $AppUI->_('Last Modified');
 				//will be updated via the mysql -> table_field is "ON UPDATE CURRENT TIMESTAMP"
 			$lastUpdate = new CDate($obj->opportunity_lastupd);
 			echo ($obj->opportunity_lastupd=="") ?
-				'<input style="text-align:center;" type="text" disabled="disabled" name="opportunity_lastupd" value="'.$CreationDate->format( $df ).'" size="25" maxlength="25" onBlur="setShort();" class="text" />'
+				'<input style="text-align:center;" type="text" disabled="disabled" name="opportunity_lastupd" value="'.$CreationDate->format( $df ).'" size="25" maxlength="25" class="text" />'
 					:
-				'<input style="text-align:center;" type="text" disabled="disabled" name="opportunity_lastupd" value="'.$lastUpdate->format( $df ).", ".$lastUpdate->format( $tf ).'" size="25" maxlength="25" onBlur="setShort();" class="text" />';
+				'<input style="text-align:center;" type="text" disabled="disabled" name="opportunity_lastupd" value="'.$lastUpdate->format( $df ).", ".$lastUpdate->format( $tf ).'" size="25" maxlength="25" class="text" />';
 			?>	
 			</td>
 		</tr>
@@ -591,10 +579,10 @@ $titleBlock->show();
 </tr>
 <tr>
 	<td>
-		<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('submit');?>" onClick="submitIt();" />
+		<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> />
 	</td>
 	<td align="right">
-		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" onClick="javascript:if(confirm('Are you sure you want to cancel.')){location.href = './index.php?m=opportunities&show_owner_id=<?php echo $show_owner_id; ?>';}" />
+		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>"<?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => './index.php?m=opportunities&show_owner_id=' . (int)$show_owner_id)); ?> />
 	</td>
 </tr>
 
@@ -707,18 +695,14 @@ if ($opportunity_id) {
 				// the company names with link and description:
 					echo '<td>';
 						echo '<a href="?m=companies&a=view&company_id='.$p['company_id'].'"'
-						   . 'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes(dPhtml($p['company_description']))) 
-		                   . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
-						   . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"'
+						   . dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($p['company_description'])) . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 'mouseover mouseout', array('call-mouseout' => 'nd'))
 						   . '>'.dPFormSafe( $p['company_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 					echo '</td>';				
 
 				// the projects with link and description			
 					echo '<td>';
 						echo '<a href="?m=projects&a=view&project_id='.$p['project_id'].'"'
-						   . 'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes(dPhtml($p['project_description']))) 
-		                   . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
-						   . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"'
+						   . dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($p['project_description'])) . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 'mouseover mouseout', array('call-mouseout' => 'nd'))
 						   . '>'.dPFormSafe( $p['project_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 					echo '</td>';
 				// The description of the relation ( between Proj and Opps ) 
