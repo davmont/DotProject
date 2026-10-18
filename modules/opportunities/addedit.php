@@ -519,7 +519,7 @@ $titleBlock->show();
 				$i = 0;
 				echo '<select type="TEXT" name="EmptyName" size="7" style="width:360px; color: #A0A0A0; " MULTIPLE="MULTIPLE" onclick="javascript:CheckForInputRelProjs();">';
 					while ( $r = mysql_fetch_assoc( $aRelated )) {
-						echo '<option value="'.$r['opportunity_project_projects'].'">'.$projects[$r['opportunity_project_projects']].'</option>';
+						echo '<option value="'.(int)$r['opportunity_project_projects'].'">'.dPhtml(@$projects[$r['opportunity_project_projects']]).'</option>';
 						$i++;
 					}
 					if ( $i <= 0 ) echo '<option value="s">click to add</option>';
@@ -707,7 +707,7 @@ if ($opportunity_id) {
 				// the company names with link and description:
 					echo '<td>';
 						echo '<a href="?m=companies&a=view&company_id='.$p['company_id'].'"'
-						   . 'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes($p['company_description'])) 
+						   . 'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes(dPhtml($p['company_description']))) 
 		                   . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
 						   . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"'
 						   . '>'.dPFormSafe( $p['company_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
@@ -716,7 +716,7 @@ if ($opportunity_id) {
 				// the projects with link and description			
 					echo '<td>';
 						echo '<a href="?m=projects&a=view&project_id='.$p['project_id'].'"'
-						   . 'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes($p['project_description'])) 
+						   . 'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes(dPhtml($p['project_description']))) 
 		                   . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
 						   . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"'
 						   . '>'.dPFormSafe( $p['project_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically

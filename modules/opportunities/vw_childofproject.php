@@ -93,8 +93,9 @@ if ($save=="1") {
 			$Result = db_loadResult( $sql );
 			
 			$tmpName = db_loadResult('SELECT opportunity_name FROM '.dPgetConfig('dbprefix', '').'opportunities WHERE opportunity_id='.$opportunity_id);
-			$txtChange = $AppUI->_("Please note that the status for Opportunity ").'"'.$tmpName.'"'.$AppUI->_(' will be changed to ').' '.$v;
-			echo "<script langauge=\"javascript\">alert(\"".$txtChange."\");</script>";
+			$txtChange = $AppUI->_("Please note that the status for Opportunity ", UI_OUTPUT_RAW).'"'.$tmpName.'"'.$AppUI->_(' will be changed to ', UI_OUTPUT_RAW).' '.$v;
+			// setMsg() escapes the text; the redirect below meant the old alert() never showed.
+			$AppUI->setMsg($txtChange, UI_MSG_OK);
 		}
 		$save="0";
 		$AppUI->redirect('m=opportunities&a=addedit&opportunity_id='.$opportunity_id);
@@ -266,7 +267,7 @@ if ($save=="1") {
 					//echo '<td>'.$p['project_name'].'</td>';		// Show Project Name
 
 					echo '<td><a href="?m=projects&a=view&project_id='.$p['project_id'].'"'
-					   . 'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes($p['project_description'])) 
+					   . 'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes(dPhtml($p['project_description']))) 
 					   . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
 					   . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"'
 					   . '>'.dPFormSafe( $p['project_name'] ).'</a></td>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically

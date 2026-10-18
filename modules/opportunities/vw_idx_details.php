@@ -105,7 +105,7 @@ foreach ($opps as $row) {		//parse the array of opportunities quotes
 	<?php
 
 			echo '<a href="?m=opportunities&a=addedit&show_owner_id='.$show_owner_id.'&opportunity_id='.$row['opportunity_id'].'"' .
-				'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes($row['opportunity_desc'])) 
+				'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes(dPhtml($row['opportunity_desc']))) 
 		                        . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
 		       . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"';
 				echo '>'.dPFormSafe( $row['opportunity_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
