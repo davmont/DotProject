@@ -20,7 +20,7 @@ if (!defined('DP_BASE_DIR')) {
 		// Build the javascript for the buttons
 		$html =  '<tr>';
 		$html .= '<td class="hilite">'.$row['company_name'].'</td>';
-		$html .= '<td class="hilite"><input class="button" type="button" value="' . $AppUI->_('new support contract', UI_OUTPUT_RAW) . '" onclick="location.href = \'?m=eventum&a=addedit&company_id='.$row['company_id'].'\';"/></td>';
+		$html .= '<td class="hilite"><input class="button" type="button" value="' . $AppUI->_('new support contract', UI_OUTPUT_RAW) . '"' . dPaction(null, array(), null, array('href' => '?m=eventum&a=addedit&company_id=' . (int)$row['company_id'])) . '/></td>';
 		$html .= '</tr>';
 		echo $html;
 	}

@@ -8,6 +8,7 @@ DISTTAR = $(PACKAGE)_$(VERSION).tar.gz
 DISTZIP = $(PACKAGE)_$(subst .,_,$(VERSION)).zip
 
 EVFILES = customer/dotproject/customer_lookup.php \
+	customer/dotproject/customer.js \
 	customer/dotproject/d_create.php \
 	customer/dotproject/create_customers.php \
 	include/customer/class.dotproject.php \
@@ -18,7 +19,9 @@ EVFILES = customer/dotproject/customer_lookup.php \
 	templates/en/customer/dotproject/customer_lookup.tpl.html
 
 DISTFILES = addedit.php \
+	addedit.js \
 	calendar_tab.day_view.issues.php \
+	configure.js \
 	configure.php \
 	do_eventum_aed.php \
 	do_eventum_supplvl_add.php \

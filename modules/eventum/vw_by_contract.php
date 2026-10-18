@@ -48,8 +48,7 @@ if (!defined('DP_BASE_DIR')) {
 		$html .= '<td class="hilite">'.$row['support_maxresponse_hrs'].' hr(s)</td>';
 		$html .= '<td class="hilite"><input class="button" type="button" value="';
 		$html .= $AppUI->_('edit');
-		$html .= '" onClick="location.href = \'?m=eventum&a=addedit&company_id=';
-		$html .= $row['company_id'].'\'" />';
+		$html .= '"' . dPaction(null, array(), null, array('href' => '?m=eventum&a=addedit&company_id=' . (int)$row['company_id'])) . ' />';
 		$html .= '<input class="button" type="button" value="';
 		$html .= $AppUI->_('delete');
 		$html .= '" /></td>';

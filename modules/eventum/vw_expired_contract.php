@@ -26,7 +26,7 @@ if (!defined('DP_BASE_DIR')) {
 		$html .= '<td class="hilite">'.$dt->format($df).'</td>';
 		$html .= '<td class="hilite"><input class="button" type="button" value="';
 		$html .= $AppUI->_('new support contract');
-		$html .= '" onClick="location = \'index.php?m=eventum&a=addedit&company_id='. $row['company_id'] .'\';" /></td>';
+		$html .= '"' . dPaction(null, array(), null, array('href' => 'index.php?m=eventum&a=addedit&company_id=' . (int)$row['company_id'])) . ' /></td>';
 		$html .= '</tr>';
 		echo $html;
 	}

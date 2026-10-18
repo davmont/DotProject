@@ -1,4 +1,5 @@
 
+<script type="text/javascript" src="{$rel_url}customer/dotproject/customer.js"></script>
 <a name="customer_details" id="customer_details"></a>
 <br />
 <table width="100%" bgcolor="{$cell_color}" border="0" cellspacing="0" cellpadding="1" align="center">
@@ -11,7 +12,7 @@
           </td>
           <td align="right" class="default">
             {if $browser.ie5up or $browser.ns6up or $browser.gecko}
-            [ <a id="customer_info_link" class="link" href="javascript:void(null);" onClick="javascript:toggleVisibility('customer_info');">{get_innerhtml element_name="customer_info"}</a> ]
+            [ <a id="customer_info_link" class="link" href="#" data-evdp-action="toggle" data-element="customer_info">{get_innerhtml element_name="customer_info"}</a> ]
             {/if}
           </td>
         </tr>

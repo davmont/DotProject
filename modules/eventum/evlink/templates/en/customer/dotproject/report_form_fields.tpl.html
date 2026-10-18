@@ -1,55 +1,4 @@
-{literal}
-<script language="JavaScript">
-<!--
-function lookupCustomer()
-{
-    var features = 'width=420,height=400,top=30,left=30,resizable=no,scrollbars=yes,toolbar=no,location=no,menubar=no,status=no';
-{/literal}
-    var popupWin = window.open('customer/{$customer_backend_name}/customer_lookup.php', '_customerLookup', features);
-{literal}
-    popupWin.focus();
-}
-function removeEmailsFieldOptions()
-{
-    var f = getForm('report_form');
-    var field = getFormElement(f, 'contact_extra_emails[]');
-    field.length = 0;
-}
-
-function addOptionToEmailsField(value)
-{
-    var f = getForm('report_form');
-    var field = getFormElement(f, 'contact_extra_emails[]');
-    field.options[field.options.length] = new Option(value, value);
-}
-
-function validateCustomer(f)
-{
-    if (f.customer != null) {
-        if (isWhitespace(f.customer.value)) {
-            errors[errors.length] = new Option('Customer', 'customer');
-        }
-        if (isWhitespace(f.contact.value)) {
-            errors[errors.length] = new Option('Contact', 'contact');
-        }
-    }
-    if (isWhitespace(f.contact_person_lname.value)) {
-        errors[errors.length] = new Option('Contact Person Last Name', 'contact_person_lname');
-    }
-    if (isWhitespace(f.contact_person_fname.value)) {
-        errors[errors.length] = new Option('Contact Person First Name', 'contact_person_fname');
-    }
-    if (isWhitespace(f.contact_email.value)) {
-        errors[errors.length] = new Option('Contact Email', 'contact_email');
-    } else {
-        if (!isEmail(f.contact_email.value)) {
-            errors[errors.length] = new Option('Contact Email', 'contact_email');
-        }
-    }
-}
-//-->
-</script>
-{/literal}
+<script type="text/javascript" src="{$rel_url}customer/dotproject/customer.js"></script>
         <tr>
           <td colspan="2" class="default">
             <b>Customer Details</b>
@@ -63,7 +12,7 @@ function validateCustomer(f)
           <td bgcolor="{$light_color}" class="default">
             <b><div id="customer_div">{$customer_name}</div></b>&nbsp;
             {if $current_role > $roles.standard_user}
-            <a class="link" href="javascript:void(null);" onClick="javascript:lookupCustomer();">Lookup Customer</a>
+            <a class="link" href="#" data-evdp-action="lookup" data-backend="{$customer_backend_name|escape:"html"}">Lookup Customer</a>
             {/if}
           </td>
         </tr>
@@ -80,8 +29,8 @@ function validateCustomer(f)
             <b>Add Primary Contact to Notification List? *</b>
           </td>
           <td bgcolor="{$light_color}" class="default">
-            <input type="radio" name="add_primary_contact" value="yes" {if $smarty.post.add_primary_contact != 'no'}checked{/if}> <a id="link" class="link" href="javascript:void(null);" onClick="javascript:checkRadio('report_form', 'add_primary_contact', 0);">Yes</a>&nbsp;&nbsp;
-            <input type="radio" name="add_primary_contact" value="no" {if $smarty.post.add_primary_contact == 'no'}checked{/if}> <a id="link" class="link" href="javascript:void(null);" onClick="javascript:checkRadio('report_form', 'add_primary_contact', 1);">No</a>
+            <input type="radio" name="add_primary_contact" value="yes" {if $smarty.post.add_primary_contact != 'no'}checked{/if}> <a id="link" class="link" href="#" data-evdp-action="radio" data-form="report_form" data-field="add_primary_contact" data-index="0">Yes</a>&nbsp;&nbsp;
+            <input type="radio" name="add_primary_contact" value="no" {if $smarty.post.add_primary_contact == 'no'}checked{/if}> <a id="link" class="link" href="#" data-evdp-action="radio" data-form="report_form" data-field="add_primary_contact" data-index="1">No</a>
           </td>
         </tr>
         <tr>
@@ -89,8 +38,8 @@ function validateCustomer(f)
             <b>Notify Customer About New Issue? *</b>
           </td>
           <td bgcolor="{$light_color}" class="default">
-            <input type="radio" name="notify_customer" value="yes" {if $smarty.post.notify_customer != 'no'}checked{/if}> <a id="link" class="link" href="javascript:void(null);" onClick="javascript:checkRadio('report_form', 'notify_customer', 0);">Yes</a>&nbsp;&nbsp;
-            <input type="radio" name="notify_customer" value="no" {if $smarty.post.notify_customer == 'no'}checked{/if}> <a id="link" class="link" href="javascript:void(null);" onClick="javascript:checkRadio('report_form', 'notify_customer', 1);">No</a>
+            <input type="radio" name="notify_customer" value="yes" {if $smarty.post.notify_customer != 'no'}checked{/if}> <a id="link" class="link" href="#" data-evdp-action="radio" data-form="report_form" data-field="notify_customer" data-index="0">Yes</a>&nbsp;&nbsp;
+            <input type="radio" name="notify_customer" value="no" {if $smarty.post.notify_customer == 'no'}checked{/if}> <a id="link" class="link" href="#" data-evdp-action="radio" data-form="report_form" data-field="notify_customer" data-index="1">No</a>
           </td>
         </tr>
         {else}

@@ -30,28 +30,6 @@ if (!defined('DP_BASE_DIR')) {
 
 	$df = $AppUI->getPref('SHDATEFORMAT');
 ?>
-<script language="javascript">
-  var lastCalField = null;
-
-  function popCalendar(f) 
-  {
-    lastCalField = f;
-    var dval = document.getElementById('contract_' + f.name);
-    window.open('index.php?m=public&a=calendar&dialog=1&callback=setContractDate&date=' + dval.value,
-    'calwin', 'top=250,left=250,width=251,height=220,scollbars=no');
-  }
-
-  function setContractDate(idate, fdate)
-  {
-    if (lastCalField) {
-      lastCalField.value = fdate;
-      var dval = document.getElementById('contract_' + lastCalField.name);
-      dval.value = idate;
-      lastCalField = null;
-    }
-  }
-
-</script>
 <form name="supportContractFrm" method="POST" action="?m=eventum&company_id=<?php echo $company_id; ?>">
 <input type="hidden" name="dosql" value="do_eventum_aed" />
 <table class="std" width="50%">
@@ -65,7 +43,7 @@ if (!defined('DP_BASE_DIR')) {
 	</td><td class="hilite">
 	<input type="text" size="10" id="start_date" name="start_date" disabled="yes" value="<?php 
 	  echo $isNew ? '' : $start_date->format($df); ?>" />
-	<a href="#" onClick="popCalendar(document.supportContractFrm.start_date)">
+	<a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
 	<img src="images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 	</a>
 	<input type="hidden" id="contract_start_date" name="contract_start_date" value="<?php echo $isNew ? '' : $start_date->format(FMT_TIMESTAMP_DATE); ?>" />
@@ -74,7 +52,7 @@ if (!defined('DP_BASE_DIR')) {
 	<?php echo $AppUI->_('Contract Finish'); ?>:
 	</td><td class="hilite">
 	<input type="text" size="10" id="finish_date" name="finish_date" disabled="yes" value="<?php echo $isNew ? '' : $end_date->format($df); ?>" />
-	<a href="#" onClick="popCalendar(document.supportContractFrm.finish_date)">
+	<a href="#"<?php echo dPaction('popCalendar', array('finish_date')); ?>>
 	<img src="images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 	</a>
 	<input type="hidden" id="contract_finish_date" name="contract_finish_date" value="<?php echo $isNew ? '' : $end_date->format(FMT_TIMESTAMP_DATE); ?>" />
@@ -85,14 +63,14 @@ if (!defined('DP_BASE_DIR')) {
 	<?php echo arraySelect($support_levels, 'support_level', 'class="text"', $obj->support_level); ?>
 </td></tr>
 <tr><td colspan="2" align="right">
-	<input class="button" type="button" value="<?php echo $AppUI->_('cancel'); ?>" 
-	  onclick="if(confirm('<?php echo $AppUI->_('eventumCancel', UI_OUTPUT_JS);?>')){location.href='?<?php echo $AppUI->getPlace();?>';}" />
+	<input class="button" type="button" value="<?php echo $AppUI->_('cancel'); ?>"<?php
+	  echo dPaction(null, array(), null, array('confirm' => $AppUI->_('eventumCancel', UI_OUTPUT_RAW), 'href' => '?' . $AppUI->getPlace())); ?> />
 	<input class="button" type="submit" value="<?php echo $AppUI->_('save'); ?>" />
 <?php
 	if (! $company_id) {
 ?>
-	<input class="button" type="button" value="<?php echo $AppUI->_('delete'); ?>"
-	  onclick="if (confirm('<?php echo $AppUI->_('deleteContract', UI_OUTPUT_JS);?>')) { document.supportContractFrm.do_del.value = '1'; document.supportContractFrm.submit(); }" />
+	<input class="button" type="button" value="<?php echo $AppUI->_('delete'); ?>"<?php
+	  echo dPaction('delContract', array(), null, array('confirm' => $AppUI->_('deleteContract', UI_OUTPUT_RAW))); ?> />
 	<input type="hidden" name="do_del" value="" />
 <?php
 	}

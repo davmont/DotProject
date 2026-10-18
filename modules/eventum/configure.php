@@ -75,45 +75,15 @@ require_once $dproot . \'/includes/config.php\';
 	$eventum_directory = $evconfig->getValue("eventum_directory");
 		
 ?>
-	<script>
-
-		function delSupport(supp_id)
-		{
-			var delid = document.getElementById('delete_level_id');
-			delid.value = supp_id;
-			var frm = document.getElementById('eventum_configure');
-			frm.submit();
-		}
-
-		function applyConfig()
-		{
-			var changecfg = document.getElementById('apply_config_changes');
-			changecfg.value = 1;
-			var frm = document.getElementById('eventum_configure');
-			frm.submit();
-		}
-
-		function checkConfigEnabled()
-		{
-			var optiondiv = document.getElementById('eventum_levels');
-			var frm = document.getElementById('eventum_configure');
-			if (frm.eventum_supplvl_enabled.checked) {
-			  optiondiv.style.visibility = "visible";
-			} else {
-			  optiondiv.style.visibility = "hidden";
-			}
-		}
-
-	</script>
 	<form method="POST" id="eventum_configure">
 	<br />
 		<b><?php echo $AppUI->_('Eventum Installation Directory');?>:</b>
 		<input type="text" class="text" name="eventum_directory" size="50" value="<?php echo dPhtml($eventum_directory); ?>"
-		onchange="applyConfig();" />
+		<?php echo dPaction('applyConfig', array(), 'change'); ?> />
 	<br />
 		<b><?php echo $AppUI->_('Enable Customer Support Levels'); ?>:</b>
 		<input type="checkbox" name="eventum_supplvl_enabled" value="1" <?php echo $support_enabled; ?> 
-		  onchange="checkConfigEnabled();"/>
+		 <?php echo dPaction('checkConfigEnabled', array(), 'change'); ?> />
 		<p><?php echo $AppUI->_('eventumEnableMsg'); ?></p>
 	<hr />
 	<input type="hidden" name="dosql" value="do_eventum_supplvl_add" />
@@ -135,7 +105,7 @@ require_once $dproot . \'/includes/config.php\';
 		echo '<tr><td><li>'.dPhtml($row['support_level_desc']).'</li></td>
 			<td>'.dPhtml($row['support_minresponse_hrs']).' hr(s)</td>
 			<td>'.dPhtml($row['support_maxresponse_hrs']).' hr(s)</td>
-			<td><a href="javascript:delSupport('.(int)$row['support_level_id'].')">[' . $AppUI->_('delete', UI_OUTPUT_JS) . ']</a></td></tr>' . "\n";
+			<td><a href="#"' . dPaction('delSupport', array((int)$row['support_level_id'])) . '>[' . $AppUI->_('delete') . ']</a></td></tr>' . "\n";
 	}
 
 	echo '<tr><td><li><input type="text" name="support_level_desc" /></td>
@@ -149,7 +119,7 @@ require_once $dproot . \'/includes/config.php\';
 	</table>
 	</div>
 	<br />
-		<input class="button" type="button" value="<?php echo $AppUI->_('apply changes', UI_OUTPUT_JS); ?>" onClick="applyConfig()" />
+		<input class="button" type="button" value="<?php echo $AppUI->_('apply changes', UI_OUTPUT_JS); ?>" <?php echo dPaction('applyConfig'); ?> />
 	</form>
 <?php
 	} // End of if evDirChanged

@@ -66,8 +66,8 @@ $titleBlock->show();
   <tr>
     <td>
       <input class="button" type="button" name="cancel"
-        value="<?php echo $AppUI->_('cancel');?>"
-	onclick="javascript:if(confirm('Are you sure you want to cancel')){location.href='index.php?m=projects&a=view&project_id=<?php echo $project_id; ?>'}" />
+        value="<?php echo $AppUI->_('cancel');?>"<?php
+	echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel', UI_OUTPUT_RAW), 'href' => 'index.php?m=projects&a=view&project_id=' . (int)$project_id)); ?> />
     </td>
     <td align="right">
       <input class="button" type="submit" name="btnSubmit" value="<?php echo $AppUI->_('submit');?>" />
