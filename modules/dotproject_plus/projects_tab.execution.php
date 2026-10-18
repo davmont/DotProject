@@ -260,7 +260,8 @@ foreach ($tasks_for_ids as $t) {
         $project->load($project_id);
         $company_id = $project->project_company;
         $showFirstActivityCreation = false; //this variable make the controlling to showing of the message to create the first activity
-        $items = $controllerWBSItem->getWBSItems($project_id);
+        // Positional: the leaf check below looks at $items[$i + 1] (getWBSItems() keys by id).
+            $items = array_values($controllerWBSItem->getWBSItems($project_id));
 
         if (count($items) > 0) {
             $wbs_items_order = 0;
