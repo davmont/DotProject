@@ -92,7 +92,7 @@ if($rn > 0) {
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo $AppUI->cfg['base_url'];?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var form = document.changeclient;
 	var msg = '';
@@ -114,6 +114,9 @@ function submitIt() {
 var isCheck = true;
 
 function checkall(form) {
+  if (typeof form === 'string') {
+    form = document.forms[form];
+  }
   for (var i = 0; true; i++){
     if(form.elements[i] == null)
       break;
@@ -131,7 +134,7 @@ function checkall(form) {
 <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Payment Date');?></td>
 <td>
 <input type="text" class="text" name="payment_date" id="date1" value="<?php echo $payment_date->format( '%Y-%m-%d' );?>" />
-<a href="#" onClick="return showCalendar('date1', 'y-mm-dd');">
+<a href="#"<?php echo dPaction('showCalendar', array('date1', 'y-mm-dd')); ?>>
 <img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 </a>
 yyyy-mm-dd
@@ -171,7 +174,7 @@ if($obj->payment_company == null) {
 
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
 <tr><td align="left"><b>Select Invoices:</b></td>
-<td align="right"><a href="#" onClick="checkall(document.changeclient); return false;">Check All</a></td></tr>
+<td align="right"><a href="#"<?php echo dPaction('checkall', array('changeclient')); ?>>Check All</a></td></tr>
 </table>
 
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
@@ -218,7 +221,7 @@ echo $s;
 
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
 <tr>
-	<td align="right"><input type="button" value="<?php echo $AppUI->_('submit');?>" class="button" onClick="submitIt()" /></td>
+	<td align="right"><input type="button" value="<?php echo $AppUI->_('submit');?>" class="button"<?php echo dPaction('submitIt'); ?> /></td>
 </tr>
 </form>
 </table>
