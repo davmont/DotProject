@@ -8,7 +8,7 @@ $config = array();
 $config['mod_name'] = 'SmartSearchNS';
 $config['mod_version'] = '2.0';
 $config['mod_directory'] = 'smartsearchns';
-$config['mod_setup_class'] = 'SSearchNS';
+$config['mod_setup_class'] = 'CSetupSmartSearchNS';
 $config['mod_type'] = 'user';
 $config['mod_ui_name'] = 'SmartSearchNS';
 $config['mod_ui_icon'] = 'kfind.png';
@@ -18,7 +18,7 @@ if (@$a == 'setup') {
 	echo dPshowModuleConfig( $config );
 }
 
-class SSearchNS {   
+class CSetupSmartSearchNS {   
 
 	function install() {
 		return null;
