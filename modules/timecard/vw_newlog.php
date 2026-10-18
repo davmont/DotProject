@@ -91,9 +91,9 @@ $projects = array();
 $companies = array( '0'=>'' );
 while ($row = db_fetch_assoc( $res )) {
 // collect tasks in js format
-	$tasks[] = "[".$row['task_project'].",".$row['task_id'].",'".addslashes($row['task_name'])."']";
+	$tasks[] = "[".(int)$row['task_project'].",".(int)$row['task_id'].",".dPjs($row['task_name'])."]";
 // collect projects in js format
-	$projects[] = "[".$row['project_company'].",".$row['task_project'].",'".addslashes($row['project_name'])."']";
+	$projects[] = "[".(int)$row['project_company'].",".(int)$row['task_project'].",".dPjs($row['project_name'])."]";
 // collect companies in normal format
 	$companies[$row['project_company']] = $row['company_name'];
 };
@@ -101,11 +101,11 @@ while ($row = db_fetch_assoc( $res )) {
 if ($task_found)
 {
 	// need to add the entry for the task itself as that was not found
-	$tasks[$task['task_log_task']] = "[{$task['task_project']}, {$task['task_log_task']}, '{$task['task_name']}']";
+	$tasks[$task['task_log_task']] = "[" . (int)$task['task_project'] . ", " . (int)$task['task_log_task'] . ", " . dPjs($task['task_name']) . "]";
 	// collect projects in js format
-	$projects[$task['task_project']] = "[{$task['project_company']},{$task['task_project']}, '{$task['project_name']}']";
+	$projects[$task['task_project']] = "[" . (int)$task['project_company'] . "," . (int)$task['task_project'] . ", " . dPjs($task['project_name']) . "]";
 	// get the company name
-	$sql = "SELECT company_name FROM companies WHERE company_id = ".$task['project_company'];
+	$sql = "SELECT company_name FROM companies WHERE company_id = ".(int)$task['project_company'];
 	// collect companies in normal format
 	$companies[$task['project_company']] =  db_LoadResult($sql);
 }
