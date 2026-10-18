@@ -24,7 +24,7 @@ $acao = new ControllerAcaoCorretiva();
 
 	
 if (isset($_POST['acao']) &&  $_POST['acao'] == 'delete'){		
-	$acao -> deleteRow($id);	
+	$acao->deleteAcao($id);	
 	}	
 	$AppUI ->redirect('m=monitoringandcontrol&a=addedit_ata&project_id='.$project_id);
 ?>
