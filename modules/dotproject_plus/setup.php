@@ -26,7 +26,7 @@ class CSetup_dotProjectPlus
     function install()
     {
         global $db;
-        $sql = "CREATE TABLE IF NOT EXISTS project_pmbok_principles (
+        $sql = "CREATE TABLE IF NOT EXISTS " . dPgetConfig('dbprefix', '') . "project_pmbok_principles (
             project_id INTEGER NOT NULL,
             principle_id INTEGER NOT NULL,
             rating INTEGER DEFAULT 0,
@@ -35,7 +35,7 @@ class CSetup_dotProjectPlus
         )";
         db_exec($sql);
 
-        $sql = "CREATE TABLE IF NOT EXISTS project_pmbok_domains (
+        $sql = "CREATE TABLE IF NOT EXISTS " . dPgetConfig('dbprefix', '') . "project_pmbok_domains (
             project_id INTEGER NOT NULL,
             domain_id INTEGER NOT NULL,
             status INTEGER DEFAULT 0,
@@ -60,9 +60,9 @@ class CSetup_dotProjectPlus
 
     function remove()
     {
-        $sql = "DROP TABLE IF EXISTS project_pmbok_principles";
+        $sql = "DROP TABLE IF EXISTS " . dPgetConfig('dbprefix', '') . "project_pmbok_principles";
         db_exec($sql);
-        $sql = "DROP TABLE IF EXISTS project_pmbok_domains";
+        $sql = "DROP TABLE IF EXISTS " . dPgetConfig('dbprefix', '') . "project_pmbok_domains";
         db_exec($sql);
         return true;
     }
