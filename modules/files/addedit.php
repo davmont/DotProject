@@ -17,8 +17,10 @@ if (!($canEdit)) {
 $canAdmin = getPermission('system', 'edit');
 
 // add to allow for returning to other modules besides Files
-$referrerArray = parse_url($_SERVER['HTTP_REFERER']);
-$referrer = $referrerArray['query'] . $referrerArray['fragment'];
+$http_referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+$referrerArray = parse_url($http_referer);
+$referrer = ((isset($referrerArray['query']) ? $referrerArray['query'] : '')
+            . (isset($referrerArray['fragment']) ? $referrerArray['fragment'] : ''));
 
 // load the companies class to retrieved denied companies
 require_once($AppUI->getModuleClass('companies'));
@@ -103,7 +105,7 @@ if ($obj->file_task) {
 } else {
 	$task_name = '';
 }
-if ($obj->file_helpdesk_item) {
+if (!empty($obj->file_helpdesk_item)) {
 	$file_helpdesk_item = $obj->file_helpdesk_item;	
 }
 
@@ -287,7 +289,7 @@ echo $AppUI->_('submit'); ?>"<?php echo dPaction('submitIt'); ?> />
 <?php 
 function file_show_attr() {
 	global $AppUI, $obj, $ci, $canAdmin, $projects,
-	$file_project, $file_task, $task_name, $preserve, $file_helpdesk_item;
+	$file_project, $file_task, $task_name, $preserve, $file_helpdesk_item, $file_id;
 	
 	
 	if ($ci) {
