@@ -321,7 +321,5 @@
 "Please enter an end date"=>"Por favor, introduzca una fecha de fin",
 "Filter Projects list by users permissions"=>"Filtrar lista de proyectos por permisos de usuario",
 "Please note that the status for Opportunity"=>"Tenga en cuenta que el estado para Oportunidad",
-"no $table"=>"no $table",
-"$page_string"=>"$page_string",
 "Adapt the assignment of the user as a result of the change"=>"Adaptar la asignación del usuario como resultado del cambio",
 "Assignments are rounded to 1/4 hour."=>"Las asignaciones se redondean a 1/4 de hora.",
