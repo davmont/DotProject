@@ -36,7 +36,7 @@
 		$roles[$role->getId()]=$role->getDescription();
 	}
 	foreach($projectTaskEstimation->getRoles() as $role){
-		if($roles[$role->roleId] !=""){
+		if(!empty($roles[$role->roleId])){
 			$estimatedRoles.=$roles[$role->getRoleId()] . " (".$role->getQuantity().")<br>";
 		}
 	}
