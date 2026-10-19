@@ -19,16 +19,16 @@ i1.earning_submit_zip, i1.earning_terms, i1.earning_comments, i1.earning_title,
 i1.earning_total, i1.earning_submitted, i1.earning_submitted_comment, i1.earning_approved, i1.earning_approved_by,
 i1.earning_approved_comment, i1.earning_paid, i1.earning_paid_comment, i2.earning_items_id, i2.earning_parent_id, 
 i2.earning_tasklog_id, i2.earning_item_date, i2.earning_item_description, i2.earning_item_hours, 
-i2.earning_item_costcode, i2.earning_item_rate, c.company_name, u.user_username, u.user_first_name, u.user_last_name, u.user_type, u.user_email
-FROM {$dbprefix}earnings i1, {$dbprefix}earnings_items i2, {$dbprefix}companies c, {$dbprefix}users u
-WHERE c.company_id = i1.earning_submit_company_id AND u.user_id = i1.earning_user_id AND i1.earning_id = $earning_id
+i2.earning_item_costcode, i2.earning_item_rate, c.company_name, u.user_username, ct.contact_first_name AS user_first_name, ct.contact_last_name AS user_last_name, u.user_type, ct.contact_email AS user_email
+FROM {$dbprefix}earnings i1, {$dbprefix}earnings_items i2, {$dbprefix}companies c, {$dbprefix}users u, {$dbprefix}contacts ct
+WHERE c.company_id = i1.earning_submit_company_id AND u.user_id = i1.earning_user_id AND ct.contact_id = u.user_contact AND i1.earning_id = $earning_id
 GROUP BY i1.earning_id";
 
 $obj = null;
 if (!db_loadObject( $sql, $obj )) {
 	$AppUI->setMsg( 'earning' );
 	$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
-	//$AppUI->redirect();
+	$AppUI->redirect('m=earnings');
 } else {
 	$AppUI->savePlace();
 }
