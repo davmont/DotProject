@@ -68,9 +68,9 @@ function delIt(id) {
 function showRow($role=null) {
 	global $canEdit, $canDelete, $role_id, $AppUI, $modules;
 	$CR = "\n";
-	$id = $role['id'];
-	$name = $role['value'];
-	$description = $role['name'];
+	$id = isset($role['id']) ? $role['id'] : null;
+	$name = isset($role['value']) ? $role['value'] : '';
+	$description = isset($role['name']) ? $role['name'] : '';
 
 	$s = '<tr>' . $CR;
 	if (($role_id == $id || $id == 0) && $canEdit) {
