@@ -37,7 +37,7 @@ class CSetupTesting {
 	}
 
 	function remove() {		// run this method on uninstall process
-		db_exec( "DROP TABLE unittest;" );	// remove the unittest table from database
+		db_exec( "DROP TABLE " . dPgetConfig('dbprefix', '') . "unittest;" );	// remove the unittest table from database
 
 		return null;
 	}
@@ -62,7 +62,7 @@ class CSetupTesting {
 	}
 
 	function install() {
-		$sql = "CREATE TABLE `unittest` ( ".
+		$sql = "CREATE TABLE `" . dPgetConfig('dbprefix', '') . "unittest` ( ".
   	"`unittest_id` int(11) NOT NULL auto_increment, ".
   	"`unittest_name` varchar(250) NOT NULL default '', ".
   	"`unittest_description` text NOT NULL, ".

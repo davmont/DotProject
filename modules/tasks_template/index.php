@@ -6,7 +6,7 @@ if (!defined('DP_BASE_DIR')) {
 	require_once($AppUI->getModuleClass("tasks_template"));
 	
 	$sql = "select tt.tasks_template_id, tasks_template_name, tasks_template_last_update, count(ttt.tasks_template_task_id) as tasks_count
-			from tasks_template as tt left join tasks_template_task as ttt using (tasks_template_id)
+			from " . dPgetConfig('dbprefix', '') . "tasks_template as tt left join " . dPgetConfig('dbprefix', '') . "tasks_template_task as ttt using (tasks_template_id)
 			group by tasks_template_id
 			order by tasks_template_name";
 	$tasks_templates = db_loadHashList($sql);
