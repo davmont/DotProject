@@ -7,7 +7,6 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_resources_costs.class.php");
 
 $AppUI->savePlace();
-$tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
 $user_id = dPgetIntParam( $_GET, 'user_id' );
 $controllerResourceCost = new ControllerResourcesCosts();  
 $controllerUtil = new ControllerUtil();
