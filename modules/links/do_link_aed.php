@@ -13,11 +13,6 @@ $not = (int)dPgetParam($_POST, 'notify', '0');
 if ($not!='0') $not='1';
 
 $obj = new CLink();
-if ($link_id) { 
-	$obj->_message = 'updated';
-} else {
-	$obj->_message = 'added';
-}
 $obj->link_date = date('Y-m-d H:i:s');
 $obj->link_category = intval(dPgetParam($_POST, 'link_category', 0));
 
@@ -35,7 +30,6 @@ if ($del) {
 		$AppUI->setMsg($msg, UI_MSG_ERROR);
 		$AppUI->redirect();
 	} else {
-		if ($not=='1') $obj->notify();
 		$AppUI->setMsg("deleted", UI_MSG_ALERT, true);
 		$AppUI->redirect("m=links");
 	}
@@ -48,9 +42,8 @@ if (!$link_id) {
 if (($msg = $obj->store())) {
         $AppUI->setMsg($msg, UI_MSG_ERROR);
 } else {
-        $obj->load($obj->file_id);
-        if ($not=='1') $obj->notify();
-        $AppUI->setMsg($file_id ? 'updated' : 'added', UI_MSG_OK, true);
+        $obj->load($obj->link_id);
+        $AppUI->setMsg($link_id ? 'updated' : 'added', UI_MSG_OK, true);
 }
 
 $AppUI->redirect();
