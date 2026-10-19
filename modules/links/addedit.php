@@ -43,6 +43,10 @@ if (!db_loadObject($q->prepare(), $obj) && $link_id > 0) {
 	$AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
 	$AppUI->redirect();
 }
+if ($obj === null) {
+	// new link: start from an empty record so the form can read its fields
+	$obj = new CLink();
+}
 
 // setup the title block
 $ttl = $link_id ? "Edit Link" : "Add Link";
