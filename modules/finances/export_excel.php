@@ -16,9 +16,11 @@ $tax 		= dPgetParam($_GET, 'tax', 0);												// 0: without, 1: with	 				Def
 $company_id 		= dPgetIntParam($_GET, 'companyId', 0);
 $department_id 		= dPgetIntParam($_GET, 'departmentId', 0);
 $project_type 		= dPgetParam($_GET, 'projectType', 0);
-$project_status 		= dPgetParam($_GET, '$projectStatus', 0);
+$project_status 		= dPgetIntParam($_GET, 'projectStatus', 0);
 $printproject 		= dPgetParam($_GET, 'project', 0);
 $printmacroproject 		= dPgetParam($_GET, 'macroproject', 0);
+$macroproject_type 		= dPgetIntParam($_GET, 'macroprojectType', 0);
+$macroproject_status 		= dPgetIntParam($_GET, 'macroprojectStatus', 0);
 
 $line=0;
 $filename ="finances.xls";

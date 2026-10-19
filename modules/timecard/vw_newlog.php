@@ -21,6 +21,7 @@ GLOBAL $AppUI;
 //***END MOD
 
 $df = $AppUI->getPref('SHDATEFORMAT');
+$dbprefix = dPgetConfig('dbprefix', '');
 
 $tid = isset($_GET['tid']) ? (int)$_GET['tid'] : 0;
 
@@ -30,18 +31,21 @@ $winnow_tasks = getPermsWhereClause("tasks", "tasks.task_id");
 // if we have a TID, then we editing an existing row
 $sql = " 
 SELECT task_log.*, project_name, task_name, task_project, project_company 
-FROM task_log
-LEFT JOIN tasks ON task_id = task_log_task
-LEFT JOIN projects ON project_id = task_project
+FROM {$dbprefix}task_log AS task_log
+LEFT JOIN {$dbprefix}tasks AS tasks ON task_id = task_log_task
+LEFT JOIN {$dbprefix}projects AS projects ON project_id = task_project
 WHERE  task_log_id = $tid 
 	AND $winnow_project
 	AND $winnow_tasks
 "; 
 
 db_loadHash( $sql, $task );
+if (!is_array($task)) {
+	$task = array(); // no task log with this id (or a new one)
+}
 
 $is_new_record = !$tid;
-$task_found = $task['project_company']!=FALSE;
+$task_found = !empty($task['project_company']);
 $require_task_info = $is_new_record || $task_found;
 //echo '<pre>';print_r($task);echo '</pre>';
 
@@ -71,9 +75,9 @@ if (isset( $task['task_log_date'] )) {
 $sql = "
 SELECT u.task_id, t.task_name, t.task_project,
 	p.project_name, p.project_company, c.company_name
-FROM user_tasks u, tasks t
-LEFT JOIN projects p ON p.project_id = t.task_project
-LEFT JOIN companies c ON c.company_id = p.project_company
+FROM {$dbprefix}user_tasks u, {$dbprefix}tasks t
+LEFT JOIN {$dbprefix}projects p ON p.project_id = t.task_project
+LEFT JOIN {$dbprefix}companies c ON c.company_id = p.project_company
 WHERE u.user_id = $AppUI->user_id
 	AND u.task_id = t.task_id
 	AND t.task_dynamic = 0
@@ -105,7 +109,7 @@ if ($task_found)
 	// collect projects in js format
 	$projects[$task['task_project']] = "[" . (int)$task['project_company'] . "," . (int)$task['task_project'] . ", " . dPjs($task['project_name']) . "]";
 	// get the company name
-	$sql = "SELECT company_name FROM companies WHERE company_id = ".(int)$task['project_company'];
+	$sql = "SELECT company_name FROM {$dbprefix}companies WHERE company_id = ".(int)$task['project_company'];
 	// collect companies in normal format
 	$companies[$task['project_company']] =  db_LoadResult($sql);
 }
@@ -125,9 +129,9 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 */
 
 $proj = new CProject();
-$proj->load($obj->task_project);
+$proj->load(isset($task['task_project']) ? (int)$task['task_project'] : 0);
 $sql = "SELECT billingcode_id, billingcode_name
-FROM billingcode
+FROM {$dbprefix}billingcode
 WHERE billingcode_status=0
 AND company_id=" . (int)$proj->project_company . "
 ORDER BY billingcode_name";
@@ -304,7 +308,7 @@ function setLogCostCode( select ) {
 	else
 	{
 		//***MOD 20050525 pedroa echo "<input type='hidden' name='task_log_creator' value=".$AppUI->user_id."/>";
-		echo "<input type='hidden' name='task_log_creator' value=".(int)$_GET['userid']."/>";
+		echo "<input type='hidden' name='task_log_creator' value='" . dPgetIntParam($_GET, 'userid', $AppUI->user_id) . "' />";
 	}
 ?>
  
@@ -400,7 +404,7 @@ function setLogCostCode( select ) {
 <tr>
 	<td align="right" valign="top" nowrap="nowrap"><?php echo $AppUI->_('Problem');?>:</td>
 	<td align="left">
-		<input type="checkbox" value="1" name="task_log_problem" <?php /*if($log->task_log_problem)*/if($task["task_log_problem"]){?>checked="checked"<?php }?> />
+		<input type="checkbox" value="1" name="task_log_problem" <?php /*if($log->task_log_problem)*/if(!empty($task["task_log_problem"])){?>checked="checked"<?php }?> />
 	</td>
 </tr>
 <tr>

@@ -20,6 +20,7 @@ GLOBAL $AppUI, $macroprojects, $company_id, $mpstatus, $macroproject_types, $cur
 GLOBAL $priority;
 
 $df = $AppUI->getPref('SHDATEFORMAT');
+$macroprojectPriorityColor = dPgetSysVal('MacroProjectPriorityColor');
 
 $editMacroProjectsAllowed = getPermission('macroprojects', 'edit');
 foreach ($macroprojects as $row) {
@@ -163,7 +164,7 @@ echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "
 		<?php echo (htmlspecialchars($start_date ? $start_date->format($df) : '-')); ?>
 	</td>
 	<td align="center" nowrap="nowrap" style="background-color:<?php 
-echo ($priority[$row['macroproject_priority']]['color']); ?>">
+echo (($macroprojectPriorityColor[$row['macroproject_priority']] ?? '')); ?>">
 		<?php echo (htmlspecialchars($end_date ? $end_date->format($df) : '-')); ?>
 	</td>
 	<td align="center">
@@ -186,7 +187,7 @@ echo ($priority[$row['macroproject_priority']]['color']); ?>">
 	</td>
 	<td align="center">
 <?php 
-		if ($row['task_log_problem']) {
+		if (!empty($row['task_log_problem'])) {
 ?>
 		<a href="?m=tasks&amp;a=index&amp;f=all&amp;macroproject_id=<?php echo ($row['macroproject_id']); ?>">
 		<?php 
@@ -209,7 +210,7 @@ echo (dPshowImage('./images/icons/dialog-warning5.png', 16, 16, 'Problem', 'Prob
 	</td>
 	<td align="center" nowrap="nowrap">
 		<?php 
-echo (htmlspecialchars($row['total_tasks'] . ($row['my_tasks'] ? ' ('.$row['my_tasks'].')' : '')));
+echo (htmlspecialchars(($row['total_tasks'] ?? '') . (!empty($row['my_tasks']) ? ' ('.$row['my_tasks'].')' : '')));
 ?>
 	</td>
 <?php 

@@ -18,11 +18,6 @@ $obj->communication_frequency_id = dPgetParam($_POST, 'frequency');
 $obj->communication_channel_id = dPgetParam($_POST, 'channel');
 $obj->communication_responsible_authorization = dPgetParam($_POST, 'responsible');
 
-if ($communication_id) {
-    $obj->_message = 'updated';
-}else {
-    $obj->_message = 'added';
-}
 
 if (!$obj->bind($_POST)) {
     $AppUI->setMsg($obj->getError(), UI_MSG_ERROR);
@@ -49,9 +44,6 @@ if ($del) {
         $q->addWhere('communication_id='.$communication_id);
         $q->exec();
         
-        if ($not=='1'){
-            $obj->notify();
-        }
         $AppUI->setMsg("deleted", UI_MSG_ALERT, true);
         $AppUI->redirect("m=communication");
       }
@@ -87,10 +79,7 @@ if (($msg = $obj->store())) {
     }
     
     $obj->load($obj->communication_id);
-    if ($not=='1') {
-        $obj->notify();
-    }
-    $AppUI->setMsg($file_id ? 'updated' : 'added', UI_MSG_OK, true);
+    $AppUI->setMsg($communication_id ? 'updated' : 'added', UI_MSG_OK, true);
   }
 
   $AppUI->redirect();

@@ -19,8 +19,8 @@ if (!defined('DP_BASE_DIR')) {
 	if($tasks_template_id >= 1 && $obj){
 		// Let's get parent tasks
 		$sql = "select ttt.*
-				from tasks_template as tt,
-					 tasks_template_task as ttt
+				from " . dPgetConfig('dbprefix', '') . "tasks_template as tt,
+					 " . dPgetConfig('dbprefix', '') . "tasks_template_task as ttt
 				where tasks_template_task_parent = 0
 					  and tt.tasks_template_id = '$tasks_template_id'
 					  and tt.tasks_template_id = ttt.tasks_template_id";
@@ -33,7 +33,7 @@ if (!defined('DP_BASE_DIR')) {
 		// If the actual $obj is a task, then tasks will be inserted as child
 		// so it needs to be dynamic
 		if($is_task){
-			$sql = "update tasks set task_dynamic = '1'
+			$sql = "update " . dPgetConfig('dbprefix', '') . "tasks set task_dynamic = '1'
 					where task_id = '".$obj->task_id."'";
 			$obj->task_dynamic = 1;
 			db_exec($sql);
@@ -73,7 +73,7 @@ if (!defined('DP_BASE_DIR')) {
 		$task->task_parent      = dPgetParam($tasks_id_mapping, $data_array["tasks_template_task_id"], $main_obj_id);
 		
 		$sql = "select *
-				from tasks_template_task
+				from " . dPgetConfig('dbprefix', '') . "tasks_template_task
 				where tasks_template_id = $tasks_template_id
 					  and tasks_template_task_parent = '".$data_array["tasks_template_task_id"]."'";
 		$child_tasks = db_loadHashList($sql);

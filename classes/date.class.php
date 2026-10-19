@@ -39,7 +39,7 @@ class CDate extends Date {
 
 	function __construct($date = null)
 	{
-		if (!is_object($date) && strlen($date) == 12 && strpos($date, '-') === false && strpos($date, '/') === false) {
+		if (!is_object($date) && strlen((string)$date) == 12 && strpos($date, '-') === false && strpos($date, '/') === false) {
 			$date = $date.'00';
 		}
 		return parent::Date($date);

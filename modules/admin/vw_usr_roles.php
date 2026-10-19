@@ -9,6 +9,7 @@ if (!defined('DP_BASE_DIR')) {
 // Create the roles class container
 require_once DP_BASE_DIR."/modules/system/roles/roles.class.php";
 
+$user_name = '';
 $perms =& $AppUI->acl();
 $user_roles = $perms->getUserRoles($user_id);
 $crole = new CRole;

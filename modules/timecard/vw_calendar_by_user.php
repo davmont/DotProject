@@ -15,11 +15,12 @@ $start_date = intval( $log_start_date ) ? new CDate( $log_start_date ) : new CDa
 $end_date = intval( $log_end_date ) ? new CDate( $log_end_date ) : new CDate();
 
 $df = $AppUI->getPref('SHDATEFORMAT');
+$dbprefix = dPgetConfig('dbprefix', '');
 if (isset( $_GET['user_id'] )) {
 	$_GET['user_id'] = (int)$_GET['user_id'];
-	$sql = "SELECT user_contact FROM users WHERE user_id = ".$_GET['user_id'] ;
+	$sql = "SELECT user_contact FROM {$dbprefix}users WHERE user_id = ".$_GET['user_id'] ;
   $user_contact = db_loadresult( $sql );
-	$sql = "SELECT contact_company FROM contacts WHERE contact_id = ".$user_contact ;
+	$sql = "SELECT contact_company FROM {$dbprefix}contacts WHERE contact_id = ".$user_contact ;
 	//print "<pre>$sql</pre>";
 
 	$company_id = db_loadResult( $sql );
@@ -101,7 +102,7 @@ if ($do_report) {
 
 	$sql = "SELECT task_log.*, tasks.task_id,tasks.task_name, projects.project_name
 		FROM
-			task_log, tasks, projects
+			{$dbprefix}task_log AS task_log, {$dbprefix}tasks AS tasks, {$dbprefix}projects AS projects
 		WHERE
 			task_log.task_log_task = tasks.task_id AND
 			task_log.task_log_creator =".$user_id." AND
@@ -198,11 +199,11 @@ if ($do_report) {
 <?php
 	if ($log_pdf) {
 	// make the PDF file
-		$sql = "SELECT user_contact FROM users WHERE user_id = ".$user_id ;
+		$sql = "SELECT user_contact FROM {$dbprefix}users WHERE user_id = ".$user_id ;
     $user_contact = db_loadresult( $sql );
-	  $sql = "SELECT contacts.contact_first_name FROM contacts WHERE contact_id = ".$user_contact ;
+	  $sql = "SELECT contacts.contact_first_name FROM {$dbprefix}contacts AS contacts WHERE contact_id = ".$user_contact ;
     $firstName = db_loadresult( $sql );
-	  $sql = "SELECT contacts.contact_last_name FROM contacts WHERE contact_id = ".$user_contact ;
+	  $sql = "SELECT contacts.contact_last_name FROM {$dbprefix}contacts AS contacts WHERE contact_id = ".$user_contact ;
     $lastName = db_loadresult( $sql );
 		$pname = "For user: ".$firstName." ".$lastName;
 

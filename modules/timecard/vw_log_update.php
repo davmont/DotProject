@@ -42,8 +42,9 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 
 $proj = new CProject();
 $proj->load($obj->task_project);
+$dbprefix = dPgetConfig('dbprefix', '');
 $sql = "SELECT billingcode_id, billingcode_name
-        FROM billingcode
+        FROM {$dbprefix}billingcode
         WHERE billingcode_status=0
         AND (company_id=" . (int)$proj->project_company . " OR company_id = 0)
         ORDER BY billingcode_name";

@@ -38,6 +38,7 @@ $end_date = intval($date_reg) ? new CDate(dPgetCleanParam($_POST, "log_end_date"
 
 $df = $AppUI->getPref('SHDATEFORMAT');
 global $currentTabId;
+$user_id = 0;
 if ($a = dPgetCleanParam($_REQUEST, "a", "") == "") {
     $a = "&tab={$currentTabId}&amp;showdetails=1";
 } else {

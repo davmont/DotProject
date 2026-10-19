@@ -108,7 +108,7 @@ class CDpObject {
 	/**
 	 *	Binds an array/hash to this object
 	 *	@param int $oid optional argument, if not specifed then the value of current key is used
-	 *	@return any result from the database operation
+	 *	@return mixed result from the database operation
 	 */
 	public function load($oid=null , $strip = true) {
 		$k = $this->_tbl_key;

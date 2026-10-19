@@ -27,9 +27,6 @@ parameters:
             - modules/mantis/no.core/*
             # Patched copies of dotProject 2.0.3 core files (dormant, to be redone)
             - modules/unitcost/patch_203/*
-            # Not analysed: timeplanning.class.php (method signatures fatal on PHP 8, never
-            # loaded). See the roadmap.
-            - modules/timeplanning/timeplanning.class.php
             - modules/*/js/*
     bootstrapFiles:
         - phpstan-bootstrap.php

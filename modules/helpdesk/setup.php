@@ -338,11 +338,11 @@ class CSetupHelpDesk {
 			$rows = db_loadList( $sql );
 			$sql = '';
 			foreach ($rows as $row) {
-		    	$sql = "SELECT MAX(status_date) status_date FROM helpdesk_item_status WHERE status_item_id =".$row['item_id'];
+		    	$sql = "SELECT MAX(status_date) status_date FROM {$dbprefix}helpdesk_item_status WHERE status_item_id =".$row['item_id'];
 				$sdrow = db_loadList( $sql );
 
 			    $sql = '';
-				$sql = "UPDATE `helpdesk_items`
+				$sql = "UPDATE `{$dbprefix}helpdesk_items`
 	    	  	SET `item_updated`='".$sdrow[0]['status_date']."' 
 	    	  	WHERE `item_id`=".$row['item_id'];
 				db_exec($sql);			

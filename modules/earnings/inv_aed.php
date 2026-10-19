@@ -4,6 +4,7 @@ if (!defined('DP_BASE_DIR')) {
 }
 /* earnings $Id: inv_aed.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
 $earning_id = intval( dPgetParam( $_GET, "earning_id", 0 ) );
+$dbprefix = dPgetConfig('dbprefix', '');
 
 require_once( $AppUI->getSystemClass( 'libmail' ) );
 
@@ -14,7 +15,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 	// Add AdHoc Item
 	if ($_POST['inv_dosql'] == "adhoc") {
 		// Add items from AdHoc Form To earning
-		$sql="INSERT INTO earnings_items (earning_parent_id, earning_tasklog_id, earning_item_date, earning_item_description, earning_item_hours,earning_item_costcode,earning_item_rate) VALUES (";
+		$sql="INSERT INTO {$dbprefix}earnings_items (earning_parent_id, earning_tasklog_id, earning_item_date, earning_item_description, earning_item_hours,earning_item_costcode,earning_item_rate) VALUES (";
 		// earning_parent_id
 		$sql .= "'" . (int)$_POST["adhoc_earning_parent_id"] . "',";
 		// earning_tasklog_id (n/a)
@@ -52,7 +53,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 				}
 			}
 		}
-		$sql = "DELETE FROM earnings_items WHERE earning_items_id IN (";
+		$sql = "DELETE FROM {$dbprefix}earnings_items WHERE earning_items_id IN (";
 		$sql .= $remove_items . ");";
 		if (!db_exec( $sql )) {
 			echo db_error();
@@ -78,7 +79,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		}
 
 		if (count($ids) > 0) {
-			$sql = "UPDATE earnings_items SET earning_item_rate = CASE earning_items_id ";
+			$sql = "UPDATE {$dbprefix}earnings_items SET earning_item_rate = CASE earning_items_id ";
 			$sql .= implode(" ", $cases);
 			$sql .= " END WHERE earning_items_id IN (" . implode(",", $ids) . ")";
 			if (!db_exec( $sql )) {
@@ -104,7 +105,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 			}
 		}
 		// First gather all the selected Task_log Items
-		$sql="SELECT task_log.*, tasks.*, projects.* FROM task_log, tasks, projects WHERE task_id = task_log_task AND project_id = task_project AND task_log_id IN (";
+		$sql="SELECT task_log.*, tasks.*, projects.* FROM {$dbprefix}task_log AS task_log, {$dbprefix}tasks AS tasks, {$dbprefix}projects AS projects WHERE task_id = task_log_task AND project_id = task_project AND task_log_id IN (";
 		$sql .= $add_items . ");";
 		$arc= db_exec( $sql );
 		echo db_error();
@@ -113,7 +114,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 			$add_records[$row["task_log_id"]] = $row;
 		}
 		foreach($add_records as $x) {
-			$sql="INSERT INTO earnings_items (earning_parent_id, earning_tasklog_id, earning_item_date, earning_item_description, earning_item_hours,earning_item_costcode,earning_item_rate) VALUES (";
+			$sql="INSERT INTO {$dbprefix}earnings_items (earning_parent_id, earning_tasklog_id, earning_item_date, earning_item_description, earning_item_hours,earning_item_costcode,earning_item_rate) VALUES (";
 			// earning_parent_id
 			$sql .= "'" . $earning_id . "',";
 			// earning_tasklog_id (n/a)
@@ -142,14 +143,14 @@ if (isset( $_POST['inv_dosql'] ) ) {
 	if ($_POST['inv_dosql'] == "killearning") {
 		// Confirmation Has Already Been Received
 		// Delete All Supporting earning_Items First
-		$sql = "DELETE FROM earnings_items WHERE earning_parent_id = " . $earning_id . ";";
+		$sql = "DELETE FROM {$dbprefix}earnings_items WHERE earning_parent_id = " . $earning_id . ";";
 		echo $sql;
 		//if (!db_exec( $sql )) {
 		//	echo db_error();
 		//}
 
 		// Then Delete earning Itself
-		$sql = "DELETE FROM earnings WHERE earning_id = " . $earning_id . ";";
+		$sql = "DELETE FROM {$dbprefix}earnings WHERE earning_id = " . $earning_id . ";";
 		//echo $sql;
 		if (!db_exec( $sql )) {
 			echo db_error();
@@ -164,7 +165,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 	// Update An Existing earning
 	if ($_POST['inv_dosql'] == "editinv") {
 		// Create SQL UPDATE command from POST variables
-		$sql = "UPDATE earnings SET";
+		$sql = "UPDATE {$dbprefix}earnings SET";
 		$sql .= " earning_date='" . db_escape($_POST["earning_date"]) . "',";
 		$sql .= " earning_num='" . db_escape($_POST["earning_num"]) . "',";
 		$sql .= " earning_submit_contact='" . db_escape($_POST["earning_submit_contact"]) . "',";
@@ -176,7 +177,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		if ( strcmp($_POST["earning_submit_address1"], "") == 0 ) {
 			// The earning address override hasn't been used so let's fill it in automatically
 			// Gather Company Details
-			$sql2="SELECT companies.* FROM companies WHERE company_id='" . (int)$_POST["earning_submit_company_id"] . "';";
+			$sql2="SELECT companies.* FROM {$dbprefix}companies AS companies WHERE company_id='" . (int)$_POST["earning_submit_company_id"] . "';";
 			$crc= db_exec( $sql2 );
 			echo db_error();
 			while ($row = db_fetch_assoc($crc)) {
@@ -211,7 +212,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 	// Add A New earning
 	if ($_POST['inv_dosql'] == "addinv") {
 		// Create SQL INSERT command from POST variables
-		$sql = "INSERT INTO earnings (earning_user_id, earning_date, earning_num, earning_submit_contact, earning_submit_company_id,";
+		$sql = "INSERT INTO {$dbprefix}earnings (earning_user_id, earning_date, earning_num, earning_submit_contact, earning_submit_company_id,";
 		$sql .= "earning_submit_email, earning_terms, earning_comments, earning_title, earning_submit_address1, earning_submit_address2,";
 		$sql .= "earning_submit_city, earning_submit_state, earning_submit_zip, earning_submit_phone";
 		$sql .= ") VALUES ( ";
@@ -227,7 +228,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		if ( strcmp($_POST["earning_submit_address1"], "") == 0 ) {
 			// The earning address override hasn't been used so let's fill it in automatically
 			// Gather Company Details
-			$sql2="SELECT companies.* FROM companies WHERE company_id='" . (int)$_POST["earning_submit_company_id"] . "';";
+			$sql2="SELECT companies.* FROM {$dbprefix}companies AS companies WHERE company_id='" . (int)$_POST["earning_submit_company_id"] . "';";
 			$crc= db_exec( $sql2 );
 			echo db_error();
 			while ($row = db_fetch_assoc($crc)) {
@@ -263,7 +264,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		$notifyMail = new Mail;
 		switch ($_POST['inv_dosql']) {
 			case "postsubmit":
-				$sql="UPDATE earnings SET earning_submitted_comment='" . db_escape($_POST["earning_submitted_comment"]) . "', earning_submitted='" . date("Ymd") . "', earning_approved='', earning_approved_comment='' WHERE earning_id=" . $earning_id . ";";
+				$sql="UPDATE {$dbprefix}earnings SET earning_submitted_comment='" . db_escape($_POST["earning_submitted_comment"]) . "', earning_submitted='" . date("Ymd") . "', earning_approved='', earning_approved_comment='' WHERE earning_id=" . $earning_id . ";";
 				$notifyMail->From( $AppUI->user_first_name . " " . $AppUI->user_last_name . " <" . $AppUI->user_email . ">" );
 				$notifyMail->To( $_POST['earning_submit_contact'] . " <" . $_POST['earning_submit_email'] . ">" );
 				$notifyMail->Subject( "Approval Requested from " . $AppUI->user_first_name . " " . $AppUI->user_last_name . "." );
@@ -281,7 +282,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 				$notifyMail->Priority(3);
 				break;
 			case "postapprove":
-				$sql="UPDATE earnings SET earning_approved_comment='" . db_escape($_POST["earning_approved_comment"]) . "', earning_approved='" . date("Ymd") . "', earning_approved_by=" . $AppUI->user_id . " WHERE earning_id=" . $earning_id . ";";
+				$sql="UPDATE {$dbprefix}earnings SET earning_approved_comment='" . db_escape($_POST["earning_approved_comment"]) . "', earning_approved='" . date("Ymd") . "', earning_approved_by=" . $AppUI->user_id . " WHERE earning_id=" . $earning_id . ";";
 				$notifyMail->From( $AppUI->user_first_name . " " . $AppUI->user_last_name . " <" . $AppUI->user_email . ">" );
 				$notifyMail->To( $_POST['earning_user_name'] . " <" . $_POST['earning_user_email'] . ">" );
 				$notifyMail->Subject( "Approval Received from " . $AppUI->user_first_name . " " . $AppUI->user_last_name . "." );
@@ -300,10 +301,10 @@ if (isset( $_POST['inv_dosql'] ) ) {
 				$notifyMail->Priority(3);
 				break;
 			case "postpaid":
-				$sql="UPDATE earnings SET earning_paid_comment='" . db_escape($_POST["earning_paid_comment"]) . "', earning_paid='" . date("Ymd") . "' WHERE earning_id=" . $earning_id . ";";
+				$sql="UPDATE {$dbprefix}earnings SET earning_paid_comment='" . db_escape($_POST["earning_paid_comment"]) . "', earning_paid='" . date("Ymd") . "' WHERE earning_id=" . $earning_id . ";";
 				break;
 			case "postdecline":
-				$sql="UPDATE earnings SET earning_approved_comment='" . db_escape($_POST["earning_approved_comment"]) . "', earning_submitted='0000-00-00 00:00:00' WHERE earning_id=" . $earning_id . ";";
+				$sql="UPDATE {$dbprefix}earnings SET earning_approved_comment='" . db_escape($_POST["earning_approved_comment"]) . "', earning_submitted='0000-00-00 00:00:00' WHERE earning_id=" . $earning_id . ";";
 				$notifyMail->From( $AppUI->user_first_name . " " . $AppUI->user_last_name . " <" . $AppUI->user_email . ">" );
 				$notifyMail->To( $_POST['earning_user_name'] . " <" . $_POST['earning_user_email'] . ">" );
 				$notifyMail->Subject( "Request Declined from " . $AppUI->user_first_name . " " . $AppUI->user_last_name . "." );

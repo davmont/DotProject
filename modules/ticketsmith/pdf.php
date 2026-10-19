@@ -61,6 +61,7 @@ $next_week->addSpan(new Date_Span(array(7,0,0,0)));
 
 $pdf->selectFont("$font_dir/Helvetica-Bold.afm");
 $pdf->ezText("\n" . $AppUI->_("$type Ticket Report"), 12);
+$pname = '';
 $pdf->ezText("$pname", 15);
 $pdf->ezText("\n");
 $pdf->selectFont("$font_dir/Helvetica.afm");

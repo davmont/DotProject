@@ -30,6 +30,7 @@ if (empty($query_string)) {
 }
 
 $earning_id = intval( dPgetParam( $_GET, 'earning_id', null ) );
+$dbprefix = dPgetConfig('dbprefix', '');
 
 if (isset( $_GET['tab'] )) {
 	$AppUI->setState( 'EarnItmsTab', $_GET['tab'] );
@@ -46,7 +47,7 @@ if ( $tab ) {
 	// List All TaskLogs Not Yet Associated With An earning
 
 	// First collect a list of all previously committed log entries (earning_items)
-	$sql="SELECT earning_tasklog_id FROM earnings_items;";
+	$sql="SELECT earning_tasklog_id FROM {$dbprefix}earnings_items;";
 	//echo $sql;
 	$mrc= db_exec( $sql );
 	echo db_error();
@@ -57,7 +58,7 @@ if ( $tab ) {
 	mysql_free_result($mrc);
 
 	// Next use the mask as part of the select statement to find non-committed log entries
-	$sql="SELECT task_log.*, tasks.*, projects.* FROM task_log, tasks, projects WHERE task_id = task_log_task AND project_id = task_project AND task_log_creator=" . $AppUI->user_id;
+	$sql="SELECT task_log.*, tasks.*, projects.* FROM {$dbprefix}task_log AS task_log, {$dbprefix}tasks AS tasks, {$dbprefix}projects AS projects WHERE task_id = task_log_task AND project_id = task_project AND task_log_creator=" . $AppUI->user_id;
 	// if the mask_array is empty, do nothing with it.
 	$mask="";
 	if ( count($mask_array) > 1) {
@@ -79,7 +80,7 @@ if ( $tab ) {
 	$sql .= " ORDER BY task_log_date DESC;";
 } else {
 	// List All earning Items Associated With This earning.
-	$sql="SELECT earnings.*, earnings_items.*, task_log.*, tasks.*, projects.* FROM earnings_items, earnings, task_log, tasks, projects WHERE earning_parent_id = earning_id AND task_log_id = earning_tasklog_id AND task_id = task_log_task AND project_id = task_project AND earning_id=" . $earning_id;
+	$sql="SELECT earnings.*, earnings_items.*, task_log.*, tasks.*, projects.* FROM {$dbprefix}earnings_items AS earnings_items, {$dbprefix}earnings AS earnings, {$dbprefix}task_log AS task_log, {$dbprefix}tasks AS tasks, {$dbprefix}projects AS projects WHERE earning_parent_id = earning_id AND task_log_id = earning_tasklog_id AND task_id = task_log_task AND project_id = task_project AND earning_id=" . $earning_id;
 	$sql .= " ORDER BY task_log_date DESC;";
 }
 $irc=db_exec( $sql );
@@ -311,7 +312,7 @@ if ( $tab ) {
 	</tr>
 	<?
 		// Add Ad Hoc earning Items Grabbed From earnings_items Table
-		$sql="SELECT earnings_items.* FROM earnings_items WHERE earning_tasklog_id='0' AND earning_parent_id = " . $earning_id;
+		$sql="SELECT earnings_items.* FROM {$dbprefix}earnings_items AS earnings_items WHERE earning_tasklog_id='0' AND earning_parent_id = " . $earning_id;
 		$sql.=" ORDER BY earning_item_date DESC;";
 		//echo $sql;
 		$arc=db_exec( $sql );

@@ -10,6 +10,8 @@ global $AppUI, $company_id, $pstatus, $m;
 
 $pstatus = dPgetSysVal( 'ProjectStatus' );
 
+// the query is DISTINCT, so it can only be ordered by a selected column
+$sort = 'project_name';
 if ($sort == 'project_priority') {
   $sort .= ' DESC';
 }
@@ -20,7 +22,7 @@ $page = isset($_REQUEST['page'])?$_REQUEST['page']:1;
 $q  = new DBQuery;
 $q->addTable('post_mortem_analysis', 'pma');
 $q->addQuery('distinct pma.project_name, project_id, pma_id, project_status,
-pma.project_start_date, pma.project_end_date, project_meeting_date');
+pma.project_start_date, pma.project_end_date, project_meeting_date, p.project_color_identifier');
 $q->addJoin('projects', 'p','p.project_name = pma.project_name');
 $q->addWhere('p.project_company = '.$company_id);
 $q->addOrder($sort);
@@ -44,11 +46,11 @@ $df = $AppUI->getPref('SHDATEFORMAT');
    $end_date = intval($p['project_end_date']) ? new CDate($p['project_end_date']) : null;
 ?>
   <tr>
-		<td width="12" style="background-color:#{$row.project_color_identifier}">
-								<a href="?m=closure&amp;a=addedit&amp;pma_id=<?php echo $p['pma_id'];?>">
+		<td width="12" style="background-color:#<?php echo preg_replace('/[^0-9A-Fa-f]/', '', (string)$p['project_color_identifier']); ?>">
+								<a href="?m=closure&amp;a=addedit&amp;pma_id=<?php echo (int)$p['pma_id'];?>">
 									<img src="./images/icons/pencil.gif" alt="Edit post mortem record"></a>
 		</td>
- 	<td> <a href="?m=closure&amp;a=view&amp;pma_id=<?php echo $p['pma_id'];?>"> <?php echo $p['project_name']; ?> <a/> </td>
+ 	<td> <a href="?m=closure&amp;a=view&amp;pma_id=<?php echo (int)$p['pma_id'];?>"> <?php echo dPhtml($p['project_name']); ?> </a> </td>
 
 	<td> <?php echo $meeting_date ? $meeting_date->format($df) : ''; ?></td>
 

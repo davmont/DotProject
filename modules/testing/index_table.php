@@ -31,8 +31,8 @@ if (!$canRead) {			// lock out users that do not have at least readPermission on
 // retrieving some dynamic content using an easy database query
 $tab = $AppUI->getState( 'TestingIdxTab' ) !== NULL ? $AppUI->getState( 'TestingIdxTab' ) : "";
 $sql = "SELECT unittest_id,unittest_name,unittest_passed,unittest_description,unittest_lasttested ,task_name
-				FROM unittest
-				LEFT OUTER JOIN tasks ON unittest_task_id = task_id";	// prepare the sqlQuery command to get all quotes from the einstein table
+				FROM " . dPgetConfig('dbprefix', '') . "unittest
+				LEFT OUTER JOIN " . dPgetConfig('dbprefix', '') . "tasks ON unittest_task_id = task_id";	// prepare the sqlQuery command to get all quotes from the einstein table
 $sql.="	WHERE 1=1";
 if($tab=="0")
 	$sql.= " AND unittest_passed IS NULL";

@@ -180,7 +180,7 @@ $statuses = $q->loadHashList('macroproject_status');
 $q->clear();
 $all_macroprojects = 0;
 foreach ($statuses as $k => $v) {
-	$macroproject_status_tabs[$v['macroproject_status']] = ($AppUI->_($macroproject_types[$v['macroproject_status']]) 
+	$macroproject_status_tabs[$v['macroproject_status']] = ($AppUI->_($macroproject_types[$v['macroproject_status']] ?? '') 
 													  . ' (' . $v['count'] . ')');
 	//count all macroprojects
 	$all_macroprojects += $v['count'];
@@ -208,7 +208,7 @@ $tabBox = new CTabBox('?m=macroprojects', DP_BASE_DIR . '/modules/macroprojects/
 $tabBox->add('vw_idx_proposed', $AppUI->_('All') . ' (' . $all_macroprojects . ')' , true,  500);
 foreach ($macroproject_types as $psk => $macroproject_status) {
 		$tabBox->add($macroproject_status_file[$psk], 
-					 (($macroproject_status_tabs[$psk]) ? $macroproject_status_tabs[$psk] : $AppUI->_($macroproject_status)), true, $psk);
+					 ((!empty($macroproject_status_tabs[$psk])) ? $macroproject_status_tabs[$psk] : $AppUI->_($macroproject_status)), true, $psk);
 }
 $min_view = true;
 $tabBox->add('viewgantt', 'Gantt');

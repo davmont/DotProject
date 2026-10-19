@@ -21,14 +21,22 @@
 	$estimatedEffort=$projectTaskEstimation->getEffort() . " " . $projectTaskEstimation->getEffortUnit();
 	$estimatedDuration=$projectTaskEstimation->getDuration();
 	
-	//roles list
+	//roles list: those of the company owning the task's project
+	$company_id = 0;
+	if (!empty($obj->task_project)) {
+		$q = new DBQuery();
+		$q->addQuery('project_company');
+		$q->addTable('projects');
+		$q->addWhere('project_id = ' . (int)$obj->task_project);
+		$company_id = (int)$q->loadResult();
+	}
 	$rolesObj = $controllerCompanyRole->getCompanyRoles($company_id);
 	$roles=array();
     foreach ($rolesObj as $role) {
 		$roles[$role->getId()]=$role->getDescription();
 	}
 	foreach($projectTaskEstimation->getRoles() as $role){
-		if($roles[$role->roleId] !=""){
+		if(!empty($roles[$role->roleId])){
 			$estimatedRoles.=$roles[$role->getRoleId()] . " (".$role->getQuantity().")<br>";
 		}
 	}

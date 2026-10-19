@@ -6,7 +6,6 @@ global $AppUI;
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/translations.php");
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_report.class.php");
 $AppUI->savePlace();
-$tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
 $company_id = dPgetIntParam( $_GET, 'company_id', 0 );
 $controllerReport = new ControllerReport();  
 

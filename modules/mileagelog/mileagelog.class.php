@@ -10,6 +10,7 @@ require_once( $AppUI->getSystemClass( 'dp' ) );
 
 function getPermsWhereClause($mod, $mod_id_field){
 	GLOBAL $AppUI, $perms;
+	$dbprefix = dPgetConfig('dbprefix', '');
 
   // Figure out the module and field
 	switch($mod){
@@ -35,7 +36,7 @@ function getPermsWhereClause($mod, $mod_id_field){
 		(isset($perms[$mod]['-1']) && ($perms[$mod]['-1']=='1' || $perms[$mod]['-1']=='-1')) || 
      		(isset($perms["all"]['-1']) && ($perms["all"]['-1']=='1' || $perms["all"]['-1']=='-1'))
      	) {
-		$sql = "SELECT $id_field FROM $mod";
+		$sql = "SELECT $id_field FROM {$dbprefix}$mod";
 		$list = db_loadColumn( $sql );
 	} else {
 		$list = array();

@@ -23,10 +23,16 @@ GLOBAL $priority;
 
 $df = $AppUI->getPref('SHDATEFORMAT');//pour avoir un format de date qui nous convient
 
-$show_all_projects = false;
-if ($currentTabId == 500) {
-	$show_all_projects = true;
-}
+// Not a status tab: both lists show every record, narrowed only by the
+// owner and company filters below.
+$show_all_projects = true;
+$show_all_macroprojects = true;
+// Each list has seven data columns plus the add/remove column.
+$base_table_cols = 7;
+$table_cols = $base_table_cols + 1;
+$added_cols = $table_cols - $base_table_cols;
+$projectPriorityColor = dPgetSysVal('ProjectPriorityColor');
+$macroprojectPriorityColor = dPgetSysVal('MacroProjectPriorityColor');
 $macroproject_id = intval(dPgetParam($_GET, 'macroproject_id', 0));
 $company_id = intval(dPgetParam($_GET, 'company_id', 0));
 $company_internal_id = intval(dPgetParam($_GET, 'company_internal_id', 0));
@@ -209,7 +215,7 @@ if (isset($_POST['project']) and isset($_POST['add']) and $_SERVER['REQUEST_METH
 $q->clear();
 $q->addTable('projects', 'p');
 //$q->addQuery('p.project_id, p.project_color_identifier, p.project_percent_complete, p.project_company, p.project_name, p.project_start_date, p.project_end_date, project_actual_end_date, u.user_username, c.company_name');
-$q->addQuery('p.project_id, p.project_color_identifier, p.project_percent_complete, p.project_company, p.project_name, p.project_start_date, p.project_end_date, u.user_username, c.company_name');
+$q->addQuery('p.project_id, p.project_color_identifier, p.project_percent_complete, p.project_company, p.project_name, p.project_start_date, p.project_end_date, p.project_priority, p.project_description, u.user_username, c.company_name, c.company_description');
 $q->addJoin('companies', 'c', 'c.company_id = p.project_company');
 $q->addJoin('users', 'u', 'u.user_id = p.project_owner');
 if($ownerFilter!=0){
@@ -291,11 +297,12 @@ $none = true;
 //Tabbed view
 $project_status_filter = $currentTabId;
 */
+$none = true;
 foreach ($projects as $row) {
 	//if (! getPermission('projects', 'view', $row['project_id'])) {
 		//continue;
 	//}
-	if ($show_all_projects || $row['project_status'] == $project_status_filter) {
+	if ($show_all_projects) {
 		$none = false;
 		$start_date = ((@intval($row['project_start_date'])) 
 		               ? new CDate($row['project_start_date']) : null);
@@ -345,7 +352,7 @@ echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "
 		<?php echo (htmlspecialchars($start_date ? $start_date->format($df) : '-')); ?>
 	</td>
 	<td align="center" nowrap="nowrap" style="background-color:<?php 
-echo ($priority[$row['project_priority']]['color']); ?>">
+echo ($projectPriorityColor[$row['project_priority']] ?? ''); ?>">
 		<?php echo (htmlspecialchars($end_date ? $end_date->format($df) : '-')); ?>
 	</td>
 	<td nowrap="nowrap">
@@ -353,7 +360,7 @@ echo ($priority[$row['project_priority']]['color']); ?>">
 	</td>
 	<td align="center" nowrap="nowrap">
 		<?php 
-echo (htmlspecialchars($row['total_tasks'] . ($row['my_tasks'] ? ' ('.$row['my_tasks'].')' : '')));
+echo (htmlspecialchars(($row['total_tasks'] ?? '') . (!empty($row['my_tasks']) ? ' ('.$row['my_tasks'].')' : '')));
 ?>
 	</td>
 	<td align="center" nowrap="nowrap">
@@ -436,7 +443,7 @@ if (isset($_POST['macroproject_son']) and isset($_POST['add']) and $_SERVER['REQ
 // select all macroprojects
 $q->clear();
 $q->addTable('macroprojects', 'mp');
-$q->addQuery('mp.macroproject_id, mp.macroproject_color_identifier, mp.macroproject_percent_complete, mp.macroproject_company, mp.macroproject_name, mp.macroproject_start_date, mp.macroproject_end_date, macroproject_actual_end_date, u.user_username, c.company_name');
+$q->addQuery('mp.macroproject_id, mp.macroproject_color_identifier, mp.macroproject_percent_complete, mp.macroproject_company, mp.macroproject_name, mp.macroproject_start_date, mp.macroproject_end_date, macroproject_actual_end_date, mp.macroproject_priority, mp.macroproject_description, u.user_username, c.company_name, c.company_description');
 $q->addJoin('companies', 'c', 'c.company_id = mp.macroproject_company');
 $q->addJoin('users', 'u', 'u.user_id = mp.macroproject_owner');
 if($ownerFilter!=0){
@@ -520,11 +527,12 @@ $none = true;
 //Tabbed view
 $project_status_filter = $currentTabId;
 */
+$none = true;
 foreach ($macroprojects as $row) {
 	//if (! getPermission('projects', 'view', $row['project_id'])) {
 		//continue;
 	//}
-	if ($show_all_macroprojects || $row['macroproject_status'] == $macroproject_status_filter) {
+	if ($show_all_macroprojects) {
 		$none = false;
 		$start_date = ((@intval($row['macroproject_start_date'])) 
 		               ? new CDate($row['macroproject_start_date']) : null);
@@ -574,7 +582,7 @@ echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "
 		<?php echo (htmlspecialchars($start_date ? $start_date->format($df) : '-')); ?>
 	</td>
 	<td align="center" nowrap="nowrap" style="background-color:<?php 
-echo ($priority[$row['macroproject_priority']]['color']); ?>">
+echo ($macroprojectPriorityColor[$row['macroproject_priority']] ?? ''); ?>">
 		<?php echo (htmlspecialchars($end_date ? $end_date->format($df) : '-')); ?>
 	</td>
 	<td nowrap="nowrap">
@@ -582,7 +590,7 @@ echo ($priority[$row['macroproject_priority']]['color']); ?>">
 	</td>
 	<td align="center" nowrap="nowrap">
 		<?php 
-echo (htmlspecialchars($row['total_tasks'] . ($row['my_tasks'] ? ' ('.$row['my_tasks'].')' : '')));
+echo (htmlspecialchars(($row['total_tasks'] ?? '') . (!empty($row['my_tasks']) ? ' ('.$row['my_tasks'].')' : '')));
 ?>
 	</td>
 	<td align="center" nowrap="nowrap">

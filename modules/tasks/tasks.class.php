@@ -2256,7 +2256,7 @@ class CTask extends CDpObject
 		// Find the end date of this task, then subtract the required number of days.
 		$date = new CDate($this->task_end_date);
 		$today = new CDate(date('Y-m-d'));
-		if (CDate::compare($date, $today) < 0) {
+		if ($date->compare($date, $today) < 0) { // compare() is not static
 			$start_day = time();
 		} else {
 			$start_day = $date->getDate(DATE_FORMAT_UNIXTIME);
@@ -2774,9 +2774,9 @@ function showtask(
 				*/
 				$a_u_tmp_array[] = ('<a href="?m=admin&amp;a=viewuser&amp;user_id=' . $val['user_id'] . '"'
 					. 'title="' . $AppUI->_('Extent of Assignment') . ':'
-					. $userAlloc[$val['user_id']]['charge'] . '%; '
+					. ($userAlloc[$val['user_id']]['charge'] ?? '') . '%; '
 					. $AppUI->_('Free Capacity') . ':'
-					. $userAlloc[$val['user_id']]['freeCapacity'] . '%' . '">'
+					. ($userAlloc[$val['user_id']]['freeCapacity'] ?? '') . '%' . '">'
 					. $val['user_username'] . ' (' . $val['perc_assignment'] . '%)</a>');
 			}
 			$s .= join(', ', $a_u_tmp_array) . '</td>';
@@ -2784,9 +2784,9 @@ function showtask(
 			$s .= ('<td align="center" nowrap="nowrap">'
 				. '<a href="?m=admin&amp;a=viewuser&amp;user_id=' . $assigned_users[0]['user_id']
 				. '" title="' . $AppUI->_('Extent of Assignment') . ':'
-				. $userAlloc[$assigned_users[0]['user_id']]['charge'] . '%; '
+				. ($userAlloc[$assigned_users[0]['user_id']]['charge'] ?? '') . '%; '
 				. $AppUI->_('Free Capacity') . ':'
-				. $userAlloc[$assigned_users[0]['user_id']]['freeCapacity'] . '%">'
+				. ($userAlloc[$assigned_users[0]['user_id']]['freeCapacity'] ?? '') . '%">'
 				. $assigned_users[0]['user_username']
 				. ' (' . $assigned_users[0]['perc_assignment'] . '%)</a>');
 			if ($a['assignee_count'] > 1) {
@@ -2800,9 +2800,9 @@ function showtask(
 					$s .= ('<br /><a href="?m=admin&amp;a=viewuser&amp;user_id='
 						. $assigned_users[$i]['user_id'] . '" title="'
 						. $AppUI->_('Extent of Assignment') . ':'
-						. $userAlloc[$assigned_users[$i]['user_id']]['charge'] . '%; '
+						. ($userAlloc[$assigned_users[$i]['user_id']]['charge'] ?? '') . '%; '
 						. $AppUI->_('Free Capacity') . ':'
-						. $userAlloc[$assigned_users[$i]['user_id']]['freeCapacity'] . '%">'
+						. ($userAlloc[$assigned_users[$i]['user_id']]['freeCapacity'] ?? '') . '%">'
 						. $assigned_users[$i]['user_username'] . ' ('
 						. $assigned_users[$i]['perc_assignment'] . '%)</a>');
 				}

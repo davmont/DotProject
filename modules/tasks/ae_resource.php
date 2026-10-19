@@ -7,6 +7,7 @@ if (!defined('DP_BASE_DIR')) {
 // $Id$
 global $AppUI, $users, $task_id, $task_project, $obj, $projTasksWithEndDates, $tab, $loadFromTab;
 
+$send_ical = 0;
 // Make sure that we can see users that are allocated to the task.
 $q = new DBQuery;
 if ($task_id == 0) {

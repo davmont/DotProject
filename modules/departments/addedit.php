@@ -172,7 +172,7 @@ if (count($depts)) {
 	<td align="right"><?php echo $AppUI->_('Owner');?>:</td>
 	<td>
 <?php
-	echo arraySelect($owners, 'dept_owner', 'size="1" class="text"', $drow["dept_owner"]);
+	echo arraySelect($owners, 'dept_owner', 'size="1" class="text"', ($drow["dept_owner"] ?? null));
 ?>
 	</td>
 </tr>

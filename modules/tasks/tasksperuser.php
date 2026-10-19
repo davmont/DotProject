@@ -27,7 +27,7 @@ $titleBlock->addCell(
 	'<form action="?m=tasks&a=tasksperuser" method="post" name="companyFilter">', '</form>'
 );
 $titleBlock->addCrumb("?m=tasks", "tasks list");
-$titleBlock->addCrumb("?m=tasks&a=todo&user_id=$user_id", "my todo");
+$titleBlock->addCrumb('?m=tasks&a=todo&user_id=' . (int)$AppUI->user_id, "my todo");
 $titleBlock->show();
 
 // include the re-usable sub view

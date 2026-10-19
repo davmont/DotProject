@@ -22,6 +22,7 @@ global $macroprojects, $tab, $user_id, $orderdir, $macroorderby, $dept_ids;
 $department = (int)(isset($_GET['dept_id']) ? $_GET['dept_id'] : (isset($department) ? $department : 0));
 
 $df = $AppUI->getPref('SHDATEFORMAT');
+$macroprojectPriorityColor = dPgetSysVal('MacroProjectPriorityColor');
 
 $mpstatus =  dPgetSysVal('MacroProjectStatus');
 
@@ -242,9 +243,9 @@ echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "
 	<td align="center"><?php 
 echo htmlspecialchars(($start_date ? $start_date->format($df) : '-')); ?></td>
 	<td align="center"><?php 
-echo htmlspecialchars((($row['macroproject_duration'] > 0) 
+echo htmlspecialchars(((($row['macroproject_duration'] ?? 0) > 0) 
                        ? ($row['macroproject_duration'] . $AppUI->_('h')) : '-')); ?></td>
-	<td align="center"nowrap="nowrap" style="background-color:<?php echo ($priority[$row['macroproject_priority']]['color']); ?>"><?php 
+	<td align="center"nowrap="nowrap" style="background-color:<?php echo (($macroprojectPriorityColor[$row['macroproject_priority']] ?? '')); ?>"><?php 
 echo htmlspecialchars(($end_date ? $end_date->format($df) : '-')); ?></td>
 	<td align="center">
 <?php 
@@ -262,7 +263,7 @@ echo ($style); ?>><?php echo htmlspecialchars($actual_end_date->format($df)); ?>
 	</td>
 	<td align="center">
 <?php 
-		if ($row['task_log_problem']) {
+		if (!empty($row['task_log_problem'])) {
 ?>
 		<a href="?m=tasks&amp;a=index&amp;f=all&amp;macroproject_id=<?php echo ($row['macroproject_id']); ?>">
 		<?php dPshowImage('./images/icons/dialog-warning5.png', 16, 16, 'Problem', 'Problem!'); ?>
@@ -283,10 +284,10 @@ echo ($style); ?>><?php echo htmlspecialchars($actual_end_date->format($df)); ?>
 echo htmlspecialchars($row['user_username'], ENT_QUOTES); ?>
 	</td>
 	<td align="center" nowrap="nowrap"><?php 
-echo htmlspecialchars($row['total_tasks'] . ($row['my_tasks'] ? ' ('.$row['my_tasks'].')' : '')); ?>
+echo htmlspecialchars(($row['total_tasks'] ?? '') . (!empty($row['my_tasks']) ? ' ('.$row['my_tasks'].')' : '')); ?>
 	</td>
 	<td align="center" nowrap="nowrap"><?php 
-echo $AppUI->_($mpstatus[$row['macroproject_status']]); ?>
+echo $AppUI->_($mpstatus[$row['macroproject_status']] ?? ''); ?>
 	</td>
 </tr>
 <?php 

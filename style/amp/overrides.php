@@ -111,7 +111,7 @@ class CTabBox extends CTabBox_core {
 			$s .= '</table></td></tr>';
 			$s .= '<tr><td width="100%" colspan="'.(count($this->tabs)*4 + 1).'" class="tabox">';
 			echo $s;
-			if ( $this->tabs[$this->active][0] != "" ) {
+			if (isset($this->tabs[$this->active]) && $this->tabs[$this->active][0] != "") {
 				$currentTabId = $this->active;
 				$currentTabName = $this->tabs[$this->active][1];
 				if (!$js_tabs)

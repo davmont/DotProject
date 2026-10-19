@@ -22,6 +22,10 @@ $orderby = $AppUI->getState('EarnIdxOrderBy') ? $AppUI->getState('EarnIdxOrderBy
 if ($orderby == "earning_date") {
 	$orderby = "earning_date DESC";
 }
+// Only the "to approve" list joins users; the earnings table has the user as earning_user_id.
+if ($orderby == "user_id") {
+	$orderby = "earning_user_id";
+}
 
 // retrieve list of earnings and their line_items
 // the tab selected tells which query to use

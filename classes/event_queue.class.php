@@ -124,7 +124,7 @@ class EventQueue {
 		else
 			include_once $AppUI->getModuleClass($fields['queue_module']);
 
-		$args = unserialize($fields['queue_data']);
+		$args = unserialize($fields['queue_data'], array('allowed_classes' => false));
 		if (mb_strpos($fields['queue_callback'], '::') !== false) {
 			list($class, $method) = explode('::', $fields['queue_callback']);
 			if (!class_exists($class)) {

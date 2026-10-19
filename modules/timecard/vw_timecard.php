@@ -13,7 +13,7 @@ if (!defined('DP_BASE_DIR')) {
 	}
 
 	//grab hours per day from config
-	$min_hours_day = $AppUI->cfg['daily_working_hours'];
+	$min_hours_day = dPgetConfig('daily_working_hours', 8);
 	$can_edit_other_timesheets = $TIMECARD_CONFIG['minimum_edit_level']>=$AppUI->user_type;
 	$show_other_worksheets = $TIMECARD_CONFIG['minimum_see_level']>=$AppUI->user_type;
 	$integrate_with_helpdesk = $TIMECARD_CONFIG['integrate_with_helpdesk'];
@@ -114,7 +114,7 @@ if (!defined('DP_BASE_DIR')) {
 		//FROM users WHERE user_id=".$AppUI->user_id." or (".getPermsWhereClause("companies", "user_company").") ORDER BY user_last_name, user_first_name";
 		
 		$q = new DBQuery;
-		$q->addTable('users');
+		$q->addTable('users', 'users');
 		$q->addQuery('users.user_contact,users.user_id,contacts.contact_first_name,contacts.contact_last_name,contacts.contact_id');
 		$q->innerJoin('contacts', 'contacts', 'contacts.contact_id = users.user_contact');
 		$q->addWhere('users.user_contact = ' . (int)$AppUI->user_id . ' OR (' . getPermsWhereClause('companies', 'user_company') . ')');
@@ -154,7 +154,7 @@ if (!defined('DP_BASE_DIR')) {
   //12:23 AM 2007-08-06 Query modified to use task name rather than task summary
 
 	$q = new DBQuery;
-	$q->addTable('task_log');
+	$q->addTable('task_log', 'task_log');
 	$q->addQuery('task_log.*, tasks.task_id, tasks.task_name');
 	$q->leftJoin('tasks', 'tasks', 'task_log.task_log_task = tasks.task_id');
 	$q->addWhere("task_log_creator=" . (int)$user_id);

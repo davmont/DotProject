@@ -539,9 +539,23 @@ function macroprojects_list_data($user_id = false)
 	}
 
 	$q->addGroup('mp.macroproject_id');
-	$q->addOrder($macroorderby . ' ' . $orderdir);
+	// The task totals, problem logs, durations and critical tasks are no longer
+	// selected (their temporary tables are disabled above), so the list headers
+	// that sort on them fall back to a column the query does have.
+	$sortable = array('macroproject_name', 'user_username', 'macroproject_color_identifier',
+	                  'company_name', 'macroproject_end_date', 'macroproject_start_date',
+	                  'macroproject_status', 'macroproject_percent_complete', 'macroproject_priority');
+	if ($macroorderby == 'task_log_problem DESC,macroproject_priority') {
+		$macroorder_column = 'macroproject_priority';
+	} else {
+		$macroorder_column = (in_array($macroorderby, $sortable) ? $macroorderby : 'macroproject_end_date');
+	}
+	$q->addOrder($macroorder_column . ' ' . $orderdir);
 	$obj_macroproject->setAllowedSQL($AppUI->user_id, $q, null, 'mp');
 	$macroprojects = $q->loadList();
+	if (!is_array($macroprojects)) {
+		$macroprojects = array();
+	}
 
 
 

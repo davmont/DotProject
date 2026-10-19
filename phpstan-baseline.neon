@@ -175,12 +175,6 @@ parameters:
 			path: classes/dp.class.php
 
 		-
-			message: '#^Method CDpObject\:\:load\(\) has invalid return type any\.$#'
-			identifier: class.notFound
-			count: 1
-			path: classes/dp.class.php
-
-		-
 			message: '#^PHPDoc tag @param has invalid value \(array Optional array of additional sql parameters \(from and where supported\)\)\: Unexpected token "Optional", expected variable at offset 300 on line 7$#'
 			identifier: phpDoc.parseError
 			count: 1
@@ -1195,28 +1189,10 @@ parameters:
 			path: modules/closure/addedit.php
 
 		-
-			message: '#^Method CClosure\:\:load\(\) has invalid return type any\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/closure/closure.class.php
-
-		-
 			message: '#^Access to an undefined property CClosure\:\:\$resource_id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: modules/closure/view.php
-
-		-
-			message: '#^Access to protected property CCommunication\:\:\$_message\.$#'
-			identifier: property.protected
-			count: 2
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Call to an undefined method CCommunication\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: modules/communication/do_communication_aed.php
 
 		-
 			message: '#^Undefined variable\: \$sql$#'
@@ -1277,12 +1253,6 @@ parameters:
 			identifier: constant.notFound
 			count: 1
 			path: modules/dataimport/do_config.php
-
-		-
-			message: '#^Method CDepartment\:\:load\(\) has invalid return type any\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/departments/departments.class.php
 
 		-
 			message: '#^Undefined variable\: \$trip$#'
@@ -1467,12 +1437,6 @@ parameters:
 		-
 			message: '#^Call to an undefined method CFile\:\:getTaskName\(\)\.$#'
 			identifier: method.notFound
-			count: 1
-			path: modules/files/addedit.php
-
-		-
-			message: '#^Undefined variable\: \$file_id$#'
-			identifier: variable.undefined
 			count: 1
 			path: modules/files/addedit.php
 
@@ -1867,30 +1831,6 @@ parameters:
 			path: modules/helpdesk/do_item_aed.php
 
 		-
-			message: '#^Constant item_notify not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: modules/helpdesk/helpdesk.class.php
-
-		-
-			message: '#^Constant item_status not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: modules/helpdesk/helpdesk.class.php
-
-		-
-			message: '#^Function mysql_insert_id not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/helpdesk/helpdesk.class.php
-
-		-
-			message: '#^Static call to instance method CDate\:\:compare\(\)\.$#'
-			identifier: method.staticCall
-			count: 1
-			path: modules/helpdesk/helpdesk.class.php
-
-		-
 			message: '#^Function split not found\.$#'
 			identifier: function.notFound
 			count: 1
@@ -2036,18 +1976,6 @@ parameters:
 
 		-
 			message: '#^Method CHosting\:\:delete\(\) should return string\|null but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: modules/hosting/hosting.class.php
-
-		-
-			message: '#^Method CHosting\:\:load\(\) has invalid return type any\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/hosting/hosting.class.php
-
-		-
-			message: '#^Method CHosting\:\:load\(\) should return any but return statement is missing\.$#'
 			identifier: return.missing
 			count: 1
 			path: modules/hosting/hosting.class.php
@@ -2335,24 +2263,6 @@ parameters:
 			path: modules/journal/setup.php
 
 		-
-			message: '#^Access to an undefined property CLink\:\:\$file_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: modules/links/do_link_aed.php
-
-		-
-			message: '#^Access to protected property CLink\:\:\$_message\.$#'
-			identifier: property.protected
-			count: 2
-			path: modules/links/do_link_aed.php
-
-		-
-			message: '#^Call to an undefined method CLink\:\:notify\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: modules/links/do_link_aed.php
-
-		-
 			message: '#^Undefined variable\: \$xpg_sqlrecs$#'
 			identifier: variable.undefined
 			count: 1
@@ -2369,12 +2279,6 @@ parameters:
 			identifier: isset.variable
 			count: 12
 			path: modules/macroprojects/departments_tab.view.macroprojects.php
-
-		-
-			message: '#^Method CMacroProject\:\:load\(\) has invalid return type any\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/macroprojects/macroprojects.class.php
 
 		-
 			message: '#^Variable \$addMacroProjectsWithAssignedTasks in isset\(\) always exists and is not nullable\.$#'
@@ -2893,12 +2797,6 @@ parameters:
 			path: modules/projects/projects.class.php
 
 		-
-			message: '#^Method CProject\:\:load\(\) has invalid return type any\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/projects/projects.class.php
-
-		-
 			message: '#^PHPDoc tag @param has invalid value \(int		Project ID of the tasks come from\.\)\: Unexpected token "Project", expected variable at offset 58 on line 3$#'
 			identifier: phpDoc.parseError
 			count: 1
@@ -3193,12 +3091,6 @@ parameters:
 			path: modules/tasks/tasks.class.php
 
 		-
-			message: '#^Method CTask\:\:load\(\) has invalid return type any\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/tasks/tasks.class.php
-
-		-
 			message: '#^Method CTaskLog\:\:dPTrimAll\(\) has invalid return type none\.$#'
 			identifier: class.notFound
 			count: 1
@@ -3265,12 +3157,6 @@ parameters:
 			path: modules/tasks/tasks.class.php
 
 		-
-			message: '#^Static call to instance method CDate\:\:compare\(\)\.$#'
-			identifier: method.staticCall
-			count: 1
-			path: modules/tasks/tasks.class.php
-
-		-
 			message: '#^Undefined variable\: \$intersect$#'
 			identifier: variable.undefined
 			count: 1
@@ -3293,12 +3179,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: modules/tasks/tasksperuser_sub.php
-
-		-
-			message: '#^Function do_exec not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/tasks_template/setup.php
 
 		-
 			message: '#^Access to an undefined property CTesting\:\:\$test_task\.$#'

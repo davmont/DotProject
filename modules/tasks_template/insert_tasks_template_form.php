@@ -14,7 +14,7 @@ if (!defined('DP_BASE_DIR')) {
 	}
 	
 	$sql = "select tasks_template_id, tasks_template_name
-			from tasks_template
+			from " . dPgetConfig('dbprefix', '') . "tasks_template
 			order by tasks_template_name";
 	$tasks_templates = db_loadHashList($sql);
 ?>

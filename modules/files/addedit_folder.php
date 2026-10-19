@@ -7,8 +7,10 @@ $file_folder_parent = intval(dPgetParam($_GET, 'file_folder_parent', 0));
 $folder = intval(dPgetParam($_GET, 'folder', 0));
 
 // add to allow for returning to other modules besides Files
-$referrerArray = parse_url($_SERVER['HTTP_REFERER']);
-$referrer = $referrerArray['query'] . $referrerArray['fragment'];
+$http_referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+$referrerArray = parse_url($http_referer);
+$referrer = ((isset($referrerArray['query']) ? $referrerArray['query'] : '')
+            . (isset($referrerArray['fragment']) ? $referrerArray['fragment'] : ''));
 
 $obj = new CFileFolder();
 // load the record data
@@ -30,6 +32,7 @@ if (($folder && !($canEdit_folder && $canRead_folder)) || (!($folder) && !($canA
 }
 
 $msg = '';
+$canDelete_folder = false;
 // check if this record has dependancies to prevent deletion
 if ($folder > 0) {
 	$canDelete_folder = $obj->canDelete($msg, $folder);

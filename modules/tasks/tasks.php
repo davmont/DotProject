@@ -578,7 +578,7 @@ if ($showEditCheckbox) {
 									<td align="right">
 										<?php
 										$hasEditableTask = ((isset($canEdit) && $canEdit) ? true : false);
-										if (is_array($p['tasks']) && !($hasEditableTask)) {
+										if (isset($p['tasks']) && is_array($p['tasks']) && !($hasEditableTask)) {
 											foreach ($p['tasks'] as $i => $t1) {
 												$hasEditableTask = (getPermission('tasks', 'edit', $t1['task_id'])
 													|| $hasEditableTask);
@@ -685,7 +685,7 @@ if ($showEditCheckbox) {
 			if (isset($p['tasks']) && is_array($p['tasks'])) {
 				foreach ($p['tasks'] as $i => $t) {
 					$tasks_filtered[] = $t['task_id'];
-					$children_of[$t['task_parent']] = (($children_of[$t['task_parent']])
+					$children_of[$t['task_parent']] = ((!empty($children_of[$t['task_parent']]))
 						? $children_of[$t['task_parent']] :
 						array());
 					if ($t['task_parent'] != $t['task_id']) {
