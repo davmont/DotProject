@@ -5,9 +5,15 @@ allows only the site's own scripts plus inline `<script>` blocks carrying the
 per-request nonce. Inline event handlers (`onclick="..."`) and `javascript:`
 URLs are not allowed.
 
-The policy is **Report-Only** while the existing pages are converted
-(roadmap Phase 7c onwards): browsers report violations instead of blocking
-them. The last step switches it to an enforced `Content-Security-Policy`.
+The policy is **enforced** (roadmap Phase 7h): browsers block anything it does
+not allow and report it to `csp-report.php`. If an upgrade breaks a page, set
+`$dPconfig['csp_report_only'] = true;` in `includes/config.php` to send it as
+`Content-Security-Policy-Report-Only` again (violations are then reported but
+not blocked) while the page is fixed.
+
+Dormant modules (helpdesk, opportunities, projectdesigner, timecard, ...)
+still contain inline JavaScript and will not work until they are converted;
+`scripts/check-inline-js.sh --list` shows what is left.
 
 | Piece | Where |
 |---|---|

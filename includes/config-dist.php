@@ -52,6 +52,10 @@ $dPconfig['dbpersist'] = false;
 // encoding) with hash_hmac('sha256', $userdata, $secret) and sends it as "check".
 // $dPconfig['postnuke_secret'] = '';
 
+// Content-Security-Policy: set to true to only report violations instead of
+// blocking them, while a page that breaks under the policy is fixed (docs/csp.md).
+// $dPconfig['csp_report_only'] = true;
+
 /***************** Configuration for DEVELOPERS use only! ******/
 // Root directory is now automatically set to avoid
 // getting it wrong. It is also deprecated as $baseDir

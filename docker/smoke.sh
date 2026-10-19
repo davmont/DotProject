@@ -88,10 +88,11 @@ QS="docker compose exec -T -u ${DP_UID:-1000} -w /var/www/html web php queuescan
 check "queue scanner needs a base URL" "$($QS >/dev/null 2>&1; echo $?)" "2"
 check "queue scanner runs from the CLI" "$($QS --base-url=$B | tail -1 | grep -o '^Done')" "Done"
 
-# Phase 7b: report-only CSP with a fresh nonce, the report endpoint, dp-actions.js on every page
-H1=$(curl -s -D - -o /dev/null $U | grep -i '^content-security-policy-report-only:')
-H2=$(curl -s -D - -o /dev/null $U | grep -i '^content-security-policy-report-only:')
-check "report-only CSP sent" "$(grep -c "script-src 'self' 'nonce-" <<<"$H1")" "1"
+# Phase 7b/7h: enforced CSP with a fresh nonce, the report endpoint, dp-actions.js on every page
+H1=$(curl -s -D - -o /dev/null $U | tr -d '\r' | grep -i '^content-security-policy')
+H2=$(curl -s -D - -o /dev/null $U | tr -d '\r' | grep -i '^content-security-policy')
+check "enforced CSP sent (not report-only)" "$(grep -ci "^content-security-policy: .*script-src 'self' 'nonce-" <<<"$H1")" "1"
+check "CSP script-src has no unsafe-inline/unsafe-eval" "$(grep -oE "script-src [^;]*" <<<"$H1" | grep -c "unsafe-")" "0"
 check "CSP nonce changes per request" "$([ -n "$H1" ] && [ "$H1" != "$H2" ] && echo yes)" "yes"
 check "CSP report endpoint refuses GET" "$(curl -s -o /dev/null -w '%{http_code}' $B/csp-report.php)" "405"
 docker compose exec -T web rm -f /var/www/html/files/temp/csp-reports.log
