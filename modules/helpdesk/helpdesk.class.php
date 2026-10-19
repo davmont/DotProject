@@ -157,7 +157,7 @@ function store($updateNulls = false) {
 		return $msg;
 	} else {
 		if(!$this->item_id) {  
-			$this->item_id = mysql_insert_id();
+			$this->item_id = db_insert_id();
 		}
 		return $msg;
 	}
@@ -280,10 +280,10 @@ function notify($type, $log_msg, $email_list=null) {
 	// Build notification specific information for top of body
 	// any comments to body string made prior will be retained at the top
 	switch ($type) {
-		case item_notify:
+		case 'item_notify':
 			//Ignore status updates of changing email notification setting on issue
 			return "skipped - ignoring email notification changes";
-		case item_status:
+		case 'item_status':
 		case STATUS_LOG:
 			$subject .= " - " . $AppUI->_('Updated status');
 			if (is_numeric($log_msg)) {
@@ -732,7 +732,7 @@ function addReminder() {
 	// Find the deadline date of this task, then subtract the required number of days.
 	$date = new CDate($this->item_deadline);
 	$today = new CDate(date('Y-m-d'));
-	if (CDate::compare($date, $today) < 0) {
+	if ($date->compare($date, $today) < 0) { // compare() is not static
 		$start_day = time();
 	} else {
 		$start_day = $date->getDate(DATE_FORMAT_UNIXTIME);
