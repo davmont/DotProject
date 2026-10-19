@@ -25,14 +25,10 @@ parameters:
             - modules/holiday/PEAR/*
             - modules/mantis/core/*
             - modules/mantis/no.core/*
-            - modules/tracIntegration/xrlib/*
             # Patched copies of dotProject 2.0.3 core files (dormant, to be redone)
             - modules/unitcost/patch_203/*
             # Not analysed: timeplanning.class.php (method signatures fatal on PHP 8, never
-            # loaded), eventum's evlink (copied into an Eventum install) and groups (nested
-            # copy, uses the dotProject 1.x permissions table). See the roadmap.
-            - modules/eventum/evlink/*
-            - modules/groups/modules/*
+            # loaded). See the roadmap.
             - modules/timeplanning/timeplanning.class.php
             - modules/*/js/*
     bootstrapFiles:

@@ -20,7 +20,7 @@ PATTERN="(?i)^(?!\\s*(//|#|/\\*|\\*)).*((^|[\\s'\"])on($EVENTS)\\s*=|javascript:
 
 files() {
   git ls-files '*.php' '*.inc' '*.html' '*.htm' '*.js' \
-    | grep -vE '^(lib|vendor|tests|docker|docs|node_modules)/|/(examples?|docs?|demo|api|jsLibraries|jscalendar|PEAR)/|^modules/(mantis/(core|no\.core)|tracIntegration/xrlib|unitcost/patch_203)/|^js/tests/|\.min\.js$|/jquery[^/]*\.js$'
+    | grep -vE '^(lib|vendor|tests|docker|docs|node_modules)/|/(examples?|docs?|demo|api|jsLibraries|jscalendar|PEAR)/|^modules/(mantis/(core|no\.core)|unitcost/patch_203)/|^js/tests/|\.min\.js$|/jquery[^/]*\.js$'
 }
 
 current() {

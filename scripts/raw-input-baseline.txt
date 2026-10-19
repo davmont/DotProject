@@ -76,9 +76,6 @@ modules/forums/post_message.php:2
 modules/forums/viewer.php:3
 modules/forums/view_topics.php:2
 modules/gallery2/configure.php:3
-modules/groups/modules/contacts/index.php:7
-modules/groups/modules/groups/do_group_aed.php:2
-modules/groups/modules/groups/index.php:2
 modules/helpdesk/configure.php:6
 modules/helpdesk/do_item_aed.php:2
 modules/helpdesk/index.php:4
