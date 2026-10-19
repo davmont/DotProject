@@ -63,8 +63,9 @@ if ($is_clash) {
 	unset($_SESSION['add_event_clash']);
 	unset($_SESSION['event_is_clash']);
 }
-if ($_GET['event_project']) {
-	$obj->event_project = $_GET['event_project'];
+$event_project = dPgetIntParam($_GET, 'event_project', 0);
+if ($event_project) {
+	$obj->event_project = $event_project;
 }
 
 // setup the title block
@@ -109,6 +110,8 @@ if ($event_id || $is_clash) {
 $inc = intval(dPgetConfig('cal_day_increment')) ? intval(dPgetConfig('cal_day_increment')) : 30;
 if (!$event_id && !$is_clash) {
 	$seldate = new CDate($date);
+	$h = 0;
+	$min = 0;
 	// If date is today, set start time to now + inc
 	if ($date == date('Ymd')) {
 		$h = date('H');
