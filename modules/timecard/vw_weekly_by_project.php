@@ -81,9 +81,10 @@ if (!defined('DP_BASE_DIR')) {
 	$date = $end_day->format("%Y-%m-%d")." 23:59:59";
 	$end_day -> setDate($date, DATE_FORMAT_ISO);
 
+	$dbprefix = dPgetConfig('dbprefix', '');
 	//Get hash of users
 //Pedro A.
-	$sql = "SELECT user_id, contact_email, concat(contact_first_name,' ',contact_last_name) as name FROM users LEFT JOIN contacts AS c ON users.user_contact = contact_id ORDER BY contact_first_name, contact_last_name;";
+	$sql = "SELECT user_id, contact_email, concat(contact_first_name,' ',contact_last_name) as name FROM {$dbprefix}users AS users LEFT JOIN {$dbprefix}contacts AS c ON users.user_contact = contact_id ORDER BY contact_first_name, contact_last_name;";
 //End Pedro A.
 	$result = db_loadList($sql);	
 	$people = array();
@@ -98,7 +99,7 @@ if (!defined('DP_BASE_DIR')) {
 
 
 	//Get hash of departments
-	$sql = "SELECT dept_id, dept_name FROM departments ORDER BY dept_name;";
+	$sql = "SELECT dept_id, dept_name FROM {$dbprefix}departments ORDER BY dept_name;";
 	$result = db_loadList($sql);	
 	$departments = array();
 	foreach($result as $row){
@@ -112,8 +113,8 @@ if (!defined('DP_BASE_DIR')) {
 			project_name,
 			company_name
 		FROM 
-			projects
-			LEFT JOIN companies ON projects.project_company=companies.company_id
+			{$dbprefix}projects AS projects
+			LEFT JOIN {$dbprefix}companies AS companies ON projects.project_company=companies.company_id
 		WHERE 
 		".getPermsWhereClause("companies", "company_id")."
 	";
@@ -183,13 +184,13 @@ if (!defined('DP_BASE_DIR')) {
 				company_name,
 				sum(task_log_hours) as hours
 			FROM 
-				task_log
-				left join tasks on task_log.task_log_task = tasks.task_id
-				left join projects on tasks.task_project = projects.project_id
-				left join users on task_log.task_log_creator = users.user_id
-				left join companies on projects.project_company = companies.company_id
-				left join project_departments on projects.project_id = project_departments.project_id
-				left join contacts on users.user_contact = contacts.contact_id
+				' . $dbprefix . 'task_log AS task_log
+				left join ' . $dbprefix . 'tasks AS tasks on task_log.task_log_task = tasks.task_id
+				left join ' . $dbprefix . 'projects AS projects on tasks.task_project = projects.project_id
+				left join ' . $dbprefix . 'users AS users on task_log.task_log_creator = users.user_id
+				left join ' . $dbprefix . 'companies AS companies on projects.project_company = companies.company_id
+				left join ' . $dbprefix . 'project_departments AS project_departments on projects.project_id = project_departments.project_id
+				left join ' . $dbprefix . 'contacts AS contacts on users.user_contact = contacts.contact_id
 			WHERE
 				projects.project_id in ('.implode(", ",$ids).")
 				AND task_log_date >= '".$start_day->format( FMT_DATETIME_MYSQL )."' 
@@ -241,7 +242,7 @@ if (!defined('DP_BASE_DIR')) {
 			$start_day -> addDays(-7);
 	}
 
-	$sql = "SELECT company_id, company_name FROM companies WHERE ".getPermsWhereClause("companies", "company_id")." ORDER BY company_name";
+	$sql = "SELECT company_id, company_name FROM {$dbprefix}companies WHERE ".getPermsWhereClause("companies", "company_id")." ORDER BY company_name";
 	$companies = arrayMerge( array( 0 => $AppUI->_('All Companies') ), db_loadHashList( $sql ) );
 
 	//last day of that week, add 6 days

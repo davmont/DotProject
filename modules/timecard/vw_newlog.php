@@ -21,6 +21,7 @@ GLOBAL $AppUI;
 //***END MOD
 
 $df = $AppUI->getPref('SHDATEFORMAT');
+$dbprefix = dPgetConfig('dbprefix', '');
 
 $tid = isset($_GET['tid']) ? (int)$_GET['tid'] : 0;
 
@@ -30,9 +31,9 @@ $winnow_tasks = getPermsWhereClause("tasks", "tasks.task_id");
 // if we have a TID, then we editing an existing row
 $sql = " 
 SELECT task_log.*, project_name, task_name, task_project, project_company 
-FROM task_log
-LEFT JOIN tasks ON task_id = task_log_task
-LEFT JOIN projects ON project_id = task_project
+FROM {$dbprefix}task_log AS task_log
+LEFT JOIN {$dbprefix}tasks AS tasks ON task_id = task_log_task
+LEFT JOIN {$dbprefix}projects AS projects ON project_id = task_project
 WHERE  task_log_id = $tid 
 	AND $winnow_project
 	AND $winnow_tasks
@@ -71,9 +72,9 @@ if (isset( $task['task_log_date'] )) {
 $sql = "
 SELECT u.task_id, t.task_name, t.task_project,
 	p.project_name, p.project_company, c.company_name
-FROM user_tasks u, tasks t
-LEFT JOIN projects p ON p.project_id = t.task_project
-LEFT JOIN companies c ON c.company_id = p.project_company
+FROM {$dbprefix}user_tasks u, {$dbprefix}tasks t
+LEFT JOIN {$dbprefix}projects p ON p.project_id = t.task_project
+LEFT JOIN {$dbprefix}companies c ON c.company_id = p.project_company
 WHERE u.user_id = $AppUI->user_id
 	AND u.task_id = t.task_id
 	AND t.task_dynamic = 0
@@ -105,7 +106,7 @@ if ($task_found)
 	// collect projects in js format
 	$projects[$task['task_project']] = "[" . (int)$task['project_company'] . "," . (int)$task['task_project'] . ", " . dPjs($task['project_name']) . "]";
 	// get the company name
-	$sql = "SELECT company_name FROM companies WHERE company_id = ".(int)$task['project_company'];
+	$sql = "SELECT company_name FROM {$dbprefix}companies WHERE company_id = ".(int)$task['project_company'];
 	// collect companies in normal format
 	$companies[$task['project_company']] =  db_LoadResult($sql);
 }
@@ -127,7 +128,7 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 $proj = new CProject();
 $proj->load($obj->task_project);
 $sql = "SELECT billingcode_id, billingcode_name
-FROM billingcode
+FROM {$dbprefix}billingcode
 WHERE billingcode_status=0
 AND company_id=" . (int)$proj->project_company . "
 ORDER BY billingcode_name";

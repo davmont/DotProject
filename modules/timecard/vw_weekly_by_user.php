@@ -46,6 +46,7 @@ if (!defined('DP_BASE_DIR')) {
 	$date = $end_day->format("%Y-%m-%d")." 23:59:59";
 	$end_day -> setDate($date, DATE_FORMAT_ISO);
 
+	$dbprefix = dPgetConfig('dbprefix', '');
 	$selects = array();
 	$join = array();
 	
@@ -58,9 +59,9 @@ if (!defined('DP_BASE_DIR')) {
 			contact_email,
 			company_name
 		FROM 
-			users
-			LEFT JOIN contacts ON users.user_contact=contacts.contact_id
-			LEFT JOIN companies ON companies.company_id=contacts.contact_company
+			{$dbprefix}users AS users
+			LEFT JOIN {$dbprefix}contacts AS contacts ON users.user_contact=contacts.contact_id
+			LEFT JOIN {$dbprefix}companies AS companies ON companies.company_id=contacts.contact_company
 		WHERE 
 		".$where."
 	";
@@ -117,7 +118,7 @@ if (!defined('DP_BASE_DIR')) {
 				task_log_creator,
 				sum(task_log_hours) as hours
 			FROM
-				task_log
+				{$dbprefix}task_log
 			WHERE
 				task_log_date >= '".$start_day->format( FMT_DATETIME_MYSQL )."' 
 				AND task_log_date <= '".$end_day->format( FMT_DATETIME_MYSQL )."'
@@ -138,7 +139,7 @@ if (!defined('DP_BASE_DIR')) {
 		$start_day -> addDays(-7);
 	}
 
-	$sql = "SELECT company_id, company_name FROM companies WHERE ".getPermsWhereClause("companies", "company_id")." ORDER BY company_name";
+	$sql = "SELECT company_id, company_name FROM {$dbprefix}companies WHERE ".getPermsWhereClause("companies", "company_id")." ORDER BY company_name";
 		//print "<pre>$sql</pre>";
 	$companies = arrayMerge( array( 0 => $AppUI->_('All Entities') ), db_loadHashList( $sql ) );
 

@@ -17,6 +17,7 @@ if ($denyEdit) {
 require_once $AppUI->getSystemClass('date');
 require_once $AppUI->getModuleClass('helpdesk');
 $df = $AppUI->getPref('SHDATEFORMAT');
+$dbprefix = dPgetConfig('dbprefix', '');
 
 $tid = isset($_GET['tid']) ? (int)$_GET['tid'] : 0;
 
@@ -24,8 +25,8 @@ $tid = isset($_GET['tid']) ? (int)$_GET['tid'] : 0;
 // if we have a TID, then we editing an existing row
 $sql = " 
 SELECT task_log.*, item_id, item_project_id, item_title, item_company_id 
-FROM task_log
-LEFT JOIN helpdesk_items ON task_log_help_desk_id = item_id
+FROM {$dbprefix}task_log AS task_log
+LEFT JOIN {$dbprefix}helpdesk_items ON task_log_help_desk_id = item_id
 WHERE  task_log_id = $tid 
 AND ".getItemPerms()."
 "; 
@@ -64,9 +65,9 @@ if (isset( $helpdeskItemTask['task_log_date'] )) {
 // get user -> help desk items
 $sql = "
 SELECT h.*, p.project_name, c.company_name, c.company_id
-FROM helpdesk_items h
-LEFT JOIN projects p ON h.item_project_id = p.project_id 
-LEFT JOIN companies c ON h.item_company_id = c.company_id
+FROM {$dbprefix}helpdesk_items h
+LEFT JOIN {$dbprefix}projects p ON h.item_project_id = p.project_id 
+LEFT JOIN {$dbprefix}companies c ON h.item_company_id = c.company_id
 WHERE ".getItemPerms()."
 ORDER by p.project_name, h.item_title
 ";
@@ -96,12 +97,12 @@ if ($helpdeskItemTask_found)
 	// need to add the entry for the helpdesk itself as that was not found
 	$helpdeskItemTasks[$helpdeskItemTask['item_id']] = "[" . (int)$helpdeskItemTask['item_project_id'] . ", " . (int)$helpdeskItemTask['item_id'] . ", " . dPjs($helpdeskItemTask['item_title']) . ", " . (int)$helpdeskItemTask['item_company_id'] . "]";
 	// get the project name
-	$sql = "SELECT project_name FROM projects WHERE project_id = ".$helpdeskItemTask['item_project_id'];
+	$sql = "SELECT project_name FROM {$dbprefix}projects WHERE project_id = ".$helpdeskItemTask['item_project_id'];
 	$itemCompanyName = db_LoadResult($sql);
 	// collect projects in js format
 	$projects[$helpdeskItemTask['item_project_id']] = "[" . (int)$helpdeskItemTask['item_company_id'] . "," . (int)$helpdeskItemTask['item_project_id'] . ", " . dPjs($itemCompanyName) . "]";
 	// get the company name
-	$sql = "SELECT company_name FROM companies WHERE company_id = ".$helpdeskItemTask['item_company_id'];
+	$sql = "SELECT company_name FROM {$dbprefix}companies WHERE company_id = ".$helpdeskItemTask['item_company_id'];
 	// collect companies in normal format
 	$companies[$helpdeskItemTask['item_company_id']] =  db_LoadResult($sql);
 }
