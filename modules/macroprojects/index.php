@@ -180,7 +180,7 @@ $statuses = $q->loadHashList('macroproject_status');
 $q->clear();
 $all_macroprojects = 0;
 foreach ($statuses as $k => $v) {
-	$macroproject_status_tabs[$v['macroproject_status']] = ($AppUI->_($macroproject_types[$v['macroproject_status']]) 
+	$macroproject_status_tabs[$v['macroproject_status']] = ($AppUI->_($macroproject_types[$v['macroproject_status']] ?? '') 
 													  . ' (' . $v['count'] . ')');
 	//count all macroprojects
 	$all_macroprojects += $v['count'];
