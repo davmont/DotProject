@@ -622,10 +622,13 @@ function displayTask($list,$task,$level,$display_week_hours,$fromPeriod,$toPerio
 	$tmp .= '&nbsp;&nbsp;&nbsp;</td>';
 	
 	$tmp .= '<td align="center" nowrap="nowrap">';
-	$ed = new CDate($task->task_end_date);
-	$dt = $now->dateDiff($ed);
-	$sgn = $now->compare($ed,$now);
-	$tmp .= ($dt*$sgn);
+	// days until the end date; nothing when the task has no end date
+	if (intval($task->task_end_date)) {
+		$ed = new CDate($task->task_end_date);
+		$dt = $now->dateDiff($ed);
+		$sgn = $now->compare($ed,$now);
+		$tmp .= ($dt*$sgn);
+	}
 	$tmp .= '</td>';
 	
 	if ($display_week_hours) {
