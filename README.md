@@ -154,7 +154,7 @@ expect `undefined index` warnings and pre-Material styling in:
 - **Projects & Tasks** — `/projects`, `/tasks`, `/tasks_template`, `/projectdesigner`
 - **Departments & HR** — `/departments`, `/human_resources`
 - **Finances & Invoicing** — `/finances`, `/invoices`, `/costs`, `/unitcost`, `/payments`
-- **Helpdesk & Ticketing** — `/helpdesk`, `/ticketsmith`, `/bugspray`, `/mantis`
+- **Helpdesk & Ticketing** — `/helpdesk`, `/ticketsmith`, `/mantis`
 - **Time & Resources** — `/timeplanning`, `/timecard`, `/timesheet`, `/timetrack`, `/resource_m`
 - **Monitoring, Gantt & Risks** — `/monitoringandcontrol`, `/igantt`, `/risks`
 - **Files & System Admin** — `/files`, `/system`, `/backup`, `/dataimport`

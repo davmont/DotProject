@@ -13,11 +13,6 @@ modules/admin/viewuser.php:5
 modules/admin/vw_usr_sessions.php:7
 modules/annotations/index.php:5
 modules/annotations/projects_tab.annotations.php:2
-modules/bugspray/configure.php:1
-modules/bugspray/do_item_aed.php:1
-modules/bugspray/index.php:2
-modules/bugspray/list.php:28
-modules/bugspray/view.php:2
 modules/calendar/addedit.php:2
 modules/calendar/calendar.class.php:1
 modules/calendar/clash.php:16
@@ -191,7 +186,6 @@ modules/resources/index.php:2
 modules/risks/index.php:2
 modules/risks/indexProjectView.php:2
 modules/risks/index_table.php:2
-modules/smartsearchns/index.php:18
 modules/system/billingcode.php:3
 modules/system/contacts_ldap.php:10
 modules/system/do_preference_aed.php:3
