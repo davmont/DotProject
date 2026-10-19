@@ -13,7 +13,6 @@ modules/admin/viewuser.php:5
 modules/admin/vw_usr_sessions.php:7
 modules/annotations/index.php:5
 modules/annotations/projects_tab.annotations.php:2
-modules/calendar/addedit.php:2
 modules/calendar/calendar.class.php:1
 modules/calendar/clash.php:16
 modules/calendar/day_view.php:2
@@ -23,10 +22,8 @@ modules/calendar/week_view.php:3
 modules/closure/companies_tab.experience_factory.php:1
 modules/closure/do_closure_aed.php:1
 modules/closure/projects_tab.post_mortem_analysis.php:1
-modules/communication/addedit_channel.php:4
-modules/communication/addedit_frequency.php:5
-modules/communication/addedit.php:12
-modules/communication/functions.php:82
+modules/communication/addedit.php:10
+modules/communication/functions.php:66
 modules/communication/index.php:2
 modules/communication/index_table.php:2
 modules/companies/do_company_aed.php:1
@@ -216,7 +213,7 @@ modules/timecard/do_updatetasklog.php:1
 modules/timecard/index.php:2
 modules/timecard/vw_calendar_by_user.php:4
 modules/timecard/vw_newhelpdesklog.php:3
-modules/timecard/vw_newlog.php:4
+modules/timecard/vw_newlog.php:3
 modules/timecard/vw_timecard.php:4
 modules/timecard/vw_weekly_by_project.php:12
 modules/timecard/vw_weekly_by_user.php:4

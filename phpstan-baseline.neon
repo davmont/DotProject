@@ -1441,12 +1441,6 @@ parameters:
 			path: modules/files/addedit.php
 
 		-
-			message: '#^Undefined variable\: \$file_id$#'
-			identifier: variable.undefined
-			count: 1
-			path: modules/files/addedit.php
-
-		-
 			message: '#^Access to an undefined property CFile\:\:\$file_checkout\.$#'
 			identifier: property.notFound
 			count: 1
@@ -3185,12 +3179,6 @@ parameters:
 			identifier: property.notFound
 			count: 1
 			path: modules/tasks/tasksperuser_sub.php
-
-		-
-			message: '#^Function do_exec not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/tasks_template/setup.php
 
 		-
 			message: '#^Access to an undefined property CTesting\:\:\$test_task\.$#'
