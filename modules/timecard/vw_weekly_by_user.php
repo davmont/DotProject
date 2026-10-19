@@ -199,7 +199,7 @@ if (!defined('DP_BASE_DIR')) {
 <?php
 	for($i=$week_count-1;$i>=0;$i--){
 		 $hours = isset($person[$i])?$person[$i]:0;
-		 $hours = round($hours,2);
+		 $hours = round((float)$hours,2);
 		 if ($i==0 AND $hours == $person['user_id']) {
 		   $hours = 0;
 		 }
