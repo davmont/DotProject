@@ -16,6 +16,7 @@ $max_levels = dPgetCleanParam($_POST, 'max_levels', '');
 $log_userfilter = (int)dPgetParam($_POST, 'log_userfilter', 0);
 $company_id = dPgetCleanParam($_POST, 'company_id', 'all');
 $project_id = dPgetCleanParam($_POST, 'project_id', 'all');
+$report_type = dPgetCleanParam($_POST, 'report_type', '');
 
 require_once ($AppUI->getModuleClass('projects'));
 require_once ($AppUI->getModuleClass('tasks'));
@@ -363,7 +364,8 @@ if ($do_report) {
 			</td>
 			<td colspan="6" style="background: #D0D0D0;color: #000000;font-weight: bold;" nowrap="nowrap">
 				<a href="index.php?m=calendar&amp;a=day_view&amp;user_id=<?php 
-			echo($user_id); ?>&tab=1"><?php echo dPhtml($userAlloc[$user_id]['userFC']); ?></a>
+			echo($user_id); ?>&tab=1"><?php echo dPhtml(isset($userAlloc[$user_id]['userFC'])
+				? $userAlloc[$user_id]['userFC'] : $user_data['user_username']); ?></a>
 			</td>
 <?php 
 			$wx = (weekCells($display_week_hours, $sss, $sse));
@@ -651,7 +653,6 @@ function displayTask($list,$task,$level,$display_week_hours,$fromPeriod,$toPerio
 		$zm1 = $z - 2;
 		$zm1 = (($zm1 <= 0) ? 1 : $zm1);
 		
-		$assUser = $userAlloc[$user_id]['userFC'];
 		// need to handle orphaned tasks different from tasks with existing assignees
 		$zm1 += (($user_id == 0) ? 1 : 0);
 		
