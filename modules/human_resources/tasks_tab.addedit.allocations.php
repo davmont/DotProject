@@ -3,17 +3,21 @@ if (!defined('DP_BASE_DIR')) {
   die('You should not access this file directly.');
 }
 
-global $tabbed, $currentTabName, $currentTabId, $AppUI;
+global $tabbed, $currentTabName, $currentTabId, $AppUI, $task_project;
 
 $task_id = intval(dPgetParam($_GET, 'task_id', 0));
 $project_id = intval(dPgetParam($_GET, 'project_id', 0));
+if (!$project_id && !empty($task_project)) {
+	// tasks addedit identifies the project as task_project, not project_id
+	$project_id = (int)$task_project;
+}
 
 $query = new DBQuery;
 $query->addTable('projects', 'p');
 $query->addQuery('project_name');
 $query->addWhere('p.project_id = ' . $project_id);
 $res_project =& $query->exec();
-$project_name = $res_project->fields['project_name'];
+$project_name = $res_project->fields ? $res_project->fields['project_name'] : '';
 
 $query = new DBQuery;
 $query->addTable('tasks', 't');
