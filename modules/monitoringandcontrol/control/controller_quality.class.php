@@ -188,7 +188,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 			$arQualidadePie = array_merge($arQualidadePie, $arQualidadePieSemErro);		
 		}
 
-	    $arQualidadePieComErro = $qualityControl->obterQuantidadeTarefaComErro($project_id, $user);
+	    $arQualidadePieComErro = (array)$qualityControl->obterQuantidadeTarefaComErro($project_id, $user);
 		if (count($arQualidadePieComErro) > 0){
 			$arQualidadePie = array_merge($arQualidadePie, $arQualidadePieComErro);
 		}			
