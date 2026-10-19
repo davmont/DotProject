@@ -18,9 +18,10 @@ if (!defined('DP_BASE_DIR')) {
 	// get date format
 	$df = $AppUI->getPref('SHDATEFORMAT');
 	$tf = $AppUI->getPref('TIMEFORMAT');
+	$dbprefix = dPgetConfig('dbprefix', '');
 
 	if (isset( $_GET['user_id'] )) {
-		$sql = "SELECT user_company FROM users WHERE user_id = " . (int)$_GET['user_id'];
+		$sql = "SELECT user_company FROM {$dbprefix}users WHERE user_id = " . (int)$_GET['user_id'];
 		$company_id = db_loadResult( $sql );
 		if(getDenyRead( "companies", $company_id )){
 			$AppUI->redirect( "m=public&a=access_denied" );
@@ -157,8 +158,8 @@ function goToDate( start_date ) {
 			<td align="right">
 	<?php
 		// list active users
-		$sql = "SELECT DISTINCT(user_id), CONCAT_WS(', ', contact_last_name, contact_first_name) as full_name FROM users ";
-		$sql.="LEFT JOIN contacts ON user_contact = contact_id ";
+		$sql = "SELECT DISTINCT(user_id), CONCAT_WS(', ', contact_last_name, contact_first_name) as full_name FROM {$dbprefix}users ";
+		$sql.="LEFT JOIN {$dbprefix}contacts ON user_contact = contact_id ";
 //		LEFT JOIN permissions ON user_id = permission_user 
 //		WHERE permission_value IS NOT NULL 
 		$sql.="WHERE (user_id=".$AppUI->user_id." or (".getPermsWhereClause("companies", "user_company").")) ORDER BY full_name";
@@ -191,7 +192,7 @@ function goToDate( start_date ) {
 
 	$sql = "SELECT mileage_log.* 
 		FROM 
-			mileage_log 
+			{$dbprefix}mileage_log AS mileage_log 
 		WHERE "
 		." mileage_log_user_id=".$user_id." AND"
 		." mileage_log_date >= \"".$start_day->format( FMT_DATETIME_MYSQL )."\" AND "

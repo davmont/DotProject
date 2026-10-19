@@ -18,6 +18,7 @@ if ($denyEdit) {
 
 require_once $AppUI->getSystemClass('date');
 $df = $AppUI->getPref('SHDATEFORMAT');
+$dbprefix = dPgetConfig('dbprefix', '');
 
 $mid = isset($_GET['mid']) ? (int)$_GET['mid'] : 0;
 $user_id = isset($_GET['user_id']) ? (int)$_GET['user_id'] : $AppUI->user_id;
@@ -29,27 +30,27 @@ if ($mid)
 if ($MILEAGELOG_CONFIG['show_purpose_task']) {
 	$task_mileage_log_purpose = new CMileageLogPurpose();
 	if ($mid) {
-		db_loadObject( "select * from mileage_log_purpose where mileage_log_id = $mid and mileage_log_purpose_relation_type='1'", $task_mileage_log_purpose );
+		db_loadObject( "select * from {$dbprefix}mileage_log_purpose where mileage_log_id = $mid and mileage_log_purpose_relation_type='1'", $task_mileage_log_purpose );
 		if ($task_mileage_log_purpose->mileage_log_purpose_relation_id)
-			$task_desc = db_loadResult("select CONCAT_WS(' :: ', task_name, task_description) from tasks where task_id=" . $task_mileage_log_purpose->mileage_log_purpose_relation_id);
+			$task_desc = db_loadResult("select CONCAT_WS(' :: ', task_name, task_description) from {$dbprefix}tasks where task_id=" . $task_mileage_log_purpose->mileage_log_purpose_relation_id);
 	}
 }
 if ($MILEAGELOG_CONFIG['show_purpose_helpdesk']) {
 	$helpdesk_mileage_log_purpose = new CMileageLogPurpose();
 	if ($mid) {
-		db_loadObject( "select * from mileage_log_purpose where mileage_log_id = $mid and mileage_log_purpose_relation_type='2'", $helpdesk_mileage_log_purpose );
+		db_loadObject( "select * from {$dbprefix}mileage_log_purpose where mileage_log_id = $mid and mileage_log_purpose_relation_type='2'", $helpdesk_mileage_log_purpose );
 		if ($helpdesk_mileage_log_purpose->mileage_log_purpose_relation_id)
-		$helpdesk_desc = db_loadResult("select CONCAT_WS(' :: ', item_title, item_summary) from helpdesk_items where item_id=" . $helpdesk_mileage_log_purpose->mileage_log_purpose_relation_id);
+		$helpdesk_desc = db_loadResult("select CONCAT_WS(' :: ', item_title, item_summary) from {$dbprefix}helpdesk_items where item_id=" . $helpdesk_mileage_log_purpose->mileage_log_purpose_relation_id);
 	}
 }
 if ($MILEAGELOG_CONFIG['show_purpose_note']) {
 	$note_mileage_log_purpose = new CMileageLogPurpose();
 	if ($mid)
-		db_loadObject( "select * from mileage_log_purpose where mileage_log_id = $mid and mileage_log_purpose_relation_type='0'", $note_mileage_log_purpose );
+		db_loadObject( "select * from {$dbprefix}mileage_log_purpose where mileage_log_id = $mid and mileage_log_purpose_relation_type='0'", $note_mileage_log_purpose );
 }
 $is_new_record = !$mid;
 if ($is_new_record)
-	$mileage_log->mileage_log_od_start = db_loadResult("select max(mileage_log_od_end) from mileage_log where mileage_log_user_id = $user_id") + 1;
+	$mileage_log->mileage_log_od_start = db_loadResult("select max(mileage_log_od_end) from {$dbprefix}mileage_log where mileage_log_user_id = $user_id") + 1;
 	
 //Prevent users from editing other ppls mileagelogs.
 $can_edit_other_mileagelogs = $MILEAGELOG_CONFIG['minimum_edit_level']>=$AppUI->user_type;
@@ -69,8 +70,8 @@ if (isset( $mileage_log['mileage_log_date'] )) {
 	$date = new CDate();
 }
 
-$sql = "SELECT DISTINCT(user_id), CONCAT_WS(', ', contact_last_name, contact_first_name) as full_name FROM users ";
-$sql.="LEFT JOIN contacts ON user_contact = contact_id ";
+$sql = "SELECT DISTINCT(user_id), CONCAT_WS(', ', contact_last_name, contact_first_name) as full_name FROM {$dbprefix}users ";
+$sql.="LEFT JOIN {$dbprefix}contacts ON user_contact = contact_id ";
 //		LEFT JOIN permissions ON user_id = permission_user 
 //		WHERE permission_value IS NOT NULL 
 $sql.="WHERE (user_id=".$AppUI->user_id." or (".getPermsWhereClause("companies", "user_company").")) ORDER BY full_name";
