@@ -12,6 +12,7 @@ if (isset( $_GET['tab'] )) {
 $tab = $AppUI->getState( 'EarnVwTab' ) !== NULL ? $AppUI->getState( 'EarnVwTab' ) : 0;
 
 // load the record data
+$dbprefix = dPgetConfig('dbprefix', '');
 $sql = "SELECT i1.earning_id, i1.earning_user_id, i1.earning_date, i1.earning_num, i1.earning_submit_company_id, i1.earning_submit_contact, 
 i1.earning_submit_email, i1.earning_submit_phone, i1.earning_submit_address1, i1.earning_submit_address2, i1.earning_submit_city, i1.earning_submit_state, 
 i1.earning_submit_zip, i1.earning_terms, i1.earning_comments, i1.earning_title, 
@@ -19,7 +20,7 @@ i1.earning_total, i1.earning_submitted, i1.earning_submitted_comment, i1.earning
 i1.earning_approved_comment, i1.earning_paid, i1.earning_paid_comment, i2.earning_items_id, i2.earning_parent_id, 
 i2.earning_tasklog_id, i2.earning_item_date, i2.earning_item_description, i2.earning_item_hours, 
 i2.earning_item_costcode, i2.earning_item_rate, c.company_name, u.user_username, u.user_first_name, u.user_last_name, u.user_type, u.user_email
-FROM earnings i1, earnings_items i2, companies c, users u
+FROM {$dbprefix}earnings i1, {$dbprefix}earnings_items i2, {$dbprefix}companies c, {$dbprefix}users u
 WHERE c.company_id = i1.earning_submit_company_id AND u.user_id = i1.earning_user_id AND i1.earning_id = $earning_id
 GROUP BY i1.earning_id";
 
