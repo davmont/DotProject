@@ -40,9 +40,12 @@ WHERE  task_log_id = $tid
 "; 
 
 db_loadHash( $sql, $task );
+if (!is_array($task)) {
+	$task = array(); // no task log with this id (or a new one)
+}
 
 $is_new_record = !$tid;
-$task_found = $task['project_company']!=FALSE;
+$task_found = !empty($task['project_company']);
 $require_task_info = $is_new_record || $task_found;
 //echo '<pre>';print_r($task);echo '</pre>';
 
@@ -126,7 +129,7 @@ $task_log_costcodes = array_merge($task_log_costcodes, db_loadColumn($sql));
 */
 
 $proj = new CProject();
-$proj->load($obj->task_project);
+$proj->load(isset($task['task_project']) ? (int)$task['task_project'] : 0);
 $sql = "SELECT billingcode_id, billingcode_name
 FROM {$dbprefix}billingcode
 WHERE billingcode_status=0
@@ -305,7 +308,7 @@ function setLogCostCode( select ) {
 	else
 	{
 		//***MOD 20050525 pedroa echo "<input type='hidden' name='task_log_creator' value=".$AppUI->user_id."/>";
-		echo "<input type='hidden' name='task_log_creator' value=".(int)$_GET['userid']."/>";
+		echo "<input type='hidden' name='task_log_creator' value='" . dPgetIntParam($_GET, 'userid', $AppUI->user_id) . "' />";
 	}
 ?>
  
@@ -401,7 +404,7 @@ function setLogCostCode( select ) {
 <tr>
 	<td align="right" valign="top" nowrap="nowrap"><?php echo $AppUI->_('Problem');?>:</td>
 	<td align="left">
-		<input type="checkbox" value="1" name="task_log_problem" <?php /*if($log->task_log_problem)*/if($task["task_log_problem"]){?>checked="checked"<?php }?> />
+		<input type="checkbox" value="1" name="task_log_problem" <?php /*if($log->task_log_problem)*/if(!empty($task["task_log_problem"])){?>checked="checked"<?php }?> />
 	</td>
 </tr>
 <tr>

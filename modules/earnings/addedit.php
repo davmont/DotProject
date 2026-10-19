@@ -58,6 +58,7 @@ if ( isset( $_GET["earning_id"] ) ) {
 	$obj = new stdClass();
 	$obj->earning_date=date("Ymd");
 	$obj->earning_num='';
+	$obj->earning_title='';
 	$obj->earning_submit_contact='Manager';
 	$obj->earning_submit_company_id=intval($AppUI->user_company);
 	$obj->earning_submit_address1='';

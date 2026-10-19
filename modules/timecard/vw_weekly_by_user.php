@@ -7,7 +7,7 @@ if (!defined('DP_BASE_DIR')) {
 	$show_possible_hours_worked = $TIMECARD_CONFIG['show_possible_hours_worked'];
 	//print "<pre>$show_possible_hours_worked</pre>";
 	//grab hours per day from config
-	$min_hours_day = $dPconfig['daily_working_hours'];
+	$min_hours_day = dPgetConfig('daily_working_hours', 8);
 	//compute hours/week from config
 	$min_hours_week =count(explode(",",$dPconfig["cal_working_days"])) * $min_hours_day;
 	// get date format

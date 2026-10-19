@@ -13,7 +13,7 @@ if (!defined('DP_BASE_DIR')) {
 
 	$can_edit_other_mileagelog = $MILEAGELOG_CONFIG['minimum_edit_level']>=$AppUI->user_type;
 	$show_other_mileagelog = $MILEAGELOG_CONFIG['minimum_see_level']>=$AppUI->user_type;
-	$integrate_with_helpdesk = $MILEAGELOG_CONFIG['integrate_with_helpdesk'];
+	$integrate_with_helpdesk = !empty($MILEAGELOG_CONFIG['integrate_with_helpdesk']);
 	
 	// get date format
 	$df = $AppUI->getPref('SHDATEFORMAT');

@@ -13,7 +13,7 @@ if (!defined('DP_BASE_DIR')) {
 	}
 
 	//grab hours per day from config
-	$min_hours_day = $AppUI->cfg['daily_working_hours'];
+	$min_hours_day = dPgetConfig('daily_working_hours', 8);
 	$can_edit_other_timesheets = $TIMECARD_CONFIG['minimum_edit_level']>=$AppUI->user_type;
 	$show_other_worksheets = $TIMECARD_CONFIG['minimum_see_level']>=$AppUI->user_type;
 	$integrate_with_helpdesk = $TIMECARD_CONFIG['integrate_with_helpdesk'];

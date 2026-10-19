@@ -27,6 +27,8 @@ $mileage_log = new CMileageLog();
 if ($mid)
 	$mileage_log->load($mid);
 
+$task_desc = '';
+$helpdesk_desc = '';
 if ($MILEAGELOG_CONFIG['show_purpose_task']) {
 	$task_mileage_log_purpose = new CMileageLogPurpose();
 	if ($mid) {
