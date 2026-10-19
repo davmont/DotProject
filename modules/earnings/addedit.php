@@ -54,7 +54,7 @@ if ( isset( $_GET["earning_id"] ) ) {
 	// Add Mode
 	$form_mode = 0;
 	// Create $obj with blank values
-	$obj = null;
+	$obj = new stdClass();
 	$obj->earning_date=date("Ymd");
 	$obj->earning_num='';
 	$obj->earning_submit_contact='Manager';
@@ -102,13 +102,13 @@ if ( $AppUI->user_type != 7 ) {
 }
 $titleBlock->show();
 ?>
-<SCRIPT language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 var calWin = null;
 
 function popCalendar( field ){
 	calendarField = field;
-	idate = eval( 'document.editFrm.' + field + '.value' );
+	idate = document.editFrm[field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
@@ -117,8 +117,8 @@ function popCalendar( field ){
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.editFrm.' + calendarField );
-	fld_fdate = eval( 'document.editFrm.' + calendarField + '_formatted');
+	fld_date = document.editFrm[calendarField];
+	fld_fdate = document.editFrm[calendarField + '_formatted'];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -168,6 +168,10 @@ function trim(s) {
 	return s;
 }
 
+function suggestNum(num) {
+	document.editFrm.earning_num.value = num;
+}
+
 function selectCompany(companyID) {
 	document.editFrm.earning_submit_company_id.value=companyID;
 	document.editFrm.earning_submit_address1.value="";
@@ -194,7 +198,7 @@ function selectCompany(companyID) {
 			<td align="right" nowrap><?php echo $AppUI->_('Date');?></td>
 			<td>
 				<input type="hidden" name="earning_date" value="<?php echo $earning_date->format( FMT_TIMESTAMP_DATE );?>">
-				<input type="text" name="earning_date_formatted" size="12" value="<?php echo $earning_date->format( $df );?>" class="text" disabled="disabled" />&nbsp;<a href="#inv_date" onClick="popCalendar('earning_date');"><img align="middle" src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a>&nbsp;<i>Click the button to select a different date.</i>
+				<input type="text" name="earning_date_formatted" size="12" value="<?php echo $earning_date->format( $df );?>" class="text" disabled="disabled" />&nbsp;<a href="#"<?php echo dPaction('popCalendar', array('earning_date')); ?>><img align="middle" src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a>&nbsp;<i>Click the button to select a different date.</i>
 			</td>
 		</tr>
 		<tr>
@@ -204,7 +208,7 @@ function selectCompany(companyID) {
 				<td align="right" nowrap><?php echo $AppUI->_('Timecard Number');?></td>
 			<?php } ?>
 			<td><input type="text" class="text" name="earning_num" value="<?php echo dPformSafe( $obj->earning_num );?>" size="30" maxlength="35" />&nbsp;
-			<input type="button" name="btnSuggNum" value=" suggest " onClick="javascript:document.editFrm.earning_num.value='<?php echo date("YmdHi") . "-" . $AppUI->user_id; ?>';">&nbsp;<i>Number must be unique.  It is highly recommended that you use the suggest button.</i></td>
+			<input type="button" name="btnSuggNum" value=" suggest " <?php echo dPaction('suggestNum', array(date("YmdHi") . "-" . $AppUI->user_id)); ?>>&nbsp;<i>Number must be unique.  It is highly recommended that you use the suggest button.</i></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Title');?></td>
@@ -216,7 +220,7 @@ function selectCompany(companyID) {
 			<td width="100%">
 			<input type="hidden" name="earning_submit_company_id" value="<?php echo $obj->earning_submit_company_id;?>">
 			<?php
-				echo arraySelect( $companies, 'earning_submit_company_select', 'class="text" size="1" onClick="javascript:selectCompany(this.value);"', $obj->earning_submit_company_id );
+				echo arraySelect( $companies, 'earning_submit_company_select', 'class="text" size="1"' . dPaction('selectCompany', array('$value')), $obj->earning_submit_company_id );
 			?>
 			</td>
 			<?php }
@@ -242,7 +246,7 @@ function selectCompany(companyID) {
 			<?php } else { ?>
 			<td align="right" nowrap><?php echo $AppUI->_('Terms');?></td>
 			<td>
-				<input type="text" name="earning_terms" value="<?php echo $obj->earning_terms; ?>">&nbsp;<i>Purely for your notations.</i>
+				<input type="text" name="earning_terms" value="<?php echo dPformSafe($obj->earning_terms); ?>">&nbsp;<i>Purely for your notations.</i>
 			</td>
 			<?php } ?>
 		</tr>
@@ -317,10 +321,10 @@ function selectCompany(companyID) {
 		<table>
 		<tr>
 			<td>
-				<input class="button" type="button" name="btnCancel" value=" cancel " onClick="javascript:location.href='?m=earnings&a=view&earning_id=<?php echo $earning_id; ?>';}" />
+				<input class="button" type="button" name="btnCancel" value=" cancel " <?php echo dPaction(null, array(), null, array('href' => '?m=earnings&a=view&earning_id=' . (isset($earning_id) ? (int)$earning_id : 0))); ?> />
 			</td>
 			<td>
-				<input class="button" type="button" name="btnSave" value=" save " onClick="javascript:submitIt();" />
+				<input class="button" type="button" name="btnSave" value=" save " <?php echo dPaction('submitIt'); ?> />
 			</td>
 		</tr>
 		</table>

@@ -249,12 +249,12 @@ if (!defined('DP_BASE_DIR')) {
 	$next_day -> copy($start_day);
 	$next_day -> addDays($week_count*7*2);
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 
 function popCalendar( field ){
 	calendarField = field;
-	idate = eval( 'document.frmSelect.' + field + '_date.value' );
+	idate = document.frmSelect[field + '_date'].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
@@ -263,8 +263,8 @@ function popCalendar( field ){
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.frmSelect.' + calendarField + '_date' );
-	fld_fdate = eval( 'document.frmSelect.' + calendarField );
+	fld_date = document.frmSelect[calendarField + '_date'];
+	fld_fdate = document.frmSelect[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -275,8 +275,8 @@ function setCalendar( idate, fdate ) {
 	<input type="hidden" name="tab" value="<?php echo $tab; ?>">
 	<table cellspacing="1" cellpadding="2" border="0" width="100%">
 	<tr>
-		<td width="1%" valign="top" nowrap="nowrap"><?php echo arraySelect( $companies, 'company_id', 'size="1" class="text" id="medium" onchange="document.frmSelect.submit()"',
-                          $company_id )?><?php echo arraySelect( $users, 'user_id', 'size="1" class="text" id="medium" onchange="document.frmSelect.submit()"',
+		<td width="1%" valign="top" nowrap="nowrap"><?php echo arraySelect( $companies, 'company_id', 'size="1" class="text" id="medium"' . dPaction(null, array(), null, array('submit' => 'frmSelect')),
+                          $company_id )?><?php echo arraySelect( $users, 'user_id', 'size="1" class="text" id="medium"' . dPaction(null, array(), null, array('submit' => 'frmSelect')),
                           $user_id )?></td>
 		<td width="98%" align="right" valign="top">
 			<table cellpadding="0" cellspacing="0" width="1%">
@@ -300,19 +300,19 @@ function setCalendar( idate, fdate ) {
 			
 			<table cellpadding="0" cellspacing="0" width="100%">
 				<tr>
-					<td width="97%"><?php echo arraySelect($report_department_types, 'report_department_type',  'size="1" class="text" id="medium" onchange="document.frmSelect.submit()"', $report_department_type)?></td>
+					<td width="97%"><?php echo arraySelect($report_department_types, 'report_department_type',  'size="1" class="text" id="medium"' . dPaction(null, array(), null, array('submit' => 'frmSelect')), $report_department_type)?></td>
 					<td nowrap="nowrap" width="1%">
 						<input type="hidden" name="browse" value="0" />
 						<input type="hidden" name="start_date" value="<?php echo $start_day->format( FMT_TIMESTAMP_DATE );?>" />
 						<input type="text" name="start" value="<?php echo $start_day->format( $df );?>" class="text" disabled="disabled" />
-						<a href="#" onClick="popCalendar('start')">
+						<a href="#"<?php echo dPaction('popCalendar', array('start')); ?>>
 							<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 						</a>
 					</td>
 					<td nowrap="nowrap" width="1%">
 						<input type="hidden" name="end_date" value="<?php echo $end_day ? $end_day->format( FMT_TIMESTAMP_DATE ) : '';?>" />
 						<input type="text" name="end" value="<?php echo $end_day ? $end_day->format( $df ) : '';?>" class="text" disabled="disabled" />
-						<a href="#" onClick="popCalendar('end')">
+						<a href="#"<?php echo dPaction('popCalendar', array('end')); ?>>
 							<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 						</a>
 					</td>

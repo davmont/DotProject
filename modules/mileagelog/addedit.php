@@ -79,19 +79,19 @@ $users = db_loadHashList($sql);
 $delete_msg = "hello hi";
 ?>
 
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 
 var calendarField = '';
 
 function popCalendar( field ){
 	calendarField = field;
-	uts = eval( 'document.addedit.mileage_log_' + field + '.value' );
+	uts = document.addedit['mileage_log_' + field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&uts=' + uts, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
 function setCalendar( uts, fdate ) {
-	fld_uts = eval( 'document.addedit.mileage_log_' + calendarField );
-	fld_fdate = eval( 'document.addedit.' + calendarField );
+	fld_uts = document.addedit['mileage_log_' + calendarField];
+	fld_fdate = document.addedit[calendarField];
 	fld_uts.value = uts;
 	fld_fdate.value = fdate;
 }
@@ -106,9 +106,9 @@ function submitIt() {
 	var miles = parseInt( f.mileage_log_miles.value );
 	
 	var purpose_entered = false;
-	var task_ctrl = eval( 'document.addedit.task_mileage_log_purpose_relation_id' );
-	var helpdesk_ctrl = eval( 'document.addedit.helpdesk_mileage_log_purpose_relation_id' );
-	var note_ctrl = eval( 'document.addedit.note_mileage_log_purpose_note' );
+	var task_ctrl = document.addedit.task_mileage_log_purpose_relation_id;
+	var helpdesk_ctrl = document.addedit.helpdesk_mileage_log_purpose_relation_id;
+	var note_ctrl = document.addedit.note_mileage_log_purpose_note;
 	
 	if (task_ctrl != null || helpdesk_ctrl != null || note_ctrl != null) {
 		if (task_ctrl != null) {
@@ -130,29 +130,29 @@ function submitIt() {
 		purpose_entered = true;
 
 	if (!purpose_entered) {
-		alert(<?= "'" . $AppUI->_('Please enter purpose.') . "'"?>);
+		alert(<?php echo dPjs($AppUI->_('Please enter purpose.', UI_OUTPUT_RAW)); ?>);
 		return false;
 	}
 	
 	if (miles <= 0 || isNaN(miles)) {
 		if (od_start < 0 || isNaN(od_start)) {
-			var msg = <?="'".$AppUI->_("Starting odometer must be at least zero.")."'"?>;
+			var msg = <?php echo dPjs($AppUI->_("Starting odometer must be at least zero.", UI_OUTPUT_RAW)); ?>;
 			alert( msg );
 			return false;
 		} else 
 		if (od_end <= od_start || isNaN(od_end)) {
 			var msg;
 			if (isNaN(od_end))
-				msg = <?='"'.$AppUI->_("Ending odometer end is required.").'"'?>;
+				msg = <?php echo dPjs($AppUI->_("Ending odometer end is required.", UI_OUTPUT_RAW)); ?>;
 			else
-				msg = <?='"'.$AppUI->_("Ending odometer must be higher than starting odometer.").'"'?>;
+				msg = <?php echo dPjs($AppUI->_("Ending odometer must be higher than starting odometer.", UI_OUTPUT_RAW)); ?>;
 				
 			alert(msg);
 			return false;
 		}
 	} else {
 		if ( od_start > 0 || od_end > 0 ) {
-			var msg = <?="'" . $AppUI->_('Enter either miles or odometer readings, NOT BOTH.') . "'"?>;
+			var msg = <?php echo dPjs($AppUI->_('Enter either miles or odometer readings, NOT BOTH.', UI_OUTPUT_RAW)); ?>;
 			alert(msg);
 			return false;
 		}
@@ -164,7 +164,7 @@ function delIt() {
 //	if (confirm( <?="'".$AppUI->_("Are you sure that you would like to delete this mileage log?")."'"?> )) {
 		var form = document.addedit;
 		form.del.value=1;
-		form.submit();
+		HTMLFormElement.prototype.submit.call(form);
 //	}
 //	alert(confirm);
 }
@@ -190,7 +190,7 @@ function setTask( key, val ) {
 <?php if ($mid)  { ?> 
 <tr>
 	<td colspan="2" width="50%" align="right">
-		<A href="javascript:delIt()"><img align="absmiddle" src="./images/icons/stock_delete-16.png" width="16" height="16" alt="<?=$AppUI->_('Delete this mileage log?')?>" border="0"><?php echo $AppUI->_('delete mileage log');?></a>
+		<a href="#"<?php echo dPaction('delIt'); ?>><img align="absmiddle" src="./images/icons/stock_delete-16.png" width="16" height="16" alt="<?=$AppUI->_('Delete this mileage log?')?>" border="0"><?php echo $AppUI->_('delete mileage log');?></a>
 	</td>
 </tr>
 <?php } ?>
@@ -208,7 +208,7 @@ function setTask( key, val ) {
 	<td>
 		<input type="hidden" name="mileage_log_date" value="<?php echo $date->getDate();?>">
 		<input type="text" name="date" value="<?php echo $date->format($df);?>" class="text" disabled="disabled">
-		<a href="#" onClick="popCalendar('date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0">
 		</a>
 
@@ -236,7 +236,7 @@ function setTask( key, val ) {
 	<input type="hidden" name="task_mileage_log_purpose_relation_type" value="1" />
 	<td align="right" valign="top" nowrap="nowrap"><?php echo $AppUI->_('Task ID');?></td>
 	<td align="left">
-		<input type="text" class="text" size="13" maxlength="10" name="task_mileage_log_purpose_relation_id" value="<?=$task_mileage_log_purpose->mileage_log_purpose_relation_id?>"/>&nbsp;<input type="button" class="button" value="<?=$AppUI->_('search...')?>" onclick="javascript:window.open('./index.php?m=public&a=selector&callback=setTask&table=tasks&dialog=1', 'selector', 'left=50,top=50,height=250,width=400,resizable');"/><br>
+		<input type="text" class="text" size="13" maxlength="10" name="task_mileage_log_purpose_relation_id" value="<?=$task_mileage_log_purpose->mileage_log_purpose_relation_id?>"/>&nbsp;<input type="button" class="button" value="<?=$AppUI->_('search...')?>" <?php echo dPaction('window.open', array('./index.php?m=public&a=selector&callback=setTask&table=tasks&dialog=1', 'selector', 'left=50,top=50,height=250,width=400,resizable')); ?>/><br>
 		<textarea name="task_mileage_log_purpose_note" cols="60" rows="3" wrap="virtual" class="textarea" readonly><?=dPFormSafe($task_desc)?></textarea>
 	</td>
 </tr>
@@ -248,7 +248,7 @@ if ($MILEAGELOG_CONFIG['show_purpose_helpdesk']) {
 	<input type="hidden" name="helpdesk_mileage_log_purpose_relation_type" value="2" />
 	<td align="right" valign="top" nowrap="nowrap"><?php echo $AppUI->_('Help Desk Item ID');?></td>
 	<td align="left">
-		<input type="text" class="text" size="13" maxlength="10" name="helpdesk_mileage_log_purpose_relation_id" value="<?=$helpdesk_mileage_log_purpose->mileage_log_purpose_relation_id?>"/>&nbsp;<input type="button" class="button" value="<?=$AppUI->_('search...')?>" onclick="javascript:window.open('./index.php?m=contacts', '_blank');"/><br>
+		<input type="text" class="text" size="13" maxlength="10" name="helpdesk_mileage_log_purpose_relation_id" value="<?=$helpdesk_mileage_log_purpose->mileage_log_purpose_relation_id?>"/>&nbsp;<input type="button" class="button" value="<?=$AppUI->_('search...')?>" <?php echo dPaction('window.open', array('./index.php?m=contacts', '_blank')); ?>/><br>
 		<textarea name="helpdesk_mileage_log_purpose_note" cols="60" rows="3" wrap="virtual" class="textarea" readonly></textarea>		
 	</td>
 </tr>
@@ -266,10 +266,10 @@ if ($MILEAGELOG_CONFIG['show_purpose_note']) {
 <?php } ?>
 <tr>
 	<td>
-		<input class="button" type="Button" name="Cancel" value="cancel" onClick="javascript:if(confirm('<?=$AppUI->_('Are you sure you want to cancel?')?>')){location.href = './index.php?m=mileagelog&tab=0';}">
+		<input class="button" type="Button" name="Cancel" value="cancel" <?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW), 'href' => './index.php?m=mileagelog&tab=0')); ?>>
 	</td>
 	<td align="right">
-		<input class="button" type="submit" name="submit" value="save" onClick="return submitIt();">
+		<input class="button" type="submit" name="submit" value="save"<?php echo dPaction('submitIt'); ?>>
 	</td>
 </tr>
 </table>

@@ -2,7 +2,8 @@
 if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
-$tid = isset($HTTP_GET_VARS['tid']) ? (int) $HTTP_GET_VARS['tid'] : 0;
+$tid = dPgetIntParam($_GET, 'tid', 0);
+$timesheet_id = dPgetIntParam($_GET, 'timesheet_id', 0);
 
 // check permissions
 $denyEdit = getDenyEdit( $m );
@@ -43,13 +44,13 @@ $q -> addOrder('p.project_name, t.task_name');
 $res = $q -> exec();
 echo db_error();
 $tasks = array();
-$project = array();
+$projects = array();
 $companies = array( '0'=>'' );
 while ($row = db_fetch_assoc( $res )) {
 // collect tasks in js format
-	$tasks[] = "[{$row['task_project']},{$row['task_id']}," . dPjs($row['task_name']) . "]";
+	$tasks[] = '[' . (int)$row['task_project'] . ',' . (int)$row['task_id'] . ',' . dPjs($row['task_name']) . "]";
 // collect projects in js format
-	$projects[] = "[{$row['project_company']},{$row['task_project']}," . dPjs($row['project_name']) . "]";
+	$projects[] = '[' . (int)$row['project_company'] . ',' . (int)$row['task_project'] . ',' . dPjs($row['project_name']) . "]";
 // collect companies in normal format
 	$companies[$row['project_company']] = $row['company_name'];
 };
@@ -64,7 +65,7 @@ $crumbs["?m=timetrack&a=view&timesheet_id=$timesheet_id"] = "view this timesheet
 ##
 ## Set up JavaScript arrays
 ##
-$ua = $_SERVER['HTTP_USER_AGENT'];
+$ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 $isMoz = strpos( $ua, 'Gecko' ) !== false;
 
 $projects = array_unique( $projects );
@@ -73,22 +74,22 @@ reset( $projects );
 $s = "\nvar tasks = new Array(".implode( ",\n", $tasks ).")";
 $s .= "\nvar projects = new Array(".implode( ",\n", $projects ).")";
 
-echo "<script language=\"javascript\">$s</script>";
+echo '<script language="javascript" nonce="' . dPcspNonce() . '">' . $s . '</script>';
 ?>
 
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 
 var calendarField = '';
 
 function popCalendar( field ){
 	calendarField = field;
-	uts = eval( 'document.AddEdit.tt_data_' + field + '.value' );
+	uts = document.AddEdit['tt_data_' + field].value;
 	window.open( './calendar.php?callback=setCalendar&uts=' + uts, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
 function setCalendar( uts, fdate ) {
-	fld_uts = eval( 'document.AddEdit.tt_data_' + calendarField );
-	fld_fdate = eval( 'document.AddEdit.' + calendarField );
+	fld_uts = document.AddEdit['tt_data_' + calendarField];
+	fld_fdate = document.AddEdit[calendarField];
 	fld_uts.value = uts;
 	fld_fdate.value = fdate;
 }
@@ -119,7 +120,7 @@ function addToList( list, text, value ) {
 function changeList( listName, source, target ) {
 	//alert(listName+','+source+','+target);return;
 	var f = document.AddEdit;
-	var list = eval( 'f.'+listName );
+	var list = f[listName];
 	
 // clear the options
 	emptyList( list );
@@ -137,7 +138,7 @@ function changeList( listName, source, target ) {
 // select an item in the list by target value
 function selectList( listName, target ) {
 	var f = document.AddEdit;
-	var list = eval( 'f.'+listName );
+	var list = f[listName];
 
 	for (var i=0, n = list.options.length; i < n; i++) {
 //alert(listName+','+target+','+list.options[i].value);
@@ -171,12 +172,17 @@ function delIt() {
 		form.submit();
 	}
 }
+
+// Refills a dependent list from the value of the select that changed.
+function changeListFrom( select, listName, sourceName ) {
+	changeList( listName, window[sourceName], select.options[select.selectedIndex].value );
+}
 </script>
 
 <table cellspacing="0" cellpadding="0" border="0" width="98%">
 <form name="AddEdit" action="./index.php?m=timetrack&a=dosql" method="post">
 <input type="hidden" name="del" value="0">
-<?php echo ((isset($addrow)) ? "<input type=\"hidden\" name=\"addrow\" value=\"$addrow\">" : ""); ?>
+<?php echo ((dPgetParam($_GET, 'addrow', null) !== null) ? '<input type="hidden" name="addrow" value="' . dPgetIntParam($_GET, 'addrow', 0) . '">' : ""); ?>
 <input type="hidden" name="tt_data_timesheet_id" value="<?php echo $timesheet_id;?>">
 <input type="hidden" name="tt_data_id" value="<?php echo (($tid > 0) ? $tid : "0"); ?>">
 
@@ -195,7 +201,7 @@ function delIt() {
 <tr>
 	<td width="50%" nowrap><?php echo breadCrumbs( $crumbs );?></td>
 	<td width="50%" align="right">
-		<A href="javascript:delIt()"><img align="absmiddle" src="./images/icons/trash.gif" width="16" height="16" alt="Delete this project" border="0">delete row</a>
+		<A href="#"<?php echo dPaction('delIt'); ?>><img align="absmiddle" src="./images/icons/trash.gif" width="16" height="16" alt="Delete this project" border="0">delete row</a>
 	</td>
 </tr>
 </table>
@@ -206,7 +212,7 @@ function delIt() {
 	<td>
 	<?php
 		$params = 'size="1" class="text" style="width:250px" ';
-		$params .= 'onchange="changeList(\'tt_data_project_id\',projects, this.options[this.selectedIndex].value)"';
+		$params .= dPaction('changeListFrom', array('$this', 'tt_data_project_id', 'projects'));
 		echo arraySelect( $companies, 'tt_data_client_id', $params, @$tt_data['tt_data_client_id'] );
 	?>
 	</td>
@@ -214,7 +220,7 @@ function delIt() {
 <tr>
 	<td align="right" nowrap="nowrap">Project:</td>
 	<td>
-		<select name="tt_data_project_id" class="text" style="width:250px" onchange="changeList('tt_data_task_id',tasks, this.options[this.selectedIndex].value)"></select>
+		<select name="tt_data_project_id" class="text" style="width:250px"<?php echo dPaction('changeListFrom', array('$this', 'tt_data_task_id', 'tasks')); ?>></select>
 	</td>
 </tr>
 <tr>
@@ -234,7 +240,7 @@ function delIt() {
 	<td>
 		<input type="hidden" name="tt_data_date" value="<?php echo $date->getTime();?>">
 		<input type="text" name="date" value="<?php echo $date->format($df);?>" class="text" disabled="disabled">
-		<a href="#" onClick="popCalendar('date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0">
 		</a>
 
@@ -255,19 +261,19 @@ function delIt() {
 </tr>
 <tr>
 	<td>
-		<input class="button" type="Button" name="Cancel" value="cancel" onClick="javascript:if(confirm('Are you sure you want to cancel.')){location.href = './index.php?m=timetrack&a=view&timesheet_id=<?php echo $timesheet_id ?>';}">
+		<input class="button" type="Button" name="Cancel" value="cancel"<?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => './index.php?m=timetrack&a=view&timesheet_id=' . (int)$timesheet_id)); ?>>
 	</td>
 	<td align="right">
-		<input class="button" type="Button" name="btnFuseAction" value="save" onClick="submitIt();">
+		<input class="button" type="Button" name="btnFuseAction" value="save"<?php echo dPaction('submitIt'); ?>>
 	</td>
 </tr>
 </table>
 </form>
 * indicates required field
-<script language="javascript">
-changeList('tt_data_project_id', projects, <?php echo @$tt_data['tt_data_client_id'] ? $tt_data['tt_data_client_id'] : 0;?>);
-changeList('tt_data_task_id', tasks, <?php echo @$tt_data['tt_data_project_id'] ? $tt_data['tt_data_project_id'] : 0;?>);
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
+changeList('tt_data_project_id', projects, <?php echo (int)@$tt_data['tt_data_client_id'];?>);
+changeList('tt_data_task_id', tasks, <?php echo (int)@$tt_data['tt_data_project_id'];?>);
 
-selectList( 'tt_data_project_id', <?php echo @$tt_data['tt_data_project_id'] ? $tt_data['tt_data_project_id'] : 0;?> );
-selectList( 'tt_data_task_id', <?php echo @$tt_data['tt_data_task_id'] ? $tt_data['tt_data_task_id'] : 0;?> );
+selectList( 'tt_data_project_id', <?php echo (int)@$tt_data['tt_data_project_id'];?> );
+selectList( 'tt_data_task_id', <?php echo (int)@$tt_data['tt_data_task_id'];?> );
 </script>

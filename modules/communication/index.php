@@ -38,7 +38,7 @@ $titleBlock = new CTitleBlock("LBL_COMMUNICATION", 'applet3-48.png', $m, "$m.$a"
 
 $titleBlock->addCell($AppUI->_("LBL_FILTER") . ':');
 $titleBlock->addCell(
-	arraySelect($projects, 'project_id', 'onChange="document.pickProject.submit()" size="1" class="text"', $project_id), '',
+	arraySelect($projects, 'project_id', 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => '')), $project_id), '',
 	'<form name="pickProject" action="?m=communication" method="post">', '</form>'
 );
 

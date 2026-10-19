@@ -25,17 +25,6 @@ $row = new CHosting();
 
 if(isset($domain_id)) $row->load($domain_id);
 ?>
-<script language="javascript">
-<!-- 
-	function delIt(){
-		var form = document.editFrm;
-		if(confirm( "Are you sure you would like to delete this domain?" )) {
-			form.del.value = "<?php echo $domain_id;?>";
-			form.submit();
-		}
-	}
- -->
-</script>
 <table cellspacing="0" cellpadding="4" border="0" width="100%" class="std">
 <form name="editFrm" action="./index.php?m=hosting" method="post">
 	<input type="hidden" name="dosql" value="do_hosting_aed" />
@@ -49,7 +38,7 @@ if(isset($domain_id)) $row->load($domain_id);
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Domain Name');?></td>
 			<td width="100%" colspan="2">
-				<input type="text" name="domain_name" value="<?php echo dPformSafe( $row->domain_name );?>" size="100" maxlength="150" onBlur="setShort();" class="text" />
+				<input type="text" name="domain_name" value="<?php echo dPformSafe( $row->domain_name );?>" size="100" maxlength="150" class="text" />
 			</td>
 		</tr>
 		<tr>
@@ -62,19 +51,19 @@ if(isset($domain_id)) $row->load($domain_id);
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Expiry Date (YYYY-mm-dd)');?></td>
 			<td width="100%" colspan="2">
-				<input type="text" name="domain_expiry_date" value="<?php echo dPformSafe( $row->domain_expiry_date );?>" size="20" maxlength="10" onBlur="setShort();" class="text" />
+				<input type="text" name="domain_expiry_date" value="<?php echo dPformSafe( $row->domain_expiry_date );?>" size="20" maxlength="10" class="text" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Registrar');?></td>
 			<td width="100%" colspan="2">
-				<input type="text" name="domain_registrar" value="<?php echo dPformSafe( $row->domain_status );?>" size="100" maxlength="150" onBlur="setShort();" class="text" />
+				<input type="text" name="domain_registrar" value="<?php echo dPformSafe( $row->domain_status );?>" size="100" maxlength="150" class="text" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Registration Status');?></td>
 			<td width="100%" colspan="2">
-				<input type="text" name="domain_status" value="<?php echo dPformSafe( $row->domain_status );?>" size="100" maxlength="150" onBlur="setShort();" class="text" />
+				<input type="text" name="domain_status" value="<?php echo dPformSafe( $row->domain_status );?>" size="100" maxlength="150" class="text" />
 			</td>
 		</tr>
 		<tr>
@@ -93,20 +82,20 @@ if(isset($domain_id)) $row->load($domain_id);
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Hosting Package');?></td>
 			<td width="100%" colspan="2">
-				<input type="text" name="hosting_package_name" value="<?php echo dPformSafe( $row->hosting_package_name );?>" size="100" maxlength="150" onBlur="setShort();" class="text" />
+				<input type="text" name="hosting_package_name" value="<?php echo dPformSafe( $row->hosting_package_name );?>" size="100" maxlength="150" class="text" />
 			</td>
 		</tr>
 		
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Expiry Date (YYYY-mm-dd)');?></td>
 			<td width="100%" colspan="2">
-				<input type="text" name="hosting_expiry_date" value="<?php echo dPformSafe( $row->hosting_expiry_date );?>" size="20" maxlength="10" onBlur="setShort();" class="text" />
+				<input type="text" name="hosting_expiry_date" value="<?php echo dPformSafe( $row->hosting_expiry_date );?>" size="20" maxlength="10" class="text" />
 			</td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Registration Status');?></td>
 			<td width="100%" colspan="2">
-				<input type="text" name="hosting_status" value="<?php echo dPformSafe( $row->hosting_status );?>" size="100" maxlength="150" onBlur="setShort();" class="text" />
+				<input type="text" name="hosting_status" value="<?php echo dPformSafe( $row->hosting_status );?>" size="100" maxlength="150" class="text" />
 			</td>
 		</tr>
 		<tr>
@@ -119,7 +108,7 @@ if(isset($domain_id)) $row->load($domain_id);
 		</tr>
 		<tr>
 			<td>
-				<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" onClick="javascript:if(confirm('Are you sure you want to cancel.')){location.href = './index.php?m=hosting';}" />
+				<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" <?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel.', UI_OUTPUT_RAW), 'href' => './index.php?m=hosting')); ?> />
 				<input class="button" type="submit" name="btnFuseAction" value="<?php echo $AppUI->_('submit');?>" />
 			</td>
 		</tr>

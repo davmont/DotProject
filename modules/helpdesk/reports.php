@@ -63,7 +63,7 @@ $q->clear();
 
 if (! $suppressHeaders) {
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
                                                                                 
 function changeIt(obj) {
         var f=document.changeMe;
@@ -108,22 +108,22 @@ if (!isset($display_company_name)) {
 	if (!isset($display_project_name)) {
 		$display_project_name = "None";
 	} else {
-		echo $AppUI->_('Selected Project') . ": <b>".$display_project_name."</b>"; 
+		echo $AppUI->_('Selected Project') . ": <b>".dPhtml($display_project_name)."</b>"; 
 		$display_company_name = "None";
 	}
 } else {
-	echo $AppUI->_('Selected Company') . ": <b>".$display_company_name."</b>";
+	echo $AppUI->_('Selected Company') . ": <b>".dPhtml($display_company_name)."</b>";
 }
 ?>
 <form name="changeMe" action="./index.php?m=helpdesk&a=reports<?php echo $report_type_var; ?>" method="post">
 <table>
 <tr>
 <td><?php echo $AppUI->_('Companies') . ':';?></td>
-<td><?php echo arraySelect( $company_list, 'company_id', 'size="1" class="text" onchange="changeIt(this);"', $company_id, false );?></td>
+<td><?php echo arraySelect( $company_list, 'company_id', 'size="1" class="text"' . dPaction('changeIt', array('$this')), $company_id, false );?></td>
 </tr>
 <tr>
 <td><?php echo $AppUI->_('Projects') . ':';?></td>
-<td><?php echo arraySelect( $project_list, 'project_id', 'size="1" class="text" onchange="changeIt(this);"', $project_id, false );?></td>
+<td><?php echo arraySelect( $project_list, 'project_id', 'size="1" class="text"' . dPaction('changeIt', array('$this')), $project_id, false );?></td>
 </tr>
 </form>
 

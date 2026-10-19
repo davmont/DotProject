@@ -13,11 +13,6 @@ modules/admin/viewuser.php:5
 modules/admin/vw_usr_sessions.php:7
 modules/annotations/index.php:5
 modules/annotations/projects_tab.annotations.php:2
-modules/bugspray/configure.php:1
-modules/bugspray/do_item_aed.php:1
-modules/bugspray/index.php:2
-modules/bugspray/list.php:28
-modules/bugspray/view.php:2
 modules/calendar/addedit.php:2
 modules/calendar/calendar.class.php:1
 modules/calendar/clash.php:16
@@ -46,8 +41,6 @@ modules/costs/index.php:2
 modules/departments/do_dept_aed.php:2
 modules/departments/index.php:4
 modules/departments/view.php:3
-modules/dotproject_plus/changed_files_from_other_modules/companies_core/view.php:3
-modules/dotproject_plus/changed_files_from_other_modules/projects_core/view.php:6
 modules/dotproject_plus/copy_project/CopyProjectViewHelper.php:1
 modules/dotproject_plus/do_copy_project.php:2
 modules/dotproject_plus/do_delete_activity_log.php:1
@@ -83,9 +76,6 @@ modules/forums/post_message.php:2
 modules/forums/viewer.php:3
 modules/forums/view_topics.php:2
 modules/gallery2/configure.php:3
-modules/groups/modules/contacts/index.php:7
-modules/groups/modules/groups/do_group_aed.php:2
-modules/groups/modules/groups/index.php:2
 modules/helpdesk/configure.php:6
 modules/helpdesk/do_item_aed.php:2
 modules/helpdesk/index.php:4
@@ -145,8 +135,7 @@ modules/mileagelog/configure.php:3
 modules/mileagelog/do_mileagelog_aed.php:13
 modules/mileagelog/index.php:2
 modules/mileagelog/vw_mileagelog.php:11
-modules/monitoringandcontrol/addedit_update_ata.php:1
-modules/monitoringandcontrol/admin_tab.viewuser.5LBLCUSTO.php:2
+modules/monitoringandcontrol/admin_tab.viewuser.5LBLCUSTO.php:1
 modules/monitoringandcontrol/do_acao_corretiva_aed.php:3
 modules/monitoringandcontrol/do_ata_aed.php:4
 modules/monitoringandcontrol/do_baseline_aed.php:3
@@ -154,11 +143,10 @@ modules/monitoringandcontrol/do_costs_aed.php:3
 modules/monitoringandcontrol/do_pendencias.php:1
 modules/monitoringandcontrol/do_quality_aed.php:3
 modules/monitoringandcontrol/do_respons_aed.php:3
-modules/monitoringandcontrol/projects_tab.2LBLRESPONSABILIDADE.php:2
+modules/monitoringandcontrol/projects_tab.2LBLRESPONSABILIDADE.php:1
 modules/monitoringandcontrol/projects_tab.5LBLCUSTO.php:4
 modules/monitoringandcontrol/projects_tab.6LBLCRONOGRAMA.php:4
-modules/monitoringandcontrol/projects_tab.7LBLQUALIDADE.php:1
-modules/monitoringandcontrol/tasks_tab.view.7LBLQUALIDADE.php:2
+modules/monitoringandcontrol/tasks_tab.view.7LBLQUALIDADE.php:1
 modules/opportunities/addedit.php:2
 modules/opportunities/do_opportunities_aed.php:2
 modules/opportunities/index.php:4
@@ -195,7 +183,6 @@ modules/resources/index.php:2
 modules/risks/index.php:2
 modules/risks/indexProjectView.php:2
 modules/risks/index_table.php:2
-modules/smartsearchns/index.php:18
 modules/system/billingcode.php:3
 modules/system/contacts_ldap.php:10
 modules/system/do_preference_aed.php:3

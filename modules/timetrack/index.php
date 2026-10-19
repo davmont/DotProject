@@ -131,7 +131,7 @@ $titleBlock->show();
 	<?php
 	if ($AppUI->user_type < 7) { ?>
 		<form action="<?PHP echo $_SERVER['REQUEST_URI'];?>" method="post" name="pickTimeSheet">
-		<?php echo arraySelect( $filters, 'f', 'onChange="document.pickTimeSheet.submit()" class="text"', $f ); ?>
+		<?php echo arraySelect( $filters, 'f', 'class="text"' . dPaction(null, array(), null, array('submit' => '')), $f ); ?>
 		</form>
 	<?php } ?>
 	</td>

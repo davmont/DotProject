@@ -20,11 +20,17 @@ $controllerWBSItem->delete($wbs_item_id);
      $obj->delete();
  }
  //find all child WBS items
-$q = new DBQuery;
-$q->addQuery("eap.id");
-$q->addTable('project_eap_items', 'eap');
-$q->addWhere("project_id =" . $project_id. " and number like '".$wbsItem->getNumber()."%'" );
-$results = db_loadHashList($q->prepare(true), 'id');
+// Children are numbered "<number>.<n>"; without a number there is nothing to match
+// (an empty prefix would match every item of the project).
+$results = array();
+$number = (string)$wbsItem->getNumber();
+if ($number !== '') {
+	$q = new DBQuery;
+	$q->addQuery("eap.id");
+	$q->addTable('project_eap_items', 'eap');
+	$q->addWhere("project_id = " . $project_id . " and number like " . $q->quote(addcslashes($number, '%_\\') . '.%'));
+	$results = db_loadHashList($q->prepare(true), 'id');
+}
 //delete the child WBS items and its activities
 foreach ($results as $id => $data) {
     $id=$data['id'];

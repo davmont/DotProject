@@ -89,36 +89,21 @@ $AppUI->savePlace();	//save the workplace state (have a footprint on this site)
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo DP_BASE_URL; ?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 <form name="javascriptdate"><input type="hidden" value="<?php echo date("Ymd"); ?>" name="today"></form>
-<script language="javascript">
-// to popup the calendar for choosing dates
-// copyied and modified from the projects addedit.php
-var calendarField = '';
-var calWin = null;
-var idate = null;
-
-function popCalendar( field ){
-calendarField = field;
-idate = eval( 'document.chooseDate.annotation_show_date.value' );
-if (document.chooseDate.annotation_show_date.value == "19700101") idate = document.javascriptdate.today.value;
-
-window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=280, height=250, scrollbars=no, status=no' );
+<script nonce="<?php echo dPcspNonce(); ?>">
+// to popup the calendar for choosing dates (named for this tab, which is part of the projects view page)
+function annotationsPopCalendar() {
+	var idate = document.chooseDate.annotation_show_date.value;
+	if (idate == "19700101") idate = document.javascriptdate.today.value;
+	window.open('index.php?m=public&a=calendar&dialog=1&callback=annotationsSetCalendar&date=' + encodeURIComponent(idate), 'calwin', 'width=280, height=250, scrollbars=no, status=no');
 }
 
 /**
 *	@param string Input date in the format YYYYMMDD
 *	@param string Formatted date
 */
-function setCalendar( idate, fdate) {
-	var owner = '';
-	fld_date = eval( 'document.chooseDate.annotation_show_date' );
-	fld_fdate = eval( 'document.chooseDate.show_date' );
-	//fld_owner = eval( 'document.pickOwner.show_date' );
-	
-	fld_date.value = idate;
-	fld_fdate.value = fdate;
-    //fld_owner.value = fdate;
-	
-	//owner.value = eval('document.show_owner_id');
+function annotationsSetCalendar(idate, fdate) {
+	document.chooseDate.annotation_show_date.value = idate;
+	document.chooseDate.show_date.value = fdate;
 	document.chooseDate.submit();
 }
 </script>
@@ -196,7 +181,7 @@ $q = new DBQuery;
 		<?php
 		// manual array for the boxsize selection array
 		$sizes = array("1"=>"xsmall","3"=>"small","6"=>"mid","10"=>"large","15"=>"xlarge");
-		echo $AppUI->_('Box Size : ').arraySelect($sizes,'rows_to_show','size=1 class=text onChange="document.chooseDate.submit();"', $rows_to_show ) ;
+		echo $AppUI->_('Box Size : ').arraySelect($sizes,'rows_to_show','size=1 class=text' . dPaction(null, array(), null, array('submit' => 'chooseDate')), $rows_to_show ) ;
 		?>
 
 	</th>
@@ -213,7 +198,7 @@ $q = new DBQuery;
 					</a>
 					<?php } ?>
 				<!-- show the calendar to choose a date -->
-					<a href="#" onClick="popCalendar( 'annotation_show_date' , 'show_date' );"> 
+					<a href="#"<?php echo dPaction('annotationsPopCalendar'); ?>> 
 						<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 					</a>
 				<!-- actual entry -->

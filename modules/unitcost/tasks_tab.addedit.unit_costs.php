@@ -54,7 +54,7 @@ $AppUI->getModuleJS('unitcost', 'tabs');
                     <?php echo $AppUI->_( 'Material Unit Cost' );?>&nbsp;<?php echo $dPconfig['currency_symbol'] ?>
                   </td>
                   <td>
-                    <input onblur="javascript:changedValue('material_unit_cost')" type="text" name="material_unit_cost" id="material_unit_cost" value="<?php echo $material_unit_cost ?>" class="text" size="18" maxlength="18"/>
+                    <input<?php echo dPaction('changedValue', array('material_unit_cost'), 'blur'); ?> type="text" name="material_unit_cost" id="material_unit_cost" value="<?php echo $material_unit_cost ?>" class="text" size="18" maxlength="18"/>
                   </td>
                 </tr>
                 <tr>
@@ -62,7 +62,7 @@ $AppUI->getModuleJS('unitcost', 'tabs');
                     <?php echo $AppUI->_( 'Equipment Unit Cost' );?>&nbsp;<?php echo $dPconfig['currency_symbol'] ?>
                   </td>
                   <td>
-                    <input onblur="javascript:changedValue('equipment_unit_cost')" type="text" name="equipment_unit_cost" id="equipment_unit_cost" value="<?php echo $equipment_unit_cost ?>" class="text" size="18" maxlength="18"/>
+                    <input<?php echo dPaction('changedValue', array('equipment_unit_cost'), 'blur'); ?> type="text" name="equipment_unit_cost" id="equipment_unit_cost" value="<?php echo $equipment_unit_cost ?>" class="text" size="18" maxlength="18"/>
                   </td>
                 </tr>
                 <tr>
@@ -70,7 +70,7 @@ $AppUI->getModuleJS('unitcost', 'tabs');
                     <?php echo $AppUI->_( 'Labor Unit Cost' );?>&nbsp;<?php echo $dPconfig['currency_symbol'] ?>
                   </td>
                   <td>
-                    <input onblur="javascript:changedValue('labor_unit_cost')" type="text" name="labor_unit_cost" id="labor_unit_cost" value="<?php echo $labor_unit_cost ?>" class="text" size="18" maxlength="18"/>
+                    <input<?php echo dPaction('changedValue', array('labor_unit_cost'), 'blur'); ?> type="text" name="labor_unit_cost" id="labor_unit_cost" value="<?php echo $labor_unit_cost ?>" class="text" size="18" maxlength="18"/>
                   </td>
                 </tr>
                 <tr>
@@ -78,7 +78,7 @@ $AppUI->getModuleJS('unitcost', 'tabs');
                     <?php echo $AppUI->_( 'Other Unit Cost' );?>&nbsp;<?php echo $dPconfig['currency_symbol'] ?>
                   </td>
                   <td>
-                    <input onblur="javascript:changedValue('other_unit_cost')" type="text" name="other_unit_cost" id="other_unit_cost" value="<?php echo $other_unit_cost ?>" class="text" size="18" maxlength="18"/>
+                    <input<?php echo dPaction('changedValue', array('other_unit_cost'), 'blur'); ?> type="text" name="other_unit_cost" id="other_unit_cost" value="<?php echo $other_unit_cost ?>" class="text" size="18" maxlength="18"/>
                   </td>
                 </tr>
                 <tr>
@@ -102,7 +102,7 @@ $AppUI->getModuleJS('unitcost', 'tabs');
                     <?php echo $AppUI->_( 'Total Units' );?>
                   </td>
                   <td>
-                    <input onblur="javascript:changedValue('total_units')" type="text" name="total_units" id="total_units" value="<?php echo $total_units ?>" class="text" size="13" maxlength="13"/>
+                    <input<?php echo dPaction('changedValue', array('total_units'), 'blur'); ?> type="text" name="total_units" id="total_units" value="<?php echo $total_units ?>" class="text" size="13" maxlength="13"/>
                   </td>
                 </tr>
                 <tr>
@@ -118,10 +118,10 @@ $AppUI->getModuleJS('unitcost', 'tabs');
 		  <?php echo $AppUI->_( 'Performance' );?>
                   </td>
                   <td>
-                    <input onblur="javascript:changedValue('performance')" type="text" name="performance" id="performance" value="<?php echo $performance ?>" class="text" size="12" maxlength="12"/>
+                    <input<?php echo dPaction('changedValue', array('performance'), 'blur'); ?> type="text" name="performance" id="performance" value="<?php echo $performance ?>" class="text" size="12" maxlength="12"/>
 		    &nbsp;<?php echo $AppUI->_( 'per' );?>&nbsp;
                     <?php
-                      echo arraySelect( $durnTypes, 'task_duration_type2', 'class="text" id="task_duration_type2" onblur="javascript:changedValue(\'task_duration_type2\')"', $obj->task_duration_type, true );
+                      echo arraySelect( $durnTypes, 'task_duration_type2', 'class="text" id="task_duration_type2"' . dPaction('changedValue', array('task_duration_type2'), 'blur'), $obj->task_duration_type, true );
 	            ?>
                   </td>
                 </tr>
@@ -155,6 +155,6 @@ $AppUI->getModuleJS('unitcost', 'tabs');
     </tr>
   </table>
 </form>
-<script language="javascript">
-  subForm.push(new FormDefinition(<?php echo $tab; ?>, document.otherFrm, checkOther, saveOther));
+<script nonce="<?php echo dPcspNonce(); ?>">
+  subForm.push(new FormDefinition(<?php echo (int)$tab; ?>, document.otherFrm, checkOther, saveOther));
 </script>

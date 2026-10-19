@@ -46,7 +46,7 @@ class ProjectMinute {
 		return $this->isSize;
 	}
 	
-	function ProjectMinute()	{
+	function __construct()	{
 	}
 	
 	function store($description,$date,$project_id,$id,$isEffort,$isDuration,$isResource,$isSize,$membersIds) {

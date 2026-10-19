@@ -33,13 +33,13 @@ $channels = $channels->loadList();
 
 ?>
 
- <script language="javascript">
-        function submitIt(channel){
-            window.location = ('?m=communication&a=addedit_channel&communication_channel='+channel)    
+ <script nonce="<?php echo dPcspNonce(); ?>">
+        function submitIt(form){
+            window.location = ('?m=communication&a=addedit_channel&communication_channel='+encodeURIComponent(form.communication_channel.value))
         }
-         function DelChannel(id_channel){
-            window.location = ('?m=communication&a=addedit_channel&communication_channel_id='+id_channel)    
-        }       
+         function DelChannel(form){
+            window.location = ('?m=communication&a=addedit_channel&communication_channel_id='+encodeURIComponent(form.channel.value))
+        }
 </script>
 
 
@@ -54,10 +54,8 @@ $channels = $channels->loadList();
                     <tr>
                         <td align="left" nowrap="nowrap" width="10%"><?php echo $AppUI->_("LBL_NEW_CHANNEL"); ?>: </td>
                         <td><input type="text" align="left" name="communication_channel" cols="50" rows="1" value=""></input></td>
-                        <td width="10%"><input type="button" class="button" value="<?php echo $AppUI->_("LBL_SUBMIT"); ?>" onclick="submitIt(communication_channel.value)" /></td>
-                        <td width="10%"><input class="button" type="button" name="cancel" value="<?php echo $AppUI->_("LBL_CANCEL"); ?>" 
-                                        onClick="javascript:if (confirm('<?php echo $AppUI->_("LBL_ANSWER_CANCEL", UI_OUTPUT_JS); ?>')) 
-                                        {location.href = './index.php?m=communication';}" /></td>
+                        <td width="10%"><input type="button" class="button" value="<?php echo $AppUI->_("LBL_SUBMIT"); ?>"<?php echo dPaction('submitIt', array('$form')); ?> /></td>
+                        <td width="10%"><input class="button" type="button" name="cancel" value="<?php echo $AppUI->_("LBL_CANCEL"); ?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('LBL_ANSWER_CANCEL', UI_OUTPUT_RAW), 'href' => './index.php?m=communication')); ?> /></td>
                     </tr>
                     <td><br></br></td><td><hr></hr></td>
                     <tr>
@@ -69,7 +67,7 @@ $channels = $channels->loadList();
                                 }
                                 ?>
                             </select>
-                        <td><input type="button" value="x" style="color: #aa0000; font-weight: bold" onclick="DelChannel(channel.value)"/></td>
+                        <td><input type="button" value="x" style="color: #aa0000; font-weight: bold"<?php echo dPaction('DelChannel', array('$form')); ?>/></td>
                         </td>
                     </tr>
                 </table>

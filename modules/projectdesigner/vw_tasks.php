@@ -306,7 +306,7 @@ $userAlloc = $tempoTask->getAllocation('user_id');
         <th nowrap="nowrap"><?php echo $AppUI->_('Duration');?>&nbsp;&nbsp;</th>
         <th nowrap="nowrap"><?php echo $AppUI->_('Finish');?></th>
         <th nowrap="nowrap"><?php echo $AppUI->_('Assigned Users')?></th>
-        <?php if ($showEditCheckbox) { echo '<th width="1"><input type="checkbox" onclick="mult_sel(this, \'selected_task_\', \'frm_tasks\')" name="multi_check"/></th>'; }?>
+        <?php if ($showEditCheckbox) { echo '<th width="1"><input type="checkbox"' . dPaction('mult_sel', array('$this', 'selected_task_', 'frm_tasks')) . ' name="multi_check"/></th>'; }?>
 </tr>
 <?php
 reset( $projects );

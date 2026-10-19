@@ -2,7 +2,7 @@
 require_once (DP_BASE_DIR . "/modules/timeplanning/model/wbs_item.class.php");
 class ControllerWBSItem {
 	
-	function ControllerWBSItem(){
+	function __construct(){
 	}
 	
 	function insert($projectId,$description,$number,$sortOrder,$isLeaf,$identation,$id) {
@@ -59,6 +59,20 @@ class ControllerWBSItem {
 		return $list;
 	}
 	
+	function getWBSItemById($id){
+		$id = (int)$id; // used in SQL below
+		$q = new DBQuery();
+		$q->addQuery('t.id, t.item_name,t.identation,t.number,t.is_leaf');
+		$q->addTable('project_eap_items', 't');
+		$q->addWhere('t.id = ' . $id);
+		$item = $q->loadHash();
+		$WBSItem = new WBSItem();
+		if ($item) {
+			$WBSItem->load($item['id'], $item['item_name'], $item['identation'], $item['number'], $item['is_leaf']);
+		}
+		return $WBSItem;
+	}
+
 	function getWBSItemByTask($task_id){
 		$task_id = (int)$task_id; // used in SQL below
 		$q = new DBQuery();

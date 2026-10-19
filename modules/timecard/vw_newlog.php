@@ -91,9 +91,9 @@ $projects = array();
 $companies = array( '0'=>'' );
 while ($row = db_fetch_assoc( $res )) {
 // collect tasks in js format
-	$tasks[] = "[".$row['task_project'].",".$row['task_id'].",'".addslashes($row['task_name'])."']";
+	$tasks[] = "[".(int)$row['task_project'].",".(int)$row['task_id'].",".dPjs($row['task_name'])."]";
 // collect projects in js format
-	$projects[] = "[".$row['project_company'].",".$row['task_project'].",'".addslashes($row['project_name'])."']";
+	$projects[] = "[".(int)$row['project_company'].",".(int)$row['task_project'].",".dPjs($row['project_name'])."]";
 // collect companies in normal format
 	$companies[$row['project_company']] = $row['company_name'];
 };
@@ -101,11 +101,11 @@ while ($row = db_fetch_assoc( $res )) {
 if ($task_found)
 {
 	// need to add the entry for the task itself as that was not found
-	$tasks[$task['task_log_task']] = "[{$task['task_project']}, {$task['task_log_task']}, '{$task['task_name']}']";
+	$tasks[$task['task_log_task']] = "[" . (int)$task['task_project'] . ", " . (int)$task['task_log_task'] . ", " . dPjs($task['task_name']) . "]";
 	// collect projects in js format
-	$projects[$task['task_project']] = "[{$task['project_company']},{$task['task_project']}, '{$task['project_name']}']";
+	$projects[$task['task_project']] = "[" . (int)$task['project_company'] . "," . (int)$task['task_project'] . ", " . dPjs($task['project_name']) . "]";
 	// get the company name
-	$sql = "SELECT company_name FROM companies WHERE company_id = ".$task['project_company'];
+	$sql = "SELECT company_name FROM companies WHERE company_id = ".(int)$task['project_company'];
 	// collect companies in normal format
 	$companies[$task['project_company']] =  db_LoadResult($sql);
 }
@@ -129,7 +129,7 @@ $proj->load($obj->task_project);
 $sql = "SELECT billingcode_id, billingcode_name
 FROM billingcode
 WHERE billingcode_status=0
-AND company_id='$proj->project_company'
+AND company_id=" . (int)$proj->project_company . "
 ORDER BY billingcode_name";
 
 $task_log_costcodes[0]="None";
@@ -159,23 +159,23 @@ reset( $projects );
 $s = "\nvar tasks = new Array(".implode( ",\n", $tasks ).")";
 $s .= "\nvar projects = new Array(".implode( ",\n", $projects ).")";
 
-echo "<script language=\"javascript\">$s</script>";
+echo '<script type="text/javascript" nonce="' . dPcspNonce() . '">' . $s . '</script>';
 
 ?>
 
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 
 var calendarField = '';
 
 function popCalendar( field ){
 	calendarField = field;
-	uts = eval( 'document.AddEdit.task_log_' + field + '.value' );
+	uts = document.AddEdit['task_log_' + field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&uts=' + uts, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
 function setCalendar( uts, fdate ) {
-	fld_uts = eval( 'document.AddEdit.task_log_' + calendarField );
-	fld_fdate = eval( 'document.AddEdit.' + calendarField );
+	fld_uts = document.AddEdit['task_log_' + calendarField];
+	fld_fdate = document.AddEdit[calendarField];
 	fld_uts.value = uts;
 	fld_fdate.value = fdate;
 }
@@ -206,8 +206,8 @@ function addToList( list, text, value ) {
 function changeList( listName, source, target ) {
 	//alert(listName+','+source+','+target);return;
 	var f = document.AddEdit;
-	var list = eval( 'f.'+listName );
-	
+	var list = f[listName];
+
 // clear the options
 	emptyList( list );
 	
@@ -224,7 +224,7 @@ function changeList( listName, source, target ) {
 // select an item in the list by target value
 function selectList( listName, target ) {
 	var f = document.AddEdit;
-	var list = eval( 'f.'+listName );
+	var list = f[listName];
 
 	for (var i=0, n = list.options.length; i < n; i++) {
 //alert(listName+','+target+','+list.options[i].value);
@@ -274,6 +274,18 @@ function delIt() {
 	}
 }
 
+function changeCompany( select ) {
+	changeList( 'task_project', projects, select.options[select.selectedIndex].value );
+}
+
+function changeProject( select ) {
+	changeList( 'task_log_task', tasks, select.options[select.selectedIndex].value );
+}
+
+function setLogCostCode( select ) {
+	select.form.task_log_costcode.value = select.options[select.selectedIndex].value;
+}
+
 </script>
 
 <form name="AddEdit" action="" method="post">
@@ -287,7 +299,7 @@ function delIt() {
 	if ($tid)
 	{
 		// maintain existing creator
-		echo "<input type='hidden' name='task_log_creator' value=".$task['task_log_creator']."/>";
+		echo "<input type='hidden' name='task_log_creator' value='".(int)$task['task_log_creator']."' />";
 	}
 	else
 	{
@@ -302,7 +314,7 @@ function delIt() {
 <table border="0" cellpadding="4" cellspacing="0" width="98%">
 <tr>
 	<td width="50%" align="right">
-		<A href="javascript:delIt()"><img align="absmiddle" src="./images/icons/stock_delete-16.png" width="16" height="16" alt="Delete this project" border="0"><?php echo $AppUI->_('delete task log');?></a>
+		<A href="#"<?php echo dPaction('delIt'); ?>><img align="absmiddle" src="./images/icons/stock_delete-16.png" width="16" height="16" alt="Delete this project" border="0"><?php echo $AppUI->_('delete task log');?></a>
 	</td>
 </tr>
 </table>
@@ -320,7 +332,7 @@ function delIt() {
 ?>
 	<td align="right" nowrap="nowrap">Task Description:</td>
 	<td>
-		<input type="text" name="task_log_name" value="<?php echo @$task['task_log_name'] ;?>" class="text"> * The company, project or task that this time was logged against has been deleted.
+		<input type="text" name="task_log_name" value="<?php echo dPhtml(@$task['task_log_name']) ;?>" class="text"> * The company, project or task that this time was logged against has been deleted.
 	</td>
 <?php
 	} else {
@@ -331,7 +343,7 @@ function delIt() {
 	<td>
 	<?php
 		$params = 'size="1" class="text" style="width:250px" ';
-		$params .= 'onchange="changeList(\'task_project\',projects, this.options[this.selectedIndex].value)"';
+		$params .= dPaction('changeCompany', array('$this'));
 		echo arraySelect( $companies, 'project_company', $params, @$task['project_company'] );
 	?>
 	</td>
@@ -339,7 +351,7 @@ function delIt() {
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project');?>:</td>
 	<td>
-		<select name="task_project" class="text" style="width:250px" onchange="changeList('task_log_task',tasks, this.options[this.selectedIndex].value)"></select>
+		<select name="task_project" class="text" style="width:250px"<?php echo dPaction('changeProject', array('$this')); ?>></select>
 	</td>
 </tr>
 <tr>
@@ -357,7 +369,7 @@ function delIt() {
 	<td>
 		<input type="hidden" name="task_log_date" value="<?php echo $date->getDate();?>">
 		<input type="text" name="date" value="<?php echo $date->format($df);?>" class="text" disabled="disabled">
-		<a href="#" onClick="popCalendar('date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0">
 		</a>
 
@@ -366,23 +378,23 @@ function delIt() {
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Hours');?>* :</td>
 	<td>
-		<input type="text" name="task_log_hours" value="<?php echo (($tid > 0) ? $task["task_log_hours"] : "");?>" class="text" size="4" maxlength="10">
+		<input type="text" name="task_log_hours" value="<?php echo (($tid > 0) ? dPhtml($task["task_log_hours"]) : "");?>" class="text" size="4" maxlength="10">
 	</td>
 
 </tr>
 <tr>
 	<td align="right" valign="top" nowrap="nowrap"><?php echo $AppUI->_('Description');?>* :</td>
 	<td align="left">
-		<textarea name="task_log_description" cols="60" rows="6" wrap="virtual" class="textarea"><?php echo (($tid > 0) ? $task["task_log_description"] : "");?></textarea>
+		<textarea name="task_log_description" cols="60" rows="6" wrap="virtual" class="textarea"><?php echo (($tid > 0) ? dPhtml($task["task_log_description"]) : "");?></textarea>
 	</td>
 </tr>
 <tr>
 	<td align="right" valign="top" nowrap="nowrap"><?php echo $AppUI->_('Cost Code');?>:</td>
 	<td align="left">
 		<?php
-			echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text" onchange="javascript:task_log_costcode.value = this.options[this.selectedIndex].value;"', '' );
+			echo arraySelect( $task_log_costcodes, 'task_log_costcodes', 'size="1" class="text"' . dPaction('setLogCostCode', array('$this')), '' );
 		?>
-		&nbsp;->&nbsp;<input type="text" class="text" name="task_log_costcode" value="<?php echo $task["task_log_costcode"]//$log->task_log_costcode;?>" maxlength="8" size="8" />
+		&nbsp;->&nbsp;<input type="text" class="text" name="task_log_costcode" value="<?php echo dPhtml(@$task["task_log_costcode"]);?>" maxlength="8" size="8" />
 	</td>
 </tr>
 <tr>
@@ -393,20 +405,20 @@ function delIt() {
 </tr>
 <tr>
 	<td>
-		<input class="button" type="Button" name="Cancel" value="cancel" onClick="javascript:if(confirm('Are you sure you want to cancel.')){location.href = './index.php?m=timecard&tab=0';}">
+		<input class="button" type="Button" name="Cancel" value="cancel"<?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => './index.php?m=timecard&tab=0')); ?>>
 	</td>
 	<td align="right">
-		<input class="button" type="Button" name="btnFuseAction" value="save" onClick="submitIt();">
+		<input class="button" type="Button" name="btnFuseAction" value="save"<?php echo dPaction('submitIt'); ?>>
 	</td>
 </tr>
 </table>
 </form>
 * indicates required field
-<script language="javascript">
-changeList('task_project', projects, <?php echo @$task['project_company'] ? $task['project_company'] : 0;?>);
-changeList('task_log_task', tasks, <?php echo @$task['task_project'] ? $task['task_project'] : 0;?>);
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+changeList('task_project', projects, <?php echo (int)@$task['project_company'];?>);
+changeList('task_log_task', tasks, <?php echo (int)@$task['task_project'];?>);
 
-selectList( 'project_company', <?php echo @$task['project_company'] ? $task['project_company'] : 0;?> );
-selectList( 'task_project', <?php echo @$task['task_project'] ? $task['task_project'] : 0;?> );
-selectList( 'task_log_task', <?php echo @$task['task_log_task'] ? $task['task_log_task'] : 0;?> );
+selectList( 'project_company', <?php echo (int)@$task['project_company'];?> );
+selectList( 'task_project', <?php echo (int)@$task['task_project'];?> );
+selectList( 'task_log_task', <?php echo (int)@$task['task_log_task'];?> );
 </script>

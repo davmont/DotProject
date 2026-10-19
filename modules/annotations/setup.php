@@ -93,7 +93,7 @@ class CSetupAnnotations {
 			", annotation_subject TEXT NULL ".
 			", PRIMARY KEY  (annotation_id)" .			
 			") ENGINE=MyISAM DEFAULT CHARSET=latin1;");
-		$ok = $ok & $q->exec();
+		$ok = $ok && $q->exec();
 		
 		// Create History table
 		$q -> clear();
@@ -126,7 +126,7 @@ class CSetupAnnotations {
 				  PRIMARY KEY  (annotation_history_id)
 				) ENGINE=MyISAM DEFAULT CHARSET=latin1 ;');
 
-		$ok = $ok & $q -> exec();
+		$ok = $ok && $q -> exec();
 		db_error();
 		
 		//inserting some extra sysvals

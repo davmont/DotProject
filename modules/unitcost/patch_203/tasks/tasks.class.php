@@ -421,7 +421,7 @@ class CTask extends CDpObject {
 /**
 * @todo Parent store could be partially used
 */
-        function store() {
+        function store($updateNulls = false) {
                 GLOBAL $AppUI;
 
                 $importing_tasks = false;
@@ -571,7 +571,7 @@ class CTask extends CDpObject {
 * @todo Parent store could be partially used
 * @todo Can't delete a task with children
 */
-        function delete() {
+        function delete($oid = null, $history_desc = '', $history_proj = 0) {
                 $this->_action = 'deleted';
         // delete linked user tasks
                 $sql = "DELETE FROM user_tasks WHERE task_id = $this->task_id";

@@ -30,11 +30,11 @@ class CHosting extends CDpObject {
 		parent::__construct( 'hosting', 'domain_id' );
 	}
 
-	function canDelete($message = null, $domain_id = null){
+	function canDelete(&$message, $domain_id = null, $joins = null){
 		return true;
 	}
 
-	function load($domain_id){
+	function load($domain_id = null, $strip = true){
 		$q = new DBQuery;
 		$q->addTable('domains','dom');
 		$q->addQuery("dom.domain_id, company_id, domain_name, domain_expiry_date, domain_registrar, domain_status,
@@ -60,7 +60,7 @@ class CHosting extends CDpObject {
 		$this->hosting_notes = $row['hosting_notes'];
 	}
 
-	function delete(){
+	function delete($oid = null, $history_desc = '', $history_proj = 0){
 		$q = new DBQuery;
 		$q->setDelete('domains');
 		$q->addWhere('domain_id='.(int)$this->domain_id);
@@ -73,7 +73,7 @@ class CHosting extends CDpObject {
 		$q->clear();
 	}
 
-	function store(){
+	function store($updateNulls = false){
 		$q = new DBQuery;
 		$q->addTable('domains');
 		$q->addInsert('company_id', $this->company_id);
@@ -126,7 +126,7 @@ function getCompanies(){
 	$rows = $q->loadList();
 
 	//display the select list
-	$buffer = '<select name="company_id" onChange="document.pickCompany.submit()" class="text">';
+	$buffer = '<select name="company_id"' . dPaction(null, array(), null, array('submit' => 'pickCompany')) . ' class="text">';
 	$buffer .= '<option value="company_0" style="font-weight:bold;">'.$AppUI->_('All').'</option>'."\n";
 	$company = '';
 	foreach ($rows as $row) {

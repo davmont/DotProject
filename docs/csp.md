@@ -11,9 +11,10 @@ not allow and report it to `csp-report.php`. If an upgrade breaks a page, set
 `Content-Security-Policy-Report-Only` again (violations are then reported but
 not blocked) while the page is fixed.
 
-Dormant modules (helpdesk, opportunities, projectdesigner, timecard, ...)
-still contain inline JavaScript and will not work until they are converted;
-`scripts/check-inline-js.sh --list` shows what is left.
+No file in the tree has inline JavaScript (the dormant modules were converted
+too), and `scripts/check-inline-js.sh` fails CI on any new inline handler,
+`javascript:` URL or `<script>` without the nonce. `eval()`, `new Function()`
+and string timers are blocked as well: there is no `'unsafe-eval'`.
 
 | Piece | Where |
 |---|---|

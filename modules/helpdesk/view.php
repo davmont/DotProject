@@ -105,7 +105,7 @@ if (!$hditem ) {
 
 	$titleBlock->show();
 ?>
-  <script language="JavaScript">
+  <script language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
   function delIt() {
     if (confirm( "<?php print $AppUI->_('doDelete').' '.$AppUI->_('Item').'?';?>" )) {
       document.frmDelete.submit();
@@ -115,6 +115,12 @@ if (!$hditem ) {
   function toggle_comment(id){
      var element = document.getElementById(id)
      element.style.display = (element.style.display == '' || element.style.display == "none") ? "inline" : "none"
+  }
+
+  // Item History: switch a comment between its short and long form.
+  function toggle_comment_pair(id){
+     toggle_comment(id + '_short');
+     toggle_comment(id + '_long');
   }
   </script>
 

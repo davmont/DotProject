@@ -23,12 +23,12 @@ $order_by = dPvalidateOrder(dPgetParam( $_GET, 'order_by', 'SGD_Logs_document_na
  $q -> addQuery('user_id,user_username');
  echo "<td>";
  $users=arrayMerge(array("0"=>""),$q -> loadHashList());
-echo $AppUI->_('Filter User') ." : " .arraySelect( $users, 'filter', 'size="1" class="text" onChange="document.filterView.submit();"',$filter, false );
+echo $AppUI->_('Filter User') ." : " .arraySelect( $users, 'filter', 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => '')),$filter, false );
  echo "</td>";
  echo "<td align=\"right\">";
  echo $AppUI->_('Order by') ." : ";
  $list=array("SGD_Logs_user_id"=>"User","SGD_Logs_action"=>"Action","SGD_Logs_document_name"=>"Document Name");
- echo arraySelect ($list,'order_by','size="1" class="text" onChange="document.filterView.submit();"',$order_by, false );
+ echo arraySelect ($list,'order_by','size="1" class="text"' . dPaction(null, array(), null, array('submit' => '')),$order_by, false );
 ?>
 </form>
 </table>
@@ -63,8 +63,8 @@ foreach ($logs as $row) {
 	$s .= '<tr bgcolor="white" valign="top">';
 	$s .= '<td width="100">'.dPhtml($row["SGD_Logs_document_name"]).'</td>';
 	$s .= '<td width="100">'.dPhtml($users[$row["SGD_Logs_user_id"]]) .'</td>';
-	$s .= '<td width="100">'.$row["SGD_Logs_date"] .'</td>';
-	$s .= '<td width="100">'.$row["SGD_Logs_action"] .'</td>';
+	$s .= '<td width="100">'.dPhtml($row["SGD_Logs_date"]) .'</td>';
+	$s .= '<td width="100">'.dPhtml($row["SGD_Logs_action"]) .'</td>';
 	$s .= '</tr>';
 }
 echo $s;

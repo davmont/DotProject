@@ -112,16 +112,16 @@ $spercent = arrayMerge( array( ''=>'(Progress)' ), $percent );
                   <th width="15%"><?php echo $AppUI->_('Start Date');?>&nbsp;</th>
                   <td width="160" nowrap>
                                   <input type='hidden' id='add_task_bulk_start_date' name='add_task_bulk_start_date' value='' />
-                                  <input type='text' onChange="setDate('frm_bulk', 'bulk_start_date');" class='text' style='width:120px;' id='bulk_start_date' name='bulk_start_date' value='' />
-                                  <a onclick="return showCalendar('bulk_start_date', '<?php echo $cf ?>', 'frm_bulk', '<?php echo (strpos($cf,'%p')!==false ? '12' : '24') ?>', true)" href="#">
+                                  <input type='text'<?php echo dPaction('setDate', array('frm_bulk', 'bulk_start_date'), 'change'); ?> class='text' style='width:120px;' id='bulk_start_date' name='bulk_start_date' value='' />
+                                  <a href="#"<?php echo dPaction('showCalendar', array('bulk_start_date', $cf, 'frm_bulk', (strpos($cf,'%p')!==false ? '12' : '24'), true)); ?>>
                                   <img src='./images/calendar.gif' width='24' height='12' alt='<?php echo $AppUI->_('Calendar');?>' border='0' />
                                   </a>
                   </td>
                   <th width="15%" nowrap="nowrap"><?php echo $AppUI->_('End Date');?>&nbsp;</th>
                   <td width="160" nowrap>
                                   <input type='hidden' id='add_task_bulk_end_date' name='add_task_bulk_end_date' value='' />
-                                  <input type='text' onChange="setDate('frm_bulk', 'bulk_end_date');" class='text' style='width:120px;' id='bulk_end_date' name='bulk_end_date' value='' />
-                                  <a onclick="return showCalendar('bulk_end_date', '<?php echo $cf ?>', 'frm_bulk', '<?php echo (strpos($cf,'%p')!==false ? '12' : '24') ?>', true)" href="#">
+                                  <input type='text'<?php echo dPaction('setDate', array('frm_bulk', 'bulk_end_date'), 'change'); ?> class='text' style='width:120px;' id='bulk_end_date' name='bulk_end_date' value='' />
+                                  <a href="#"<?php echo dPaction('showCalendar', array('bulk_end_date', $cf, 'frm_bulk', (strpos($cf,'%p')!==false ? '12' : '24'), true)); ?>>
                                   <img src='./images/calendar.gif' width='24' height='12' alt='<?php echo $AppUI->_('Calendar');?>' border='0' />
                                   </a>
                   </td>
@@ -191,7 +191,7 @@ $spercent = arrayMerge( array( ''=>'(Progress)' ), $percent );
                   <td width="100%">&nbsp;</td>
             </tr>                                
             <tr>
-                  <td colspan="20" align="right"><input type="button" class="button" value="<?php echo $AppUI->_('update');?>" onclick="if (confirm('Are you sure you wish to apply the update(s) to the selected task(s)?')) document.frm_bulk.submit();" /></td>
+                  <td colspan="20" align="right"><input type="button" class="button" value="<?php echo $AppUI->_('update');?>" <?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you wish to apply the update(s) to the selected task(s)?', 'submit' => 'frm_bulk')); ?> /></td>
             </tr>
             </table>
             </form>

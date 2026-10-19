@@ -42,7 +42,7 @@ class WBSItem {
 		return $this->sortOrder;
 	}
 	
-	function WBSItem(){
+	function __construct(){
 	}
 	
 	function store($projectId,$description,$number,$sortOrder,$isLeaf,$identation,$id) {

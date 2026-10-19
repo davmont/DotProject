@@ -22,9 +22,9 @@ class CCommunication extends CDpObject {
     var $communication_date = NULL;
     var $communication_responsible_authorization = NULL;
 
-    function CCommunication() {
+    function __construct() {
 
-        $this->CDpObject('communication', 'communication_id');
+        parent::__construct('communication', 'communication_id');
     }
 
     function check() {
@@ -33,7 +33,7 @@ class CCommunication extends CDpObject {
         return NULL; // object is ok
     }
 
-    function delete() {
+    function delete($oid = null, $history_desc = '', $history_proj = 0) {
         global $dPconfig;
         $this->_message = "deleted";
 // delete the main table reference

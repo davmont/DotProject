@@ -92,7 +92,7 @@ $f3 = $AppUI->getState( 'InventoryIdxFilterIndex' ) ? $AppUI->getState( 'Invento
 $f4 = $AppUI->getState( 'InventoryIdxFilterSearch' ) ? $AppUI->getState( 'InventoryIdxFilterSearch' ) : '';
 
 global $specify_company;
-$specify_company = $f1;
+$specify_company = (int)$f1;
 
 // set up filters list
 
@@ -114,22 +114,21 @@ else $filters3 = array( "na" => "NA" );
 
 $titleBlock->addCrumbRight(
 	'<TD><form action="?m=inventory" method="post" name="itemFilter1">'.$AppUI->_('Filter') . ': '
-		. arraySelect( $filters, 'f1', 'size=1 class=text id="itemList1" onChange="document.itemFilter1.submit();"', $f1, true )
+		. arraySelect( $filters, 'f1', 'size=1 class=text id="itemList1"' . dPaction(null, array(), null, array('submit' => '')), $f1, true )
 		. '</form></TD>'
 		. '<TD><form action="?m=inventory" method="post" id="itemFilter2" name="itemFilter2">'
-		. arraySelect( $filters2, 'f2', 'size=1 class=text style="width: 100px" id="itemList2" onChange="'."javascript:changeListByType( 'itemList1', 'itemList2', 'itemList3', 0, '".$AppUI->_( "Choose..." )."' );".'"', $f2, true )
-		. arraySelect( $filters3, 'f3', 'size=1 class=text style="width: 100px" id="itemList3" onChange="document.itemFilter2.submit();"', $f3, true )
+		. arraySelect( $filters2, 'f2', 'size=1 class=text style="width: 100px" id="itemList2"'
+			. dPaction('changeListByType', array('itemList1', 'itemList2', 'itemList3', 0, $AppUI->_( "Choose...", UI_OUTPUT_RAW ))), $f2, true )
+		. arraySelect( $filters3, 'f3', 'size=1 class=text style="width: 100px" id="itemList3"' . dPaction(null, array(), null, array('submit' => '')), $f3, true )
 		. '<INPUT TYPE="button" name="clear" value="<--'.$AppUI->_('Clear')
-		  . '" onClick="document.itemFilter2.f3.value=0;'
-		  . ' document.itemFilter2.submit();">'
+		  . '"' . dPaction('inventoryClearFilter', array('$form', 'f3', 0)) . '>'
 		. "</form></TD>"
 
 
 		. '<TD><form action="?m=inventory" method="post" id="itemFilter3" name="itemFilter3">'
-		. "<INPUT TYPE='text' size='10' name='f4' onChange='document.itemFilter3.submit();' value='$f4'>"
+		. "<INPUT TYPE='text' size='10' name='f4'" . dPaction(null, array(), 'change', array('submit' => '')) . " value='" . htmlspecialchars((string)$f4, ENT_QUOTES) . "'>"
 		. '<INPUT TYPE="button" name="clear" value="<--'.$AppUI->_('Clear')
-		  . '" onClick="document.itemFilter3.f4.value='."''".';'
-		  . ' document.itemFilter3.submit();">'
+		  . '"' . dPaction('inventoryClearFilter', array('$form', 'f4', '')) . '>'
 		. '</FORM></TD>'
 
 	, 'ALIGN="right"'
@@ -157,19 +156,25 @@ include("{$dPconfig['root_dir']}/modules/inventory/inventory.php");
 ?>
 
 
-<script LANGUAGE="JavaScript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 <!--
+// The filter "Clear" buttons: reset one field and submit.
+function inventoryClearFilter( form, field, value )
+{
+	form.elements[ field ].value = value;
+	form.submit();
+}
 
 <?php
 
 if ( $f3 != 'na' )
 {
 	echo 'changeListByType( "itemList1", "itemList2", "itemList3", '
-		.(( $f3 && $f3 != "choose" ) ? $f3 : "0").", '".$AppUI->_( "Choose..." )."' );";
+		.dPjs(( $f3 && $f3 != "choose" ) ? (string)$f3 : "0").", ".dPjs($AppUI->_( "Choose...", UI_OUTPUT_RAW ))." );";
 }
 
 ?>
 
 -->
-</SCRIPT>
+</script>
 

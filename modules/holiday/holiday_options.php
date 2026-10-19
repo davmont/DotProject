@@ -85,7 +85,7 @@ $holiday_driver = intval($settings['holiday_driver']);
 	<td  height="40" width="35%" align="right">
 		<table>
 		<tr><td>
-			<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>" onClick="submit()">
+			<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>"<?php echo dPaction(null, array(), null, array('submit' => '')); ?>>
 		</td></tr>
 		</table>
 	</td>

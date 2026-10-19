@@ -154,11 +154,11 @@ expect `undefined index` warnings and pre-Material styling in:
 - **Projects & Tasks** — `/projects`, `/tasks`, `/tasks_template`, `/projectdesigner`
 - **Departments & HR** — `/departments`, `/human_resources`
 - **Finances & Invoicing** — `/finances`, `/invoices`, `/costs`, `/unitcost`, `/payments`
-- **Helpdesk & Ticketing** — `/helpdesk`, `/ticketsmith`, `/bugspray`, `/mantis`
+- **Helpdesk & Ticketing** — `/helpdesk`, `/ticketsmith`, `/mantis`
 - **Time & Resources** — `/timeplanning`, `/timecard`, `/timesheet`, `/timetrack`, `/resource_m`
 - **Monitoring, Gantt & Risks** — `/monitoringandcontrol`, `/igantt`, `/risks`
 - **Files & System Admin** — `/files`, `/system`, `/backup`, `/dataimport`
-- **Third-party integrations** — `/tracIntegration`, `/gallery2`
+- **Third-party integrations** — `/gallery2`
 
 Contributors prioritizing v2.4.0 should focus on PHP 8 warnings and Material
 restyling in the above modules.

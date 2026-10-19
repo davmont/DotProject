@@ -111,7 +111,7 @@ class CInventory extends CDpObject
 
 // if "delete_children" is true then all children are also deleted
 
-	function delete( $idx, $delete_children = 0 )
+	function delete($idx = null, $delete_children = 0, $history_proj = 0)
 	{
 
                $sql = new DBQuery();

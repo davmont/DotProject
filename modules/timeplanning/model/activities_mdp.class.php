@@ -9,7 +9,7 @@ class ActivityMDP {
     private $y=NULL;
 	private $name=NULL; 
 	private $dependencies=NULL; 
-	function ActivityMDP(){
+	function __construct(){
 	}
 	
 	function updateDependencies($taskId,$dependencies){

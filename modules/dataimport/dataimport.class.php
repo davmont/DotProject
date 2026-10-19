@@ -13,9 +13,9 @@ class CDataImport extends CDpObject {
   var $diconfig_quote_char = null;
   var $diconfig_default = null;
 
-  function CDataImport() 
+  function __construct() 
   {
-    $this->CDpObject('dataimport_config', 'diconfig_id');
+    parent::__construct('dataimport_config', 'diconfig_id');
   }
 
   function check()
@@ -127,7 +127,8 @@ function diBuildSelect($name, $id, &$data, $default = '', $addSelect = false, $o
 
   $result = '<select class="text" name="'.$name.'['.$id.']" id="'.$name.'^'.$id.'"';
   if ($onChange) {
-    $result .= ' onchange="'. $onChange . '"';
+    // $onChange is the name of a global function; it gets the change event.
+    $result .= dPaction($onChange, array('$event'));
   }
   $result .= '>';
   if ($addSelect) {

@@ -1,6 +1,10 @@
 <?php
 require_once(DP_BASE_DIR . "/modules/dotproject_plus/translations.php");
 ?>
+<!-- jQuery and jQuery UI: the WBS save/delete/sort calls, the size autocomplete and the copy dialog need them -->
+<link type="text/css" rel="stylesheet" href="./modules/dotproject_plus/css/jquery-ui.min.css" />
+<script src="./modules/dotproject_plus/js/jquery-1.12.3.min.js"></script>
+<script src="./modules/dotproject_plus/js/jquery-ui.js"></script>
 
 <!-- calendar goodies -->
 <link type="text/css" rel="stylesheet"
@@ -256,7 +260,8 @@ foreach ($tasks_for_ids as $t) {
         $project->load($project_id);
         $company_id = $project->project_company;
         $showFirstActivityCreation = false; //this variable make the controlling to showing of the message to create the first activity
-        $items = $controllerWBSItem->getWBSItems($project_id);
+        // Positional: the leaf check below looks at $items[$i + 1] (getWBSItems() keys by id).
+            $items = array_values($controllerWBSItem->getWBSItems($project_id));
 
         if (count($items) > 0) {
             $wbs_items_order = 0;

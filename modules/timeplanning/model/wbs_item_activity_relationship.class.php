@@ -5,7 +5,7 @@ if (!defined('DP_BASE_DIR')){
 require_once (DP_BASE_DIR .'/modules/tasks/tasks.class.php');
 class WBSItemActivityRelationship {
 	
-	function WBSItemActivityRelationship (){
+	function __construct (){
 	}
 	
 	function store($id,$description,$work_package,$project_id) {

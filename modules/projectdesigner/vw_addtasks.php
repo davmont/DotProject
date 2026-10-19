@@ -6,22 +6,23 @@ if (!defined('DP_BASE_DIR')) {
 global $AppUI, $dPconfig, $projects, $project_id;
 ?>
 
-<script language="JavaScript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 function buildTaskName(id) {
       var f = document.editFrm;
-      var taskNameObj = eval('f.add_task_name_'+id);
-      var taskName = eval('f.add_task_name_'+id+'.value');
+      var taskNameObj = f.elements['add_task_name_'+id];
+      var taskName = taskNameObj.value;
       //var oldProj = eval('oldProj');
-      var oldType = eval('oldType_'+id);
+      var oldType = window['oldType_'+id];
       taskName = taskName.replace(oldProj, '');
       taskName = taskName.replace(oldType, '');
       //var projectName = f.project_name.value;
-      var taskType = eval('f.add_task_type_'+id+'.options[f.add_task_type_'+id+'.selectedIndex].text');
+      var typeSel = f.elements['add_task_type_'+id];
+      var taskType = typeSel.options[typeSel.selectedIndex].text;
       var newTaskName = oldProj+taskName+'-'+taskType;
       taskNameObj.value = newTaskName;
       oldTaskName = newTaskName;
       //eval("oldProj = "+projectName+"+':'");
-      eval("oldType_"+id+" = '-'+'"+taskType+"'");
+      window['oldType_'+id] = '-'+taskType;
 }
 
 function addTasks() {
@@ -45,10 +46,10 @@ function addTasks() {
              var int_en_date = new String(int_st_date.replace(/start_date_/,'end_date_'));
              var st_date = new String(tempobj.name.replace(/add_task_/,''));
              var en_date = new String(st_date.replace(/start_date_/,'end_date_'));
-             st_date = eval('f.'+st_date);
-             en_date = eval('f.'+en_date);
-             int_st_date = eval('f.'+int_st_date+'.value');
-             int_en_date = eval('f.'+int_en_date+'.value');
+             st_date = f.elements[String(st_date)];
+             en_date = f.elements[String(en_date)];
+             int_st_date = f.elements[String(int_st_date)].value;
+             int_en_date = f.elements[String(int_en_date)].value;
              var sDate = new Date(int_st_date.substring(0,4),(int_st_date.substring(4,6)-1),int_st_date.substring(6,8), int_st_date.substring(8,10), int_st_date.substring(10,12));
              var eDate = new Date(int_en_date.substring(0,4),(int_en_date.substring(4,6)-1),int_en_date.substring(6,8), int_en_date.substring(8,10), int_en_date.substring(10,12));
              var s = Date.UTC(int_st_date.substring(0,4),(int_st_date.substring(4,6)-1),int_st_date.substring(6,8), int_st_date.substring(8,10), int_st_date.substring(10,12));
@@ -75,7 +76,7 @@ function addTasks() {
 <form name="editFrm" action="?m=<?php echo $m;?>" method="post">
 	<input type="hidden" name="dosql" value="do_addtasks_aed" />
 	<input type="hidden" name="project" value="<?php echo $project_id;?>" />
-	<input type="hidden" name="project_name" value="<?php echo $obj->project_name;?>" />
+	<input type="hidden" name="project_name" value="<?php echo dPhtml($obj->project_name);?>" />
       <input type="hidden" name="redirect" value="<?php echo $redirect;?>" />
       <input type="hidden" name="nrcomponents" value="0" />
       <input type="hidden" name="opt_view_project" value="<?php echo (isset($view_options[0]['pd_option_view_project']) ? $view_options[0]['pd_option_view_project'] : 1);?>" />
@@ -123,14 +124,14 @@ function addTasks() {
 <table width="100%">
 <tr>
 	<td align="left" width="20">
- 		<a href="#bottom" onClick="addComponent()">
+ 		<a href="#bottom"<?php echo dPaction('addComponent'); ?>>
 			<img src="./modules/projectdesigner/images/add.png" width="16" height="16" title="<?php echo $AppUI->_('Add Line');?>" alt="<?php echo $AppUI->_('Add Line');?>" border="0" />
 		</a>
 	</td>
 </tr>
 <tr>
 	<td colspan="5" valign="bottom" align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('add');?>" onclick="addTasks()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('add');?>" <?php echo dPaction('addTasks'); ?> />
 	</td>
 </tr>
 </table>

@@ -110,9 +110,7 @@ if (is_array($status_log)) {
           print $AppUI->_($isa[$log['status_code']]);
         } else if ($log['status_code'] == 16) {
           // Comment
-          print "<a href=\"javascript:void(0);\"
-                    onClick=\"toggle_comment('{$log['status_id']}_short');
-                              toggle_comment('{$log['status_id']}_long');\">"
+          print '<a href="#"' . dPaction('toggle_comment_pair', array((string)$log['status_id'])) . '>'
               . dPshowImage (dPfindImage( 'toggle.png', $m ), 16, 16, '')
               . "</a>";
 

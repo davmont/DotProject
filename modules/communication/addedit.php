@@ -20,7 +20,7 @@ if ($canDelete && $communication_id) {
 $titleBlock->show();
 ?>
 
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
         
     function submitIt(){
         var f = document.uploadFrm;
@@ -139,7 +139,7 @@ $titleBlock->show();
                             echo '<option value="' . $registro['contact_id'] . '" ' . ($registro['contact_id'] == $registros['contact_id'] ? 'selected="selected"' : '') . '>'
                                   . dPhtml($registro['contact_first_name'] . ' ' . $registro['contact_last_name']) . '</option>';
                             }
-                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold" onclick="DelIssuing(' . $registros['contact_id'] . ',' . $communication_id . ')"/></td></tr>';
+                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold"' . dPaction('DelIssuing', array((int)$registros['contact_id'], (int)$communication_id)) . '/></td></tr>';
                         }
                     } else {
                         foreach ($_SESSION['emitters'] as $registro_session) {
@@ -148,12 +148,12 @@ $titleBlock->show();
                             echo '<option value="' . $registro['contact_id'] . '" ' . ($registro_session == $registro['contact_id'] ? 'selected="selected"' : '') . '>'
                                   . dPhtml($registro['contact_first_name'] . ' ' . $registro['contact_last_name']) . '</option>';
                             }
-                       echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold" onclick="DelIssuing(' . $registro_session . ',' . $communication_id . ')"/></td></tr>';
+                       echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold"' . dPaction('DelIssuing', array((int)$registro_session, (int)$communication_id)) . '/></td></tr>';
                         }
                     }
                     ?>
                     <tr><td><?php echo $AppUI->_("LBL_ISSUING");?>: </td>                        
-                        <td><select id="issuing" name="issuing" style="min-width:150px" onchange="AddIssuing(this.value,<?php echo $communication_id ?>)">
+                        <td><select id="issuing" name="issuing" style="min-width:150px"<?php echo dPaction('AddIssuing', array('$value', (int)$communication_id)); ?>>
                             <option value=""><?php echo $AppUI->_("LBL_ADD")?></option>
                     <?php
                     foreach ($rlista as $registro) {
@@ -171,7 +171,7 @@ $titleBlock->show();
                             echo '<option value="' . $registro['contact_id'] . '" ' . ($registro['contact_id'] == $registros['contact_id'] ? 'selected="selected"' : '') . '>'
                                  . dPhtml($registro['contact_first_name'] . ' ' . $registro['contact_last_name']) . '</option>';
                             }
-                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold" onclick="DelReceptor(' . $registros['contact_id'] . ',' . $communication_id . ')"/></td></tr>';
+                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold"' . dPaction('DelReceptor', array((int)$registros['contact_id'], (int)$communication_id)) . '/></td></tr>';
                         }
                    } else {
                         foreach ($_SESSION['receptors'] as $registro_session) {
@@ -180,12 +180,12 @@ $titleBlock->show();
                             echo '<option value="' . $registro['contact_id'] . '" ' . ($registro_session == $registro['contact_id'] ? 'selected="selected"' : '') . '>'
                                   . dPhtml($registro['contact_first_name'] . ' ' . $registro['contact_last_name']) . '</option>';
                             }
-                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold" onclick="DelReceptor(' . $registro_session . ',' . $communication_id . ')"/></td></tr>';
+                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold"' . dPaction('DelReceptor', array((int)$registro_session, (int)$communication_id)) . '/></td></tr>';
                         }
                   }
                   ?>
                     <tr><td><?php echo $AppUI->_("LBL_RECEPTOR")?></td>                        
-                        <td><select id="receptor" name="receptor" style="min-width:150px" onchange="AddReceptor(this.value,<?php echo $communication_id ?>)">
+                        <td><select id="receptor" name="receptor" style="min-width:150px"<?php echo dPaction('AddReceptor', array('$value', (int)$communication_id)); ?>>
                             <option value=""><?php echo $AppUI->_("LBL_ADD")?></option>
                   <?php
                   foreach ($rlista as $registro) {
@@ -209,7 +209,7 @@ $titleBlock->show();
                   ?></select></td>
                   </tr>
                   <tr><td><?php echo $AppUI->_("LBL_FREQUENCY")?>: </td>
-                      <td><select id="frequency" name="frequency" style="min-width:150px" onchange="setdate(this.value, <?php echo $communication_id ?>)">
+                      <td><select id="frequency" name="frequency" style="min-width:150px"<?php echo dPaction('setdate', array('$value', (int)$communication_id)); ?>>
                           <option value=""><?php echo $AppUI->_("LBL_SELECT")?></option>
                   <?php
                   if (isset($_GET['frequency'])) {
@@ -249,15 +249,13 @@ $titleBlock->show();
         <td width="10%">
             <table border="0" width="100%">
             <tr>
-                <td><input class="button" type="button" name="cancel" value="<?php echo $AppUI->_("LBL_CANCEL"); ?>" 
-                           onClick="javascript:if (confirm('<?php echo $AppUI->_('LBL_ANSWER_CANCEL', UI_OUTPUT_JS); ?>')) 
-                           {location.href = './index.php?m=communication';}" />
+                <td><input class="button" type="button" name="cancel" value="<?php echo $AppUI->_("LBL_CANCEL"); ?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('LBL_ANSWER_CANCEL', UI_OUTPUT_RAW), 'href' => './index.php?m=communication')); ?> />
                 </td>
             </tr>
             </table>
         </td>
         <td align="right">
-            <input type="button" class="button" value="<?php echo $AppUI->_("LBL_SUBMIT"); ?>" onclick="submitIt()" />
+            <input type="button" class="button" value="<?php echo $AppUI->_("LBL_SUBMIT"); ?>"<?php echo dPaction('submitIt'); ?> />
         </td>
     </tr>
    </form>

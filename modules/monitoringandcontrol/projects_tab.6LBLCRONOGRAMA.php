@@ -27,6 +27,17 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 		$dtAtual = date('d/m/Y');
 	}
 	$cmbBaseline = dPgetIntParam($_POST, 'cmbBaseline', 0);
+	// Only a baseline of this project; anything else means the current plan.
+	if ($cmbBaseline) {
+		$q = new DBQuery();
+		$q->addTable('monitoring_baseline');
+		$q->addQuery('COUNT(*)');
+		$q->addWhere('baseline_id = ' . $cmbBaseline . ' AND project_id = ' . (int)$project_id);
+		if (!$q->loadResult()) {
+			$cmbBaseline = 0;
+		}
+		$q->clear();
+	}
 ?>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/util.js"> </script>
 <!--  calendar  -->
@@ -145,7 +156,7 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
         </tr>		        
 		<tr>
 			<td align="right"><?php echo $AppUI->_('LBL_INDICE_PRAZO');?> (<?php echo $AppUI->_('LBL_IDP');?>)</td>
-            <td><input type="text" class="text" name="idp" size="15" readonly="readonly" value="<?php echo round($vlIndiceDesempenho, 2) ;?>"></td>
+            <td><input type="text" class="text" name="idp" size="15" readonly="readonly" value="<?php echo round((float)$vlIndiceDesempenho, 2) ;?>"></td>
         </tr>	
 		<tr>
 			<td colspan="2">&nbsp;</td>

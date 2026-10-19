@@ -74,7 +74,7 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 	$titleBlock->show();
 
 	// get project_id if any
-	$project_id = ( empty($_REQUEST['project_id']) ) ? 0 : $_REQUEST['project_id'];
+	$project_id = ( empty($_REQUEST['project_id']) ) ? 0 : (int)$_REQUEST['project_id'];
 
 	// get username, password (a hash value only) and email of the currently browsing user
 	$sql = new DBQuery();
@@ -93,7 +93,7 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 	$sql -> addQuery('project_name, project_id');
 
 	if ( $project_id != 0 ){
-          $sql -> addWhere('project_id='. (int) mysql_real_escape_string($project_id));
+          $sql -> addWhere('project_id='. (int)$project_id);
 	}
 	$res = $sql -> exec();
 	while ( $row = $sql ->fetchRow() ) {
@@ -172,7 +172,7 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 			?>
 			<br />
 			<?php if( $bool ) { ?>
-					<script language="javascript" type="text/javascript">
+					<script nonce="<?php echo dPcspNonce(); ?>">
 						function toggle_chckBoxes(that) {
 							var d 	= document;
 							var bxs	= d.getElementsByName('bugs[]');
@@ -192,8 +192,18 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 									break;
 								}
 							}
-							alert('<?php echo $AppUI->_( 'Please select a issue first!' ); ?>');
+							alert(<?php echo dPjs($AppUI->_( 'Please select a issue first!', UI_OUTPUT_RAW )); ?>);
 							return 'false';
+						}
+
+						// Import Task button: needs a selected issue, then asks before submitting.
+						function importTask(btn) {
+							if( ctrlChck() == 'false' ) return false;
+							document.getElementById('bug_action').value = 'task';
+							if( confirm(<?php echo dPjs(str_replace('\n', "\n", $AppUI->_( 'Due to technical restrictions, already imported issues will be dublicated!\nContinue?', UI_OUTPUT_RAW ))); ?>) ) {
+								btn.form.submit();
+							}
+							return false;
 						}
 						<?php if($canUpdateStatus) { ?>
 						function updatestatus( bool ) {
@@ -245,7 +255,7 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 								c[i].style.display = 'none';
 							}
 							var f = d.getElementById('mantisframe');
-							var muri = "<?php echo $cnf['mantismethod'].'://'.$cnf['mantishost'].'/'.$cnf['mantisuri'].'bug_change_status_page.php'; ?>";
+							var muri = <?php echo dPjs($cnf['mantismethod'].'://'.$cnf['mantishost'].'/'.$cnf['mantisuri'].'bug_change_status_page.php'); ?>;
 							var bid = d.getElementById('loadbug').value;
 							var nst = that.value;
 							muri = muri + '?new_status=' + nst + '&bug_id=' + bid;
@@ -293,17 +303,17 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 					<tbody>
 						<tr>
 							<td align="right" valign="top"><a href="<?php echo 'http://'. $cnf['mantishost'].'/'.$cnf['mantisuri'] .'view.php?id='. (int) $bugid; ?>" target="_blank" ><?php echo $bugid; ?></a></td>							
-							<td align="left" valign="top"><?php echo $bugprojname; ?></td>
-							<td align="left" valign="top"><?php echo $buguser; ?></td>
-							<td align="left" valign="top"><?php echo $bugsev; ?>
-							<td align="left" valign="top"><?php echo $bugpri; ?>
-							<td align="left" style="background-color:<?php echo $status_color; ?>" valign="top"><strong><b><?php echo $bugstat ?></b></strong></td>
-							<td align="left" valign="top"><?php echo $bugrep; ?>							
-							<td align="left" valign="top"><?php echo $bugres; ?>
+							<td align="left" valign="top"><?php echo dPhtml($bugprojname); ?></td>
+							<td align="left" valign="top"><?php echo dPhtml($buguser); ?></td>
+							<td align="left" valign="top"><?php echo dPhtml($bugsev); ?>
+							<td align="left" valign="top"><?php echo dPhtml($bugpri); ?>
+							<td align="left" style="background-color:<?php echo $status_color; ?>" valign="top"><strong><b><?php echo dPhtml($bugstat); ?></b></strong></td>
+							<td align="left" valign="top"><?php echo dPhtml($bugrep); ?>							
+							<td align="left" valign="top"><?php echo dPhtml($bugres); ?>
 							<?php if( $bool ) { ?>
 								<td align="center" valign="top">
-									<input type="hidden" name="bugstatus[]" value="<?php echo $bugstat; ?>" />
-									<input type="checkbox" name="bugs[]" value="<?php echo $bugid ?>" onclick="toggle_chckBoxes(this);">
+									<input type="hidden" name="bugstatus[]" value="<?php echo dPhtml($bugstat); ?>" />
+									<input type="checkbox" name="bugs[]" value="<?php echo $bugid ?>"<?php echo dPaction('toggle_chckBoxes', array('$this')); ?>>
 								</td>
 							<?php } ?>
 						</tr>
@@ -320,14 +330,13 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 							<input type="hidden" name="bug_action" id="bug_action" value="" />
 							<?php
 								if( $canCreateTask ) {
-									$msg = $AppUI->_( 'Due to technical restrictions, already imported issues will be dublicated!\nContinue?' );
 									?>
-									<input type="button" class="button" name="btnCreateTask" value="Import Task" onclick="if(ctrlChck() == 'false' ){return false;} document.getElementById('bug_action').value='task';if( confirm('<?php echo $msg; ?>') ) { submit(); } else { return false; }" />
+									<input type="button" class="button" name="btnCreateTask" value="Import Task"<?php echo dPaction('importTask', array('$this')); ?> />
 									<?php
 								}
 								if( $canUpdateStatus ) {
 									?>
-									<input type="button" class="button" name="btnUpdateStatus" value="Change Status" onclick="updatestatus(true);" />
+									<input type="button" class="button" name="btnUpdateStatus" value="Change Status"<?php echo dPaction('updatestatus', array(true)); ?> />
 									<?php
 								}
 							?>
@@ -341,9 +350,9 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 			<tbody>
 				<tr>
 					<td align="right" valign="top" colspan="7">
-						<input type="button" class="button" name="btnCancel" value="<?php echo $AppUI->_('Cancel'); ?>" onclick="updatestatus(false);" />
+						<input type="button" class="button" name="btnCancel" value="<?php echo $AppUI->_('Cancel'); ?>" <?php echo dPaction('updatestatus', array(false)); ?> />
 						&nbsp;
-						<input type="button" class="button" name="btnReloadPage" value="<?php echo $AppUI->_( 'Load Changes to Overview' ); ?>" onclick="window.location.reload();" />
+						<input type="button" class="button" name="btnReloadPage" value="<?php echo $AppUI->_( 'Load Changes to Overview' ); ?>" <?php echo dPaction('location.reload'); ?> />
 					</td>
 				</tr>
 				<tr>
@@ -356,13 +365,13 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 					<th align="center" width="14%">Closed</th>
 				</tr>
 				<tr>
-					<td align="center"><input type="checkbox" name="newstatus[]" value="10" onclick="noteform(this);" /></td>
-					<td align="center"><input type="checkbox" name="newstatus[]" value="20" onclick="noteform(this);" /></td>
-					<td align="center"><input type="checkbox" name="newstatus[]" value="30" onclick="noteform(this);" /></td>
-					<td align="center"><input type="checkbox" name="newstatus[]" value="40" onclick="noteform(this);" /></td>
-					<td align="center"><input type="checkbox" name="newstatus[]" value="50" onclick="noteform(this);" /></td>
-					<td align="center"><input type="checkbox" name="newstatus[]" value="80" onclick="noteform(this);" /></td>
-					<td align="center"><input type="checkbox" name="newstatus[]" value="90" onclick="noteform(this);" /></td>
+					<td align="center"><input type="checkbox" name="newstatus[]" value="10" <?php echo dPaction('noteform', array('$this')); ?> /></td>
+					<td align="center"><input type="checkbox" name="newstatus[]" value="20" <?php echo dPaction('noteform', array('$this')); ?> /></td>
+					<td align="center"><input type="checkbox" name="newstatus[]" value="30" <?php echo dPaction('noteform', array('$this')); ?> /></td>
+					<td align="center"><input type="checkbox" name="newstatus[]" value="40" <?php echo dPaction('noteform', array('$this')); ?> /></td>
+					<td align="center"><input type="checkbox" name="newstatus[]" value="50" <?php echo dPaction('noteform', array('$this')); ?> /></td>
+					<td align="center"><input type="checkbox" name="newstatus[]" value="80" <?php echo dPaction('noteform', array('$this')); ?> /></td>
+					<td align="center"><input type="checkbox" name="newstatus[]" value="90" <?php echo dPaction('noteform', array('$this')); ?> /></td>
 				</tr>
 
 				<tr><td align="right" valign="top" colspan="7" style="height: 20px;">&nbsp;</td></tr>
@@ -377,9 +386,9 @@ if( $perms->checkModule( 'mantis','access' ) ) {
 
 				<tr>
 					<td align="right" valign="top" colspan="7">
-						<input type="button" class="button" name="btnCancel" value="<?php echo $AppUI->_('Cancel'); ?>" onclick="updatestatus(false);" />
+						<input type="button" class="button" name="btnCancel" value="<?php echo $AppUI->_('Cancel'); ?>" <?php echo dPaction('updatestatus', array(false)); ?> />
 						&nbsp;
-						<input type="button" class="button" name="btnReloadPage" value="<?php echo $AppUI->_( 'Load Changes to Overview' ); ?>" onclick="window.location.reload();" />
+						<input type="button" class="button" name="btnReloadPage" value="<?php echo $AppUI->_( 'Load Changes to Overview' ); ?>" <?php echo dPaction('location.reload'); ?> />
 					</td>
 				</tr>
 			</tbody>

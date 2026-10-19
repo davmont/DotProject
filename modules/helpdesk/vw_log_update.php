@@ -69,7 +69,7 @@ for ($x=0; $x < $nums; $x++) {
 ?>
 
 <!-- TIMER RELATED SCRIPTS -->
-<script language="JavaScript">
+<script language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
 	// please keep these lines on when you copy the source
 	// made by: Nicolas - http://www.javascript-page.com
 	// adapted by: Juan Carlos Gonzalez jcgonz@users.sourceforge.net
@@ -93,7 +93,7 @@ for ($x=0; $x < $nums; $x++) {
 	   var total_hours   = Math.round( (total_minutes / 60) * 100) / 100;
 	   document.editFrm.task_log_hours.value = total_hours;
 	   
-	   timerID = setTimeout("UpdateTimer()", 60000);
+	   timerID = setTimeout(UpdateTimer, 60000);
 	}
 	
 	function timerStart() {
@@ -124,13 +124,13 @@ for ($x=0; $x < $nums; $x++) {
 	
   function popCalendar( field ){
     calendarField = field;
-    idate = eval( 'document.editFrm.task_' + field + '.value' );
+    idate = document.editFrm.elements['task_' + field].value;
     window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=270,height=250,scollbars=false' );
   }
 
   function setCalendar( idate, fdate ) {
-    fld_date = eval( 'document.editFrm.task_' + calendarField );
-    fld_fdate = eval( 'document.editFrm.' + calendarField );
+    fld_date = document.editFrm.elements['task_' + calendarField];
+    fld_fdate = document.editFrm.elements[calendarField];
     fld_date.value = idate; 
     fld_fdate.value = fdate;
   }
@@ -140,7 +140,7 @@ for ($x=0; $x < $nums; $x++) {
     var f = document.editFrm;
     if(obj.options[obj.selectedIndex].value>0){
       if(f.item_status.selectedIndex==0){
-    	f.item_status.selectedIndex=<?php echo $HELPDESK_CONFIG['assigned_status_id'];?>;
+    	f.item_status.selectedIndex=<?php echo (int)$HELPDESK_CONFIG['assigned_status_id'];?>;
       }
     }
   }	
@@ -167,7 +167,7 @@ for ($x=0; $x < $nums; $x++) {
 		<input type="hidden" name="task_log_date" value="<?php echo $log_date->format( FMT_DATETIME_MYSQL ); ?>">
 	<!-- end patch #890841 -->
 		<input type="text" name="log_date" value="<?php echo $log_date->format( $df ); ?>" class="disabledText" disabled="disabled">
-		<a href="#" onClick="popCalendar('log_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('log_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar'); ?>" border="0" />
 		</a>
 	</td>
@@ -211,7 +211,7 @@ for ($x=0; $x < $nums; $x++) {
 //				$lv_users = array( $hditem["item_assigned_to"] => $users[$hditem["item_assigned_to"]] );
 //				echo arraySelect( $lv_users, 'item_assigned_to', 'size="1" class="text" id="iat" ', @$hditem["item_assigned_to"] ); 
 //			} else {
-		        echo arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"',
+		        echo arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat"' . dPaction('updateStatus', array('$this')),
                           @$hditem["item_assigned_to"] ); 
 //			}
 	?>
@@ -219,7 +219,7 @@ for ($x=0; $x < $nums; $x++) {
 </tr>
 <tr>
 	<td colspan="2" valign="bottom" align="right">
-		<input type="submit" class="button" value="<?php echo $AppUI->_($task_log_id?'update task log':'Create Task Log'); ?>" onclick="" />
+		<input type="submit" class="button" value="<?php echo $AppUI->_($task_log_id?'update task log':'Create Task Log'); ?>" />
 	</td>
 </tr>
 

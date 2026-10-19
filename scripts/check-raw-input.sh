@@ -13,7 +13,7 @@ PATTERN='\$_(GET|POST|REQUEST|COOKIE)[[:space:]]*\['
 
 current() {
   git ls-files '*.php' '*.inc' \
-    | grep -vE '^(lib|vendor|tests|docker)/|^modules/(holiday/PEAR|mantis/(core|no\.core)|tracIntegration/xrlib|unitcost/patch_203)/' \
+    | grep -vE '^(lib|vendor|tests|docker)/|^modules/(holiday/PEAR|mantis/(core|no\.core)|unitcost/patch_203)/' \
     | xargs grep -cE "$PATTERN" 2>/dev/null \
     | grep -v ':0$' | sort || true
 }

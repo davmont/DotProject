@@ -60,7 +60,7 @@ class CSetupTimeTrack {
 			  tt_data_note varchar(255) default NULL,
 			  PRIMARY KEY  (tt_data_id)
 		)");
-		$ok = $ok & $q ->exec();
+		$ok = $ok && $q ->exec();
 		
 		$q =new DBQuery();
 
@@ -81,7 +81,7 @@ class CSetupTimeTrack {
                             tt_approve_note_date date NOT NULL default '0000-00-00',
                             PRIMARY KEY  (tt_id)
                           )");		
-        $ok = $ok & $q ->exec();
+        $ok = $ok && $q ->exec();
         if(!$ok){
           return $ok;
         }

@@ -164,7 +164,7 @@ $titleBlock->show();
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo $dPconfig['base_url'];?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script LANGUAGE="JavaScript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 <!--
 
 function delIt()
@@ -182,27 +182,15 @@ var isNS4=document.layers?true:false;
 /* _w : which ID (1) or (2) */
 /* _h : (h)ide or (s)how */
 function toggleT(_w,_h) {
-  if (isDOM)
-  {
     if (_h=='s') document.getElementById(_w).style.visibility='visible';
     if (_h=='h') document.getElementById(_w).style.visibility='hidden';
-  }
-  else if (isIE) {
-    if (_h=='s') eval("document.all."+_w+".style.visibility='visible';");
-    if (_h=='h') eval("document.all."+_w+".style.visibility='hidden';");
-  }
-  else if(isNS4)
-  {
-    if (_h=='s') eval("document.layers['"+_w+"'].visibility='show';");
-    if (_h=='h') eval("document.layers['"+_w+"'].visibility='hide';");
-  }
 }
 
 
 function EnableDisable( _type )
 {
-	eval( "sel = document.forms['editFrm'].inventory_" + _type + ";" );
-	eval( "newsel = document.forms['editFrm'].inventory_new" + _type + ";" );
+	var sel = document.forms['editFrm']['inventory_' + _type];
+	var newsel = document.forms['editFrm']['inventory_new' + _type];
 
     if ( sel.options[ sel.selectedIndex ].value == -1 )
 	{
@@ -216,6 +204,12 @@ function EnableDisable( _type )
     return true;
 }
 
+
+// Company select: refill the department list (dept_lists is set by javalists.php).
+function changeDeptList( box )
+{
+	changeList( box, dept_lists, 'departmentlist' );
+}
 
 function submitIt()
 {
@@ -235,7 +229,7 @@ function submitIt()
 
 
 -->
-</SCRIPT>
+</script>
 
 
 <?php include_once("{$dPconfig['root_dir']}/modules/inventory/javalists.php"); ?>
@@ -305,11 +299,11 @@ function submitIt()
 			<TR>
 				<TD>
 					<?php echo $AppUI->_( 'Brand' );?>: <BR />
-					<SELECT NAME="inventory_brand" ONCHANGE="javascript:EnableDisable( 'brand' );">
+					<SELECT NAME="inventory_brand"<?php echo dPaction('EnableDisable', array('brand')); ?>>
 						<?php
 							foreach ($brand_list as $brand)
 							{
-								echo "<OPTION VALUE='".$brand["inventory_brand_id"].(($brand['inventory_brand_id']==$obj->inventory_brand)?"' SELECTED>":"'>").$brand["inventory_brand_name"]."</OPTION>";
+								echo "<OPTION VALUE='".$brand["inventory_brand_id"].(($brand['inventory_brand_id']==$obj->inventory_brand)?"' SELECTED>":"'>").dPhtml($brand["inventory_brand_name"])."</OPTION>";
 							}
 						?>
 						<OPTION VALUE='-1'>&lt;<?php echo $AppUI->_("New Brand"); ?>&gt;</OPTION>
@@ -320,11 +314,11 @@ function submitIt()
 					</SPAN>
 				<BR /><BR />
 					<?php echo $AppUI->_( 'Category' );?>: <BR />
-					<SELECT NAME="inventory_category" ONCHANGE="javascript:EnableDisable( 'category' );">
+					<SELECT NAME="inventory_category"<?php echo dPaction('EnableDisable', array('category')); ?>>
 						<?php
 							foreach ($category_list as $category)
 							{
-								echo "<OPTION VALUE='".$category["inventory_category_id"].(($category['inventory_category_id']==$obj->inventory_category)?"' SELECTED>":"'>").$category["inventory_category_name"]."</OPTION>";
+								echo "<OPTION VALUE='".$category["inventory_category_id"].(($category['inventory_category_id']==$obj->inventory_category)?"' SELECTED>":"'>").dPhtml($category["inventory_category_name"])."</OPTION>";
 							}
 						?>
 						<OPTION VALUE='-1'>&lt;<?php echo $AppUI->_( "New Category" ); ?>&gt;</OPTION>
@@ -375,14 +369,14 @@ function submitIt()
 				<BR />
 					<?php echo $AppUI->_( "Purchase Date" ); ?>:<BR />
 					<INPUT TYPE="TEXT" CLASS="text" DISABLED ID="date1" NAME="inventory_purchased" VALUE="<?php echo $purchase_date->format( '%Y-%m-%d' ); ?>" />
-					<a href="#" onClick="return showCalendar('date1', 'y-mm-dd');">
+					<a href="#"<?php echo dPaction('showCalendar', array('date1', 'y-mm-dd')); ?>>
 						<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 					</a>
 
 				<BR />
 					<?php echo $AppUI->_( "Delivery Date" ); ?>:<BR />
 					<INPUT TYPE="TEXT" CLASS="text" DISABLED ID="date4" NAME="inventory_delivered" VALUE="<?php echo $delivered_date->format( '%Y-%m-%d' ); ?>" />
-					<a href="#" onClick="return showCalendar('date4', 'y-mm-dd');">
+					<a href="#"<?php echo dPaction('showCalendar', array('date4', 'y-mm-dd')); ?>>
 						<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 					</a>
 				</TD>
@@ -407,12 +401,12 @@ function submitIt()
 					<?php echo $AppUI->_( "Company" ); ?>: <BR />
 					<SELECT NAME="inventory_company" ID="companylist"
 						CLASS="text" <?php if ( $inventory_parent ) echo "DISABLED "; ?>
-						ONCHANGE="javascript:changeList( this, dept_lists, 'departmentlist' )">
+						<?php echo dPaction('changeDeptList', array('$this')); ?>>
 					<?php
 						foreach( $company_list as $row )
 						{
 							$compname = $row["company_name"];
-							echo "<OPTION VALUE='".$row["company_id"].(($row[ "company_id" ] == $obj->inventory_company ) ? "' SELECTED>" : "'>" ).$compname;
+							echo "<OPTION VALUE='".$row["company_id"].(($row[ "company_id" ] == $obj->inventory_company ) ? "' SELECTED>" : "'>" ).dPhtml($compname);
 						}
 					?>
 					</SELECT>
@@ -448,7 +442,7 @@ function submitIt()
 								if ( !getDenyRead( "projects", $row[ 'project_id' ] ) )
 								{
 									$project_list[ $row[ "project_id" ] ] = $row;
-									echo "<OPTION VALUE='".$row["project_id"].(($row[ "project_id" ] == $obj->inventory_project ) ? "' SELECTED>":"'>")."(".$row["project_short_name"].") ".$row["project_name"];
+									echo "<OPTION VALUE='".$row["project_id"].(($row[ "project_id" ] == $obj->inventory_project ) ? "' SELECTED>":"'>")."(".dPhtml($row["project_short_name"]).") ".dPhtml($row["project_name"]);
 								}
 							}
 						}
@@ -472,7 +466,7 @@ function submitIt()
 							foreach ($rows as $row)
 							{
 								$username = $row["user_first_name"]." ".$row["user_last_name"];
-								echo "<OPTION VALUE='".$row["user_id"].(($row[ "user_id" ] == $obj->inventory_user ) ? "' SELECTED>" : "'>" ).$username;
+								echo "<OPTION VALUE='".$row["user_id"].(($row[ "user_id" ] == $obj->inventory_user ) ? "' SELECTED>" : "'>" ).dPhtml($username);
 							}
 						}
 
@@ -495,13 +489,13 @@ function submitIt()
 					<TR>
 						<TD STYLE="padding-right: 10px">
 							<INPUT TYPE="TEXT" CLASS="text" DISABLED ID="date2" NAME="inventory_assign_from" VALUE="<?php echo $from_date->format( '%Y-%m-%d' ); ?>" />
-							<a href="#" onClick="return showCalendar('date2', 'y-mm-dd');">
+							<a href="#"<?php echo dPaction('showCalendar', array('date2', 'y-mm-dd')); ?>>
 								<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 							</a>
 						</TD>
 						<TD STYLE="padding-left: 10px">
 							<INPUT TYPE="TEXT" CLASS="text" DISABLED ID="date3" NAME="inventory_assign_until" VALUE="<?php echo $until_date->format( '%Y-%m-%d' ); ?>" />
-							<a href="#" onClick="return showCalendar('date3', 'y-mm-dd');">
+							<a href="#"<?php echo dPaction('showCalendar', array('date3', 'y-mm-dd')); ?>>
 								<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 							</a>
 						</TD>
@@ -516,12 +510,12 @@ function submitIt()
 	<TD COLSPAN="2">
 		<HR />
 		<?php echo $AppUI->_( 'Notes' ); ?>: <BR />
-		<TEXTAREA CLASS="textarea" NAME="inventory_description" wrap="virtual" ROWS="10" COLS="60"><?php echo $obj->inventory_description; ?></TEXTAREA>
+		<TEXTAREA CLASS="textarea" NAME="inventory_description" wrap="virtual" ROWS="10" COLS="60"><?php echo dPformSafe( $obj->inventory_description ); ?></TEXTAREA>
 	</TD>
 </TR>
 <TR>
 	<TD COLSPAN="2" ALIGN="right">
-		<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_((($inventory_id)?'update':'add'));?>" onClick="submitIt();" />
+		<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_((($inventory_id)?'update':'add'));?>" <?php echo dPaction('submitIt'); ?> />
 	</TD>
 </TR>
 </FORM>
@@ -551,15 +545,15 @@ if ( $inventory_id )
 
 
 
-<SCRIPT LANGUAGE="JavaScript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 <!--
 EnableDisable( 'category' );
 EnableDisable( 'brand' );
 <?php
 	echo "changeList( getElementById( 'companylist' ), dept_lists, 'departmentlist', "
-		.(($inventory_id || $inventory_parent)?$obj->inventory_department:1)," );";
+		.(($inventory_id || $inventory_parent)?(int)$obj->inventory_department:1)," );";
 ?>
 
 -->
-</SCRIPT>
+</script>
 

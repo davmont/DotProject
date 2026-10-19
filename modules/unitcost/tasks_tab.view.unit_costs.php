@@ -100,6 +100,6 @@ $AppUI->getModuleJS('unitcost', 'tabs');
     </tr>
   </table>
 </form>
-<script language="javascript">
-  subForm.push(new FormDefinition(<?php echo $tab; ?>, document.otherFrm, checkOther, saveOther));
+<script nonce="<?php echo dPcspNonce(); ?>">
+  subForm.push(new FormDefinition(<?php echo (int)$tab; ?>, document.otherFrm, checkOther, saveOther));
 </script>

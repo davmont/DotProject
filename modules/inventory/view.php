@@ -106,7 +106,7 @@ $titleBlock->show();
 
 ?>
 
-<script LANGUAGE="JavaScript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 
 function delIt()
 {
@@ -115,7 +115,7 @@ function delIt()
 	}
 }
 
-</SCRIPT>
+</script>
 
 <TABLE BORDER="0" CELLPADDING="4" CELLSPACING="0" WIDTH="100%" CLASS="std">
 <FORM NAME="frmDelete" ACTION="./index.php?m=inventory" METHOD="post">

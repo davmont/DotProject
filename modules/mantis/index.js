@@ -59,11 +59,19 @@ function ts_makeSortable(table) {
         var cell = firstRow.cells[i];
         var txt = ts_getInnerText(cell);
 		if( getPosInArray(public_custom_column_miss,i) == -1 ) {
-	        cell.innerHTML = '<a href="#" style="color: #ffffff;" '+ 
-	        'onclick="ts_resortTable(this, '+i+');return false;">' + 
+	        cell.innerHTML = '<a href="#" style="color: #ffffff;">' + 
 	        txt+'<span class="sortarrow">&nbsp;&nbsp;&nbsp;</span></a>';
+	        cell.firstChild.addEventListener('click', ts_sortClickHandler(i), false);
 		}
     }
+}
+
+// Click handler for the header link of column col (was an inline onclick).
+function ts_sortClickHandler(col) {
+	return function (ev) {
+		ev.preventDefault();
+		ts_resortTable(this, col);
+	};
 }
 
 function ts_getInnerText(el) {

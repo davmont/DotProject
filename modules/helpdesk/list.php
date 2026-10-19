@@ -109,7 +109,7 @@ if($HELPDESK_CONFIG['search_criteria_company']){
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $allowedCompanies ),
                               'company',
-							                'size="1" id="company" class="text" onchange="changeList()"',
+							                'size="1" id="company" class="text"' . dPaction('changeList'),
 							                $company )
                . "</td>";
 	}
@@ -159,7 +159,7 @@ if($HELPDESK_CONFIG['search_criteria_project']){
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>'('.$AppUI->_('All').')', '0'=>'('.$AppUI->_('Without Project').')' ), $project_list ),
                               'project',
-							                'size="1" id="project" class="text" onchange="changeList()"',
+							                'size="1" id="project" class="text"' . dPaction('changeList'),
 							                $project )
                . "</td>";
 	}
@@ -194,7 +194,7 @@ if($HELPDESK_CONFIG['search_criteria_assigned_to']){
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $assigned_to_list ),
                               'assigned_to',
-						                  'size="1" id="assigned_to" class="text" onchange="changeList()"',
+						                  'size="1" id="assigned_to" class="text"' . dPaction('changeList'),
 						                  $assigned_to )
                . "</td>";
 	}
@@ -220,7 +220,7 @@ if($HELPDESK_CONFIG['search_criteria_status']){
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>'All', '-2'=>'All (not closed)'), $ist ),
                               'item_status',
-						                  'size="1" id="status" class="text" onchange="changeList()"',
+						                  'size="1" id="status" class="text"' . dPaction('changeList'),
 						                  $status, true )
                . "</td>";
   }
@@ -244,7 +244,7 @@ if($HELPDESK_CONFIG['search_criteria_call_type']){
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>'All' ), $ict ),
                               'item_calltype',
-						                  'size="1" id="call_type" class="text" onchange="changeList()"',
+						                  'size="1" id="call_type" class="text"' . dPaction('changeList'),
 						                  $calltype, true )
                . "</td>";
 	}
@@ -268,7 +268,7 @@ if($HELPDESK_CONFIG['search_criteria_call_source']){
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $ics ), 
                               'item_source',
-						                  'size="1" id="call_source" class="text" onchange="changeList()"',
+						                  'size="1" id="call_source" class="text"' . dPaction('changeList'),
 						                  $item_source, true)
                . "</td>";
 	}
@@ -292,7 +292,7 @@ if($HELPDESK_CONFIG['search_criteria_priority']){
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>'All' ), $ipr ),
                               'item_priority',
-							                'size="1" id="priority" class="text" onchange="changeList()"',
+							                'size="1" id="priority" class="text"' . dPaction('changeList'),
 							                $priority, true )
                . "</td>";
 	}
@@ -316,7 +316,7 @@ if($HELPDESK_CONFIG['search_criteria_severity']){
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>'All' ), $isv ),
                               'item_severity',
-						                  'size="1" id="severity" class="text" onchange="changeList()"',
+						                  'size="1" id="severity" class="text"' . dPaction('changeList'),
 						                   $item_severity, true )
                . "</td>";
 	}
@@ -340,7 +340,7 @@ if($HELPDESK_CONFIG['search_criteria_application']){
                . "</label>:</td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $iap ),
                               'item_application',
-						                  'size="1" id="application" class="text" onchange="changeList()"',
+						                  'size="1" id="application" class="text"' . dPaction('changeList'),
 						                  $item_application, true)
                . "</td>";
 	}
@@ -373,7 +373,7 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $requestor_list ),
                               'requestor',
-						                  'size="1" id="requestor" class="text" onchange="changeList()"',
+						                  'size="1" id="requestor" class="text"' . dPaction('changeList'),
 						                  $requestor )
                . "</td>";
 	}
@@ -397,7 +397,7 @@ if($HELPDESK_CONFIG['search_criteria_os']){
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $ios ),
                               'item_os',
-						                  'size="1" id="os" class="text" onchange="changeList()"',
+						                  'size="1" id="os" class="text"' . dPaction('changeList'),
 						                  $item_os, true )
                . "</td>";
 	}
@@ -448,7 +448,7 @@ $titleBlock = new CTitleBlock( 'Issue Management', 'helpdesk.png', $m, 'ID_HELP_
 
 if (hditemCreate()) {
 	$titleBlock->addCell(
-	'<input type="submit" onclick="newItemFromList()" class="button" value="'.$AppUI->_('New Item').'" />', ''
+	'<input type="submit"' . dPaction('newItemFromList') . ' class="button" value="'.$AppUI->_('New Item').'" />', ''
   );
 }
 
@@ -459,7 +459,7 @@ $titleBlock->show();
 }
 ?>
 
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function changeList() {
 	document.filterFrm.submit();
 }

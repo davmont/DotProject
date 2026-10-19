@@ -40,7 +40,7 @@ if (!$sql -> loadObject($obj ) && $payment_id > 0) {
 // format dates
 $df = $AppUI->getPref('SHDATEFORMAT');
 
-$payment_date = new CDate( $obj->payment_date );
+$payment_date = new CDate( @$obj->payment_date );
 
 // collect all the users for the payment owner list
 $owners = array( '0'=>'' );
@@ -58,7 +58,7 @@ $titleBlock->addCrumb( "?m=payments", "payments list" );
 $titleBlock->show();
 
 // create invoices list
-$company = $obj->payment_company != null ? ' AND company_id = ' . $obj->payment_company : null;
+$company = @$obj->payment_company != null ? ' AND company_id = ' . (int)$obj->payment_company : null;
 $sql -> clear();
 $sql -> addTable('invoices','inv');
 $sql -> addQuery('invoice_id, invoice_date,invoice_due, invoice_terms, invoice_company,comp.company_name,'.
@@ -92,7 +92,7 @@ if($rn > 0) {
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo $AppUI->cfg['base_url'];?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var form = document.changeclient;
 	var msg = '';
@@ -114,6 +114,9 @@ function submitIt() {
 var isCheck = true;
 
 function checkall(form) {
+  if (typeof form === 'string') {
+    form = document.forms[form];
+  }
   for (var i = 0; true; i++){
     if(form.elements[i] == null)
       break;
@@ -131,7 +134,7 @@ function checkall(form) {
 <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Payment Date');?></td>
 <td>
 <input type="text" class="text" name="payment_date" id="date1" value="<?php echo $payment_date->format( '%Y-%m-%d' );?>" />
-<a href="#" onClick="return showCalendar('date1', 'y-mm-dd');">
+<a href="#"<?php echo dPaction('showCalendar', array('date1', 'y-mm-dd')); ?>>
 <img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 </a>
 yyyy-mm-dd
@@ -141,37 +144,37 @@ yyyy-mm-dd
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Payment Company');?></td>
 			<td>
 <?php
-if($obj->payment_company == null) {
-  echo arraySelect( $companies, 'payment_company', 'class="text" size="1"', $row->payment_company );
+if(@$obj->payment_company == null) {
+  echo arraySelect( $companies, 'payment_company', 'class="text" size="1"', 0 );
 } else {
-  echo '<b>&nbsp;' . @$obj->company_name . '</b>';
+  echo '<b>&nbsp;' . dPhtml(@$obj->company_name) . '</b>';
 }
 ?> </td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('Payment Type');?></td>
 	<td>
-	<?php echo arraySelect( $types, 'payment_type', 'class="text"', $obj->payment_type, true ); ?>
+	<?php echo arraySelect( $types, 'payment_type', 'class="text"', @$obj->payment_type, true ); ?>
  (<?php echo $AppUI->_('required');?>)
 	</td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('Payment Amount');?> $</td>
 	<td>
-		<input type="text" class="text" name="payment_amount" value="<?php echo @$obj->payment_amount;?>" size="9" maxlength="9" /> (<?php echo $AppUI->_('required');?>)
+		<input type="text" class="text" name="payment_amount" value="<?php echo dPformSafe(@$obj->payment_amount);?>" size="9" maxlength="9" /> (<?php echo $AppUI->_('required');?>)
 	</td>
 </tr>
 <tr>
 	<td align="right"><?php echo $AppUI->_('Payment AuthCode');?></td>
 	<td>
-		<input type="text" class="text" name="payment_authcode" value="<?php echo @$obj->payment_authcode;?>" size="9" maxlength="9" /> (<?php echo $AppUI->_('required');?>)
+		<input type="text" class="text" name="payment_authcode" value="<?php echo dPformSafe(@$obj->payment_authcode);?>" size="9" maxlength="9" /> (<?php echo $AppUI->_('required');?>)
 	</td>
 </tr>
 </table>
 
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
 <tr><td align="left"><b>Select Invoices:</b></td>
-<td align="right"><a href="#" onClick="checkall(document.changeclient); return false;">Check All</a></td></tr>
+<td align="right"><a href="#"<?php echo dPaction('checkall', array('changeclient')); ?>>Check All</a></td></tr>
 </table>
 
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
@@ -188,8 +191,9 @@ if($obj->payment_company == null) {
 	</th>
 </tr>
 
-<?
+<?php
 $s = '';
+$CT = "\t";
 
 foreach($inv as $row) {
   $invoice_date = intval( @$row["invoice_date"] ) ? new CDate( $row["invoice_date"] ) : null;
@@ -197,15 +201,15 @@ foreach($inv as $row) {
 
   $s .= $CR . '<tr>';
   $s .= $CR . '<td align="center">';
-  $s .= '<input type=checkbox name="invoice_list[]" value="'.@$row['invoice_id'] . '"';
+  $s .= '<input type=checkbox name="invoice_list[]" value="'.(int)@$row['invoice_id'] . '"';
   if(isset($selected)) {
     if(in_array(@$row["invoice_id"], $selected)) { $s .= " checked"; }
   }
   
   $s .= '></td>';
-  $s .= $CR . '<td align="right" width="65"><a href="./index.php?m=invoicess&a=addedit&invoice_id="'.@$row['invoice_id'].'">' . $row["invoice_id"] . '</a></td>';
-  $s .= $CR . '<td align="center" nowrap="nowrap">'.$row['company_name'].'</td>';
-  $s .= $CR . '<td align="center" nowrap="nowrap">'.$row['invoice_grand_total'].'</td>';
+  $s .= $CR . '<td align="right" width="65"><a href="./index.php?m=invoices&a=addedit&invoice_id='.(int)@$row['invoice_id'].'">' . (int)$row["invoice_id"] . '</a></td>';
+  $s .= $CR . '<td align="center" nowrap="nowrap">'.dPhtml($row['company_name']).'</td>';
+  $s .= $CR . '<td align="center" nowrap="nowrap">'.dPhtml($row['invoice_grand_total']).'</td>';
   $s .= $CR . '<td align="right" nowrap="nowrap">';
   $s .= $CT . ($invoice_date ? $invoice_date->format( $df ) : '-');
   $s .= $CT . '(' . ($invoice_due ? $invoice_due->format( $df ) : '-') . ')';
@@ -218,7 +222,7 @@ echo $s;
 
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
 <tr>
-	<td align="right"><input type="button" value="<?php echo $AppUI->_('submit');?>" class="button" onClick="submitIt()" /></td>
+	<td align="right"><input type="button" value="<?php echo $AppUI->_('submit');?>" class="button"<?php echo dPaction('submitIt'); ?> /></td>
 </tr>
 </form>
 </table>

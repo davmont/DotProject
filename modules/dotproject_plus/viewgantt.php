@@ -636,19 +636,6 @@ if (!@$min_view) {
 			}
 			///////////////////////////////////new check box variables need to be passed here to gantt.php ////////////////////////////////////////////////////////////////////////////////////////
 			if ($cnt[0]['N'] > 0) {
-				/*
-					<Script>
-					if (navigator.appName == 'Netscape' && document.layers != null) {
-						wid = window.innerWidth;
-						hit = window.innerHeight;
-					}
-					if (document.all != null){
-						wid = document.body.clientWidth;
-						hit = document.body.clientHeight;
-					}
-					document.write('Height '+hit+', Width '+wid);
-					</script>
-				*/
 				//	include 'gantt.php';
 			
 				$src = ('?m=tasks&amp;a=gantt&amp;suppressHeaders=1&amp;project_id=' . $project_id

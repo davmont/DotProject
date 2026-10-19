@@ -115,9 +115,9 @@ if ( $tab ) {
 				<td colspan="7" align="right">
 					<?php if ( !$changeLock ) { ?>
 						<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Select the items you want to add to this form.</i>&nbsp;
-						<input type="button" name="btnSelAll" value=" sel all " onClick="selAllItems();">&nbsp;
-						<input type="button" name="btnUnSelAll" value=" unsel all " onClick="unselAllItems();">&nbsp;
-						<input type="button" name="btnAdd" value=" add sel " onClick="addInvItems();">&nbsp;
+						<input type="button" name="btnSelAll" value=" sel all " <?php echo dPaction('selAllItems'); ?>>&nbsp;
+						<input type="button" name="btnUnSelAll" value=" unsel all " <?php echo dPaction('unselAllItems'); ?>>&nbsp;
+						<input type="button" name="btnAdd" value=" add sel " <?php echo dPaction('addInvItems'); ?>>&nbsp;
 					<?php } ?>
 				</td>
 			</tr>
@@ -165,9 +165,9 @@ if ( $tab ) {
 		<td colspan="7" align="right">
 			<?php if ( !$changeLock ) { ?>
 				<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Select the items you want to add to this form.</i>&nbsp;
-				<input type="button" name="btnSelAll" value=" sel all " onClick="selAllItems();">&nbsp;
-				<input type="button" name="btnUnSelAll" value=" unsel all " onClick="unselAllItems();">&nbsp;
-				<input type="button" name="btnAdd" value=" add sel " onClick="addInvItems();">&nbsp;
+				<input type="button" name="btnSelAll" value=" sel all " <?php echo dPaction('selAllItems'); ?>>&nbsp;
+				<input type="button" name="btnUnSelAll" value=" unsel all " <?php echo dPaction('unselAllItems'); ?>>&nbsp;
+				<input type="button" name="btnAdd" value=" add sel " <?php echo dPaction('addInvItems'); ?>>&nbsp;
 			<?php } ?>
 		</td>
 	</tr>
@@ -272,7 +272,7 @@ if ( $tab ) {
 		<?php if ( $AppUI->user_type != 7 && !$timecard) { ?>
 			<td valign="middle">
 				<?php if ( !$changeLock ) { ?>
-					<center><input type="button" name="btnUpd" value=" upd " onClick="updRates();"></center>
+					<center><input type="button" name="btnUpd" value=" upd " <?php echo dPaction('updRates'); ?>></center>
 				<?php } ?>
 			</td>
 			<td>
@@ -283,7 +283,7 @@ if ( $tab ) {
 		<?php } ?>
 		<td valign="middle">
 			<?php if ( !$changeLock ) { ?>
-				<center><input type="button" name="btnRem" value=" rem " onClick="remInvItems();"></center>
+				<center><input type="button" name="btnRem" value=" rem " <?php echo dPaction('remInvItems'); ?>></center>
 			<?php } ?>
 		</td>
 	</tr>
@@ -377,7 +377,7 @@ if ( $tab ) {
 		<?php if ( $AppUI->user_type != 7 && !$timecard) { ?>
 			<td valign="middle">
 				<?php if ( !$changeLock ) { ?>
-					<center><input type="button" name="btnUpd" value=" upd " onClick="updRates();"></center>
+					<center><input type="button" name="btnUpd" value=" upd " <?php echo dPaction('updRates'); ?>></center>
 				<?php } ?>
 			</td>
 			<td>
@@ -388,7 +388,7 @@ if ( $tab ) {
 		<?php } ?>
 		<td valign="middle">
 			<?php if ( !$changeLock ) { ?>
-				<center><input type="button" name="btnRem" value=" rem " onClick="remInvItems();"></center>
+				<center><input type="button" name="btnRem" value=" rem " <?php echo dPaction('remInvItems'); ?>></center>
 			<?php } ?>
 			</form>
 		</td>
@@ -446,7 +446,7 @@ if ( $tab ) {
 				<input type="hidden" name="adhoc_earning_tasklog_id" value="0">
 				<input type="hidden" name="inv_dosql" value="adhoc">
 				<input type="hidden" name="adhoc_earning_item_date" value="<?php echo $adhoc_date->format( FMT_TIMESTAMP_DATE );?>">
-				<input type="text" name="adhoc_earning_item_date_formatted" size="10" value="<?php echo $adhoc_date->format( $df );?>" class="text" disabled="disabled" /><a href="#adhoc" onClick="popCalendar('adhoc_earning_item_date');"><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a></td>
+				<input type="text" name="adhoc_earning_item_date_formatted" size="10" value="<?php echo $adhoc_date->format( $df );?>" class="text" disabled="disabled" /><a href="#"<?php echo dPaction('popCalendar', array('adhoc_earning_item_date')); ?>><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a></td>
 			<td colspan="2" valign="top">
 				<input type="text" size="60" maxlength="200" name="adhoc_earning_item_description" value="">
 			</td>
@@ -461,7 +461,7 @@ if ( $tab ) {
 				<td><input type="hidden" name="adhoc_earning_item_rate" size="6" maxlength="10" value="0.00" /></td>
 			<?php } ?>
 			<td valign="top">
-					<center><input type="button" name="btnAdHoc" value=" add " onClick="addAdHoc();"></center></form>
+					<center><input type="button" name="btnAdHoc" value=" add " <?php echo dPaction('addAdHoc'); ?>></center></form>
 			</td>
 		</tr>
 	</table>

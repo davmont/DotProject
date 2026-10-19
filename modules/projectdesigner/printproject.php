@@ -182,7 +182,7 @@ $extra = array(
        3=>'Inactive Task'
 );
 ?>
-<SCRIPT language="JavaScript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 var check_task_dates = <?php
   if (isset($dPconfig['check_task_dates']) && $dPconfig['check_task_dates'])
     echo 'true';
@@ -201,6 +201,12 @@ var working_days = new Array(<?php echo dPgetConfig( 'cal_working_days' );?>);
 var cal_day_start = <?php echo intval(dPgetConfig( 'cal_day_start' ));?>;
 var cal_day_end = <?php echo intval(dPgetConfig( 'cal_day_end' ));?>;
 var daily_working_hours = <?php echo intval(dPgetConfig('daily_working_hours')); ?>;
+
+function pdPrintWindow() {
+	document.getElementById('imghd').style.display = 'none';
+	window.print();
+	window.close();
+}
 </script>
 
 <style type="text/css">
@@ -249,7 +255,7 @@ TABLE.prjprint TR {
             	?>
             	</td>
         <!--	    <td width="22" align="right">
-				<a href="#" onclick="var img=document.getElementById('imghd'); img.style.display='none'; window.print(); window.close();">
+				<a href="#"<?php echo dPaction('pdPrintWindow'); ?>>
       			<img id="imghd" src="./modules/projectdesigner/images/printer.png" border="0" width="22" height="22" alt="print project" title="print project"/>
       			</a>
       			</td>-->  

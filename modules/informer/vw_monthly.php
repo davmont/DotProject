@@ -1,4 +1,14 @@
 <?php
+// Also defined by the other informer view; flat tab view includes both.
+if (!function_exists('printSum')) {
+function printSum( $float ) {
+	$float = str_replace( '.',',',(string) $float );
+	$pos = strpos( $float,',' );
+	if( $pos === false ) return $float .',00';
+	if( strlen( substr( $float,$pos + 1 ) ) == 1 ) return $float.'0';
+	return $float;
+}
+}
 if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
@@ -62,7 +72,7 @@ if (!defined('DP_BASE_DIR')) {
 	$weekdate->copy( $start_day );
 //echo '<pre>'; print_r($data);echo '</pre>';	
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function delIt2(id) {
 		if (confirm( "Are you sure you want to delete this Task Log?" )) {
 			document.frmDelete2.task_log_id.value = id;
@@ -129,7 +139,7 @@ if (!defined('DP_BASE_DIR')) {
 			$cD = $perms->checkModuleItem( 'task_log','delete',$row['task_id'] );
 			if( $cE ) $act = "[<a href=\"./index.php?m=tasks&a=view&tab=1&task_id=".$row['task_id']."&task_log_id=".$row['task_log_id']."\">edit</a>]";
 			else $act = '';
-			if( $cD ) $act .= " [<a href=\"javascript:delIt2(".$row['task_log_id'].");\">delete</a>]";
+			if( $cD ) $act .= " [<a href=\"#\"" . dPaction('delIt2', array((int)$row['task_log_id'])) . ">delete</a>]";
 			if( $act != '' ) $act .= '<br />';
 
 			if( $pp && $op == $row['project_short_name'] ) $row['project_short_name'] = '';
@@ -175,11 +185,5 @@ if (!defined('DP_BASE_DIR')) {
 </table>
 
 <?php
-function printSum( $float ) {
-	$float = str_replace( '.',',',(string) $float );
-	$pos = strpos( $float,',' );
-	if( $pos === false ) return $float .',00';
-	if( strlen( substr( $float,$pos + 1 ) ) == 1 ) return $float.'0';
-	return $float;
-}
+
 ?>

@@ -27,7 +27,7 @@ for ($x=0; $x < $nums; $x++) {
 */
 
 ?>
-<script language="JavaScript">
+<script language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
 function delIt2(id) {
 	if (confirm( "<?php echo $AppUI->_('doDelete', UI_OUTPUT_JS).' '.$AppUI->_('Task Log', UI_OUTPUT_JS).'?';?>" )) {
 		document.frmDelete2.task_log_id.value = id;
@@ -133,7 +133,7 @@ foreach ($logs as $row) {
 //	if ($canEdit) {
 // ANDY ; not allowed to delete except admin
 	if ($canEdit && $AppUI->user_type==1) {
-		$s .= "\n\t\t<a href=\"javascript:delIt2({$row['task_log_id']});\" title=\"".$AppUI->_('delete log')."\">"
+		$s .= "\n\t\t<a href=\"#\"" . dPaction('delIt2', array((int)$row['task_log_id'])) . " title=\"".$AppUI->_('delete log')."\">"
 			. "\n\t\t\t". dPshowImage( './images/icons/stock_delete-16.png', 16, 16, '' )
 			. "\n\t\t</a>";
 	}

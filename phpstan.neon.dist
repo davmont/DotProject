@@ -25,23 +25,10 @@ parameters:
             - modules/holiday/PEAR/*
             - modules/mantis/core/*
             - modules/mantis/no.core/*
-            - modules/tracIntegration/xrlib/*
             # Patched copies of dotProject 2.0.3 core files (dormant, to be redone)
             - modules/unitcost/patch_203/*
-            # Classes whose method signatures are fatal on PHP 8 (they cannot be
-            # baselined). All are dormant or never loaded; fix them when each module is
-            # revived (docs/security-audit/ROADMAP.md, "Nice to have: dormant modules").
-            - modules/communication/communication.class.php
-            - modules/eventum/evlink/*
-            - modules/groups/modules/*
-            - modules/helpdesk/helpdesk.class.php
-            - modules/hosting/hosting.class.php
-            - modules/inventory/inventory.class.php
-            - modules/links/links.class.php
-            - modules/opportunities/opportunities.class.php
-            - modules/payments/payments.class.php
-            - modules/projectdesigner/projectdesigner.class.php
-            - modules/testing/testing.class.php
+            # Not analysed: timeplanning.class.php (method signatures fatal on PHP 8, never
+            # loaded). See the roadmap.
             - modules/timeplanning/timeplanning.class.php
             - modules/*/js/*
     bootstrapFiles:

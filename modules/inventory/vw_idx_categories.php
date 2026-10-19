@@ -22,38 +22,23 @@ if ( $canEdit )
 {
 ?>
 
-<SCRIPT LANGUAGE="JavaScript" type="text/javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 <!--
+// Asks for the new name of a category or brand and posts it (dpPost adds the CSRF token).
 function renameWindow( _id, _name, _type )
 {
-	
-window.name = "InventoryWindow";
-
-rw = window.open("", 'RenameWin','width=400,height=100,scrollbar=no,resizable=no,status=no,toolbar=no' );
-rw.document.clear();
-rw.document.write( "<HTML>\n" );
-rw.document.write( "<HEAD>Rename " + _type + ' "' + _name + '" </HEAD>\n' );
-
-rw.document.write( "<BODY>\n" );
-rw.document.write( "<FORM action='?m=inventory' METHOD='post' TARGET='" + window.name + "' onSubmit='self.close()'>\n" );
-rw.document.write( "<INPUT TYPE='hidden' name='change_" + _type + "_id' value='" + _id + "' />\n" );
-rw.document.write( "<INPUT TYPE='hidden' NAME='dosql' VALUE='do_inventory_aed' />\n" );
-rw.document.write( "<INPUT TYPE='text' NAME='change_"+_type+"_name' value='"+_name+"'>\n" );
-
-update_text = "<?php echo $AppUI->_('rename');?>";
-cancel_text = "<?php echo $AppUI->_('cancel');?>";
-rw.document.write( '<INPUT type="submit" name="btnFuseAction" value="'+update_text+'" />\n' );
-rw.document.write( '<INPUT type="button" name="btnFuseCancel" value="'+cancel_text+'" onClick="self.close()" />\n' );
-rw.document.write( "</FORM>\n" );
-
-rw.document.write( "</BODY>\n" );
-rw.document.write( "</HTML>\n" );
-rw.document.close();
-
-
+	var label = <?php echo dPjs($AppUI->_('rename', UI_OUTPUT_RAW)); ?>;
+	var newName = window.prompt( label + ' ' + _type + ' "' + _name + '"', _name );
+	if ( newName === null || newName === '' ) {
+		return false;
+	}
+	var fields = { dosql: 'do_inventory_aed' };
+	fields[ 'change_' + _type + '_id' ] = _id;
+	fields[ 'change_' + _type + '_name' ] = newName;
+	return dpPost( '?m=inventory', fields );
 }
 -->
-</SCRIPT>
+</script>
 
 <?php
 }
@@ -80,12 +65,12 @@ rw.document.close();
 					echo "<TR><TD>";
 					if ( $canEdit )
 					{
-						echo "<A HREF='javascript:renameWindow( ".$category[ 'inventory_category_id' ].",\"".$category[ 'inventory_category_name' ]."\",\"category\" );'>";
+						echo '<A HREF="#"' . dPaction('renameWindow', array((int)$category['inventory_category_id'], $category['inventory_category_name'], 'category')) . '>';
 						echo dPshowImage( "./images/icons/stock_edit-16.png", 16, 16, "" );
 						echo "</A>";
 					}
 					echo "</TD><TD WIDTH='100%'>";
-					echo $category[ 'inventory_category_name' ];
+					echo dPhtml($category[ 'inventory_category_name' ]);
 					echo "</TD><TD ALIGN='center'>";
 					echo '<INPUT TYPE="CHECKBOX" NAME="category_'.$category['inventory_category_id'].'">';
 					echo "</TD></TR>";
@@ -110,12 +95,12 @@ rw.document.close();
 					echo "<TR><TD>";
 					if ( $canEdit )
 					{
-						echo "<A HREF='javascript:renameWindow( ".$brand[ 'inventory_brand_id' ].",\"".$brand[ 'inventory_brand_name' ]."\",\"brand\" );'>";
+						echo '<A HREF="#"' . dPaction('renameWindow', array((int)$brand['inventory_brand_id'], $brand['inventory_brand_name'], 'brand')) . '>';
 						echo dPshowImage( "./images/icons/stock_edit-16.png", 16, 16, "" );
 						echo "</A>";
 					}
 					echo "</TD><TD WIDTH='100%'>";
-					echo $brand[ 'inventory_brand_name' ];
+					echo dPhtml($brand[ 'inventory_brand_name' ]);
 					echo "</TD><TD ALIGN='center'>";
 					echo '<INPUT TYPE="CHECKBOX" NAME="brand_'.$brand['inventory_brand_id'].'">';
 					echo "</TD></TR>";

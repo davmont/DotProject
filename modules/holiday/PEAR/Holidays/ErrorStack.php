@@ -230,7 +230,7 @@ class PEAR_ErrorStack {
      *                 defaults to {@link getFileLine()}
      * @param boolean  $throwPEAR_Error
      */
-    function PEAR_ErrorStack($package, $msgCallback = false, $contextCallback = false,
+    function __construct($package, $msgCallback = false, $contextCallback = false,
                          $throwPEAR_Error = false)
     {
         $this->_package = $package;
@@ -253,7 +253,7 @@ class PEAR_ErrorStack {
      * @static
      * @return PEAR_ErrorStack
      */
-    function &singleton($package, $msgCallback = false, $contextCallback = false,
+    static function &singleton($package, $msgCallback = false, $contextCallback = false,
                          $throwPEAR_Error = false, $stackClass = 'PEAR_ErrorStack')
     {
         if (isset($GLOBALS['_PEAR_ERRORSTACK_SINGLETON'][$package])) {
@@ -299,7 +299,7 @@ class PEAR_ErrorStack {
      * @param Log $log 
      * @static
      */
-    function setDefaultLogger(&$log)
+    static function setDefaultLogger(&$log)
     {
         if (is_object($log) && method_exists($log, 'log') ) {
             $GLOBALS['_PEAR_ERRORSTACK_DEFAULT_LOGGER'] = &$log;
@@ -360,7 +360,7 @@ class PEAR_ErrorStack {
      * @param string Package name, or false for all packages
      * @static
      */
-    function setDefaultCallback($callback = false, $package = false)
+    static function setDefaultCallback($callback = false, $package = false)
     {
         if (!is_callable($callback)) {
             $callback = false;
@@ -434,7 +434,7 @@ class PEAR_ErrorStack {
      * @param string|array $cb
      * @static
      */
-    function staticPushCallback($cb)
+    static function staticPushCallback($cb)
     {
         array_push($GLOBALS['_PEAR_ERRORSTACK_OVERRIDE_CALLBACK'], $cb);
     }
@@ -445,7 +445,7 @@ class PEAR_ErrorStack {
      * @return array|string|false
      * @static
      */
-    function staticPopCallback()
+    static function staticPopCallback()
     {
         $ret = array_pop($GLOBALS['_PEAR_ERRORSTACK_OVERRIDE_CALLBACK']);
         if (!is_array($GLOBALS['_PEAR_ERRORSTACK_OVERRIDE_CALLBACK'])) {
@@ -606,7 +606,7 @@ class PEAR_ErrorStack {
      *                          thrown.  see docs for {@link push()}
      * @static
      */
-    function staticPush($package, $code, $level = 'error', $params = array(),
+    static function staticPush($package, $code, $level = 'error', $params = array(),
                         $msg = false, $repackage = false, $backtrace = false)
     {
         $s = &PEAR_ErrorStack::singleton($package);
@@ -681,7 +681,7 @@ class PEAR_ErrorStack {
      * @return boolean
      * @since PEAR1.5.0a1
      */
-    function staticPop($package)
+    static function staticPop($package)
     {
         if ($package) {
             if (!isset($GLOBALS['_PEAR_ERRORSTACK_SINGLETON'][$package])) {
@@ -752,7 +752,7 @@ class PEAR_ErrorStack {
      * @return boolean
      * @static
      */
-    function staticHasErrors($package = false, $level = false)
+    static function staticHasErrors($package = false, $level = false)
     {
         if ($package) {
             if (!isset($GLOBALS['_PEAR_ERRORSTACK_SINGLETON'][$package])) {
@@ -779,7 +779,7 @@ class PEAR_ErrorStack {
      * @static
      * @return array 
      */
-    function staticGetErrors($purge = false, $level = false, $merge = false,
+    static function staticGetErrors($purge = false, $level = false, $merge = false,
                              $sortfunc = array('PEAR_ErrorStack', '_sortErrors'))
     {
         $ret = array();

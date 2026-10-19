@@ -287,7 +287,9 @@ function getCurrency(){
 function tdClick(){
 	$("#saveButton").show();
 	$(this).addClass("edit");
-	$(this).html(<?php echo dPjs($dPconfig['currency_symbol']); ?> + '<input name="'+$(this).parent().attr('id')+$(this).attr('rel')+'" style="width: 85%;" type="text" value="'+ $(this).attr('val')+'"/>');
+	// Built with DOM methods: the value and the currency symbol are text, not HTML.
+	var input = $('<input type="text" style="width: 85%;"/>').attr('name', $(this).parent().attr('id')+$(this).attr('rel')).val($(this).attr('val'));
+	$(this).text(<?php echo dPjs($dPconfig['currency_symbol']); ?>).append(input);
 	$(this).children().focus();
 }
 

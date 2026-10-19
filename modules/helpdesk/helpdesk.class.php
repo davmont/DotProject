@@ -94,8 +94,8 @@ class CHelpDeskItem extends CDpObject {
   var $item_updated = NULL;
   var $item_deadline = NULL;
   
-function CHelpDeskItem() {
-	$this->CDpObject( 'helpdesk_items', 'item_id' );
+function __construct() {
+	parent::__construct( 'helpdesk_items', 'item_id' );
 }
 
 function check() {
@@ -111,7 +111,7 @@ function check() {
 	return NULL;
 }
 
-function store() {
+function store($updateNulls = false) {
   global $AppUI;
 	// Update the last modified time and user
 	// Pretty much duplicates the item_updated field, will keep for now.
@@ -163,7 +163,7 @@ function store() {
 	}
 }
 
-  function delete() {
+  function delete($oid = null, $history_desc = '', $history_proj = 0) {
 	  
 		// This section will grant every request to delete an HDitem
 		$k = $this->_tbl_key;
@@ -835,8 +835,8 @@ class CHDTaskLog extends CDpObject {
   var $task_log_costcode = NULL;
   var $task_log_reference = NULL;	//ANDY added
 
-  function CHDTaskLog() {
-    $this->CDpObject( 'task_log', 'task_log_id' );
+  function __construct() {
+    parent::__construct( 'task_log', 'task_log_id' );
   }
 
   // overload check method
@@ -872,14 +872,14 @@ function issue_list_data($user_id = false) {
 	$q->clear();
 	
 	//display the select list
-	$buffer = '<select name="department" onChange="document.pickCompany.submit()" class="text">';
+	$buffer = '<select name="department"' . dPaction(null, array(), null, array('submit' => 'pickCompany')) . ' class="text">';
 	$buffer .= ('<option value="company_0" style="font-weight:bold;">' . $AppUI->_('All') 
 	            . '</option>'."\n");
 	foreach ($rows as $row) {
 		$buffer .= ('<option value="' . $company_prefix . $row['company_id'] 
 					. '" style="font-weight:bold;"' 
 					. (($company_id == $row['company_id']) ? 'selected="selected"' : '') 
-					. '>' . $row['company_name'] . '</option>' . "\n");
+					. '>' . dPhtml($row['company_name']) . '</option>' . "\n");
 		
 	}
 	$buffer .= '</select>';
