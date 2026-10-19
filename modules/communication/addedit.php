@@ -222,11 +222,11 @@ $titleBlock->show();
                   }
                   ?></select>
                     <span style="margin-left:15px; <?php echo ($showdate ? '' : 'display:none;'); ?>"><?php echo $AppUI->_("LBL_DATE")?>: </span>
-                    <input type="text" style="<?php echo ($showdate ? '' : 'display:none;'); ?> margin-left: 10px;" value="<?php echo ($communication_id == 0 ? htmlspecialchars((string)$_GET['communication_date'], ENT_QUOTES) : htmlspecialchars((string)@$obj->communication_date, ENT_QUOTES));  ?>" name="communication_date">
+                    <input type="text" style="<?php echo ($showdate ? '' : 'display:none;'); ?> margin-left: 10px;" value="<?php echo ($communication_id == 0 ? htmlspecialchars((string)dPgetParam($_GET, 'communication_date', ''), ENT_QUOTES) : htmlspecialchars((string)@$obj->communication_date, ENT_QUOTES));  ?>" name="communication_date">
                     </td>
                  </tr>
                  <tr><td align="left" nowrap="nowrap"><?php echo $AppUI->_("LBL_RESTRICTIONS");?>: </td>
-                     <td align="left"><textarea name="communication_restrictions" cols="100" rows="3" class="textarea"><?php echo ($communication_id == 0 ? htmlspecialchars((string)$_GET['restrictions'], ENT_QUOTES) : htmlspecialchars((string)@$obj->communication_restrictions, ENT_QUOTES)); ?></textarea></td>
+                     <td align="left"><textarea name="communication_restrictions" cols="100" rows="3" class="textarea"><?php echo ($communication_id == 0 ? htmlspecialchars((string)dPgetParam($_GET, 'restrictions', ''), ENT_QUOTES) : htmlspecialchars((string)@$obj->communication_restrictions, ENT_QUOTES)); ?></textarea></td>
                  </tr>
                  <td align="left" nowrap="nowrap"><?php echo $AppUI->_("LBL_RESPONSIBLE");?>: </td> 
                      <td><select id="responsible" name="responsible" style="min-width:150px">
