@@ -40,13 +40,18 @@ function getTaskLinks($startPeriod, $endPeriod, &$links, $strMaxLen, $company_id
 			. ';background-color:#' . $row['color']);
 
 		// determine which day(s) to display the task
-		$start = new CDate($row['task_start_date']);
-		$end = $row['task_end_date'] ? new CDate($row['task_end_date']) : null;
+		// an empty date ('0000-00-00 ...') has no year and cannot be compared
+		$start = intval($row['task_start_date']) ? new CDate($row['task_start_date']) : null;
+		$end = intval($row['task_end_date']) ? new CDate($row['task_end_date']) : null;
+		if (!$start && !$end) {
+			continue;
+		}
 		$durn = $row['task_duration'];
 		$durnType = $row['task_duration_type'];
 
 		if (
-			($start->after($startPeriod) || $start->equals($startPeriod))
+			$start
+			&& ($start->after($startPeriod) || $start->equals($startPeriod))
 			&& ($start->before($endPeriod) || $start->equals($endPeriod))
 		) {
 			$temp = $link;
@@ -59,9 +64,9 @@ function getTaskLinks($startPeriod, $endPeriod, &$links, $strMaxLen, $company_id
 			$links[$start->format(FMT_TIMESTAMP_DATE)][] = $temp;
 		}
 		if (
-			$end && $start->before($end)
+			$end && ((!$start || $start->before($end))
 			&& ($end->after($startPeriod) || $end->equals($startPeriod))
-			|| ($end->before($endPeriod) || $end->equals($endPeriod))
+			|| ($end->before($endPeriod) || $end->equals($endPeriod)))
 		) {
 			$temp = $link;
 			$temp['alt'] = ("FINISH\n" . $link['alt']);
@@ -69,6 +74,9 @@ function getTaskLinks($startPeriod, $endPeriod, &$links, $strMaxLen, $company_id
 				$temp['text'] .= dPshowImage(dPfindImage('block-end-16.png'));
 			}
 			$links[$end->format(FMT_TIMESTAMP_DATE)][] = $temp;
+		}
+		if (!$start) {
+			continue;
 		}
 		// convert duration to days
 		if ($durnType < 24.0) {
