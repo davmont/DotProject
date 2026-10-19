@@ -925,12 +925,6 @@ parameters:
 			path: modules/annotations/addedit.php
 
 		-
-			message: '#^Constant Ymd not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: modules/annotations/index.php
-
-		-
 			message: '#^Method DBQuery\:\:prepareSelect\(\) invoked with 1 parameter, 0 required\.$#'
 			identifier: arguments.count
 			count: 4
@@ -977,54 +971,6 @@ parameters:
 			identifier: phpDoc.parseError
 			count: 1
 			path: modules/backup/zip.lib.php
-
-		-
-			message: '#^Access to an undefined property CHelpDeskItem\:\:\$error\.$#'
-			identifier: property.notFound
-			count: 1
-			path: modules/bugspray/do_item_aed.php
-
-		-
-			message: '#^Function mysql_insert_id not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/bugspray/helpdesk.class.php
-
-		-
-			message: '#^Variable \$company in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: modules/bugspray/list.php
-
-		-
-			message: '#^Variable \$item_application in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: modules/bugspray/list.php
-
-		-
-			message: '#^Variable \$item_os in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: modules/bugspray/list.php
-
-		-
-			message: '#^Variable \$requestor in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 1
-			path: modules/bugspray/list.php
-
-		-
-			message: '#^Function selPermWhere invoked with 2 parameters, 3\-4 required\.$#'
-			identifier: arguments.count
-			count: 3
-			path: modules/bugspray/selector.php
-
-		-
-			message: '#^Access to an undefined property CTaskLog\:\:\$task_log_help_desk_id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: modules/bugspray/vw_log_update.php
 
 		-
 			message: '#^Access to an undefined property CMonthCalendar\:\:\$classes\.$#'
@@ -1261,94 +1207,16 @@ parameters:
 			path: modules/closure/view.php
 
 		-
-			message: '#^Access to property \$_message on an unknown class CCommunication\.$#'
-			identifier: class.notFound
-			count: 4
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Access to property \$communication_channel_id on an unknown class CCommunication\.$#'
-			identifier: class.notFound
+			message: '#^Access to protected property CCommunication\:\:\$_message\.$#'
+			identifier: property.protected
 			count: 2
 			path: modules/communication/do_communication_aed.php
 
 		-
-			message: '#^Access to property \$communication_frequency_id on an unknown class CCommunication\.$#'
-			identifier: class.notFound
+			message: '#^Call to an undefined method CCommunication\:\:notify\(\)\.$#'
+			identifier: method.notFound
 			count: 2
 			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Access to property \$communication_id on an unknown class CCommunication\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Access to property \$communication_project_id on an unknown class CCommunication\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Access to property \$communication_responsible_authorization on an unknown class CCommunication\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Call to method bind\(\) on an unknown class CCommunication\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Call to method delete\(\) on an unknown class CCommunication\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Call to method getError\(\) on an unknown class CCommunication\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class CCommunication\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Call to method notify\(\) on an unknown class CCommunication\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CCommunication\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Instantiated class CCommunication not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/communication/do_communication_aed.php
-
-		-
-			message: '#^Call to method canDelete\(\) on an unknown class CCommunication\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/communication/functions.php
-
-		-
-			message: '#^Instantiated class CCommunication not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/communication/functions.php
 
 		-
 			message: '#^Undefined variable\: \$sql$#'
@@ -1429,18 +1297,6 @@ parameters:
 			path: modules/departments/view.php
 
 		-
-			message: '#^Path in require_once\(\) "/app/modules/timeplanning/companies_organizational_diagram\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: modules/dotproject_plus/changed_files_from_other_modules/companies_core/view.php
-
-		-
-			message: '#^Constant php not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: modules/dotproject_plus/changed_files_from_other_modules/projects_core/addedit.php
-
-		-
 			message: '#^Method ProjectTemplate\:\:closeWBS\(\) has invalid return type type\.$#'
 			identifier: class.notFound
 			count: 1
@@ -1457,12 +1313,6 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: modules/dotproject_plus/copy_project/ProjectTemplate.php
-
-		-
-			message: '#^Call to an undefined method ControllerWBSItem\:\:getWBSItemById\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/dotproject_plus/do_delete_wbs_item.php
 
 		-
 			message: '#^Function getUserIdByHR not found\.$#'
@@ -1507,12 +1357,6 @@ parameters:
 			path: modules/dotproject_plus/feedback/feedback_controller.php
 
 		-
-			message: '#^Class Feedback does not have a constructor and must be instantiated without any parameters\.$#'
-			identifier: new.noConstructor
-			count: 45
-			path: modules/dotproject_plus/feedback/feedback_controller.php
-
-		-
 			message: '#^Constant initiating_obj not found\.$#'
 			identifier: constant.notFound
 			count: 1
@@ -1531,84 +1375,6 @@ parameters:
 			path: modules/dotproject_plus/viewgantt.php
 
 		-
-			message: '#^Cannot access property \$earning_comments on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_date on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_num on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_submit_address1 on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_submit_address2 on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_submit_city on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_submit_company_id on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_submit_contact on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_submit_email on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_submit_phone on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_submit_state on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_submit_zip on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
-			message: '#^Cannot access property \$earning_terms on null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/earnings/addedit.php
-
-		-
 			message: '#^File ends with a trailing whitespace\. This may cause problems when running the code in the web browser\. Remove the closing \?\> mark or remove the whitespace\.$#'
 			identifier: whitespace.fileEnd
 			count: 1
@@ -1619,18 +1385,6 @@ parameters:
 			identifier: function.notFound
 			count: 1
 			path: modules/earnings/items.php
-
-		-
-			message: '#^Class CEventumContract does not have a constructor and must be instantiated without any parameters\.$#'
-			identifier: new.noConstructor
-			count: 1
-			path: modules/eventum/addedit.php
-
-		-
-			message: '#^Class CEventumContract does not have a constructor and must be instantiated without any parameters\.$#'
-			identifier: new.noConstructor
-			count: 1
-			path: modules/eventum/do_eventum_aed.php
 
 		-
 			message: '#^Access to an undefined property CEventumConfig\:\:\$_prefix\.$#'
@@ -2053,48 +1807,6 @@ parameters:
 			path: modules/files/files.class.php
 
 		-
-			message: '#^Access to property \$task_log_creator on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/files/files.class.php
-
-		-
-			message: '#^Access to property \$task_log_date on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/files/files.class.php
-
-		-
-			message: '#^Access to property \$task_log_description on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/files/files.class.php
-
-		-
-			message: '#^Access to property \$task_log_help_desk_id on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/files/files.class.php
-
-		-
-			message: '#^Access to property \$task_log_id on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/files/files.class.php
-
-		-
-			message: '#^Access to property \$task_log_name on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 4
-			path: modules/files/files.class.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/files/files.class.php
-
-		-
 			message: '#^Comparison operation "\>" between The and 0 results in an error\.$#'
 			identifier: greater.invalid
 			count: 2
@@ -2107,26 +1819,8 @@ parameters:
 			path: modules/files/files.class.php
 
 		-
-			message: '#^Instantiated class CHDTaskLog not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/files/files.class.php
-
-		-
 			message: '#^Method CFile\:\:store\(\) should return string\|null but return statement is missing\.$#'
 			identifier: return.missing
-			count: 1
-			path: modules/files/files.class.php
-
-		-
-			message: '#^Method CHelpDeskItem\:\:log_status\(\) invoked with 3 parameters, 1\-2 required\.$#'
-			identifier: arguments.count
-			count: 2
-			path: modules/files/files.class.php
-
-		-
-			message: '#^Method CHelpDeskItem\:\:notify\(\) invoked with 2 parameters, 1 required\.$#'
-			identifier: arguments.count
 			count: 1
 			path: modules/files/files.class.php
 
@@ -2257,136 +1951,40 @@ parameters:
 			path: modules/helpdesk/do_item_aed.php
 
 		-
-			message: '#^Access to an undefined property CHelpDeskItem\:\:\$item_deadline\.$#'
-			identifier: property.notFound
-			count: 2
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Access to an undefined property CHelpDeskItem\:\:\$item_updated\.$#'
-			identifier: property.notFound
-			count: 4
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Access to property \$task_log_costcode on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Access to property \$task_log_date on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 4
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Access to property \$task_log_description on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Access to property \$task_log_name on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Access to property \$task_log_reference on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Call to an undefined method CHelpDeskItem\:\:clearReminder\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Call to method bind\(\) on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Call to method getError\(\) on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Constant NEW_ITEM_LOG not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Constant NEW_WATCHER_LOG not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Constant STATUSTASK_LOG not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Constant TASK_LOG not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Instantiated class CHDTaskLog not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Method CHelpDeskItem\:\:log_status\(\) invoked with 3 parameters, 1\-2 required\.$#'
-			identifier: arguments.count
-			count: 3
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Method CHelpDeskItem\:\:notify\(\) invoked with 2 parameters, 1 required\.$#'
-			identifier: arguments.count
-			count: 3
-			path: modules/helpdesk/do_item_aed.php
-
-		-
-			message: '#^Method CHelpDeskItem\:\:notify\(\) invoked with 3 parameters, 1 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: modules/helpdesk/do_item_aed.php
-
-		-
 			message: '#^Undefined variable\: \$del$#'
 			identifier: variable.undefined
 			count: 1
 			path: modules/helpdesk/do_item_aed.php
 
 		-
+			message: '#^Constant item_notify not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: modules/helpdesk/helpdesk.class.php
+
+		-
+			message: '#^Constant item_status not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: modules/helpdesk/helpdesk.class.php
+
+		-
+			message: '#^Function mysql_insert_id not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: modules/helpdesk/helpdesk.class.php
+
+		-
+			message: '#^Static call to instance method CDate\:\:compare\(\)\.$#'
+			identifier: method.staticCall
+			count: 1
+			path: modules/helpdesk/helpdesk.class.php
+
+		-
 			message: '#^Function split not found\.$#'
 			identifier: function.notFound
 			count: 1
 			path: modules/helpdesk/helpdesk.functions.php
-
-		-
-			message: '#^Function issue_list_data not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/helpdesk/index.php
 
 		-
 			message: '#^Array has 2 duplicate keys with value ''where'' \(''where'', ''where''\)\.$#'
@@ -2473,62 +2071,8 @@ parameters:
 			path: modules/helpdesk/vw_idx_watched.php
 
 		-
-			message: '#^Access to property \$task_log_costcode on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/helpdesk/vw_log_update.php
-
-		-
-			message: '#^Access to property \$task_log_creator on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/helpdesk/vw_log_update.php
-
-		-
-			message: '#^Access to property \$task_log_date on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/helpdesk/vw_log_update.php
-
-		-
-			message: '#^Access to property \$task_log_description on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/helpdesk/vw_log_update.php
-
-		-
-			message: '#^Access to property \$task_log_help_desk_id on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/helpdesk/vw_log_update.php
-
-		-
-			message: '#^Access to property \$task_log_id on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/helpdesk/vw_log_update.php
-
-		-
-			message: '#^Access to property \$task_log_name on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 4
-			path: modules/helpdesk/vw_log_update.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class CHDTaskLog\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/helpdesk/vw_log_update.php
-
-		-
 			message: '#^File ends with a trailing whitespace\. This may cause problems when running the code in the web browser\. Remove the closing \?\> mark or remove the whitespace\.$#'
 			identifier: whitespace.fileEnd
-			count: 1
-			path: modules/helpdesk/vw_log_update.php
-
-		-
-			message: '#^Instantiated class CHDTaskLog not found\.$#'
-			identifier: class.notFound
 			count: 1
 			path: modules/helpdesk/vw_log_update.php
 
@@ -2569,142 +2113,40 @@ parameters:
 			path: modules/holiday/setup.php
 
 		-
-			message: '#^Access to property \$company_id on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/hosting/addedit.php
-
-		-
-			message: '#^Access to property \$domain_expiry_date on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/hosting/addedit.php
-
-		-
-			message: '#^Access to property \$domain_name on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/hosting/addedit.php
-
-		-
-			message: '#^Access to property \$domain_notes on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/hosting/addedit.php
-
-		-
-			message: '#^Access to property \$domain_status on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/hosting/addedit.php
-
-		-
-			message: '#^Access to property \$hosting_expiry_date on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/hosting/addedit.php
-
-		-
-			message: '#^Access to property \$hosting_notes on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/hosting/addedit.php
-
-		-
-			message: '#^Access to property \$hosting_package_name on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/hosting/addedit.php
-
-		-
-			message: '#^Access to property \$hosting_status on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/hosting/addedit.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/hosting/addedit.php
-
-		-
-			message: '#^Instantiated class CHosting not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/hosting/addedit.php
-
-		-
 			message: '#^Variable \$domain_id in isset\(\) always exists and is not nullable\.$#'
 			identifier: isset.variable
 			count: 1
 			path: modules/hosting/addedit.php
 
 		-
-			message: '#^Access to property \$domain_expiry_date on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 4
-			path: modules/hosting/do_hosting_aed.php
-
-		-
-			message: '#^Access to property \$domain_id on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/hosting/do_hosting_aed.php
-
-		-
-			message: '#^Access to property \$hosting_expiry_date on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/hosting/do_hosting_aed.php
-
-		-
-			message: '#^Access to property \$project_end_date on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/hosting/do_hosting_aed.php
-
-		-
-			message: '#^Call to method bind\(\) on an unknown class CHosting\.$#'
-			identifier: class.notFound
+			message: '#^Access to an undefined property CHosting\:\:\$project_end_date\.$#'
+			identifier: property.notFound
 			count: 1
 			path: modules/hosting/do_hosting_aed.php
 
 		-
-			message: '#^Call to method canDelete\(\) on an unknown class CHosting\.$#'
-			identifier: class.notFound
+			message: '#^Method CHosting\:\:delete\(\) should return string\|null but return statement is missing\.$#'
+			identifier: return.missing
 			count: 1
-			path: modules/hosting/do_hosting_aed.php
+			path: modules/hosting/hosting.class.php
 
 		-
-			message: '#^Call to method delete\(\) on an unknown class CHosting\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/hosting/do_hosting_aed.php
-
-		-
-			message: '#^Call to method getError\(\) on an unknown class CHosting\.$#'
+			message: '#^Method CHosting\:\:load\(\) has invalid return type any\.$#'
 			identifier: class.notFound
 			count: 1
-			path: modules/hosting/do_hosting_aed.php
+			path: modules/hosting/hosting.class.php
 
 		-
-			message: '#^Call to method store\(\) on an unknown class CHosting\.$#'
-			identifier: class.notFound
+			message: '#^Method CHosting\:\:load\(\) should return any but return statement is missing\.$#'
+			identifier: return.missing
 			count: 1
-			path: modules/hosting/do_hosting_aed.php
+			path: modules/hosting/hosting.class.php
 
 		-
-			message: '#^Instantiated class CHosting not found\.$#'
-			identifier: class.notFound
+			message: '#^Method CHosting\:\:store\(\) should return string\|null but return statement is missing\.$#'
+			identifier: return.missing
 			count: 1
-			path: modules/hosting/do_hosting_aed.php
-
-		-
-			message: '#^Function getCompanies not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/hosting/index.php
+			path: modules/hosting/hosting.class.php
 
 		-
 			message: '#^Comparison operation "\!\=" between \*NEVER\* and 0 results in an error\.$#'
@@ -2869,12 +2311,6 @@ parameters:
 			path: modules/igantt/igantt.ajax.php
 
 		-
-			message: '#^Class iGanttResponse does not have a constructor and must be instantiated without any parameters\.$#'
-			identifier: new.noConstructor
-			count: 1
-			path: modules/igantt/igantt.ajax.php
-
-		-
 			message: '#^Constant GANTT_ACTIVITY not found\.$#'
 			identifier: constant.notFound
 			count: 1
@@ -2941,424 +2377,16 @@ parameters:
 			path: modules/initiating/pdf.php
 
 		-
-			message: '#^Access to property \$inventory_asset_no on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_asset_no on an unknown class Cinventory\.$#'
-			identifier: class.notFound
+			message: '#^Class CInventory referenced with incorrect case\: Cinventory\.$#'
+			identifier: class.nameCase
 			count: 1
 			path: modules/inventory/addedit.php
 
 		-
-			message: '#^Access to property \$inventory_assign_from on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_assign_from on an unknown class Cinventory\.$#'
-			identifier: class.notFound
+			message: '#^Method CInventory\:\:delete\(\) should return string\|null but return statement is missing\.$#'
+			identifier: return.missing
 			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_assign_until on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_assign_until on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_brand on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_brand on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_category on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_category on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_company on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 6
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_company on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_cost on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_costcode on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_costcode on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_delivered on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 4
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_delivered on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_department on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 6
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_department on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_description on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_id on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_name on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_name on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_parent on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 6
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_project on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 7
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_project on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_purchase_company on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_purchase_company on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_purchase_state on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 7
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_purchase_state on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_purchased on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 4
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_purchased on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_quantity on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_rental_period on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 5
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_rental_period on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_serial on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_user on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 7
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_user on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Call to method calcChildrenTotal\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Call to method canDelete\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Call to method getAssetNo\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class Cinventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Instantiated class CInventory not found\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Instantiated class Cinventory not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/addedit.php
-
-		-
-			message: '#^Access to property \$inventory_assign_from on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Access to property \$inventory_assign_until on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Access to property \$inventory_brand_id on an unknown class CInventoryBrand\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Access to property \$inventory_brand_name on an unknown class CInventoryBrand\.$#'
-			identifier: class.notFound
-			count: 5
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Access to property \$inventory_category_id on an unknown class CInventoryCategory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Access to property \$inventory_category_name on an unknown class CInventoryCategory\.$#'
-			identifier: class.notFound
-			count: 5
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Access to property \$inventory_delivered on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Access to property \$inventory_id on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Access to property \$inventory_parent on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Access to property \$inventory_project on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Access to property \$inventory_purchased on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Access to property \$inventory_user on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Call to method bind\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Call to method delete\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Call to method getError\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class CInventoryBrand\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class CInventoryCategory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CInventoryBrand\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CInventoryCategory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Instantiated class CInventory not found\.$#'
-			identifier: class.notFound
-			count: 4
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Instantiated class CInventoryBrand not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/do_inventory_aed.php
-
-		-
-			message: '#^Instantiated class CInventoryCategory not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/do_inventory_aed.php
+			path: modules/inventory/inventory.class.php
 
 		-
 			message: '#^File ends with a trailing whitespace\. This may cause problems when running the code in the web browser\. Remove the closing \?\> mark or remove the whitespace\.$#'
@@ -3367,172 +2395,10 @@ parameters:
 			path: modules/inventory/setup.php
 
 		-
-			message: '#^Call to method calcChildrenTotal\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/utility.php
-
-		-
-			message: '#^Instantiated class CInventory not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/utility.php
-
-		-
 			message: '#^Undefined variable\: \$AppUI$#'
 			identifier: variable.undefined
 			count: 2
 			path: modules/inventory/utility.php
-
-		-
-			message: '#^Access to property \$inventory_assign_from on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_assign_until on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_brand on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_category on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_company on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_cost on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_costcode on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_delivered on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_department on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_description on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_id on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_name on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_parent on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_project on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_purchase_state on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 4
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_purchased on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_quantity on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_rental_period on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_serial on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Access to property \$inventory_user on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Call to method calcChildrenTotal\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Call to method canDelete\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Call to method getAssetNo\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class CInventory\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
-
-		-
-			message: '#^Instantiated class CInventory not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/inventory/view.php
 
 		-
 			message: '#^File ends with a trailing whitespace\. This may cause problems when running the code in the web browser\. Remove the closing \?\> mark or remove the whitespace\.$#'
@@ -3559,87 +2425,21 @@ parameters:
 			path: modules/journal/setup.php
 
 		-
-			message: '#^Call to method canDelete\(\) on an unknown class CLink\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/links/addedit.php
-
-		-
-			message: '#^Instantiated class CLink not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/links/addedit.php
-
-		-
-			message: '#^Access to property \$_message on an unknown class CLink\.$#'
-			identifier: class.notFound
-			count: 4
-			path: modules/links/do_link_aed.php
-
-		-
-			message: '#^Access to property \$file_id on an unknown class CLink\.$#'
-			identifier: class.notFound
+			message: '#^Access to an undefined property CLink\:\:\$file_id\.$#'
+			identifier: property.notFound
 			count: 1
 			path: modules/links/do_link_aed.php
 
 		-
-			message: '#^Access to property \$link_category on an unknown class CLink\.$#'
-			identifier: class.notFound
+			message: '#^Access to protected property CLink\:\:\$_message\.$#'
+			identifier: property.protected
 			count: 2
 			path: modules/links/do_link_aed.php
 
 		-
-			message: '#^Access to property \$link_date on an unknown class CLink\.$#'
-			identifier: class.notFound
+			message: '#^Call to an undefined method CLink\:\:notify\(\)\.$#'
+			identifier: method.notFound
 			count: 2
-			path: modules/links/do_link_aed.php
-
-		-
-			message: '#^Access to property \$link_owner on an unknown class CLink\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/links/do_link_aed.php
-
-		-
-			message: '#^Call to method bind\(\) on an unknown class CLink\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/links/do_link_aed.php
-
-		-
-			message: '#^Call to method delete\(\) on an unknown class CLink\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/links/do_link_aed.php
-
-		-
-			message: '#^Call to method getError\(\) on an unknown class CLink\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/links/do_link_aed.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class CLink\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/links/do_link_aed.php
-
-		-
-			message: '#^Call to method notify\(\) on an unknown class CLink\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/links/do_link_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CLink\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/links/do_link_aed.php
-
-		-
-			message: '#^Instantiated class CLink not found\.$#'
-			identifier: class.notFound
-			count: 1
 			path: modules/links/do_link_aed.php
 
 		-
@@ -3819,12 +2619,6 @@ parameters:
 		-
 			message: '#^Call to method setXMLRPCDebug\(\) on an unknown class PHPXMLRPCClient\.$#'
 			identifier: class.notFound
-			count: 1
-			path: modules/mantis/index.php
-
-		-
-			message: '#^Function mysql_real_escape_string not found\.$#'
-			identifier: function.notFound
 			count: 1
 			path: modules/mantis/index.php
 
@@ -4045,12 +2839,6 @@ parameters:
 			path: modules/monitoringandcontrol/control/controller_util.class.php
 
 		-
-			message: '#^Call to an undefined method ControllerAcaoCorretiva\:\:deleteRow\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/monitoringandcontrol/do_pendencias.php
-
-		-
 			message: '#^File ends with a trailing whitespace\. This may cause problems when running the code in the web browser\. Remove the closing \?\> mark or remove the whitespace\.$#'
 			identifier: whitespace.fileEnd
 			count: 1
@@ -4069,12 +2857,6 @@ parameters:
 			path: modules/monitoringandcontrol/projects_tab.5LBLCUSTO.php
 
 		-
-			message: '#^Function eregi not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/monitoringandcontrol/projects_tab.5LBLCUSTO.php
-
-		-
 			message: '#^Method ControllerEarnValue\:\:obterInicioPeriodo\(\) invoked with 2 parameters, 1 required\.$#'
 			identifier: arguments.count
 			count: 1
@@ -4093,12 +2875,6 @@ parameters:
 			path: modules/monitoringandcontrol/projects_tab.6LBLCRONOGRAMA.php
 
 		-
-			message: '#^Function eregi not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/monitoringandcontrol/projects_tab.6LBLCRONOGRAMA.php
-
-		-
 			message: '#^Method ControllerEarnValue\:\:obterInicioPeriodo\(\) invoked with 2 parameters, 1 required\.$#'
 			identifier: arguments.count
 			count: 1
@@ -4111,458 +2887,14 @@ parameters:
 			path: modules/monitoringandcontrol/projects_tab.7LBLQUALIDADE.php
 
 		-
-			message: '#^Access to property \$opportunity_ba on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_background on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_boundaries on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_comments on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_costbenefit on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_created on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_curway on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_desc on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_horizontality on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_id on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_lastupd on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_must on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_must_rationale on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_name on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_orig on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 7
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_owner on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_pm on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_precost on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_preout on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_preyn on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_priority on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_project on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_proposal on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_rationale on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_risks on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_sholders on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_sizing on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_sponsor on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_status on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Access to property \$opportunity_strategy on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Call to method canDelete\(\) on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Function mysql_fetch_assoc not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Function mysql_query not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
-			message: '#^Instantiated class COpportunities not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/addedit.php
-
-		-
 			message: '#^Method DBQuery\:\:prepareSelect\(\) invoked with 1 parameter, 0 required\.$#'
 			identifier: arguments.count
 			count: 1
 			path: modules/opportunities/addedit.php
 
 		-
-			message: '#^Access to property \$opportunity_ba on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_background on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_boundaries on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_comments on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_costbenefit on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_created on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_curway on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_desc on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_email on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_financials on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_horizontality on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_id on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_invcost on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_lastupd on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_must on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_must_rationale on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_name on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_orig on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_owner on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_pm on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_precost on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_preout on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_preyn on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_priority on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_project on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_proposal on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_rationale on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_recucost on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_risks on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_sholders on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_sizing on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_sponsor on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_status on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Access to property \$opportunity_strategy on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Call to method bind\(\) on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Call to method canDelete\(\) on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Call to method delete\(\) on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Call to method getError\(\) on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class COpportunities\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/opportunities/do_opportunities_aed.php
-
-		-
-			message: '#^Instantiated class COpportunities not found\.$#'
-			identifier: class.notFound
+			message: '#^Access to an undefined property COpportunities\:\:\$opportunity_email\.$#'
+			identifier: property.notFound
 			count: 1
 			path: modules/opportunities/do_opportunities_aed.php
 
@@ -4579,70 +2911,10 @@ parameters:
 			path: modules/opportunities/vw_childofproject.php
 
 		-
-			message: '#^Cannot access property \$payment_company on array\|CCompany\|float\|int\|string\|false\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: modules/payments/addedit.php
-
-		-
 			message: '#^Method DBQuery\:\:addGroup\(\) invoked with 2 parameters, 1 required\.$#'
 			identifier: arguments.count
 			count: 1
 			path: modules/payments/addedit.php
-
-		-
-			message: '#^Call to method bind\(\) on an unknown class CPayment\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/payments/do_payment_aed.php
-
-		-
-			message: '#^Call to method canDelete\(\) on an unknown class CPayment\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/payments/do_payment_aed.php
-
-		-
-			message: '#^Call to method delete\(\) on an unknown class CPayment\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/payments/do_payment_aed.php
-
-		-
-			message: '#^Call to method getError\(\) on an unknown class CPayment\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/payments/do_payment_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CPayment\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/payments/do_payment_aed.php
-
-		-
-			message: '#^Call to method updatePaymentsInvoices\(\) on an unknown class CPayment\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/payments/do_payment_aed.php
-
-		-
-			message: '#^Instantiated class CPayment not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/payments/do_payment_aed.php
-
-		-
-			message: '#^Call to method getDeniedRecords\(\) on an unknown class CPayment\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/payments/index.php
-
-		-
-			message: '#^Instantiated class CPayment not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/payments/index.php
 
 		-
 			message: '#^File ends with a trailing whitespace\. This may cause problems when running the code in the web browser\. Remove the closing \?\> mark or remove the whitespace\.$#'
@@ -4651,178 +2923,10 @@ parameters:
 			path: modules/payments/setup.php
 
 		-
-			message: '#^Access to property \$pd_option_user on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_addtasks_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_actions on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_addtasks_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_addtasks on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_addtasks_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_files on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_addtasks_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_gantt on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_addtasks_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_project on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_addtasks_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_tasks on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_addtasks_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/projectdesigner/do_addtasks_aed.php
-
-		-
-			message: '#^Instantiated class CProjectDesignerOptions not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/projectdesigner/do_addtasks_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_user on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_projectdesigner_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_actions on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_projectdesigner_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_addtasks on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_projectdesigner_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_files on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_projectdesigner_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_gantt on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_projectdesigner_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_project on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_projectdesigner_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_tasks on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_projectdesigner_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/projectdesigner/do_projectdesigner_aed.php
-
-		-
-			message: '#^Instantiated class CProjectDesignerOptions not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/projectdesigner/do_projectdesigner_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_user on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_task_bulk_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_actions on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_task_bulk_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_addtasks on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_task_bulk_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_files on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_task_bulk_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_gantt on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_task_bulk_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_project on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_task_bulk_aed.php
-
-		-
-			message: '#^Access to property \$pd_option_view_tasks on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/projectdesigner/do_task_bulk_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CProjectDesignerOptions\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/projectdesigner/do_task_bulk_aed.php
-
-		-
-			message: '#^Instantiated class CProjectDesignerOptions not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/projectdesigner/do_task_bulk_aed.php
-
-		-
 			message: '#^Method CTask\:\:getDependencies\(\) invoked with 1 parameter, 0 required\.$#'
 			identifier: arguments.count
 			count: 1
 			path: modules/projectdesigner/do_task_bulk_aed.php
-
-		-
-			message: '#^Function getCriticalTasksInverted not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/projectdesigner/gantt.php
 
 		-
 			message: '#^Static call to instance method Date\:\:compare\(\)\.$#'
@@ -4837,6 +2941,24 @@ parameters:
 			path: modules/projectdesigner/jscalendar/calendar.php
 
 		-
+			message: '#^Method CProjectDesignerOptions\:\:store\(\) should return string\|null but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: modules/projectdesigner/projectdesigner.class.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(int Project_id\)\: Unexpected token "Project_id", expected variable at offset 79 on line 2$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: modules/projectdesigner/projectdesigner.class.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(int SQL\-limit to limit the number of returned tasks\)\: Unexpected token "SQL\-limit", expected variable at offset 103 on line 3$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: modules/projectdesigner/projectdesigner.class.php
+
+		-
 			message: '#^Function constructTaskTree invoked with 3 parameters, 1\-2 required\.$#'
 			identifier: arguments.count
 			count: 1
@@ -4847,42 +2969,6 @@ parameters:
 			identifier: arguments.count
 			count: 1
 			path: modules/projectdesigner/vw_actions.php
-
-		-
-			message: '#^Function findchild_pr not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/projectdesigner/vw_projecttask.php
-
-		-
-			message: '#^Function showtask_pr not found\.$#'
-			identifier: function.notFound
-			count: 2
-			path: modules/projectdesigner/vw_projecttask.php
-
-		-
-			message: '#^Function taskstyle_pd not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/projectdesigner/vw_projecttask.php
-
-		-
-			message: '#^Function findchild_pd not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/projectdesigner/vw_tasks.php
-
-		-
-			message: '#^Function showtask_pd not found\.$#'
-			identifier: function.notFound
-			count: 3
-			path: modules/projectdesigner/vw_tasks.php
-
-		-
-			message: '#^Function taskstyle_pd not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/projectdesigner/vw_tasks.php
 
 		-
 			message: '#^Variable \$extraGet in isset\(\) always exists and is not nullable\.$#'
@@ -4969,24 +3055,6 @@ parameters:
 			path: modules/registers/setup.php
 
 		-
-			message: '#^Class Tree does not have a constructor and must be instantiated without any parameters\.$#'
-			identifier: new.noConstructor
-			count: 2
-			path: modules/reports/tree.class.php
-
-		-
-			message: '#^Class TreeLeaf does not have a constructor and must be instantiated without any parameters\.$#'
-			identifier: new.noConstructor
-			count: 1
-			path: modules/reports/tree.class.php
-
-		-
-			message: '#^Class TreeNode does not have a constructor and must be instantiated without any parameters\.$#'
-			identifier: new.noConstructor
-			count: 2
-			path: modules/reports/tree.class.php
-
-		-
 			message: '#^Deprecated in PHP 8\.0\: Required parameter \$hours follows optional parameter \$summary\.$#'
 			identifier: parameter.requiredAfterOptional
 			count: 1
@@ -5033,30 +3101,6 @@ parameters:
 			identifier: function.notFound
 			count: 1
 			path: modules/smartsearch/smartsearch.class.php
-
-		-
-			message: '#^Function ereg_replace not found\.$#'
-			identifier: function.notFound
-			count: 2
-			path: modules/smartsearchns/smartsearchns.class.php
-
-		-
-			message: '#^Function eregi_replace not found\.$#'
-			identifier: function.notFound
-			count: 3
-			path: modules/smartsearchns/smartsearchns.class.php
-
-		-
-			message: '#^Function sql_regcase not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/smartsearchns/smartsearchns.class.php
-
-		-
-			message: '#^Undefined variable\: \$records$#'
-			identifier: variable.undefined
-			count: 3
-			path: modules/smartsearchns/smartsearchns.class.php
 
 		-
 			message: '#^Function arraySelect invoked with 6 parameters, 4\-5 required\.$#'
@@ -5347,56 +3391,14 @@ parameters:
 			path: modules/tasks_template/setup.php
 
 		-
-			message: '#^Access to property \$test_task on an unknown class CTesting\.$#'
-			identifier: class.notFound
+			message: '#^Access to an undefined property CTesting\:\:\$test_task\.$#'
+			identifier: property.notFound
 			count: 1
 			path: modules/testing/addedit.php
 
 		-
-			message: '#^Access to property \$unittest_description on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/addedit.php
-
-		-
-			message: '#^Access to property \$unittest_expectedresult on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/addedit.php
-
-		-
-			message: '#^Access to property \$unittest_name on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/addedit.php
-
-		-
-			message: '#^Access to property \$unittest_task_id on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/addedit.php
-
-		-
-			message: '#^Call to method canDelete\(\) on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/addedit.php
-
-		-
-			message: '#^Call to method getTaskName\(\) on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/addedit.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/addedit.php
-
-		-
-			message: '#^Instantiated class CTesting not found\.$#'
-			identifier: class.notFound
+			message: '#^Call to an undefined method CTesting\:\:getTaskName\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: modules/testing/addedit.php
 
@@ -5405,90 +3407,6 @@ parameters:
 			identifier: arguments.count
 			count: 1
 			path: modules/testing/ae_dates.php
-
-		-
-			message: '#^Call to method bind\(\) on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/do_test_aed.php
-
-		-
-			message: '#^Call to method delete\(\) on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/do_test_aed.php
-
-		-
-			message: '#^Call to method getError\(\) on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/do_test_aed.php
-
-		-
-			message: '#^Call to method store\(\) on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/do_test_aed.php
-
-		-
-			message: '#^Instantiated class CTesting not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/do_test_aed.php
-
-		-
-			message: '#^Access to property \$unittest_actualresult on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/runtest.php
-
-		-
-			message: '#^Access to property \$unittest_description on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/runtest.php
-
-		-
-			message: '#^Access to property \$unittest_expectedresult on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/runtest.php
-
-		-
-			message: '#^Access to property \$unittest_lasttested on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 4
-			path: modules/testing/runtest.php
-
-		-
-			message: '#^Access to property \$unittest_name on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/runtest.php
-
-		-
-			message: '#^Access to property \$unittest_passed on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/testing/runtest.php
-
-		-
-			message: '#^Call to method canDelete\(\) on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/runtest.php
-
-		-
-			message: '#^Call to method load\(\) on an unknown class CTesting\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/runtest.php
-
-		-
-			message: '#^Instantiated class CTesting not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/testing/runtest.php
 
 		-
 			message: '#^Path in require\(\) "/appmodules/ticketsmith/common\.inc\.php" is not a file or it does not exist\.$#'
@@ -5537,18 +3455,6 @@ parameters:
 			identifier: isset.variable
 			count: 1
 			path: modules/timecard/vw_weekly_by_user.php
-
-		-
-			message: '#^Undefined variable\: \$taskName$#'
-			identifier: variable.undefined
-			count: 1
-			path: modules/timeplanning/control/controller_activity_mdp.class.php
-
-		-
-			message: '#^Class EstimatedRole does not have a constructor and must be instantiated without any parameters\.$#'
-			identifier: new.noConstructor
-			count: 2
-			path: modules/timeplanning/model/project_task_estimation.class.php
 
 		-
 			message: '#^File ends with a trailing whitespace\. This may cause problems when running the code in the web browser\. Remove the closing \?\> mark or remove the whitespace\.$#'
