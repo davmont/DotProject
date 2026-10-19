@@ -5,24 +5,24 @@ if (!defined('DP_BASE_DIR')) {
 
 //$communication_channel_id = intval(dPgetParam($_GET, 'communication_channel_id'));
 
-// add communication channel
-if (isset($_GET['communication_channel'])){
-    $add = ($_GET['communication_channel']);
-    $radd = new DBQuery;
-    $radd->addInsert('communication_channel', $add);
-    $radd->addTable('communication_channel');
-    $radd->exec();
-    header('location:?m=communication&a=addedit_channel');
-}
-
-// del communication channel
-if (isset($_GET['communication_channel_id'])){
-    $del = (int)$_GET['communication_channel_id'];
-    $rdel = new DBQuery;
-    $rdel->setDelete('communication_channel');
-    $rdel->addWhere('communication_channel_id=' .$del);
-    $rdel->exec();
-    header('location:?m=communication&a=addedit_channel');
+// Adding and deleting change data: POST with the CSRF token and edit permission only.
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$AppUI->verifyCsrfToken();
+	if (!getPermission('communication', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	if (dPgetIntParam($_POST, 'del', 0)) {
+		$q = new DBQuery;
+		$q->setDelete('communication_channel');
+		$q->addWhere('communication_channel_id = ' . dPgetIntParam($_POST, 'channel', 0));
+		$q->exec();
+	} else if (trim((string)dPgetParam($_POST, 'communication_channel', '')) !== '') {
+		$q = new DBQuery;
+		$q->addTable('communication_channel');
+		$q->addInsert('communication_channel', dPgetParam($_POST, 'communication_channel', ''));
+		$q->exec();
+	}
+	$AppUI->redirect('m=communication&a=addedit_channel');
 }
 
 // list of channels
@@ -35,18 +35,19 @@ $channels = $channels->loadList();
 
  <script nonce="<?php echo dPcspNonce(); ?>">
         function submitIt(form){
-            window.location = ('?m=communication&a=addedit_channel&communication_channel='+encodeURIComponent(form.communication_channel.value))
+            form.del.value = '0';
+            form.submit();
         }
-         function DelChannel(form){
-            window.location = ('?m=communication&a=addedit_channel&communication_channel_id='+encodeURIComponent(form.channel.value))
+        function DelChannel(form){
+            form.del.value = '1';
+            form.submit();
         }
 </script>
 
 
 <table width="50%" border="0" cellpadding="3" cellspacing="3" class="std" charset=UTF-8>
-    <form name="uploadFrm" action="?m=communication" method="post">
+    <form name="uploadFrm" action="?m=communication&amp;a=addedit_channel" method="post">
         <input type="hidden" name="del" value="0" />        
-        <input type="hidden" name="communication_channel_id" value="<?php echo $communication_channel_id; ?>" />
     <tr><td style="font-size: 12px; font-weight: bold; color: #006"><?php echo $AppUI->_("LBL_TITLE_CHANNELS"); ?></td></tr>
         <tr>
             <td width="80%" valign="top" align="left">
@@ -63,11 +64,11 @@ $channels = $channels->loadList();
                         <td><select id="channel" name="channel" style="min-width:150px">
                                 <?php
                                 foreach ($channels as $registro) {
-                                    echo '<option value="'.$registro['communication_channel_id'].'">'. dPhtml($registro['communication_channel']).'</option>';
+                                    echo '<option value="'.(int)$registro['communication_channel_id'].'">'. dPhtml($registro['communication_channel']).'</option>';
                                 }
                                 ?>
                             </select>
-                        <td><input type="button" value="x" style="color: #aa0000; font-weight: bold"<?php echo dPaction('DelChannel', array('$form')); ?>/></td>
+                        <td><input type="button" value="x" style="color: #aa0000; font-weight: bold"<?php echo dPaction('DelChannel', array('$form'), null, array('confirm' => $AppUI->_('doDelete', UI_OUTPUT_RAW) . '?')); ?>/></td>
                         </td>
                     </tr>
                 </table>
