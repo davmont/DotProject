@@ -167,7 +167,12 @@ function customSave(){
 
 document.getElementById("task_milestone").onchange=milestoneupdate;
 document.getElementById("task_milestone").onclick=milestoneupdate;
-getMainSaveButton().onclick=customSave;
+// The main save button runs customSave() (milestone dates) instead of the page's own
+// submitEditFrm. Replace its data-dp-call: adding an onclick as well would submit twice.
+var mainSaveButton = getMainSaveButton();
+if (mainSaveButton) {
+	mainSaveButton.setAttribute('data-dp-call', 'customSave');
+}
 //setInterval("milestoneupdate()",2000);
 setTimeout(milestoneupdate, 500);
 
