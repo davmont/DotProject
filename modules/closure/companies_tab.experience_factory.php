@@ -10,6 +10,8 @@ global $AppUI, $company_id, $pstatus, $m;
 
 $pstatus = dPgetSysVal( 'ProjectStatus' );
 
+// the query is DISTINCT, so it can only be ordered by a selected column
+$sort = 'project_name';
 if ($sort == 'project_priority') {
   $sort .= ' DESC';
 }
