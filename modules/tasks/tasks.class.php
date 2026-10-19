@@ -2256,7 +2256,7 @@ class CTask extends CDpObject
 		// Find the end date of this task, then subtract the required number of days.
 		$date = new CDate($this->task_end_date);
 		$today = new CDate(date('Y-m-d'));
-		if (CDate::compare($date, $today) < 0) {
+		if ($date->compare($date, $today) < 0) { // compare() is not static
 			$start_day = time();
 		} else {
 			$start_day = $date->getDate(DATE_FORMAT_UNIXTIME);
