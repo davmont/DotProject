@@ -151,7 +151,7 @@ function setDept(key, val) {
 
 <table width="100%" border="0" cellpadding="0" cellspacing="1" height="400" class="std">
 <form name="editFrm" action="./index.php?m=admin" method="post">
-	<input type="hidden" name="user_id" value="<?php echo intval($user['user_id']);?>" />
+	<input type="hidden" name="user_id" value="<?php echo intval($user['user_id'] ?? 0);?>" />
 	<input type="hidden" name="contact_id" value="<?php echo intval($user['contact_id']);?>" />
 	<input type="hidden" name="dosql" value="do_user_aed" />
 	<?php echo $AppUI->getCsrfInput(); ?>
@@ -178,7 +178,7 @@ function setDept(key, val) {
 <tr>
     <td align="right"> <?php echo $AppUI->_('User Type');?>:</td>
     <td>
-<?php echo arraySelect($utypes, 'user_type', 'class="text" size="1"', $user['user_type'], true); ?>
+<?php echo arraySelect($utypes, 'user_type', 'class="text" size="1"', ($user['user_type'] ?? null), true); ?>
     </td>
 </tr>
 <?php } // End of security
@@ -216,7 +216,7 @@ echo dPhtml(@$user['contact_last_name']);?>" maxlength="50" /></td>
     <td align="right"> <?php echo $AppUI->_('Company');?>:</td>
     <td>
 <?php 
-echo arraySelect($companies, 'contact_company', 'class="text" size="1"', $user['contact_company']);
+echo arraySelect($companies, 'contact_company', 'class="text" size="1"', ($user['contact_company'] ?? null));
 ?>
     </td>
 </tr>
@@ -243,7 +243,7 @@ echo dPhtml(@$user['contact_email']);?>" maxlength="255" size="40" /> </td>
 echo dPhtml(@$user['user_signature']);?></textarea></td>
 </tr>
 <tr>
-	<td align="right"><?php if ($user['user_contact']) { ?>
+	<td align="right"><?php if (!empty($user['user_contact'])) { ?>
 		<a href="?m=contacts&amp;a=addedit&amp;contact_id=<?php 
 echo (int)$user['user_contact']; ?>"><?php echo $AppUI->_(array('edit', 'contact info')); ?></a>
 	<?php } ?></td>
