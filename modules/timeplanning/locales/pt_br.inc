@@ -1,4 +1,4 @@
-﻿##
+##
 ## DO NOT MODIFY THIS FILE BY HAND!
 ##
 "LBL_ADD"=>"Adicionar",
