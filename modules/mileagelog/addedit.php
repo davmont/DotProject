@@ -56,14 +56,14 @@ if ($is_new_record)
 $can_edit_other_mileagelogs = $MILEAGELOG_CONFIG['minimum_edit_level']>=$AppUI->user_type;
 if (!$can_edit_other_mileagelogs)
 {
-	if(isset($_GET['mid']) && ((isset($mileage_log['mileage_log_user_id']) && $mileage_log['mileage_log_user_id'] != $AppUI->user_id) || (!isset($mileage_log['mileage_log_user_id']))))
+	if(isset($_GET['mid']) && ((isset($mileage_log->mileage_log_user_id) && $mileage_log->mileage_log_user_id != $AppUI->user_id) || (!isset($mileage_log->mileage_log_user_id))))
 	{
 		$AppUI->redirect( "m=public&a=access_denied" );
 	}
 }
 
-if (isset( $mileage_log['mileage_log_date'] )) {
-	$date = new CDate( $mileage_log['mileage_log_date'] ); 
+if (isset( $mileage_log->mileage_log_date )) {
+	$date = new CDate( $mileage_log->mileage_log_date ); 
 } else if (isset( $_GET['date'] )) {
 	$date = new CDate($_GET['date']); 
 } else {
