@@ -21,7 +21,10 @@ if ($advanced_search == 'on') {
 	$show_empty = dPgetCleanParam($_POST, 'showempty', '');
 }
 else {
+	$ignore_specchar = '';
 	$ignore_case = 'on';
+	$display_all_flds = '';
+	$show_empty = '';
 }
 
 ?>
