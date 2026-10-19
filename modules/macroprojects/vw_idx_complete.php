@@ -20,6 +20,7 @@ GLOBAL $AppUI, $macroprojects, $company_id, $mpstatus, $macroproject_types, $cur
 GLOBAL $priority;
 
 $df = $AppUI->getPref('SHDATEFORMAT');
+$macroprojectPriorityColor = dPgetSysVal('MacroProjectPriorityColor');
 
 $editMacroProjectsAllowed = getPermission('macroprojects', 'edit');
 foreach ($macroprojects as $row) {
@@ -141,11 +142,11 @@ echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "
 	</td>
 	<td align="center" nowrap="nowrap">
 		<?php 
-echo (htmlspecialchars($row['total_tasks'] . ($row['my_tasks'] ? ' ('.$row['my_tasks'].')' : '')));
+echo (htmlspecialchars(($row['total_tasks'] ?? '') . (!empty($row['my_tasks']) ? ' ('.$row['my_tasks'].')' : '')));
 ?>
 	</td>
 	<td align="center" nowrap="nowrap" style="background-color:<?php 
-echo ($priority[$row['macroproject_priority']]['color']); ?>">
+echo (($macroprojectPriorityColor[$row['macroproject_priority']] ?? '')); ?>">
 		<?php echo (($end_date ? $end_date->format($df) : '-')); ?>
 	</td>
 <?php 
