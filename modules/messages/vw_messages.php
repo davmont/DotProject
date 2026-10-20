@@ -50,23 +50,24 @@ if (!defined('DP_BASE_DIR')) {
 					}
 				
 					foreach($incoming_messages as $message){
+						$message = (object)$message; // loadList() returns arrays
 						$m_row  = "<tr>";
 						
 						$m_row .= "<td>";
 						if ($message->task_priority < 0 ) {
 							$m_row .= "<img src=\"./images/icons/low.gif\" alt='L' />";
 						} else if ($message->task_priority > 0) {
-							$m_row .= "<img src=\"./images/icons/" . $message->task_priority ."'.gif\" alt='" . $message->task_priority . "' />'";
+							$m_row .= "<img src=\"./images/icons/" . (int)$message->task_priority . ".gif\" alt='" . (int)$message->task_priority . "' />";
 						}
 						$m_row .= "</td>"; // Priority icons
-						$m_row .= "<td>".$message->task_start_date."</td>";
+						$m_row .= "<td>".dPhtml($message->task_start_date)."</td>";
 						$task_name = $message->task_name != "" ? $message->task_name : $AppUI->_("No subject");
-						$m_row .= "<td> <a href='index.php?m=messages&message_id=".$message->task_id."'>" . dPhtml($task_name) . "</a></td>";
+						$m_row .= "<td> <a href='index.php?m=messages&message_id=".(int)$message->task_id."'>" . dPhtml($task_name) . "</a></td>";
 						
 						if($show_sent_messages){
 							$m_row .= "<td>".$AppUI->_($message->task_status == -1 ? "Yes" : "No")."</td>";
 						} else {
-							$m_row .= "<td>".dPhtml($user_hash[$message->task_owner])."</td>";
+							$m_row .= "<td>".dPhtml(isset($user_hash[$message->task_owner]) ? $user_hash[$message->task_owner] : '')."</td>";
 						}
 						
 						$m_row .= "<td></td>"; // Actions
