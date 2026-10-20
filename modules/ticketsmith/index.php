@@ -34,7 +34,14 @@ $offset = dPgetCleanParam($_GET, 'offset', $offset);
 $column = dPvalidateOrder($column, array("author", "subject", "timestamp", "activity", "type", "priority", "assignment"), $CONFIG["order_by"]);
 $direction = dPvalidateOrder(mb_strtoupper($direction), array('ASC', 'DESC'), 'ASC');
 $offset = (int)$offset;
-$action = dPgetCleanParam($_REQUEST, 'action', null);
+// Expunging deletes tickets: POST with the CSRF token and delete permission only.
+$action = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dPgetCleanParam($_POST, 'action', null) : null;
+if ($action == "expunge") {
+    $AppUI->verifyCsrfToken();
+    if (!getPermission('ticketsmith', 'delete')) {
+        $AppUI->redirect('m=public&a=access_denied');
+    }
+}
 
 if ($type == '') {
 	if ($AppUI->getState("ticket_type")) {
@@ -215,7 +222,7 @@ for ($loop = 0; $loop < count($types); $loop++) {
 print(join(" | ", $toggles));
 print(" ".$AppUI->_('Tickets')."</td>\n");
 if ($type == "Deleted" && $parent_count) {
-    print("<td align='center'><a href='?m=ticketsmith&amp;type=Deleted&amp;action=expunge'>".$AppUI->_('Expunge Deleted')."</a></td>");
+    print("<td align='center'><a href='#'" . dPaction('dpPost', array('?m=ticketsmith&type=Deleted', array('action' => 'expunge'))) . ">".$AppUI->_('Expunge Deleted')."</a></td>");
 }
 print("<td align='right'>
 <a href='?m=ticketsmith&amp;a=pdf&amp;type=$type&suppressHeaders=1'>" . $AppUI->_('Report as PDF') . "</a> |
