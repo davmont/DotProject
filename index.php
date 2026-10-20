@@ -290,6 +290,14 @@ if ($u && file_exists(DP_BASE_DIR . '/modules/' . $m . '/' . $u . '/' . $u . '.c
 	include_once(DP_BASE_DIR . '/modules/' . $m . '/' . $u . '/' . $u . '.class.php');
 }
 
+// Every POST from a logged-in session must carry the CSRF token: server-rendered POST
+// forms get it injected (CAppUI::injectCsrfToken), script-built ones from js/dp-ui.js,
+// and AJAX posts send it. This also covers pages that write on POST without being
+// named do_* (they were missed by the checks below).
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$AppUI->verifyCsrfToken();
+}
+
 // do some db work if dosql is set
 // TODO - MUST MOVE THESE INTO THE MODULE DIRECTORY
 if (isset($_REQUEST['dosql'])) {

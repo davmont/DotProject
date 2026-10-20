@@ -19,6 +19,17 @@ if (!defined($baseDir)){
 	
 //get the save status
 	$save= (isset( $_GET['save'] )) ?  intval( dPgetParam( $_GET, "save", "-1" ) ) : intval( dPgetParam( $_POST, "save", "-1" ) );
+	// Saving replaces the related projects: POST with the CSRF token and edit permission only.
+	if ($save == 1) {
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			$save = -1;
+		} else {
+			$AppUI->verifyCsrfToken();
+			if (!getPermission('opportunities', 'edit')) {
+				$AppUI->redirect('m=public&a=access_denied');
+			}
+		}
+	}
 
 // format dates
 	$df = $AppUI->getPref('SHDATEFORMAT');            //this is the way dates should be handled! 

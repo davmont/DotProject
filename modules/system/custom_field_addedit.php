@@ -13,7 +13,14 @@ $titleBlock->show();
 
 $field_id = ((dpGetParam($_POST, 'field_id', NULL) != NULL) 
              ? dpGetParam($_POST, 'field_id', NULL) : dpGetParam($_GET, 'field_id', 0));
-$delete_field = dpGetParam($_GET, 'delete', 0);
+// Deleting a field changes data: POST with the CSRF token and system edit permission only.
+$delete_field = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dpGetParam($_POST, 'delete', 0) : 0;
+if ($delete_field) {
+	$AppUI->verifyCsrfToken();
+	if (!getPermission('system', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+}
 $module = ((dpGetParam($_GET, 'module', NULL) == NULL) 
            ? dpGetParam($_POST, 'module', NULL) : dpGetParam($_GET, 'module', NULL));
 

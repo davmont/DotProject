@@ -20,9 +20,18 @@ $errors = false;
 $tasks = array();
 $actions = false;
 
-$do = isset($_REQUEST['do']) ? $_REQUEST['do'] : 'conf';
-$set_duration = isset($_REQUEST['set_duration']) ? $_REQUEST['set_duration'] : null;
-$set_dynamic = isset($_REQUEST['set_dynamic']) ? $_REQUEST['set_dynamic'] : null;
+// The steps after 'conf' come from the page's form; 'fixate', set_duration and
+// set_dynamic change tasks: POST with the CSRF token and tasks edit permission only.
+$is_post = ($_SERVER['REQUEST_METHOD'] === 'POST');
+$do = $is_post ? dPgetCleanParam($_POST, 'do', 'conf') : 'conf';
+$set_duration = $is_post ? dPgetParam($_POST, 'set_duration', null) : null;
+$set_dynamic = $is_post ? dPgetParam($_POST, 'set_dynamic', null) : null;
+if ($is_post && ($do == 'fixate' || $set_duration || $set_dynamic)) {
+	$AppUI->verifyCsrfToken();
+	if (!getPermission('tasks', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+}
 
 $df = $AppUI->getPref('SHDATEFORMAT');
 

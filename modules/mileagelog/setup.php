@@ -103,10 +103,13 @@ class CSetupMileageLog {
 			WHERE syskey_name = 'MileageLogList'";
 		$id = db_loadResult( $sql );
 
-    	unset($bulk_sql);
+    	$bulk_sql = array();
 
-		$bulk_sql[] = "DELETE FROM {$dbprefix}syskeys WHERE syskey_id = $id";
-		$bulk_sql[] = "DELETE FROM {$dbprefix}sysvals WHERE sysval_key_id = $id";
+		$id = (int)$id; // 0 when the list key is not there (nothing to delete)
+		if ($id) {
+			$bulk_sql[] = "DELETE FROM {$dbprefix}syskeys WHERE syskey_id = $id";
+			$bulk_sql[] = "DELETE FROM {$dbprefix}sysvals WHERE sysval_key_id = $id";
+		}
 
 		foreach ($bulk_sql as $s) {
 			db_exec($s);

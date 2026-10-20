@@ -42,19 +42,19 @@ $titleBlock->show();
         
     function AddReceptor(a, b) {
         var get = GetForm();
-        window.location = ('?m=communication&a=addedit&communication_id='+b+'&radd='+a+get)
+        dpPost('?m=communication&a=addedit&communication_id=' + encodeURIComponent(b) + get, { radd: a });
     }
     function DelReceptor(a, b) {            
         var get = GetForm();
-        window.location = ('?m=communication&a=addedit&communication_id='+b+'&rdel='+a+get)
+        dpPost('?m=communication&a=addedit&communication_id=' + encodeURIComponent(b) + get, { rdel: a });
     }
     function AddIssuing(a, b) {            
         var get = GetForm();
-        window.location = ('?m=communication&a=addedit&communication_id='+b+'&raddi='+a+get)
+        dpPost('?m=communication&a=addedit&communication_id=' + encodeURIComponent(b) + get, { raddi: a });
     }
     function DelIssuing(a, b) {
         var get = GetForm();
-        window.location = ('?m=communication&a=addedit&communication_id='+b+'&rdeli='+a+get)
+        dpPost('?m=communication&a=addedit&communication_id=' + encodeURIComponent(b) + get, { rdeli: a });
     }        
         
     function GetForm() {
@@ -68,28 +68,28 @@ $titleBlock->show();
         var communication_date = document.uploadFrm.communication_date.value;
         var responsible = document.uploadFrm.responsible.value;
         if (project != '') {
-            get += '&project='+project;
+            get += '&project=' + encodeURIComponent(project);
         }
         if (title != '') {
-            get += '&title='+title;
+            get += '&title=' + encodeURIComponent(title);
         }
         if (communication != '') {
-            get += '&communication='+communication;
+            get += '&communication=' + encodeURIComponent(communication);
         }
         if (channel != '') {
-            get += '&channel='+channel;
+            get += '&channel=' + encodeURIComponent(channel);
         }
         if (frequency != '') {
-            get += '&frequency='+frequency;
+            get += '&frequency=' + encodeURIComponent(frequency);
         }
         if (restrictions != '') {
-            get += '&restrictions='+restrictions;
+            get += '&restrictions=' + encodeURIComponent(restrictions);
         }
         if (communication_date != '') {
-            get += '&communication_date='+communication_date;
+            get += '&communication_date=' + encodeURIComponent(communication_date);
         }
          if (responsible != '') {
-            get += '&responsible='+responsible;
+            get += '&responsible=' + encodeURIComponent(responsible);
         }
         return get;
     }

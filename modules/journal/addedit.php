@@ -22,8 +22,11 @@ if (!$canEdit) {
 }
 
 
-$action = @$_REQUEST["action"];
+// Adding, updating and deleting change data: POST with the CSRF token only
+// (edit permission is checked above).
+$action = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dPgetCleanParam($_POST, 'action', '') : '';
 if($action) {
+	$AppUI->verifyCsrfToken();
 	$journal_description = $_POST["journal_description"];
 	$journal_project = $_POST["journal_project"];
 	$userid = $AppUI->user_id;

@@ -479,7 +479,7 @@ function db_datetime($timestamp = NULL)
 		return NULL;
 	}
 	$datetime_str = ((is_object($timestamp)) ? $timestamp->toString('%Y-%m-%d %H:%M:%S')
-		: strftime('%Y-%m-%d %H:%M:%S', $timestamp));
+		: dp_strftime('%Y-%m-%d %H:%M:%S', $timestamp));
 	return $datetime_str;
 }
 

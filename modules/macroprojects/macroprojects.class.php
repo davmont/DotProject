@@ -529,9 +529,14 @@ function macroprojects_list_data($user_id = false)
 	}
 
 	if ($user_id && $addMacroProjectsWithAssignedTasks) {
-		$q->addWhere('(tu.user_id = ' . $user_id . ' OR mp.macroproject_owner = ' . $user_id . ')');
+		// Macroprojects with a project that has a task assigned to the user (the old
+		// tasks_users join is gone; macroprojects reach projects through macroproject_project).
+		$dbprefix = dPgetConfig('dbprefix', '');
+		$q->addWhere('(mp.macroproject_owner = ' . (int)$user_id . ' OR mp.macroproject_id IN (SELECT mpp.macroproject_id FROM '
+			. $dbprefix . 'macroproject_project mpp INNER JOIN ' . $dbprefix . 'tasks t ON t.task_project = mpp.project_id INNER JOIN '
+			. $dbprefix . 'user_tasks ut ON ut.task_id = t.task_id WHERE ut.user_id = ' . (int)$user_id . '))');
 	} else if ($user_id) {
-		$q->addWhere('mp.macroproject_owner = ' . $user_id);
+		$q->addWhere('mp.macroproject_owner = ' . (int)$user_id);
 	}
 
 	if ($owner > 0) {
@@ -673,7 +678,7 @@ function makeWhereClauseEachProjectOfAMacroProject($macroproject_id, $whereClaus
 		$finalWhere = "";
 		foreach ($projectsofmacro as $projectReed) {
 			$idxMacro++;
-			$projectPrint = $projectReed['project_id'];
+			$projectPrint = (int)$projectReed['project_id'];
 			if ($idxMacro < count($projectsofmacro)) {//if we don't work on the last project of the array projectofmacro we add an or after the conditions
 				$finalWhere .= "($whereClause $projectPrint) or ";
 			} else {
@@ -681,7 +686,8 @@ function makeWhereClauseEachProjectOfAMacroProject($macroproject_id, $whereClaus
 			}
 		}
 	} else {
-		$finalWhere = ($whereClause . ' 10');
+		// No projects: match nothing (it used to fall back to project 10).
+		$finalWhere = '1 = 0';
 	}
 	return $finalWhere;
 }

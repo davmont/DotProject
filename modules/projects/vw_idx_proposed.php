@@ -25,7 +25,7 @@ $table_cols = $base_table_cols + (($editProjectsAllowed) ? 1 : 0);
 $added_cols = $table_cols - $base_table_cols;
 ?>
 
-<form action='./index.php' method='get'>
+<form action='./index.php?m=projects' method='post'>
 <table width="100%" border="0" cellpadding="3" cellspacing="1" class="tbl">
 <tr>
 	<td colspan="<?php echo ($base_table_cols); ?>" nowrap="nowrap">

@@ -103,7 +103,8 @@ class CTask extends CDpObject
 		$this->task_milestone = intval($this->task_milestone);
 		$this->task_dynamic = intval($this->task_dynamic);
 
-		$this->task_percent_complete = intval($this->task_percent_complete);
+		// The column is decimal(5,2): keep two decimals (unit-cost progress is fractional).
+		$this->task_percent_complete = round((float)$this->task_percent_complete, 2);
 
 		if ($this->task_milestone) {
 			$this->task_duration = '0';

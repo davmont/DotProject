@@ -10,7 +10,7 @@ rm -f files/temp/ratelimit_*
 
 check() { if [ "$2" = "$3" ]; then echo "PASS  $1"; else echo "FAIL  $1 (got '$2', want '$3')"; FAIL=1; fi; }
 login() { rm -f "$CJ"; curl -s -c "$CJ" -b "$CJ" -o /dev/null $U
-  curl -s -L -c "$CJ" -b "$CJ" -X POST $U -d "login=login&username=$1&password=$2" | grep -o 'Logout' | head -1; }
+  curl -s -L -c "$CJ" -b "$CJ" $U -d "login=login&username=$1&password=$2" | grep -o 'Logout' | head -1; }
 token() { curl -s -c "$CJ" -b "$CJ" "$U?m=companies" | grep -o 'name="csrf-token" content="[0-9a-f]*"' | grep -o '[0-9a-f]\{64\}'; }
 code() { curl -s -c "$CJ" -b "$CJ" -o /dev/null -w '%{http_code}:%{redirect_url}' "$@"; }
 
@@ -30,6 +30,8 @@ check "token present" "${#T}" "64"
 check "POST without token refused" "$(code -X POST "$U?m=companies" -d 'dosql=do_company_aed&company_id=0&company_name=SmokeNoTok')" "302:$U?m=public&a=access_denied"
 check "POST bad token refused" "$(code -X POST "$U?m=companies" -d "dosql=do_company_aed&company_id=0&company_name=SmokeBad&csrf_token=$(printf '0%.0s' $(seq 64))")" "302:$U?m=public&a=access_denied"
 check "GET dosql refused" "$(code "$U?m=companies&dosql=do_company_aed&company_id=0&company_name=SmokeGet")" "302:$U?m=public&a=access_denied"
+check "any POST without token refused (not only dosql)" "$(code -X POST "$U?m=projects" -d 'project_status=1')" "302:$U?m=public&a=access_denied"
+check "POST with token to a view works" "$(code -X POST "$U?m=projects" -d "project_status=1&csrf_token=$T")" "200:"
 $DB -e "DELETE FROM dotp_companies WHERE company_name LIKE 'Smoke%'"
 code -X POST "$U?m=companies" -d "dosql=do_company_aed&company_id=0&company_name=SmokeGood&csrf_token=$T" >/dev/null
 check "POST valid token saves" "$($DB -e "SELECT COUNT(*) FROM dotp_companies WHERE company_name='SmokeGood'")" "1"

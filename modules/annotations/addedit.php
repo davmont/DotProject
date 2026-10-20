@@ -49,7 +49,17 @@ $AppUI->savePlace();	//save the workplace state (have a footprint on this site)
 	}  // Dont add seconds --> they will be  added before the storage in storage loop
 	$changed_show_date= 	intval( dPgetParam( $_REQUEST, "changed_show_date", "0" ) );
 	$annotation_id = 		intval( dPgetParam( $_REQUEST, "annotation_id", "-1" ) );
-	$save_annotations= 		intval( dPgetParam( $_REQUEST, "save_annotations", "0" ) );
+	// Saving (1) and deleting (-1) change data: POST with the CSRF token and permission only.
+	$save_annotations = 0;
+	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		$save_annotations = intval( dPgetParam( $_POST, "save_annotations", "0" ) );
+		if ($save_annotations == 1 || $save_annotations == -1) {
+			$AppUI->verifyCsrfToken();
+			if (!getPermission('annotations', $save_annotations == -1 ? 'delete' : 'edit')) {
+				$AppUI->redirect( "m=public&a=access_denied" );
+			}
+		}
+	}
 	$tab= 					intval( dPgetParam( $_REQUEST, "tab", "-1") );   //came from projects view?
 	$addnew= 				intval( dPgetParam( $_REQUEST, "addnew", "0") );   //came from projects view?
 	$annotation_show_date = intval( dPgetParam( $_REQUEST, "annotation_show_date", $show_date ) );  //Dummy for the calendar

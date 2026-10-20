@@ -39,10 +39,19 @@ if ($obj === null) {
     $obj = new CCommunication();
 }
 
-$radd_id = dPgetIntParam($_GET, 'radd');
-$rdel_id = dPgetIntParam($_GET, 'rdel');
-$raddi_id = dPgetIntParam($_GET, 'raddi');
-$rdeli_id = dPgetIntParam($_GET, 'rdeli');
+// Adding or removing receptors and issuers changes data: POST with the CSRF
+// token and edit permission only (the form state stays in the URL).
+$radd_id = $rdel_id = $raddi_id = $rdeli_id = 0;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $AppUI->verifyCsrfToken();
+    if (!getPermission('communication', 'edit')) {
+        $AppUI->redirect('m=public&a=access_denied');
+    }
+    $radd_id = dPgetIntParam($_POST, 'radd');
+    $rdel_id = dPgetIntParam($_POST, 'rdel');
+    $raddi_id = dPgetIntParam($_POST, 'raddi');
+    $rdeli_id = dPgetIntParam($_POST, 'rdeli');
+}
 $get = '';
 
 
@@ -76,8 +85,8 @@ if ($communication_id != 0 && $radd_id != 0) {
         if (isset($_GET['communication_date'])) {
             $get .= '&communication_date=' . urlencode($_GET['communication_date']);
         }
-        if (isset($_GET['communication_responsible'])) {
-            $get .= '&communication_responsible=' . urlencode($_GET['communication_responsible']);
+        if (isset($_GET['responsible'])) {
+            $get .= '&responsible=' . urlencode($_GET['responsible']);
         }
         header('location:?m=communication&a=addedit&communication_id=' . $communication_id . $get);
 } else {
@@ -116,8 +125,8 @@ if ($communication_id != 0 && $rdel_id != 0) {
         if (isset($_GET['communication_date'])) {
             $get .= '&communication_date=' . urlencode($_GET['communication_date']);
         }
-        if (isset($_GET['communication_responsible'])) {
-            $get .= '&communication_responsible=' . urlencode($_GET['communication_responsible']);
+        if (isset($_GET['responsible'])) {
+            $get .= '&responsible=' . urlencode($_GET['responsible']);
         }
         header('location:?m=communication&a=addedit&communication_id=' . $communication_id . $get);
 } else {
@@ -161,8 +170,8 @@ if ($communication_id != 0 && $raddi_id != 0) {
         if (isset($_GET['communication_date'])) {
             $get .= '&communication_date=' . urlencode($_GET['communication_date']);
         }
-         if (isset($_GET['communication_responsible'])) {
-            $get .= '&communication_responsible=' . urlencode($_GET['communication_responsible']);
+         if (isset($_GET['responsible'])) {
+            $get .= '&responsible=' . urlencode($_GET['responsible']);
         }
         header('location:?m=communication&a=addedit&communication_id=' . $communication_id . $get);
 } else {
@@ -201,8 +210,8 @@ if ($communication_id != 0 && $rdeli_id != 0) {
         if (isset($_GET['communication_date'])) {
             $get .= '&communication_date=' . urlencode($_GET['communication_date']);
         }
-         if (isset($_GET['communication_responsible'])) {
-            $get .= '&communication_responsible=' . urlencode($_GET['communication_responsible']);
+         if (isset($_GET['responsible'])) {
+            $get .= '&responsible=' . urlencode($_GET['responsible']);
         }
         header('location:?m=communication&a=addedit&communication_id=' . $communication_id . $get);
 } else {

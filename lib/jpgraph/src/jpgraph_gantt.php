@@ -2128,8 +2128,8 @@ class GanttScale {
         }
 
         // Get day in week for start and ending date (Sun==0)
-        $ds=strftime("%w",$this->iStartDate);
-        $de=strftime("%w",$this->iEndDate);
+        $ds=dp_strftime("%w",$this->iStartDate);
+        $de=dp_strftime("%w",$this->iEndDate);
 
         // We want to start on iWeekStart day. But first we subtract a week
         // if the startdate is "behind" the day the week start at.
@@ -2278,17 +2278,17 @@ class GanttScale {
 
     // Get day in month
     function GetMonthDayNbr($aDate) {
-        return 0+strftime("%d",$aDate);
+        return 0+dp_strftime("%d",$aDate);
     }
 
     // Get day in year
     function GetYearDayNbr($aDate) {
-        return 0+strftime("%j",$aDate);
+        return 0+dp_strftime("%j",$aDate);
     }
 
     // Get month number
     function GetMonthNbr($aDate) {
-        return 0+strftime("%m",$aDate);
+        return 0+dp_strftime("%m",$aDate);
     }
 
     // Translate a date to screen coordinates (horizontal scale)
@@ -2599,63 +2599,63 @@ class GanttScale {
                     $x+$daywidth,$yb-$this->day->iFrameWeight);
                 }
 
-                $mn = strftime('%m',$datestamp);
+                $mn = dp_strftime('%m',$datestamp);
                 if( $mn[0]=='0' )
                     $mn = $mn[1];
 
                 switch( $this->day->iStyle ) {
                     case DAYSTYLE_LONG:
                         // "Monday"
-                        $txt = strftime('%A',$datestamp);
+                        $txt = dp_strftime('%A',$datestamp);
                         break;
                     case DAYSTYLE_SHORT:
                         // "Mon"
-                        $txt = strftime('%a',$datestamp);
+                        $txt = dp_strftime('%a',$datestamp);
                         break;
                     case DAYSTYLE_SHORTDAYDATE1:
                         // "Mon 23/6"
-                        $txt = strftime('%a %d/'.$mn,$datestamp);
+                        $txt = dp_strftime('%a %d/'.$mn,$datestamp);
                         break;
                     case DAYSTYLE_SHORTDAYDATE2:
                         // "Mon 23 Jun"
-                        $txt = strftime('%a %d %b',$datestamp);
+                        $txt = dp_strftime('%a %d %b',$datestamp);
                         break;
                     case DAYSTYLE_SHORTDAYDATE3:
                         // "Mon 23 Jun 2003"
-                        $txt = strftime('%a %d %b %Y',$datestamp);
+                        $txt = dp_strftime('%a %d %b %Y',$datestamp);
                         break;
                     case DAYSTYLE_LONGDAYDATE1:
                         // "Monday 23 Jun"
-                        $txt = strftime('%A %d %b',$datestamp);
+                        $txt = dp_strftime('%A %d %b',$datestamp);
                         break;
                     case DAYSTYLE_LONGDAYDATE2:
                         // "Monday 23 Jun 2003"
-                        $txt = strftime('%A %d %b %Y',$datestamp);
+                        $txt = dp_strftime('%A %d %b %Y',$datestamp);
                         break;
                     case DAYSTYLE_SHORTDATE1:
                         // "23/6"
-                        $txt = strftime('%d/'.$mn,$datestamp);
+                        $txt = dp_strftime('%d/'.$mn,$datestamp);
                         break;
                     case DAYSTYLE_SHORTDATE2:
                         // "23 Jun"
-                        $txt = strftime('%d %b',$datestamp);
+                        $txt = dp_strftime('%d %b',$datestamp);
                         break;
                     case DAYSTYLE_SHORTDATE3:
                         // "Mon 23"
-                        $txt = strftime('%a %d',$datestamp);
+                        $txt = dp_strftime('%a %d',$datestamp);
                         break;
                     case DAYSTYLE_SHORTDATE4:
                         // "23"
-                        $txt = strftime('%d',$datestamp);
+                        $txt = dp_strftime('%d',$datestamp);
                         break;
                     case DAYSTYLE_CUSTOM:
                         // Custom format
-                        $txt = strftime($this->day->iLabelFormStr,$datestamp);
+                        $txt = dp_strftime($this->day->iLabelFormStr,$datestamp);
                         break;
                     case DAYSTYLE_ONELETTER:
                     default:
                         // "M"
-                        $txt = strftime('%A',$datestamp);
+                        $txt = dp_strftime('%A',$datestamp);
                         $txt = strtoupper($txt[0]);
                         break;
                 }
@@ -2808,7 +2808,7 @@ class GanttScale {
 
             $img->SetLineWeight($this->month->grid->iWeight);
             $img->SetColor($this->month->iTextColor);
-            $year = 0+strftime("%Y",$this->iStartDate);
+            $year = 0+dp_strftime("%Y",$this->iStartDate);
             $img->SetTextAlign("center");
             if( $this->GetMonthNbr($this->iStartDate) == $this->GetMonthNbr($this->iEndDate)
                 && $this->GetYear($this->iStartDate)==$this->GetYear($this->iEndDate) ) {
