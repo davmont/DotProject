@@ -75,10 +75,8 @@ function validarDataForm(elem){
 		var dtInicioReg = parseInt(regIntervalo[0].split("/")[2].toString() + regIntervalo[0].split("/")[1].toString() + regIntervalo[0].split("/")[0].toString());
 		var dtFimReg = parseInt(regIntervalo[1].split("/")[2].toString() +  regIntervalo[1].split("/")[1].toString() +  regIntervalo[1].split("/")[0].toString());		
 		
-		if((dtInicioTela >= dtInicioReg &&
-		    dtInicioTela <= dtFimReg) ||
-		   (dtFimTela >= dtInicioReg &&
-		    dtFimTela <= dtFimReg)){
+		// Overlap, including a new period that contains an existing one.
+		if (dtInicioTela <= dtFimReg && dtFimTela >= dtInicioReg) {
 			window.alert('The range entered is invalid because it is already inside another already registered');
 			elem.dt_begin.focus();		
 			return false;			
