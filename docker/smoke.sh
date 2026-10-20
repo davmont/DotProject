@@ -10,7 +10,7 @@ rm -f files/temp/ratelimit_*
 
 check() { if [ "$2" = "$3" ]; then echo "PASS  $1"; else echo "FAIL  $1 (got '$2', want '$3')"; FAIL=1; fi; }
 login() { rm -f "$CJ"; curl -s -c "$CJ" -b "$CJ" -o /dev/null $U
-  curl -s -L -c "$CJ" -b "$CJ" -X POST $U -d "login=login&username=$1&password=$2" | grep -o 'Logout' | head -1; }
+  curl -s -L -c "$CJ" -b "$CJ" $U -d "login=login&username=$1&password=$2" | grep -o 'Logout' | head -1; }
 token() { curl -s -c "$CJ" -b "$CJ" "$U?m=companies" | grep -o 'name="csrf-token" content="[0-9a-f]*"' | grep -o '[0-9a-f]\{64\}'; }
 code() { curl -s -c "$CJ" -b "$CJ" -o /dev/null -w '%{http_code}:%{redirect_url}' "$@"; }
 
