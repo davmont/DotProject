@@ -63,14 +63,14 @@ if (!function_exists('dp_strftime')) {
 				case 'B': $out .= dp_strftime_name('MMMM', 'F', $timestamp, $gmt); break;
 				case 'd': $out .= $date('d', $timestamp); break;
 				case 'e': $out .= sprintf('%2d', $date('j', $timestamp)); break;
-				case 'j': $out .= sprintf('%03d', $date('z', $timestamp) + 1); break;
+				case 'j': $out .= sprintf('%03d', (int)$date('z', $timestamp) + 1); break;
 				case 'u': $out .= $date('N', $timestamp); break;
 				case 'w': $out .= $date('w', $timestamp); break;
 				case 'U': // week of the year, weeks starting on Sunday
-					$out .= sprintf('%02d', (int)(($date('z', $timestamp) + 7 - $date('w', $timestamp)) / 7));
+					$out .= sprintf('%02d', (int)(((int)$date('z', $timestamp) + 7 - (int)$date('w', $timestamp)) / 7));
 					break;
 				case 'W': // week of the year, weeks starting on Monday
-					$out .= sprintf('%02d', (int)(($date('z', $timestamp) + 7 - (($date('w', $timestamp) + 6) % 7)) / 7));
+					$out .= sprintf('%02d', (int)(((int)$date('z', $timestamp) + 7 - (((int)$date('w', $timestamp) + 6) % 7)) / 7));
 					break;
 				case 'V': $out .= $date('W', $timestamp); break;
 				case 'G': $out .= $date('o', $timestamp); break;
@@ -78,7 +78,7 @@ if (!function_exists('dp_strftime')) {
 				case 'm': $out .= $date('m', $timestamp); break;
 				case 'y': $out .= $date('y', $timestamp); break;
 				case 'Y': $out .= $date('Y', $timestamp); break;
-				case 'C': $out .= sprintf('%02d', (int)($date('Y', $timestamp) / 100)); break;
+				case 'C': $out .= sprintf('%02d', (int)((int)$date('Y', $timestamp) / 100)); break;
 				case 'H': $out .= $date('H', $timestamp); break;
 				case 'k': $out .= sprintf('%2d', $date('G', $timestamp)); break;
 				case 'I': $out .= $date('h', $timestamp); break;
