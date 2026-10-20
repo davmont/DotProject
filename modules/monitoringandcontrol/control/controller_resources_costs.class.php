@@ -9,57 +9,50 @@ DB filelds - TABLE: 'monitoring_user_cost' :
 */
 class ControllerResourcesCosts{
 	
-	/* Verifica se os dados são válidos e efetua a inserção  */
-	
-	function checkInsert($tx_pad,$use_cost,$dt_begin,$dt_end,$user_id){
-			global $AppUI;	
-			$resCost = new ControllerResourcesCosts(); 			
-			$dt_begin=  $resCost -> convert_to_datetime($dt_begin);
-			$dt_end =  $resCost -> convert_to_datetime($dt_end);
-			$resCost -> insertCosts($tx_pad,$use_cost,$dt_begin,$dt_end,$user_id);
-	}  
-	
-	/* Verifica se os dados são válidos e efetua a alteração  */
-	function checkUpdate($tx_pad,$use_cost,$dt_begin,$dt_end,$user_id,$id){
-			global $AppUI;	
-			$controllerUtil = new ControllerUtil(); 
-			$controllerResourceCosts = new ControllerResourcesCosts();
-			$data_i =  $controllerUtil->date_to_hours($dt_begin);				// convert date to hours
-			$data_f =  $controllerUtil->date_to_hours($dt_end);				
-			if($dt_end != null || $dt_end !=""){    
-				if($data_i > $data_f){   // compara 
-					$AppUI->setMsg('A data Início Vigencia deve ser inferior a data Fim Vigencia.', UI_MSG_ERROR);
-					$AppUI->redirect('m=admin&a=viewuser&user_id=' . (int)$user_id);
+	/*
+	 * Checks a cost period before it is saved: both dates (dd/mm/yyyy) given, the
+	 * begin before the end, and no overlap with another period of the user. Two
+	 * periods of one user may not overlap: actual cost charges every task log hour
+	 * at the rate of the period containing the log date, so an overlap would count
+	 * those hours twice. Returns an error message, or null when the period is valid.
+	 */
+	function validatePeriod($user_id, $dt_begin, $dt_end, $exclude_id = 0){
+			$begin = $this->parsePeriodDate($dt_begin);
+			$end = $this->parsePeriodDate($dt_end);
+			if ($begin === null || $end === null) {
+				return 'Fill in valid begin and end dates (dd/mm/yyyy).';
+			}
+			if ($begin >= $end) {
+				return 'Date begin must be before date end';
+			}
+			$q = new DBQuery;
+			$q->addTable('monitoring_user_cost', 'c');
+			$q->addQuery('cost_dt_begin, cost_dt_end');
+			$q->addWhere('user_id = ' . (int)$user_id);
+			if ($exclude_id) {
+				$q->addWhere('cost_id <> ' . (int)$exclude_id);
+			}
+			foreach ((array)$q->loadList() as $row) {
+				$rowBegin = substr((string)$row['cost_dt_begin'], 0, 10);
+				$rowEnd = ($row['cost_dt_end'] && substr($row['cost_dt_end'], 0, 10) != '0000-00-00')
+					? substr($row['cost_dt_end'], 0, 10) : '9999-12-31';
+				if ($begin <= $rowEnd && $end >= $rowBegin) {
+					return 'The range entered is invalid because it overlaps a period already registered';
 				}
 			}
-			
-			$pos = $controllerResourceCosts ->getPosition($id,$user_id);		// get inserted row position on table
-			$prevPos = $pos-1;
-			$nextPos = $pos+1;			
-			$rows = $controllerUtil -> getRecordsByUser($user_id);	
-			$dt_endPrev = $rows[$prevPos][5];		// get previous dt_end
-			$dt_iniNext = $rows[$nextPos][4];		// get next dt_begin
-				
-			if(!empty($dt_endPrev )){
-				$dt_endPrev =  $controllerUtil -> formatDate($dt_endPrev);
-				$dt_endPrev =  $controllerUtil-> date_to_hours($dt_endPrev);			
-					if($data_i < $dt_endPrev){  
-						$AppUI->setMsg('Alteração inválida. A data Início de Vigencia atual deve ser posterior a data Fim de Vigencia anterior.', UI_MSG_ERROR);
-						$AppUI->redirect('m=admin&a=viewuser&user_id=' . (int)$user_id);
-					}					
-			}
-		
-			if(!empty($dt_iniNext)){
-				$dt_iniNext =  $controllerUtil -> formatDate($dt_iniNext);
-				$dt_iniNext =  $controllerUtil-> date_to_hours($dt_iniNext);
-					if($data_f > $dt_iniNext){   
-						$AppUI->setMsg('Alteração inválida. A data Fim de Vigencia atual deve ser anterior ao próximo Início de Vigencia.', UI_MSG_ERROR);
-						$AppUI->redirect('m=admin&a=viewuser&user_id=' . (int)$user_id);
-					}			
-			}
-			
-			$resCost -> updateRow($tx_pad,$use_cost,$dt_begin,$dt_end,$user_id, $id);
+			return null;
+	}
 
+	// dd/mm/yyyy (or yyyy-mm-dd) to yyyy-mm-dd; null when it is not a valid date.
+	function parsePeriodDate($date){
+			$date = trim((string)$date);
+			if (preg_match('#^(\d{1,2})/(\d{1,2})/(\d{4})$#', $date, $m) && checkdate((int)$m[2], (int)$m[1], (int)$m[3])) {
+				return sprintf('%04d-%02d-%02d', $m[3], $m[2], $m[1]);
+			}
+			if (preg_match('#^(\d{4})-(\d{2})-(\d{2})#', $date, $m) && checkdate((int)$m[2], (int)$m[3], (int)$m[1])) {
+				return sprintf('%04d-%02d-%02d', $m[1], $m[2], $m[3]);
+			}
+			return null;
 	}
 
 	function insertCosts($tx_pad,$use_cost,$dt_begin,$dt_end,$user_id){
@@ -119,27 +112,6 @@ class ControllerResourcesCosts{
 			$pos = array_search($id, $array_id );
 			
 			return $pos ;	
-	}
-	
-	function isValidDtBegin($dt_begin,$user_id){		
-			global $AppUI;	
-			$controllerUtil = new ControllerAdminViewUserCustos(); 
-			$result = false ;
-			$data_i =  $controllerUtil->date_to_hours($dt_begin);				
-			$list_dtEnd = $controllerUtil->getListDtEnd($user_id);	
-			if(!empty($list_dtEnd)){
-				if($list_dtEnd[0][0] != null){
-						$prev_dt = $list_dtEnd[0][0];											
-						$prev_dt =  $controllerUtil-> formatDate($prev_dt);																											
-						$prev_dt =  $controllerUtil-> date_to_hours($prev_dt);
-							if($prev_dt >$data_i){
-								$AppUI->setMsg('A data início de vigência deve ser posterior ao fim da vigência anterior.', UI_MSG_ERROR);
-								$AppUI->redirect('m=admin&a=viewuser&user_id=' . (int)$user_id);
-							}else
-								$result = true ;
-				}
-			}
-			return $result ;
 	}
 	
 	function getResourcesCosts(){

@@ -36,7 +36,7 @@ function validarData(pObj) {
 		var dia = pObj.value.substring(0,2);
 		var mes = pObj.value.substring(3,5);
 		var ano = pObj.value.substring(6,10);
-		if (mes == 4 || mes == 6 || mes == 9 || mes == 11 && dia > 30) 
+		if ((mes == 4 || mes == 6 || mes == 9 || mes == 11) && dia > 30) 
 		  aRet = false;
 		else 
 		  if ((ano % 4) != 0 && mes == 2 && dia > 28) 
