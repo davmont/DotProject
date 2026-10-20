@@ -7,7 +7,6 @@ require_once(DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ear
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_baseline.class.php");
 require_once(DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 $AppUI->savePlace();
-$tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
 $project_id = dPgetIntParam( $_GET, 'project_id', 0 ); 
 
  ini_set('max_execution_time', 180);
