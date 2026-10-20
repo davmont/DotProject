@@ -15,10 +15,16 @@ $inventory_parent = intval( dPgetParam( $_GET, "inventory_parent", 0 ) );
 $add_remembered = intval( dPgetParam( $_GET, "add_remembered", 0 ) );
 
 // if add_remembered is true, recall the marked items and
-// add them to the parent item
+// add them to the parent item (this changes the items: POST with the CSRF
+// token and edit permission only)
 
-if ( $add_remembered && $inventory_parent )
+if ( $add_remembered && $inventory_parent && $_SERVER['REQUEST_METHOD'] === 'POST' )
 {
+	$AppUI->verifyCsrfToken();
+	if ( !getPermission( 'inventory', 'edit' ) )
+	{
+		$AppUI->redirect( 'm=public&a=access_denied' );
+	}
 	$parent = new CInventory();
 	if ( !$parent->load( $inventory_parent ) )
 	{
