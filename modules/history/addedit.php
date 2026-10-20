@@ -11,9 +11,15 @@ if (!$canEdit) {
 	$AppUI->redirect("m=public&a=access_denied");
 }
 */
-$action = @$_REQUEST["action"];
+// Adding, updating and deleting change data: POST with the CSRF token and edit
+// permission only.
+$action = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dPgetCleanParam($_POST, 'action', '') : '';
 $q = new DBQuery;
 if ($action) {
+	$AppUI->verifyCsrfToken();
+	if (!getPermission('history', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
 	$history_description = dPgetCleanParam($_POST, 'history_description', '');
 	$history_project = dPgetCleanParam($_POST, 'history_project', '');
 	$userid = $AppUI->user_id;
