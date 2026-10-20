@@ -60,7 +60,20 @@ if ($dot > 0) {
 	$log_duration_minutes = sprintf('%.3F', mb_substr($obj->task_log_hours, $dot + 1)/60.0);
 	$obj->task_log_hours = sprintf('%.3F', floor($obj->task_log_hours) + $log_duration_minutes);
 }
-$obj->task_log_hours = sprintf('%.3F', round($obj->task_log_hours, 3));
+// An empty hours field means no hours (round('') throws on PHP 8).
+$obj->task_log_hours = sprintf('%.3F', round((float)$obj->task_log_hours, 3));
+
+// Modules with task tabs can act on task logs: their tasks_dosql.updatetask.php may add
+// functions to $post_log_store (called with the stored log) and $post_log_delete
+// (called with the deleted log).
+$post_log_store = array();
+$post_log_delete = array();
+foreach (findTabModules('tasks', 'view') as $mod) {
+	$fname = DP_BASE_DIR . '/modules/' . $AppUI->checkFileName($mod) . '/tasks_dosql.updatetask.php';
+	if (file_exists($fname)) {
+		require_once $fname;
+	}
+}
 
 // prepare (and translate) the module name ready for the suffix
 $AppUI->setMsg('Task Log');
@@ -68,6 +81,9 @@ if ($del) {
 	if (($msg = $obj->delete())) {
 		$AppUI->setMsg($msg, UI_MSG_ERROR);
 	} else {
+		foreach ($post_log_delete as $post_log_function) {
+			$post_log_function($obj);
+		}
 		$AppUI->setMsg('deleted', UI_MSG_ALERT);
 	}
 	$AppUI->redirect();
@@ -77,6 +93,9 @@ if ($del) {
 		$AppUI->setMsg($msg, UI_MSG_ERROR);
 		$AppUI->redirect();
 	} else {
+		foreach ($post_log_store as $post_log_function) {
+			$post_log_function($obj);
+		}
 		$AppUI->setMsg(@$_POST['task_log_id'] ? 'updated' : 'inserted', UI_MSG_OK, true);
 	}
 }

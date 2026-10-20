@@ -349,6 +349,15 @@ if ($AppUI->isActiveModule('contacts') && getPermission('contacts', 'view')) {
         <td align="right" valign="top"><?php echo $AppUI->_('Extra Recipients'); ?>:</td>
         <td><input type="text" class="text" name="email_extras" maxlength="255" size="30" /></td>
       </tr>
+<?php
+// Modules with task tabs can add task log fields (rows of this table): tasks_log.addedit.php.
+foreach (findTabModules('tasks', 'view') as $mod) {
+	$fname = DP_BASE_DIR . '/modules/' . $AppUI->checkFileName($mod) . '/tasks_log.addedit.php';
+	if (file_exists($fname)) {
+		include $fname;
+	}
+}
+?>
       <tr>
         <td colspan="2" valign="bottom" align="right">
           <input type="button" class="button" value="<?php 
