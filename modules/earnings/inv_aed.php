@@ -10,6 +10,12 @@ require_once( $AppUI->getSystemClass( 'libmail' ) );
 
 // Respond To inv_dosql Commands in _POST
 if (isset( $_POST['inv_dosql'] ) ) {
+	// Every command changes data, and this view is not named do_*, so index.php's
+	// write-handler check does not apply: token and edit permission here.
+	$AppUI->verifyCsrfToken();
+	if (!getPermission('earnings', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
 	// Figure out what kind
 
 	// Add AdHoc Item
@@ -144,10 +150,9 @@ if (isset( $_POST['inv_dosql'] ) ) {
 		// Confirmation Has Already Been Received
 		// Delete All Supporting earning_Items First
 		$sql = "DELETE FROM {$dbprefix}earnings_items WHERE earning_parent_id = " . $earning_id . ";";
-		echo $sql;
-		//if (!db_exec( $sql )) {
-		//	echo db_error();
-		//}
+		if (!db_exec( $sql )) {
+			echo db_error();
+		}
 
 		// Then Delete earning Itself
 		$sql = "DELETE FROM {$dbprefix}earnings WHERE earning_id = " . $earning_id . ";";
