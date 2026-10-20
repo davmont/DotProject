@@ -241,11 +241,11 @@ foreach ($proTasks as $row) {
 	}
 	
 	$ted = new CDate($row['task_end_date']);
-	if ($ted->after(new CDate($end_max))) {
+	if ($end_max == '0000-00-00 00:00:00' || $ted->after(new CDate($end_max))) {
 		$end_max = $row['task_end_date'];
 	}
-	if ($ted->after(new CDate($projects[$row['task_project']]['project_end_date']))
-	    || $projects[$row['task_project']]['project_end_date'] == '') {
+	if ($projects[$row['task_project']]['project_end_date'] == ''
+	    || $ted->after(new CDate($projects[$row['task_project']]['project_end_date']))) {
 		$projects[$row['task_project']]['project_end_date'] = $row['task_end_date'];
 	}
 	
@@ -461,7 +461,6 @@ foreach ($projects as $p) {
 	if (isset($p['tasks'])) {
 		$tnums = count($p['tasks']);
 	}
-	$task_id = $t['task_id'];
 
 	for ($i=0; $i < $tnums; $i++) {
 		$t = $p['tasks'][$i];
