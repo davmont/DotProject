@@ -124,8 +124,6 @@ modules/macroprojects/reports/userperformance.php:2
 modules/macroprojects/viewfinances.php:1
 modules/macroprojects/viewgantt.php:2
 modules/macroprojects/view.php:4
-modules/mantis/index.php:1
-modules/mantis/taskimport.php:3
 modules/messages/index.php:7
 modules/mileagelog/addedit.php:5
 modules/mileagelog/configure.php:3
@@ -165,7 +163,7 @@ modules/projects/admin_tab.viewuser.projects.php:6
 modules/projects/companies_tab.view.projects_gantt.php:2
 modules/projects/departments_tab.view.projects_gantt.php:4
 modules/projects/departments_tab.view.projects.php:8
-modules/projects/do_project_aed.php:3
+modules/projects/do_project_aed.php:1
 modules/projects/index.php:10
 modules/projects/reports/tasksperuser.php:1
 modules/projects/reports/userperformance.php:2

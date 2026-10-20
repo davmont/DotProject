@@ -2347,192 +2347,6 @@ parameters:
 			path: modules/macroprojects/reports/tasksperuser.php
 
 		-
-			message: '#^Call to an undefined static method Error\:\:isError\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: modules/mantis/createproject.php
-
-		-
-			message: '#^Call to method addArg\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 12
-			path: modules/mantis/createproject.php
-
-		-
-			message: '#^Call to method call\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/mantis/createproject.php
-
-		-
-			message: '#^Call to method createClient\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/mantis/createproject.php
-
-		-
-			message: '#^Call to method resetRequest\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/mantis/createproject.php
-
-		-
-			message: '#^Call to method setFunction\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/mantis/createproject.php
-
-		-
-			message: '#^Call to method setXMLRPCDebug\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/mantis/createproject.php
-
-		-
-			message: '#^Instantiated class PHPXMLRPCClient not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/mantis/createproject.php
-
-		-
-			message: '#^Call to an undefined static method Error\:\:isError\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: modules/mantis/index.php
-
-		-
-			message: '#^Call to method addArg\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 11
-			path: modules/mantis/index.php
-
-		-
-			message: '#^Call to method call\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/mantis/index.php
-
-		-
-			message: '#^Call to method createClient\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/mantis/index.php
-
-		-
-			message: '#^Call to method resetRequest\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/mantis/index.php
-
-		-
-			message: '#^Call to method setFunction\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 3
-			path: modules/mantis/index.php
-
-		-
-			message: '#^Call to method setXMLRPCDebug\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/mantis/index.php
-
-		-
-			message: '#^Instantiated class PHPXMLRPCClient not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/mantis/index.php
-
-		-
-			message: '#^Call to an undefined static method Error\:\:isError\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Call to method addArg\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 6
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Call to method call\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Call to method createClient\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Call to method resetRequest\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Call to method setFunction\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Call to method setXMLRPCDebug\(\) on an unknown class PHPXMLRPCClient\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Instantiated class PHPXMLRPCClient not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Undefined variable\: \$AppUI$#'
-			identifier: variable.undefined
-			count: 1
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Undefined variable\: \$comment$#'
-			identifier: variable.undefined
-			count: 1
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Undefined variable\: \$notify$#'
-			identifier: variable.undefined
-			count: 1
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Undefined variable\: \$post_save$#'
-			identifier: variable.undefined
-			count: 1
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Undefined variable\: \$pre_save$#'
-			identifier: variable.undefined
-			count: 1
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Variable \$post_save in isset\(\) is never defined\.$#'
-			identifier: isset.variable
-			count: 1
-			path: modules/mantis/taskimport.php
-
-		-
-			message: '#^Variable \$pre_save in isset\(\) is never defined\.$#'
-			identifier: isset.variable
-			count: 1
-			path: modules/mantis/taskimport.php
-
-		-
 			message: '#^Call to an undefined method CMileageLog\:\:getError\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -2581,60 +2395,6 @@ parameters:
 			path: modules/mngdocument/setup.php
 
 		-
-			message: '#^Undefined variable\: \$baseline$#'
-			identifier: variable.undefined
-			count: 2
-			path: modules/monitoringandcontrol/control/controller_earn_value.class.php
-
-		-
-			message: '#^Variable \$baseline in isset\(\) is never defined\.$#'
-			identifier: isset.variable
-			count: 1
-			path: modules/monitoringandcontrol/control/controller_earn_value.class.php
-
-		-
-			message: '#^Call to an undefined method ControllerResourcesCosts\:\:convert_to_datetime\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: modules/monitoringandcontrol/control/controller_resources_costs.class.php
-
-		-
-			message: '#^Call to an undefined method ControllerUtil\:\:getRecordsByUser\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/monitoringandcontrol/control/controller_resources_costs.class.php
-
-		-
-			message: '#^Call to method date_to_hours\(\) on an unknown class ControllerAdminViewUserCustos\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/monitoringandcontrol/control/controller_resources_costs.class.php
-
-		-
-			message: '#^Call to method formatDate\(\) on an unknown class ControllerAdminViewUserCustos\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/monitoringandcontrol/control/controller_resources_costs.class.php
-
-		-
-			message: '#^Call to method getListDtEnd\(\) on an unknown class ControllerAdminViewUserCustos\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/monitoringandcontrol/control/controller_resources_costs.class.php
-
-		-
-			message: '#^Instantiated class ControllerAdminViewUserCustos not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/monitoringandcontrol/control/controller_resources_costs.class.php
-
-		-
-			message: '#^Undefined variable\: \$resCost$#'
-			identifier: variable.undefined
-			count: 1
-			path: modules/monitoringandcontrol/control/controller_resources_costs.class.php
-
-		-
 			message: '#^Binary operation "\*" between string and 24 results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -2671,12 +2431,6 @@ parameters:
 			path: modules/monitoringandcontrol/projects_tab.5LBLCUSTO.php
 
 		-
-			message: '#^Method ControllerEarnValue\:\:obterInicioPeriodo\(\) invoked with 2 parameters, 1 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: modules/monitoringandcontrol/projects_tab.5LBLCUSTO.php
-
-		-
 			message: '#^Binary operation "\+" between string and int\<1, max\> results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 1
@@ -2686,12 +2440,6 @@ parameters:
 			message: '#^Binary operation "\-" between string and string results in an error\.$#'
 			identifier: binaryOp.invalid
 			count: 2
-			path: modules/monitoringandcontrol/projects_tab.6LBLCRONOGRAMA.php
-
-		-
-			message: '#^Method ControllerEarnValue\:\:obterInicioPeriodo\(\) invoked with 2 parameters, 1 required\.$#'
-			identifier: arguments.count
-			count: 1
 			path: modules/monitoringandcontrol/projects_tab.6LBLCRONOGRAMA.php
 
 		-
@@ -3281,18 +3029,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: modules/timetrack/view.php
-
-		-
-			message: '#^Access to protected property Cunitcost_task_costs\:\:\$_tbl_key\.$#'
-			identifier: property.protected
-			count: 1
-			path: modules/unitcost/tasks_dosql.addedit.php
-
-		-
-			message: '#^Function setItem not found\.$#'
-			identifier: function.notFound
-			count: 11
-			path: modules/unitcost/tasks_dosql.addedit.php
 
 		-
 			message: '#^Class CTask referenced with incorrect case\: Ctask\.$#'
