@@ -21,9 +21,15 @@ $end_date   = intval( $log_end_date )   ? new CDate( $log_end_date ) : new CDate
 $holiday_description = dPgetParam( $_POST, "holiday_description", '');
 $holiday_annual = dPgetParam( $_POST, "holiday_annual", 0);
         
-$action = @$_REQUEST["action"];
+// Adding, updating and deleting change data: POST with the CSRF token and edit
+// permission only.
+$action = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dPgetCleanParam($_POST, 'action', '') : '';
 $q = new DBQuery();
 if($action) {
+        $AppUI->verifyCsrfToken();
+        if (!getPermission('holiday', 'edit')) {
+                $AppUI->redirect('m=public&a=access_denied');
+        }
         if( $action == "add" ) {
         		$q -> addTable('holiday');
         		$q -> addInsert('holiday_description',$holiday_description);

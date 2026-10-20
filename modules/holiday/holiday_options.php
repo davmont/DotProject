@@ -10,8 +10,13 @@ if (!defined('DP_BASE_DIR')) {
 ##
 
 
-$action = @$_REQUEST["action"];
+// Saving the settings changes data: POST with the CSRF token and edit permission only.
+$action = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dPgetCleanParam($_POST, 'action', '') : '';
 if($action=="update") {
+	$AppUI->verifyCsrfToken();
+	if (!getPermission('holiday', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
 	$holiday_manual = $_POST["holiday_manual"];
 	$holiday_auto = $_POST["holiday_auto"];
 	$holiday_driver = $_POST["holiday_driver"];
