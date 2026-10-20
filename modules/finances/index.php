@@ -218,7 +218,7 @@ if(dPgetParam($_POST, 'edit', 0))
 					foreach($years as $y){
 						$yearsGET .= $y.'y';
 					}?>
-					<a href="?m=finances&amp;a=export_excel&amp;projectStatus=<?php echo $project_status;?>&amp;projectType=<?php echo $project_type;?>&amp;departementId=<?php echo $departement_id;?>&amp;companyId=<?php echo $company_id;?>&amp;years=<?php echo $yearsGET;?>&amp;tax=<?php echo $tax;?>&amp;hideNull=<?php echo $hideNull;?>&amp;suppressHeaders=1">
+					<a href="?m=finances&amp;a=export_excel&amp;projectStatus=<?php echo $project_status;?>&amp;projectType=<?php echo $project_type;?>&amp;departmentId=<?php echo (int)$department_id;?>&amp;companyId=<?php echo $company_id;?>&amp;years=<?php echo $yearsGET;?>&amp;tax=<?php echo $tax;?>&amp;hideNull=<?php echo $hideNull;?>&amp;suppressHeaders=1">
 					<?php echo $AppUI->_('Excel export');?></a>
 				</td>
 			</tr>
