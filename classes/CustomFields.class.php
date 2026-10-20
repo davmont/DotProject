@@ -820,7 +820,7 @@ class CustomFields
 		global $db;
 		$q = new DBQuery;
 		$q->setDelete('custom_fields_struct');
-		$q->addWhere('field_id = ' . $field_id);
+		$q->addWhere('field_id = ' . (int)$field_id);
 		if (!$q->exec()) {
 			$q->clear();
 			return $db->ErrorMsg();
