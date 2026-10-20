@@ -15,7 +15,7 @@ check: lint phpstan raw-input inline-js js-test
 # PHP 8.3 syntax check of first-party code (vendored copies excluded, as in phpstan.neon.dist).
 lint:
 	git ls-files -z '*.php' \
-	  | grep -zvE '^(lib|vendor)/|^modules/(holiday/PEAR|mantis/(core|no\.core)|unitcost/patch_203)/' \
+	  | grep -zvE '^(lib|vendor)/|^modules/(holiday/PEAR|mantis/(core|no\.core))/' \
 	  | $(DOCKER_RUN) -i --entrypoint sh php:8.3-cli -c 'xargs -0 -n 50 -P 4 sh -c "for f; do php -d error_reporting=E_ALL\&~E_DEPRECATED -l \"\$$f\" >/dev/null || { php -l \"\$$f\"; exit 255; }; done" _'
 	@echo "OK: no syntax errors."
 

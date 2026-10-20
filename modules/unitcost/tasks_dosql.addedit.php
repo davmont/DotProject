@@ -32,6 +32,14 @@ global $performance;
 
 
 /**
+ * A field of the posted task form (the core's setItem() helper is gone).
+ */
+function unitcost_post_value($name)
+{
+  return dPgetParam($_POST, $name, null);
+}
+
+/**
  * presave functions are called before the session storage of tab data
  * is destroyed.  It can be used to save this data to be used later in
  * the postsave function.
@@ -51,17 +59,17 @@ function unitcost_presave()
   global $total_units;
   global $performance;
 
-  $material_unit_cost = setItem('material_unit_cost');
-  $equipment_unit_cost = setItem('equipment_unit_cost');
-  $labor_unit_cost = setItem('labor_unit_cost');
-  $other_unit_cost = setItem('other_unit_cost');
-  $total_unit_cost = setItem('total_unit_cost');
-  $task_total_cost = setItem('task_total_cost');
-  $norm_ref = setItem('norm_ref');
-  $norm_dsc = setItem('norm_dsc');
-  $unit_of_measure = setItem('unit_of_measure');
-  $total_units = setItem('total_units');
-  $performance = setItem('performance');
+  $material_unit_cost = (float)unitcost_post_value('material_unit_cost');
+  $equipment_unit_cost = (float)unitcost_post_value('equipment_unit_cost');
+  $labor_unit_cost = (float)unitcost_post_value('labor_unit_cost');
+  $other_unit_cost = (float)unitcost_post_value('other_unit_cost');
+  $total_unit_cost = (float)unitcost_post_value('total_unit_cost');
+  $task_total_cost = (float)unitcost_post_value('task_total_cost');
+  $norm_ref = unitcost_post_value('norm_ref');
+  $norm_dsc = unitcost_post_value('norm_dsc');
+  $unit_of_measure = unitcost_post_value('unit_of_measure');
+  $total_units = (float)unitcost_post_value('total_units');
+  $performance = (float)unitcost_post_value('performance');
 
   // sanity; will find dotProject standard way later...
   $material_unit_cost = $material_unit_cost ? $material_unit_cost : 0;
@@ -106,9 +114,7 @@ function unitcost_postsave()
 
   // unicost task costs object
   $task_costs = new Cunitcost_task_costs;
-  if(!($task_costs->load($task_id))){
-    $task_costs->_tbl_key = NULL;
-  }
+  $exists = $task_costs->load($task_id);
 
   $task_costs->task_id = $task_id;
   $task_costs->material_unit_cost = $material_unit_cost;
@@ -123,8 +129,13 @@ function unitcost_postsave()
   $task_costs->total_units = $total_units;
   $task_costs->performance = $performance;
 
-  // store changes
-  $task_costs->store();  
+  // store changes: a new row is inserted first (the key is the task id, already
+  // set, so store() alone would update a missing row); store() then also updates
+  // the task and project budgets.
+  if (!$exists) {
+    db_insertObject('unitcost_task_costs', $task_costs);
+  }
+  $task_costs->store();
     
   return true;
 

@@ -197,3 +197,27 @@ function changedValue(fld_name)
 
 	
 }
+
+
+// Task log form (tasks_log.addedit.php): percent complete follows the units made
+// and can be fractional, so the core's 0-100 select becomes a text field.
+document.addEventListener('DOMContentLoaded', function () {
+	if (!document.getElementById('new_actual_units')) {
+		return;
+	}
+	var select = document.querySelector('form[name="editFrm"] select[name="task_percent_complete"]');
+	if (!select) {
+		return;
+	}
+	var input = document.createElement('input');
+	input.type = 'text';
+	input.className = 'text';
+	input.size = 6;
+	input.name = 'task_percent_complete';
+	input.id = 'task_percent_complete';
+	input.value = select.value;
+	input.setAttribute('data-dp-on', 'blur');
+	input.setAttribute('data-dp-call', 'changedValue');
+	input.setAttribute('data-dp-args', '["task_percent_complete"]');
+	select.parentNode.replaceChild(input, select);
+});
