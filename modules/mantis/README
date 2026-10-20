@@ -1,79 +1,56 @@
-FOR LICENSING INFORMATION PLEASE REFER TO THE LICENSE FILE, WHICH YOU SHOULD HAVE RECEIVED WITH 
-THIS PACKAGE.
+dotProject Mantis module 1.0 - MantisBT integration through the REST API
+=======================================================================
 
-0)	Preface
-	0.1)	Project Names:
-	Generally about dotProject and Mantis.
-	Mantis is great bug tracking application and bugs are assigned to projects. But dotProject 
-	is project management system. This includes not only issue solving but time tracking, 
-	budget calculation etc. etc.
-	So dotProject is the leading application and that's why Mantis is being integrated into 
-	dotProject and not the other way around.
+What it does
+------------
+- Links a dotProject project to a MantisBT project (project tab "Mantis").
+- Lists the issues of the linked Mantis project.
+- Imports selected issues as dotProject tasks (each issue once per project;
+  the task links back to the issue).
+- Changes the status of selected issues, optionally with a note.
+- Creates the Mantis project for a dotProject project (needs a Mantis token
+  with the right to create projects).
 
-	How can definitely identify a project? By Name? 
-	Nope. What about "Support" for two different projects for the same company? Or what about 
-	"Security Improvements" for the same project "Web Site Dev" but for two different companies.
-	While working on this module I faced this problem and as a first approach I decided 
-	that each one project must have a unique name, regardless of the company. So the 
-	project name of "Security Improvements" for Company 1 would be "Security Improvements 
-	for Company 1" or "CP1 - Security Improvements" - it is up to you.
-	The point is: at this stage of development the correct identification of projects in dP
-	and Mantis is done only by name.
-	I am aware of the fact that this is not a nice solution, so this is noted in "Know Issues"
+Requirements
+------------
+- MantisBT 2.x with the REST API enabled (the default); tested with 2.28.
+- PHP curl extension on the dotProject server.
 
-	What is the best way to consider user permissions for Mantis users?
-	One single Mantis account won't be enough because only administrator are allowed to 
-	create new projects in Mantis, only developers are allowed to change the status of 
-	an issue.
-	So the real question is: how to identify each one user in Mantis.
-	Well, the only meaningful answer would be: users must have same usernames and passwords 
-	in both tools.
+Setup
+-----
+1. Install the module in System Admin > View Modules.
+2. In System Admin > System Configuration > Mantis Integration, set the Mantis
+   address, for example https://bugs.example.org. It must be HTTPS; "Allow
+   HTTP for Mantis" exists only for a local test installation.
+3. Each user creates an API token in Mantis (My Account > API Tokens) and
+   enters it on the module page (Mantis > Mantis API token). Mantis then
+   applies that user's own Mantis permissions; dotProject never sends Mantis
+   anything about the dotProject account.
+4. In a project's Mantis tab, link the project to a Mantis project (or create
+   it in Mantis).
 
-	0.2)	Workflow:
-	This all being said pops the question about a correct workflow.
-	It is not my job to tell how to organize your workflow, it is my job to make sure that 
-	this module makes sense for each one workflow.
-	However there are several things to be considered.
-	0.2.1) People that have the privileges to create new or to edit existing projects in dP must 
-	have administrator access in Mantis
-	OR
-	0.2.2) else when creating projects in dP people have to mail project_name and project_description 
-	to a Mantis administrator.
+Permissions
+-----------
+- Viewing the tab: access to the Mantis module and a stored token.
+- Linking, unlinking, creating, importing: edit rights on the project and on
+  the Mantis module (importing also needs the right to add tasks).
+- Changing status: edit rights on the Mantis module; Mantis decides whether
+  the token's user may change the issue.
 
-	0.2.3) 1 is automated and saves time. However if you choose the "no.core" branch of the module 
-	(see section 0.3) in combination with 2 each change of the project_name will result in double 
-	work - once in dP and once in Mantis
+Upgrading from 0.2
+------------------
+0.2 talked XML-RPC to a server side copied into Mantis, sent each user's
+dotProject password hash to Mantis and matched projects by name. That server
+side, the XML-RPC client and the dotProject core patch are gone, and the
+"Mantis Integration" project field is removed on upgrade: link each project
+again from its Mantis tab, and have each user enter an API token.
 
-	0.3)	Branches:
-	Two branches? Why?
-	We at http://mgtraining.com wanted the Mantis Integration to be as automated as possible. In 
-	order to achieve this, one file of the dP core had to be modified. This change allows us to 
-	make changes of project_name and project_description in both tools at the same time by changing 
-	them in the leading application - dotProject.
-	The second branch - "no.core" - has some cutbacks, but it is still as automated as possible. And
-	this is the branch I am advising you to take if you don't feel happy or sure what you're doing 
-	when editing core files.
-	Each branch comes with its own README.branch.
-	
-	0.4)	Compatibility:
-	The module was developed under dp.2.1.rc1 has not been tested with other dotProject versions. 
-	Please come back to me if you found the module to be (not) working with other versions.
-	It is also testes with Mantis 1.06 and 1.07.
-	
-	
-1) 	Requirements:
-	1.1) 	Valid dotProject installation
-	1.2)	Valid Mantis installation
-	1.3)	All users must be registered in both tools with same username and same password.
-	1.4)	Projects must have the same names, see section 0.1.
+Stored data
+-----------
+Tables mantis_user_tokens (one token per user, never shown again after it is
+saved), mantis_projects (dotProject project -> Mantis project) and
+mantis_task_issues (tasks created from issues). The tokens are stored as
+entered, like other credentials in the dotProject database: restrict access
+to the database accordingly. Removing the module drops the three tables.
 
-	
-2)	Installation:
-	See README.branch.name
-
-	
-3) Postinstall:
-	Table sorting is done on the fly using JavaScript. Unfurtunately it is enabled only when viewing the complete
-	overview and NOT when viewing the mantis tab on a specific project.
-	To enable: move from dotproject/modules/mantis/index.js to dotproject/js/sortable.js
-	Done :)
+Licence: GNU GPL, as dotProject (see LICENSE).
