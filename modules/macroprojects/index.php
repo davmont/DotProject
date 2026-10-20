@@ -24,14 +24,20 @@ $q = new DBQuery();
 // load the companies class to retrieved denied companies
 require_once ($AppUI->getModuleClass('companies'));
 
-// Let's update macroproject status!
-if (isset($_GET['update_macroproject_status']) && isset($_GET['macroproject_status']) 
-   && isset($_GET['macroproject_id'])) {
-	$macroprojects_id = $_GET['macroproject_id']; // This must be an array
-	
+// Let's update macroproject status! (POST with the CSRF token and edit permission only)
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+   && dPgetParam($_POST, 'update_macroproject_status') !== null
+   && dPgetParam($_POST, 'macroproject_status') !== null
+   && is_array(dPgetParam($_POST, 'macroproject_id'))) {
+	$AppUI->verifyCsrfToken();
+	$macroprojects_id = dPgetParam($_POST, 'macroproject_id'); // This must be an array
+
 	foreach ($macroprojects_id as $macroproject_id) {
+		if (!getPermission('macroprojects', 'edit', (int)$macroproject_id)) {
+			continue; /* Cannot update the status of a macroproject we can't edit */
+		}
 		$q->addTable('macroprojects');
-		$q->addUpdate('macroproject_status', $_GET['macroproject_status']);
+		$q->addUpdate('macroproject_status', (int)dPgetParam($_POST, 'macroproject_status'));
 		$q->addWhere('macroproject_id = ' . (int)$macroproject_id);
 		$q->exec();
 		$q->clear();
