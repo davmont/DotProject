@@ -1,0 +1,18 @@
+# Optional MantisBT next to the sandbox, to test the Mantis module:
+#
+#   docker compose -f compose.yml -f compose.mantis.yml up -d mantis
+#   ./mantis-setup.sh        # installs Mantis, prints an API token, configures dotProject
+#
+# Mantis: http://127.0.0.1:8090 (administrator / root). dotProject reaches it as
+# http://mantis inside the compose network (mantis_allow_http is set for that).
+services:
+  mantis:
+    image: xlrl/mantisbt:2.28.4
+    ports:
+      - "127.0.0.1:8090:80"
+    environment:
+      MANTIS_ENABLE_ADMIN: "1"
+      MANTIS_TIMEZONE: "UTC"
+    depends_on:
+      db:
+        condition: service_healthy
