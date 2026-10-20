@@ -115,27 +115,33 @@ if (!defined('DP_BASE_DIR')) {
 									<?php
 										$links = array();
 										$links["Reply"] = "index.php?m=messages&reply_to_message_id=".$view_message->task_id;
+										// The other links change the message: they post 'action' (dpPost).
+										$message_url = "index.php?m=messages&message_id=".$view_message->task_id;
 										
 										if($show_read_messages){
-											$links["Mark as unread"] = "index.php?m=messages&message_id=".$view_message->task_id."&action=mark_as_unread";
+											$links["Mark as unread"] = array("action" => "mark_as_unread");
 										} else {
-											$links["Mark as read"] = "index.php?m=messages&message_id=".$view_message->task_id."&action=mark_as_read";
+											$links["Mark as read"] = array("action" => "mark_as_read");
 										}
 										
 										if($show_sent_messages){
 											$links = array();
 											if($view_message->task_status == '-1'){
-												$links["Resend message"] = "index.php?m=messages&message_id=".$view_message->task_id."&action=resend_message";
+												$links["Resend message"] = array("action" => "resend_message");
 											}
 										}
 										
-										$links["Delete"] = "index.php?m=messages&message_id=".$view_message->task_id."&action=delete";
+										$links["Delete"] = array("action" => "delete");
 									?>
 									<table width='100%' cellpadding="0" cellspacing="0">
 										<tr>
 											<?php
 												foreach ($links as $name => $link) {
-													echo "<td align='center'><a href='$link'>".$AppUI->_($name)."</td>";
+													if (is_array($link)) {
+														echo "<td align='center'><a href='#'" . dPaction('dpPost', array($message_url, $link)) . ">".$AppUI->_($name)."</td>";
+													} else {
+														echo "<td align='center'><a href='$link'>".$AppUI->_($name)."</td>";
+													}
 												}
 											?>
 										</tr>
@@ -144,7 +150,8 @@ if (!defined('DP_BASE_DIR')) {
 										if(!$show_sent_messages){
 											?>
 											<hr />
-											<form action='index.php?m=messages&message_id=<?php echo $view_message->task_id; ?>&action=convert_to_task' method='post'>
+											<form action='index.php?m=messages&message_id=<?php echo $view_message->task_id; ?>' method='post'>
+												<input type='hidden' name='action' value='convert_to_task' />
 												<?php
 													echo $AppUI->_("Converto to task within the following project");
 													echo "<br />";
