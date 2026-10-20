@@ -23,8 +23,6 @@ parameters:
         analyseAndScan:
             # Vendored third-party copies inside modules
             - modules/holiday/PEAR/*
-            - modules/mantis/core/*
-            - modules/mantis/no.core/*
             - modules/*/js/*
     bootstrapFiles:
         - phpstan-bootstrap.php

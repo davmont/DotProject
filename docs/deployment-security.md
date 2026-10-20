@@ -14,7 +14,7 @@ dotProject directory; without it Apache ignores them silently.
 
 | Path | Rule |
 |---|---|
-| `modules/`, `lib/`, `classes/`, `functions/`, `includes/`, `style/`, `locales/`, `db/`, `misc/`, `xmlrpc/` | `.php`, `.phtml`, `.phar` and `.inc` refused; images, CSS and JS still served |
+| `modules/`, `lib/`, `classes/`, `functions/`, `includes/`, `style/`, `locales/`, `db/`, `misc/` | `.php`, `.phtml`, `.phar` and `.inc` refused; images, CSS and JS still served |
 | `vendor/`, `tests/`, `docs/`, `docker/`, `files/` | Everything refused |
 | Root | `queuescanner.php`, developer scripts, `composer.*`, `package*.json` and `*.md` refused |
 
@@ -28,7 +28,7 @@ nginx does not read `.htaccess`. Put the equivalent rules in the `server`
 block, before the PHP `location`:
 
 ```nginx
-location ~ ^/(modules|lib|classes|functions|includes|style|locales|db|misc|xmlrpc)/.*\.(php|phtml|phar|inc)$ { deny all; }
+location ~ ^/(modules|lib|classes|functions|includes|style|locales|db|misc)/.*\.(php|phtml|phar|inc)$ { deny all; }
 location ~ ^/(vendor|tests|docs|docker|files)/ { deny all; }
 location ~ ^/(queuescanner|benchmark_\w+|test_\w+|fix_locales|install_timeplanning|gen_locale\w*|find_missing_labels)\.php$ { deny all; }
 location ~ ^/(composer\.(json|lock)|package(-lock)?\.json)$ { deny all; }
