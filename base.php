@@ -45,6 +45,8 @@ $baseDir = dirname(__FILE__);
 //$baseDir .= ((substr_compare($baseDir, DIRECTORY_SEPERATOR, -1 , 1) == 0) ? '' : DIRECTORY_SEPERATOR);
 // Define to deprecate the global baseDir
 define('DP_BASE_DIR', $baseDir);
+// strftime() is deprecated since PHP 8.1 and removed in PHP 9 (includes/strftime.php).
+require_once DP_BASE_DIR . '/includes/strftime.php';
 
 // Security headers for every page (the installer sends the same ones, see
 // install/check_upgrade.php). The Content-Security-Policy comes separately.

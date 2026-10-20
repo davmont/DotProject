@@ -266,7 +266,7 @@ Added PHP 5.2.0 compatibility fixes.
  *
 
 - 19 March 2006 0.24
-Changed strftime() locale detection, because some locales prepend the day of week to the date when %c is used.
+Changed dp_strftime() locale detection, because some locales prepend the day of week to the date when %c is used.
 
 - 10 Feb 2006 0.23
 PHP5 compat: when we detect PHP5, the RFC2822 format for gmt 0000hrs is changed from -0000 to +0000.
@@ -428,7 +428,7 @@ function adodb_date_test_date($y1,$m,$d=13)
 
 function adodb_date_test_strftime($fmt)
 {
-	$s1 = strftime($fmt);
+	$s1 = dp_strftime($fmt);
 	$s2 = adodb_strftime($fmt);
 
 	if ($s1 == $s2) return true;
@@ -1371,21 +1371,21 @@ global $ADODB_DATE_LOCALE;
 	if (!defined('ADODB_TEST_DATES')) {
 		if ((abs($ts) <= 0x7FFFFFFF)) { // check if number in 32-bit signed range
 			if (!defined('ADODB_NO_NEGATIVE_TS') || $ts >= 0) // if windows, must be +ve integer
-				return ($is_gmt)? @gmstrftime($fmt,$ts): @strftime($fmt,$ts);
+				return ($is_gmt)? @dp_gmstrftime($fmt,$ts): @dp_strftime($fmt,$ts);
 
 		}
 	}
 
 	if (empty($ADODB_DATE_LOCALE)) {
 	/*
-		$tstr = strtoupper(gmstrftime('%c',31366800)); // 30 Dec 1970, 1 am
+		$tstr = strtoupper(dp_gmstrftime('%c',31366800)); // 30 Dec 1970, 1 am
 		$sep = substr($tstr,2,1);
 		$hasAM = strrpos($tstr,'M') !== false;
 	*/
 		# see PHPLens Issue No: 14865 for reasoning, and changelog for version 0.24
-		$dstr = gmstrftime('%x',31366800); // 30 Dec 1970, 1 am
+		$dstr = dp_gmstrftime('%x',31366800); // 30 Dec 1970, 1 am
 		$sep = substr($dstr,2,1);
-		$tstr = strtoupper(gmstrftime('%X',31366800)); // 30 Dec 1970, 1 am
+		$tstr = strtoupper(dp_gmstrftime('%X',31366800)); // 30 Dec 1970, 1 am
 		$hasAM = strrpos($tstr,'M') !== false;
 
 		$ADODB_DATE_LOCALE = array();
