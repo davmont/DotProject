@@ -11,19 +11,22 @@ $q = new DBQuery();
 // load the companies class to retrieved denied companies
 require_once($AppUI->getModuleClass('companies'));
 
-// Let's update project status!
+// Let's update project status! (POST with the CSRF token only)
 if (
-	isset($_GET['update_project_status']) && isset($_GET['project_status'])
-	&& isset($_GET['project_id'])
+	$_SERVER['REQUEST_METHOD'] === 'POST'
+	&& dPgetParam($_POST, 'update_project_status') !== null
+	&& dPgetParam($_POST, 'project_status') !== null
+	&& is_array(dPgetParam($_POST, 'project_id'))
 ) {
-	$projects_id = $_GET['project_id']; // This must be an array
+	$AppUI->verifyCsrfToken();
+	$projects_id = dPgetParam($_POST, 'project_id'); // This must be an array
 
 	foreach ($projects_id as $project_id) {
 		if (!getPermission('projects', 'edit', (int) $project_id)) {
 			continue; /* Cannot update the status of a project we can't edit */
 		}
 		$q->addTable('projects');
-		$q->addUpdate('project_status', $_GET['project_status']);
+		$q->addUpdate('project_status', (int) dPgetParam($_POST, 'project_status'));
 		$q->addWhere('project_id = ' . (int) $project_id);
 		$q->exec();
 		$q->clear();
