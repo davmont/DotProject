@@ -29,7 +29,8 @@ else
 
 <body>
 	<table width="100%" cellpadding="0" cellspacing="0" border="0">
-		<tr>
+		<?php if (!$dialog) { // no banner in pop-up windows ?>
+<tr>
 			<td>
 				<table width="100%" cellpadding="3" cellspacing="0" border="0">
 					<tr>
@@ -53,6 +54,7 @@ else
 				</table>
 			</td>
 		</tr>
+<?php } ?>
 		<?php if (!$dialog) {
 			// top navigation menu
 			$nav = $AppUI->getMenuModules();

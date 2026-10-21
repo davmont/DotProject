@@ -34,6 +34,7 @@ $AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
 
 <body>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
+<?php if (!$dialog) { // no banner in pop-up windows ?>
 <tr>
 	<td><table width='100%' cellpadding="3" cellspacing="0" border="0"><tr>
 	<th style="background: url(style/<?php 
@@ -54,6 +55,7 @@ echo ('<a href="' . dPformSafe($dPconfig['base_url'], DP_FORM_URI) . '">' . $pag
 echo $uistyle;?>/images/dp_icon.gif" border="0" /></a></th>
 	</tr></table></td>
 </tr>
+<?php } ?>
 <?php if (!$dialog) {
 	// top navigation menu
 	$nav = $AppUI->getMenuModules();
