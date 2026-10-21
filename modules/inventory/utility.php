@@ -117,7 +117,7 @@ function load_all_items()
 	if ( $filter_company ){
 		if ( $filter_index && $filter_type != "choose" )
 		{
-			$where .= "AND inventory_${filter_type} = $filter_index \n";
+			$where .= "AND inventory_{$filter_type} = $filter_index \n";
 		}
 		else
 		{

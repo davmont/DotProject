@@ -119,7 +119,7 @@ function getAllowedProjectsForJavascript($activeonly=0){
       
   $q = new DBQuery; 
   $q->addQuery('project_id, project_name, company_name, company_id');
-  $q->addTable('projects');
+  $q->addTable('projects', 'projects');
   $q->addJoin('companies','','company_id = projects.project_company');
   $q->addWhere($whereclause);
   $q->addOrder('project_name');

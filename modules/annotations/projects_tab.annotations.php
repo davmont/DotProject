@@ -65,7 +65,7 @@ $AppUI->savePlace();	//save the workplace state (have a footprint on this site)
 	if ($tab=="-1") {$tab="0"; $AppUI->redirect("m=projects&a=view&tab=".$tab."&project_id=".$project_id); }  //cant get the getstate['tab'] --> will be fixed later
 
 // In case that we got the "show all"days value --> annotation_show_date (for the calender) will be today, show_date will stay "all"
-	$annotation_show_date= ($show_date=="all") ? date(Ymd) : $show_date;
+	$annotation_show_date= ($show_date=="all") ? date('Ymd') : $show_date;
 	$tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval for us  ( replaces only the db_query for this Sysval)
 /******************
 ** format the dates **
@@ -202,7 +202,7 @@ $q = new DBQuery;
 						<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 					</a>
 				<!-- actual entry -->
-					<a href="?m=projects&a=view&rows_to_show=<?php echo $rows_to_show; ?>&project_id=<?php echo $project_id; ?>&tab=<?php echo $tab; ?>&show_date=<?php echo date(Ymd); ?>">
+					<a href="?m=projects&a=view&rows_to_show=<?php echo $rows_to_show; ?>&project_id=<?php echo $project_id; ?>&tab=<?php echo $tab; ?>&show_date=<?php echo date('Ymd'); ?>">
 						<img src="./images/arrow-up.gif" width="16" height="16" alt="<?php echo $AppUI->_('Today'); ?>" border="0" >
 					</a>
 				<!-- all entries -->

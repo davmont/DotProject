@@ -11,7 +11,7 @@ $q = new DBQuery();
 $q -> addTable('users','u');
 $q -> addJoin('contacts','c','u.user_contact=c.contact_id');
 $q -> addQuery('u.user_id, u.user_username, c.contact_first_name, c.contact_last_name');
-$q -> addWhere("user_company = $AppUI->user_company
+$q -> addWhere("user_company = " . (int)$AppUI->user_company . "
 " . ($is_special ? "" : " and user_id = " . $AppUI->user_id));
 $q -> addOrder('contact_last_name, contact_first_name');
 $result = $q -> loadList();

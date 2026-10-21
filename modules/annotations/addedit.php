@@ -87,7 +87,7 @@ if ($changed_show_date != "") $show_date=$changed_show_date;
 			$q -> clear();
 			$q -> addTable('contacts');
 			$q -> addQuery('contact_first_name,contact_last_name');
-			$q -> addWhere('contact_id=( SELECT project_owner FROM projects WHERE project_id='.$project_id.' ) ');
+			$q -> addWhere('contact_id=( SELECT project_owner FROM ' . dPgetConfig('dbprefix', '') . 'projects WHERE project_id=' . (int)$project_id . ' ) ');
 			$tmp_project_owner_name = $q -> loadList();
 			$project_owner_name = $tmp_project_owner_name[0]['contact_last_name'].", ".substr($tmp_project_owner_name[0]['contact_first_name'],0,1).".";
 		}

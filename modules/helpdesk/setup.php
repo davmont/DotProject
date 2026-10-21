@@ -252,7 +252,7 @@ class CSetupHelpDesk {
 
 	        // Add audit trail to system values
 	        $sql = "SELECT syskey_id
-	                FROM ${dbprefix}syskeys
+	                FROM {$dbprefix}syskeys
 	                WHERE syskey_name = 'HelpDeskList'";
 	        $syskey_id = db_loadResult( $sql );
 

@@ -45,7 +45,7 @@ if ($AppUI->getState('show_timesheet_payroll')) {
 	$q->addJoin('contacts', 'c', 'c.contact_id=u.user_contact');
 	$q->addQuery('u.user_id, c.contact_first_name, c.contact_last_name');
 	if ($AppUI->getState('employee_payroll') == 0) {
-		$q->addWhere("u.user_company =  $AppUI->user_company");
+		$q->addWhere("u.user_company = " . (int)$AppUI->user_company);
 		$q->addOrder('contact_last_name, contact_first_name');
 		$result = $q->loadList();
 
