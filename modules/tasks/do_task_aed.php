@@ -147,19 +147,14 @@ function sendIcal($task_id, $lastUpdate)
 	global $addText, $editText, $delText, $taskText, $ofProjectText, $hasBeenText,$send_ical, $send_ical_to_user;
 	$ical = setIcalEvent($task_id, 0, $lastUpdate);
 	
-	//we save the ical file
-	$file = fopen('./modules/ical/ical.ics', 'r+');
-	ftruncate($file,0);
-	fputs($file, $ical);
-	fclose($file);
-	
-	//we prepare the mail with the ical file in attached_file
+	//we prepare the mail with the ical event attached (it was written to a
+	//shared modules/ical/ical.ics first: concurrent saves mixed them up, and a
+	//read-only install could not send it)
 	$boundary = "_".md5 (uniqid (rand()));
 	
-	$attached_file = file_get_contents('./modules/ical/ical.ics'); 
-	$attached_file = chunk_split(base64_encode($attached_file));
+	$attached_file = chunk_split(base64_encode($ical));
 
-	$attached = "\n\n". "--" .$boundary . "\nContent-Type: application/ics; name=\"$file\"\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"ical.ics\"\r\n\n".$attached_file . "--" . $boundary . "--";
+	$attached = "\n\n". "--" .$boundary . "\nContent-Type: application/ics; name=\"ical.ics\"\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"ical.ics\"\r\n\n".$attached_file . "--" . $boundary . "--";
 	$q = new DBQuery();
 	$q->addTable('config');
 	$q->addQuery('config_value');

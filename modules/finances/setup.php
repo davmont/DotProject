@@ -51,15 +51,10 @@ class CSetupFinances {
 
   function remove() {
 		$dbprefix = dPgetConfig('dbprefix', '');
-		$success = 1;
 		$q = new DBQuery();
 		$q -> dropTable('budget');
-		$success = $success & $q -> exec();
-		
-		if($success){
-			return null;
-		}
-		return $success; 
+		// exec() returns a record set object, not a number.
+		return $q -> exec() ? null : db_error();
 	}
   
 	function upgrade($old_version) {

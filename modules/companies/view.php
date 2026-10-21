@@ -203,12 +203,25 @@ $titleBlock->show();
 <hr />
 <div id="rh_div"
 	style="display:<?php echo (isset($_GET["rh_config"]) && $_GET["rh_config"] == "1") ? "block" : "none" ?>">
-	<?php require_once(DP_BASE_DIR . "/modules/human_resources/view_company_users.php"); ?>
-	<?php require_once(DP_BASE_DIR . "/modules/timeplanning/companies_tab.1LBLORGONOGRAM.php"); ?>
-	<?php require_once(DP_BASE_DIR . "/modules/human_resources/view_company_roles.php"); ?>
+	<?php
+	// Parts of these add-on modules, only when they are active (their tables
+	// are gone once they are removed).
+	$active_modules = $AppUI->getActiveModules();
+	if (isset($active_modules['human_resources'])) {
+		require_once(DP_BASE_DIR . "/modules/human_resources/view_company_users.php");
+	}
+	if (isset($active_modules['timeplanning'])) {
+		require_once(DP_BASE_DIR . "/modules/timeplanning/companies_tab.1LBLORGONOGRAM.php");
+	}
+	if (isset($active_modules['human_resources'])) {
+		require_once(DP_BASE_DIR . "/modules/human_resources/view_company_roles.php");
+	}
+	?>
 </div>
 <br />
-<?php require_once(DP_BASE_DIR . "/modules/dotproject_plus/companies_tab.Projects.php"); ?>
+<?php if (isset($active_modules['dotproject_plus'])) {
+	require_once(DP_BASE_DIR . "/modules/dotproject_plus/companies_tab.Projects.php");
+} ?>
 
 <?php
 // tabbed information boxes
