@@ -29,6 +29,10 @@ if (@$a == 'setup') {
 class CSetupjournal {
 
 	function install() {
+		// The core schema creates it (the project view always has a Journal tab).
+		if (db_loadResult("SHOW TABLES LIKE '" . db_escape(dPgetConfig('dbprefix', '') . 'journal') . "'")) {
+			return null;
+		}
 		$q = new DBQuery();
 		$q -> createTable('journal');
 		$q -> createDefinition("( " .
@@ -58,7 +62,7 @@ class CSetupjournal {
 	}
 	
 	function upgrade() {
-		return null;
+		return true;
 	}
 }
 

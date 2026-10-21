@@ -64,13 +64,13 @@ class SResource {
 		$q->createDefinition($sql);
 		$ok = $ok && $q->exec();
 		$q->clear();
-		$q->addTable('resource_types');
-		$q->addInsert('resource_type_name', 'Equipment');
-		$q->exec();
-		$q->addInsert('resource_type_name', 'Tool');
-		$q->exec();
-		$q->addInsert('resource_type_name', 'Venue');
-		$ok = $ok && $q->exec();
+		foreach (array('Equipment', 'Tool', 'Venue') as $type_name) {
+			// A fresh query each time: reusing one appended the values.
+			$q = new DBQuery;
+			$q->addTable('resource_types');
+			$q->addInsert('resource_type_name', $type_name);
+			$ok = $ok && $q->exec();
+		}
 		
 		if (!$ok) {
 			return false;

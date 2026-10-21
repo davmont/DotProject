@@ -89,7 +89,7 @@ class CSetupCommunication {
    PRIMARY KEY (`communication_id`)
 ) ");
 
-	$q->exec($sql);
+	$q->exec();
 
 	$q->clear();
 
@@ -103,7 +103,7 @@ class CSetupCommunication {
    PRIMARY KEY (`communication_issuing_id`)
 ) ");
 
-	$q->exec($sql);
+	$q->exec();
 
 	$q->clear();
 
@@ -117,7 +117,7 @@ class CSetupCommunication {
    PRIMARY KEY (`communication_receptor_id`)
 ) ");
 
-	$q->exec($sql);
+	$q->exec();
 
 	$q->clear();
 
@@ -130,7 +130,7 @@ class CSetupCommunication {
    PRIMARY KEY (`communication_channel_id`)
 ) ");
 
-	$q->exec($sql);
+	$q->exec();
 
 	$q->clear();
 
@@ -144,7 +144,7 @@ class CSetupCommunication {
    PRIMARY KEY (`communication_frequency_id`)
 ) ");
 
-	$q->exec($sql);
+	$q->exec();
 
 	$q->clear();
 

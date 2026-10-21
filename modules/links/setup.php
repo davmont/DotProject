@@ -70,7 +70,7 @@ KEY `idx_link_project` (`link_project`) ,
 KEY `idx_link_parent` (`link_parent`) 
 ) DEFAULT CHARSET utf8");
 
-	$q->exec($sql);
+	$q->exec();
 
 	$q->clear();
 	$q->addTable('sysvals');

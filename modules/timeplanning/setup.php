@@ -252,13 +252,29 @@ class CSetup_TimePlanning{
 		$this->updateFile($fileProjectBr,$projectsBr);
 	}
 	
+	// Appends the strings whose keys the file lacks (dotProject ships them, and
+	// installing again used to append them again); an unwritable file is left
+	// as it is (it was a fatal error on PHP 8).
 	private function updateFile($fileName,$content){
 		if(!file_exists($fileName)){
 			$fileName=str_replace("\\","/",$fileName);
 		}
-		$fp = fopen($fileName, 'a');
-		fwrite($fp, $content);
-		fclose($fp);
+		$current = is_readable($fileName) ? file_get_contents($fileName) : false;
+		if ($current === false) {
+			return;
+		}
+		$add = '';
+		foreach (explode("\n", $content) as $line) {
+			if (preg_match('/^("[^"]+")\s*=>/', $line, $m) && !preg_match('/^\s*' . preg_quote($m[1], '/') . '\s*=>/m', $current)) {
+				$add .= "\n" . $line;
+			}
+		}
+		if ($add === '') {
+			return;
+		}
+		if (!is_writable($fileName) || file_put_contents($fileName, $add, FILE_APPEND) === false) {
+			error_log('dotProject: could not add translations to ' . $fileName);
+		}
 	}
 	
 	function remove() {
