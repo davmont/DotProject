@@ -62,6 +62,8 @@ $AppUI->savePlace();	//save the workplace state (have a footprint on this site)
 	}
 	$tab= 					intval( dPgetParam( $_REQUEST, "tab", "-1") );   //came from projects view?
 	$addnew= 				intval( dPgetParam( $_REQUEST, "addnew", "0") );   //came from projects view?
+	// Presets come from the 'details' table of the Details module when it is installed.
+	$details_installed = (bool)db_loadResult("SHOW TABLES LIKE '" . db_escape(dPgetConfig('dbprefix', '') . 'details') . "'");
 	$annotation_show_date = intval( dPgetParam( $_REQUEST, "annotation_show_date", $show_date ) );  //Dummy for the calendar
 
 // get the date
@@ -540,7 +542,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 				}
 			// ********** If there are no Values --> try to get them out of Details   ( Anno -> Details -> Opps ) ***************************************************************************
 					// We need the right detail:   detail_project = annotation_project
-					if ( $obj->annotation_project > 0 ) { // if there is an related Project  ( ?? Which one should be taken ??)
+					if ( $obj->annotation_project > 0 && $details_installed ) { // if there is an related Project  ( ?? Which one should be taken ??)
 							$q = new DBQuery();
 							$q->addTable('details');
 							$q->addQuery('detail_id,detail_project,detail_strategy,detail_sholders,detail_risks,detail_sizing,detail_horizontality,detail_costbenefit');
@@ -655,7 +657,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 					$q->clear();
 					if (isset($prev_values['annotation_must']) && ($prev_values['annotation_must'] == "1" || $prev_values['annotation_must'] == "0")) {
 					$obj->annotation_must = $prev_values['annotation_must'];
-				} ELSE {
+				} else if ($details_installed) {
 						$q = new DBQuery();
 						$q->addTable('details');
             $q->addQuery('*');
