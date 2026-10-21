@@ -349,6 +349,8 @@ function db_insertObject($table, &$object, $keyName = NULL, $verbose = false)
 	} else {
 		$fmtsql = "INSERT INTO $table (%s) VALUES (%s) ";
 	}
+	$fields = array();
+	$values = array();
 	foreach (get_object_vars($object) as $k => $v) {
 		if (is_array($v) || is_object($v) || $v == NULL) {
 			continue;
@@ -358,6 +360,10 @@ function db_insertObject($table, &$object, $keyName = NULL, $verbose = false)
 		}
 		$fields[] = $k;
 		$values[] = "'" . db_escape($v) . "'";
+	}
+	if (!$fields) {
+		// Nothing to insert (every field empty): MySQL would reject "()" anyway.
+		return false;
 	}
 	$sql = sprintf($fmtsql, implode(",", $fields), implode(",", $values));
 	if ($verbose) {

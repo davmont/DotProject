@@ -31,7 +31,6 @@ $q->addQuery('billingcode_id, billingcode_name');
 
 $task_log_costcodes[0]=$AppUI->_('None');
 $ptrc = $q->exec();
-echo db_error();
 $nums = 0;
 if ($ptrc)
 	$nums=db_num_rows($ptrc);
@@ -142,16 +141,19 @@ function setCalendar( idate, fdate ) {
 </table>
 
 <?php
+$pfx = dPgetConfig('dbprefix', '');
 if ($do_report) {
+	$project_id = (int)$project_id;
+	$company_id = (int)$company_id;
 
 	$sql = "SELECT t.*, item_id, CONCAT_WS(' ',contact_first_name,contact_last_name) AS creator, billingcode_value, ROUND((billingcode_value * t.task_log_hours), 2) AS amount"
-		."\nFROM task_log AS t"
-		."\nLEFT JOIN helpdesk_items AS ts ON ts.item_id = task_log_help_desk_id"
-		."\nLEFT JOIN users AS u ON user_id = task_log_creator"
-                ."\nLEFT JOIN contacts ON user_contact = contact_id"
-		."\nLEFT JOIN projects ON project_id = item_project_id"
-		."\nLEFT JOIN companies AS c ON c.company_id = item_company_id"
-		."\nLEFT JOIN billingcode ON billingcode_id = task_log_costcode"
+		."\nFROM {$pfx}task_log AS t"
+		."\nLEFT JOIN {$pfx}helpdesk_items AS ts ON ts.item_id = task_log_help_desk_id"
+		."\nLEFT JOIN {$pfx}users AS u ON user_id = task_log_creator"
+                ."\nLEFT JOIN {$pfx}contacts ON user_contact = contact_id"
+		."\nLEFT JOIN {$pfx}projects ON project_id = item_project_id"
+		."\nLEFT JOIN {$pfx}companies AS c ON c.company_id = item_company_id"
+		."\nLEFT JOIN {$pfx}billingcode ON billingcode_id = task_log_costcode"
 		."\nWHERE task_log_task = 0 AND task_log_help_desk_id > 0";
 //	if (!$log_allprojects)
 //	{
@@ -182,7 +184,6 @@ if ($do_report) {
 //	echo "<pre>$sql</pre>";
 
 	$logs = db_loadList( $sql );
-	echo db_error();
 ?>
 	<table cellspacing="1" cellpadding="4" border="0" class="tbl">
 	<tr>
@@ -271,20 +272,18 @@ if ($do_report) {
 	if ($log_pdf) {
 	// make the PDF file
 		 if ($project_id){
-			$sql = "SELECT project_name FROM projects WHERE project_id=$project_id";
+			$sql = "SELECT project_name FROM {$pfx}projects WHERE project_id=" . (int)$project_id;
 			$pname = 'Project: '.db_loadResult( $sql );
 		}
 		else
 			$pname = "All Companies and All Projects";
-		echo db_error();
 
 		if ($company_id){
-			$sql = "SELECT company_name FROM companies WHERE company_id=$company_id";
+			$sql = "SELECT company_name FROM {$pfx}companies WHERE company_id=" . (int)$company_id;
 			$cname = 'Company: '.db_loadResult( $sql );
 		}
 		else
 			$cname = "All Companies and All Projects";
-		echo db_error();
 
 		$font_dir = dPgetConfig( 'root_dir' )."/lib/ezpdf/fonts";
 		$temp_dir = dPgetConfig( 'root_dir' )."/files/temp";

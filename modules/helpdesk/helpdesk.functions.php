@@ -325,7 +325,7 @@ function dump ($var) {
 if (!function_exists('get_mysql_to_epoch')) {
 function get_mysql_to_epoch( $sqldate )
 {
-    list( $year, $month, $day, $hour, $minute, $second )= split( '([^0-9])', $sqldate );
+    list( $year, $month, $day, $hour, $minute, $second )= array_pad(preg_split('/[^0-9]/', (string)$sqldate), 6, 0);
     //echo $year.",".$month.",".$day;
     return date( 'U', mktime( $hour, $minute, $second, $month, $day, $year) );
 }

@@ -24,11 +24,17 @@ $query = new DBQuery;
 $query->addTable('tasks', 't');
 $query->addQuery('project_name, project_id');
 $query->innerJoin('projects', 'p', 't.task_project = p.project_id');
-$query->addWhere('t.task_id = ' . $task_id);
+$query->addWhere('t.task_id = ' . (int)$task_id);
 $res_project =& $query->exec();
-$project_id = $res_project->fields['project_id'];
-$project_name = $res_project->fields['project_name'];
+$project_id = ($res_project && !$res_project->EOF) ? (int)$res_project->fields['project_id'] : 0;
+$project_name = $project_id ? $res_project->fields['project_name'] : '';
 $query->clear();
+if (!$project_id) {
+	// Allocations belong to a task's estimated role: nothing to edit without one.
+	$AppUI->setMsg('Task', UI_MSG_ERROR);
+	$AppUI->setMsg('not found', UI_MSG_ERROR, true);
+	$AppUI->redirect();
+}
 													
 require_once DP_BASE_DIR."/modules/tasks/tasks.class.php";
 $task = new CTask();
@@ -40,7 +46,7 @@ $query = new DBQuery;
 $query->addTable('project_tasks_estimated_roles', 'e');
 $query->addQuery('c.role_name');
 $query->innerJoin('company_role', 'c', 'c.id = e.role_id');
-$query->addWhere('e.id = ' . $project_tasks_estimated_roles_id);
+$query->addWhere('e.id = ' . (int)$project_tasks_estimated_roles_id);
 $res =& $query->exec();
 $company_role = $res->fields['role_name'];
 $query->clear();
@@ -77,7 +83,7 @@ if($allocated_user_id) {
 	$query = new DBQuery;
 	$query->addTable('human_resource', 'h');
 	$query->addQuery('human_resource_id');
-	$query->addWhere('h.human_resource_user_id = ' . $allocated_user->user_id);
+	$query->addWhere('h.human_resource_user_id = ' . (int)$allocated_user->user_id);
 	$res =& $query->exec();
 	require_once DP_BASE_DIR."/modules/human_resources/human_resources.class.php";
 	$allocated_hr = new CHumanResource();
@@ -100,7 +106,7 @@ if($allocated_user_id || $human_resource_allocation_id) {
 	$query->addTable('users', 'u');
 	$query->addQuery('contact_last_name, contact_first_name');
 	$query->addJoin('contacts', 'c', 'u.user_contact = c.contact_id');
-	$query->addWhere('u.user_id = ' . $allocated_user->user_id);
+	$query->addWhere('u.user_id = ' . (int)$allocated_user->user_id);
 	$res =& $query->exec();
 	$allocated_user_contact = $res->fields['contact_last_name'] . ', ' . $res->fields['contact_first_name'];
 	$query->clear();
@@ -278,16 +284,16 @@ if($allocated_user_id || $human_resource_allocation_id) {
 $query = new DBQuery;
 $query->addTable('projects', 'p');
 $query->addQuery('project_company');
-$query->addWhere('p.project_id = ' . $project_id);
+$query->addWhere('p.project_id = ' . (int)$project_id);
 $res =& $query->exec();
-$company_id = $res->fields['project_company'];
+$company_id = ($res && !$res->EOF) ? (int)$res->fields['project_company'] : 0;
 $query->clear();
 
 $query->addTable('contacts', 'c');
 $query->addQuery('user_id, human_resource_id, contact_id');
 $query->innerJoin('users', 'u', 'u.user_contact = c.contact_id');
 $query->innerJoin('human_resource', 'h', 'h.human_resource_user_id = u.user_id');
-$query->addWhere('c.contact_company = ' . $company_id);
+$query->addWhere('c.contact_company = ' . (int)$company_id);
 $res =& $query->exec();
 
 $ordered_users = array();
@@ -299,7 +305,7 @@ require_once DP_BASE_DIR."/modules/admin/admin.class.php";
 require_once DP_BASE_DIR."/modules/human_resources/human_resources.class.php";
 require_once DP_BASE_DIR."/modules/contacts/contacts.class.php";
 require_once DP_BASE_DIR."/modules/human_resources/allocation_functions.php";
-for ($res; ! $res->EOF; $res->MoveNext()) {
+for ($res; $res && ! $res->EOF; $res->MoveNext()) {
 	$user = new CUser();
 	$user->load($res->fields['user_id']);
 	$hr = new CHumanResource();

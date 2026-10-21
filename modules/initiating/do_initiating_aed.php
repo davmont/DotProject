@@ -25,9 +25,7 @@ if ($obj->initiating_end_date) {
 	$obj->initiating_end_date = $date->format(FMT_DATETIME_MYSQL);
 }
 
-if ($initiating_id) { 
-	$obj->_message = 'updated';
-} else {
+if (!$initiating_id) {
 	$obj->initiating_date_create = str_replace("'", '', $db->DBTimeStamp(time()));
 	$obj->initiating_create_by = $AppUI->user_id;
 	if ($completed) {
@@ -39,7 +37,6 @@ if ($initiating_id) {
 	if ($authorized) {
 		$obj->initiating_authorized = 1;
 	}
-	$obj->_message = 'added';
 }
 
 if (!$obj->bind($_POST)) {

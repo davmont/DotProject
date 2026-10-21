@@ -16,7 +16,6 @@ $q->addOrder('billingcode_name');
 
 $task_log_costcodes[0]=$AppUI->_('None');
 $ptrc = $q->exec();
-echo db_error();
 $nums = 0;
 if ($ptrc)
 	$nums=db_num_rows($ptrc);
@@ -56,10 +55,10 @@ function delIt2(id) {
 <?php
 // Pull the task comments
 $q = new DBQuery; 
-$q->addQuery('task_log.*, user_username');
-$q->addTable('task_log');
+$q->addQuery('tl.*, user_username');
+$q->addTable('task_log', 'tl');
 $q->addJoin('users','','user_id = task_log_creator');
-$q->addWhere('task_log_help_desk_id = '. $item_id);
+$q->addWhere('task_log_help_desk_id = ' . (int)$item_id);
 $q->addOrder('task_log_date');
 $logs = $q->loadList();
 
@@ -72,7 +71,7 @@ $hrs = 0;
 $q = new DBQuery; 
 $q->addQuery('item_company_id,item_created_by,item_status');
 $q->addTable('helpdesk_items');
-$q->addWhere('item_id = '.$item_id);
+$q->addWhere('item_id = ' . (int)$item_id);
 $hditem = $q->loadHash();
 
 

@@ -21,7 +21,6 @@ if ($msg = $obj->checkout($AppUI->user_id, $coReason)) {
 } else {
 	$AppUI->setMsg('File checkout completed', UI_MSG_OK);
 	//Notification
-	$obj->_message = (($co_cancel) ? 'reverted' : 'checked out');
 	if ($not) {
 		$obj->notify();
 	}

@@ -70,12 +70,12 @@ if (!$hditem ) {
   $assigned_email = $hditem['assigned_email'];
 
   $q = new DBQuery; 
-  $q->addQuery('helpdesk_item_watchers.user_id, 
+  $q->addQuery('hiw.user_id, 
                 CONCAT(contact_first_name, \' \', contact_last_name) as name,	contact_email');
-  $q->addTable('helpdesk_item_watchers');
-  $q->addJoin('users','','helpdesk_item_watchers.user_id = users.user_id');
+  $q->addTable('helpdesk_item_watchers', 'hiw');
+  $q->addJoin('users','u','hiw.user_id = u.user_id');
   $q->addJoin('contacts','','user_contact = contact_id');
-  $q->addWhere('item_id = ' . (int)$item_id);
+  $q->addWhere('hiw.item_id = ' . (int)$item_id);
   $q->addOrder('contact_last_name, contact_first_name');
   $watchers = $q->loadList();
 

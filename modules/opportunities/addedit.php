@@ -96,7 +96,7 @@ $yesno = array(1 => 'no', 2 => 'yes');
 	if ($opportunity_id && !array_key_exists( $obj->opportunity_orig, $companies )) {
 		$q->addTable('companies');
 		$q->addQuery('company_name');
-		$q->addWhere('companies.company_id = '.$obj->opportunity_orig);
+		$q->addWhere('company_id = ' . (int)$obj->opportunity_orig);
 		$sql = $q->prepare();
 		$q->clear();
 		$companies[$obj->opportunity_orig] = db_loadResult($sql);
