@@ -55,7 +55,7 @@ class GanttRenderer {
   <?php endforeach; ?>
   &nbsp;&nbsp;<button type="button"<?php echo dPaction('window.print'); ?> style="padding:2px 8px;cursor:pointer;">Print</button>
 </div>
-<div style="overflow-x:auto;background:#fff;padding:10px;border:1px solid #ccc;max-width:100%;">
+<div style="overflow-x:auto;background:#fff;padding:10px;border:1px solid #ccc;box-sizing:border-box;width:0;min-width:100%;">
   <svg id="<?php echo $cid; ?>"></svg>
 </div>
 <?php // Drawn by js/dp-gantt.js; a JSON data block is not executed, so it needs no CSP nonce. ?>

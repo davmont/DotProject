@@ -133,9 +133,9 @@ foreach ( $results as $row ) {
 			$hours[$name] = 0;
 	}
 	
-	$row['company_name'] = "<a href=\"index.php?m=companies&a=view&company_id=${row['company_id']}\">${row['company_name']}</a>";
-	$row['project_name'] = "<a href=\"index.php?m=projects&a=view&project_id=${row['project_id']}\">${row['project_name']}</a>";
-	$row['task_name']    = "<a href=\"index.php?m=tasks&a=view&task_id=${row['task_id']}\">${row['task_name']}</a>";
+	$row['company_name'] = '<a href="index.php?m=companies&amp;a=view&amp;company_id=' . (int)$row['company_id'] . '">' . dPhtml($row['company_name']) . '</a>';
+	$row['project_name'] = '<a href="index.php?m=projects&amp;a=view&amp;project_id=' . (int)$row['project_id'] . '">' . dPhtml($row['project_name']) . '</a>';
+	$row['task_name']    = '<a href="index.php?m=tasks&amp;a=view&amp;task_id=' . (int)$row['task_id'] . '">' . dPhtml($row['task_name']) . '</a>';
 
 	if ( $show_details )
 		$row['task_log_cost_code'] = $work_category[$row['task_log_cost_code']];

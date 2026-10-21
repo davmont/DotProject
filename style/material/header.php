@@ -29,14 +29,15 @@ else
 
 <body>
 	<table width="100%" cellpadding="0" cellspacing="0" border="0">
-		<tr>
+		<?php if (!$dialog) { // no banner in pop-up windows ?>
+<tr>
 			<td>
 				<table width="100%" cellpadding="3" cellspacing="0" border="0">
 					<tr>
 						<th class="banner" align="left"><strong><?php
 						echo "<a style='color: white' href='{$dPconfig['base_url']}'>$page_title</a>";
 						?></strong>
-							<?php if (getPermission('smartsearch', 'access')): ?>
+							<?php if (!$dialog && getPermission('smartsearch', 'access')): ?>
 								<form name="frmHeaderSearch" action="?m=smartsearch" method="post"
 									style="display:inline; margin-left:20px;">
 									<input class="text" type="text" id="keyword1" name="keyword1"
@@ -53,6 +54,7 @@ else
 				</table>
 			</td>
 		</tr>
+<?php } ?>
 		<?php if (!$dialog) {
 			// top navigation menu
 			$nav = $AppUI->getMenuModules();

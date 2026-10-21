@@ -37,7 +37,7 @@ $qd = new DBQuery();
 $qd -> addTable('departments');
 $qd -> addQuery('dept_id, dept_name, dept_company');
 $qd -> addOrder('dept_name');
-$qd -> addWhere("dept_company = $AppUI->user_company");
+$qd -> addWhere("dept_company = " . (int)$AppUI->user_company);
 $departments = $qd -> loadList();
 
 // employees
@@ -45,7 +45,7 @@ $qu = new DBQuery();
 $qu -> addTable('users','u');
 $qu -> addJoin('contacts','c','u.user_contact=c.contact_id');
 $qu -> addQuery('u.user_id, u.user_username, c.contact_first_name, c.contact_last_name, u.user_department');
-$qu -> addWhere("u.user_company = $AppUI->user_company");
+$qu -> addWhere("u.user_company = " . (int)$AppUI->user_company);
 $qu -> addOrder('contact_last_name, contact_first_name');
 
 $employees = $qu -> loadList();
@@ -83,7 +83,7 @@ $qu -> clear();
 $qu -> addTable('users','u');
 $qu -> addJoin('contacts','c','u.user_contact=c.contact_id');
 $qu -> addQuery('u.user_id, u.user_username, c.contact_first_name, c.contact_last_name');
-$qu -> addWhere("user_company = $AppUI->user_company");
+$qu -> addWhere("user_company = " . (int)$AppUI->user_company);
 $qu -> addOrder('contact_last_name, contact_first_name');		 
 
 $result = $qu -> loadList();

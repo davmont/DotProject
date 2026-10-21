@@ -30,7 +30,7 @@ foreach ($assigned_perc as $user_id => $data) {
 <script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 echo "var projTasksWithEndDates=new Array();\n";
-$keys = array_keys($projTasksWithEndDates);
+$keys = array_keys((array)$projTasksWithEndDates);
 for ($i = 1, $xi = sizeof($keys); $i < $xi; $i++) {
 	//array[task_is] = end_date, end_hour, end_minutes
 	echo ('projTasksWithEndDates[' . (int)$keys[$i] . ']=new Array('

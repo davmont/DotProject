@@ -21,6 +21,7 @@ else
 
 <body>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
+<?php if (!$dialog) { // no banner in pop-up windows ?>
 <tr>
 	<td><table class="banner" width='100%' cellpadding="3" cellspacing="0" border="0" background="style/<?php echo $uistyle;?>/images/titlegrad.jpg"><tr>
 	<th align="left"><strong><?php
@@ -29,6 +30,7 @@ else
 	<th align="right" width='95'><a href='http://www.dotproject.net/' <?php if ($dialog) echo "target='_blank'"; ?>><img src="style/<?php echo $uistyle;?>/images/dp_icon.gif" border=0></a></th>
 	</tr></table></td>
 </tr>
+<?php } ?>
 <?php if (!$dialog) {
 	// top navigation menu
 	$nav = $AppUI->getMenuModules();

@@ -25,12 +25,13 @@ else
 
 <body>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
+<?php if (!$dialog) { // no banner in pop-up windows ?>
 <tr>
 	<td><table width="100%" cellpadding="3" cellspacing="0" border="0"><tr>
 	<th style="background: url(style/<?php echo $uistyle;?>/images/titlegrad.jpg);" class="banner" align="left"><strong><?php
 		echo "<a style='color: white' href='{$dPconfig['base_url']}'>$page_title</a>";
 	?></strong>
-	<?php if (getPermission('smartsearch', 'access')): ?>
+	<?php if (!$dialog && getPermission('smartsearch', 'access')): ?>
 	<form name="frmHeaderSearch" action="?m=smartsearch"  method="post">
 		<input class="text" type="text" id="keyword1" name="keyword1" value="<?php echo dPhtml(dPgetCleanParam($_POST, 'keyword1', '')); ?>" accesskey="k" />
 		<input class="button" type="submit" value="<?php echo $AppUI->_('Search')?>" />
@@ -40,6 +41,7 @@ else
 	<th align="right" width='50'><a href='http://www.dotproject.net/' <?php if ($dialog) echo "target='_blank'"; ?>><img src="style/<?php echo $uistyle;?>/images/dp_icon.gif" border="0" alt="http://dotproject.net/" /></a></th>
 	</tr></table></td>
 </tr>
+<?php } ?>
 <?php if (!$dialog) {
 	// top navigation menu
 	$nav = $AppUI->getMenuModules();

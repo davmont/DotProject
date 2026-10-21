@@ -89,13 +89,14 @@ class CTabBox extends CTabBox_core {
 			echo "</table>\n";
 		} else {
 			$s = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
-			$s .= '<tr><td><table border="0" cellpadding="0" cellspacing="0">';
+			$s .= '<tr><td><div class="tabrow">';
 			if ( count($this->tabs)-1 < $this->active ) {
 				$this->active = 0;
 			}
 			foreach( $this->tabs as $k => $v ) {
 				$class = ($k == $this->active) ? 'tabon' : 'taboff';
 				$sel = ($k == $this->active) ? 'Selected' : '';
+				$s .= '<table class="tabitem" border="0" cellpadding="0" cellspacing="0"><tr>';
 				$s .= '<td id="toptab_'.$k.'" valign="middle" nowrap="nowrap"';
 				$s .= " class=\"$class\"";
 				$s .= '>&nbsp;<a href="';
@@ -106,9 +107,9 @@ class CTabBox extends CTabBox_core {
 				else
 					$s .= $this->baseHRef.'tab='.$k;
 				$s .='">'.($v[2] ? $v[1] : $AppUI->_($v[1])).'</a>&nbsp;</td>';
-				$s .= '<td width="1" class="tabsp"><img src="./images/shim.gif" height="1" width="1" /></td>';
+				$s .= '<td width="1" class="tabsp"><img src="./images/shim.gif" height="1" width="1" /></td></tr></table>';
 			}
-			$s .= '</table></td></tr>';
+			$s .= '</div></td></tr>';
 			$s .= '<tr><td width="100%" colspan="'.(count($this->tabs)*4 + 1).'" class="tabox">';
 			echo $s;
 			if (isset($this->tabs[$this->active]) && $this->tabs[$this->active][0] != "") {
