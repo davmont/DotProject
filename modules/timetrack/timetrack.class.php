@@ -31,7 +31,7 @@ class CTimeSheet {
                 $q = new DBQuery();
                 $q -> addTable('timetrack_idx');
                 $q -> addQuery('*');
-                $q -> addWhere('tt_id = '.$oid);
+                $q -> addWhere('tt_id = ' . (int)$oid);
                 $q -> loadObject($obj);
 		return $obj;
 	}
@@ -80,7 +80,7 @@ class CTimeSheet {
 		} else{
                       $q -> clear();
                       $q -> setDelete('timetrack_data');
-                      $q -> addWhere('tt_id = '.$this->tt_id);
+                      $q -> addWhere('tt_id = ' . (int)$this->tt_id);
 			if (!$q->exec()) {
 				return db_error();
 			} else {

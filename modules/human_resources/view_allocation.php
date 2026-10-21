@@ -10,7 +10,7 @@ $project_id = intval(dPgetParam($_GET, 'project_id', 0));
 $query = new DBQuery;
 $query->addTable('projects', 'p');
 $query->addQuery('project_name');
-$query->addWhere('p.project_id = ' . $project_id);
+$query->addWhere('p.project_id = ' . (int)$project_id);
 $res_project =& $query->exec();
 $project_name = $res_project->fields['project_name'];
 $query->clear();
@@ -26,7 +26,7 @@ $task->load($task_id);
 $query = new DBQuery;
 $query->addTable('human_resource_allocation', 'a');
 $query->addQuery('*');
-$query->addWhere('a.project_tasks_estimated_roles_id = ' . $project_tasks_estimated_roles_id);
+$query->addWhere('a.project_tasks_estimated_roles_id = ' . (int)$project_tasks_estimated_roles_id);
 $res =& $query->exec();
 
 $query_company_role = new DBQuery;
@@ -35,7 +35,7 @@ $query_company_role->addQuery('c.role_name, h.human_resources_role_responsabilit
 						h.human_resources_role_authority, h.human_resources_role_competence');
 $query_company_role->addJoin('company_role', 'c', 'c.id = e.role_id');
 $query_company_role->addJoin('human_resources_role', 'h', 'h.human_resources_role_name = c.role_name');
-$query_company_role->addWhere('e.id = ' . $project_tasks_estimated_roles_id);
+$query_company_role->addWhere('e.id = ' . (int)$project_tasks_estimated_roles_id);
 $res_company_role =& $query_company_role->exec();
 
 if($res->fields['human_resource_id']) {
@@ -44,7 +44,7 @@ if($res->fields['human_resource_id']) {
 	$query_hr->addQuery('u.user_username, c.contact_first_name, c.contact_last_name');
 	$query_hr->addJoin('users', 'u', 'u.user_id = h.human_resource_user_id');
 	$query_hr->addJoin('contacts', 'c', 'u.user_contact = c.contact_id');
-	$query_hr->addWhere('h.human_resource_id = ' . $res->fields['human_resource_id']);
+	$query_hr->addWhere('h.human_resource_id = ' . (int)$res->fields['human_resource_id']);
 	$res_hr =& $query_hr->exec();
 	$contact_name = $res_hr->fields['contact_last_name'] . ', ' . $res_hr->fields['contact_first_name'];
 	

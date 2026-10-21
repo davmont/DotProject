@@ -64,7 +64,7 @@ class ControllerWBSItem {
 		$q = new DBQuery();
 		$q->addQuery('t.id, t.item_name,t.identation,t.number,t.is_leaf');
 		$q->addTable('project_eap_items', 't');
-		$q->addWhere('t.id = ' . $id);
+		$q->addWhere('t.id = ' . (int)$id);
 		$item = $q->loadHash();
 		$WBSItem = new WBSItem();
 		if ($item) {

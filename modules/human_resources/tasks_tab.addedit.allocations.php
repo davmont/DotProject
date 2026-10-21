@@ -15,14 +15,14 @@ if (!$project_id && !empty($task_project)) {
 $query = new DBQuery;
 $query->addTable('projects', 'p');
 $query->addQuery('project_name');
-$query->addWhere('p.project_id = ' . $project_id);
+$query->addWhere('p.project_id = ' . (int)$project_id);
 $res_project =& $query->exec();
 $project_name = $res_project->fields ? $res_project->fields['project_name'] : '';
 
 $query = new DBQuery;
 $query->addTable('tasks', 't');
 $query->addQuery('task_name');
-$query->addWhere('t.task_id = ' . $task_id);
+$query->addWhere('t.task_id = ' . (int)$task_id);
 $res_task =& $query->exec();
 
 $query = new DBQuery;
@@ -31,7 +31,7 @@ $query->addQuery('e.id, e.role_id, r.role_name, h.human_resources_role_responsab
 						h.human_resources_role_authority, h.human_resources_role_competence');
 $query->innerJoin('company_role', 'r', 'r.id = e.role_id');
 $query->addJoin('human_resources_role', 'h', 'h.human_resources_role_company_id = r.id');
-$query->addWhere('e.task_id = ' . $task_id);
+$query->addWhere('e.task_id = ' . (int)$task_id);
 $res =& $query->exec();
 ?>
 <table width='100%' border='0' cellpadding='2' cellspacing='1' class='tbl'>

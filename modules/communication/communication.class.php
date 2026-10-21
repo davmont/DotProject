@@ -39,7 +39,7 @@ class CCommunication extends CDpObject {
 // delete the main table reference
         $q = new DBQuery();
         $q->setDelete('communication');
-        $q->addWhere('communication_id = ' . $this->communication_id);
+        $q->addWhere('communication_id = ' . (int)$this->communication_id);
         if (!$q->exec()) {
             return db_error();
         }

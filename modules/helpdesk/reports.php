@@ -30,7 +30,6 @@ $obj->setAllowedSQL($AppUI->user_id, $q);
 $company_list=array("0"=> $AppUI->_("All", UI_OUTPUT_RAW) );
 $ptrc = $q->exec();
 $nums=db_num_rows($ptrc);
-echo db_error();
 for ($x=0; $x < $nums; $x++) {
         $row = db_fetch_assoc( $ptrc );
         if ($row["company_id"] == $company_id) $display_company_name=$row["company_name"];
@@ -44,7 +43,7 @@ $q = new DBQuery;
 $q->addTable('projects');
 $q->addQuery('project_id, project_status, project_name, project_description, project_short_name');
 if ($company_id) {
-	$q->addWhere('project_company = '.$company_id);
+	$q->addWhere('project_company = ' . (int)$company_id);
 }
 $q->addGroup('project_id');
 $q->addOrder('project_short_name');
@@ -53,7 +52,6 @@ $obj->setAllowedSQL($AppUI->user_id, $q);
 $project_list=array("0"=> $AppUI->_("All", UI_OUTPUT_RAW) );
 $ptrc = $q->exec();
 $nums=db_num_rows($ptrc);
-echo db_error();
 for ($x=0; $x < $nums; $x++) {
         $row = db_fetch_assoc( $ptrc );
         if ($row["project_id"] == $project_id) $display_project_name='('.$row["project_short_name"].') '.$row["project_name"];

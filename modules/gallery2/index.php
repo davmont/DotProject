@@ -25,7 +25,6 @@ $q -> clearQuery();
 $q -> addQuery('gallery_folder');
 $gallery_folder= $q-> loadResult();
 
-echo db_error();
 if($gallery_folder && $gallery_uri)
 {
 	// initiate G2

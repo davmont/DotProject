@@ -13,7 +13,7 @@ class FeedbackEvaluationStatistic  {
             $q = new DBQuery();
             $q->addQuery("avg(grade),stddev(grade),count(grade) ");
             $q->addTable("feedback_evaluation");
-            $q->addWhere("feedback_id=" . $feedbackId);
+            $q->addWhere("feedback_id=" . (int)$feedbackId);
             //$list = $q->loadList();
             $sql = $q->prepare();
             $list=db_loadList($sql);

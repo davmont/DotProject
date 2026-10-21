@@ -58,7 +58,7 @@ if ((isset($f)) && ($AppUI->user_type < 7) ) { // keep people from playing aroun
 			$q -> addJoin('timetrack_idx','timetrack_idx','tt_id = tt_data_timesheet_id');
 			$q -> addJoin('projects','projects','project_id = tt_data_project_id');
 			$q -> addJoin('users','users','user_id = tt_user_id');
-			$q -> addWhere('tt_active = 0 AND project_owner = '.$AppUI->user_id);
+			$q -> addWhere('tt_active = 0 AND project_owner = ' . (int)$AppUI->user_id);
 			$q -> addOrder('tt_end_date');
 			$tab = "1";
 			$review = "1";
@@ -94,7 +94,7 @@ $timesheets =  $q ->loadList();
 $q -> clear();
 $q -> addTable('timetrack_idx');
 $q -> addQUery('MAX(tt_end_date) AS end_date');
-$q -> addWhere('tt_user_id = '.$AppUI->user_id);
+$q -> addWhere('tt_user_id = ' . (int)$AppUI->user_id);
 $tsld_data =$q -> loadHash();
 
 if ($tsld_data['end_date']) {

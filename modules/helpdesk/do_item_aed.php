@@ -209,7 +209,7 @@ function doWatchers($list, $hditem) {
 	$q = new DBQuery;
 	$q->addQuery('user_id');
 	$q->addTable('helpdesk_item_watchers');
-	$q->addWhere('item_id = '.$hditem->item_id);
+	$q->addWhere('item_id = ' . (int)$hditem->item_id);
 	$current_users = $q->loadHashList();
 	$q->clear();
 	$current_users = array_keys($current_users);
@@ -217,7 +217,7 @@ function doWatchers($list, $hditem) {
 	// Delete the existing watchers as the list might have changed
 	$q = new DBQuery;
 	$q->setDelete('helpdesk_item_watchers');
-	$q->addWhere('item_id='.$hditem->item_id);
+	$q->addWhere('item_id=' . (int)$hditem->item_id);
 	$q->exec();
 	$q->clear();
 
@@ -228,7 +228,7 @@ function doWatchers($list, $hditem) {
 				$q->addQuery('user_id, c.contact_email');
 				$q->addTable('users');
 				$q->addJoin('contacts', 'c', 'user_contact = contact_id');
-				$q->addWhere('user_id = '.$watcher);
+				$q->addWhere('user_id = ' . (int)$watcher);
 				$rows = $q->loadList();
 				$q->clear();
 				foreach ($rows as $row) {
@@ -242,7 +242,7 @@ function doWatchers($list, $hditem) {
 				$q->addTable('helpdesk_item_watchers');
 				$q->addInsert('item_id',$hditem->item_id, true);
 				$q->addInsert('user_id', $watcher, true);
-				$q->addWhere('item_id='.$hditem->item_id);
+				$q->addWhere('item_id=' . (int)$hditem->item_id);
 				$q->exec();
 				$q->clear();
 				if ($email_list) {

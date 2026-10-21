@@ -14,7 +14,7 @@ class WBSItemActivityRelationship {
 			$obj = new CTask();
 			$q->addQuery('task_id');
 			$q->addTable('tasks');
-			$q->addWhere('task_id =' . $id);
+			$q->addWhere('task_id =' . (int)$id);
 			$record = $q->loadResult();
 			$obj->task_project = $project_id;
 			$obj->task_name = $description;
@@ -29,19 +29,19 @@ class WBSItemActivityRelationship {
 				$q = new DBQuery();
 				$q->addTable('tasks', 't');							
 				$q->addUpdate('task_name', $description);	
-				$q->addWhere('task_id = '.$id);		
+				$q->addWhere('task_id = ' . (int)$id);		
 				$q->exec();
 			}
 			$q = new DBQuery();
 			$q->addTable('tasks', 't');							
 			$q->addUpdate('task_parent', $obj->task_id);	
-			$q->addWhere('task_id = '.$obj->task_id);		
+			$q->addWhere('task_id = ' . (int)$obj->task_id);		
 			$q->exec();
 			
 			$q = new DBQuery();
 			$q->addQuery('task_id');
 			$q->addTable('tasks_workpackages');
-			$q->addWhere('task_id =' . $obj->task_id);
+			$q->addWhere('task_id =' . (int)$obj->task_id);
 			$record = $q->loadResult();
 			$q->clear();
 			$q->addTable('tasks_workpackages');
@@ -51,7 +51,7 @@ class WBSItemActivityRelationship {
 				$q->addInsert('task_id', $obj->task_id);
 			}else{
 				$q->addUpdate('eap_item_id', $work_package);
-				$q->addWhere('task_id = ' . $obj->task_id);
+				$q->addWhere('task_id = ' . (int)$obj->task_id);
 			}
 			$q->exec();
 			$q->clear();
@@ -62,7 +62,7 @@ class WBSItemActivityRelationship {
 		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('tasks');
-		$q->addWhere('task_id=' . $id);
+		$q->addWhere('task_id=' . (int)$id);
 		$q->exec();
 	}
 	

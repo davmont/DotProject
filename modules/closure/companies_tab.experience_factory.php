@@ -24,7 +24,7 @@ $q->addTable('post_mortem_analysis', 'pma');
 $q->addQuery('distinct pma.project_name, project_id, pma_id, project_status,
 pma.project_start_date, pma.project_end_date, project_meeting_date, p.project_color_identifier');
 $q->addJoin('projects', 'p','p.project_name = pma.project_name');
-$q->addWhere('p.project_company = '.$company_id);
+$q->addWhere('p.project_company = ' . (int)$company_id);
 $q->addOrder($sort);
 $rows = $q->loadList();
 

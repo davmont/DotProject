@@ -17,7 +17,7 @@ $back = 'm=projects&a=view&project_id=' . $project_id;
 $q = new DBQuery;
 $q->addTable('projects');
 $q->addQuery('project_id, project_name, project_description');
-$q->addWhere('project_id = ' . $project_id);
+$q->addWhere('project_id = ' . (int)$project_id);
 $project = $q->loadHash();
 if (!$project || !getPermission('projects', 'view', $project_id)) {
 	$AppUI->redirect('m=public&a=access_denied');

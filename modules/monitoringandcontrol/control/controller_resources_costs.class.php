@@ -73,7 +73,7 @@ class ControllerResourcesCosts{
 	function deleteRow($id){
 			$q = new DBQuery();
 			$q->setDelete('monitoring_user_cost');
-			$q->addWhere('cost_id=' . $id);
+			$q->addWhere('cost_id=' . (int)$id);
 			$q->exec();
 			$q->clear();	
 	}	
@@ -90,7 +90,7 @@ class ControllerResourcesCosts{
 			$q->addUpdate('cost_value', $tx_pad);
 			$q->addUpdate('cost_per_use', $use_cost);
 			$q->addUpdate('user_id', $user_id);
-			$q->addWhere('cost_id = ' . $id);
+			$q->addWhere('cost_id = ' . (int)$id);
 			$q->exec();	
 		}
 
@@ -100,7 +100,7 @@ class ControllerResourcesCosts{
 			$q = new DBQuery();	
 			$q-> addTable('monitoring_user_cost');
 			$q-> addQuery('cost_id');
-			$q->addWhere('user_id =' .$user_id);	
+			$q->addWhere('user_id =' . (int)$user_id);	
 			$q->addOrder('cost_id ASC');
 			$sql = $q->prepare();
 			$list = db_loadList($sql);	
@@ -131,7 +131,7 @@ class ControllerResourcesCosts{
 		$q = new DBQuery;
 		$q->addQuery('cost_id, user_id, cost_value, cost_per_use, cost_dt_begin, cost_dt_end');
 		$q->addTable('monitoring_user_cost', 'c');
-		$q->addWhere('cost_id =' .$id);	
+		$q->addWhere('cost_id =' . (int)$id);	
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return $list;			
@@ -143,7 +143,7 @@ class ControllerResourcesCosts{
 		$q = new DBQuery;
 		$q->addQuery('cost_id, user_id, cost_value, cost_per_use, cost_dt_begin, cost_dt_end');
 		$q->addTable('monitoring_user_cost', 'c');
-		$q->addWhere('user_id =' .$user_id);	
+		$q->addWhere('user_id =' . (int)$user_id);	
 		$q->addOrder('cost_id ASC');
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
@@ -157,10 +157,10 @@ class ControllerResourcesCosts{
 		$q = new DBQuery;
 		$q->addQuery('cost_dt_begin, cost_dt_end');
 		$q->addTable('monitoring_user_cost', 'c');
-		$q->addWhere('user_id =' .$user_id);
+		$q->addWhere('user_id =' . (int)$user_id);
 		
 		if (isset($id)){
-			$q->addWhere('cost_id <>' .$id);
+			$q->addWhere('cost_id <>' . (int)$id);
 		}
 				
 		$q->addOrder('cost_id DESC');

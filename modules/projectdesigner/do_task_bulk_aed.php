@@ -142,7 +142,7 @@ if (is_array($selected) && count( $selected )) {
 					$upd_task->store();
                               $q = new DBQuery;
                               $q->setDelete('task_dependencies');
-                              $q->addWhere('dependencies_task_id='.$upd_task->task_id);
+                              $q->addWhere('dependencies_task_id=' . (int)$upd_task->task_id);
                               $q->exec();
 				} elseif (!($bulk_task_dependency==$upd_task->task_id)){
 					$upd_task->task_dynamic = 31;
@@ -254,7 +254,6 @@ if (is_array($selected) && count( $selected )) {
 				}
 		    }
 		}
-		echo db_error();
 	}
 }
 $AppUI->redirect('m=projectdesigner&project_id='.$project_id);

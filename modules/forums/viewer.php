@@ -34,7 +34,6 @@ $q->addWhere("f.forum_id = $forum_id");
 $q->exec(ADODB_FETCH_ASSOC);
 $forum = $q->fetchRow();
 $forum_name = $forum["forum_name"];
-echo db_error();
 $q->clear();
 
 $start_date = intval($forum["forum_create_date"]) ? new CDate($forum["forum_create_date"]) : null;

@@ -133,7 +133,7 @@ if ($do_report) {
 		}
 		$q->addTable('task_log');
 		$q->addQuery('*');
-		$q->addWhere('task_log_task = '.$task['task_id']);
+		$q->addWhere('task_log_task = ' . (int)$task['task_id']);
 		$q->addOrder('task_log_date desc');
 		$q->setLimit('1');
 		$task_log = $q->loadHash();

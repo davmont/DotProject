@@ -23,19 +23,19 @@ $q  = new DBQuery;
 $q->addTable('post_mortem_analysis', 'pma');
 $q->addQuery('pma_id, pma.project_name, project_meeting_date, participants');
 $q->addJoin('projects', 'p','p.project_name = pma.project_name');
-$q->addWhere('p.project_id = '.$project_id);
+$q->addWhere('p.project_id = ' . (int)$project_id);
 $q->addOrder($sort);
 $rows = $q->loadList();
 
 $q->addTable('projects');
 $q->addQuery('count(*)');
-$q->addWhere('project_id = '.$project_id);
+$q->addWhere('project_id = ' . (int)$project_id);
 $count_rows = $q->loadResult();
 
 $q  = new DBQuery;
 $q->addTable('projects');
 $q->addQuery('project_name');
-$q->addWhere('project_id = '.$project_id);
+$q->addWhere('project_id = ' . (int)$project_id);
 $res =& $q->exec();
 
 $project_name = $res->fields['project_name'];

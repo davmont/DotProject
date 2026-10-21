@@ -45,7 +45,7 @@ $today = new CDate();
 $q = new DBQuery;
 $q->addTable('users', 'u');
 $q->addQuery('DISTINCT(user_contact)');
-$q->addWhere('user_id = '.$AppUI->user_id);
+$q->addWhere('user_id = ' . (int)$AppUI->user_id);
 
 $contact	= new CContact();
 $contact->load($q->loadResult());

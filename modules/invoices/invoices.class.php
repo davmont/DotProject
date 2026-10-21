@@ -66,7 +66,7 @@ class CInvoice extends CDpObject
 		} else {
 			$q->clear();
 			$q->addTable('invoices');
-			$q->addWhere('invoice_id = ' . $this->invoice_id);
+			$q->addWhere('invoice_id = ' . (int)$this->invoice_id);
 			if (!$q->exec()) {
 				return db_error();
 			} else {

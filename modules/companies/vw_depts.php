@@ -13,7 +13,7 @@ $q  = new DBQuery;
 $q->addTable('departments','dept');
 $q->addQuery('dept.*, COUNT(c.contact_department) as dept_users');
 $q->addJoin('contacts', 'c', 'c.contact_department = dept.dept_id');
-$q->addWhere('dept.dept_company = '.$company_id);
+$q->addWhere('dept.dept_company = ' . (int)$company_id);
 $q->addGroup('dept.dept_id');
 $q->addOrder('dept.dept_parent, dept.dept_name');
 $sql = $q->prepare();

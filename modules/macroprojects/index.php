@@ -171,7 +171,7 @@ $q->addTable('macroprojects', 'p');
 $q->addQuery('p.macroproject_status, COUNT(p.macroproject_id) as count');
 $obj_macroproject->setAllowedSQL($AppUI->user_id, $q, null, 'p');
 if ($owner > 0) {
-	$q->addWhere('p.macroproject_owner = ' . $owner);
+	$q->addWhere('p.macroproject_owner = ' . (int)$owner);
 }
 if (isset($department)) {
 	$q->addJoin('macroproject_departments', 'pd', 'pd.macroproject_id = p.macroproject_id');
@@ -179,7 +179,7 @@ if (isset($department)) {
 		$q->addWhere('pd.department_id in (' . implode(',',$dept_ids) . ')');
 	}
 } else if ($company_id &&!$addPwOiD) {
-	$q->addWhere('p.macroproject_company = ' . $company_id);
+	$q->addWhere('p.macroproject_company = ' . (int)$company_id);
 }
 $q->addGroup('macroproject_status');
 $statuses = $q->loadHashList('macroproject_status');

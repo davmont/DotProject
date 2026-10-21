@@ -11,7 +11,7 @@ $company_id = intval(dPgetParam($_GET, 'company_id', 0));
 $query = new DBQuery;
 $query->addTable('companies', 'c');
 $query->addQuery('company_name');
-$query->addWhere('c.company_id = ' . $company_id);
+$query->addWhere('c.company_id = ' . (int)$company_id);
 $res =& $query->exec();
 $titleBlock->addCrumb(('?m=companies&amp;a=view&amp;company_id=' . $company_id), $AppUI->_('company').' ' . $res->fields['company_name']);
 $query->clear();
@@ -20,7 +20,7 @@ $contact_id = intval(dPgetParam($_GET, 'contact_id', 0));
 $query = new DBQuery;
 $query->addTable('contacts', 'c');
 $query->addQuery('contact_last_name, contact_first_name');
-$query->addWhere('c.contact_id = ' . $contact_id);
+$query->addWhere('c.contact_id = ' . (int)$contact_id);
 $res =& $query->exec();
 $contact_name = $res->fields['contact_last_name'] . ', ' . $res->fields['contact_first_name'];
 $titleBlock->addCrumb('?m=contacts&amp;a=view&amp;contact_id=' . $contact_id, $AppUI->_('contact').' '. $contact_name);
@@ -30,7 +30,7 @@ $user_id = intval(dPgetParam($_GET, 'user_id', 0));
 $query = new DBQuery;
 $query->addTable('human_resource', 'h');
 $query->addQuery('human_resource_id');
-$query->addWhere('h.human_resource_user_id = ' . $user_id);
+$query->addWhere('h.human_resource_user_id = ' . (int)$user_id);
 $res =& $query->exec();
 $human_resource_id = $res->fields['human_resource_id'];
 $query->clear();
@@ -65,7 +65,7 @@ if($existsHumanResource) {
 	$query->addTable('human_resource_roles', 'r');
 	$query->addQuery('h.human_resources_role_name, h.human_resources_role_id');
 	$query->innerJoin('human_resources_role', 'h', 'h.human_resources_role_id = r.human_resources_role_id');
-	$query->addWhere('r.human_resource_id = ' . $human_resource_id);
+	$query->addWhere('r.human_resource_id = ' . (int)$human_resource_id);
 	$sql = $query->prepare();
 	$roles = db_loadList($sql);
 	$roles_array = array();
@@ -101,7 +101,7 @@ function cal_work_day_conv($val) {
 
 $query->addTable('users', 'u');
 $query->addQuery('user_username');
-$query->addWhere('u.user_id = ' . $user_id);
+$query->addWhere('u.user_id = ' . (int)$user_id);
 $res =& $query->exec();
 ?>
 <script src="./modules/human_resources/view_hr.js"></script>

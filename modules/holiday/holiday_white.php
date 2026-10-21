@@ -31,7 +31,6 @@ $q -> addWhere('holiday_white=1');
 $q -> addOrder('holiday_start_date DESC');
 
 $prc = $q -> exec();
-echo db_error();
 
 while ($row = db_fetch_assoc( $prc )) {
 ?>

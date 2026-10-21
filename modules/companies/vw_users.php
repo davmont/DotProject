@@ -13,7 +13,7 @@ $q  = new DBQuery;
 $q->addTable('users', "usr");
 $q->addQuery('user_id, user_username, contact_first_name, contact_last_name');
 $q->addJoin('contacts', 'c', 'usr.user_contact = contact_id');
-$q->addWhere('contact_company = '.$company_id);
+$q->addWhere('contact_company = ' . (int)$company_id);
 $q->addOrder('contact_last_name');
 
 if (!($rows = $q->loadList())) {

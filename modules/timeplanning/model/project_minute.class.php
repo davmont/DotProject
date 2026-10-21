@@ -60,7 +60,7 @@ class ProjectMinute {
 			$q->addUpdate('isDuration', $isDuration);
 			$q->addUpdate('isResource', $isResource);
 			$q->addUpdate('isSize', $isSize);
-			$q->addWhere('id =' . $id);
+			$q->addWhere('id =' . (int)$id);
 		}else{
 			$q->addInsert('description', $description);
 			$q->addInsert('minute_date', $date);
@@ -103,7 +103,7 @@ class ProjectMinute {
 		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('task_minute_members');
-		$q->addWhere('task_minute_id =' . $id);
+		$q->addWhere('task_minute_id =' . (int)$id);
 		$result=true;
 		if (!$q->exec()){
 			$result=false;
@@ -116,7 +116,7 @@ class ProjectMinute {
 		$q = new DBQuery;
 		$q->addQuery("tm.description, tm.minute_date,tm.id,tm.isEffort,tm.isSize,tm.isDuration,tm.isResource");
 		$q->addTable('project_minutes', 'tm');
-		$q->addWhere('id ='.$minute_id);
+		$q->addWhere('id =' . (int)$minute_id);
 		$results = db_loadHashList($q->prepare(true), 'id');
 		$hasMinute=false;
 		foreach ($results as $id => $data) {
@@ -141,7 +141,7 @@ class ProjectMinute {
 		$q = new DBQuery();
 		$q->addTable('task_minute_members','tm');
 		$q->addQuery("tm.user_id");
-		$q->addWhere('task_minute_id ='.$minute_id);
+		$q->addWhere('task_minute_id =' . (int)$minute_id);
 		$results = db_loadHashList($q->prepare(true), 'user_id');
 		$this->members=array();
 		foreach ($results as $user_id => $data) {
@@ -154,7 +154,7 @@ class ProjectMinute {
 		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('project_minutes');
-		$q->addWhere('id =' . $id);
+		$q->addWhere('id =' . (int)$id);
 		$result=true;
 		if (!$q->exec()){
 			$result=false;

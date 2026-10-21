@@ -24,7 +24,6 @@ $q->addWhere("f.forum_id = $forum_id");
 $res = $q->exec();
 $forum_info = $q->fetchRow();
 $q->clear();
-echo db_error();
 
 //pull message information
 $q = new DBQuery;
@@ -33,7 +32,6 @@ $q->addJoin('users', 'u', 'fm.message_author = u.user_id');
 $q->addQuery('fm.*, u.user_username');
 $q->addWhere('fm.message_id = ' . ($message_id ? $message_id : $message_parent));
 $res = $q->exec();
-echo db_error();
 $message_info = $q->fetchRow();
 $q->clear();
 
@@ -44,7 +42,6 @@ if ($message_parent != -1) {
 	$q->addOrder('fm.message_id DESC'); // fetch last message first
 	$q->setLimit(1);
 	$res = $q->exec();
-	echo db_error();
 	$last_message_info = $q->fetchRow();
 	if (!$last_message_info) { // if it's first response, use original message
 		$last_message_info =& $message_info;

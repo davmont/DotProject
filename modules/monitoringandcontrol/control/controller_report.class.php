@@ -12,7 +12,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ba
 		$q = new DBQuery;
 		$q->addQuery('p.project_name, p.project_id ');
 		$q->addTable('projects', 'p');
-		$q->addWhere('p.project_company ='.$company);
+		$q->addWhere('p.project_company =' . (int)$company);
 		
 		$sql = $q->prepare();
 		$list = db_loadList($sql);	
@@ -51,7 +51,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ba
 		$q = new DBQuery;
 		$q->addQuery('p.project_company ');
 		$q->addTable('projects', 'p');
-		$q->addWhere('p.project_id ='.$project_id);		
+		$q->addWhere('p.project_id =' . (int)$project_id);		
 		$sql = $q->prepare();
 		$list = db_loadList($sql);	
 		return $list;		

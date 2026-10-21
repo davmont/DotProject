@@ -260,7 +260,7 @@ function reassign( $oldobj, $newobj, $id = 0 )
 	$sql = new DBQuery();
 	$sql -> addTable('inventory');
 	$sql -> addQuery('inventory_id');
-	$sql -> addWhere('inventory_parent='.$id);
+	$sql -> addWhere('inventory_parent=' . (int)$id);
 	if ( $children = $sql->loadResult() )
 	{
 		foreach ( $children as $child_id )

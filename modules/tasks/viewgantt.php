@@ -76,7 +76,7 @@ $q->addQuery('t.task_id, task_parent, task_name, task_start_date, task_end_date'
     . ', task_order, task_project, task_milestone, project_name, task_dynamic');
 $q->addWhere('project_status != 7 AND task_dynamic = 1');
 if ($project_id) {
-    $q->addWhere('task_project = ' . $project_id);
+    $q->addWhere('task_project = ' . (int)$project_id);
 }
 $task_acl = new CTask;
 $task_acl->setAllowedSQL($AppUI->user_id, $q);
@@ -414,8 +414,8 @@ if ($a == 'todo') {
     $todo_user_id = intval(defVal(@$_REQUEST['user_id'], $AppUI->user_id));
     $q->addTable('tasks', 't');
     $q->innerJoin('projects', 'p', 'p.project_id = t.task_project');
-    $q->innerJoin('user_tasks', 'ut', 'ut.task_id = t.task_id AND ut.user_id = ' . $todo_user_id);
-    $q->leftJoin('user_task_pin', 'tp', 'tp.task_id = t.task_id AND tp.user_id = ' . $todo_user_id);
+    $q->innerJoin('user_tasks', 'ut', 'ut.task_id = t.task_id AND ut.user_id = ' . (int)$todo_user_id);
+    $q->leftJoin('user_task_pin', 'tp', 'tp.task_id = t.task_id AND tp.user_id = ' . (int)$todo_user_id);
     $q->addQuery('t.task_id, t.task_name, t.task_start_date, t.task_end_date, t.task_percent_complete, t.task_milestone');
     $q->addWhere('(t.task_percent_complete < 100 OR t.task_percent_complete IS NULL)');
     $q->addWhere('t.task_status = 0');

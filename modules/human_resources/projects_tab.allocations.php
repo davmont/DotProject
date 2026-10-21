@@ -9,13 +9,13 @@ $project_id = intval(dPgetParam($_GET, 'project_id', 0));
 $query = new DBQuery;
 $query->addTable('projects', 'p');
 $query->addQuery('project_name');
-$query->addWhere('p.project_id = ' . $project_id);
+$query->addWhere('p.project_id = ' . (int)$project_id);
 $res =& $query->exec();
 $query->clear();
 
 $query->addTable('tasks', 't');
 $query->addQuery('task_id, task_name');
-$query->addWhere('t.task_project = ' . $project_id);
+$query->addWhere('t.task_project = ' . (int)$project_id);
 $res =& $query->exec();
 ?>
 

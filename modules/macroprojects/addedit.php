@@ -73,7 +73,7 @@ if ($macroproject_id && !array_key_exists($row->macroproject_company, $companies
 	$q = new DBQuery;
 	$q->addTable('companies', 'co');
 	$q->addQuery('company_name');
-	$q->addWhere('co.company_id = ' . $row->macroproject_company);
+	$q->addWhere('co.company_id = ' . (int)$row->macroproject_company);
 	$sql = $q->prepare();
 	$q->clear();
 	$companies[$row->macroproject_company] = db_loadResult($sql);
@@ -112,7 +112,7 @@ if ($macroproject_id) {
 	$q = new DBQuery;
 	$q->addTable('macroproject_departments');
 	$q->addQuery('department_id');
-	$q->addWhere('macroproject_id = ' . $macroproject_id);
+	$q->addWhere('macroproject_id = ' . (int)$macroproject_id);
 	$selected_departments = $q->loadColumn();
 }
 $departments_count = 0;
@@ -135,7 +135,7 @@ if ($macroproject_id) {
 	$q = new DBQuery;
 	$q->addTable('macroproject_contacts');
 	$q->addQuery('contact_id');
-	$q->addWhere('macroproject_id = ' . $macroproject_id);
+	$q->addWhere('macroproject_id = ' . (int)$macroproject_id);
 	$res =& $q->exec();
 	for ($res; !$res->EOF; $res->MoveNext())
 		$selected_contacts[] = $res->fields['contact_id'];

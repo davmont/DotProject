@@ -84,7 +84,6 @@ class CInventory extends CDpObject
 
 			$child_list = $sql->loadList();
 
-			echo db_error();
                        $sql->clear();
 			foreach ( $child_list as $child )
 			{

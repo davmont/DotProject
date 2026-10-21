@@ -161,7 +161,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 
 	// Update An Existing earning
 	if ($_POST['inv_dosql'] == "editinv") {
-		if (db_loadResult("SELECT COUNT(*) FROM {$dbprefix}earnings WHERE earning_num = '" . db_escape($_POST["earning_num"]) . "' AND earning_id <> " . (int)$earning_id)) {
+		if (db_loadResult("SELECT COUNT(*) FROM {$dbprefix}earnings WHERE earning_num = '" . db_escape(dPgetCleanParam($_POST, 'earning_num', '')) . "' AND earning_id <> " . (int)$earning_id)) {
 			$AppUI->setMsg('Error: Duplicate earning Number?', UI_MSG_ERROR);
 			$AppUI->redirect();
 		}
@@ -209,7 +209,7 @@ if (isset( $_POST['inv_dosql'] ) ) {
 	// Add A New earning
 	if ($_POST['inv_dosql'] == "addinv") {
 		// earning_num is unique: say so instead of letting the INSERT fail.
-		if (db_loadResult("SELECT COUNT(*) FROM {$dbprefix}earnings WHERE earning_num = '" . db_escape($_POST["earning_num"]) . "'")) {
+		if (db_loadResult("SELECT COUNT(*) FROM {$dbprefix}earnings WHERE earning_num = '" . db_escape(dPgetCleanParam($_POST, 'earning_num', '')) . "'")) {
 			$AppUI->setMsg('Error: Duplicate earning Number?', UI_MSG_ERROR);
 			$AppUI->redirect();
 		}

@@ -15,7 +15,7 @@ if (!defined('DP_BASE_DIR')) {
   $q->leftJoin('users','u2','u2.user_id = hiw.user_id');
   $q->leftJoin('contacts','contacts','u2.user_contact = contacts.contact_id');
   $q->leftJoin('projects','p','p.project_id = hi.item_project_id');
-  $q->addWhere('hiw.user_id = '.$AppUI->user_id);
+  $q->addWhere('hiw.user_id = ' . (int)$AppUI->user_id);
   $q->addWhere('hi.item_status != '.$HELPDESK_CONFIG['closed_status_id']);
   $rows = $q->loadList();
 

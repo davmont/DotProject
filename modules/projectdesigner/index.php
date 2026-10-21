@@ -59,7 +59,7 @@ $cal_df = str_replace('%','', $cal_df);
 $q  = new DBQuery;
 $q->addTable('project_designer_options','pdo');
 $q->addQuery('pdo.*');
-$q->addWhere('pdo.pd_option_user = '.$AppUI->user_id);
+$q->addWhere('pdo.pd_option_user = ' . (int)$AppUI->user_id);
 $view_options = $q->loadList();
 
 $project_id = intval( dPgetParam( $_REQUEST, "project_id", 0 ) );
@@ -166,7 +166,7 @@ if (!$project_id) {
       //check that project has tasks; otherwise run seperate query
       $q->addTable('tasks', 't');
       $q->addQuery("COUNT(distinct t.task_id) AS total_tasks");
-      $q->addWhere('task_project = '.$project_id);
+      $q->addWhere('task_project = ' . (int)$project_id);
       $hasTasks = $q->loadResult();
       $q->clear();
 
@@ -193,7 +193,7 @@ if (!$project_id) {
           $q->addJoin('companies', 'com', 'company_id = project_company');
           $q->addJoin('users', 'u', 'user_id = project_owner');
           $q->addJoin('contacts', 'con', 'contact_id = user_contact');
-          $q->addWhere('project_id = '.$project_id);
+          $q->addWhere('project_id = ' . (int)$project_id);
           $q->addGroup('project_id');
           $sql = $q->prepare();
       }

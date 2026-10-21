@@ -87,7 +87,7 @@ for ($i = 0; $i < sizeof($rolesIds); $i++) {
         $q = new DBQuery();
         $q->addTable("project_tasks_estimated_roles");
         $q->addQuery("id");
-        $q->addWhere("role_id=".$rolesIds[$i]." and task_id=".$task_id);
+        $q->addWhere("role_id=".$rolesIds[$i]." and task_id=" . (int)$task_id);
         $sql = $q->prepare();
         $records = db_loadList($sql);
         $task_estimative_id=$records[$countControl[$rolesIds[$i]]][0];
@@ -163,7 +163,7 @@ function updateActivity($startDateTxt, $endDateTxt, $taskId,$owner,$description,
     if ($task_status > -1) {
         $q->addUpdate("task_status", $task_status);
     }
-    $q->addWhere("task_id = " . $taskId);
+    $q->addWhere("task_id = " . (int)$taskId);
     $q->exec();
     return $duration;
 }

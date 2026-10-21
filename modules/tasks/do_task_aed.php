@@ -20,7 +20,7 @@ $send_ical_to_user = 0;
 $q = new DBQuery();
 $q->addTable('tasks_ical', 'ti');
 $q->addQuery('ti.UID');
-$q->addWhere('ti.task_id = ' . $task_id);
+$q->addWhere('ti.task_id = ' . (int)$task_id);
 $task_ical = $q->loadResult();
 if($task_ical){ $send_ical_to_user = 1;}
 
@@ -34,7 +34,7 @@ function setIcalEvent($task_id, $only_mail, $lastUpdate)
 	$q->addJoin('contacts', 'con', 'con.contact_id =  u.user_contact');
 	$q->addJoin('tasks_ical', 'ti', 'ti.task_id =  t.task_id');
 	$q->addQuery('DISTINCT t.task_name, t.task_end_date, t.task_start_date, t.task_description, con.contact_first_name, con.contact_last_name, con.contact_email, p.project_name, ti.UID, ti.created, ti.sequence');
-	$q->addWhere('t.task_id = ' . $task_id);
+	$q->addWhere('t.task_id = ' . (int)$task_id);
 	$rows = $q->loadList();
 	$q->clear();
 	$q = new DBQuery();
@@ -183,7 +183,7 @@ function sendIcal($task_id, $lastUpdate)
 	$q->addTable('tasks', 't');
 	$q->addJoin('projects', 'p', 'p.project_id =  t.task_project');
 	$q->addQuery('DISTINCT t.task_name, p.project_name');
-	$q->addWhere('t.task_id = ' . $task_id);
+	$q->addWhere('t.task_id = ' . (int)$task_id);
 	$rows = $q->loadList();
 	$q->clear();
 	foreach($rows as $row){
@@ -202,7 +202,7 @@ function sendIcal($task_id, $lastUpdate)
 	$q->addJoin('users', 'u', 'u.user_id =  ut.user_id');
 	$q->addJoin('contacts', 'con', 'con.contact_id =  u.user_contact');
 	$q->addQuery('con.contact_email');
-	$q->addWhere('ut.task_id = ' . $task_id);
+	$q->addWhere('ut.task_id = ' . (int)$task_id);
 	$rows = $q->loadList();
 	$q->clear();
 	if($rows != null){
@@ -442,7 +442,7 @@ if ($sub_form) {
 				$q->addTable('tasks', 't');							
 				$q->addUpdate('task_start_date', $obj->task_start_date);	
 				$q->addUpdate('task_end_date', $obj->task_end_date);
-				$q->addWhere('task_id = '.$obj->task_id);
+				$q->addWhere('task_id = ' . (int)$obj->task_id);
 				$q->addWhere('task_dynamic != 1');
 				$q->exec();
 				$q->clear();
@@ -452,7 +452,7 @@ if ($sub_form) {
 		$q = new DBQuery();
 		$q->addTable('task_dependencies');
 		$q->addQuery('dependencies_task_id');
-		$q->addWhere('dependencies_req_task_id ='.$task_id);
+		$q->addWhere('dependencies_req_task_id =' . (int)$task_id);
 		$task_son = $q->loadList();
 		$q->clear();
 		if($task_son != null){
@@ -460,7 +460,7 @@ if ($sub_form) {
 				$q = new DBQuery();
 				$q->addTable('tasks_ical', 'ti');
 				$q->addQuery('ti.UID');
-				$q->addWhere('ti.task_id = ' . $ts['dependencies_task_id']);
+				$q->addWhere('ti.task_id = ' . (int)$ts['dependencies_task_id']);
 				$task_ical = $q->loadResult();
 				if($task_ical){
 					$send_ical = 1;

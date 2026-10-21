@@ -80,7 +80,7 @@ class CDepartment extends CDpObject {
 		$q  = new DBQuery;
 		$q->addTable('departments','dep');
 		$q->addQuery('dep.*');
-		$q->addWhere('dep.dept_parent = '.$this->dept_id);
+		$q->addWhere('dep.dept_parent = ' . (int)$this->dept_id);
 		$res = $q->exec();
 
 		if (db_num_rows($res)) {
@@ -101,7 +101,7 @@ class CDepartment extends CDpObject {
 		$q->clear();
 		$q->addQuery('*');
 		$q->setDelete('departments');
-		$q->addWhere('dept_id = '.$this->dept_id);
+		$q->addWhere('dept_id = ' . (int)$this->dept_id);
 		if (!$q->exec()) {
 			$result = db_error();
 		} else {

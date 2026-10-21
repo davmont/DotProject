@@ -175,7 +175,6 @@ if ($do_report) {
 	//echo "<pre>$sql</pre>";
 
 	$logs = $q->loadList();
-	echo db_error();
 ?>
 	<table cellspacing="1" cellpadding="4" border="0" class="tbl" summary"project task summary">
 	<tr>
@@ -264,7 +263,6 @@ if ($do_report) {
 		} else {
 			$pname = "All Projects";
 		}
-		echo db_error();
 
 		$font_dir = DP_BASE_DIR.'/lib/ezpdf/fonts';
 		$temp_dir = DP_BASE_DIR.'/files/temp';

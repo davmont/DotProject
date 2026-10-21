@@ -21,7 +21,7 @@ $principles = array(
 $q = new DBQuery();
 $q->addTable('project_pmbok_principles');
 $q->addQuery('*');
-$q->addWhere('project_id = ' . $project_id);
+$q->addWhere('project_id = ' . (int)$project_id);
 $sql = $q->prepare();
 $rows = db_loadList($sql);
 $data = array();

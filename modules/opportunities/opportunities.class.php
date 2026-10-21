@@ -66,7 +66,7 @@ class COpportunities extends CDpObject {
 	function delete($oid = null, $history_desc = '', $history_proj = 0) {
 		$q = new DBQuery();
 		$q -> setDelete('opportunities');
-		$q -> addWhere('opportunity_id = '.$this->opportunity_id);
+		$q -> addWhere('opportunity_id = ' . (int)$this->opportunity_id);
 		
 		if (!$q -> exec()) {
 			return db_error();

@@ -37,7 +37,6 @@ if (is_array($selected) && count($selected)) {
 				$upd_file->store();
 			}
 		}
-		echo db_error();
 	}
 }
 $AppUI->redirect($redirect);

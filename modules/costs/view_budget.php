@@ -12,7 +12,7 @@ $q = new DBQuery;
 $q->clear();
 $q->addQuery('*');
 $q->addTable('costs_budget');
-$q->addWhere('budget_id = ' . $budget_id);
+$q->addWhere('budget_id = ' . (int)$budget_id);
 
 
 // check if this record has dependancies to prevent deletion
@@ -215,7 +215,7 @@ $notHumanCost = $q->loadList();
     $q->clear();
     $q->addQuery('*');
     $q->addTable('budget_reserve', 'b');
-    $q->addWhere("budget_reserve_project_id = " . $projectSelected);
+    $q->addWhere("budget_reserve_project_id = " . (int)$projectSelected);
     $q->addOrder('budget_reserve_risk_id');
     $risks = $q->loadList();
     ?>
@@ -299,7 +299,7 @@ insertBudget($projectSelected, $subTotal);
 $q->clear();
 $q->addQuery('*');
 $q->addTable('costs_budget');
-$q->addWhere('budget_project_id = ' . $projectSelected);
+$q->addWhere('budget_project_id = ' . (int)$projectSelected);
 $q->addOrder('budget_id');
 $v = $q->exec();
 ?>

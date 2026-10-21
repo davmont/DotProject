@@ -14,7 +14,7 @@ $q = new DBQuery;
 $q->clear();
 $q->addQuery('*');
 $q->addTable('costs');
-$q->addWhere('cost_project_id = ' . $projectSelected);
+$q->addWhere('cost_project_id = ' . (int)$projectSelected);
 
 
 // check if this record has dependancies to prevent deletion

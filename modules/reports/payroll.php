@@ -217,7 +217,7 @@ function traverse_employees($employee_id, $employee_first_name, $employee_last_n
 	$q->addJoin('tasks', 't', 't.task_id = l.task_log_task');
 	$q->addJoin('projects', 'p', 'p.project_id = t.task_project');
 	$q->addJoin('companies', 'c', 'c.company_id = p.project_company');
-	$q->addWhere('l.task_log_creator = ' . $employee_id);
+	$q->addWhere('l.task_log_creator = ' . (int)$employee_id);
 	$q->addWhere("l.task_log_date >= '" . $start_date->format(FMT_DATETIME_MYSQL) . "'");
 	$q->addWhere("l.task_log_date <= '" . $end_date->format(FMT_DATETIME_MYSQL) . "'");
 	$q->addOrder('task_log_date');

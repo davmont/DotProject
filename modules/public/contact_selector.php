@@ -156,7 +156,7 @@ if (mb_strlen($selected_contacts_id) > 0 && !$show_all && !$company_id) {
 	// Contacts for this company only
 	$q->addTable('companies', 'c');
 	$q->addQuery('c.company_name');
-	$q->addWhere('company_id = ' . $company_id);
+	$q->addWhere('company_id = ' . (int)$company_id);
 	$company_name = $q->loadResult();
 	$q->clear();
 	/*

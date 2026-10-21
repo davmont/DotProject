@@ -27,7 +27,7 @@ if (!empty($_POST['out_user_id']) && !empty($_POST['out_name']) && $canEdit && $
         $r->addTable('sessions', 's');
         $r->addQuery('DISTINCT(session_id), user_access_log_id');
         $r->addJoin('user_access_log', 'ual', 'session_user = user_access_log_id');
-        $r->addWhere('user_id = ' . $boot_user_id);
+        $r->addWhere('user_id = ' . (int)$boot_user_id);
         $r->addOrder('user_access_log_id');
 
         //execute query and fetch results

@@ -23,7 +23,7 @@ if ($project_id) {
         $q = new DBQuery();
         $q->addTable('project_pmbok_principles');
         $q->addQuery('count(*)');
-        $q->addWhere('project_id = ' . $project_id . ' AND principle_id = ' . $id);
+        $q->addWhere('project_id = ' . $project_id . ' AND principle_id = ' . (int)$id);
         $exists = $q->loadResult();
         $q->clear();
 
@@ -32,7 +32,7 @@ if ($project_id) {
         if ($exists) {
             $q->addUpdate('rating', $rating);
             $q->addUpdate('notes', $note);
-            $q->addWhere('project_id = ' . $project_id . ' AND principle_id = ' . $id);
+            $q->addWhere('project_id = ' . $project_id . ' AND principle_id = ' . (int)$id);
         } else {
             $q->addInsert('project_id', $project_id);
             $q->addInsert('principle_id', $id);

@@ -230,7 +230,7 @@ if ($do_report) {
 	$sql->addTable('users');
 	$sql->addQuery('user_id, user_username');
 	if ($log_userfilter!=0) {
-		$sql->addWhere('user_id = ' . $log_userfilter);
+		$sql->addWhere('user_id = ' . (int)$log_userfilter);
 	}
 	$sql->addOrder('user_username');
 	$user_list = $sql->loadHashList('user_id');
@@ -258,7 +258,7 @@ if ($do_report) {
 		$sql->addWhere("p.project_company='$company_id'");
 	}
 	if ($log_userfilter !=0) {
-		$sql->addWhere('ut.user_id = ' . $log_userfilter);
+		$sql->addWhere('ut.user_id = ' . (int)$log_userfilter);
 	}
 	
 	$task = new CTask();

@@ -20,7 +20,7 @@ $communication_id = intval(dPgetParam($_GET, 'communication_id'));
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('communication');
-$q->addWhere('communication_id = ' . $communication_id);
+$q->addWhere('communication_id = ' . (int)$communication_id);
 
 // check if this record has dependancies to prevent deletion
 $msg = '';
@@ -101,7 +101,7 @@ if ($communication_id != 0 && $rdel_id != 0) {
         $del = $rdel_id;
         $rdel = new DBQuery;
         $rdel->setDelete('communication_receptor');
-        $rdel->addWhere('communication_id = ' . $communication_id . ' and communication_stakeholder_id = ' . $del);
+        $rdel->addWhere('communication_id = ' . $communication_id . ' and communication_stakeholder_id = ' . (int)$del);
         $rdel->exec();
         
         if (isset($_GET['project'])) {
@@ -186,7 +186,7 @@ if ($communication_id != 0 && $rdeli_id != 0) {
         $del = $rdeli_id;
         $rdel = new DBQuery;
         $rdel->setDelete('communication_issuing');
-        $rdel->addWhere('communication_id = ' . $communication_id . ' and communication_stakeholder_id = ' . $del);
+        $rdel->addWhere('communication_id = ' . $communication_id . ' and communication_stakeholder_id = ' . (int)$del);
         $rdel->exec();
       
         if (isset($_GET['project'])) {
@@ -252,7 +252,7 @@ $qreceptors->addQuery('m.communication_id, c.contact_id ,c.contact_first_name,c.
 $qreceptors->addTable('communication_receptor', 'r');
 $qreceptors->addJoin('contacts', 'c', 'c.contact_id=r.communication_stakeholder_id');
 $qreceptors->addJoin('communication', 'm', 'm.communication_id=r.communication_id');
-$qreceptors->addWhere('m.communication_id = ' . $communication_id);
+$qreceptors->addWhere('m.communication_id = ' . (int)$communication_id);
 $rreceptors = $qreceptors->loadList();
 
 
@@ -262,7 +262,7 @@ $remitters->addQuery('m.communication_id, c.contact_id ,c.contact_first_name,c.c
 $remitters->addTable('communication_issuing', 'i');
 $remitters->addJoin('contacts', 'c', 'c.contact_id=i.communication_stakeholder_id');
 $remitters->addJoin('communication', 'm', 'm.communication_id=i.communication_id');
-$remitters->addWhere('m.communication_id = ' . $communication_id);
+$remitters->addWhere('m.communication_id = ' . (int)$communication_id);
 $remitters = $remitters->loadList();
 
 // list of channels

@@ -10,7 +10,7 @@ $company_id = intval(dPgetParam($_GET, 'company_id', 0));
 $query = new DBQuery;
 $query->addTable('companies', 'c');
 $query->addQuery('company_name');
-$query->addWhere('c.company_id = ' . $company_id);
+$query->addWhere('c.company_id = ' . (int)$company_id);
 $res =& $query->exec();
 
 $titleBlock = new CTitleBlock('Human Resource Configurations', 'applet3-48.png', $m, "$m.$a");
@@ -22,7 +22,7 @@ $query = new DBQuery;
 $query->addTable('users', 'u');
 $query->addQuery('user_id, user_username, contact_last_name, contact_first_name, contact_id');
 $query->addJoin('contacts', 'c', 'u.user_contact = c.contact_id');
-$query->addWhere('c.contact_company = ' . $company_id);
+$query->addWhere('c.contact_company = ' . (int)$company_id);
 $query->addOrder('contact_last_name');
 $res =& $query->exec();
 

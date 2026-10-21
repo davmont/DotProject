@@ -91,13 +91,13 @@ if ($category_filter) {
 	$q->addWhere($category_filter);
 }
 if ($company_id) {
-	$q->addWhere('p.project_company = ' . $company_id);
+	$q->addWhere('p.project_company = ' . (int)$company_id);
 }
 if ($project_id) {
-	$q->addWhere('f.file_project = ' . $project_id);
+	$q->addWhere('f.file_project = ' . (int)$project_id);
 }
 if ($task_id) {
-	$q->addWhere('f.file_task = ' . $task_id);
+	$q->addWhere('f.file_task = ' . (int)$task_id);
 }
 
 
@@ -122,7 +122,7 @@ if (count($allowedFolders)) {
 }
 if ($company_id) {
 	$r->innerJoin('companies', 'co', 'co.company_id = p.project_company');
-	$r->addWhere('co.company_id = ' . $company_id);
+	$r->addWhere('co.company_id = ' . (int)$company_id);
 	$r->addWhere($allowedCompanies);
 }
 
@@ -160,13 +160,13 @@ if ($category_filter) {
 	$q2->addWhere($category_filter);
 }
 if ($company_id) {
-	$q2->addWhere('p.project_company = ' . $company_id);
+	$q2->addWhere('p.project_company = ' . (int)$company_id);
 }
 if ($project_id) {
-	$q2->addWhere('f.file_project = ' . $project_id);
+	$q2->addWhere('f.file_project = ' . (int)$project_id);
 }
 if ($task_id) {
-	$q2->addWhere('f.file_task = ' . $task_id);
+	$q2->addWhere('f.file_task = ' . (int)$task_id);
 }
 $q2->setLimit($xpg_pagesize, $xpg_min);
 // Adding an Order by that is different to a group by can cause
@@ -206,13 +206,13 @@ if ($category_filter) {
 	$q3->addWhere($category_filter);
 }
 if ($company_id) {
-	$q3->addWhere('p.project_company = ' . $company_id);
+	$q3->addWhere('p.project_company = ' . (int)$company_id);
 }
 if ($project_id) {
-	$q3->addWhere('f.file_project = ' . $project_id);
+	$q3->addWhere('f.file_project = ' . (int)$project_id);
 }
 if ($task_id) {
-	$q3->addWhere('f.file_task = ' . $task_id);
+	$q3->addWhere('f.file_task = ' . (int)$task_id);
 }
 
 $files = array();

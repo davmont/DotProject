@@ -11,7 +11,7 @@ $projectSelected = intval(dPgetParam($_GET, 'project_id'));
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('budget_reserve');
-$q->addWhere('budget_reserve_id = ' . $budget_reserve_id);
+$q->addWhere('budget_reserve_id = ' . (int)$budget_reserve_id);
 //$project_id = $q->loadList();
 // check if this record has dependancies to prevent deletion
 $msg = '';

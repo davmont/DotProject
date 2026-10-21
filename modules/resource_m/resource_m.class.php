@@ -163,18 +163,18 @@ function loadUsersIncludindFilters($contact_id, $company_id, $department_id, $pr
 	$q->addQuery('DISTINCT(contact_id)');
 	$q->addJoin('contacts', 'con', 'user_contact = contact_id');
 	if ($contact_id)
-		$q->addWhere('contact_id = '.$contact_id);
+		$q->addWhere('contact_id = ' . (int)$contact_id);
 	if ($company_id)
-		$q->addWhere('contact_company = '.$company_id);
+		$q->addWhere('contact_company = ' . (int)$company_id);
 	if ($department_id){
 		$q->addJoin('departments', 'd', 'con.contact_department = d.dept_id');
-		$q->addWhere('con.contact_department = '.$department_id.' OR d.dept_parent = '.$department_id);
+		$q->addWhere('con.contact_department = '.$department_id.' OR d.dept_parent = ' . (int)$department_id);
 
 	}
 	if($project_id){
 		$q->addJoin('user_tasks', 'ut', 'ut.user_id = u.user_id');
 		$q->addJoin('tasks', 't', 't.task_id = ut.task_id');
-		$q->addWhere('t.task_project = '.$project_id);
+		$q->addWhere('t.task_project = ' . (int)$project_id);
 	}
 	$q->addOrder('contact_last_name, contact_first_name');
 	$usersId = 	$q->loadColumn();
@@ -265,7 +265,7 @@ function getChildIds($task_id, $contact_id, $start_date, $end_date) {
 	$q->addWhere('task_start_date < str_to_date("'.$end_date.'", "%Y%m%d")');
 	$q->addWhere('task_end_date > str_to_date("'.$start_date.'", "%Y%m%d")');
 	$q->addWhere('task_parent != t.task_id');
-	$q->addWhere('task_parent = '.$task_id);
+	$q->addWhere('task_parent = ' . (int)$task_id);
 	$q->addOrder('task_start_date , task_end_date, task_id');
 	$child_ids = $q->loadColumn(); 
 	
@@ -303,20 +303,20 @@ function editDur($user_id, $task_id, $new_sdate, $new_edate, $adapt=false) {
 		$q = new DBQuery; 
 		$q->addTable('user_tasks', 'ut');
 		$q->addQuery('perc_assignment');
-		$q->addWhere('user_id = '.$user_id);
-		$q->addWhere('task_id = '.$task_id);
+		$q->addWhere('user_id = ' . (int)$user_id);
+		$q->addWhere('task_id = ' . (int)$task_id);
 		$old_percent = $q->loadResult();
 		
 		// Take the old start and end date of this task
 		$q = new DBQuery; 
 		$q->addTable('tasks', 't');
 		$q->addQuery('task_start_date');
-		$q->addWhere('task_id = '.$task_id);
+		$q->addWhere('task_id = ' . (int)$task_id);
 		$cold_sdate = new CDate($q->loadResult());
 		$q = new DBQuery; 
 		$q->addTable('tasks', 't');
 		$q->addQuery('task_end_date');
-		$q->addWhere('task_id = '.$task_id);
+		$q->addWhere('task_id = ' . (int)$task_id);
 		$cold_edate = new CDate($q->loadResult());
 		
 		// Calculate the new percent from the old values and the new dates
@@ -328,8 +328,8 @@ function editDur($user_id, $task_id, $new_sdate, $new_edate, $adapt=false) {
 		$q = new DBQuery; 
 		$q->addTable('user_tasks', 'ut');
 		$q->addUpdate('perc_assignment', $new_percent);
-		$q->addWhere('user_id = '.$user_id);
-		$q->addWhere('task_id = '.$task_id);
+		$q->addWhere('user_id = ' . (int)$user_id);
+		$q->addWhere('task_id = ' . (int)$task_id);
 		$q->exec();
 	}
 	$dur_type = ($new_dur > $dPconfig['daily_working_hours']) ? '24' : '1'; 
@@ -343,7 +343,7 @@ function editDur($user_id, $task_id, $new_sdate, $new_edate, $adapt=false) {
 	$q->addUpdate('task_end_date',$cnew_edate->format(FMT_DATETIME_MYSQL));
 	$q->addUpdate('task_duration',$new_dur);
 	$q->addUpdate('task_duration_type',$dur_type);
-	$q->addWhere('task_id = '.$task_id);
+	$q->addWhere('task_id = ' . (int)$task_id);
 	$q->exec();	
 	
 	// Update dependencies by loading parents
@@ -368,20 +368,20 @@ function editAssign($user_id, $task_id, $new_percent, $aff_style, $adapt=false) 
 		$q = new DBQuery; 
 		$q->addTable('user_tasks', 'ut');
 		$q->addQuery('perc_assignment');
-		$q->addWhere('user_id = '.$user_id);
-		$q->addWhere('task_id = '.$task_id);
+		$q->addWhere('user_id = ' . (int)$user_id);
+		$q->addWhere('task_id = ' . (int)$task_id);
 		$old_percent = $q->loadResult();
 		
 		// Take the start and end date of this task
 		$q = new DBQuery; 
 		$q->addTable('tasks', 't');
 		$q->addQuery('task_start_date');
-		$q->addWhere('task_id = '.$task_id);
+		$q->addWhere('task_id = ' . (int)$task_id);
 		$csdate = new CDate($q->loadResult());
 		$q = new DBQuery; 
 		$q->addTable('tasks', 't');
 		$q->addQuery('task_end_date');
-		$q->addWhere('task_id = '.$task_id);
+		$q->addWhere('task_id = ' . (int)$task_id);
 		$cedate = new CDate($q->loadResult());
 		
 		// Calculate the new duration and new end date from the old values and the new assignment
@@ -402,7 +402,7 @@ function editAssign($user_id, $task_id, $new_percent, $aff_style, $adapt=false) 
 		$q->addUpdate('task_end_date',$nedate->format(FMT_DATETIME_MYSQL));
 		$q->addUpdate('task_duration',$new_dur);
 		$q->addUpdate('task_duration_type',$dur_type);
-		$q->addWhere('task_id = '.$task_id);
+		$q->addWhere('task_id = ' . (int)$task_id);
 		$q->exec();	
 	}
 	$task = new CTask();
@@ -412,8 +412,8 @@ function editAssign($user_id, $task_id, $new_percent, $aff_style, $adapt=false) 
 	$q = new DBQuery; 
 	$q->addTable('user_tasks', 'ut');
 	$q->addUpdate('perc_assignment', $new_percent);
-	$q->addWhere('user_id = '.$user_id);
-	$q->addWhere('task_id = '.$task_id);
+	$q->addWhere('user_id = ' . (int)$user_id);
+	$q->addWhere('task_id = ' . (int)$task_id);
 	$q->exec();
 }
 
@@ -529,7 +529,7 @@ function getUserTaskAssign($taskid, $user_id) {
 	$q->addQuery('perc_assignment');
 	$q->addJoin('users', 'u', 'u.user_id = ut.user_id');
 	$q->addWhere('u.user_contact = '.$user_id);
-	$q->addWhere('task_id='.$taskid);
+	$q->addWhere('task_id=' . (int)$taskid);
 	return $q->loadResult();
 }
 
@@ -549,7 +549,7 @@ function getParentStartDate($task_id) {
 		$q = new DBQuery;
 		$q->addTable('tasks', 't');
 		$q->addQuery('DISTINCT(task_id), task_parent, task_start_date');
-		$q->addWhere('task_id = '.$task_id);
+		$q->addWhere('task_id = ' . (int)$task_id);
 		$parent = $q->loadList();
 		
 		$task_id = $parent[0]['task_parent'];
@@ -614,7 +614,7 @@ function getContactId($user_id) {
 	$q = new DBQuery;
 	$q->addTable('users', 'u');
 	$q->addQuery('DISTINCT(user_contact)');
-	$q->addWhere('user_id = '.$user_id);
+	$q->addWhere('user_id = ' . (int)$user_id);
 	return $q->loadResult();
 }
 

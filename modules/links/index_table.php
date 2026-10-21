@@ -141,10 +141,10 @@ if (!empty($search)) {
 	$q->addWhere("(link_name like $like OR link_description like $like)");
 }
 if ($project_id) { // Project
-	$q->addWhere('link_project = ' . $project_id);
+	$q->addWhere('link_project = ' . (int)$project_id);
 }
 if ($task_id) { // Task
-	$q->addWhere('link_task = ' . $task_id);
+	$q->addWhere('link_task = ' . (int)$task_id);
 }
 if ($catsql) { // Category
 	$q->addWhere($catsql);

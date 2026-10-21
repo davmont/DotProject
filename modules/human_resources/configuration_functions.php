@@ -6,7 +6,7 @@ function getRolesByCompanyId($company_id) {
 	$query = new DBQuery;
 	$query->addTable('human_resources_role', 'r');
 	$query->addQuery('r.human_resources_role_id');
-	$query->addWhere('r.human_resources_role_company_id = ' . $company_id);
+	$query->addWhere('r.human_resources_role_company_id = ' . (int)$company_id);
 	$sql = $query->prepare();
 	$query->clear();
 	return db_loadList($sql);
@@ -16,7 +16,7 @@ function isConfiguredRole($human_resources_role_id) {
 	$query = new DBQuery;
 	$query->addTable('human_resources_role', 'r');
 	$query->addQuery('r.human_resources_role_name, r.human_resources_role_authority, r.human_resources_role_responsability, r.human_resources_role_competence');
-	$query->addWhere('r.human_resources_role_id = ' . $human_resources_role_id);
+	$query->addWhere('r.human_resources_role_id = ' . (int)$human_resources_role_id);
 	$res =& $query->exec();
 	$configured = false;
 	if($res->fields['human_resources_role_name']) {
@@ -45,7 +45,7 @@ function isRoleAllocated($project_tasks_estimated_roles_id) {
 	$query = new DBQuery;
 	$query->addTable('human_resource_allocation', 'a');
 	$query->addQuery('human_resource_allocation_id');
-	$query->addWhere('a.project_tasks_estimated_roles_id = ' . $project_tasks_estimated_roles_id);
+	$query->addWhere('a.project_tasks_estimated_roles_id = ' . (int)$project_tasks_estimated_roles_id);
 	$sql = $query->prepare();
 	$query->clear();
 	$list = db_loadList($sql);
@@ -56,7 +56,7 @@ function getProjectTasksEstimatedRolesByTaskId($task_id) {
 	$query = new DBQuery;
 	$query->addTable('project_tasks_estimated_roles', 'e');
 	$query->addQuery('e.id');
-	$query->addWhere('e.task_id = ' . $task_id);
+	$query->addWhere('e.task_id = ' . (int)$task_id);
 	$sql = $query->prepare();
 	$query->clear();
 	return db_loadList($sql);
@@ -79,7 +79,7 @@ function getTasksByProjectId($project_id) {
 	$query = new DBQuery;
 	$query->addTable('tasks', 't');
 	$query->addQuery('task_id');
-	$query->addWhere('t.task_project = ' . $project_id);
+	$query->addWhere('t.task_project = ' . (int)$project_id);
 	$sql = $query->prepare();
 	$query->clear();
 	return db_loadList($sql);
@@ -102,7 +102,7 @@ function getProjectsByCompanyId($company_id) {
 	$query = new DBQuery;
 	$query->addTable('projects', 'p');
 	$query->addQuery('project_id');
-	$query->addWhere('p.project_company = ' . $company_id);
+	$query->addWhere('p.project_company = ' . (int)$company_id);
 	$sql = $query->prepare();
 	$query->clear();
 	return db_loadList($sql);
@@ -112,7 +112,7 @@ function companyHasPolicies($company_id) {
 	$query = new DBQuery;
 	$query->addTable('company_policies', 'p');
 	$query->addQuery('company_policies_id');
-	$query->addWhere('p.company_policies_company_id = ' . $company_id);
+	$query->addWhere('p.company_policies_company_id = ' . (int)$company_id);
 	$sql = $query->prepare();
 	$query->clear();
 	$list = db_loadList($sql);
@@ -135,7 +135,7 @@ function userHasHumanResource($user_id) {
 	$query = new DBQuery;
 	$query->addTable('human_resource', 'h');
 	$query->addQuery('human_resource_id');
-	$query->addWhere('h.human_resource_user_id = ' . $user_id);
+	$query->addWhere('h.human_resource_user_id = ' . (int)$user_id);
 	$sql = $query->prepare();
 	$query->clear();
 	$list = db_loadList($sql);
@@ -147,7 +147,7 @@ function getUsersByCompanyId($company_id) {
 	$query->addTable('users', 'u');
 	$query->addQuery('user_id');
 	$query->innerJoin('contacts', 'c', 'u.user_contact = c.contact_id');
-	$query->addWhere('c.contact_company = ' . $company_id);
+	$query->addWhere('c.contact_company = ' . (int)$company_id);
 	$sql = $query->prepare();
 	$query->clear();
 	return db_loadList($sql);

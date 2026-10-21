@@ -52,7 +52,7 @@ class CInitiating extends CDpObject
 		// delete the main table reference
 		$q = new DBQuery();
 		$q->setDelete('initiating');
-		$q->addWhere('initiating_id = ' . $this->initiating_id);
+		$q->addWhere('initiating_id = ' . (int)$this->initiating_id);
 		if (!$q->exec()) {
 			return db_error();
 		}

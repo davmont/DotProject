@@ -38,7 +38,7 @@ $notHumanCost = $q->loadList();
 $q->clear();
 $q->addQuery('*');
 $q->addTable('costs_budget');
-$q->addWhere('budget_project_id = ' . $projectSelected);
+$q->addWhere('budget_project_id = ' . (int)$projectSelected);
 $q->addOrder('budget_id');
 $v = $q->loadList();
 
@@ -196,7 +196,7 @@ if ($v == null) {
     $q->clear();
     $q->addQuery('*');
     $q->addTable('budget_reserve', 'b');
-    $q->addWhere("budget_reserve_project_id = " . $projectSelected);
+    $q->addWhere("budget_reserve_project_id = " . (int)$projectSelected);
     $q->addOrder('budget_reserve_risk_id');
     $risks = $q->loadList();
     ?>
@@ -269,7 +269,7 @@ if ($v == null) {
 $q->clear();
 $q->addQuery('*');
 $q->addTable('costs_budget');
-$q->addWhere('budget_project_id = ' . $projectSelected);
+$q->addWhere('budget_project_id = ' . (int)$projectSelected);
 $q->addOrder('budget_id');
 $v = $q->exec();
 $budget_reserve_management = ($v && isset($v->fields) && isset($v->fields['budget_reserve_management'])) ? $v->fields['budget_reserve_management'] : 0;

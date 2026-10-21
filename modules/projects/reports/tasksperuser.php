@@ -122,7 +122,7 @@ if ($do_report) {
 	$query->leftJoin('contacts', 'c', 'c.contact_id = u.user_contact');
 	$query->addQuery('u.user_id, u.user_username, c.contact_first_name, c.contact_last_name');
 	if ($log_userfilter) {
-		$query->addWhere('user_id = ' . $log_userfilter);
+		$query->addWhere('user_id = ' . (int)$log_userfilter);
 	}
 	$query->addOrder('user_username');
 	$user_list = $query->loadHashList('user_id');
@@ -143,7 +143,7 @@ if ($do_report) {
 	}
 	
 	if ($project_id) {
-		$query->addWhere('t.task_project = '. $project_id);
+		$query->addWhere('t.task_project = ' . (int)$project_id);
 	}
 	// Now add the required restrictions.
 	$proj->setAllowedSQL($AppUI->user_id, $query, null, 'p');

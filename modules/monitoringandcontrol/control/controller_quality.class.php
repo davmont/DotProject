@@ -24,7 +24,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 	function deleteRow($id){
 		$q = new DBQuery();
 		$q->setDelete('monitoring_quality');
-		$q->addWhere('quality_id=' . $id);
+		$q->addWhere('quality_id=' . (int)$id);
 		$q->exec();
 		$q->clear();	
 	}	
@@ -40,7 +40,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q->addUpdate('quality_status_id', $status);
 		$q->addUpdate('quality_date_end', $date_end);
 		$q->addUpdate('task_id', $task_id);
-		$q->addWhere('quality_id = ' . $id);
+		$q->addWhere('quality_id = ' . (int)$id);
 		$q->exec();	
 	}
 	
@@ -60,13 +60,13 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 			$qAux->addTable('monitoring_quality', 'q');
 			$qAux->innerJoin('tasks', 't', 't.task_id = q.task_id');
 			
-			$qAux->addWhere('t.task_project ='.$project_id);
+			$qAux->addWhere('t.task_project =' . (int)$project_id);
 			$qAux->addWhere('q.quality_status_id <> 3');//Cancelado
-			$qAux->addWhere('q.quality_type_id='.$row['quality_type_id']);
+			$qAux->addWhere('q.quality_type_id=' . (int)$row['quality_type_id']);
 			
 			if(isset($user) && $user > 0) {
 				$qAux->innerJoin('user_tasks', 'ut', 't.task_id = ut.task_id');
-				$qAux->addWhere('ut.user_id='.$user);
+				$qAux->addWhere('ut.user_id=' . (int)$user);
 			}
 			
 			$sql = $qAux->prepare();
@@ -96,12 +96,12 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		
 		if(isset($user) && $user > 0) {
 			$q->innerJoin('user_tasks', 'ut', 't.task_id = ut.task_id');
-			$q->addWhere('ut.user_id='.$user);
+			$q->addWhere('ut.user_id=' . (int)$user);
 		}		
 		
-		$q->addWhere('t.task_project ='.$project_id);
+		$q->addWhere('t.task_project =' . (int)$project_id);
 		$q->addWhere('q.quality_status_id <> 3');//Cancelado
-		$q->addWhere('q.quality_type_id ='.$idTipoErro);
+		$q->addWhere('q.quality_type_id =' . (int)$idTipoErro);
 		
 		$q->addGroup('qt.quality_type_name');
 		$q->addGroup('year(t.task_start_date)');
@@ -121,11 +121,11 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q = new DBQuery;
 		$q->addQuery('COUNT(t.task_id) as quantity');
 		$q->addTable('tasks', 't');
-		$q->addWhere('t.task_project ='.$project_id);
+		$q->addWhere('t.task_project =' . (int)$project_id);
 
 		if(isset($user) && $user > 0) {
 			$q->innerJoin('user_tasks', 'ut', 't.task_id = ut.task_id');
-			$q->addWhere('ut.user_id='.$user);
+			$q->addWhere('ut.user_id=' . (int)$user);
 		}
 
 		$qSub = new DBQuery;
@@ -156,7 +156,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q->addTable('tasks', 't');
 		$q->innerJoin('user_tasks', 'ut', 't.task_id = ut.task_id');
 		$q->innerJoin('users', 'u', 'u.user_id = ut.user_id');
-		$q->addWhere('t.task_project ='.$project_id);
+		$q->addWhere('t.task_project =' . (int)$project_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		 
@@ -170,7 +170,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q->addQuery('         month(t.task_start_date) as month');
 		$q->addQuery('         year(t.task_start_date) as year');
 		$q->addTable('tasks', 't');
-		$q->addWhere('t.task_project ='.$project_id);
+		$q->addWhere('t.task_project =' . (int)$project_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		 
@@ -263,7 +263,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q = new DBQuery;
 		$q->addQuery( ' quality_id, quality_type_id, quality_description, user_id ,quality_status_id, quality_date_end, task_id  ');
 		$q->addTable('monitoring_quality', 'q');	
-		$q->addWhere('task_id='.$task_id);
+		$q->addWhere('task_id=' . (int)$task_id);
 		$q-> addOrder('quality_id');
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
@@ -316,7 +316,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q = new DBQuery;
 		$q->addQuery('quality_status_name');
 		$q->addTable('monitoring_quality_status','s');	
-		$q-> addWhere('quality_status_id='. $num);					
+		$q-> addWhere('quality_status_id=' . (int)$num);					
 		$sql = $q->prepare();
 		$list = db_loadList($sql);	
 		$statusname='';
@@ -333,7 +333,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q = new DBQuery;
 		$q->addQuery('quality_type_name');
 		$q->addTable('monitoring_quality_type','t');	
-		$q-> addWhere('quality_type_id='. $num);					
+		$q-> addWhere('quality_type_id=' . (int)$num);					
 		$sql = $q->prepare();
 		$list = db_loadList($sql);	
 		$typename='';
@@ -349,7 +349,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q = new DBQuery;
 		$q->addQuery( ' quality_id, quality_type_id, quality_description, user_id ,quality_status_id, quality_date_end, task_id  ');
 		$q->addTable('monitoring_quality', 'q');	
-		$q->addWhere('quality_id='.$id);
+		$q->addWhere('quality_id=' . (int)$id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return $list;	

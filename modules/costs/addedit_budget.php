@@ -15,7 +15,7 @@ if (!(($canEdit && $budget_id) || ($canAuthor && !($budget_id)))) {
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('costs_budget');
-$q->addWhere('budget_id = ' . $budget_id);
+$q->addWhere('budget_id = ' . (int)$budget_id);
 //$project_id = $q->loadList();
 // check if this record has dependancies to prevent deletion
 $msg = '';

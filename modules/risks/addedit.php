@@ -38,7 +38,7 @@ if (!(($canEdit && $risk_id) || ($canAuthor && !($risk_id)))) {
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('risks');
-$q->addWhere('risk_id = ' . $risk_id);
+$q->addWhere('risk_id = ' . (int)$risk_id);
 
 // check if this record has dependancies to prevent deletion
 $msg = '';
@@ -191,7 +191,7 @@ $titleBlock->show();
                             $q = new DBQuery();
                             $q->addQuery('project_id, project_name');
                             $q->addTable('projects');
-                            $q->addWhere('project_id = ' . $projectSelected);
+                            $q->addWhere('project_id = ' . (int)$projectSelected);
                             $project = $q->loadHashList();
                             if ($projectSelected == null) {
                                 $projectSelected = @$obj->risk_project;

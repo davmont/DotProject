@@ -9,7 +9,7 @@ $id=intval(dPgetParam($_GET, 'id', 0));
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('initiating');
-$q->addWhere('initiating_id = ' . $id);
+$q->addWhere('initiating_id = ' . (int)$id);
 
 $obj = new CInitiating();
 
@@ -26,7 +26,7 @@ $q->addQuery('*');
 $q->addTable('contacts','c');
 $q->addTable('users','u');
 $q->addWhere('u.user_contact = c.contact_id');
-$q->addWhere('user_id = ' . $obj->initiating_manager);
+$q->addWhere('user_id = ' . (int)$obj->initiating_manager);
 $contact = $q->loadHash();
 
 // instancia um novo documento com o nome de pdf

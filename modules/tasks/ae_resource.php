@@ -36,7 +36,7 @@ if ($task_id == 0) {
 	$q = new DBQuery();
 	$q->addTable('tasks_ical', 'ti');
 	$q->addQuery('ti.UID');
-	$q->addWhere('ti.task_id = ' . $task_id);
+	$q->addWhere('ti.task_id = ' . (int)$task_id);
 	$task_ical = $q->loadResult();
 	if($task_ical){ $send_ical = 1;}
 }

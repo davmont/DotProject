@@ -28,7 +28,7 @@ class ControllerAta{
 			$q->addUpdate('ds_title', $title);
 			$q->addUpdate('ds_subject', $subject);
 			$q->addUpdate('project_id', $project_id);
-			$q->addWhere('meeting_id = '. $meeting_id);
+			$q->addWhere('meeting_id = ' . (int)$meeting_id);
 			$q->exec();	
 		}
 		
@@ -36,7 +36,7 @@ class ControllerAta{
 			global $db;
 			$q = new DBQuery();	
 			$q->setDelete('monitoring_meeting_user');
-			$q->addWhere('meeting_id=' . $meeting_id);
+			$q->addWhere('meeting_id=' . (int)$meeting_id);
 			$q->exec();			
 			$count = count($participants);
 			$db->StartTrans();
@@ -54,7 +54,7 @@ class ControllerAta{
 			global $db;
 			$q = new DBQuery();	
 			$q->setDelete('monitoring_meeting_item_select');
-			$q->addWhere('meeting_id=' . $meeting_id);
+			$q->addWhere('meeting_id=' . (int)$meeting_id);
 			$q->exec();		
 			$count = count($item_id);
 			$db->StartTrans();
@@ -153,33 +153,33 @@ class ControllerAta{
 	function deleteRow($meeting_id){
 		$q = new DBQuery();
 		$q->setDelete('monitoring_change_request');
-		$q->addWhere('meeting_id=' . $meeting_id);
+		$q->addWhere('meeting_id=' . (int)$meeting_id);
 		$q->exec();
 		$q->clear();	
 			
 		$q = new DBQuery();
 		$q->setDelete('monitoring_meeting_user');
-		$q->addWhere('meeting_id=' . $meeting_id);
+		$q->addWhere('meeting_id=' . (int)$meeting_id);
 		$q->exec();
 		$q->clear();	
 		
 		$q->setDelete('monitoring_meeting_item_tasks_delivered');
-		$q->addWhere('meeting_id=' . $meeting_id);
+		$q->addWhere('meeting_id=' . (int)$meeting_id);
 		$q->exec();
 		$q->clear();	
 		
 		$q->setDelete('monitoring_meeting_item_senior');
-		$q->addWhere('meeting_id=' . $meeting_id);
+		$q->addWhere('meeting_id=' . (int)$meeting_id);
 		$q->exec();
 		$q->clear();	
 		
 		$q->setDelete('monitoring_meeting_item_select');
-		$q->addWhere('meeting_id=' . $meeting_id);
+		$q->addWhere('meeting_id=' . (int)$meeting_id);
 		$q->exec();
 		$q->clear();	
 		
 		$q->setDelete('monitoring_meeting');
-		$q->addWhere('meeting_id=' . $meeting_id);
+		$q->addWhere('meeting_id=' . (int)$meeting_id);
 		$q->exec();
 		$q->clear();				
 	}	
@@ -195,7 +195,7 @@ class ControllerAta{
 		$q->addQuery('i.meeting_item_description');		
 		$q->addTable('monitoring_meeting_item_select', 's');
 		$q->innerJoin('monitoring_meeting_item', 'i', 'i.meeting_item_id = s.meeting_item_id');
-		$q->addWhere('meeting_id =' .$meeting_id);	
+		$q->addWhere('meeting_id =' . (int)$meeting_id);	
 		$q->addOrder('i.meeting_item_id ASC');	
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
@@ -211,7 +211,7 @@ class ControllerAta{
 		$q->addTable('monitoring_meeting', 'm');	
 		$q->innerJoin('monitoring_meeting_type', 't', 't.meeting_type_id = m.meeting_type_id');
 		
-		$q->addWhere('project_id='.$project_id);
+		$q->addWhere('project_id=' . (int)$project_id);
 		$q->addOrder('meeting_id ASC');
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
@@ -225,7 +225,7 @@ class ControllerAta{
 		$q->addQuery('meeting_id, project_id, dt_meeting_begin, ds_title,ds_subject,dt_meeting_end, t.meeting_type_id, t.meeting_type_name');
 		$q->addTable('monitoring_meeting', 'm');	
 		$q->innerJoin('monitoring_meeting_type', 't', 't.meeting_type_id = m.meeting_type_id');
-		$q->addWhere('meeting_id =' .$meeting_id);	
+		$q->addWhere('meeting_id =' . (int)$meeting_id);	
 		$q->addOrder('meeting_id ASC');
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
@@ -264,7 +264,7 @@ class ControllerAta{
 		$q = new DBQuery;
 		$q->addTable('monitoring_meeting');
 		$q->addQuery('meeting_id');
-		$q->addWhere('project_id ='.$project_id);
+		$q->addWhere('project_id =' . (int)$project_id);
 		$q->addOrder('meeting_id DESC');	
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
@@ -278,7 +278,7 @@ class ControllerAta{
 		$q = new DBQuery;
 		$q->addQuery('user_id');
 		$q->addTable('monitoring_meeting_user','u');
-		$q->addWhere('meeting_id =' .$meeting_id);	
+		$q->addWhere('meeting_id =' . (int)$meeting_id);	
 		$sql = $q->prepare();
 		$list = db_loadList($sql);	
 		return $list;			
@@ -290,13 +290,13 @@ class ControllerAta{
 		$q = new DBQuery;
 		$q->addTable('tasks', 't');
 		$q->addQuery('t.task_name, t.task_duration, t.task_start_date, t.task_end_date, t.task_id ');
-		$q->addWhere('t.task_project ='.$project_id);
+		$q->addWhere('t.task_project =' . (int)$project_id);
 		
 		$qSub = new DBQuery;		
 		$qSub->addQuery('tSub.task_id ');
 		$qSub->addTable('monitoring_meeting_item_tasks_delivered', 'dSub');		
 		$qSub->innerJoin('tasks', 'tSub', 'tSub.task_id = dSub.task_id');
-		$qSub->addWhere('tSub.task_project ='.$project_id);
+		$qSub->addWhere('tSub.task_project =' . (int)$project_id);
 		$sqlSub = $qSub->prepare();
 		$q->addWhere('t.task_id not in ('.$sqlSub . ')');
 		$q->addWhere('t.task_percent_complete=100');
@@ -312,7 +312,7 @@ class ControllerAta{
 		$q->addQuery('t.task_name, t.task_duration, t.task_start_date, t.task_end_date, t.task_id');
 		$q->addTable('monitoring_meeting_item_tasks_delivered', 'd');
 		$q->innerJoin('tasks', 't', 't.task_id = d.task_id');
-		$q->addWhere('d.meeting_id='.$meeting_id);
+		$q->addWhere('d.meeting_id=' . (int)$meeting_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		return  $list;  		
@@ -324,7 +324,7 @@ class ControllerAta{
 		$q = new DBQuery;
 		$q->addQuery('s.meeting_percentual, s.meeting_size, s.meeting_idc, s.meeting_idp, s.meeting_vp, s.meeting_va, s.meeting_cr, s.meeting_baseline');
 		$q->addTable('monitoring_meeting_item_senior', 's');
-		$q->addWhere('s.meeting_id='.$meeting_id);
+		$q->addWhere('s.meeting_id=' . (int)$meeting_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		return  $list;  		
@@ -339,7 +339,7 @@ class ControllerAta{
 		
 		$q->addTable('monitoring_meeting_user', 'm');
 		$q->innerJoin('users', 'u', 'm.user_id = u.user_id');		
-		$q->addWhere('m.meeting_id ='.$meeting_id);
+		$q->addWhere('m.meeting_id =' . (int)$meeting_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return $list;

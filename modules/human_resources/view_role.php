@@ -11,7 +11,7 @@ $company_id = intval(dPgetParam($_GET, 'company_id', 0));
 $query = new DBQuery;
 $query->addTable('companies', 'c');
 $query->addQuery('company_name');
-$query->addWhere('c.company_id = ' . $company_id);
+$query->addWhere('c.company_id = ' . (int)$company_id);
 $res =& $query->exec();
 $titleBlock->addCrumb(('?m=companies&amp;a=view&amp;company_id=' . $company_id),  $AppUI->_('company') .' '. $res->fields['company_name']);
 $query->clear();

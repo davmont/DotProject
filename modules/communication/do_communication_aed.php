@@ -36,12 +36,12 @@ if ($del) {
     } else {
         $q = new DBQuery();
         $q->setDelete('communication_receptor');
-        $q->addWhere('communication_id='.$communication_id);
+        $q->addWhere('communication_id=' . (int)$communication_id);
         $q->exec();
         
         $q = new DBQuery();
         $q->setDelete('communication_issuing');
-        $q->addWhere('communication_id='.$communication_id);
+        $q->addWhere('communication_id=' . (int)$communication_id);
         $q->exec();
         
         $AppUI->setMsg("deleted", UI_MSG_ALERT, true);

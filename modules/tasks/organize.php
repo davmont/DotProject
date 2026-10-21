@@ -116,7 +116,7 @@ $q->addTable('tasks', 't');
 $q->innerJoin('projects', 'p', 'p.project_id = t.task_project');
 $q->addQuery('t.*, p.project_name, p.project_id, p.project_color_identifier');
 if ($project_id) {
-	$q->addWhere('p.project_id = ' . $project_id);
+	$q->addWhere('p.project_id = ' . (int)$project_id);
 }
 if (count($allowedTasks)) {
 	$q->addWhere($allowedTasks);

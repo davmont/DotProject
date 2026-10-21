@@ -43,11 +43,11 @@ if($action) {
 		$q -> addTable('journal'); // this is not out of the block because we have the setDelete and may cause problems
 		$q -> addUpdate('journal_description', $journal_description);
 		$q -> addUpdate('journal_project',$journal_project);
-		$q -> addWhere('journal_id ='.$journal_id);		
+		$q -> addWhere('journal_id =' . (int)$journal_id);		
 		$okMsg = "journal updated";
 	} else if ( $action == "del" ) {
 		$q -> setDelete('journal');
-		$q -> addWhere('journal_id ='. $journal_id);		
+		$q -> addWhere('journal_id =' . (int)$journal_id);		
 		$okMsg = "journal deleted";				
 	}
 	if(!$q -> exec()) {

@@ -46,7 +46,7 @@ class CBudget extends CDpObject
 		$q = new DBQuery;
 		$q->addTable('budget');
 		$q->addQuery('budget_id');
-		$q->addWhere('task_id = ' . $task_id);
+		$q->addWhere('task_id = ' . (int)$task_id);
 		$budget_id = $q->loadResult();
 		if ($budget_id == null) {
 			$this->Tax = mostCommonTax();
@@ -65,7 +65,7 @@ class CBudget extends CDpObject
 		$q = new DBQuery;
 		$q->addTable('budget');
 		$q->addQuery('budget_id');
-		$q->addWhere('task_id = ' . $this->task_id);
+		$q->addWhere('task_id = ' . (int)$this->task_id);
 		$budget_id = $q->loadResult();
 		if ($budget_id == null) {
 			$q->addTable('budget');
@@ -84,7 +84,7 @@ class CBudget extends CDpObject
 		$q->addUpdate('equipment_operation', $this->equipment_operation);
 		$q->addUpdate('intangible_operation', $this->intangible_operation);
 		$q->addUpdate('service_operation', $this->service_operation);
-		$q->addWhere('task_id = ' . $this->task_id);
+		$q->addWhere('task_id = ' . (int)$this->task_id);
 		$q->exec();
 	}
 
@@ -239,7 +239,7 @@ function updateValue($var, $val, $tax)
 	$q = new DBQuery();
 	$q->addTable('budget');
 	$q->addQuery('COUNT(*)');
-	$q->addWhere('task_id = ' . $task_id);
+	$q->addWhere('task_id = ' . (int)$task_id);
 
 	if ($q->loadResult() == 0) {
 		$q->clear();
@@ -252,7 +252,7 @@ function updateValue($var, $val, $tax)
 		$q->clear();
 		$q->addTable('budget');
 		$q->addQuery('Tax');
-		$q->addWhere('task_id = ' . $task_id);
+		$q->addWhere('task_id = ' . (int)$task_id);
 		$val = number_format($val / ($q->loadResult() / 100 + 1), 2, '.', '');
 	}
 	$q->clear();
@@ -279,7 +279,7 @@ function updateValue($var, $val, $tax)
 		default:
 			return -1;
 	}
-	$q->addWhere('task_id = ' . $task_id);
+	$q->addWhere('task_id = ' . (int)$task_id);
 	return $q->exec();
 }
 
@@ -418,7 +418,7 @@ function loadTasks($project_id, $years)
 	$q = new DBQuery;
 	$q->addTable('tasks', 't');
 	$q->addQuery('DISTINCT(task_id)');
-	$q->addWhere('task_project = ' . $project_id);
+	$q->addWhere('task_project = ' . (int)$project_id);
 	$q->addWhere('task_parent = t.task_id');
 	$q->addWhere('task_status >= 0');
 	$q->addOrder('task_start_date , task_end_date, task_id');
@@ -432,7 +432,7 @@ function loadTasks($project_id, $years)
 
 	$q->addTable('tasks', 't');
 	$q->addQuery('DISTINCT(task_id)');
-	$q->addWhere('task_project = ' . $project_id);
+	$q->addWhere('task_project = ' . (int)$project_id);
 	$q->addWhere('task_parent = t.task_id');
 	$q->addWhere('task_status >= 0');
 	$q->addOrder('task_start_date , task_end_date, task_id');
@@ -511,7 +511,7 @@ function countChildren($task_id, $years = null)
 	$q->addTable('tasks', 't');
 	$q->addQuery('COUNT(DISTINCT(t.task_id))');
 	$q->addWhere('task_parent != t.task_id');
-	$q->addWhere('task_parent = ' . $task_id);
+	$q->addWhere('task_parent = ' . (int)$task_id);
 	if ($years != null && $years[0] != 1) {
 		$where = '( false ';
 		foreach ($years as $year) {
@@ -534,7 +534,7 @@ function countLastChildren($task_id)
 	$q->addTable('tasks', 't');
 	$q->addQuery('DISTINCT(t.task_id)');
 	$q->addWhere('task_parent != t.task_id');
-	$q->addWhere('task_parent = ' . $task_id);
+	$q->addWhere('task_parent = ' . (int)$task_id);
 	$ids = $q->loadColumn();
 
 	$res = 0;
@@ -557,7 +557,7 @@ function getChildrenIds($task_id)
 	$q->addTable('tasks', 't');
 	$q->addQuery('DISTINCT(t.task_id)');
 	$q->addWhere('task_parent != t.task_id');
-	$q->addWhere('task_parent = ' . $task_id);
+	$q->addWhere('task_parent = ' . (int)$task_id);
 	return $q->loadColumn();
 }
 
@@ -574,7 +574,7 @@ function getAllChildrenIds($task_id, $years = null)
 		$q->addTable('tasks', 't');
 		$q->addQuery('DISTINCT(task_id)');
 		$q->addWhere('task_parent != t.task_id');
-		$q->addWhere('task_parent = ' . $task_id);
+		$q->addWhere('task_parent = ' . (int)$task_id);
 		$q->addWhere('task_status >= 0');
 		$q->addOrder('task_start_date , task_end_date, task_id');
 		$ids = $q->loadColumn();
@@ -589,7 +589,7 @@ function getAllChildrenIds($task_id, $years = null)
 	$q->addTable('tasks', 't');
 	$q->addQuery('DISTINCT(t.task_id)');
 	$q->addWhere('task_parent != t.task_id');
-	$q->addWhere('task_parent = ' . $task_id);
+	$q->addWhere('task_parent = ' . (int)$task_id);
 	$q->addWhere('task_status >= 0');
 	$q->addOrder('task_start_date , task_end_date, task_id');
 	if ($years != null && $years[0] != 1) {

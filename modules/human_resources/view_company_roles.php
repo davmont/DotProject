@@ -10,7 +10,7 @@ $company_id = intval(dPgetParam($_GET, 'company_id', 0));
 $query = new DBQuery;
 $query->addTable('companies', 'c');
 $query->addQuery('company_name');
-$query->addWhere('c.company_id = ' . $company_id);
+$query->addWhere('c.company_id = ' . (int)$company_id);
 $res =& $query->exec();
 
 $titleBlock = new CTitleBlock('Roles', 'applet3-48.png', 'human_resources', "$m.$a");
@@ -25,7 +25,7 @@ $query->clear();
 $query = new DBQuery;
 $query->addTable('human_resources_role', 'r');
 $query->addQuery('r.*');
-$query->addWhere('r.human_resources_role_company_id = ' . $company_id);
+$query->addWhere('r.human_resources_role_company_id = ' . (int)$company_id);
 $res_companies =& $query->exec();
 
 ?>

@@ -22,7 +22,7 @@ $q -> addTable('timetrack_data','d');
 $q -> addQuery('d.*,p.project_name,t.task_name');
 $q -> addJoin('projects','p','project_id = tt_data_project_id');
 $q -> addJoin('tasks','t','t.task_id = d.tt_data_task_id');
-$q -> addWhere('tt_data_id = '.$tid);
+$q -> addWhere('tt_data_id = ' . (int)$tid);
 $tt_data=$q -> loadHash();
 ##echo '<pre>';print_r($tt_data);echo '</pre>';##
 
@@ -36,13 +36,12 @@ $q -> addQuery('u.task_id, t.task_name, t.task_project,
 	p.project_name, p.project_company, c.company_name');
 $q -> addJoin('projects','p','p.project_id = t.task_project');
 $q -> addJoin('companies','c','c.company_id = p.project_company');
-$q -> addWhere('u.user_id = '.$AppUI->user_id);
+$q -> addWhere('u.user_id = ' . (int)$AppUI->user_id);
 $q -> addWhere('u.task_id = t.task_id');
 $q -> addOrder('p.project_name, t.task_name');
 ##echo "<pre>$sql</pre>";
 
 $res = $q -> exec();
-echo db_error();
 $tasks = array();
 $projects = array();
 $companies = array( '0'=>'' );

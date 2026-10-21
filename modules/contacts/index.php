@@ -91,7 +91,6 @@ $q->clear();
 $rn = 0;
 $disp_arr = array();
 if (!($res = db_exec($sql))) {
-	echo db_error();
 } else {
 	while ($row = db_fetch_assoc($res)) {
 		if (!($row['user_id']) || $perms->checkLogin($row['user_id'])) {

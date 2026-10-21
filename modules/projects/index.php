@@ -172,7 +172,7 @@ $q->addTable('projects', 'p');
 $q->addQuery('p.project_status, COUNT(p.project_id) as count');
 $obj_project->setAllowedSQL($AppUI->user_id, $q, null, 'p');
 if ($owner > 0) {
-	$q->addWhere('p.project_owner = ' . $owner);
+	$q->addWhere('p.project_owner = ' . (int)$owner);
 }
 if (isset($department)) {
 	$q->addJoin('project_departments', 'pd', 'pd.project_id = p.project_id');
@@ -180,7 +180,7 @@ if (isset($department)) {
 		$q->addWhere('pd.department_id = ' . (int) $department);
 	}
 } else if ($company_id && !$addPwOiD) {
-	$q->addWhere('p.project_company = ' . $company_id);
+	$q->addWhere('p.project_company = ' . (int)$company_id);
 }
 $q->addGroup('project_status');
 $statuses = $q->loadHashList('project_status');
