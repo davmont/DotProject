@@ -37,7 +37,7 @@ $notHumanCost = $q->loadList();
 
 $q->clear();
 $q->addQuery('*');
-$q->addTable('budget');
+$q->addTable('costs_budget');
 $q->addWhere('budget_project_id = ' . $projectSelected);
 $q->addOrder('budget_id');
 $v = $q->loadList();
@@ -268,7 +268,7 @@ if ($v == null) {
 <?php
 $q->clear();
 $q->addQuery('*');
-$q->addTable('budget');
+$q->addTable('costs_budget');
 $q->addWhere('budget_project_id = ' . $projectSelected);
 $q->addOrder('budget_id');
 $v = $q->exec();

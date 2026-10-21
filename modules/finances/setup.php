@@ -30,7 +30,7 @@ if (!defined('DP_BASE_DIR')) {
 
 $config = array();
 $config['mod_name'] = 'Finances';
-$config['mod_version'] = '1.0';
+$config['mod_version'] = '1.1';
 $config['mod_directory'] = 'finances';
 $config['mod_setup_class'] = 'CSetupFinances';
 $config['mod_type'] = 'user';
@@ -62,10 +62,29 @@ class CSetupFinances {
 		return $success; 
 	}
   
-	function upgrade($old_version) { return true; }
+	function upgrade($old_version) {
+		// 1.1: when the costs module was installed first, 'budget' was its table
+		// and ours was never created (see install()).
+		if (version_compare($old_version, '1.1', '<')) {
+			return $this->install() === null;
+		}
+		return true;
+	}
 
 	function install() { 
 		$dbprefix = dPgetConfig('dbprefix', '');
+		// The costs module used to create a 'budget' table too (project budgets,
+		// other columns); move it to its new name, costs_budget, first.
+		$exists = function ($table) use ($dbprefix) {
+			return (bool)db_loadResult("SHOW TABLES LIKE '" . db_escape($dbprefix . $table) . "'");
+		};
+		if ($exists('budget') && !$exists('costs_budget')
+			&& db_loadResult("SHOW COLUMNS FROM `" . $dbprefix . "budget` LIKE 'budget_project_id'")) {
+			db_exec("RENAME TABLE `" . $dbprefix . "budget` TO `" . $dbprefix . "costs_budget`");
+		}
+		if ($exists('budget')) {
+			return null;
+		}
 		$success = true;
 		$q = new DBQuery();
 		$q -> createTable('budget');
@@ -83,10 +102,9 @@ class CSetupFinances {
 				  `service_operation` decimal(15,2) DEFAULT '0',
 				  PRIMARY KEY (`budget_id`)
 				) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;");
-		$success= $success & $q -> exec();
-		if($sucess){
+		if ($q -> exec()) {
 			return null;
 		}
-		return $success; 
+		return db_error();
 	}
 }

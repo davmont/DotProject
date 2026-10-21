@@ -1054,7 +1054,7 @@ function thereIsMilestoneForCapstoneProject($projectId) {
 function thereIsManagementReserveNonInitialized($projectId) {
     $q = new DBQuery();
     $q->addQuery("b.budget_reserve_management");
-    $q->addTable("budget", "b");
+    $q->addTable("costs_budget", "b");
     $q->addWhere("b.budget_project_id=$projectId and b.budget_reserve_management<=0");
     $sql = $q->prepare();
 //echo $sql;

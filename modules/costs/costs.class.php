@@ -95,7 +95,7 @@ class CBudget extends CDpObject
 
 	function __construct()
 	{
-		parent::__construct('budget', 'budget_id');
+		parent::__construct('costs_budget', 'budget_id');
 	}
 
 	function check()
@@ -112,7 +112,7 @@ class CBudget extends CDpObject
 
 		// delete the main table reference
 		$q = new DBQuery();
-		$q->setDelete('budget');
+		$q->setDelete('costs_budget');
 		$q->addWhere('budget_id = ' . $this->budget_id);
 		if (!$q->exec()) {
 			return db_error();

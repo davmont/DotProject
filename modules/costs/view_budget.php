@@ -11,7 +11,7 @@ $projectSelected = intval(dPgetParam($_GET, 'project_id'));
 $q = new DBQuery;
 $q->clear();
 $q->addQuery('*');
-$q->addTable('budget');
+$q->addTable('costs_budget');
 $q->addWhere('budget_id = ' . $budget_id);
 
 
@@ -298,7 +298,7 @@ insertBudget($projectSelected, $subTotal);
 
 $q->clear();
 $q->addQuery('*');
-$q->addTable('budget');
+$q->addTable('costs_budget');
 $q->addWhere('budget_project_id = ' . $projectSelected);
 $q->addOrder('budget_id');
 $v = $q->exec();

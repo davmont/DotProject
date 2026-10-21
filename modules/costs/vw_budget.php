@@ -5,7 +5,7 @@ if (!defined('DP_BASE_DIR')) {
 
 
 $q = new DBQuery();
-$q->addTable('budget', 'b');
+$q->addTable('costs_budget', 'b');
 $q->addQuery('DISTINCT p.project_id, p.project_name');
 $q->addJoin('projects', 'p', 'p.project_id = b.budget_project_id');
 $q->addOrder('p.project_id');

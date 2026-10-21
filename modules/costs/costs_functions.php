@@ -367,7 +367,7 @@ function insertBudget($project, $subTotal)
     $q = new DBQuery();
     $q->clear();
     $q->addQuery('*');
-    $q->addTable('budget');
+    $q->addTable('costs_budget');
     $q->addWhere('budget_project_id = ' . $project);
     $q->addOrder('budget_id');
     $res = $q->loadList();
@@ -375,7 +375,7 @@ function insertBudget($project, $subTotal)
 
     if ($res == null) {
 
-        $q->addTable('budget');
+        $q->addTable('costs_budget');
         $q->addInsert('budget_id', $project);
         $q->addInsert('budget_project_id', $project);
         $q->addInsert('budget_reserve_management', 0);
@@ -386,7 +386,7 @@ function insertBudget($project, $subTotal)
         $total = (($res[0]['budget_reserve_management'] / 100) * $subTotal);
         $total += $subTotal;
 
-        $q->addTable('budget');
+        $q->addTable('costs_budget');
         $q->addUpdate('budget_sub_total', $subTotal);
         $q->addUpdate('budget_total', $total);
         $q->addWhere('budget_id=' . $project);
