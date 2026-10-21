@@ -532,10 +532,5 @@ $tabBox->loadExtras($m);
 $f = 'all';
 $min_view = true;
 
-if (isset($AppUI->getActiveModules()['dotproject_plus'])) {
-	$tabBox->add(DP_BASE_DIR . "/modules/dotproject_plus/projects_tab.planning_and_monitoring", $AppUI->_("Planning and monitoring", UI_OUTPUT_HTML));
-	$tabBox->add(DP_BASE_DIR . "/modules/dotproject_plus/projects_tab.execution", $AppUI->_("Execution", UI_OUTPUT_HTML));
-}
-
 $tabBox->show();
 ?>
