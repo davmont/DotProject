@@ -204,7 +204,7 @@ selector.style.height = (wh - count - 5) + "px";
 <table width="100%">
 <tr>
 	<td>
-		<div style="white-space:normal; overflow:auto; "  id="selector">
+		<div style="white-space:normal; overflow:auto; max-height:calc(100vh - 60px);" id="selector">
 		<ul style="padding-left:0px">
 		<?php
 if (count($list) > 1) {
