@@ -36,7 +36,7 @@ else
 						<th class="banner" align="left"><strong><?php
 						echo "<a style='color: white' href='{$dPconfig['base_url']}'>$page_title</a>";
 						?></strong>
-							<?php if (getPermission('smartsearch', 'access')): ?>
+							<?php if (!$dialog && getPermission('smartsearch', 'access')): ?>
 								<form name="frmHeaderSearch" action="?m=smartsearch" method="post"
 									style="display:inline; margin-left:20px;">
 									<input class="text" type="text" id="keyword1" name="keyword1"
