@@ -303,6 +303,7 @@
 "3LBLMDP" => "PDM",
 "4LBLESTIMATIONS" => "Estimations",
 "1LBL_BASELINE"=>"Baseline",
+"1LBLBASELINE"=>"Baseline",
 "2LBLRESPONSABILIDADE"=>"Responsability",
 "3LBLACAOCORRETIVA"=>"Change Request",
 "4LBLATA"=>"Meeting",

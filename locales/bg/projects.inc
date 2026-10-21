@@ -5,6 +5,7 @@
 "(no end date)"=>"(no end date)",
 "(no start date)"=>"(no start date)",
 "1LBL_BASELINE"=>"Baseline",
+"1LBLBASELINE"=>"Baseline",
 "1LBLWBS"=>"WBS",
 "2LBLDERIVATION"=>"Derivation",
 "2LBLRESPONSABILIDADE"=>"Responsability",
