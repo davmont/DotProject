@@ -593,3 +593,12 @@ th form {
 .disabled {
 	color: #000000;
 }
+
+/* tab boxes: the tabs wrap onto more lines instead of widening the page */
+div.tabrow {
+	white-space: normal;
+}
+table.tabitem {
+	display: inline-table;
+	vertical-align: bottom;
+}

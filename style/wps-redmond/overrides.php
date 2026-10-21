@@ -46,7 +46,7 @@ class CTabBox extends CTabBox_core {
 		} else {
 		// tabbed view
 			$s = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
-			$s .= '<tr><td><table border="0" cellpadding="0" cellspacing="0">';
+			$s .= '<tr><td><div class="tabrow">';
 			
 			if ( count($this->tabs)-1 < $this->active ) {
 				//Last selected tab is not available in this view. eg. Child tasks
@@ -55,6 +55,7 @@ class CTabBox extends CTabBox_core {
 			foreach( $this->tabs as $k => $v ) {
 				$class = ($k == $this->active) ? 'tabon' : 'taboff';
 				$sel = ($k == $this->active) ? 'Selected' : '';
+				$s .= '<table class="tabitem" border="0" cellpadding="0" cellspacing="0"><tr>';
 				$s .= '<td height="28" valign="middle" width="3"><img src="./style/' . $uistyle . '/images/tab'.$sel.'Left.png" width="3" height="28" border="0" alt="" /></td>';
 				$s .= '<td id="toptab_'.$k.'" valign="middle" nowrap="nowrap"';
 				if ($js_tabs)
@@ -70,9 +71,9 @@ class CTabBox extends CTabBox_core {
 					$s .= $this->baseHRef.'tab='.$k;
 				$s .='">'.($v[2] ? $v[1] : $AppUI->_($v[1])).'</a>&nbsp;</td>';
 				$s .= '<td valign="middle" width="3"><img src="./style/' . $uistyle . '/images/tab'.$sel.'Right.png" width="3" height="28" border="0" alt="" /></td>';
-				$s .= '<td width="3" class="tabsp"><img src="./images/shim.gif" height="1" width="3" /></td>';
+				$s .= '<td width="3" class="tabsp"><img src="./images/shim.gif" height="1" width="3" /></td></tr></table>';
 			}
-			$s .= '</table></td></tr>';
+			$s .= '</div></td></tr>';
 			$s .= '<tr><td width="100%" colspan="'.(count($this->tabs)*4 + 1).'" class="tabox">';
 			echo $s;
 			//Will be null if the previous selection tab is not available in the new window eg. Children tasks

@@ -480,3 +480,12 @@ table.minical td.weekend:hover {
 	background-color: #f0f8ff;
 	cursor: pointer;
 }
+
+/* tab boxes: the tabs wrap onto more lines instead of widening the page */
+div.tabrow {
+	white-space: normal;
+}
+table.tabitem {
+	display: inline-table;
+	vertical-align: bottom;
+}
