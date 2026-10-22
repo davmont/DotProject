@@ -1,0 +1,3 @@
+# Known layout issues (docker/tests/browser/layout.js): reported, not failing.
+# theme  viewport  url-regex  # why
+# Add an entry only for a page that cannot reasonably fit, and say why.

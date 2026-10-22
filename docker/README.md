@@ -15,3 +15,15 @@ Notes
 - Browser checks (forms sent with `form.submit()`, all five themes) were run with Playwright and headless Chrome; `smoke.sh` covers the server-side behaviour with curl.
 - `config.php` is bind-mounted as a single file: after editing it, run `docker compose up -d --force-recreate web`, otherwise the container keeps serving the old copy.
 - Optional MantisBT for the Mantis module: `docker compose -f compose.yml -f compose.mantis.yml up -d mantis && ./mantis-setup.sh` installs MantisBT 2.28 on http://127.0.0.1:8090 (administrator / root, database `bugtracker` in the same MariaDB), creates a test project with issues, prints an API token and sets dotProject's Mantis address (`http://mantis`, HTTP allowed for the sandbox only). Install the Mantis module first, then enter the token on its "Mantis API token" page. `reset-db.sh` resets dotProject only; run the script again afterwards.
+
+## Full audit (`make audit-full`, docker/tests/)
+
+`docker/tests/run.sh` checks every add-on module end to end in the sandbox (about an hour locally; CI job `audit-full`):
+
+1. reinstall the database, install and activate every add-on through System > Modules, seed data (`seed.sh`);
+2. crawl every page as admin and as worker (`crawl.py`);
+3. fill and save every add/edit form as admin and as worker (`browser/forms.js`), then crawl again with the saved data;
+4. layout in each theme at 1366x768 plus `LAYOUT_EXTRA` (`browser/layout.js`: no sideways scrolling, no control outside the window; `layout-known.txt` lists accepted exceptions), pop-ups at their window sizes and the task form's tab switching (`browser/popups.js`);
+5. remove every add-on, crawl the core without them, reinstall and crawl again.
+
+Every step also fails on anything in the PHP log: SQL errors, fatals, warnings, notices and deprecations (`ALLOW_DEPRECATED=1` relaxes the last). Reports go to `docker/.audit/` (ignored by git). Run parts with `STEPS="2 3"`; choose themes with `THEMES="default material"`. The browser checks use `playwright-core` (`cd docker/tests/browser && npm ci`) with an installed Chrome (`CHROME=/path/to/chrome` if it is not `/usr/bin/google-chrome`). `modules.sh install|toggle|remove|upgrade [module ...]` is also useful on its own.
