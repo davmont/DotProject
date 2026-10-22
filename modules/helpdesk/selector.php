@@ -10,7 +10,7 @@ function selPermWhere( $table, $idfld ) {
 	// get any companies denied from viewing
 	$q = new DBQuery;
 	$q->addQuery($table, 'permissions');
-	$q->addWhere('permission_user = '.$AppUI->user_id);
+	$q->addWhere('permission_user = ' . (int)$AppUI->user_id);
 	$q->addWhere('permission_grant_on = '.$table);
 	$q->addWhere('permission_item = '.$idfld);
 	$q->addWhere('permission_value = 0');
@@ -143,7 +143,6 @@ if (!$ok) {
  		$list = arrayMerge( array( 0=>''), $q->loadHashList());
 
 	}
-	echo db_error();
 ?>
 <script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	// Calls window.opener.<callback>(key, val); the callback may be a dotted path.

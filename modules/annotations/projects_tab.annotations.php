@@ -119,9 +119,9 @@ $q = new DBQuery;
 	$q->addTable('projects') ;
 	//$q->addQuery('project_id, project_status, project_name, project_description') ;
 	$q->addQuery('*') ;
-	$q->addWhere('project_id = '.$project_id) ;
+	$q->addWhere('project_id = ' . (int)$project_id) ;
 
-	if ($show_date=="all") { $q->leftJoin('annotations','','annotation_project = '.$project_id) ;
+	if ($show_date=="all") { $q->leftJoin('annotations','','annotation_project = ' . (int)$project_id) ;
 	} ELSE { 
 		$q->leftJoin('annotations','','(annotation_project = '.$project_id.' AND annotation_date = '.$show_the_date->format(FMT_TIMESTAMP_DATE).')') ;
 	}
@@ -139,7 +139,7 @@ $q = new DBQuery;
 **********************************************************************************************************************/
 	$q->addTable('annotations') ;
 	$q->addQuery('annotation_date') ;
-	$q->addWhere('annotation_project = '.$project_id) ;
+	$q->addWhere('annotation_project = ' . (int)$project_id) ;
 	//$q->addOrder('annotation_date ASC');
 	$sql = $q->prepareSelect( $q ); 
 	$q->clear();

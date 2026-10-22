@@ -93,7 +93,7 @@ class CUser extends CDpObject {
 			$acl->deleteLogin($id);
 			$q = new DBQuery;
 			$q->setDelete('user_preferences');
-			$q->addWhere('pref_user = '.$this->user_id);
+			$q->addWhere('pref_user = ' . (int)$this->user_id);
 			$q->exec();
 			$q->clear();
 		}

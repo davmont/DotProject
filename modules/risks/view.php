@@ -37,7 +37,7 @@ foreach ($riskPriority as $key => $value) {
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('risks');
-$q->addWhere('risk_id = ' . $risk_id);
+$q->addWhere('risk_id = ' . (int)$risk_id);
 
 // check if this record has dependancies to prevent deletion
 $msg = '';

@@ -73,7 +73,7 @@ $task = new CTask();
 $q = new DBQuery();
 $q->clear();
 $q->addTable('tasks', 't');
-$q->addWhere('t.task_project = '.$project_id);
+$q->addWhere('t.task_project = ' . (int)$project_id);
 $q->addQuery('t.task_id, t.task_parent, t.task_name, t.task_start_date, t.task_end_date, t.task_percent_complete, t.task_milestone, t.task_dynamic');
 $q->addOrder('t.task_start_date, t.task_end_date');
 // get any specifically denied tasks
@@ -268,7 +268,7 @@ $response->script( "setSelectOptionIndex(document.getElementById(\"task_percent_
 $task->_query->clear();
 $task->_query->addTable('tasks');
 $task->_query->addQuery('task_id, task_parent, task_name, task_dynamic');
-$task->_query->addWhere('task_project = '.$task->task_project );
+$task->_query->addWhere('task_project = ' . (int)$task->task_project);
 $task->_query->addOrder('task_start_date, task_end_date');
 $alltasks = $task->_query->loadList();
 $task->_query->clear();
@@ -402,7 +402,7 @@ $unassign = $taskParams['task_unassign'];
 if ( $unassign < 0 ) {		// Delete all existing assignments
 	$task->_query->clear();
 	$task->_query->setDelete('user_tasks');
-	$task->_query->addWhere('task_id = ' . $task->task_id);
+	$task->_query->addWhere('task_id = ' . (int)$task->task_id);
 	$task->_query->exec();
 	$task->_query->clear();
 } else if ( $unassign > 0 ) {	// Delete a single assignment

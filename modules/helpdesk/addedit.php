@@ -29,7 +29,6 @@ $q->addWhere('billingcode_status=0');
 
 $task_log_costcodes[0]=$AppUI->_('None');
 $ptrc = $q->exec();
-echo db_error();
 $nums = 0;
 if ($ptrc)
 	$nums=db_num_rows($ptrc);
@@ -260,13 +259,13 @@ function getRequestorInfo($requser, $usertype, $datatype) {
 		$q->addQuery('u.user_id as id');
 		$q->addJoin('contacts','c','u.user_contact = c.contact_id');
 		$q->addQuery("c.contact_email as email, c.contact_phone as phone, CONCAT(c.contact_first_name,' ', c.contact_last_name) as name");
-		$q->addWhere('u.user_id='.$requser);
+		$q->addWhere('u.user_id=' . (int)$requser);
         	break;
 	  case 2:
 		$q = new DBQuery();
 		$q->addTable('contacts','c');
 		$q->addQuery("c.contact_email as email, c.contact_phone as phone, CONCAT(c.contact_first_name,' ', c.contact_last_name) as name");
-		$q->addWhere('contact_id='.$requser);
+		$q->addWhere('contact_id=' . (int)$requser);
 		break;
 	  default:
 		break;

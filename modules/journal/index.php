@@ -28,7 +28,7 @@ $q->addJoin('projects', 'p', 'j.journal_project=p.project_id');
 $q->addOrder('journal_date DESC');
 // check for project filter
 if ($project_id) {
-	$q->addWhere('p.project_id = ' . $project_id);
+	$q->addWhere('p.project_id = ' . (int)$project_id);
 }
 
 $prc = $q->exec();

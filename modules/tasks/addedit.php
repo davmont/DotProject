@@ -115,7 +115,7 @@ function build_date_list(&$date_array, $row) {
 $q->addTable('tasks');
 $q->addQuery('task_id, task_name, task_end_date, task_start_date, task_milestone, task_parent' 
              . ', task_dynamic');
-$q->addWhere('task_id = task_parent AND task_project = ' . $task_project);
+$q->addWhere('task_id = task_parent AND task_project = ' . (int)$task_project);
 $q->addOrder('task_start_date');
 $sql = $q->prepare();
 $root_tasks = db_loadHashList($sql, 'task_id');
@@ -126,7 +126,7 @@ $task_parent_options = '';
 $q->addTable('tasks');
 $q->addQuery('task_id, task_name, task_end_date, task_start_date, task_milestone, task_parent' 
              . ', task_dynamic');
-$q->addWhere('task_id != task_parent AND task_project = ' . $task_project);
+$q->addWhere('task_id != task_parent AND task_project = ' . (int)$task_project);
 $q->addOrder('task_start_date');
 $sql = $q->prepare();
 $sub_tasks = db_exec($sql);
@@ -208,8 +208,8 @@ function getDepartmentSelectionList($company_id, $checked_array = array(),
 	}
 	$q->addTable('departments');
 	$q->addQuery('dept_id, dept_name');
-	$q->addWhere('dept_parent = ' . $dept_parent);
-	$q->addWhere('dept_company = ' . $company_id);
+	$q->addWhere('dept_parent = ' . (int)$dept_parent);
+	$q->addWhere('dept_company = ' . (int)$company_id);
 	$sql = $q->prepare();
 	$depts_list = db_loadHashList($sql, 'dept_id');
 	$q->clear();
@@ -236,7 +236,7 @@ $can_edit_time_information = $obj->canUserEditTimeInformation();
 
 $q->addQuery('project_id, project_name');
 $q->addTable('projects');
-$q->addWhere('project_company = ' . $company_id);
+$q->addWhere('project_company = ' . (int)$company_id);
 $q->addWhere('(project_status <> 7 OR project_id = '. $task_project . ')');
 $q->addOrder('project_name');
 $project->setAllowedSQL($AppUI->user_id, $q);

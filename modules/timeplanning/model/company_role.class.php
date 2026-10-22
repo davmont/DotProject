@@ -53,7 +53,7 @@ class CompanyRole {
 		$q = new DBQuery();
 		$q->addQuery('id');
 		$q->addTable('company_role');
-		$q->addWhere('id =' . $id);
+		$q->addWhere('id =' . (int)$id);
 		$record = $q->loadResult();
 		$q->clear();
 		$q->addTable('company_role');
@@ -66,7 +66,7 @@ class CompanyRole {
 			$q->addUpdate('identation', $identation);
 			$q->addUpdate('role_name', $description);
 			$q->addUpdate('sort_order',$sort_order);
-			$q->addWhere('id = ' . $id);
+			$q->addWhere('id = ' . (int)$id);
 			
 		}
 		$q->exec();
@@ -84,7 +84,7 @@ class CompanyRole {
 		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('company_role');
-		$q->addWhere('id =' . $id);
+		$q->addWhere('id =' . (int)$id);
 		$q->exec();
 	}
 	

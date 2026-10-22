@@ -89,12 +89,16 @@ function setCalendar( idate, fdate ) {
 </table>
 
 <?php
+$pfx = dPgetConfig('dbprefix', '');
 if ($do_report) {
+	$project_id = (int)$project_id;
 
-	$sql = "SELECT t.*, CONCAT_WS(' ',u.user_first_name,u.user_last_name) AS creator"
-		."\nFROM task_log AS t, tasks"
-		."\nLEFT JOIN users AS u ON user_id = task_log_creator"
-		."\nWHERE task_log_task = task_id AND task_project = $project_id";
+	$sql = "SELECT t.*, CONCAT_WS(' ',c.contact_first_name,c.contact_last_name) AS creator"
+		."\nFROM {$pfx}task_log AS t"
+		."\nINNER JOIN {$pfx}tasks ON task_id = task_log_task"
+		."\nLEFT JOIN {$pfx}users AS u ON u.user_id = task_log_creator"
+		."\nLEFT JOIN {$pfx}contacts AS c ON c.contact_id = u.user_contact"
+		."\nWHERE task_project = $project_id";
 	if (!$log_all) {
 		$sql .= "\n	AND task_log_date >= '".$start_date->format( FMT_DATETIME_MYSQL )."'"
 		."\n	AND task_log_date <= '".$end_date->format( FMT_DATETIME_MYSQL )."'";
@@ -107,7 +111,6 @@ if ($do_report) {
 	//echo "<pre>$sql</pre>";
 
 	$logs = db_loadList( $sql );
-	echo db_error();
 ?>
 	<table cellspacing="1" cellpadding="4" border="0" class="tbl">
 	<tr>
@@ -172,9 +175,8 @@ if ($do_report) {
 <?php
 	if ($log_pdf) {
 	// make the PDF file
-		$sql = "SELECT project_name FROM projects WHERE project_id=$project_id";
+		$sql = "SELECT project_name FROM {$pfx}projects WHERE project_id=" . (int)$project_id;
 		$pname = db_loadResult( $sql );
-		echo db_error();
 
 		$font_dir = dPgetConfig( 'root_dir' )."/lib/ezpdf/fonts";
 		$temp_dir = dPgetConfig( 'root_dir' )."/files/temp";

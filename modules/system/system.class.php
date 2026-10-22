@@ -276,7 +276,7 @@ class CConfig extends CDpObject {
 		$this->_query->clear();
 		$this->_query->addTable('config_list');
 		$this->_query->addOrder('config_list_id');
-		$this->_query->addWhere('config_id = ' . $id);
+		$this->_query->addWhere('config_id = ' . (int)$id);
 		$sql = $this->_query->prepare();
 		$this->_query->clear();
 		return db_loadHashList($sql, 'config_list_id');
@@ -337,7 +337,7 @@ class bcode extends CDpObject {
 			$q->addUpdate('billingcode_value', $this->billingcode_value);
 			$q->addUpdate('billingcode_status', $this->billingcode_status);
 			$q->addUpdate('company_id', $this->company_id);
-			$q->addWhere('billingcode_id = ' . $this->_billingcode_id);	
+			$q->addWhere('billingcode_id = ' . (int)$this->_billingcode_id);	
 			$q->exec();
 			$q->clear();
 		} else if (!($ret = db_insertObject ('billingcode', $this, 'billingcode_id'))) {

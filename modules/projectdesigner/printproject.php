@@ -68,7 +68,7 @@ $tasks = arrayMerge( array( '0'=>$AppUI->_('(None)', UI_OUTPUT_RAW) ), $tasks );
       //check that project has tasks; otherwise run seperate query
       $q->addTable('tasks', 't');
       $q->addQuery("COUNT(distinct t.task_id) AS total_tasks");
-      $q->addWhere('task_project = '.$project_id);
+      $q->addWhere('task_project = ' . (int)$project_id);
       $hasTasks = $q->loadResult();
       $q->clear();
 
@@ -95,7 +95,7 @@ $tasks = arrayMerge( array( '0'=>$AppUI->_('(None)', UI_OUTPUT_RAW) ), $tasks );
           $q->addJoin('companies', 'com', 'company_id = project_company');
           $q->addJoin('users', 'u', 'user_id = project_owner');
           $q->addJoin('contacts', 'con', 'contact_id = user_contact');
-          $q->addWhere('project_id = '.$project_id);
+          $q->addWhere('project_id = ' . (int)$project_id);
           $q->addGroup('project_id');
           $sql = $q->prepare();
       }

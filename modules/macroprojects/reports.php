@@ -32,7 +32,6 @@ $ptrc = $obj->getAllowedMacroProjectsInRows($AppUI->user_id);
 
 $nums=db_num_rows($ptrc);
 
-echo db_error();
 for ($x=0; $x < $nums; $x++) {
 	$row = db_fetch_assoc($ptrc);
 	if ($row['macroproject_id'] == $macroproject_id) {

@@ -19,7 +19,7 @@ $q = new DBQuery;
 $q->addTable('departments','dep');
 $q->addQuery('dep.*, company_name');
 $q->addJoin('companies', 'com', 'com.company_id = dep.dept_company');
-$q->addWhere('dep.dept_id = '.$dept_id);
+$q->addWhere('dep.dept_id = ' . (int)$dept_id);
 $sql = $q->prepare();
 $q->clear();
 if (!db_loadHash($sql, $drow) && $dept_id > 0) {
@@ -37,7 +37,7 @@ if (!db_loadHash($sql, $drow) && $dept_id > 0) {
 	$q  = new DBQuery;
 	$q->addTable('companies','com');
 	$q->addQuery('company_name');
-	$q->addWhere('com.company_id = '.$company_id);
+	$q->addWhere('com.company_id = ' . (int)$company_id);
 	$sql = $q->prepare();
 	$q->clear();
 	$company_name = db_loadResult($sql);
@@ -52,8 +52,8 @@ if (!db_loadHash($sql, $drow) && $dept_id > 0) {
 		$q  = new DBQuery;
 		$q->addTable('departments','dep');
 		$q->addQuery('dept_id, dept_name, dept_parent');
-		$q->addWhere('dep.dept_company = '.$company_id);
-		$q->addWhere('dep.dept_id != '.$dept_id);
+		$q->addWhere('dep.dept_company = ' . (int)$company_id);
+		$q->addWhere('dep.dept_id != ' . (int)$dept_id);
 		$depts = $q->loadArrayList();
 		$depts['0']  = array(0, '- '.$AppUI->_('Select Unit').' -', -1);
 	}

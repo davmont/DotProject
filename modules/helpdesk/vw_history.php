@@ -24,7 +24,7 @@ $q->addQuery('*,TRIM(CONCAT(co.contact_first_name,\' \',co.contact_last_name)) m
 $q->addTable('helpdesk_item_status','h');
 $q->addJoin('users','u','u.user_id = h.status_modified_by');
 $q->addJoin('contacts','co','u.user_contact = co.contact_id');
-$q->addWhere('h.status_item_id='.$hditem['item_id']);
+$q->addWhere('h.status_item_id=' . (int)$hditem['item_id']);
 $q->addOrder('h.status_date');
 
 // Pagination

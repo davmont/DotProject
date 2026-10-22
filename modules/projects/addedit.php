@@ -58,7 +58,7 @@ if ($project_id && !array_key_exists($row->project_company, $companies)) {
 	$q  = new DBQuery;
 	$q->addTable('companies', 'co');
 	$q->addQuery('company_name');
-	$q->addWhere('co.company_id = '.$row->project_company);
+	$q->addWhere('co.company_id = ' . (int)$row->project_company);
 	$sql = $q->prepare();
 	$q->clear();
 	$companies[$row->project_company] = db_loadResult($sql);
@@ -82,7 +82,7 @@ if($project_id && $actual_end_date)//we add project_actual_end_date in db
 {
 	$q = new DBQuery;
 	$q->addTable('projects');
-	$q->addWhere('project_id = ' . $project_id);
+	$q->addWhere('project_id = ' . (int)$project_id);
 	$q->addUpdate('project_actual_end_date', $actual_end_date->getDate());
 	$q->exec();
 	$q->clear();
@@ -107,7 +107,7 @@ if ($project_id) {
 	$q = new DBQuery;
 	$q->addTable('project_departments');
 	$q->addQuery('department_id');
-	$q->addWhere('project_id = ' . $project_id);
+	$q->addWhere('project_id = ' . (int)$project_id);
 	$selected_departments = $q->loadColumn();
 }
 $departments_count = 0;
@@ -130,7 +130,7 @@ if ($project_id) {
 	$q = new DBQuery;
 	$q->addTable('project_contacts');
 	$q->addQuery('contact_id');
-	$q->addWhere('project_id = ' . $project_id);
+	$q->addWhere('project_id = ' . (int)$project_id);
 	$res =& $q->exec();
 	for ($res; ! $res->EOF; $res->MoveNext())
 		$selected_contacts[] = $res->fields['contact_id'];

@@ -27,7 +27,7 @@ class ControllerRespons{
 	function deleteRow($id){
 		$q = new DBQuery();
 		$q->setDelete('monitoring_responsibility_matriz');
-		$q->addWhere('responsibility_id=' . $id);
+		$q->addWhere('responsibility_id=' . (int)$id);
 		$q->exec();
 		$q->clear();	
 	}
@@ -42,7 +42,7 @@ class ControllerRespons{
 			$q->addUpdate('responsibility_user_id_support', $support[$j]);
 			$q->addUpdate('responsibility_user_id_approve', $approve[$j]);
 			$q->addUpdate('project_id', $project_id);
-			$q->addWhere('responsibility_id = ' . $id);
+			$q->addWhere('responsibility_id = ' . (int)$id);
 			$q->exec();	
 		}
 	}	

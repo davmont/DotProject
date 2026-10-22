@@ -88,7 +88,7 @@ function insertCostValues($project)
       $q->innerJoin('user_tasks', 'dp', 'dp.task_id = t.task_id');
       $q->innerJoin('human_resource', 'h', 'dp.user_id = h.human_resource_user_id');
       $q->innerJoin('users', 'usr', 'usr.user_id = h.human_resource_user_id');
-      $q->addWhere('t.task_project = ' . $project);
+      $q->addWhere('t.task_project = ' . (int)$project);
       $q->addGroup('usr.user_id');
       $q->addOrder('usr.user_id ASC');
       $hoursUser = $q->loadList();
@@ -123,7 +123,7 @@ function insertCostValues($project)
     $q->innerJoin('human_resource_roles', 'hr', 'hr.human_resource_id = h.human_resource_id');
     $q->innerJoin('human_resources_role', 'hs', 'hr.human_resources_role_id = hs.human_resources_role_id');
     $q->innerJoin('monitoring_user_cost', 'mc', 'usr.user_id = mc.user_id');
-    $q->addWhere('t.task_project = ' . $project);
+    $q->addWhere('t.task_project = ' . (int)$project);
     $q->addOrder('usr.user_id ASC');
     $res = $q->loadList();
 
@@ -210,7 +210,7 @@ function insertCostValues($project)
     $q->addTable('tasks', 't');
     $q->innerJoin('resource_tasks', 'rt', 'rt.task_id = t.task_id');
     $q->innerJoin('resources', 'r', 'r.resource_id = rt.resource_id');
-    $q->addWhere('t.task_project = ' . $project);
+    $q->addWhere('t.task_project = ' . (int)$project);
     $q->addWhere('rt.percent_allocated = 100');
     $q->addGroup('r.resource_name');
     $q->addOrder('r.resource_name ASC');
@@ -304,7 +304,7 @@ function insertReserveBudget($project)
     $q->clear();
     $q->addQuery('*');
     $q->addTable('budget_reserve', 'b');
-    $q->addWhere("budget_reserve_project_id = " . $project);
+    $q->addWhere("budget_reserve_project_id = " . (int)$project);
     $q->addOrder('budget_reserve_risk_id');
     $budgets = $q->loadList();
 
@@ -332,7 +332,7 @@ function insertReserveBudget($project)
             $q->clear();
             $q->addTable('budget_reserve');
             $q->addUpdate('budget_reserve_description', $row['risk_name']);
-            $q->addWhere('budget_reserve_project_id=' . $project . ' and budget_reserve_risk_id=' . $row['risk_id']);
+            $q->addWhere('budget_reserve_project_id=' . $project . ' and budget_reserve_risk_id=' . (int)$row['risk_id']);
             $q->exec();
         }
         $db->CompleteTrans();
@@ -367,15 +367,15 @@ function insertBudget($project, $subTotal)
     $q = new DBQuery();
     $q->clear();
     $q->addQuery('*');
-    $q->addTable('budget');
-    $q->addWhere('budget_project_id = ' . $project);
+    $q->addTable('costs_budget');
+    $q->addWhere('budget_project_id = ' . (int)$project);
     $q->addOrder('budget_id');
     $res = $q->loadList();
     $resul = $q->exec();
 
     if ($res == null) {
 
-        $q->addTable('budget');
+        $q->addTable('costs_budget');
         $q->addInsert('budget_id', $project);
         $q->addInsert('budget_project_id', $project);
         $q->addInsert('budget_reserve_management', 0);
@@ -386,10 +386,10 @@ function insertBudget($project, $subTotal)
         $total = (($res[0]['budget_reserve_management'] / 100) * $subTotal);
         $total += $subTotal;
 
-        $q->addTable('budget');
+        $q->addTable('costs_budget');
         $q->addUpdate('budget_sub_total', $subTotal);
         $q->addUpdate('budget_total', $total);
-        $q->addWhere('budget_id=' . $project);
+        $q->addWhere('budget_id=' . (int)$project);
         $q->exec();
     }
 }

@@ -31,7 +31,7 @@ $q -> addQuery('tt_start_date, tt_end_date, tt_id, tt_active,
 	user_first_name, user_last_name, tt_supervisor_approval, tt_pm_approval, tt_approve_note');
 $q -> addJoin('timetrack_data','data','tt_data_timesheet_id = tt_id');
 $q -> addJoin('users','u','user_id = tt_user_id');
-$q -> addWhere('tt_id = '.$timesheet_id);
+$q -> addWhere('tt_id = ' . (int)$timesheet_id);
 $q -> addGroup('tt_id');
 
 $tg_data = $q -> loadHash();
@@ -39,13 +39,13 @@ $tg_data = $q -> loadHash();
 
 //pull data for this timesheet
 $q = new DBQuery();
-$q -> addTable('timetrack_data'); 
-$q -> addQuery("timetrack_data.*, DATE_FORMAT(tt_data_date,'%m/%d/%Y') AS tid_date,
+$q -> addTable('timetrack_data', 'td'); 
+$q -> addQuery("td.*, DATE_FORMAT(tt_data_date,'%m/%d/%Y') AS tid_date,
 	company_name, project_name, task_name");
 $q -> addJoin('companies','c','company_id = tt_data_client_id');
 $q -> addJoin('projects','p','project_id = tt_data_project_id');
 $q -> addJoin('tasks','t','task_id = tt_data_task_id');
-$q -> addWhere('tt_data_timesheet_id = $timesheet_id');
+$q -> addWhere('tt_data_timesheet_id = ' . (int)$timesheet_id);
 $q -> addOrder('tt_data_date');
 
 $tt_data = $q -> loadList(); 

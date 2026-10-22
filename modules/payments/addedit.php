@@ -28,7 +28,7 @@ $sql -> addQuery("paym.*,cont.contact_first_name,cont.contact_last_name,comp.com
 $sql -> addJoin('users','users','users.user_id = paym.payment_owner');
 $sql -> addJoin('companies','comp','comp.company_id = paym.payment_company');
 $sql -> addJoin('contacts','cont','cont.contact_id=users.user_contact');
-$sql -> addWhere('paym.payment_id = '.$payment_id);
+$sql -> addWhere('paym.payment_id = ' . (int)$payment_id);
 
 $obj = null;
 if (!$sql -> loadObject($obj ) && $payment_id > 0) {
@@ -75,7 +75,7 @@ $inv = $sql -> loadList();
 $sql ->clear();
 $sql -> addTable('invoice_payment');
 $sql -> addQuery('invoice_id');
-$sql -> addWhere('payment_id ='.$payment_id);
+$sql -> addWhere('payment_id =' . (int)$payment_id);
 
 $sql->exec();
 $rn = $sql->foundRows();

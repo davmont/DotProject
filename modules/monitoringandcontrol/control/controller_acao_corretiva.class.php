@@ -37,7 +37,7 @@ DB filelds - TABLE: 'monitoring_change_request ' :
 	function deleteAcao($change_id){
 			$q = new DBQuery();
 			$q->setDelete('monitoring_change_request');
-			$q->addWhere('change_id=' . $change_id);
+			$q->addWhere('change_id=' . (int)$change_id);
 			$q->exec();
 			$q->clear();	
 	}	
@@ -58,7 +58,7 @@ DB filelds - TABLE: 'monitoring_change_request ' :
 			$q->addUpdate('change_date_limit', $date_limit);
 			$q->addUpdate('meeting_id', $id_ata);
 			$q->addUpdate('project_id', $project_id);
-			$q->addWhere('change_id = ' . $change_id);			
+			$q->addWhere('change_id = ' . (int)$change_id);			
 			$q->exec();	
 		}		
 		
@@ -71,7 +71,7 @@ DB filelds - TABLE: 'monitoring_change_request ' :
 		$q->addTable('monitoring_change_request', 'c');	
 		$q->LeftJoin('tasks', 't', 't.task_id = c.task_id');
 		
-		$q->addWhere('c.change_id='.$change_id);
+		$q->addWhere('c.change_id=' . (int)$change_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return $list;			
@@ -84,7 +84,7 @@ DB filelds - TABLE: 'monitoring_change_request ' :
 		$q->addQuery('task_id');
 		$q->addQuery('task_name');
 		$q->addTable('tasks', 't');	
-		$q->addWhere('task_project='.$task_project);
+		$q->addWhere('task_project=' . (int)$task_project);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return $list;			
@@ -96,7 +96,7 @@ DB filelds - TABLE: 'monitoring_change_request ' :
 		$q = new DBQuery;
 		$q->addQuery('change_id, task_id, change_impact, change_status, change_description, change_cause, change_request, change_date_limit, user_id,meeting_id,project_id');
 		$q->addTable('monitoring_change_request', 'c');	
-		$q->addWhere('task_id='.$task_id);
+		$q->addWhere('task_id=' . (int)$task_id);
 		$q->addOrder('change_id ASC');
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
@@ -109,7 +109,7 @@ DB filelds - TABLE: 'monitoring_change_request ' :
 		$q = new DBQuery;
 		$q->addQuery('change_id, task_id, change_impact, change_status, change_description, change_cause, change_request, change_date_limit, user_id,meeting_id');
 		$q->addTable('monitoring_change_request', 'c');	
-		$q->addWhere('project_id='.$project_id);
+		$q->addWhere('project_id=' . (int)$project_id);
 		$q->addOrder('change_id ASC');
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
@@ -123,7 +123,7 @@ DB filelds - TABLE: 'monitoring_change_request ' :
 		$q->addQuery('c.change_id, c.task_id, c.change_impact, c.change_status, c.change_description, c.change_cause, c.change_request, c.change_date_limit, c.user_id, c.meeting_id, u.user_username');
 		$q->addTable('monitoring_change_request', 'c');	
 		$q->innerJoin('users', 'u', 'c.user_id = u.user_id');
-		$q->addWhere('meeting_id='.$meeting_id);
+		$q->addWhere('meeting_id=' . (int)$meeting_id);
 		$q->addOrder('change_id DESC');
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
@@ -140,7 +140,7 @@ DB filelds - TABLE: 'monitoring_change_request ' :
 		$q->addTable('monitoring_change_request', 'c');
 		$q->leftJoin('tasks', 't', 't.task_id = c.task_id');
 		$q->leftJoin('monitoring_meeting', 'm', 'm.meeting_id = c.meeting_id');
-		$q->addWhere('change_id ='.$change_id);	
+		$q->addWhere('change_id =' . (int)$change_id);	
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		

@@ -17,7 +17,7 @@ if (!(($canEdit && $cost_id) || ($canAuthor && !($cost_id)))) {
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('costs');
-$q->addWhere('cost_id = ' . $cost_id);
+$q->addWhere('cost_id = ' . (int)$cost_id);
 
 // check if this record has dependancies to prevent deletion
 $msg = '';

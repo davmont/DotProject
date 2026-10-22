@@ -165,7 +165,7 @@ if ($do_report) {
 	$q->addQuery('a.*, b.project_name');
 	$q->addWhere('a.task_project = b.project_id');
 	if ($project_id != 0) { 
-		$q->addWhere('task_project =' . $project_id);
+		$q->addWhere('task_project =' . (int)$project_id);
 	}
 	if (!$log_all) {
 		$q->addWhere("task_start_date >= '" . $start_date->format(FMT_DATETIME_MYSQL) . "'");
@@ -228,7 +228,7 @@ if ($do_report) {
 		$q->addTable('user_tasks', 'ut');
 		$q->leftJoin('users', 'u', 'u.user_id = ut.user_id');
 		$q->leftJoin('contacts', 'c', 'c.contact_id = u.user_contact');
-		$q->addWhere('ut.task_id = ' . $task_id);
+		$q->addWhere('ut.task_id = ' . (int)$task_id);
 		$sql_user = $q->loadColumn();
 		$Tasks['users'] = implode(', ', $sql_user);
 		$tree->add($Tasks['task_parent'], $task_id, $Tasks);

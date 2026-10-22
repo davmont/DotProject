@@ -39,7 +39,7 @@
 		$q = new DBQuery();
 		$q->addQuery('t.task_id');
 		$q->addTable('tasks', 't');
-		$q->addWhere('task_project = '.$project_id);
+		$q->addWhere('task_project = ' . (int)$project_id);
 		$sql = $q->prepare();
 		$tasks = db_loadList($sql);
 		foreach ($tasks as $task) {			

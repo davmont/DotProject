@@ -33,7 +33,7 @@ $q->addTable('tasks', "tsk");
 $q->leftJoin('users', 'u1', 'u1.user_id = task_owner');
 $q->leftJoin('projects', 'p', 'p.project_id = task_project');
 $q->leftJoin('task_log', 'tl', 'tl.task_log_task = task_id');
-$q->addWhere('task_id = ' . $task_id);
+$q->addWhere('task_id = ' . (int)$task_id);
 $q->addQuery('tsk.*');
 $q->addQuery('project_name, project_color_identifier');
 $q->addQuery('u1.user_username as username');
@@ -80,7 +80,7 @@ $q->addTable('users', 'u');
 $q->addTable('user_tasks', 't');
 $q->leftJoin('contacts', 'c' , 'user_contact = contact_id');
 $q->addQuery('u.user_id, u.user_username, contact_email');
-$q->addWhere('t.task_id = ' . $task_id);
+$q->addWhere('t.task_id = ' . (int)$task_id);
 $q->addWhere('t.user_id = u.user_id');
 $q->addOrder('u.user_username');
 
@@ -298,7 +298,7 @@ function delIt() {
 			$q->addTable('tasks', 't');
 			$q->addTable('task_dependencies', 'td');
 			$q->addWhere('td.dependencies_req_task_id = t.task_id');
-			$q->addWhere('td.dependencies_task_id = ' . $task_id);
+			$q->addWhere('td.dependencies_task_id = ' . (int)$task_id);
 			
 			$taskDep = $q->loadHashList();
 			$q->clear();
@@ -325,7 +325,7 @@ function delIt() {
 			$q->addTable('tasks', 't');
 			$q->addTable('task_dependencies', 'td');
 			$q->addWhere('td.dependencies_task_id = t.task_id');
-			$q->addWhere('td.dependencies_req_task_id = ' . $task_id);
+			$q->addWhere('td.dependencies_req_task_id = ' . (int)$task_id);
 			$dependingTasks = $q->loadHashList();
 			$q->clear();
 		?>
@@ -359,7 +359,7 @@ function delIt() {
 		$q->addTable('departments', 'd');
 		$q->addTable('task_departments', 't');
 		$q->addWhere('t.department_id = d.dept_id');
-		$q->addWhere('t.task_id = ' . $task_id);
+		$q->addWhere('t.task_id = ' . (int)$task_id);
 		$q->addQuery('dept_id, dept_name, dept_phone');
 		$depts = $q->loadHashList('dept_id');
 		$q->clear();
@@ -388,7 +388,7 @@ function delIt() {
 			$q->addTable('contacts', 'c');
 			$q->leftJoin('task_contacts', 'tc', 'tc.contact_id = c.contact_id');
 			$q->leftJoin('departments', 'd', 'dept_id = contact_department');
-			$q->addWhere('tc.task_id = ' . $obj->task_id);
+			$q->addWhere('tc.task_id = ' . (int)$obj->task_id);
 			$q->addQuery('c.contact_id, contact_first_name, contact_last_name, contact_email');
 			$q->addQuery('contact_phone, dept_name');
 			$q->addWhere('(contact_owner = '.$AppUI->user_id.' or contact_private = 0)');
@@ -424,7 +424,7 @@ function delIt() {
 			$q->addTable('contacts', 'c');
 			$q->leftJoin('project_contacts', 'pc', 'pc.contact_id = c.contact_id');
 			$q->leftJoin('departments', 'd', 'd.dept_id = c.contact_department');
-			$q->addWhere('pc.project_id = ' . $obj->task_project);
+			$q->addWhere('pc.project_id = ' . (int)$obj->task_project);
 			$q->addQuery('c.contact_id, contact_first_name, contact_last_name, contact_email');
 			$q->addQuery('contact_phone, dept_name');
 			$q->addWhere('(contact_owner = '.$AppUI->user_id.' or contact_private = 0)');

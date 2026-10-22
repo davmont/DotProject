@@ -104,7 +104,7 @@ class CFile extends CDpObject
 		$this->_query->clear();
 		$this->_query->addTable('projects');
 		$this->_query->addQuery('project_owner');
-		$this->_query->addWhere('project_id = ' . $this->file_project);
+		$this->_query->addWhere('project_id = ' . (int)$this->file_project);
 		$res = $this->_query->exec();
 		if ($res && $row = db_fetch_assoc($res)) {
 			if ($row['project_owner'] == $AppUI->user_id)
@@ -155,7 +155,7 @@ class CFile extends CDpObject
 		$this->_query->clear();
 		$this->_query->setDelete('files_index');
 		$this->_query->addQuery('*');
-		$this->_query->addWhere('file_id = ' . $this->file_id);
+		$this->_query->addWhere('file_id = ' . (int)$this->file_id);
 		if (!$this->_query->exec()) {
 			$this->_query->clear();
 			return db_error();
@@ -383,7 +383,7 @@ class CFile extends CDpObject
 					. ', ac.contact_email as assignee_email'
 					. ', ac.contact_first_name as assignee_first_name'
 					. ', ac.contact_last_name as assignee_last_name');
-				$this->_query->addWhere('t.task_id = ' . $this->file_task);
+				$this->_query->addWhere('t.task_id = ' . (int)$this->file_task);
 				$users = $this->_query->loadList();
 			} else {
 				//find project owner and notify him about new or modified file
@@ -394,7 +394,7 @@ class CFile extends CDpObject
 					. ', uc.contact_first_name as owner_first_name'
 					. ', uc.contact_last_name as owner_last_name'
 					. ', uc.contact_email as owner_email');
-				$this->_query->addWhere('u.user_id = ' . $project->project_owner);
+				$this->_query->addWhere('u.user_id = ' . (int)$project->project_owner);
 				$users = $this->_query->loadList();
 			}
 			$this->_query->clear();
@@ -480,7 +480,7 @@ class CFile extends CDpObject
 				$this->_query->addQuery('c.contact_email as contact_email'
 					. ', c.contact_first_name as contact_first_name'
 					. ', c.contact_last_name as contact_last_name');
-				$this->_query->addWhere('pc.project_id = ' . $this->file_project);
+				$this->_query->addWhere('pc.project_id = ' . (int)$this->file_project);
 				$pc_users = $this->_query->loadList();
 				$this->_query->clear();
 
@@ -489,7 +489,7 @@ class CFile extends CDpObject
 				$this->_query->addQuery('c.contact_email as contact_email'
 					. ', c.contact_first_name as contact_first_name'
 					. ', c.contact_last_name as contact_last_name');
-				$this->_query->addWhere('tc.task_id = ' . $this->file_task);
+				$this->_query->addWhere('tc.task_id = ' . (int)$this->file_task);
 				$tc_users = $this->_query->loadList();
 				$this->_query->clear();
 
@@ -500,7 +500,7 @@ class CFile extends CDpObject
 				$this->_query->addQuery('c.contact_email as contact_email'
 					. ', c.contact_first_name as contact_first_name'
 					. ', c.contact_last_name as contact_last_name');
-				$this->_query->addWhere('pc.project_id = ' . $this->file_project);
+				$this->_query->addWhere('pc.project_id = ' . (int)$this->file_project);
 				$users = $this->_query->loadList();
 				$this->_query->clear();
 			}
@@ -545,7 +545,7 @@ class CFile extends CDpObject
 		$this->_query->addTable('users', 'a');
 		$this->_query->leftJoin('contacts', 'b', 'b.contact_id = a.user_contact');
 		$this->_query->addQuery('contact_first_name, contact_last_name');
-		$this->_query->addWhere('a.user_id = ' . $this->file_owner);
+		$this->_query->addWhere('a.user_id = ' . (int)$this->file_owner);
 		if (!$this->_query->exec()) {
 			$this->_query->clear();
 			return db_error();
@@ -564,7 +564,7 @@ class CFile extends CDpObject
 		$this->_query->clear();
 		$this->_query->addTable('tasks');
 		$this->_query->addQuery('task_name');
-		$this->_query->addWhere('task_id = ' . $this->file_task);
+		$this->_query->addWhere('task_id = ' . (int)$this->file_task);
 		if (!$this->_query->exec()) {
 			$this->_query->clear();
 			return db_error();
@@ -629,7 +629,7 @@ class CFileFolder extends CDpObject
 		$this->_query->clear();
 		$this->_query->addTable($this->_tbl);
 		$this->_query->addQuery('COUNT(DISTINCT file_folder_id) AS num_of_subfolders');
-		$this->_query->addWhere('file_folder_parent=' . $oid);
+		$this->_query->addWhere('file_folder_parent=' . (int)$oid);
 		$sql1 = $this->_query->prepare();
 		$this->_query->clear();
 
@@ -653,7 +653,7 @@ class CFileFolder extends CDpObject
 		$this->_query->clear();
 		$this->_query->addTable($this->_tbl);
 		$this->_query->addQuery('file_folder_name');
-		$this->_query->addWhere('file_folder_id=' . $this->file_folder_parent);
+		$this->_query->addWhere('file_folder_id=' . (int)$this->file_folder_parent);
 		$sql = $this->_query->prepare();
 		return db_loadResult($sql);
 	}

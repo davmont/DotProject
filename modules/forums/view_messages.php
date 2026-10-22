@@ -139,7 +139,7 @@ foreach ($messages as $row) {
 	$q->addTable('users', 'u');
 	$q->addQuery('DISTINCT contact_email, contact_first_name, contact_last_name, user_username');
 	$q->addJoin('contacts', 'con', 'contact_id = user_contact');
-	$q->addWhere('u.user_id = ' . $row['message_editor']);
+	$q->addWhere('u.user_id = ' . (int)$row['message_editor']);
 	$editor = $q->loadList();
 	
 	$date = intval($row['message_date']) ? new CDate($row['message_date']) : null;

@@ -857,7 +857,7 @@ $activitiesIdsForDisplay = array();
 $q = new DBQuery();
 $q->addTable('tasks');
 $q->addQuery('task_id');
-$q->addWhere("task_project = " . $project_id);
+$q->addWhere("task_project = " . (int)$project_id);
 $q->addOrder('task_id');
 $sql = $q->prepare();
 $tasks_for_ids = db_loadList($sql);
@@ -906,7 +906,7 @@ foreach ($tasks_for_ids as $t) {
             $q->innerJoin('users', 'u', 'u.user_contact = c.contact_id');
             $q->innerJoin('human_resource', 'h', 'h.human_resource_user_id = u.user_id');
             $q->innerJoin('human_resource_roles', 'hr_roles', 'hr_roles.human_resource_id =h.human_resource_id and hr_roles.human_resources_role_id=' . $role->getId());
-            $q->addWhere('c.contact_company = ' . $project->project_company);
+            $q->addWhere('c.contact_company = ' . (int)$project->project_company);
             $q->addOrder("u.user_username");
             $sql = $q->prepare();
             $records = db_loadList($sql);
@@ -928,7 +928,7 @@ foreach ($tasks_for_ids as $t) {
         $q->addQuery('user_id, human_resource_id, contact_id,u.user_username, contact_last_name, contact_first_name');
         $q->innerJoin('users', 'u', 'u.user_contact = c.contact_id');
         $q->innerJoin('human_resource', 'h', 'h.human_resource_user_id = u.user_id');
-        $q->addWhere('c.contact_company = ' . $project->project_company);
+        $q->addWhere('c.contact_company = ' . (int)$project->project_company);
         $q->addOrder("u.user_username");
         $sql = $q->prepare();
         $records = db_loadList($sql);
@@ -976,7 +976,7 @@ foreach ($tasks_for_ids as $t) {
             $q = new DBQuery();
             $q->addQuery("t.task_id");
             $q->addTable("tasks", "t");
-            $q->addWhere("t.task_project=" . $project_id);
+            $q->addWhere("t.task_project=" . (int)$project_id);
             $sql = $q->prepare();
             $records = db_loadList($sql);
             $activitiesCount = count($records);
@@ -1289,7 +1289,7 @@ foreach ($tasks_for_ids as $t) {
                                         $q->addJoin("human_resource_allocation", "hr_al ", "hr_al.project_tasks_estimated_roles_id=tr.id");
                                         $q->addJoin("human_resource", "hr ", " hr_al.human_resource_id=hr.human_resource_id");
                                         $q->addJoin("users", "u", " hr.human_resource_user_id=u.user_id");
-                                        $q->addWhere("tr.task_id=" . $task_id);
+                                        $q->addWhere("tr.task_id=" . (int)$task_id);
                                         $sql = $q->prepare();
                                         $RHrecords = db_loadList($sql);
 
@@ -1310,7 +1310,7 @@ foreach ($tasks_for_ids as $t) {
                                             $q = new DBQuery();
                                             $q->addTable("human_resource_allocation");
                                             $q->addQuery("human_resource_id");
-                                            $q->addWhere("project_tasks_estimated_roles_id=" . $role_estimated_id);
+                                            $q->addWhere("project_tasks_estimated_roles_id=" . (int)$role_estimated_id);
                                             $sql = $q->prepare();
                                             $records = db_loadList($sql);
                                             foreach ($records as $record) {
@@ -1502,7 +1502,7 @@ foreach ($tasks_for_ids as $t) {
                                                                         $query->addTable("users", "u");
                                                                         $query->addQuery("user_id, user_username, contact_last_name, contact_first_name, contact_id");
                                                                         $query->addJoin("contacts", "c", "u.user_contact = c.contact_id");
-                                                                        $query->addWhere("c.contact_company = " . $company_id);
+                                                                        $query->addWhere("c.contact_company = " . (int)$company_id);
                                                                         $query->addOrder("contact_last_name");
                                                                         $res = &$query->exec();
                                                                         for ($res; !$res->EOF; $res->MoveNext()) {
@@ -1525,7 +1525,7 @@ foreach ($tasks_for_ids as $t) {
                                                                     $query->addTable("users", "u");
                                                                     $query->addQuery("user_id, user_username, contact_last_name, contact_first_name, contact_id");
                                                                     $query->addJoin("contacts", "c", "u.user_contact = c.contact_id");
-                                                                    $query->addWhere("u.user_id = " . $obj->task_owner);
+                                                                    $query->addWhere("u.user_id = " . (int)$obj->task_owner);
                                                                     $res = &$query->exec();
                                                                     for ($res; !$res->EOF; $res->MoveNext()) {
                                                                         $user_name = $res->fields["contact_first_name"] . " " . $res->fields["contact_last_name"];
@@ -1612,7 +1612,7 @@ foreach ($tasks_for_ids as $t) {
                                                                             $q = new DBQuery();
                                                                             $q->addTable("human_resource_allocation");
                                                                             $q->addQuery("human_resource_id");
-                                                                            $q->addWhere("project_tasks_estimated_roles_id=" . $role_estimated_id);
+                                                                            $q->addWhere("project_tasks_estimated_roles_id=" . (int)$role_estimated_id);
                                                                             $sql = $q->prepare();
                                                                             $records = db_loadList($sql);
                                                                             foreach ($records as $record) {

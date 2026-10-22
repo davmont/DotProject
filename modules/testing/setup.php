@@ -5,7 +5,7 @@ if (!defined('DP_BASE_DIR')) {
 /*
  * Name:      Unit Testing
  * Directory: testing
- * Version:   1.0.0
+ * Version:   1.0.1
  * Type:      user
  * UI Name:   Unit Testing
  * UI Icon:
@@ -14,7 +14,7 @@ if (!defined('DP_BASE_DIR')) {
 // MODULE CONFIGURATION DEFINITION
 $config = array();
 $config['mod_name'] = 'Unit Testing';		// name the module
-$config['mod_version'] = '1.0.0';		// add a version number
+$config['mod_version'] = '1.0.1';		// add a version number
 $config['mod_directory'] = 'testing';		// tell dotProject where to find this module
 $config['mod_setup_class'] = 'CSetupTesting';	// the name of the PHP setup class (used below)
 $config['mod_type'] = 'user';			// 'core' for modules distributed with dP by standard, 'user' for additional modules from dotmods
@@ -52,6 +52,12 @@ class CSetupTesting {
 			//do some alter table commands
 
 		case "1.0":
+		case "1.0.0":
+			// The 1.0.0 installer indexed columns the table does not have, so
+			// the table was never created.
+			if (!db_loadResult("SHOW TABLES LIKE '" . db_escape(dPgetConfig('dbprefix', '') . 'unittest') . "'")) {
+				$this->install();
+			}
 			return true;
 
 		default:
@@ -73,8 +79,8 @@ class CSetupTesting {
   	"`unittest_task_id` int(11) NOT NULL default '0', ".
   	"`unittest_project_id` int(11) NOT NULL default '0', ".
   	"PRIMARY KEY  (`unittest_id`), ".
-  	"KEY `project_id` (`project_id`), ".
-  	"KEY `task_id` (`task_id`) ".
+  	"KEY `project_id` (`unittest_project_id`), ".
+  	"KEY `task_id` (`unittest_task_id`) ".
 		") ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ; ";
         
 

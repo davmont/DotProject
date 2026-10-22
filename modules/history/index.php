@@ -82,7 +82,7 @@ function show_history($history) {
 				$module = 'tasks';
 				$q->addTable('task_log');
 				$q->addQuery('task_log_task');
-				$q->addWhere('task_log_id = ' . $id);
+				$q->addWhere('task_log_id = ' . (int)$id);
 				$task_log_task = $q->loadResult();
 				$q->clear();
 				$link = '&amp;a=view&amp;task_id=' . $task_log_task . '&amp;tab=1&amp;' . $table_id 
@@ -152,13 +152,13 @@ if (!empty($_REQUEST['project_id'])) {
 	
 	$r->addTable('tasks');
 	$r->addQuery('task_id');
-	$r->addWhere('task_project = ' . $project_id);
+	$r->addWhere('task_project = ' . (int)$project_id);
 	$project_tasks = implode(',', $r->loadColumn());
 	$r->clear();
 	
 	$r->addTable('files');
 	$r->addQuery('file_id');
-	$r->addWhere('file_project = ' . $project_id);
+	$r->addWhere('file_project = ' . (int)$project_id);
 	$project_files = implode(',', $r->loadColumn());
 	$r->clear();
 	

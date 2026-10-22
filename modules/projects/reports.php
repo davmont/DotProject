@@ -19,7 +19,6 @@ $ptrc = $obj->getAllowedProjectsInRows($AppUI->user_id);
 
 $nums=db_num_rows($ptrc);
 
-echo db_error();
 for ($x=0; $x < $nums; $x++) {
 	$row = db_fetch_assoc($ptrc);
 	if ($row['project_id'] == $project_id) {

@@ -43,7 +43,7 @@ $working_hours = ($dPconfig['daily_working_hours'] ? $dPconfig['daily_working_ho
 //check that project has tasks; otherwise run seperate query
 $q->addTable('tasks', 'tsk');
 $q->addQuery("COUNT(distinct tsk.task_id) AS total_tasks");
-$q->addWhere('task_project = ' . $project_id);
+$q->addWhere('task_project = ' . (int)$project_id);
 $hasTasks = $q->loadResult();
 $q->clear();
 
@@ -71,7 +71,7 @@ if ($hasTasks) {
 		. ", CONCAT_WS(' ',contact_first_name,contact_last_name) user_name, p.*, "
 		. '(0.0) AS project_percent_complete');
 }
-$q->addWhere('project_id = ' . $project_id);
+$q->addWhere('project_id = ' . (int)$project_id);
 $q->addGroup('project_id');
 $sql = $q->prepare();
 $q->clear();
@@ -94,7 +94,7 @@ if ($hasTasks) {
 	$q->addTable('task_log');
 	$q->addTable('tasks');
 	$q->addQuery('ROUND(SUM(task_log_hours),2)');
-	$q->addWhere('task_log_task = task_id AND task_project = ' . $project_id);
+	$q->addWhere('task_log_task = task_id AND task_project = ' . (int)$project_id);
 	$sql = $q->prepare();
 	$q->clear();
 	$worked_hours = db_loadResult($sql);
@@ -104,14 +104,14 @@ if ($hasTasks) {
 	//same milestone comment as above, also applies to dynamic tasks
 	$q->addTable('tasks');
 	$q->addQuery('ROUND(SUM(task_duration),2)');
-	$q->addWhere('task_duration_type = 24 AND task_dynamic != 1 AND task_project = ' . $project_id);
+	$q->addWhere('task_duration_type = 24 AND task_dynamic != 1 AND task_project = ' . (int)$project_id);
 	$sql = $q->prepare();
 	$q->clear();
 	$days = db_loadResult($sql);
 
 	$q->addTable('tasks');
 	$q->addQuery('ROUND(SUM(task_duration),2)');
-	$q->addWhere('task_duration_type = 1 AND task_dynamic != 1 AND task_project = ' . $project_id);
+	$q->addWhere('task_duration_type = 1 AND task_dynamic != 1 AND task_project = ' . (int)$project_id);
 	$sql = $q->prepare();
 	$q->clear();
 	$hours = db_loadResult($sql);
@@ -122,16 +122,14 @@ if ($hasTasks) {
 	$q->addTable('tasks', 't');
 	$q->addQuery('ROUND(SUM(t.task_duration*u.perc_assignment/100),2)');
 	$q->addJoin('user_tasks', 'u', 't.task_id = u.task_id');
-	$q->addWhere('t.task_duration_type = 24 AND t.task_dynamic != 1 AND t.task_project = '
-		. $project_id);
+	$q->addWhere('t.task_duration_type = 24 AND t.task_dynamic != 1 AND t.task_project = ' . (int)$project_id);
 	$total_project_days_sql = $q->prepare();
 	$q->clear();
 
 	$q->addTable('tasks', 't');
 	$q->addQuery('ROUND(SUM(t.task_duration*u.perc_assignment/100),2)');
 	$q->addJoin('user_tasks', 'u', 't.task_id = u.task_id');
-	$q->addWhere('t.task_duration_type = 1 AND t.task_dynamic != 1 AND t.task_project = '
-		. $project_id);
+	$q->addWhere('t.task_duration_type = 1 AND t.task_dynamic != 1 AND t.task_project = ' . (int)$project_id);
 	$total_project_hours_sql = $q->prepare();
 	$q->clear();
 
@@ -410,7 +408,7 @@ smartUpdateProjectPercentComplete($project_id);
 				$q->addTable('departments', 'a');
 				$q->addTable('project_departments', 'b');
 				$q->addQuery('a.dept_id, a.dept_name, a.dept_phone');
-				$q->addWhere('a.dept_id = b.department_id AND b.project_id = ' . $project_id);
+				$q->addWhere('a.dept_id = b.department_id AND b.project_id = ' . (int)$project_id);
 				$depts = $q->loadHashList('dept_id');
 				$q->clear();
 				if (count($depts) > 0) {
@@ -511,7 +509,9 @@ $canAccessTask = getPermission('tasks', 'access');
 $canAccessTaskLog = getPermission('task_log', 'access');
 $showEditCheckbox = false;
 
-$tabBox->add(DP_BASE_DIR . '/modules/journal/index', $AppUI->_('Journal'));
+if (isset($AppUI->getActiveModules()['journal'])) {
+	$tabBox->add(DP_BASE_DIR . '/modules/journal/index', $AppUI->_('Journal'));
+}
 if (isset($AppUI->getActiveModules()['initiating'])) {
 	$tabBox->add(DP_BASE_DIR . '/modules/initiating/index_table', $AppUI->_('Initiating'));
 }

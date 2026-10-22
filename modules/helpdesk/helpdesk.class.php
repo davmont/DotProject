@@ -132,13 +132,13 @@ function store($updateNulls = false) {
 		$q->addJoin('contacts','c','u.user_contact = c.contact_id');
 		$q->addQuery("c.contact_email as email, c.contact_phone as phone, CONCAT(c.contact_first_name,' ', c.contact_last_name) as name");
 		// KZHAO  8-3-2006
-		$q->addWhere('u.user_id='.$this->item_requestor_id);
+		$q->addWhere('u.user_id=' . (int)$this->item_requestor_id);
         	break;
 	  case '2': //it's only a contact
 		$q = new DBQuery();
 		$q->addTable('contacts','c');
 		$q->addQuery("c.contact_email as email, c.contact_phone as phone, CONCAT(c.contact_first_name,' ', c.contact_last_name) as name");
-		$q->addWhere('contact_id='.$this->item_requestor_id);
+		$q->addWhere('contact_id=' . (int)$this->item_requestor_id);
 		break;
 	  default:
 		break;
@@ -231,7 +231,7 @@ function notify($type, $log_msg, $email_list=null) {
 			$q->addTable('users','u');
 			$q->addQuery('c.contact_email');
 			$q->addJoin('contacts','c','u.user_contact = c.contact_id');
-			$q->addWhere('u.user_id='.$this->item_assigned_to);
+			$q->addWhere('u.user_id=' . (int)$this->item_assigned_to);
 			$assigned_to_email_list = $q->loadHashList();
 			$q->clear();
 			$assigned_to_email_list = array_keys($assigned_to_email_list);
@@ -259,7 +259,7 @@ function notify($type, $log_msg, $email_list=null) {
 		$q->addQuery('c.contact_email');
 		$q->addJoin('users','u','hdw.user_id = u.user_id');
 		$q->addJoin('contacts','c','u.user_contact = c.contact_id');
-		$q->addWhere('hdw.item_id='.$this->item_id);
+		$q->addWhere('hdw.item_id=' . (int)$this->item_id);
 		$watcher_email_list = $q->loadHashList();
 		$q->clear();
 		$watcher_email_list = array_keys($watcher_email_list);
@@ -290,7 +290,7 @@ function notify($type, $log_msg, $email_list=null) {
 				$q = new DBQuery();
 				$q->addTable('helpdesk_item_status','hds');
 				$q->addQuery('hds.status_code, hds.status_comment');
-				$q->addWhere('hds.status_id='.$log_msg);
+				$q->addWhere('hds.status_id=' . (int)$log_msg);
 				$log=$q->loadHash();
 				$q->clear();
 				$body .= $AppUI->_('Updated status')."  -  {$isa[$log['status_code']]} {$log['status_comment']}\n\n";
@@ -331,7 +331,7 @@ function notify($type, $log_msg, $email_list=null) {
 				$q = new DBQuery();
 				$q->addTable('task_log','tl');
 				$q->addQuery('tl.task_log_name, tl.task_log_description');
-				$q->addWhere('tl.task_log_id='.$log_msg);
+				$q->addWhere('tl.task_log_id=' . (int)$log_msg);
 				$log=$q->loadHash();
 				$q->clear();
 				$subject .= " - " . $AppUI->_('Updated file log');

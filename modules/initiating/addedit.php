@@ -14,7 +14,7 @@ $initiating_id = intval(dPgetParam($_GET, 'id', 0));
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('initiating');
-$q->addWhere('initiating_id = ' . $initiating_id);
+$q->addWhere('initiating_id = ' . (int)$initiating_id);
 
 // check if this record has dependancies to prevent deletion
 $msg = '';

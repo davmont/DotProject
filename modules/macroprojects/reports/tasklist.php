@@ -228,7 +228,7 @@ if ($do_report) {
 		$q->addTable('user_tasks', 'ut');
 		$q->leftJoin('users', 'u', 'u.user_id = ut.user_id');
 		$q->leftJoin('contacts', 'c', 'c.contact_id = u.user_contact');
-		$q->addWhere('ut.task_id = ' . $task_id);
+		$q->addWhere('ut.task_id = ' . (int)$task_id);
 		$sql_user = $q->loadColumn();
 		$Tasks['users'] = implode(', ', $sql_user);
 		$tree->add($Tasks['task_parent'], $task_id, $Tasks);

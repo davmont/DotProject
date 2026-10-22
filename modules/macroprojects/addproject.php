@@ -189,7 +189,7 @@ if (isset($_POST['project']) and isset($_POST['add']) and $_SERVER['REQUEST_METH
 		$q->addTable('macroproject_project');
 		$q->addQuery('macroproject_id');
 		$q->addWhere('project_id = ' .(int)$_POST['project']);
-		$q->addWhere('macroproject_id = ' .$macroproject_id);
+		$q->addWhere('macroproject_id = ' . (int)$macroproject_id);
 		$existing_macroproject = $q->loadList();
 		if(!(count($existing_macroproject) != 0))//pour empecher d'ajouter plusieurs fois le même project
 		{
@@ -203,7 +203,7 @@ if (isset($_POST['project']) and isset($_POST['add']) and $_SERVER['REQUEST_METH
 	{
 		$q->setDelete('macroproject_project');
 		$q->addWhere('project_id = ' .(int)$_POST['project']);
-		$q->addWhere('macroproject_id = ' .$macroproject_id);
+		$q->addWhere('macroproject_id = ' . (int)$macroproject_id);
 	}
 	$q->exec();
 	updateMacroProjectPercentComplete($macroproject_id);
@@ -219,7 +219,7 @@ $q->addQuery('p.project_id, p.project_color_identifier, p.project_percent_comple
 $q->addJoin('companies', 'c', 'c.company_id = p.project_company');
 $q->addJoin('users', 'u', 'u.user_id = p.project_owner');
 if($ownerFilter!=0){
-	$q->addWhere('p.project_owner = '.$ownerFilter);
+	$q->addWhere('p.project_owner = ' . (int)$ownerFilter);
 }
 if($companyFilter != '0' && $companyFilter != '')
 {
@@ -229,7 +229,7 @@ if($companyFilter != '0' && $companyFilter != '')
 	else{
 		$q->addJoin('project_departments', 'pd', 'pd.project_id = p.project_id');
 		$q->addJoin('departments', 'd', 'pd.department_id = d.dept_id');
-		$q->addWhere('pd.department_id = '.$companyFilter.' OR d.dept_parent = '.$companyFilter);
+		$q->addWhere('pd.department_id = '.$companyFilter.' OR d.dept_parent = ' . (int)$companyFilter);
 	}
 }
 $projects = $q->loadList();
@@ -369,8 +369,8 @@ echo (htmlspecialchars(($row['total_tasks'] ?? '') . (!empty($row['my_tasks']) ?
 		$q->clear();
 		$q->addTable('macroproject_project');
 		$q->addQuery('macroproject_id');
-		$q->addWhere('project_id = ' .$row['project_id']);
-		$q->addWhere('macroproject_id = ' .$macroproject_id);
+		$q->addWhere('project_id = ' . (int)$row['project_id']);
+		$q->addWhere('macroproject_id = ' . (int)$macroproject_id);
 		$macroproject_list = $q->loadList();
 		if(count($macroproject_list) == 0){
 		?>
@@ -447,7 +447,7 @@ $q->addQuery('mp.macroproject_id, mp.macroproject_color_identifier, mp.macroproj
 $q->addJoin('companies', 'c', 'c.company_id = mp.macroproject_company');
 $q->addJoin('users', 'u', 'u.user_id = mp.macroproject_owner');
 if($ownerFilter!=0){
-	$q->addWhere('mp.macroproject_owner = '.$ownerFilter);
+	$q->addWhere('mp.macroproject_owner = ' . (int)$ownerFilter);
 }
 if($companyFilter != '0' && $companyFilter != '')
 {
@@ -458,7 +458,7 @@ if($companyFilter != '0' && $companyFilter != '')
 	
 		$q->addJoin('macroproject_departments', 'mpd', 'mpd.macroproject_id = mp.macroproject_id');
 		$q->addJoin('departments', 'd', 'mpd.department_id = d.dept_id');
-		$q->addWhere('mpd.department_id = '.$companyFilter.' OR d.dept_parent = '.$companyFilter);
+		$q->addWhere('mpd.department_id = '.$companyFilter.' OR d.dept_parent = ' . (int)$companyFilter);
 	}
 }
 $q->addWhere('mp.macroproject_id !='.$macroproject_id.recoverFatherMacroProjects($macroproject_id, 'mp.macroproject_id !='));

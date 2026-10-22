@@ -83,7 +83,7 @@ if ($changed_show_date != "") $show_date=$changed_show_date;
 			$q = new DBQuery();
 			$q -> addTable('projects');
 			$q -> addQuery('project_name');
-			$q -> addWhere('project_id='.$project_id);
+			$q -> addWhere('project_id=' . (int)$project_id);
 			$project_name=$q -> loadResult();
 			
 			$q -> clear();
@@ -194,8 +194,8 @@ if ($save_annotations == "1") {
 			$q->AddInsert('annotation_history_must_rationale',$obj->annotation_must_rationale);
 			$q->AddInsert('annotation_history_flag',$obj->annotation_flag);
 			$q->AddInsert('annotation_history_subject',$obj->annotation_subject);
-			$sql = $q->prepareInsert();
-			$result = db_loadList( $sql );
+			// exec() binds the values (prepareInsert() leaves '?' placeholders).
+			$q->exec();
 			$q->clear();
 
 	// Store the data

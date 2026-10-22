@@ -63,7 +63,7 @@ class CResource extends CDpObject {
     $result = "All Resources";
     $this->_query->clear();
     $this->_query->addTable('resource_types');
-    $this->_query->addWhere('resource_type_id = ' . $this->resource_type);
+    $this->_query->addWhere('resource_type_id = ' . (int)$this->resource_type);
     $res =& $this->_query->exec();
     if ($row = db_fetch_assoc($res)) {
       $result = $row['resource_type_name'];

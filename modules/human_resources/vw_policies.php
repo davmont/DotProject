@@ -10,7 +10,7 @@ $company_id = intval(dPgetParam($_GET, 'company_id', null));
 $query = new DBQuery;
 $query->addTable('companies', 'c');
 $query->addQuery('company_name');
-$query->addWhere('c.company_id = ' . $company_id);
+$query->addWhere('c.company_id = ' . (int)$company_id);
 $res =& $query->exec();
 $company_name = ($res && $res->fields) ? $res->fields['company_name'] : '';
 
@@ -20,7 +20,7 @@ $titleBlock->addCrumb(('?m=companies&amp;a=view&amp;company_id=' . $company_id),
 $query = new DBQuery;
 $query->addTable('company_policies', 'p');
 $query->addQuery('company_policies_id');
-$query->addWhere('p.company_policies_company_id = ' . $company_id);
+$query->addWhere('p.company_policies_company_id = ' . (int)$company_id);
 $res =& $query->exec();
 $company_policies_id = ($res && $res->fields) ? $res->fields['company_policies_id'] : null;
 $query->clear();

@@ -47,7 +47,7 @@ if ($loadFromTab && isset($_SESSION['tasks_subform']['hresource_assign'])) {
 	$q = new DBQuery;
 	$q->addTable('resource_tasks');
 	$q->addQuery('resource_id, percent_allocated');
-	$q->addWhere('task_id = ' . $task_id);
+	$q->addWhere('task_id = ' . (int)$task_id);
 	$sql = $q->prepareSelect();
 	$assigned_res = $q->exec();
 	while ($row = db_fetch_assoc($assigned_res)) {

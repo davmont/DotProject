@@ -32,7 +32,7 @@ class CPayment extends CDpObject {
 	// delete all current entries
 		$q = new DBQuery();
 		$q -> setDelete('invoice_payment');
-		$q -> addWhere('payment_id = '.$this->payment_id);		
+		$q -> addWhere('payment_id = ' . (int)$this->payment_id);		
 		$q -> exec();
 
 	// process dependencies
@@ -48,7 +48,7 @@ class CPayment extends CDpObject {
 		      $q -> clear();
 		      $q -> addTable('invoices');
 		      $q -> addUpdate('invoice_status', 1);
-		      $q -> addWhere('invoice_id = '.$invoice_id);
+		      $q -> addWhere('invoice_id = ' . (int)$invoice_id);
 		      $q -> exec();     		      
 		    }
 		  }

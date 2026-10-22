@@ -76,7 +76,7 @@ class CForum extends CDpObject {
 		$q->clear();
 		
 		$q->setDelete('forums');
-		$q->addWhere('forum_id = '.$this->forum_id);
+		$q->addWhere('forum_id = ' . (int)$this->forum_id);
 		if (!$q->exec()) {
 			$q->clear();
 			return db_error();
@@ -165,14 +165,12 @@ class CForumMessage {
 			$date = new CDate();
 			$this->message_date = $date->format( FMT_DATETIME_MYSQL );
 			$new_id = db_insertObject( 'forum_messages', $this, 'message_id' ); ## TODO handle error now
-			echo db_error(); //TODO handle error better
 
 			$q->addTable('forum_messages');
 			$q->addQuery('count(message_id), MAX(message_date)');
 			$q->addWhere('message_forum = '.$this->message_forum);
 
 			$res = $q->exec();
-			echo db_error(); ## TODO handle error better
 			$reply = db_fetch_row( $res );
 			$q->clear();
 
@@ -204,12 +202,12 @@ class CForumMessage {
 
 		$q->addTable('forum_messages');
 		$q->addQuery('message_forum');
-		$q->addWhere('message_id = ' . $this->message_id);
+		$q->addWhere('message_id = ' . (int)$this->message_id);
 		$forumId = db_loadResult($q->prepare());
 		$q->clear();
 
 		$q->setDelete('forum_messages');
-		$q->addWhere('message_id = '.$this->message_id);
+		$q->addWhere('message_id = ' . (int)$this->message_id);
 		if (!$q->exec()) {
 			$result = db_error();
 		} else {
@@ -225,7 +223,7 @@ class CForumMessage {
 
 		$q->addTable('forums');
 		$q->addUpdate('forum_message_count', $messageCount);
-		$q->addWhere('forum_id = ' . $forumId);
+		$q->addWhere('forum_id = ' . (int)$forumId);
 		$q->exec();
 		$q->clear();
 		
@@ -268,7 +266,7 @@ class CForumMessage {
 		
 		$q->addTable('forum_watch');
 		$q->addWhere('user_id = watch_user');
-		$q->addWhere('user_id <> ' . $AppUI->user_id);
+		$q->addWhere('user_id <> ' . (int)$AppUI->user_id);
 		$q->addWhere("(watch_forum = $this->message_forum OR watch_topic = $this->message_parent)");
 
 		if (!($res = $q->exec())) {

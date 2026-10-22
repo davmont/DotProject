@@ -46,6 +46,9 @@ class CSetupInitiating
     $q = new DBQuery();
     $q->dropTable('initiating');
     $q->exec();
+    $q->clear();
+    $q->dropTable('initiating_stakeholder');
+    $q->exec();
   }
 
   function upgrade($old_version)
@@ -87,6 +90,10 @@ PRIMARY KEY (`initiating_id`)
     $q->exec();
 
     $q->clear();
+    // Earlier versions left this table behind on remove.
+    if (db_loadResult("SHOW TABLES LIKE '" . db_escape(dPgetConfig('dbprefix', '') . 'initiating_stakeholder') . "'")) {
+      return null;
+    }
     $q = new DBQuery();
     $q->createTable('initiating_stakeholder');
     $q->createDefinition("(

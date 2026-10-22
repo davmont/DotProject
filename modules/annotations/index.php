@@ -270,9 +270,9 @@ $icon_show_all_filled_path = "./images/clip.png";	//icon to show only the filled
  } else {
 	$q->leftJoin('annotations','','(annotation_project = project_id and annotation_date = '.$show_the_date->format( FMT_TIMESTAMP_DATE ).')');
  }
- if ($project_id!="-1") 	$q->addWhere('project_id = '.$project_id);
+ if ($project_id!="-1") 	$q->addWhere('project_id = ' . (int)$project_id);
  if ($project_status!="-1") $q->addWhere('project_status = '.$project_status);
- if ($show_owner_id!="-1")  $q->addWhere('project_owner = '.$show_owner_id); 
+ if ($show_owner_id!="-1")  $q->addWhere('project_owner = ' . (int)$show_owner_id); 
  
  $sql = $q->prepareSelect( $q );
  $q->clear();

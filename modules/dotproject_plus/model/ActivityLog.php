@@ -21,7 +21,7 @@ class ActivityLog {
         $q = new DBQuery();
         $q->addTable("task_log");
         $q->addQuery("min(task_log_date), max(task_log_date)");
-        $q->addWhere("task_log_task=" . $activityId);
+        $q->addWhere("task_log_task=" . (int)$activityId);
         $sql = $q->prepare();
         $records = db_loadList($sql);
         $this->result=array();
@@ -76,7 +76,7 @@ class ActivityLog {
         $q->addTable("task_log","tl");
         $q->addJoin("users","u","tl.task_log_creator = u.user_id","inner");
         $q->addJoin("contacts","c","u.user_contact=c.contact_id","inner");        
-        $q->addWhere("task_log_task=" . $activityId);
+        $q->addWhere("task_log_task=" . (int)$activityId);
         $q->addOrder("task_log_date asc");
         $sql = $q->prepare();
         //echo $sql;

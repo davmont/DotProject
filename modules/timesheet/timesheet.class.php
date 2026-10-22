@@ -25,7 +25,7 @@ class Timesheet {
 		$q = new DBQuery();
 		$q -> addTable('timesheet');
 		$q -> addQuery('*');
-		$q -> addWhere('timesheet_id = '.$oid);
+		$q -> addWhere('timesheet_id = ' . (int)$oid);
 		return $q->loadObject($this);
 	}
 
@@ -66,7 +66,7 @@ class Timesheet {
 	function delete() {
 		$q = new DBQuery();
 		$q -> setDelete('timesheet');
-		$q -> addWhere('timesheet_id = '.$this->timesheet_id);
+		$q -> addWhere('timesheet_id = ' . (int)$this->timesheet_id);
 		
 		if (!$q->exec()) {
 			return db_error();

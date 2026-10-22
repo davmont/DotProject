@@ -38,7 +38,7 @@ class CProjectDesignerOptions extends CDpObject {
                   $q->addReplace('pd_option_view_actions',$this->pd_option_view_actions);
                   $q->addReplace('pd_option_view_addtasks',$this->pd_option_view_addtasks);
                   $q->addReplace('pd_option_view_files',$this->pd_option_view_files);
-                  $q->addWhere('pd_option_user = '.$this->pd_option_user);
+                  $q->addWhere('pd_option_user = ' . (int)$this->pd_option_user);
                   $q->exec();
         }                    
 }
@@ -107,7 +107,7 @@ function get_actual_end_date_pd($task_id, $task) {
   else {
       $q->addQuery('MAX(task_log_date) AS actual_end_date');
       $q->addTable('task_log');
-      $q->addWhere('task_log_task = '.$task_id);
+      $q->addWhere('task_log_task = ' . (int)$task_id);
   }
   
   $task_log_end_date = $q->loadResult();

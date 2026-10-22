@@ -143,7 +143,7 @@ if ($do_report) {
 		$q->addWhere("hi.item_created <= '".$end_date->format( FMT_DATETIME_MYSQL )."'");
 	}
 	if (count($allowedTasks)) {
-		$q->addWhere('implode(" AND ", $allowedTasks)');
+		$q->addWhere(implode(' AND ', $allowedTasks));
 	}
 	$q->addOrder('hi.item_id');
 	$Task_List = $q->loadList();
@@ -274,23 +274,21 @@ if ($log_pdf) {
 			$q5 = new DBQuery;
 			$q5->addQuery("project_name");
 			$q5->addTable('projects');
-			$q5->addWhere('project_id = '.$project_id);
+			$q5->addWhere('project_id = ' . (int)$project_id);
 			$pname = 'Project: '.$q5->loadResult();
 		}
 		else
 			$pname = "All Companies and All Projects";
-		echo db_error();
 
 		if ($company_id){
 			$q6 = new DBQuery;
 			$q6->addQuery("company_name");
 			$q6->addTable('companies');
-			$q6->addWhere('company_id = '.$company_id);
+			$q6->addWhere('company_id = ' . (int)$company_id);
 			$cname = 'Company: '.$q6->loadResult();
 		}
 		else
 			$cname = "All Companies and All Projects";
-		echo db_error();
 
 		$font_dir = dPgetConfig( 'root_dir' )."/lib/ezpdf/fonts";
 		$temp_dir = dPgetConfig( 'root_dir' )."/files/temp";

@@ -19,7 +19,7 @@ $q = new DBQuery;
 $q->addTable('billingcode','bc');
 $q->addQuery('*');
 $q->addOrder('billingcode_name ASC');
-$q->addWhere('company_id = ' . $company_id);
+$q->addWhere('company_id = ' . (int)$company_id);
 $billingcodes = $q->loadList();
 $q->clear();
 

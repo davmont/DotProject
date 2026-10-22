@@ -9,7 +9,7 @@ if($human_resource_id) {
 	$query->addTable('human_resource_roles', 'r');
 	$query->addQuery('h.human_resources_role_name, h.human_resources_role_id');
 	$query->innerJoin('human_resources_role', 'h', 'h.human_resources_role_id = r.human_resources_role_id');
-	$query->addWhere('r.human_resource_id = ' . $human_resource_id);
+	$query->addWhere('r.human_resource_id = ' . (int)$human_resource_id);
 	$sql = $query->prepare();
 	$roles = db_loadList($sql);
 }
@@ -40,7 +40,7 @@ foreach ($roles as $role) {
 $query = new DBQuery;
 $query->addTable('human_resources_role', 'r');
 $query->addQuery('r.human_resources_role_name, r.human_resources_role_id');
-$query->addWhere('r.human_resources_role_company_id = ' . $company_id);
+$query->addWhere('r.human_resources_role_company_id = ' . (int)$company_id);
 $sql = $query->prepare();
 $company_roles = db_loadList($sql);
 $different_roles = $company_roles;

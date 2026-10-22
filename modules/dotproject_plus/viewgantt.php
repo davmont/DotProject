@@ -116,7 +116,7 @@ $q->addQuery('t.task_id, task_parent, task_name, task_start_date, task_end_date'
 
 $q->addWhere('project_status != 7 AND task_dynamic = 1');
 if ($project_id) {
-	$q->addWhere('task_project = ' . $project_id);
+	$q->addWhere('task_project = ' . (int)$project_id);
 }
 $task = new CTask;
 $task->setAllowedSQL($AppUI->user_id, $q);
@@ -628,7 +628,7 @@ if (!@$min_view) {
 				$q = new DBQuery;
 				$q->addTable('tasks');
 				$q->addQuery('COUNT(*) AS N');
-				$q->addWhere('task_project=' . $project_id);
+				$q->addWhere('task_project=' . (int)$project_id);
 				$cnt = $q->loadList();
 				$q->clear();
 			} else {

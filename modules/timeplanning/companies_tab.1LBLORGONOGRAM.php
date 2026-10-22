@@ -13,7 +13,7 @@ $crole = new CRole;
 $query = new DBQuery;
 $query->addTable('human_resources_role', 'r');
 $query->addQuery('human_resources_role_name as name');
-$query->addWhere('r.human_resources_role_company_id = ' . $company_id);
+$query->addWhere('r.human_resources_role_company_id = ' . (int)$company_id);
 $sql = $query->prepare();
 $query->clear();
 $roles = db_loadList($sql);

@@ -13,7 +13,7 @@ if (!defined('DP_BASE_DIR')) {
  */
 $config = array();
 $config['mod_name'] = 'Costs'; // name the module
-$config['mod_version'] = '1.0.1'; // add a version number
+$config['mod_version'] = '1.1'; // add a version number
 $config['mod_directory'] = 'costs'; // tell dotProject where to find this module
 $config['mod_setup_class'] = 'SSetupCosts'; // the name of the PHP setup class (used below)
 $config['mod_type'] = 'user'; //'core' for standard dP modules, 'user' for additional modules from dotmods
@@ -27,6 +27,29 @@ $config['permissions_item_label'] = 'cost_name'; // identify "title" field in ta
 
 if (@$a == 'setup') {
     echo dPshowModuleConfig($config);
+}
+
+if (!function_exists('costsTableExists')) {
+    /** True when the (prefixed) table exists. */
+    function costsTableExists($table) {
+        $name = dPgetConfig('dbprefix', '') . $table;
+        return (bool)db_loadResult("SHOW TABLES LIKE '" . db_escape($name) . "'");
+    }
+
+    /**
+     * Costs 1.0 kept its project budgets in 'budget', a name the finances module
+     * also uses for its task budgets (other columns): whichever module was
+     * installed second failed. A 'budget' table with the costs columns is renamed
+     * to costs_budget (the finances installer does the same before creating its
+     * own table).
+     */
+    function costsMoveBudgetTable() {
+        $prefix = dPgetConfig('dbprefix', '');
+        if (costsTableExists('budget') && !costsTableExists('costs_budget')
+            && db_loadResult("SHOW COLUMNS FROM `" . $prefix . "budget` LIKE 'budget_project_id'")) {
+            db_exec("RENAME TABLE `" . $prefix . "budget` TO `" . $prefix . "costs_budget`");
+        }
+    }
 }
 
 class SSetupCosts {
@@ -52,10 +75,12 @@ class SSetupCosts {
 			primary key (cost_id),
                         foreign key (cost_project_id) references `dotp_projects`(project_id)
 		)ENGINE=MYISAM";
-        $q->createTable('costs');
-        $q->createDefinition($sql);
-        $ok = $ok && $q->exec();
-        $q->clear();
+        if (!costsTableExists('costs')) {
+            $q->createTable('costs');
+            $q->createDefinition($sql);
+            $ok = $ok && $q->exec();
+            $q->clear();
+        }
       
         
         $sql = "(
@@ -71,10 +96,12 @@ class SSetupCosts {
 			foreign key (budget_reserve_project_id) references `dotp_projects`(project_id),
                         foreign key (budget_reserve_risk_id) references `dotp_risks` (risk_id)
 		)ENGINE=MYISAM";
-        $q->createTable('budget_reserve');
-        $q->createDefinition($sql);
-        $ok = $ok && $q->exec();
-        $q->clear();
+        if ($ok && !costsTableExists('budget_reserve')) {
+            $q->createTable('budget_reserve');
+            $q->createDefinition($sql);
+            $ok = $ok && $q->exec();
+            $q->clear();
+        }
 
 
         $sql = "(
@@ -86,10 +113,14 @@ class SSetupCosts {
                         primary key (budget_id),
 			foreign key (budget_project_id) references `dotp_projects`(project_id)
 		)ENGINE=MYISAM";
-        $q->createTable('budget');
-        $q->createDefinition($sql);
-        $ok = $ok && $q->exec();
-        $q->clear();
+        // Was 'budget', which the finances module also creates (other columns).
+        costsMoveBudgetTable();
+        if (!costsTableExists('costs_budget')) {
+            $q->createTable('costs_budget');
+            $q->createDefinition($sql);
+            $ok = $ok && $q->exec();
+            $q->clear();
+        }
 
 
         if (!$ok) {
@@ -108,13 +139,16 @@ class SSetupCosts {
         $q->exec();
         $q->clear();
 
-        $q->dropTable('budget');
+        $q->dropTable('costs_budget');
         $q->exec();
         $q->clear();
     }
 
     function upgrade($old_version) {
-
+        // 1.1: the project budget table is costs_budget (see install()).
+        if (version_compare($old_version, '1.1', '<')) {
+            return $this->install() === null;
+        }
         return true;
     }
 

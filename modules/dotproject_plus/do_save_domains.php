@@ -19,7 +19,7 @@ if ($project_id) {
         $q = new DBQuery();
         $q->addTable('project_pmbok_domains');
         $q->addQuery('count(*)');
-        $q->addWhere('project_id = ' . $project_id . ' AND domain_id = ' . $id);
+        $q->addWhere('project_id = ' . $project_id . ' AND domain_id = ' . (int)$id);
         $exists = $q->loadResult();
         $q->clear();
 
@@ -28,7 +28,7 @@ if ($project_id) {
         if ($exists) {
             $q->addUpdate('status', $status);
             $q->addUpdate('notes', $note);
-            $q->addWhere('project_id = ' . $project_id . ' AND domain_id = ' . $id);
+            $q->addWhere('project_id = ' . $project_id . ' AND domain_id = ' . (int)$id);
         } else {
             $q->addInsert('project_id', $project_id);
             $q->addInsert('domain_id', $id);

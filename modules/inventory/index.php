@@ -49,7 +49,7 @@ if ( isset( $_GET[ 'quick_filter' ] ) )
 		$sql = new DBQuery();
 		$sql -> addTable($databases[$quick_filter]);
 		$sql -> addQuery($quick_filter.'_company AS company_id');
-		$sql -> addWhere($quick_filter."_id=".$quick_filter_id);
+		$sql -> addWhere($quick_filter."_id=" . (int)$quick_filter_id);
 
 		$row = $sql->loadList();
 

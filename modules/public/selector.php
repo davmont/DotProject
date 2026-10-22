@@ -170,7 +170,6 @@ if (!$ok) {
 } else {
 	$list = arrayMerge(array(0 => $AppUI->_('[none]')), 
 	                   ((!(empty($query_result))) ? $query_result : $q->loadHashList()));
-	echo db_error();
 ?>
 <script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function setClose(key, val) {

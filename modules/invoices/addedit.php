@@ -43,7 +43,7 @@ if ($invoice_id && !array_key_exists($row->invoice_company, $companies)) {
 	$sql->clear();
 	$sql->addTable('companies');
 	$sql->addQuery('company_name');
-	$sql->addWhere('company_id=' . $row->invoice_company);
+	$sql->addWhere('company_id=' . (int)$row->invoice_company);
 	$companies[$row->invoice_company] = $sql->loadResult();
 }
 

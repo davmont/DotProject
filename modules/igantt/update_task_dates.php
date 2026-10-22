@@ -52,7 +52,8 @@ $success = $q->exec();
 if ($success) {
     echo json_encode(['status' => 'success', 'message' => 'Task dates updated.']);
 } else {
-    echo json_encode(['status' => 'error', 'message' => db_error()]);
+    error_log('igantt: task date update failed: ' . db_error());
+    echo json_encode(['status' => 'error', 'message' => 'Database error']);
 }
 
 exit;

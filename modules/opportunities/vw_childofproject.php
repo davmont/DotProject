@@ -83,9 +83,9 @@ if ($save=="1") {
 				$q->addInsert('opportunity_project_projects',$i);
 				$q->addInsert('opportunity_project_opportunities',$opportunity_id);
 				$q->addInsert('opportunity_project_description',$description);
-				$sql = $q->prepareInsert();
+				// exec() binds the values (prepareInsert() leaves '?' placeholders).
+				$q->exec();
 				$q->clear();
-				if ( $sql != "" ) $Result = db_loadResult( $sql );
 				$projs="";
 				$strTmp = "opportunity_id=".$opportunity_id;
 			}				
@@ -99,9 +99,8 @@ if ($save=="1") {
 			$q->addTable('opportunities');
 			$q->addUpdate('opportunity_status',$k);
 			$q->addWhere($strTmp);
-			$sql = $q->prepareUpdate();
+			$q->exec();
 			$q->clear();
-			$Result = db_loadResult( $sql );
 			
 			$tmpName = db_loadResult('SELECT opportunity_name FROM '.dPgetConfig('dbprefix', '').'opportunities WHERE opportunity_id='.$opportunity_id);
 			$txtChange = $AppUI->_("Please note that the status for Opportunity ", UI_OUTPUT_RAW).'"'.$tmpName.'"'.$AppUI->_(' will be changed to ', UI_OUTPUT_RAW).' '.$v;
@@ -137,7 +136,7 @@ if ($save=="1") {
 	//$opportunity_id = intval( dPgetParam( $_GET, "opportunity_id", 0 ) );
 	$q->addTable('opportunities');
 	$q->addQuery('opportunity_name');
-	$q->addWhere('opportunity_id = '.$opportunity_id);
+	$q->addWhere('opportunity_id = ' . (int)$opportunity_id);
 	$sql = $q->prepareSelect();
 	$OpportunityName = db_LoadResult( $sql );
 	

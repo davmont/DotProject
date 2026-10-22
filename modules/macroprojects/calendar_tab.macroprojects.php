@@ -49,7 +49,7 @@ if ($allowed_where) {
 	$q->addWhere(implode(' AND ', $allowed_where));
 }
 if ($company_id) {
-	$q->addWhere('mp.macroproject_company = ' . $company_id);
+	$q->addWhere('mp.macroproject_company = ' . (int)$company_id);
 }
 $q->addOrder('macroproject_end_date');
 

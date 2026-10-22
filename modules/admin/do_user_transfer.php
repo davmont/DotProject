@@ -33,7 +33,7 @@ if (count($projects) > 1) {
 $q = new DBQuery();
 $q->addUpdate('project_owner', $user_id);
 $q->addTable('projects');
-$q->addWhere('project_owner =  ' . $from_user);
+$q->addWhere('project_owner =  ' . (int)$from_user);
 $q->addWhere('project_id' . $project_where);
 if (! $q->exec()) {
 	$AppUI->setMsg('failed to update project owner', UI_MSG_ERROR);
@@ -43,7 +43,7 @@ $q->clear();
 
 $q->addUpdate('contact_id', $user_id);
 $q->addTable('project_contacts');
-$q->addWhere('contact_id = ' . $from_user);
+$q->addWhere('contact_id = ' . (int)$from_user);
 $q->addWhere('project_id ' . $project_where);
 if (!$q->exec()) {
 	$AppUI->setMsg('failed to update project contacts', UI_MSG_ERROR);
@@ -54,7 +54,7 @@ $q->clear();
 // Tasks:
 $q->addUpdate('task_owner', $user_id);
 $q->addTable('tasks');
-$q->addWhere('task_owner =  ' . $from_user);
+$q->addWhere('task_owner =  ' . (int)$from_user);
 $q->addWhere('task_project' . $project_where);
 if (!$q->exec()) {
 	$AppUI->setMsg('failed to update task owner', UI_MSG_ERROR);
@@ -70,7 +70,7 @@ $q->clear();
 
 $q->addUpdate('contact_id', $user_id);
 $q->addTable('task_contacts');
-$q->addWhere('contact_id = ' . $from_user);
+$q->addWhere('contact_id = ' . (int)$from_user);
 $q->addWhere('task_id IN (' . $task_sql . ')');
 if (!$q->exec()) {
 	$AppUI->setMsg('failed to update task contacts', UI_MSG_ERROR);
@@ -80,7 +80,7 @@ $q->clear();
 
 $q->addUpdate('user_id', $user_id);
 $q->addTable('user_tasks');
-$q->addWhere('user_id = ' . $from_user);
+$q->addWhere('user_id = ' . (int)$from_user);
 $q->addWhere('task_id IN (' . $task_sql . ')');
 if (!$q->exec()) {
 	$AppUI->setMsg('failed to update task assignments', UI_MSG_ERROR);

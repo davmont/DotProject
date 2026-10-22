@@ -149,13 +149,11 @@ $projects = array();
 $canAccessTask = getPermission('tasks', 'access');
 if ($canAccessTask) {
 	$prc = db_exec($psql);
-	echo db_error();
 	while ($row = db_fetch_assoc($prc)) {
 		$projects[$row['project_id']] = $row;
 	}
 
 	$prc2 = db_exec($psql2);
-	echo db_error();
 	while ($row2 = db_fetch_assoc($prc2)) {
 		if ($projects[$row2['project_id']]) {
 			array_push($projects[$row2['project_id']], $row2);
@@ -333,7 +331,6 @@ if ($canAccessTask) {
 	if ($ptrc != false) {
 		$nums = db_num_rows($ptrc);
 	}
-	echo db_error();
 } else {
 	$nums = 0;
 }
@@ -360,7 +357,6 @@ if (!empty($all_task_ids)) {
 
 	$paurc = db_exec($ausql);
 	$nnums = db_num_rows($paurc);
-	echo db_error();
 
 	$task_users_map = array();
 	for ($xx = 0; $xx < $nnums; $xx++) {

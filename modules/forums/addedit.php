@@ -23,9 +23,8 @@ $forum_id = intval(dPgetParam($_GET, 'forum_id', 0));
 $q = new DBQuery;
 $q->addTable('forums');
 $q->addQuery('*');
-$q->addWhere('forum_id = ' . $forum_id);
+$q->addWhere('forum_id = ' . (int)$forum_id);
 $res = $q->exec();
-echo db_error();
 $forum_info = db_fetch_assoc($res);
 if (!is_array($forum_info)) {
 	$forum_info = array();
@@ -47,7 +46,6 @@ $projObj->setAllowedSQL($AppUI->user_id, $q);
 if (isset($company_id))
 	$q->addWhere("project_company = $company_id");
 $projects = array('0' => '') + $q->loadHashList();
-echo db_error();
 
 if (!in_array($forum_project, array_keys($projects))) {
 	$forum_project = 0;

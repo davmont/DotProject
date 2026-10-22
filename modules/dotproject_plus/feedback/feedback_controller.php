@@ -637,7 +637,7 @@ function getRolesCount($company_id) {
     $q = new DBQuery();
     $q->addQuery('r.id, r.role_name');
     $q->addTable('company_role', 'r');
-    $q->addWhere("r.company_id=" . $company_id);
+    $q->addWhere("r.company_id=" . (int)$company_id);
     $sql = $q->prepare();
 //echo $sql;
     $items = db_loadList($sql);
@@ -1006,7 +1006,7 @@ function getActivitiesCount($projectId) {
     $q = new DBQuery();
     $q->addQuery("t.task_id");
     $q->addTable("tasks", "t");
-    $q->addWhere("t.task_project=" . $projectId);
+    $q->addWhere("t.task_project=" . (int)$projectId);
     $sql = $q->prepare();
     $records = db_loadList($sql);
     return count($records);
@@ -1054,7 +1054,7 @@ function thereIsMilestoneForCapstoneProject($projectId) {
 function thereIsManagementReserveNonInitialized($projectId) {
     $q = new DBQuery();
     $q->addQuery("b.budget_reserve_management");
-    $q->addTable("budget", "b");
+    $q->addTable("costs_budget", "b");
     $q->addWhere("b.budget_project_id=$projectId and b.budget_reserve_management<=0");
     $sql = $q->prepare();
 //echo $sql;
@@ -1085,7 +1085,7 @@ function isQualityPoliciesTooShort($projectId) {
     $q = new DBQuery();
     $q->addQuery("qp.id");
     $q->addTable("quality_planning", "qp");
-    $q->addWhere("CHAR_LENGTH(quality_policies)<=150 and project_id=" . $projectId);
+    $q->addWhere("CHAR_LENGTH(quality_policies)<=150 and project_id=" . (int)$projectId);
     $sql = $q->prepare();
     $records = db_loadList($sql);
     if (count($records) > 0) {
@@ -1152,7 +1152,7 @@ function thereIsAssuranceItemsMethodAsTest($projectId) {
     $query->addQuery("qp.id");
     $query->addTable("quality_assurance_item", "qi");
     $query->addJoin("quality_planning", "qp", "qp.id=qi.quality_planning_id", "inner");
-    $query->addWhere("ucase(qi.how) like '%TEST%' and qp.project_id=" . $projectId);
+    $query->addWhere("ucase(qi.how) like '%TEST%' and qp.project_id=" . (int)$projectId);
     $sql = $query->prepare();
     $records = db_loadList($sql);
     if (count($records) > 0) {
@@ -1165,7 +1165,7 @@ function thereIsContingenceReserve($projectId) {
     $q = new DBQuery();
     $q->addQuery('*');
     $q->addTable('budget_reserve', 'b');
-    $q->addWhere("budget_reserve_project_id = " . $projectId);
+    $q->addWhere("budget_reserve_project_id = " . (int)$projectId);
     $q->addOrder('budget_reserve_risk_id');
     $sql = $q->prepare();
     $records = db_loadList($sql);
@@ -1179,7 +1179,7 @@ function getCommunicationCount($projectId) {
     $q = new DBQuery();
     $q->addQuery('communication_id');
     $q->addTable('communication');
-    $q->addWhere("communication_project_id= " . $projectId);
+    $q->addWhere("communication_project_id= " . (int)$projectId);
     $sql = $q->prepare();
     $records = db_loadList($sql);
     return count($records);
@@ -1284,7 +1284,7 @@ function getStakeholdersCount($projectId) {
         $q->addTable("initiating_stakeholder", "stk");
         $q->addJoin("initiating", "i", "i.initiating_id = stk.initiating_id");
         $q->addJoin("contacts", "c", "c.contact_id = stk.contact_id");
-        $q->addWhere("i.initiating_id=" . $initiating_id);
+        $q->addWhere("i.initiating_id=" . (int)$initiating_id);
         $q->addOrder("stk.initiating_id");
         $q->addOrder("stk.contact_id");
         $list = $q->loadList();
@@ -1325,7 +1325,7 @@ function thereIsStakeholders($projectId) {
         $q->addTable("initiating_stakeholder", "stk");
         $q->addJoin("initiating", "i", "i.initiating_id = stk.initiating_id");
         $q->addJoin("contacts", "c", "c.contact_id = stk.contact_id");
-        $q->addWhere("i.initiating_id=" . $initiating_id);
+        $q->addWhere("i.initiating_id=" . (int)$initiating_id);
         $q->addOrder("stk.initiating_id");
         $q->addOrder("stk.contact_id");
         $list = $q->loadList();

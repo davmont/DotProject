@@ -19,10 +19,10 @@ $project->setAllowedSQL($AppUI->user_id, $q, 't.task_project');
 
 if ($userFilter) {
 	$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
-	$q->addWhere('ut.user_id = '.$AppUI->user_id);
+	$q->addWhere('ut.user_id = ' . (int)$AppUI->user_id);
 }
 if ($proj != 0) {
-  $q->addWhere('task_project = '.$proj);
+  $q->addWhere('task_project = ' . (int)$proj);
 }
 
 $sql = $q->prepare();

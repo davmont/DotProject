@@ -22,7 +22,7 @@ class CFeedbackEvaluation extends CDpObject {
             $q = new DBQuery();
             $q->addQuery("id");
             $q->addTable("feedback_evaluation");
-            $q->addWhere("user_id=". $this->user_id ." and feedback_id=" . $this->feedback_id);
+            $q->addWhere("user_id=". $this->user_id ." and feedback_id=" . (int)$this->feedback_id);
             $list = $q->loadList();
             $q->clear();
             $q->addTable("feedback_evaluation");
@@ -32,7 +32,7 @@ class CFeedbackEvaluation extends CDpObject {
                 $q->addInsert("grade", $this->grade);
             }else{
                 $q->addUpdate("grade", $this->grade);
-                $q->addWhere("user_id=". $this->user_id ." and feedback_id=" . $this->feedback_id);
+                $q->addWhere("user_id=". $this->user_id ." and feedback_id=" . (int)$this->feedback_id);
             }
             $q->exec();
         }

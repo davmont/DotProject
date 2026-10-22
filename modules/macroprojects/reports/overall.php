@@ -104,7 +104,6 @@ function showcompany($company, $restricted = false)
         $company_billingcodes=NULL;
         $ptrc=db_exec($sql);
         $nums=db_num_rows($ptrc);
-        echo db_error();
                                                                                                                          
         for ($x=0; $x < $nums; $x++) {
                 $row=db_fetch_assoc($ptrc);
@@ -114,13 +113,13 @@ function showcompany($company, $restricted = false)
 	$q = new DBQuery;
 	$q->addTable('projects');
 	$q->addQuery('project_id, project_name');
-	$q->addWhere('project_company = ' . $company);
+	$q->addWhere('project_company = ' . (int)$company);
 
 	$projects = $q->loadHashList();
   
 	$q->addTable('companies');
 	$q->addQuery('company_name');
-	$q->addWhere('company_id = ' . $company);
+	$q->addWhere('company_id = ' . (int)$company);
 	$company_name = $q->loadResult();                                                                                                                       
 
         $table = '<h2>Company: ' . $company_name . '</h2>

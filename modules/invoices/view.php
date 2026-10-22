@@ -30,7 +30,7 @@ $sql -> addTable('invoices','invoices');
 $sql -> addQuery('company_name,invoices.*,SUM(t1.product_price*t1.product_qty) as invoice_grand_total');
 $sql -> addJoin('companies','comp','company_id = invoice_company');
 $sql -> addJoin('invoice_product','t1','invoices.invoice_id = t1.product_invoice');
-$sql -> addWhere('invoice_id = '.$invoice_id);
+$sql -> addWhere('invoice_id = ' . (int)$invoice_id);
 $sql -> addGroup('invoice_id');
 
 $obj = null;

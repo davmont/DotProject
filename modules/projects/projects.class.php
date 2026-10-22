@@ -87,7 +87,7 @@ class CProject extends CDpObject
 				. ' * IF(t1.task_duration_type = 24, ' . $working_hours
 				. ', t1.task_duration_type)) AS project_percent_complete');
 			$q->addJoin('tasks', 't1', 'p.project_id = t1.task_project');
-			$q->addWhere('project_id = ' . $oid);// . ' AND t1.task_id = t1.task_parent'); ==>on veut le calculer en prenant en compte toutes les t�ches
+			$q->addWhere('project_id = ' . (int)$oid);// . ' AND t1.task_id = t1.task_parent'); ==>on veut le calculer en prenant en compte toutes les t�ches
 			$this->project_percent_complete = $q->loadResult();
 		}
 		return $result;
@@ -138,7 +138,7 @@ class CProject extends CDpObject
 		$q = new DBQuery;
 		$q->addTable('tasks');
 		$q->addQuery('task_id');
-		$q->addWhere('task_project = ' . $this->project_id);
+		$q->addWhere('task_project = ' . (int)$this->project_id);
 		$sql = $q->prepare();
 		$q->clear();
 		$tasks_to_delete = db_loadColumn($sql);
@@ -153,21 +153,21 @@ class CProject extends CDpObject
 			$q->clear();
 		}
 		$q->setDelete('tasks');
-		$q->addWhere('task_project =' . $this->project_id);
+		$q->addWhere('task_project =' . (int)$this->project_id);
 		$q->exec();
 		$q->clear();
 
 		// remove the project-contacts and project-departments map
 		$q->setDelete('project_contacts');
-		$q->addWhere('project_id =' . $this->project_id);
+		$q->addWhere('project_id =' . (int)$this->project_id);
 		$q->exec();
 		$q->clear();
 		$q->setDelete('project_departments');
-		$q->addWhere('project_id =' . $this->project_id);
+		$q->addWhere('project_id =' . (int)$this->project_id);
 		$q->exec();
 		$q->clear();
 		$q->setDelete('projects');
-		$q->addWhere('project_id =' . $this->project_id);
+		$q->addWhere('project_id =' . (int)$this->project_id);
 
 		$result = ((!$q->exec()) ? db_error() : NULL);
 		$q->clear();
@@ -188,7 +188,7 @@ class CProject extends CDpObject
 		$q = new DBQuery;
 		$q->addTable('tasks');
 		$q->addQuery('task_id');
-		$q->addWhere('task_project =' . $from_project_id);
+		$q->addWhere('task_project =' . (int)$from_project_id);
 		$sql = $q->prepare();
 		$q->clear();
 		$tasks = array_flip(db_loadColumn($sql));
@@ -258,7 +258,7 @@ class CProject extends CDpObject
 
 		$q->addTable('tasks');
 		$q->addQuery('task_id');
-		$q->addWhere('task_project =' . $this->project_id);
+		$q->addWhere('task_project =' . (int)$this->project_id);
 		$tasks = $q->loadColumn();
 
 		// Update dates based on new project's start date.
@@ -407,7 +407,7 @@ class CProject extends CDpObject
 		$q->addTable('projects');
 		$q->addJoin('tasks', 't', 't.task_project = project_id');
 		$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
-		$q->addWhere('ut.user_id = ' . $userId);
+		$q->addWhere('ut.user_id = ' . (int)$userId);
 		$q->addGroup('project_id');
 		$q->addOrder('project_name');
 		$this->setAllowedSQL($userId, $q);
@@ -427,7 +427,7 @@ class CProject extends CDpObject
 		$q = new DBQuery;
 		$q->addTable('tasks');
 		if ($project_id) {
-			$q->addWhere('task_project = ' . $project_id);
+			$q->addWhere('task_project = ' . (int)$project_id);
 		}
 		$q->addWhere("!isnull(task_end_date) AND task_end_date !=  '0000-00-00 00:00:00'");
 		$q->addOrder('task_end_date DESC');
@@ -468,7 +468,7 @@ class CProject extends CDpObject
 		//split out related departments and store them seperatly.
 		$q = new DBQuery;
 		$q->setDelete('project_departments');
-		$q->addWhere('project_id=' . $this->project_id);
+		$q->addWhere('project_id=' . (int)$this->project_id);
 		$q->exec();
 		$q->clear();
 		if ($this->project_departments) {
@@ -484,7 +484,7 @@ class CProject extends CDpObject
 
 		//split out related contacts and store them seperatly.
 		$q->setDelete('project_contacts');
-		$q->addWhere('project_id=' . $this->project_id);
+		$q->addWhere('project_id=' . (int)$this->project_id);
 		$q->exec();
 		$q->clear();
 		if ($this->project_contacts) {
@@ -555,7 +555,7 @@ function projects_list_data($user_id = false)
 		. ', t.task_duration_type)) AS project_duration');
 	if ($user_id) {
 		$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
-		$q->addWhere('ut.user_id = ' . $user_id);
+		$q->addWhere('ut.user_id = ' . (int)$user_id);
 	}
 	//$q->addWhere('t.task_id = t.task_parent'); ==>on veut le calculer en prenant en compte toutes les t�ches
 	$q->addGroup('t.task_project');
@@ -571,7 +571,7 @@ function projects_list_data($user_id = false)
 	$q->addQuery('t.task_project, COUNT(distinct t.task_id) AS total_tasks');
 	if ($user_id) {
 		$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
-		$q->addWhere('ut.user_id = ' . $user_id);
+		$q->addWhere('ut.user_id = ' . (int)$user_id);
 	}
 	$q->addGroup('t.task_project');
 	$tasks_total = $q->exec();
@@ -625,7 +625,7 @@ function projects_list_data($user_id = false)
 		$q->addQuery('t.task_project, ut.user_id');
 		$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
 		if ($user_id) {
-			$q->addWhere('ut.user_id = ' . $user_id);
+			$q->addWhere('ut.user_id = ' . (int)$user_id);
 		}
 		$q->addOrder('t.task_end_date DESC');
 		$q->addGroup('t.task_project');
@@ -695,7 +695,7 @@ function projects_list_data($user_id = false)
 				. ((!empty($owner_ids)) ? implode(',', $owner_ids) : 0) . ')');
 		}
 	} else if ($company_id && !$addPwOiD) {
-		$q->addWhere('p.project_company = ' . $company_id);
+		$q->addWhere('p.project_company = ' . (int)$company_id);
 	}
 
 	if ($projectTypeId > -1) {
@@ -705,11 +705,11 @@ function projects_list_data($user_id = false)
 	if ($user_id && $addProjectsWithAssignedTasks) {
 		$q->addWhere('(tu.user_id = ' . $user_id . ' OR p.project_owner = ' . $user_id . ')');
 	} else if ($user_id) {
-		$q->addWhere('p.project_owner = ' . $user_id);
+		$q->addWhere('p.project_owner = ' . (int)$user_id);
 	}
 
 	if ($owner > 0) {
-		$q->addWhere('p.project_owner = ' . $owner);
+		$q->addWhere('p.project_owner = ' . (int)$owner);
 	}
 
 	$q->addGroup('p.project_id');
@@ -778,7 +778,7 @@ function smartUpdateProjectPercentComplete($project)
 	// R�cup�re l'avancement stock� en base
 	$q->addTable('projects', 'pr');
 	$q->addQuery('pr.project_percent_complete');
-	$q->addWhere('pr.project_id = ' . $project);
+	$q->addWhere('pr.project_id = ' . (int)$project);
 	$oldProject = $q->loadResult();
 	$q->exec();
 	$q->clear();
@@ -787,7 +787,7 @@ function smartUpdateProjectPercentComplete($project)
 	$q->addQuery('SUM(task_duration * task_duration_type * task_percent_complete) 
 				/ SUM(task_duration * task_duration_type) AS project_percent_complete');
 	$q->addTable('tasks', 't');
-	$q->addWhere('task_project = ' . $project);
+	$q->addWhere('task_project = ' . (int)$project);
 	$newProject = $q->loadResult();
 	$q->exec();
 	$q->clear();
@@ -795,7 +795,7 @@ function smartUpdateProjectPercentComplete($project)
 	$q->addTable('projects', 'p');
 	if ($oldProject != intval($newProject))//si on a une nouvelle valeur de project_percent_complete
 	{
-		$q->addWhere('project_id = ' . $project);//on veut s'occuper uniquement de la ligne concern�e
+		$q->addWhere('project_id = ' . (int)$project);//on veut s'occuper uniquement de la ligne concern�e
 		$q->addUpdate('project_percent_complete', $newProject);//on update le project_percent_complete de la ligne
 		$q->exec();
 		$q->clear();
@@ -829,7 +829,7 @@ function updateProjectPercentComplete()
 
 	foreach ($projects as $row) {
 		$q->addTable('projects', 'p');
-		$q->addWhere('project_id = ' . $row['project_id']);//on veut s'occuper uniquement de la ligne concern�e
+		$q->addWhere('project_id = ' . (int)$row['project_id']);//on veut s'occuper uniquement de la ligne concern�e
 		$q->addUpdate('project_percent_complete', $row['project_percent_complete']);//on update le project_percent_complete de la ligne
 		$q->exec();
 		$q->clear();

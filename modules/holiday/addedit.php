@@ -44,12 +44,12 @@ if($action) {
         		$q -> addUpdate('holiday_start_date',$start_date->format(FMT_DATETIME_MYSQL));
         		$q -> addUpdate('holiday_end_date',$end_date->format(FMT_DATETIME_MYSQL));
         		$q -> addUpdate('holiday_annual',$holiday_annual);
-        		$q -> addWhere('holiday_id = '.$holiday_id);              
+        		$q -> addWhere('holiday_id = ' . (int)$holiday_id);              
                 $okMsg = "Holiday updated";
         }
         else if ( $action == "del" ) {
         		$q -> setDelete('holiday');
-        		$q -> addWhere('holiday_id = '.$holiday_id);		
+        		$q -> addWhere('holiday_id = ' . (int)$holiday_id);		
                 $okMsg = "Holiday removed";
 	}
         if(!$q -> exec()) {
@@ -64,7 +64,7 @@ if($action) {
 $q ->clear();
 $q -> addTable('holiday');
 $q -> addQuery('*');
-$q -> addWhere('holiday_id = '.$holiday_id);
+$q -> addWhere('holiday_id = ' . (int)$holiday_id);
 $holiday = $q -> loadHash();
 
 if($holiday_white == -1)

@@ -101,19 +101,19 @@ if ($list_by_department){
 $q -> addWhere("l.task_log_date >= '" . $start_date . " 00:00:00'");
 $q -> addWhere("l.task_log_date <= '" . $end_date . " 00:00:00'");
 if ($task and $list_by_task){
-	$q -> addWhere('t.task_id = ' . $task);
+	$q -> addWhere('t.task_id = ' . (int)$task);
 }
 if ($project and $list_by_project){
-	$q -> addWhere('p.project_id = ' . $project);
+	$q -> addWhere('p.project_id = ' . (int)$project);
 }
 if ($company and $list_by_company){
-	$q -> addWhere('c.company_id = ' . $company);
+	$q -> addWhere('c.company_id = ' . (int)$company);
 }
 if ($employee and $list_by_employee){
-	$q -> addWhere('u.user_id = ' . $employee);
+	$q -> addWhere('u.user_id = ' . (int)$employee);
 }
 if ($department and $list_by_department){
-	$q -> addWhere('d.dept_id = ' . $department);
+	$q -> addWhere('d.dept_id = ' . (int)$department);
 }
 
 $results = $q -> loadList();

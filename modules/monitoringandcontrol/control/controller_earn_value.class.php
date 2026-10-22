@@ -334,7 +334,7 @@ class ControllerEarnValue{
 		$q = new DBQuery;
 		$q->addTable('tasks', 't');
 		$q->addQuery('task_duration, task_percent_complete');
-		$q->addWhere(' t.task_project ='.$project_id);
+		$q->addWhere(' t.task_project =' . (int)$project_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		
@@ -358,7 +358,7 @@ class ControllerEarnValue{
 		$q = new DBQuery;
 		$q->addTable('tasks', 't');
 		$q->addQuery('task_duration');
-		$q->addWhere('t.task_project ='.$project_id);
+		$q->addWhere('t.task_project =' . (int)$project_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		$duracaoTotal = 0;
@@ -373,7 +373,7 @@ class ControllerEarnValue{
 		$q = new DBQuery;
 		$q->addTable('tasks', 't');
 		$q->addQuery('min(task_start_date)');
-		$q->addWhere(' t.task_project ='.$project_id);
+		$q->addWhere(' t.task_project =' . (int)$project_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		return $list;
@@ -441,7 +441,7 @@ class ControllerEarnValue{
 		$q = new DBQuery;
 		$q->addTable('monitoring_baseline_task', 't');
 		$q->addQuery('min(task_start_date)');
-		$q->addWhere(' t.baseline_id ='.$baselineId);
+		$q->addWhere(' t.baseline_id =' . (int)$baselineId);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		return $list;

@@ -16,13 +16,11 @@ $sql->addTable('inventory_categories');
 $sql->addQuery('*');
 
 $category_list =$sql->loadList();
-echo db_error();
 
 $sql->clear();
 $sql -> addTable('inventory_brands');
 $sql->addQuery('*');
 $brand_list = $sql->loadList();
-echo db_error();
 
 function get_category_name( &$category_list, $catind )
 {

@@ -218,21 +218,21 @@ $q->addJoin('companies', 'c1', 'mp.macroproject_company = c1.company_id');
 if ($department > 0) {
     $q->addJoin('macroproject_departments', 'mpd', 'mpd.macroproject_id = mp.macroproject_id');
     if (!$addPwOiD) {
-        $q->addWhere('mpd.department_id = ' . $department);
+        $q->addWhere('mpd.department_id = ' . (int)$department);
     } else {
         $q->addWhere('mp.macroproject_owner IN (' . ((!empty($owner_ids)) ? implode(',', $owner_ids) : 0) . ')');
     }
 } elseif ($company_id != 0 && !$addPwOiD) {
-    $q->addWhere('macroproject_company = ' . $company_id);
+    $q->addWhere('macroproject_company = ' . (int)$company_id);
 }
 
 if ($macroproFilter == '-4')      $q->addWhere('macroproject_status != 7');
-elseif ($macroproFilter == '-3')  $q->addWhere('macroproject_owner = ' . $user_id);
+elseif ($macroproFilter == '-3')  $q->addWhere('macroproject_owner = ' . (int)$user_id);
 elseif ($macroproFilter == '-2')  $q->addWhere('macroproject_status != 3');
 elseif ($macroproFilter != '-1')  $q->addWhere('macroproject_status = ' . intval($macroproFilter));
 
 if ($user_id && $m_orig == 'admin' && $a_orig == 'viewuser') {
-    $q->addWhere('macroproject_owner = ' . $user_id);
+    $q->addWhere('macroproject_owner = ' . (int)$user_id);
 }
 if ($showInactive != '1') $q->addWhere('macroproject_status != 7');
 

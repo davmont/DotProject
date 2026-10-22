@@ -65,7 +65,7 @@ if ($caller == 'todo') {
 	$q->addTable('projects', 'pr');
 	$q->addTable('tasks', 'ta');
 	$q->addTable('user_tasks', 'ut');
-	$q->leftJoin('user_task_pin', 'tp', 'tp.task_id = ta.task_id and tp.user_id = ' . $user_id);
+	$q->leftJoin('user_task_pin', 'tp', 'tp.task_id = ta.task_id and tp.user_id = ' . (int)$user_id);
 
 	$q->addWhere('ut.task_id = ta.task_id');
 	$q->addWhere("ut.user_id = '$user_id'");
@@ -86,7 +86,7 @@ if ($caller == 'todo') {
 	$q->addWhere('project_status != 7');
 	$q->addOrder('project_id, task_start_date');
 	if ($project_id) {
-	        $q->addWhere('task_project = '.$project_id);
+	        $q->addWhere('task_project = ' . (int)$project_id);
 	}
 	switch ($f) {
 	        case 'all':
@@ -94,23 +94,23 @@ if ($caller == 'todo') {
 	                break;
 	        case 'myproj':
 	                $q->addWhere('task_status > -1');
-	                $q->addWhere('project_owner = '.$AppUI->user_id);
+	                $q->addWhere('project_owner = ' . (int)$AppUI->user_id);
 	                break;
 	        case 'mycomp':
 	                $q->addWhere('task_status > -1');
-	                $q->addWhere('project_company = '.$AppUI->user_company);
+	                $q->addWhere('project_company = ' . (int)$AppUI->user_company);
 	                break;
 	        case 'myinact':
 	                $q->addTable('user_tasks', 'ut');
 	                $q->addWhere('task_project = p.project_id');
-	                $q->addWhere('ut.user_id = '.$AppUI->user_id);
+	                $q->addWhere('ut.user_id = ' . (int)$AppUI->user_id);
 	                $q->addWhere('ut.task_id = t.task_id');
 	                break;
 	        default:
 	                $q->addTable('user_tasks', 'ut');
 	                $q->addWhere('task_status > -1');
 	                $q->addWhere('task_project = p.project_id');
-	                $q->addWhere('ut.user_id = '.$AppUI->user_id);
+	                $q->addWhere('ut.user_id = ' . (int)$AppUI->user_id);
 	                $q->addWhere('ut.task_id = t.task_id');
 	                break;
 	}
@@ -383,7 +383,7 @@ for($i = 0; $i < count(@$gantt_arr); $i ++ ) {
                 $q->addTable('users', 'u');
                 $q->addQuery('ut.task_id, u.user_username, ut.perc_assignment');
                 $q->addWhere('u.user_id = ut.user_id');
-                $q->addWhere('ut.task_id = '.$a['task_id']);
+                $q->addWhere('ut.task_id = ' . (int)$a['task_id']);
                 $res = $q->loadList();
                 foreach ($res as $rw) {
                         switch ($rw['perc_assignment']) {
@@ -428,7 +428,7 @@ for($i = 0; $i < count(@$gantt_arr); $i ++ ) {
                         $q->addJoin('user_tasks', 'u', 't.task_id = u.task_id');
                         $q->addQuery('ROUND(SUM(t.task_duration*u.perc_assignment/100),2) AS wh');
                         $q->addWhere('t.task_duration_type = 24');
-                        $q->addWhere('t.task_id = '.$a['task_id']);
+                        $q->addWhere('t.task_id = ' . (int)$a['task_id']);
 
                         $wh = $q->loadResult();
                         $work_hours = $wh * $dPconfig['daily_working_hours'];
@@ -439,7 +439,7 @@ for($i = 0; $i < count(@$gantt_arr); $i ++ ) {
                         $q->addJoin('user_tasks', 'u', 't.task_id = u.task_id');
                         $q->addQuery('ROUND(SUM(t.task_duration*u.perc_assignment/100),2) AS wh');
                         $q->addWhere('t.task_duration_type = 1');
-                        $q->addWhere('t.task_id = '.$a['task_id']);
+                        $q->addWhere('t.task_id = ' . (int)$a['task_id']);
 
                         $wh2 = $q->loadResult();
                         $work_hours += $wh2;
@@ -499,7 +499,7 @@ for($i = 0; $i < count(@$gantt_arr); $i ++ ) {
         $q = new DBQuery;
         $q->addTable('task_dependencies');
         $q->addQuery('dependencies_task_id');
-        $q->addWhere('dependencies_req_task_id=' . $a['task_id']);
+        $q->addWhere('dependencies_req_task_id=' . (int)$a['task_id']);
         $query = $q->loadList();
 
         foreach($query as $dep) {

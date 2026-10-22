@@ -918,7 +918,7 @@ class CEvent extends CDpObject
 			$q = new DBQuery;
 			$q->addTable('projects', 'p');
 			$q->addQuery('project_name');
-			$q->addWhere('p.project_id =' . $this->event_project);
+			$q->addWhere('p.project_id =' . (int)$this->event_project);
 			$sql = $q->prepare();
 			$q->clear();
 			if (db_loadHash($sql, $prj)) {

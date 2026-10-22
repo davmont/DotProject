@@ -49,7 +49,7 @@ class CRisks extends CDpObject
 		// delete the main table reference
 		$q = new DBQuery();
 		$q->setDelete('risks');
-		$q->addWhere('risk_id = ' . $this->risk_id);
+		$q->addWhere('risk_id = ' . (int)$this->risk_id);
 		if (!$q->exec()) {
 			return db_error();
 		}

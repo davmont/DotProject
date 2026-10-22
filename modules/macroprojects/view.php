@@ -89,7 +89,7 @@ if ($hasTasks) {
 				 . ", CONCAT_WS(' ',contact_first_name,contact_last_name) user_name, mp.*, "
                  .'(0.0) AS macroproject_percent_complete');
 }
-$q->addWhere('macroproject_id = ' . $macroproject_id);
+$q->addWhere('macroproject_id = ' . (int)$macroproject_id);
 $q->addGroup('macroproject_id');
 $sql = $q->prepare();
 $q->clear();
@@ -401,7 +401,7 @@ printf('%.1f%%', $obj->macroproject_percent_complete); ?></td>
 $q->addTable('departments', 'a');
 $q->addTable('macroproject_departments', 'b');
 $q->addQuery('a.dept_id, a.dept_name, a.dept_phone');
-$q->addWhere('a.dept_id = b.department_id AND b.macroproject_id = ' . $macroproject_id);
+$q->addWhere('a.dept_id = b.department_id AND b.macroproject_id = ' . (int)$macroproject_id);
 $depts = $q->loadHashList('dept_id');
 $q->clear();
 if (count($depts) > 0) {

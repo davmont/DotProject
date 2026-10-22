@@ -44,9 +44,9 @@ class CSetupRisks {
         $q->setDelete('sysvals');
         $q->addWhere("sysval_title IN ('RiskImpact', 'RiskProbability', 'RiskStatus', 'RiskPotential', 'RiskPriority', 'RiskActive', 'RiskStrategy')");
         $q->exec();
-
-        unlink(DP_BASE_DIR . "/modules/projects/locales/pt_br.inc");
-        unlink(DP_BASE_DIR . "/modules/projects/locales/en.inc");
+        // modules/projects/locales/ (the risk labels) ships with dotProject:
+        // removing the module used to delete those files.
+        return null;
     }
 
     function upgrade($old_version) {

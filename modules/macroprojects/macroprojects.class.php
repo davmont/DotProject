@@ -90,7 +90,7 @@ class CMacroProject extends CDpObject
 			$q = new DBQuery;
 			$q->addTable('macroprojects', 'mp');
 			$q->addQuery('mp.macroproject_percent_complete');
-			$q->addWhere('macroproject_id =' . $oid);
+			$q->addWhere('macroproject_id =' . (int)$oid);
 
 			$macroprojects = $q->loadList();
 			$q->exec();
@@ -125,16 +125,16 @@ class CMacroProject extends CDpObject
 
 		// remove the macroproject-contacts and macroproject-departments map
 		$q->setDelete('macroproject_contacts');
-		$q->addWhere('macroproject_id =' . $this->macroproject_id);
+		$q->addWhere('macroproject_id =' . (int)$this->macroproject_id);
 		$q->exec();
 		$q->clear();
 		$q->setDelete('macroproject_departments');
-		$q->addWhere('macroproject_id =' . $this->macroproject_id);
+		$q->addWhere('macroproject_id =' . (int)$this->macroproject_id);
 		$q->exec();
 		$q->clear();
 		// remove the macroproject_project and macroproject_macroproject map
 		$q->setDelete('macroproject_project');
-		$q->addWhere('macroproject_id =' . $this->macroproject_id);
+		$q->addWhere('macroproject_id =' . (int)$this->macroproject_id);
 		$q->exec();
 		$q->clear();
 		$q->setDelete('macroproject_macroproject');
@@ -142,7 +142,7 @@ class CMacroProject extends CDpObject
 		$q->exec();
 		$q->clear();
 		$q->setDelete('macroprojects');
-		$q->addWhere('macroproject_id =' . $this->macroproject_id);
+		$q->addWhere('macroproject_id =' . (int)$this->macroproject_id);
 
 		$result = ((!$q->exec()) ? db_error() : NULL);
 		$q->clear();
@@ -235,7 +235,7 @@ class CMacroProject extends CDpObject
 		$q->addTable('macroprojects');
 		//$q->addJoin('tasks', 't', 't.task_project = project_id');
 		//$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
-		//$q->addWhere('ut.user_id = ' . $userId);
+		//$q->addWhere('ut.user_id = ' . (int)$userId);
 		$q->addGroup('macroproject_id');
 		$q->addOrder('macroproject_name');
 		$this->setAllowedSQL($userId, $q);
@@ -296,7 +296,7 @@ class CMacroProject extends CDpObject
 		//split out related departments and store them seperatly.
 		$q = new DBQuery;
 		$q->setDelete('macroproject_departments');
-		$q->addWhere('macroproject_id=' . $this->macroproject_id);
+		$q->addWhere('macroproject_id=' . (int)$this->macroproject_id);
 		$q->exec();
 		$q->clear();
 		if ($this->macroproject_departments) {
@@ -312,7 +312,7 @@ class CMacroProject extends CDpObject
 
 		//split out related contacts and store them seperatly.
 		$q->setDelete('macroproject_contacts');
-		$q->addWhere('macroproject_id=' . $this->macroproject_id);
+		$q->addWhere('macroproject_id=' . (int)$this->macroproject_id);
 		$q->exec();
 		$q->clear();
 		if ($this->macroproject_contacts) {
@@ -381,7 +381,7 @@ function macroprojects_list_data($user_id = false)
 				 . ', t.task_duration_type)) AS project_duration');
 	if ($user_id) {
 		$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
-		$q->addWhere('ut.user_id = ' . $user_id);
+		$q->addWhere('ut.user_id = ' . (int)$user_id);
 	}
 	//$q->addWhere('t.task_id = t.task_parent'); ==>on veut le calculer en prenant en compte toutes les t�ches
 	$q->addGroup('t.task_project');
@@ -397,7 +397,7 @@ function macroprojects_list_data($user_id = false)
 	$q->addQuery('t.task_project, COUNT(distinct t.task_id) AS total_tasks');
 	if ($user_id) {
 		$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
-		$q->addWhere('ut.user_id = ' . $user_id);
+		$q->addWhere('ut.user_id = ' . (int)$user_id);
 	}
 	$q->addGroup('t.task_project');
 	$tasks_total = $q->exec();
@@ -451,7 +451,7 @@ function macroprojects_list_data($user_id = false)
 		$q->addQuery('t.task_project, ut.user_id');
 		$q->addJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
 		if ($user_id) {
-			$q->addWhere('ut.user_id = ' . $user_id);
+			$q->addWhere('ut.user_id = ' . (int)$user_id);
 		}
 		$q->addOrder('t.task_end_date DESC');
 		$q->addGroup('t.task_project');
@@ -521,7 +521,7 @@ function macroprojects_list_data($user_id = false)
 				. ((!empty($owner_ids)) ? implode(',', $owner_ids) : 0) . ')');
 		}
 	} else if ($company_id && !$addPwOiD) {
-		$q->addWhere('mp.macroproject_company = ' . $company_id);
+		$q->addWhere('mp.macroproject_company = ' . (int)$company_id);
 	}
 
 	if ($macroprojectTypeId > -1) {
@@ -540,7 +540,7 @@ function macroprojects_list_data($user_id = false)
 	}
 
 	if ($owner > 0) {
-		$q->addWhere('mp.macroproject_owner = ' . $owner);
+		$q->addWhere('mp.macroproject_owner = ' . (int)$owner);
 	}
 
 	$q->addGroup('mp.macroproject_id');
@@ -662,7 +662,7 @@ function recoverProjects($macroproject_id)
 	$q->addTable('macroproject_project');
 	$q->addQuery('project_id');
 	$q->addWhere('macroproject_id = 0' . recoverMacroProjects($macroproject_id));
-	//$q->addWhere('macroproject_id = ' . $macroproject_id);
+	//$q->addWhere('macroproject_id = ' . (int)$macroproject_id);
 	$projectsofmacro = $q->loadList();
 	$q->clear();
 	return $projectsofmacro;
@@ -698,7 +698,7 @@ function updateMacroProjectPercentComplete($macroproject_id)
 	$q = new DBQuery();
 	$q->addTable('macroprojects', 'ma');
 	$q->addQuery('ma.macroproject_id, SUM(t.task_duration * t.task_duration_type * t.task_percent_complete) / SUM(t.task_duration * t.task_duration_type) AS macroproject_percent_complete');
-	$q->addWhere('macroproject_id =' . $macroproject_id);
+	$q->addWhere('macroproject_id =' . (int)$macroproject_id);
 	$q->addWhere(makeWhereClauseEachProjectOfAMacroProject($macroproject_id, 't.task_project='));//for work on all tasks of all projects of this macroproject
 	$q->addJoin('tasks', 't', '1');
 	$macroprojects = $q->loadList();
@@ -709,7 +709,7 @@ function updateMacroProjectPercentComplete($macroproject_id)
 		echo "Macroproject ID : " . $row['macroproject_id'];
 		if ($row['macroproject_id'] != '') {	// if macroproject contains tasks
 			$q->addTable('macroprojects', 'mp');
-			$q->addWhere('macroproject_id = ' . $row['macroproject_id']);
+			$q->addWhere('macroproject_id = ' . (int)$row['macroproject_id']);
 			$q->addUpdate('macroproject_percent_complete', $row['macroproject_percent_complete']);
 			$q->exec();
 			$q->clear();

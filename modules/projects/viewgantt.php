@@ -235,21 +235,21 @@ $q->addJoin('companies', 'c1', 'p.project_company = c1.company_id');
 if ($department > 0) {
     $q->addJoin('project_departments', 'pd', 'pd.project_id = p.project_id');
     if (!$addPwOiD) {
-        $q->addWhere('pd.department_id = ' . $department);
+        $q->addWhere('pd.department_id = ' . (int)$department);
     } else {
         $q->addWhere('p.project_owner IN (' . ((!empty($owner_ids)) ? implode(',', $owner_ids) : 0) . ')');
     }
 } elseif ($company_id != 0 && !$addPwOiD) {
-    $q->addWhere('project_company = ' . $company_id);
+    $q->addWhere('project_company = ' . (int)$company_id);
 }
 
 if ($proFilter == '-4')       $q->addWhere('project_status != 7');
-elseif ($proFilter == '-3')   $q->addWhere('project_owner = ' . $user_id);
+elseif ($proFilter == '-3')   $q->addWhere('project_owner = ' . (int)$user_id);
 elseif ($proFilter == '-2')   $q->addWhere('project_status != 3');
 elseif ($proFilter != '-1')   $q->addWhere('project_status = ' . intval($proFilter));
 
 if ($user_id && $m_orig == 'admin' && $a_orig == 'viewuser') {
-    $q->addWhere('project_owner = ' . $user_id);
+    $q->addWhere('project_owner = ' . (int)$user_id);
 }
 if ($showInactive != '1') $q->addWhere('project_status != 7');
 

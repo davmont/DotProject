@@ -50,12 +50,11 @@ if ( $tab ) {
 	$sql="SELECT earning_tasklog_id FROM {$dbprefix}earnings_items;";
 	//echo $sql;
 	$mrc= db_exec( $sql );
-	echo db_error();
 	$mask_array = array();
 	while ($row = db_fetch_assoc($mrc)) {
 		$mask_array[$row["earning_tasklog_id"]] = $row;
 	}
-	mysql_free_result($mrc);
+	db_free_result($mrc);
 
 	// Next use the mask as part of the select statement to find non-committed log entries
 	$sql="SELECT task_log.*, tasks.*, projects.* FROM {$dbprefix}task_log AS task_log, {$dbprefix}tasks AS tasks, {$dbprefix}projects AS projects WHERE task_id = task_log_task AND project_id = task_project AND task_log_creator=" . $AppUI->user_id;
@@ -84,7 +83,6 @@ if ( $tab ) {
 	$sql .= " ORDER BY task_log_date DESC;";
 }
 $irc=db_exec( $sql );
-echo db_error();
 
 // create an index of earning_items
 $earning_items = array();
@@ -316,7 +314,6 @@ if ( $tab ) {
 		$sql.=" ORDER BY earning_item_date DESC;";
 		//echo $sql;
 		$arc=db_exec( $sql );
-		echo db_error();
 
 		// create an index of ad hoc earning_items
 		$adhoc_items = array();

@@ -29,7 +29,7 @@ $q -> addQuery('tt_start_date, tt_end_date, tt_id, tt_active,
         SUM( tt_data_hours ) AS hour_count,
         COUNT( DISTINCT( DAYOFYEAR( tt_data_date ) ) ) AS day_count');
 $q -> addJoin('timetrack_data','timetrack_data','tt_data_timesheet_id = tt_id');
-$q -> addWhere('tt_id = '.$timesheet_id);
+$q -> addWhere('tt_id = ' . (int)$timesheet_id);
 $q -> addGroup('tt_id');
 
 $tg_data = $q -> loadHash();
@@ -42,7 +42,7 @@ $q -> addQuery("data.*, DATE_FORMAT(tt_data_date,'%m/%d/%Y') AS tid_date,
 $q -> addJoin('companies','c','c.company_id = data.tt_data_client_id');
 $q -> addJoin('projects','p','p.project_id = data.tt_data_project_id');
 $q -> addJoin('tasks','t','t.task_id = data.tt_data_task_id');
-$q -> addWhere('data.tt_data_timesheet_id = '.$timesheet_id);
+$q -> addWhere('data.tt_data_timesheet_id = ' . (int)$timesheet_id);
 $q -> addGroup('data.tt_data_date');
 
 

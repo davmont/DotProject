@@ -32,7 +32,6 @@ if (!$ok) {
 			$q->setDelete('modules');
 			$q->addWhere('mod_id='.(int)$mod_id);
                         $q->exec();
-                        echo db_error();
                         $AppUI->setMsg('Module has been removed from the modules list - please check your database for additional tables that may need to be removed', UI_MSG_ERROR);
                 }       
 		$AppUI->redirect();

@@ -37,11 +37,11 @@ if ($action) {
 		$q->addTable('history');
 		$q->addUpdate('history_description', $history_description);
 		$q->addUpdate('history_project', $history_project);
-		$q->addWhere('history_id ='.$history_id);
+		$q->addWhere('history_id =' . (int)$history_id);
 		$okMsg = 'History updated';
 	} else if ($action == 'del') {
 		$q->setDelete('history');
-		$q->addWhere('history_id ='.$history_id);
+		$q->addWhere('history_id =' . (int)$history_id);
 		$okMsg = 'History deleted';				
 	}
 	if (!$q->exec()) {
@@ -56,7 +56,7 @@ if ($action) {
 // pull the history
 $q->addTable('history');
 $q->addQuery('*');
-$q->addWhere('history_id ='.$history_id);
+$q->addWhere('history_id =' . (int)$history_id);
 $sql = $q->prepare();
 $q->clear();
 db_loadHash($sql, $history);
