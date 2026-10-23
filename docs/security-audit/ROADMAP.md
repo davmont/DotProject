@@ -358,6 +358,15 @@ Branch `fix/warnings-and-audit-suite` from `devel`.
 - Verified: `make audit-full` ALL PASS locally; `make check` passes.
 - **Left:** the material theme at 1024px is wider than the window on dense lists (tasks list ~1150px); not in the audit's viewport set.
 
+### Sample data, material at 1024px, consultancy company filters (2026-10-23)
+Branch `feature/sample-data` from `devel`.
+- **Sample data (`db/sample/`, `make sample-data`):** Brightline Consulting (six consultants) and fictional clients ACME Corporation, Dundler Mifflin Paper Company, Harbor & Vine Logistics, Quill City Library Network: eight projects in every status (one behind schedule, one on hold, a proposal, a completed audit), task trees with dynamic phases, milestones, dependencies, shared assignments, time logs, calendar meetings, forums, contacts. Dates relative to the load day. The audit now runs on it too.
+- **Workflow check:** a consultant logging hours and progress through the task log form updates the task, its dynamic phase (duration-weighted) and the project percentage as expected.
+- **Company filters:** project list, projects Gantt, calendar and "my company" task filters also match the project's internal company, so a consultancy's staff see the client projects they deliver (they saw none by default). Behaviour change for existing installs: the default lists now include projects a user's company runs for clients.
+- **Layout:** material theme fits 1024px (31 pages scrolled sideways; compact spacing below 1280px, to-do and Gantt filter rows wrap); the audit checks material at 1024px. With real data: calendar day view, saved project charter, annotations list, HR form, contact selector button.
+- Gantt charts open on today. PHP warnings only real data reaches (departments, HR views, forum replies, helpdesk mail) fixed.
+- Verified: `make audit-full` ALL PASS (with the sample data), `make check` passes.
+
 ### Nice to have: dormant modules (to be revived later)
 Phase 8 converted them for the CSP, fixed the XSS/SQL injection found on the way and made most of them load on PHP 8 (see above). What is left for a real revival:
 - **Removed (2026-10-19, owner decision):** bugspray (an old copy of helpdesk) and smartsearchns (a fork of smartsearch; its two helpdesk search objects are in git history, port them to smartsearch if helpdesk is revived) as duplicates; groups (contact groups, 2004 alpha on the 1.x permissions table), tracIntegration (Trac integration) and eventum (Eventum helpdesk integration) as not useful. All remain in git history.

@@ -94,7 +94,7 @@ $icon_show_all_filled_path = "./images/clip.png";	//icon to show only the filled
 				$tmp += array($p['contact_id'] => ($p['contact_last_name'].", ".$p['contact_first_name']));	//Fill an array for dP arraySelect
 			}
 			// show the dropdown filter with dP arraySelect
-			echo arraySelect($tmp,'show_owner_id','size=1 class=text' . dPaction(null, array(), null, array('submit' => 'pickOwner')), $show_owner_id ) ;
+			echo arraySelect($tmp,'show_owner_id','size=1 class=text style="max-width: 14em;"' . dPaction(null, array(), null, array('submit' => 'pickOwner')), $show_owner_id ) ;
 	  ?>		
   </th>
   </form>
@@ -127,7 +127,7 @@ $icon_show_all_filled_path = "./images/clip.png";	//icon to show only the filled
 			}
 
 		// DropDown Project select
-		echo arraySelect($tmp,'project_id','size=1 class=text' . dPaction(null, array(), null, array('submit' => 'pickProject')), $project_id ) ;
+		echo arraySelect($tmp,'project_id','size=1 class=text style="max-width: 14em;"' . dPaction(null, array(), null, array('submit' => 'pickProject')), $project_id ) ;
 
 		?>		
   </th>
@@ -152,7 +152,7 @@ $icon_show_all_filled_path = "./images/clip.png";	//icon to show only the filled
 		<?php
 		// inserting the "Show ALL"-Status:
 		$ProjectStatus=array("-1"=>"All")+$ProjectStatus;	//And once again an array for the dP arraySelect
-		echo arraySelect( $ProjectStatus, 'project_status', 'size=1 class=text' . dPaction(null, array(), null, array('submit' => 'pickStatus')), $project_status ) ;
+		echo arraySelect( $ProjectStatus, 'project_status', 'size=1 class=text style="max-width: 14em;"' . dPaction(null, array(), null, array('submit' => 'pickStatus')), $project_status ) ;
 		?>
   </th>
   </form>
@@ -349,13 +349,13 @@ foreach ($aProject as $v) {
 				if (!$v['annotation_previous']) $v['annotation_previous'] = $emptyString ;
 				if (!$v['annotation_next']) $v['annotation_next'] = $emptyString ;
 			
-			echo '<td colspan="2" nowrap="nowrap" align="center"><center>';
+			echo '<td colspan="2" align="center"><center>';
 				echo '<table width="100%" ><tr>';
 					if ( $v['annotation_subject'] != "" ) {
 						echo '<td width="100%" colspan="2" align="Left">'.$AppUI->_('Subject')." : <textarea READONLY style='width: 88%; background-color: #efefef;' rows='1'>".dPhtml($v['annotation_subject']).'</textarea></td>';
 						echo '</tr><tr>';
 					}
-					echo '<td width="49%" nowrap="nowrap" align="center"><center>';
+					echo '<td width="49%" align="center"><center>';
 						echo ($v['annotation_previous'] || $v['annotation_next']) ? 
 								'<textarea READONLY name="prev" style="width:99%; font-size:8pt;" rows="'.$rows_to_show.'" wrap="physical">'
 									:
@@ -365,7 +365,7 @@ foreach ($aProject as $v) {
 							echo dPFormSafe( $v['annotation_previous'] );	// Here should be the right information out of db annotations because it is always a single date choosen!)
 							echo '</textarea></center>';
 					echo '</td>';
-					echo '<td width="49%" nowrap="nowrap" align="center"><center>';
+					echo '<td width="49%" align="center"><center>';
 						echo ($v['annotation_previous'] || $v['annotation_next']) ? 
 								'<textarea READONLY name="next" style="width:99%; font-size:8pt;" rows="'.$rows_to_show.'" wrap="physical">'
 									:

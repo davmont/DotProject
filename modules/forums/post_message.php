@@ -180,7 +180,7 @@ if ($message_parent > -1) {
 							|| $forum_info['forum_moderated'] == $AppUI->user_id
 							|| (getPermission('projects', 'edit', $forum_info['project_id'])
 								&& !($forum_info['project_id']))
-							|| $message_info['message_author'] == $AppUI->user_id
+							|| (is_array($message_info) && $message_info['message_author'] == $AppUI->user_id)
 							|| !($message_id))
 					) {
 						echo '<input type="hidden" name="dosql" value="do_post_aed" />';

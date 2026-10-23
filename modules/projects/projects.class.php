@@ -698,7 +698,8 @@ function projects_list_data($user_id = false)
 				. ((!empty($owner_ids)) ? implode(',', $owner_ids) : 0) . ')');
 		}
 	} else if ($company_id && !$addPwOiD) {
-		$q->addWhere('p.project_company = ' . (int)$company_id);
+		// The company's own projects and those it runs for clients (internal company).
+		$q->addWhere('(p.project_company = ' . (int)$company_id . ' OR p.project_company_internal = ' . (int)$company_id . ')');
 	}
 
 	if ($projectTypeId > -1) {

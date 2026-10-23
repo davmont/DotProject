@@ -180,7 +180,8 @@ if (isset($department)) {
 		$q->addWhere('pd.department_id = ' . (int) $department);
 	}
 } else if ($company_id && !$addPwOiD) {
-	$q->addWhere('p.project_company = ' . (int)$company_id);
+	// The company's own projects and those it runs for clients (internal company).
+	$q->addWhere('(p.project_company = ' . (int)$company_id . ' OR p.project_company_internal = ' . (int)$company_id . ')');
 }
 $q->addGroup('project_status');
 $statuses = $q->loadHashList('project_status');

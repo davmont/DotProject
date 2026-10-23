@@ -2,7 +2,8 @@
 # Full audit of the sandbox: every add-on installed, used and removed with no SQL
 # error, PHP warning or broken layout. Run by `make audit-full` after docker/up.sh.
 #
-#   1  reinstall the database; install and activate every add-on module; seed data
+#   1  reinstall the database; install and activate every add-on module; load the
+#      sample data (db/sample) and the seed data
 #   2  crawl every page as admin and as worker
 #   3  fill and save every add/edit form as admin and as worker; crawl again with that data
 #   4  layout in each theme (THEMES, at 1366x768) and at LAYOUT_EXTRA (theme@WxH ...);
@@ -16,7 +17,7 @@
 . "$(dirname "$0")/lib.sh"
 STEPS=${STEPS:-1 2 3 4 5}
 THEMES=${THEMES:-default amp dp-grey-theme material wps-redmond}
-LAYOUT_EXTRA=${LAYOUT_EXTRA:-dp-grey-theme@1024x768 default@1920x1080}
+LAYOUT_EXTRA=${LAYOUT_EXTRA:-dp-grey-theme@1024x768 material@1024x768 default@1920x1080}
 FAILED=()
 step() { echo; echo "== $*"; }
 run() { local name=$1; shift; "$@" || FAILED+=("$name"); }
@@ -42,6 +43,9 @@ if has 1; then
 	(cd "$DOCKER_DIR" && ./reset-db.sh) >"$OUT/reset-db.txt" 2>&1 || FAILED+=("reset-db")
 	run "install add-ons" "$TESTS_DIR/modules.sh" install
 	run "activate add-ons" "$TESTS_DIR/modules.sh" toggle
+	log_mark
+	run "sample data" dc exec -T web php db/sample/sample-data.php
+	run "sample data (log)" log_check "sample data"
 	"$TESTS_DIR/seed.sh"
 fi
 P=$(db -e "SELECT MAX(project_id) FROM dotp_projects WHERE project_name='Seed Project'")

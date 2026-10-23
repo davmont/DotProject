@@ -302,7 +302,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 			<td width="50%" valign="top">
 				<table cellspacing="0" cellpadding="2" border="0">
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('MacroProject Name'); ?></td>
+						<td align="right"><?php echo $AppUI->_('MacroProject Name'); ?></td>
 						<td width="100%" colspan="2">
 							<input type="text" name="macroproject_name"
 								value="<?php echo dPformSafe($row->macroproject_name); ?>" size="25" maxlength="50"
@@ -310,13 +310,13 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('MacroProject Owner'); ?></td>
+						<td align="right"><?php echo $AppUI->_('MacroProject Owner'); ?></td>
 						<td colspan="2">
 							<?php echo arraySelect($users, 'macroproject_owner', 'size="1" style="width:200px;" class="text"', $row->macroproject_owner ? $row->macroproject_owner : $AppUI->user_id) ?>
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Company'); ?></td>
+						<td align="right"><?php echo $AppUI->_('Company'); ?></td>
 						<td width="100%" nowrap="nowrap" colspan="2">
 							<?php
 							echo arraySelect($companies, 'macroproject_company', 'class="text" size="1"', $row->macroproject_company);
@@ -324,7 +324,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Internal Division'); ?></td>
+						<td align="right"><?php echo $AppUI->_('Internal Division'); ?></td>
 						<td width="100%" nowrap="nowrap" colspan="2">
 							<?php
 							echo arraySelect($companies_internal, 'macroproject_company_internal', 'class="text" size="1"', $row->macroproject_company_internal);
@@ -332,7 +332,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Start Date'); ?></td>
+						<td align="right"><?php echo $AppUI->_('Start Date'); ?></td>
 						<td nowrap="nowrap"> <input type="hidden" name="macroproject_start_date"
 								value="<?php echo $start_date->format(FMT_TIMESTAMP_DATE); ?>" />
 							<input type="text" class="text" name="start_date" id="date1"
@@ -359,7 +359,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Target Finish Date'); ?></td>
+						<td align="right"><?php echo $AppUI->_('Target Finish Date'); ?></td>
 						<td nowrap="nowrap"> <input type="hidden" name="macroproject_end_date"
 								value="<?php echo $end_date ? $end_date->format(FMT_TIMESTAMP_DATE) : ''; ?>" />
 							<input type="text" class="text" name="end_date" id="date2"
@@ -373,7 +373,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Target Budget'); ?>
+						<td align="right"><?php echo $AppUI->_('Target Budget'); ?>
 							<?php echo $dPconfig['currency_symbol'] ?></td>
 						<td>
 							<input type="text" name="macroproject_target_budget"
@@ -386,7 +386,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Actual Finish Date'); ?></td>
+						<td align="right"><?php echo $AppUI->_('Actual Finish Date'); ?></td>
 						<td nowrap="nowrap">
 							<?php if ($macroproject_id > 0) { ?>
 								<?php echo $actual_end_date ? '<a href="?m=tasks&amp;a=view&amp;task_id=' . $criticalTasks[0]['task_id'] . '">' : ''; ?>
@@ -398,7 +398,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Actual Budget'); ?>
+						<td align="right"><?php echo $AppUI->_('Actual Budget'); ?>
 							<?php echo $dPconfig['currency_symbol'] ?></td>
 						<td>
 							<input type="text" name="macroproject_actual_budget"
@@ -412,14 +412,14 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('URL'); ?></td>
+						<td align="right"><?php echo $AppUI->_('URL'); ?></td>
 						<td colspan="2">
 							<input type="text" name="macroproject_url" value='<?php echo dPformSafe(@$row->macroproject_url); ?>'
 								size="40" maxlength="255" class="text" />
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Staging URL'); ?></td>
+						<td align="right"><?php echo $AppUI->_('Staging URL'); ?></td>
 						<td colspan="2">
 							<input type="text" name="macroproject_demo_url"
 								value='<?php echo dPformSafe(@$row->macroproject_demo_url); ?>' size="40" maxlength="255"
@@ -440,14 +440,14 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 			<td width="50%" valign="top">
 				<table cellspacing="0" cellpadding="2" border="0" width="100%">
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Priority'); ?></td>
+						<td align="right"><?php echo $AppUI->_('Priority'); ?></td>
 						<td nowrap="nowrap">
 							<?php echo arraySelect($macroprojectPriority, 'macroproject_priority', 'size="1" class="text"', $row->macroproject_priority, true); ?>
 							*
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Short Name'); ?></td>
+						<td align="right"><?php echo $AppUI->_('Short Name'); ?></td>
 						<td colspan="3">
 							<input type="text" name="macroproject_short_name"
 								value="<?php echo dPformSafe(@$row->macroproject_short_name); ?>" size="10"
@@ -455,7 +455,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Color Identifier'); ?></td>
+						<td align="right"><?php echo $AppUI->_('Color Identifier'); ?></td>
 						<td nowrap="nowrap">
 							<input type="text" name="macroproject_color_identifier"
 								value="<?php echo (@$row->macroproject_color_identifier) ? dPformSafe(@$row->macroproject_color_identifier) : 'FFFFFF'; ?>"
@@ -474,7 +474,7 @@ $mpstatus = dPgetSysVal('MacroProjectStatus');
 						</td>
 					</tr>
 					<tr>
-						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('MacroProject Type'); ?></td>
+						<td align="right"><?php echo $AppUI->_('MacroProject Type'); ?></td>
 						<td colspan="3">
 							<?php echo arraySelect($mptype, 'macroproject_type', 'size="1" class="text"', $row->macroproject_type, true); ?>
 							*

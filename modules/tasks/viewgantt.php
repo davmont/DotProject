@@ -290,8 +290,11 @@ if (!@$min_view) {
 						</tr>
 					</table>
 				</td>
+				<td colspan="2">&nbsp;</td>
+			</tr>
+			<tr>
 				<td align="right"><em>Quick Date Filter:</em></td>
-				<td align="right">
+				<td colspan="3" align="left">
 					<table border="0" cellpadding="0" cellspacing="0">
 						<tr>
 							<td align="right">

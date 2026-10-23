@@ -276,6 +276,7 @@ function notify($type, $log_msg, $email_list=null) {
 
 	// Build basic subject information
 	$subject = $HELPDESK_CONFIG['email_subject']." - Issue #{$this->item_id} ({$this->item_title})";
+	$body = '';
 
 	// Build notification specific information for top of body
 	// any comments to body string made prior will be retained at the top

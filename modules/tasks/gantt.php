@@ -177,7 +177,7 @@ if ($caller == 'todo') {
 			$q->addWhere('project_owner = ' . (int)$AppUI->user_id);
 			break;
 		case 'mycomp':
-			$q->addWhere('project_company = ' . (int)$AppUI->user_company);
+			$q->addWhere('(project_company = ' . (int)$AppUI->user_company . ' OR project_company_internal = ' . (int)$AppUI->user_company . ')');
 			break;
 		case 'myinact':
 			$q->innerJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');

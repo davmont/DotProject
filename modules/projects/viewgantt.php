@@ -240,7 +240,7 @@ if ($department > 0) {
         $q->addWhere('p.project_owner IN (' . ((!empty($owner_ids)) ? implode(',', $owner_ids) : 0) . ')');
     }
 } elseif ($company_id != 0 && !$addPwOiD) {
-    $q->addWhere('project_company = ' . (int)$company_id);
+    $q->addWhere('(project_company = ' . (int)$company_id . ' OR project_company_internal = ' . (int)$company_id . ')');
 }
 
 if ($proFilter == '-4')       $q->addWhere('project_status != 7');
