@@ -15,7 +15,9 @@ $formatted_date = $this_day->format($df);
 <!--
 	(function () {
 		var target = dPpublicLookup(window.parent.document, <?php echo dPjs($field); ?>);
-		target.owner[target.name].value = <?php echo dPjs($formatted_date); ?>;
+		if (target && target.owner[target.name]) {
+			target.owner[target.name].value = <?php echo dPjs($formatted_date); ?>;
+		}
 	})();
 //-->
 </script>
