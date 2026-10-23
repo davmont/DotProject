@@ -216,7 +216,7 @@ var desvio = document.formPendencia.description.value;
       <tr>
             <td style="width:20%; padding-left:30px">Respons&aacute;vel:    
                 <select name="user" size="1"  id="user" >
-   					<option value"0">Selecione...</option>  
+   					<option value="0">Selecione...</option>  
                   		 <?php						
 									$list = array();	
 									$list = $controllerUtil -> getUsers();

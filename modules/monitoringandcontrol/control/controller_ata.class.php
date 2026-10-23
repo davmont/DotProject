@@ -229,7 +229,7 @@ class ControllerAta{
 		$q->addOrder('meeting_id ASC');
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
-		return $list[0];			
+		return $list ? $list[0] : null;
 	}
 	
 	function getMeetingItem(){

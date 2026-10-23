@@ -6,7 +6,6 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/translations.php");
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_acao_corretiva.class.php");
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
-$tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
 $task_id = dPgetIntParam( $_GET, 'task_id', 0 );
 $project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $controllerAcaoCorretiva = new ControllerAcaoCorretiva();

@@ -15,6 +15,12 @@ $titleBlock = new CTitleBlock($titulo, 'graph-up.png', $m, $m . '.' . $a);
 $titleBlock->show();
 
 $controllerUtil = new ControllerUtil();
+// The form belongs to an existing project.
+$project_name = $controllerUtil->getProjectName($project_id);
+if (!$project_name) {
+	$AppUI->setMsg('Invalid ID', UI_MSG_ERROR);
+	$AppUI->redirect('m=projects');
+}
 $controllerAta = new ControllerAta();
 $controllerReport = new ControllerReport();  
 ?>
@@ -78,7 +84,6 @@ $(document).ready(function() {
 	  <tr>
       		<td align="right"><?php echo $AppUI->_('LBL_PROJETO'); ?>:</td>
              <td>
-             		<?php $project_name = $controllerUtil->getProjectName($project_id) ; ?>
                  <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name[0][0]); ?> " />					
             </td>
              <td ></td>
@@ -265,6 +270,7 @@ $(document).ready(function() {
 			
          </tr>		
 				<?php 
+					$company_id = 0;
 					$companies = $controllerReport ->getProjectCompany($project_id);
 					foreach($companies as $comp){
 							$company_id = $comp[0];

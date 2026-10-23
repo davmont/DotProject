@@ -26,7 +26,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		global $AppUI;	
 		$list = array();
 		$q = new DBQuery;
-		$q->addQuery('b.baseline_id, b.baseline_name, b.baseline_version, b.baseline_observation');
+		$q->addQuery('b.baseline_id, b.baseline_name, b.baseline_version, b.baseline_observation, b.project_id');
 		$q->addTable('monitoring_baseline', 'b');	
 		$q->addWhere('b.baseline_id=' . (int)$baseline_id);
 		$sql = $q->prepare();

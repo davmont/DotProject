@@ -21,6 +21,20 @@ $titleBlock->show();
 $controllerAta = new ControllerAta();
 $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 $controllerUtil = new ControllerUtil();
+// The form belongs to a project, given directly or through the task.
+if ($task_id > 0) {
+	$task_name = $controllerUtil->getTaskName($task_id);
+	if ($task_name) {
+		$project_id = (int)$task_name[0]['project_id'];
+	} else {
+		$task_id = 0;
+	}
+}
+$project_retorno = $controllerUtil->getProjectName($project_id);
+if (!$project_retorno) {
+	$AppUI->setMsg('Invalid ID', UI_MSG_ERROR);
+	$AppUI->redirect('m=projects');
+}
 ?>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/ata.js"   ></script>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/validateChangeRequest.js"></script>
@@ -45,7 +59,7 @@ $controllerUtil = new ControllerUtil();
 	  <tr>
       		<td align="right" style="width:10%"><?php echo $AppUI->_('LBL_PROJETO'); ?>:</td>
              <td  style="width:90%" >
-             <?php if(isset($task_id)&& $task_id!=''){
+             <?php if($task_id > 0){
 			 
 						$task_name = $controllerUtil->getTaskName($task_id) ;
 						$project_name = $task_name[0]['project_name'] ;
@@ -70,14 +84,14 @@ $controllerUtil = new ControllerUtil();
 			
               
              <td  style="width:90%">
-             <?php if(isset($task_id)&& $task_id!=''){
+             <?php if($task_id > 0){
 			 
 				$task_name = $controllerUtil->getTaskName($task_id) ; 						
 				 echo ' <input type="text" name="tarefa" size="40" id="tarefa" readonly="readonly" value="'.dPhtml($task_name[0]['task_name']).'" />';
 				 echo ' <input type="hidden" name="task_id" size="40" id="task_id"  value="'.(int)$task_id.'" />';				 
 				 } else{ ?>
                     <select name="task_id" size="1"  >
-   					<option value"0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
+   					<option value="0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
                   		 <?php	 		
 				
 				$task_project=$project_id;
@@ -127,7 +141,7 @@ $controllerUtil = new ControllerUtil();
             <td align="right"><?php echo $AppUI->_('LBL_RESPONSAVEL'); ?>:</td>
 	        <td >            
                 <select name="user[]" size="1"  id="user" >
-   					<option value"0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
+   					<option value="0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
                   		 <?php		   		
 				$list = array();	
 				$list = $controllerUtil -> getUsers();
@@ -142,7 +156,7 @@ $controllerUtil = new ControllerUtil();
             <td align="right"><?php echo $AppUI->_('LBL_ATA'); ?>:</td>            
 	        <td >            
                 <select name="ata" size="1"  id="ata" >
-   					<option value"0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
+   					<option value="0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
                   		 <?php						
 							$lista = $controllerAta -> getMeeting($project_id);
 							foreach($lista as $line){	

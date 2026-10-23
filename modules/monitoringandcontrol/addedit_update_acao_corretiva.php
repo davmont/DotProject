@@ -18,7 +18,13 @@ $titleBlock->show();
 $controllerAta = new ControllerAta();
 $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 $controllerUtil = new ControllerUtil();
+$records = $controllerAcaoCorretiva->getChangeRequestById($change_id);
+if (!$records) {
+	$AppUI->setMsg('Invalid ID', UI_MSG_ERROR);
+	$AppUI->redirect($project_id ? 'm=projects&a=view&project_id=' . $project_id : 'm=projects');
+}
 ?>
+<script type="text/javascript" src="./modules/monitoringandcontrol/js/validateChangeRequest.js"></script>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/ata.js"></script>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/util.js"> </script>
 <!--  calendar  -->
@@ -46,7 +52,6 @@ $controllerUtil = new ControllerUtil();
       		<td align="right" style="width:10%"><?php echo $AppUI->_('LBL_PROJETO'); ?>:</td>
              <td  style="width:90%" >
              		<?php
-					  		$records= $controllerAcaoCorretiva->getChangeRequestById($change_id);
 							$project_name = $controllerUtil->getProjectName($records['project_id']) ; 						
 					 ?>
                  <input type="text" name="projeto" size="20" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name[0][0]); ?> " />			
@@ -103,7 +108,7 @@ $controllerUtil = new ControllerUtil();
             <td align="right"><?php echo $AppUI->_('LBL_RESPONSAVEL'); ?>:</td>
 	        <td >            
                 <select name="user" size="1"  id="user" >
-   					<option value"0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
+   					<option value="0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
                   		 <?php		   		
 								$list = array();	
 								$list = $controllerUtil -> getUsers();
