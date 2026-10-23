@@ -67,7 +67,7 @@ if (is_numeric($dept_id) && $dept_id > 0) {
 				$titleBlock->addCrumb('?m=departments&a=addedit&dept_id=' . $dept_id, 'edit this department');
 
 				if ($canDelete) {
-					$titleBlock->addCrumbDelete('delete department', $canDelete, $msg);
+					$titleBlock->addCrumbDelete('delete department', $canDelete, '');
 				}
 			}
 			$titleBlock->show();

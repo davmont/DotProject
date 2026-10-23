@@ -94,7 +94,8 @@ function getUserRolesByUserId($user_id) {
 	$query->innerJoin('human_resource', 'h', 'h.human_resource_user_id = ' . (int)$user_id);
 	$query->addWhere('u.user_id = ' . (int)$user_id);
 	$res =& $query->exec();
-	$human_resource_id =$res->fields['human_resource_id'];
+	// No row: the user is not a human resource yet.
+	$human_resource_id = ($res && !$res->EOF) ? $res->fields['human_resource_id'] : 0;
 	$roles = null;
 	if($human_resource_id) {
 		$roles = getUserRoles($human_resource_id);

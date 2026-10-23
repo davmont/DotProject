@@ -32,7 +32,7 @@ $query->addTable('human_resource', 'h');
 $query->addQuery('human_resource_id');
 $query->addWhere('h.human_resource_user_id = ' . (int)$user_id);
 $res =& $query->exec();
-$human_resource_id = $res->fields['human_resource_id'];
+$human_resource_id = ($res && !$res->EOF) ? $res->fields['human_resource_id'] : 0;
 $query->clear();
 
 $obj = new CHumanResource;
@@ -87,10 +87,12 @@ $cwd[6] = '7';
 $cwd_conv = array_map('cal_work_day_conv', $cwd);
 
 function cal_work_day_conv($val) {
-	global $locale_char_set;
+	global $AppUI, $locale_char_set;
 	setlocale(LC_ALL, 'en_AU'.(($locale_char_set)? ('.' . $locale_char_set) : '.utf8'));
 	$wk = Date_Calc::getCalendarWeek(null, null, null, "%a", LOCALE_FIRST_DAY);
-	setlocale(LC_ALL, $AppUI->user_lang);
+	if (!empty($AppUI->user_lang)) {
+		setlocale(LC_ALL, $AppUI->user_lang);
+	}
 	
 	$day_name = $wk[($val - LOCALE_FIRST_DAY)%7];
 	if ($locale_char_set == "utf-8" && function_exists("utf8_encode")) {
