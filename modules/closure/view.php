@@ -137,7 +137,7 @@ if ($canDelete) {
 	<td>
 		<?php
 			require_once(DP_BASE_DIR . '/classes/CustomFields.class.php');
-			$custom_fields = New CustomFields( $m, $a, $obj->resource_id, "view" );
+			$custom_fields = New CustomFields( $m, $a, $obj->pma_id, "view" );
 			$custom_fields->printHTML();
 		?>
 	</td>

@@ -154,27 +154,26 @@ function insertCostValues($project)
         $db->CompleteTrans();
     } else {
         /* ################### UPDATE VALORES DOS CUSTOS HUMANOS #################### */
-        $i = 0;
+        // Each human cost row is named after its person and role; update it with
+        // that person's rate (rows were paired with the rates by list position,
+        // which gave costs the wrong rate when the lists differed).
+        $rates = array();
         foreach ($res as $row) {
-            $k = 0;
-            $array[$i][$k] = $row['cost_value'];
-            $k = $k + 1;
-            $array[$i][$k] = $row['contact_first_name'] . ' ' . $row['contact_last_name'] . ' - ' . $row['human_resources_role_name'];
-            $i++;
+            $rates[$row['contact_first_name'] . ' ' . $row['contact_last_name'] . ' - ' . $row['human_resources_role_name']] = $row['cost_value'];
         }
-        $j = 0;
         $db->StartTrans();
         foreach ($humanCost as $row) {
-            $l = 0;
-            $value = ($array[$j][$l] * $row['cost_quantity']) * diferencaMeses(substr($row['cost_date_begin'], 0, -9), substr($row['cost_date_end'], 0, -9));
+            if (!isset($rates[$row['cost_description']])) {
+                continue;
+            }
+            $rate = $rates[$row['cost_description']];
+            $value = ($rate * $row['cost_quantity']) * diferencaMeses(substr($row['cost_date_begin'], 0, -9), substr($row['cost_date_end'], 0, -9));
             $q->clear();
             $q->addTable('costs');
-            $q->addUpdate('cost_value_unitary', $array[$j][$l]);
+            $q->addUpdate('cost_value_unitary', $rate);
             $q->addUpdate('cost_value_total', $value);
-            $l = $l + 1;
-            $q->addWhere('cost_description = ' . $q->quote($array[$j][$l]) . ' and cost_type_id= 0');
+            $q->addWhere('cost_id = ' . (int)$row['cost_id'] . ' and cost_type_id= 0');
             $q->exec();
-            $j++;
         }
         $db->CompleteTrans();
         $db->StartTrans();

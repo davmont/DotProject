@@ -48,10 +48,9 @@ if ($projectSelected != null) {
 }
 
 
-/* transform date to dd/mm/yyyy */
-$date_begin = intval($obj->cost_date_begin) ? new CDate($obj->cost_date_begin) : null;
-$date_end = intval($obj->cost_date_end) ? new CDate($obj->cost_date_end) : null;
 $df = $AppUI->getPref('SHDATEFORMAT');
+$sumH = 0;
+$sumNH = 0;
 
 
 // Get humans estimatives

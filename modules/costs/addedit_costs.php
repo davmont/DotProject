@@ -31,6 +31,10 @@ if (!db_loadObject($q->prepare(), $obj) && ($cost_id > 0)) {
     $AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
     $AppUI->redirect();
 }
+if (!$obj) {
+    // A new record: the form starts empty.
+    $obj = new CCosts();
+}
 
 /* transform date to dd/mm/yyyy */
 $date_begin = intval($obj->cost_date_begin) ? new CDate($obj->cost_date_begin) : null;
@@ -43,7 +47,8 @@ $q->addQuery('project_start_date,project_end_date');
 $q->addTable('projects');
 $q->addWhere("project_id = '$project_id'");
 $datesProject = & $q->exec();
-$dateTemp = substr($datesProject->fields['project_end_date'], 0, -9);
+$projectDates = ($datesProject && !$datesProject->EOF) ? $datesProject->fields : array('project_start_date' => '', 'project_end_date' => '');
+$dateTemp = substr((string)$projectDates['project_end_date'], 0, -9);
 $dateEP = (string)$dateTemp;
 
 
@@ -109,7 +114,7 @@ $titleBlock->show();
         if (f.cost_quantity.value == 0 || f.cost_quantity.value < 0) {
             msg += "\nPlease enter a valid value to hours per month(Greater than 0)";
             if ((foc==false) && (navigator.userAgent.indexOf('MSIE')== -1)) {
-                f.budget_reserve_financial_impact.focus();
+                f.cost_quantity.focus();
                 foc=true;
             }
         }

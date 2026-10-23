@@ -28,6 +28,10 @@ if (!db_loadObject($q->prepare(), $obj) && $initiating_id > 0) {
 	$AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
 	$AppUI->redirect();
 }
+if (!$obj) {
+	// A new term of opening: the form starts empty.
+	$obj = new CInitiating();
+}
 
 $initiating_completed = 0;
 // se for update verifica se ja esta concluido o preenchimento do termo de abertura do projeto
@@ -176,7 +180,7 @@ function notauthorizedIt() {
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project Manager'); ?>:</td>
 			<td align="left"><?php echo arraySelect($owners, 'initiating_manager', 'size="1" class="text"', 
-                 ((@$obj->initiating_manager) ? $obj->initiating_manager : $AppUI->contact_id));?>
+                 ((@$obj->initiating_manager) ? $obj->initiating_manager : $AppUI->user_id));?>
 			</td>
 		</tr>
 	</table>
@@ -189,7 +193,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Justification');?>:</td>
 			<td>
-				<textarea name="initiating_justification" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_justification" rows="10" style="width:100%; min-width:20em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_justification);?>
 				</textarea>
 			</td>
@@ -197,7 +201,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Objectives');?>:</td>
 			<td>
-				<textarea name="initiating_objective" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_objective" rows="10" style="width:100%; min-width:20em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_objective);?>
 				</textarea>
 			</td>
@@ -205,7 +209,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Expected Results');?>:</td>
 			<td>
-				<textarea name="initiating_expected_result" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_expected_result" rows="10" style="width:100%; min-width:20em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_expected_result);?>
 				</textarea>
 			</td>
@@ -213,7 +217,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Premises');?>:</td>
 			<td>
-				<textarea name="initiating_premise" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_premise" rows="10" style="width:100%; min-width:20em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_premise);?>
 				</textarea>
 			</td>
@@ -221,7 +225,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Restrictions');?>:</td>
 			<td>
-				<textarea name="initiating_restrictions" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_restrictions" rows="10" style="width:100%; min-width:20em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_restrictions);?>
 				</textarea>
 			</td>
@@ -229,7 +233,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Budget');?>:</td>
 			<td>
-				<textarea name="initiating_budget" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_budget" rows="10" style="width:100%; min-width:20em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_budget);?>
 				</textarea>
 			</td>
@@ -257,7 +261,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Milestones');?>:</td>
 			<td>
-				<textarea name="initiating_milestone" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_milestone" rows="10" style="width:100%; min-width:20em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_milestone);?>
 				</textarea>
 			</td>
@@ -265,7 +269,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Criteria for success');?>:</td>
 			<td>
-				<textarea name="initiating_success" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_success" rows="10" style="width:100%; min-width:20em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_success);?>
 				</textarea>
 			</td>
@@ -277,7 +281,7 @@ if ($initiating_id) { ?>
 			<tr>
 				<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Approved/Not Approved Comments');?>:</td>
 				<td align="left" >
-					<textarea name="initiating_approved_comments" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+					<textarea name="initiating_approved_comments" rows="10" style="width:100%; min-width:20em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_approved_comments);?>
 					</textarea>
 				</td>
@@ -285,7 +289,7 @@ if ($initiating_id) { ?>
 			<tr>
 				<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Authorized/Not Authorized Comments');?>:</td>
 				<td>
-					<textarea name="initiating_authorized_comments" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+					<textarea name="initiating_authorized_comments" rows="10" style="width:100%; min-width:20em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_authorized_comments);?>
 					</textarea>
 				</td>
@@ -299,34 +303,23 @@ if ($initiating_id) { ?>
 	<td>
 		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW), 'href' => './index.php?m=initiating')); ?> />
 	</td>
-	<td align="right">
+	<td align="right" nowrap="nowrap">
 		<?php 
 		print("<a href='?m=initiating&amp;a=pdf&amp;id=$initiating_id&amp;suppressHeaders=1'>" . $AppUI->_('Gerar PDF') . "</a>\n");
 		?>
-	</td><?php 
+		<?php 
 if ($initiating_id && !$initiating_completed) { ?>
-	<td align="right">
 		<input type="button" class="button" value="<?php echo $AppUI->_('completed');?>"<?php echo dPaction('completedIt'); ?> />
-	</td>
 <?php 
 } if ($initiating_completed && !$initiating_approved) { ?>
-	<td align="right">
 		<input type="button" class="button" value="<?php echo $AppUI->_('approved');?>"<?php echo dPaction('approvedIt'); ?> />
-	</td>
-	<td align="right">
 		<input type="button" class="button" value="<?php echo $AppUI->_('not approved');?>"<?php echo dPaction('notapprovedIt'); ?> />
-	</td>
 <?php 
 } if ($initiating_approved && !$initiating_authorized) { ?>
-	<td align="right">
 		<input type="button" class="button" value="<?php echo $AppUI->_('authorized');?>"<?php echo dPaction('authorizedIt'); ?> />
-	</td>
-	<td align="right">
 		<input type="button" class="button" value="<?php echo $AppUI->_('not authorized');?>"<?php echo dPaction('notauthorizedIt'); ?> />
-	</td>
 <?php 
 }?>
-	<td align="right">
 		<input type="button" class="button" value="<?php echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>

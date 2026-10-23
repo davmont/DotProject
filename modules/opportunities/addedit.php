@@ -8,6 +8,9 @@ if (!defined('DP_BASE_DIR')) {
 // retrieve GET-Parameters via dPframework
 // please always use this way instead of hard code (e.g. there have been some problems with REGISTER_GLOBALS=OFF with hard code)
 	$opportunity_id = intval( dPgetParam( $_GET, "opportunity_id", 0 ) );
+	// Set when the form is opened from a company or a project (prefills them).
+	$company_id = intval( dPgetParam( $_GET, "company_id", 0 ) );
+	$project_id = intval( dPgetParam( $_GET, "project_id", 0 ) );
 	$id_contexts = intval( dPgetParam( $_GET, "id_contexts", 1));
 	$show_owner_id= (isset($_POST['show_owner_id'])) ? intval( dPgetParam( $_POST, "show_owner_id", -1)) : intval( dPgetParam( $_GET, "show_owner_id", -1));
 	$opportunity_owner= intval(dPgetParam( $_REQUEST, "opportunity_owner", 0));
@@ -104,6 +107,9 @@ $yesno = array(1 => 'no', 2 => 'yes');
 
 // unserialize the multiselection array ( for selection ) :
 	$multisystemselect = unserialize( (string)$obj->opportunity_ba, array('allowed_classes' => false) );
+	if (!is_array($multisystemselect)) {
+		$multisystemselect = array();	// none stored yet
+	}
 	
 // Projects link
 	if ($opportunity_id == 0 && $project_id > 0) {

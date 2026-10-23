@@ -24,17 +24,20 @@ if ($pma_id > 0 && !$row->load($pma_id)) {
 //	$AppUI->redirect();
 }
 
+$df = $AppUI->getPref('SHDATEFORMAT');
+$participants = '';
 if($pma_id == 0){
  $q  = new DBQuery;
  $q->addTable('projects');
  $q->addQuery('project_target_budget, project_start_date, project_end_date, project_name');
  $q->addWhere('project_name=' . $q->quote($project_name));
  $res =& $q->exec();
-
+ if ($res && !$res->EOF) {
  $row->planned_budget = $res->fields['project_target_budget'];
  $row->project_planned_start_date = $res->fields['project_start_date'];
  $row->project_planned_end_date = $res->fields['project_end_date'];
  $row->project_name = $res->fields['project_name'];
+ }
  
 $start_date = new CDate($row->project_planned_start_date);
 
@@ -46,11 +49,7 @@ $actual_start_date =  null;
 
 $actual_end_date =  null;
 
-echo $res->fields['project_start_date'];
 }else{
-
-// format dates
-$df = $AppUI->getPref('SHDATEFORMAT');
 
 $start_date = new CDate($row->project_planned_start_date);
 
@@ -260,7 +259,7 @@ echo arraySelect($projects, 'project_name', 'size="1" class="text"', $row->proje
    <br/><?php echo $AppUI->_("List here (each topic with '*') technologies, processes, IDEs or whatever tecniques, tools or services that worked out for you in this project");?>
 	</td>
 	  <tr><td align='right'><?php echo $AppUI->_('Project Weaknesses');?></td>
-  <td><textarea name='project_weaknesses' cols=80 rows=8 ><?php echo dPformSafe($row->weaknesses); ?></textarea>
+  <td><textarea name='project_weaknesses' cols=80 rows=8 ><?php echo dPformSafe($row->project_weaknesses); ?></textarea>
    <br/><?php echo $AppUI->_("List here (each topic with '*') technologies, processes, IDEs or whatever tecniques, tools or services that did not worked out for you in this project");?>
 	<tr><td align='right'><?php echo $AppUI->_('Improvement Suggestions');?></td>
   <td><textarea name='improvement_suggestions' cols=80 rows=8 ><?php echo dPformSafe($row->improvement_suggestions); ?></textarea>

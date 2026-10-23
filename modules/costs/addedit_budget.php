@@ -28,6 +28,10 @@ if (!db_loadObject($q->prepare(), $obj) && ($budget_id > 0)) {
     $AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
     $AppUI->redirect();
 }
+if (!$obj) {
+    // A new record: the form starts empty.
+    $obj = new CBudget();
+}
 
 
 // setup the title block

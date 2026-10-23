@@ -82,13 +82,14 @@ $notHumanCost = $q->loadList();
     $q->addTable('projects');
     $q->addWhere("project_id = '$projectSelected'");
     $datesProject = &$q->exec();
+    $projectDates = ($datesProject && !$datesProject->EOF) ? $datesProject->fields : array('project_start_date' => '', 'project_end_date' => '');
 
-    $meses = diferencaMeses(substr($datesProject->fields['project_start_date'], 0, -9), substr($datesProject->fields['project_end_date'], 0, -9));
-    $monthStartProject = (int) substr($datesProject->fields['project_start_date'], 5, -12);
-    $monthEndProject = (int) substr($datesProject->fields['project_end_date'], 5, -12);
-    $monthSProject = (int) substr($datesProject->fields['project_start_date'], 5, -12);
-    $yearStartProject = (int) substr($datesProject->fields['project_start_date'], 0, -15);
-    $yearEndProject = (int) substr($datesProject->fields['project_end_date'], 0, -15);
+    $meses = diferencaMeses(substr($projectDates['project_start_date'], 0, -9), substr($projectDates['project_end_date'], 0, -9));
+    $monthStartProject = (int) substr($projectDates['project_start_date'], 5, -12);
+    $monthEndProject = (int) substr($projectDates['project_end_date'], 5, -12);
+    $monthSProject = (int) substr($projectDates['project_start_date'], 5, -12);
+    $yearStartProject = (int) substr($projectDates['project_start_date'], 0, -15);
+    $yearEndProject = (int) substr($projectDates['project_end_date'], 0, -15);
 
     $years = $yearEndProject - $yearStartProject;
     $tempYear = $yearStartProject;
@@ -150,7 +151,7 @@ $notHumanCost = $q->loadList();
         <tr>
             <td nowrap="nowrap"><?php echo dPhtml($row['cost_description']); ?></td>
             <?php
-            $mtz = costsBudget($meses, $c, $row, substr($datesProject->fields['project_start_date'], 5, -12), substr($datesProject->fields['project_end_date'], 5, -12), $mtz);
+            $mtz = costsBudget($meses, $c, $row, substr($projectDates['project_start_date'], 5, -12), substr($projectDates['project_end_date'], 5, -12), $mtz);
             $c++;
             ?>
 
@@ -189,7 +190,7 @@ $notHumanCost = $q->loadList();
         <tr>
             <td nowrap="nowrap" width="15%"><?php echo dPhtml($row['cost_description']); ?></td>
             <?php
-            $mtzNH = costsBudget($meses, $c, $row, substr($datesProject->fields['project_start_date'], 5, -12), substr($datesProject->fields['project_end_date'], 5, -12), $mtzNH);
+            $mtzNH = costsBudget($meses, $c, $row, substr($projectDates['project_start_date'], 5, -12), substr($projectDates['project_end_date'], 5, -12), $mtzNH);
             $c++;
             ?>
 

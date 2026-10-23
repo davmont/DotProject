@@ -70,6 +70,9 @@ function deleteRole(roleId, roleName) {
 function addRole() {
 	var roleCombo = document.getElementById('role_combo');
 	var rolesTable = document.getElementById('roles_table');
+	if (roleCombo.selectedIndex < 0) {
+		return; // no role left to add (none defined for the company, or all added)
+	}
 	var lastRowNumber = rolesTable.rows.length;
 	var row = rolesTable.insertRow(lastRowNumber);
 	var roleId = roleCombo.options[roleCombo.selectedIndex].value;

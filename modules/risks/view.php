@@ -46,7 +46,8 @@ $canDelete = $obj->canDelete($msg, $risk_id);
 
 // load the record data
 $obj = null;
-if ((!db_loadObject($q->prepare(), $obj)) && ($risk_id > 0)) {
+// Nothing to view without an existing risk.
+if (!db_loadObject($q->prepare(), $obj) || !$obj) {
     $AppUI->setMsg('LBL_RISKS');
     $AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
     $AppUI->redirect();
@@ -186,7 +187,7 @@ $titleBlock->show();
                     </tr>
                     <tr>
                         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('LBL_POTENTIAL'); ?>:</td>
-                        <td nowrap="nowrap"><?php echo $riskPotential[@$obj->risk_potential] ?></td>
+                        <td nowrap="nowrap"><?php echo isset($riskPotential[$obj->risk_potential_other_projects]) ? $riskPotential[$obj->risk_potential_other_projects] : ''; ?></td>
                     </tr>
                     <tr>
                         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('LBL_LESSONS'); ?>:</td>
