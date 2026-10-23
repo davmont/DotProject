@@ -11,8 +11,9 @@ GLOBAL $baseDir, $AppUI, $project_id;
 // it is automatically appended on the applications main ./index.php by the dPframework
 
 // we check for permissions on this module
-	$canRead = !getDenyRead( $m );			// retrieve module-based readPermission bool flag
-	$canEdit = !getDenyEdit( $m );			// retrieve module-based writePermission bool flag
+	// (included by the project view's tab box: the module is not the current $m)
+	$canRead = !getDenyRead( 'annotations' );			// retrieve module-based readPermission bool flag
+	$canEdit = !getDenyEdit( 'annotations' );			// retrieve module-based writePermission bool flag
 
 //if (!$canRead) {			// lock out users that do not have at least readPermission on this module
 //	$AppUI->redirect( "m=public&a=access_denied" );
@@ -22,7 +23,6 @@ $AppUI->savePlace();	//save the workplace state (have a footprint on this site)
 
 //this is the way dates should be handled! why not here? --> go ahead (as referenz: projects/addedit.php)
 	$df = $AppUI->getPref('SHDATEFORMAT');
-	$show_the_date = new CDate( $show_date );
 	$today = date('Ymd');
 // retrieve any state parameters
 	$project_id = intval( dPgetParam( $_GET, "project_id", -1 ) );
@@ -146,8 +146,9 @@ $q = new DBQuery;
 	$aResult = db_loadList( $sql );
 	
 	// And here comes the first and the last Entry, named by their date
-		$last_entry = new CDate($aResult[0][0]);	//the date of the last annotation made
-		$first_entry = new CDate( $aResult[count($aResult)-1][0] );  //the date of the first annotation made
+		// (no annotations yet: both are today)
+		$last_entry = new CDate($aResult ? $aResult[0][0] : null);	//the date of the last annotation made
+		$first_entry = new CDate($aResult ? $aResult[count($aResult)-1][0] : null);  //the date of the first annotation made
 		$tmpNextDay = new CDate($show_the_date);
 		$tmpPrevDay = new CDate($show_the_date);
 		$tmpNextDay->addDays("1");	//Who knew?? this helps us jumping one day forwards and backwards

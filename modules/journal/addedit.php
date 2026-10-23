@@ -64,6 +64,10 @@ $q -> addTable('journal');
 $q -> addQuery('*');
 $q -> addWhere("journal_id = $journal_id");
 $journal = $q -> loadHash();
+if (!$journal) {
+	// A new entry (or one that no longer exists).
+	$journal = array('journal_project' => 0, 'journal_description' => '');
+}
 
 
 if ($journal["journal_project"]){

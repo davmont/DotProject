@@ -43,9 +43,12 @@ class CHosting extends CDpObject {
 		$q->addWhere('dom.domain_id = '.(int)$domain_id);
 		$results = $q->exec();
 
-		$row = db_fetch_assoc($results);
+		$row = $results ? db_fetch_assoc($results) : false;
+		if (!$row) {
+			return false;
+		}
 
-		$this->domain_id = $row['domains.domain_id'];
+		$this->domain_id = $row['domain_id'];
 		$this->company_id = $row['company_id'];
 		$this->domain_name = $row['domain_name'];
 		$this->domain_expiry_date = $row['domain_expiry_date'];
@@ -58,6 +61,7 @@ class CHosting extends CDpObject {
 		$this->hosting_expiry_date = $row['hosting_expiry_date'];
 		$this->hosting_status = $row['hosting_status'];
 		$this->hosting_notes = $row['hosting_notes'];
+		return true;
 	}
 
 	function delete($oid = null, $history_desc = '', $history_proj = 0){

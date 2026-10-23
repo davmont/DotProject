@@ -6,7 +6,7 @@ if (!defined('DP_BASE_DIR')) {
 
 global $AppUI;
 
-$sort = $_GET['sort'];
+$sort = dPgetParam($_GET, 'sort', '');
 switch($sort){
 	case "DNA" : $orderBy = "domain_name ASC"; break;
 	case "DND" : $orderBy = "domain_name DESC"; break;
@@ -52,8 +52,8 @@ while($row = db_fetch_assoc($results)){
 	$expiry = mktime(0, 0, 0, $expiry_date[1], $expiry_date[2], $expiry_date[0]);
 	$timePeriod = 60 * 60 * 24 * 60; //30 days in seconds
 	
-	$latest_date = intval(date('Ymd', intval(mktime()) + $timePeriod));
-	$earliest_date = intval(date('Ymd', intval(mktime()) - $timePeriod));
+	$latest_date = intval(date('Ymd', time() + $timePeriod));
+	$earliest_date = intval(date('Ymd', time() - $timePeriod));
 
 	$expiry_date_of_domain = intval($expiry_date[0].$expiry_date[1].$expiry_date[2]);
 
@@ -84,8 +84,8 @@ foreach($domains as $domain){
 	$expiry = mktime(0, 0, 0, $expiry_date[1], $expiry_date[2], $expiry_date[0]);
 	$timePeriod = 60 * 60 * 24 * 60; //60 days in seconds
 
-	$latest_date = intval(date('Ymd', intval(mktime()) + $timePeriod));
-	$earliest_date = intval(date('Ymd', intval(mktime()) - $timePeriod));
+	$latest_date = intval(date('Ymd', time() + $timePeriod));
+	$earliest_date = intval(date('Ymd', time() - $timePeriod));
 	
 	$expiry_date_of_hosting = intval($expiry_date[0].$expiry_date[1].$expiry_date[2]);
 	

@@ -3,7 +3,7 @@ if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 
-if (($m) and (getDenyRead($m))) {
+if (!empty($m) && getDenyRead($m)) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
 

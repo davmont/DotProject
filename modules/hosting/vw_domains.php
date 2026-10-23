@@ -6,7 +6,7 @@ if (!defined('DP_BASE_DIR')) {
 
 global $AppUI;
 
-$sort = $_GET['sort'];
+$sort = dPgetParam($_GET, 'sort', '');
 switch($sort){
 	case "DNA" : $orderBy = "domain_name ASC"; break;
 	case "DND" : $orderBy = "domain_name DESC"; break;

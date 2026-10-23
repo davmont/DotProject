@@ -66,6 +66,11 @@ $q -> addTable('holiday');
 $q -> addQuery('*');
 $q -> addWhere('holiday_id = ' . (int)$holiday_id);
 $holiday = $q -> loadHash();
+if (!$holiday) {
+	// A new holiday (or one that no longer exists).
+	$holiday = array('holiday_white' => 0, 'holiday_annual' => 0, 'holiday_description' => '',
+		'holiday_start_date' => null, 'holiday_end_date' => null);
+}
 
 if($holiday_white == -1)
 {

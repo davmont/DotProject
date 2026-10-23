@@ -11,7 +11,8 @@ if (!defined('DP_BASE_DIR')) {
 ## 
 
 $AppUI->savePlace();
-$titleBlock = new CTitleBlock('History', 'stock_book_blue_48.png', $m, "$m.$a");
+// (also included by the project History tab, where $a is not set)
+$titleBlock = new CTitleBlock('History', 'stock_book_blue_48.png', $m, $m . '.' . (isset($a) ? $a : 'index'));
 $titleBlock->show();
 
 function show_history($history) {
@@ -27,8 +28,8 @@ function show_history($history) {
 	$module_result = $q->fetchRow();
 	$q->clear();
 	
-	$table_id = $module_result['permissions_item_field'];
-	$module = $module_result['mod_directory'];
+	$table_id = $module_result ? $module_result['permissions_item_field'] : '';
+	$module = $module_result ? $module_result['mod_directory'] : '';
 		  
 	if (!($table_id || $module)) { //valid "modules" w/o item level permissions
 		switch ($table) {
@@ -112,7 +113,7 @@ $offset = ($page-1) * $limit;
 $in_filter = ((!empty($_REQUEST['filter'])) ? $_REQUEST['filter'] : '');
 
 $q->addTable('modules', 'm');
-$q->addQuery('mod_directory, mod_name, permissions_item_table, permissions_item_field');
+$q->addQuery('mod_directory, mod_name, permissions_item_table, permissions_item_field, permissions_item_label');
 $q->addWhere('permissions_item_table is not null');
 $q->addWhere("permissions_item_table <> ''");
 $available_modules = $q->loadHashList('mod_directory');
@@ -131,7 +132,7 @@ foreach ($available_modules as $my_mod => $my_mod_data) {
 	
 	$filter_module_tables[$my_mod] = $my_mod_table;
 	if ($my_mod_table && !(getPermission($my_mod, 'view'))) {
-		$denied_tables .= ((($denied_module_list) ? "','" : '') . $my_mod_table);
+		$denied_tables .= ((($denied_tables) ? "','" : '') . $my_mod_table);
 	}
 }
 
@@ -244,7 +245,8 @@ echo $AppUI->_('Add history'); ?>"<?php echo dPaction(null, array(), null, array
 $perms =& $AppUI->acl();
 foreach ($history as $row) {
 	$mod_table = $row['history_table'];
-	$module = (($mod_table == 'task_log') ? 'tasks' : $filter_module_tables[$mod_table]);
+	// $filter_module_tables maps module => table
+	$module = (($mod_table == 'task_log') ? 'tasks' : array_search($mod_table, $filter_module_tables));
 	
 	$df = $AppUI->getPref('SHDATEFORMAT');
 	$tf = $AppUI->getPref('TIMEFORMAT');
