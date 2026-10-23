@@ -58,7 +58,7 @@ if (!$project_name) {
 	  <tr>
 			<td align="right"><?php echo $AppUI->_('LBL_OBSERVACAO'); ?>:</td>
 			 <td>
-				 <textarea  name="dsObservacao" cols="106" rows="4" ></textarea>					
+				 <textarea  name="dsObservacao" rows="4" style="width:100%; box-sizing:border-box;"></textarea>					
 			</td>
 		</tr>		
 	  <tr>	  
