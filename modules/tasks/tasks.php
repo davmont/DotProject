@@ -234,7 +234,7 @@ switch ($f) {
 		if (!($AppUI->user_company)) {
 			$AppUI->user_company = 0;
 		}
-		$where .= ' AND project_company = ' . $AppUI->user_company;
+		$where .= ' AND (project_company = ' . (int)$AppUI->user_company . ' OR project_company_internal = ' . (int)$AppUI->user_company . ')';
 		break;
 	case 'myunfinished':
 		$from = $dbprefix . 'user_tasks as ut3, ' . $from;

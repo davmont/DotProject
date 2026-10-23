@@ -690,7 +690,9 @@ class CEvent extends CDpObject
 
 			$$query_set->addJoin('projects', 'p', 'p.project_id =  e.event_project');
 			if (($AppUI->getState('CalIdxCompany'))) {
-				$$query_set->addWhere('p.project_company = ' . $AppUI->getState('CalIdxCompany'));
+				$cal_company = (int)$AppUI->getState('CalIdxCompany');
+				// Projects of the company and those it runs for clients (internal company).
+				$$query_set->addWhere('(p.project_company = ' . $cal_company . ' OR p.project_company_internal = ' . $cal_company . ')');
 			}
 
 			if (count($allowedProjects)) {

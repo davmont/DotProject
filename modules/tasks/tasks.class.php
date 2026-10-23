@@ -1392,7 +1392,7 @@ class CTask extends CDpObject
 		}
 
 		if ($company_id) {
-			$q->addWhere('p.project_company = ' . (int)$company_id);
+			$q->addWhere('(p.project_company = ' . (int)$company_id . ' OR p.project_company_internal = ' . (int)$company_id . ')');
 		}
 		if (count($task_filter_where) > 0) {
 			$q->addWhere('(' . implode(' AND ', $task_filter_where) . ')');

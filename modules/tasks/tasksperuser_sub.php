@@ -255,7 +255,7 @@ if ($do_report) {
 		$sql->addWhere('t.task_project = \''. $project_id . '\'');
 	}
 		if ($company_id != 'all') {
-		$sql->addWhere("p.project_company='$company_id'");
+		$sql->addWhere('(p.project_company = ' . (int)$company_id . ' OR p.project_company_internal = ' . (int)$company_id . ')');
 	}
 	if ($log_userfilter !=0) {
 		$sql->addWhere('ut.user_id = ' . (int)$log_userfilter);
