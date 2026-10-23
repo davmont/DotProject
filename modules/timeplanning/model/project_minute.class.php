@@ -119,6 +119,9 @@ class ProjectMinute {
 		$q->addWhere('id =' . (int)$minute_id);
 		$results = db_loadHashList($q->prepare(true), 'id');
 		$hasMinute=false;
+		// Defaults when the minute does not exist (a new one).
+		$id = $description = $date = '';
+		$isEffort = $isSize = $isDuration = $isResource = 0;
 		foreach ($results as $id => $data) {
 			$description=$data[0];
 			$date=$data[1];

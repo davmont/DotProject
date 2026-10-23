@@ -202,8 +202,8 @@ class CTask extends CDpObject
 				$parents_dependents = explode(',', $current_parent->dependentTasks());
 				$this_intersect = array_intersect($this_dependencies, $parents_dependents);
 				//Any tasks dependent on a dynamic parent task cannot be dependencies of task
-				if (array_sum($this_intersect)) {
-					$ids = '(' . implode(',', $intersect) . ')';
+				if (array_sum(array_map('intval', $this_intersect))) {
+					$ids = '(' . implode(',', $this_intersect) . ')';
 					return array('BadDep_CircularDepOnParentDependent', $ids);
 				}
 
@@ -212,7 +212,8 @@ class CTask extends CDpObject
 		} // parent
 
 		// Have deps
-		if (array_sum($this_dependencies)) {
+		// The lists come from explode(): '' for no dependency.
+		if (array_sum(array_map('intval', $this_dependencies))) {
 			if ($this->task_dynamic == 1) {
 				return 'BadDep_DynNoDep';
 			}
@@ -254,7 +255,7 @@ class CTask extends CDpObject
 
 			// Task dependencies can not be dependent on this task
 			$intersect = array_intersect($this_dependencies, $this_dependents);
-			if (array_sum($intersect)) {
+			if (array_sum(array_map('intval', $intersect))) {
 				$ids = '(' . implode(',', $intersect) . ')';
 				return array('BadDep_CircularDep', $ids);
 			}
@@ -719,7 +720,8 @@ class CTask extends CDpObject
 			$pTask->load($this->task_parent);
 			$pTask->updateDynamics();
 
-			if ($oTsk->task_parent != $this->task_parent) {
+			// $oTsk (the task before this update) exists for updates only.
+			if (isset($oTsk) && $oTsk->task_parent != $this->task_parent) {
 				$old_parent = new CTask();
 				$old_parent->load($oTsk->task_parent);
 				$old_parent->updateDynamics();
@@ -889,7 +891,7 @@ class CTask extends CDpObject
 		// process dependencies
 		$tarr = explode(',', $cslist);
 		foreach ($tarr as $task) {
-			list($task_id, $task_delay) = explode('|', $task);
+			list($task_id, $task_delay) = array_pad(explode('|', $task), 2, 0);
 			if (intval($task_id) > 0) {
 				$q->addTable('task_dependencies');
 				$q->addReplace('dependencies_task_id', $this->task_id);

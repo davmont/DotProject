@@ -41,6 +41,11 @@ require_once DP_BASE_DIR . '/lib/phpgacl/gacl_api.class.php';
  */
 class dPacl extends gacl_api
 {
+	// Set by gacl::__construct() and below (declared for PHP 8.2).
+	var $db = null;
+	var $Cache_Lite = null;
+	var $_original_db_prefix = '';
+	var $_debug_msg = '';
 
 	function __construct($opts = null)
 	{
