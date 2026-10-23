@@ -83,7 +83,7 @@ function cal_work_day_conv($val) {
 <td align='center'>
   <table>  
 	<tr><td align='right'><?php echo $AppUI->_('Lattes URL'); ?></td>
-  <td align='left'><input type='text' size="100" maxlength="500" name="human_resource_lattes_url"
+  <td align='left'><input type='text' size="100" maxlength="500" style="width: 100%; max-width: 60em; box-sizing: border-box;" name="human_resource_lattes_url"
     value="<?php echo dPformSafe($hr->human_resource_lattes_url);?>" />
   </td></tr>
 	<tr>

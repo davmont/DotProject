@@ -532,4 +532,8 @@ table.tabitem {
 	TD.nav a {
 		padding: 4px;
 	}
+	table.minical th,
+	table.minical td {
+		padding: 3px;
+	}
 }

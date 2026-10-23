@@ -253,6 +253,9 @@ echo ((!is_null($call_back)) ? '&call_back=' . $call_back : '');
 	<hr />
 	<input name="contacts_submited" type="hidden" value="1" />
 	<input name="selected_contacts_id" type="hidden" value="<?php echo $selected_contacts_id; ?>">
-	<input type="submit" value="<?php
-	echo $AppUI->_('Continue'); ?>"<?php echo dPaction('setContactIDs'); ?> class="button" />
+	<!-- The list scrolls; the button stays at the bottom of the window. -->
+	<div style="position: sticky; bottom: 0; padding: 4px 0; background: #fff;">
+		<input type="submit" value="<?php
+		echo $AppUI->_('Continue'); ?>"<?php echo dPaction('setContactIDs'); ?> class="button" />
+	</div>
 </form>
