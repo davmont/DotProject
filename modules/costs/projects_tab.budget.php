@@ -68,12 +68,13 @@ if ($v == null) {
     $q->addTable('projects');
     $q->addWhere("project_id = '$projectSelected'");
     $datesProject = &$q->exec();
+    $projectDates = ($datesProject && !$datesProject->EOF) ? $datesProject->fields : array('project_start_date' => '', 'project_end_date' => '');
 
-    $meses = diferencaMeses(substr($datesProject->fields['project_start_date'], 0, -9), substr($datesProject->fields['project_end_date'], 0, -9));
-    $monthStartProject = (int) substr($datesProject->fields['project_start_date'], 5, -12);
-    $monthSProject = (int) substr($datesProject->fields['project_start_date'], 5, -12);
-    $yearStartProject = (int) substr($datesProject->fields['project_start_date'], 0, -15);
-    $yearEndProject = (int) substr($datesProject->fields['project_end_date'], 0, -15);
+    $meses = diferencaMeses(substr($projectDates['project_start_date'], 0, -9), substr($projectDates['project_end_date'], 0, -9));
+    $monthStartProject = (int) substr($projectDates['project_start_date'], 5, -12);
+    $monthSProject = (int) substr($projectDates['project_start_date'], 5, -12);
+    $yearStartProject = (int) substr($projectDates['project_start_date'], 0, -15);
+    $yearEndProject = (int) substr($projectDates['project_end_date'], 0, -15);
 
     $years = $yearEndProject - $yearStartProject;
     $tempYear = $yearStartProject;
@@ -134,7 +135,7 @@ if ($v == null) {
         <tr>
             <td nowrap="nowrap"><?php echo $row['cost_description']; ?></td>
             <?php
-            $mtz = costsBudget($meses, $c, $row, substr($datesProject->fields['project_start_date'], 5, -12), substr($datesProject->fields['project_end_date'], 5, -12), $mtz);
+            $mtz = costsBudget($meses, $c, $row, substr($projectDates['project_start_date'], 5, -12), substr($projectDates['project_end_date'], 5, -12), $mtz);
             $c++;
             ?>
 
@@ -170,7 +171,7 @@ if ($v == null) {
         <tr>
             <td nowrap="nowrap" width="15%"><?php echo $row['cost_description']; ?></td>
             <?php
-            $mtzNH = costsBudget($meses, $c, $row, substr($datesProject->fields['project_start_date'], 5, -12), substr($datesProject->fields['project_end_date'], 5, -12), $mtzNH);
+            $mtzNH = costsBudget($meses, $c, $row, substr($projectDates['project_start_date'], 5, -12), substr($projectDates['project_end_date'], 5, -12), $mtzNH);
             $c++;
             ?>
 
@@ -218,7 +219,7 @@ if ($v == null) {
                 <?php echo $row['budget_reserve_description'] ?>
             </td>
             <?php
-            $mtzC = costsContingency($meses, $c, $row, $monthSProject, substr($datesProject->fields['project_end_date'], 5, -12), $mtzC);
+            $mtzC = costsContingency($meses, $c, $row, $monthSProject, substr($projectDates['project_end_date'], 5, -12), $mtzC);
             $c++;
             ?>
 

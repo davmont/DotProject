@@ -37,6 +37,12 @@ for ($x=0; $x < $nums; $x++) {
         $task_log_costcodes[$row["billingcode_id"]] = $row["billingcode_name"];
 }
 */
+// Values a new item may be preset with (from the query string, see below).
+$hditem = array();
+$item_calltype = $item_status = $item_priority = $item_severity = $item_source = 0;
+$item_os = $item_application = $item_requestor = 0;
+$project_id = $company_id = $assigned_to = 0;
+
 // Pull data if editing an existing item
 if ($item_id) {
 	$q = new DBQuery;
@@ -45,6 +51,11 @@ if ($item_id) {
 	$q->addWhere('item_id = \''.$item_id."'");
 	$hditem = $q->loadHash();
 	$q->clear();
+	if (!$hditem) {
+		$AppUI->setMsg('Help Desk Item', UI_MSG_ERROR);
+		$AppUI->setMsg('not found', UI_MSG_ERROR, true);
+		$AppUI->redirect('m=helpdesk');
+	}
 }
 //echo "\n<br />HDITEM: ";
 //var_dump($hditem);
@@ -61,7 +72,7 @@ if ( (!$hditem) && (count($_GET) > 3) && (!$item_id) ) {
 	$project_id = dPgetIntParam($_GET, 'project', 0);
 	$company_id = dPgetIntParam($_GET, 'company', 0);
 	$assigned_to = dPgetIntParam($_GET, 'assigned_to', 0);
-	$requestor = dPgetParam($_GET, 'requestor', 0);
+	$item_requestor = dPgetParam($_GET, 'requestor', 0);
 }
 
 // Check permissions for this record
@@ -619,7 +630,7 @@ function selectList( listName, target ) {
       <td align="right" nowrap="nowrap"><label for="ire">&dagger; <?php echo $AppUI->_('Requestor E-mail'); ?>:</label></td>
       <td valign="top"><input type="text" class="text" id="ire"
 	                      <?php echo dPaction('checkRequestorType'); ?>
-      <?php if ($hditem["item_requestor_type"]!=0): ?>
+      <?php if (!empty($hditem["item_requestor_type"])): ?>
                               disabled="disabled"
                               value="<?php echo dPhtml(getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 1)); ?>"
       <?php else: ?>
@@ -633,7 +644,7 @@ function selectList( listName, target ) {
       <td align="right" nowrap="nowrap"><label for="irp">&dagger; <?php echo $AppUI->_('Requestor Phone'); ?>:</label></td>
       <td valign="top"><input type="text" class="text" id="irp"
                               <?php echo dPaction('checkRequestorType'); ?>
-      <?php if ($hditem["item_requestor_type"]!=0): ?>
+      <?php if (!empty($hditem["item_requestor_type"])): ?>
                               disabled="disabled"
                               value="<?php echo dPhtml(getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 2)); ?>"
       <?php endif; ?>

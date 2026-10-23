@@ -7,13 +7,17 @@ global $tabbed, $currentTabName, $currentTabId, $AppUI;
 
 $task_id = intval(dPgetParam($_GET, 'task_id', 0));
 $project_id = intval(dPgetParam($_GET, 'project_id', 0));
+if (!$project_id && $task_id) {
+	// The task view passes only the task: its project is the task's.
+	$project_id = (int)db_loadResult('SELECT task_project FROM ' . dPgetConfig('dbprefix', '') . 'tasks WHERE task_id = ' . (int)$task_id);
+}
 
 $query = new DBQuery;
 $query->addTable('projects', 'p');
 $query->addQuery('project_name');
 $query->addWhere('p.project_id = ' . (int)$project_id);
 $res_project =& $query->exec();
-$project_name = $res_project->fields['project_name'];
+$project_name = ($res_project && !$res_project->EOF) ? $res_project->fields['project_name'] : '';
 
 $query = new DBQuery;
 $query->addTable('tasks', 't');

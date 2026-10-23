@@ -1,0 +1,8 @@
+{
+  "name": "dotproject-audit-browser",
+  "private": true,
+  "description": "Browser checks for docker/tests (forms, layout, tab switching, pop-ups)",
+  "dependencies": {
+    "playwright-core": "1.64.1"
+  }
+}

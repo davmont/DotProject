@@ -18,6 +18,15 @@ $project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $controllerBaseline = new ControllerBaseline();
 $controllerUtil = new ControllerUtil();
 $record = $controllerBaseline->getBaselineRequestById($idBaseline);
+if (!$record) {
+	$AppUI->setMsg('Invalid ID', UI_MSG_ERROR);
+	$AppUI->redirect($project_id ? 'm=projects&a=view&project_id=' . $project_id : 'm=projects');
+}
+$project_name = $controllerUtil->getProjectName($project_id);
+if (!$project_name) {
+	$project_id = (int)$record[0]['project_id'];
+	$project_name = $controllerUtil->getProjectName($project_id);
+}
 ?>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/ata.js"   ></script>
 <!--  calendar  -->
@@ -46,7 +55,7 @@ $record = $controllerBaseline->getBaselineRequestById($idBaseline);
 		</tr>
 	  <tr>
 			<td align="right"><?php echo $AppUI->_('LBL_PROJETO'); ?>:</td>
-			 <td><?php $project_name = $controllerUtil->getProjectName($project_id) ; ?>
+			 <td>
 				 <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name[0][0]); ?> " />					
 			</td>
 		</tr>

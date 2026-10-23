@@ -32,7 +32,9 @@ if ($del) {
 	} else {
 		$AppUI->setMsg( @$_POST['payment_id'] ? 'updated' : 'added', UI_MSG_OK, true );
 	}
-	$obj->updatePaymentsInvoices( $invoice_list );
+	// The invoices ticked on the form (read from the request: register_globals is long gone).
+	$invoice_list = dPgetParam( $_POST, 'invoice_list', array() );
+	$obj->updatePaymentsInvoices( is_array($invoice_list) ? $invoice_list : array() );
 	$AppUI->redirect();
 }
 ?>

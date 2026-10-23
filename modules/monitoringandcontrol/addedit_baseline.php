@@ -12,6 +12,12 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/translations.php");
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 
 $controllerUtil = new ControllerUtil();
+// The form belongs to an existing project.
+$project_name = $controllerUtil->getProjectName($project_id);
+if (!$project_name) {
+	$AppUI->setMsg('Invalid ID', UI_MSG_ERROR);
+	$AppUI->redirect('m=projects');
+}
 ?>
 <script src="./modules/monitoringandcontrol/js/baseline.js" > </script>
  <table width="100%" cellspacing="1" cellpadding="1" border="0">
@@ -31,7 +37,7 @@ $controllerUtil = new ControllerUtil();
 		</tr>
 	  <tr>
 			<td align="right"><?php echo $AppUI->_('LBL_PROJETO'); ?>:</td>
-			 <td><?php $project_name = $controllerUtil->getProjectName($project_id) ; ?>
+			 <td>
 				 <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name[0][0]); ?> " />					
 			</td>
 		</tr>

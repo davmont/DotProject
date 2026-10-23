@@ -23,3 +23,6 @@ includes/config.php
 
 # npm dependencies (Jest for js/tests)
 node_modules/
+
+# docker/tests output (make audit-full)
+docker/.audit/

@@ -138,22 +138,22 @@ function setTask( key, val ) {
 		</tr>
 <?php
 $project = new CProject();
-$projects = $project->getAllowedRecords( $AppUI->user_id, 'project_id,project_name', 'project_name', null, $extra );
+$projects = $project->getAllowedRecords( $AppUI->user_id, 'project_id,project_name', 'project_name' );
 $projects = arrayMerge( array( '0'=>$AppUI->_('All', UI_OUTPUT_RAW) ), $projects );
 
-if ($obj->test_task) {
-	$test_task = $obj->unittest_task_id;
-	$task_name = $obj->getTaskName();
-} else if ($test_task) {
+// The form fields test_project / test_task carry unittest_project_id / unittest_task_id
+// (do_test_aed.php maps them back).
+$test_project = (int)$obj->unittest_project_id;
+$test_task = (int)$obj->unittest_task_id;
+$select_disabled = '';
+$task_name = '';
+if ($test_task) {
 	$q  = new DBQuery;
 	$q->addTable('tasks');
 	$q->addQuery('task_name');
-	$q->addWhere("task_id=$test_task");
-	$sql = $q->prepare();
+	$q->addWhere('task_id = ' . $test_task);
+	$task_name = $q->loadResult();
 	$q->clear();
-	$task_name = db_loadResult( $sql );
-} else {
-	$task_name = '';
 }
 
 ?>		
@@ -170,11 +170,11 @@ if ($obj->test_task) {
 		</tr>
 <?php
 $onclick_task = dPaction('popTask');
-$str_out .= "<tr>" .
+$str_out = "<tr>" .
             '<td align="right" nowrap="nowrap">' . $AppUI->_( 'Task' ) . ':</td>'.
 			      '<td align="left" colspan="2" valign="top">' .
 				    '<input type="hidden" name="test_task" value="' .  $test_task . '" />' .
-				    '<input type="text" class="text" name="task_name" value="' . $task_name. '" size="40" disabled />' .
+				    '<input type="text" class="text" name="task_name" value="' . dPformSafe($task_name) . '" size="40" disabled />' .
 				    '<input type="button" class="button" value="' . $AppUI->_('select task') . '..."' .
 				     $onclick_task . '/>' .	'</td></tr>';
 		echo $str_out;

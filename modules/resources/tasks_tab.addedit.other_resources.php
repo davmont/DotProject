@@ -30,6 +30,7 @@ $q->clear();
 
 
 $resources = array();
+$initResAssignment = '';	// a new task has no resources yet
 if ($loadFromTab && isset($_SESSION['tasks_subform']['hresource_assign'])) {
 	$initResAssignment = '';
 	foreach (explode(';', $_SESSION['tasks_subform']['hresource_assign']) as $perc) {

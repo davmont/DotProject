@@ -64,7 +64,7 @@ if (($msg = $obj->store())) {
 } else {
         $obj->load($obj->initiating_id);
         if ($not=='1') $obj->notify();
-        $AppUI->setMsg($file_id ? 'updated' : 'added', UI_MSG_OK, true);
+        $AppUI->setMsg($initiating_id ? 'updated' : 'added', UI_MSG_OK, true);
 }
 
 $AppUI->redirect();

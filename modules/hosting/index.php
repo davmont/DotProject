@@ -41,7 +41,7 @@ if(!(strpos($department, $company_prefix)===false)){
 	unset($department);
 }*/
 
-if(!(strpos($company_id, $company_prefix)===false)){
+if (isset($company_id) && !(strpos($company_id, $company_prefix)===false)){
 	$company_id = (int)substr($company_id,strlen($company_prefix));
 	$AppUI->setState( 'HostIdxCompany', $company_id );
 }

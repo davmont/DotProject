@@ -47,6 +47,7 @@
 			<?php
 			$items = $controllerWBSItem->getWBSItems($project_id);
 			$activities=array();
+			$id = 0; // the last work package: tasks without one are listed under it
 			foreach ($items as $item) {
 				$id = $item->getId();
 				$name = $item->getName();
@@ -94,7 +95,8 @@
 	//add tasks without workpackage 
 	$tasks=$ControllerWBSItemActivityRelationship->getAllActivities($project_id);
     foreach ($tasks as $task) {
-		if($activities[$task->task_id]==null){
+		// Rows go under a work package row (id_<id>): none without work packages.
+		if ($id && empty($activities[$task->task_id])) {
 			$taskDescription=$task->task_name;
 			$taskId=$task->task_id;
 			echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>addLine(" . dPjs($taskDescription) . ",'','','','',''," . (int)$taskId . ",'','','',''," . (int)$id . ");</script>";

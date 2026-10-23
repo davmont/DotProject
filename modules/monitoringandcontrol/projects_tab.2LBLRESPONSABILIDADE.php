@@ -7,7 +7,6 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_pr
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
-$tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
 $project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $controllerResp = new ControllerProjectsResponsability();
 $controllerUtil = new ControllerUtil();    

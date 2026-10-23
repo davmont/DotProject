@@ -126,10 +126,10 @@ DB filelds - TABLE: 'monitoring_quality_type'
 	}		
 
 	function getHora($date){
-		$convdate = explode(' ',$date);
-		$horas= explode(":",$convdate[1]);		
-		$hr= $horas[0];
-		$min= $horas[1];
+		$convdate = explode(' ', (string)$date);
+		$horas = explode(':', isset($convdate[1]) ? $convdate[1] : '00:00');
+		$hr = $horas[0];
+		$min = isset($horas[1]) ? $horas[1] : '00';
 		$getHora = array(0=>$hr,1=>$min);
 		return $getHora ;
 	}

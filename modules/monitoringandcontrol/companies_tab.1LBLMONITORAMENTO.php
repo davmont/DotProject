@@ -32,8 +32,8 @@ $controllerReport = new ControllerReport();
 					$cadastrados = $controllerReport -> obterDadosRelatorioGerenciaSenior($company_id);	
 					foreach($cadastrados as $cad){
 					
-					if($row['idc'] < 0.8){$corIdc="#FF9FA5";}elseif ($row['idc'] < 1){$corIdc="#FFFFAE";}elseif ($row['idc'] > 1){$corIdc="#B7FFB7";}
-					if($row['idp'] < 0.8){$corIdp="#FF9FA5";}elseif ($row['idp'] < 1){$corIdp="#FFFFAE";}elseif ($row['idp'] > 1){$corIdp="#B7FFB7";} 						
+					if($cad['idc'] < 0.8){$corIdc="#FF9FA5";}elseif ($cad['idc'] < 1){$corIdc="#FFFFAE";}elseif ($cad['idc'] > 1){$corIdc="#B7FFB7";}
+					if($cad['idp'] < 0.8){$corIdp="#FF9FA5";}elseif ($cad['idp'] < 1){$corIdp="#FFFFAE";}elseif ($cad['idp'] > 1){$corIdp="#B7FFB7";} 						
 				?>										
 					<tr>
 						<td align="center"><a href="?m=projects&a=view&project_id=<?php echo (int)$cad['id']; ?>">  <?php echo dPhtml($cad['projeto']); ?> </a></td>

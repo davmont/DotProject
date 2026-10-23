@@ -20,6 +20,15 @@ $controllerReport = new ControllerReport();
 $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
 $meeting_id = dPgetIntParam($_POST, 'meeting_id');	
 $meetingData = $controllerAta -> getListById($meeting_id);	 
+if (!$meetingData) {
+	$AppUI->setMsg('Invalid ID', UI_MSG_ERROR);
+	$AppUI->redirect($project_id ? 'm=projects&a=view&project_id=' . $project_id : 'm=projects');
+}
+$project_name = $controllerUtil->getProjectName($project_id);
+if (!$project_name) {
+	$project_id = (int)$meetingData['project_id'];
+	$project_name = $controllerUtil->getProjectName($project_id);
+}
 ?>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/ata.js" ></script>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/jquery.js" ></script>
@@ -51,9 +60,6 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 	  <tr>
       		<td align="right"><?php echo $AppUI->_('LBL_PROJETO'); ?>:</td>
              <td>
-             		<?php 
-							$project_name = $controllerUtil->getProjectName($project_id) ; 						
-					 ?>
                  <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name[0][0]); ?> " />					
             </td>
              <td colspan="6"></td>

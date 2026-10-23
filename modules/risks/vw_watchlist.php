@@ -96,7 +96,7 @@ $inactiveList = $q->loadList();
     <?php foreach ($activeList as $row) {
         ?>
         <tr>
-            <td nowrap style="background-color:#<?php echo $bg; ?>" width="30">
+            <td nowrap width="30">
                 <a href="index.php?m=risks&a=addedit&id=<?php
     echo($row['risk_id']);
     if ($projectSelected != null) {
@@ -187,7 +187,7 @@ $inactiveList = $q->loadList();
     </tr>
     <?php foreach ($inactiveList as $row) { ?>
         <tr>
-            <td nowrap style="background-color:#<?php echo $bg; ?>" width="30">
+            <td nowrap width="30">
                 <a href="index.php?m=risks&a=addedit&id=<?php
     echo($row['risk_id']);
     if ($projectSelected != null) {

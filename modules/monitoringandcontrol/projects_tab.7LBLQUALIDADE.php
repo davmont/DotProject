@@ -8,7 +8,6 @@ require_once(DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_qua
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 
 $AppUI->savePlace();
-$tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
 $project_id = dPgetIntParam( $_GET, 'project_id', 0 ); 
 
  ini_set('max_execution_time', 180);
@@ -42,7 +41,7 @@ global $AppUI;
         
             <td colspan="2">
                 <select name="user" size="1"  id="user" <?php echo dPaction(null, array(), null, array('submit' => '')); ?>>
-                    <option value"0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
+                    <option value="0"><?php echo $AppUI->_('LBL_SELECIONE'); ?>...</option>  
                     <?php		   		
                     $list = array();	
                     $list = $qualityControl -> obterUsuarioDeTarefa($project_id);

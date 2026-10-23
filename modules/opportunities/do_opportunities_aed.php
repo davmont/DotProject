@@ -68,7 +68,7 @@ if ($del) {
 			$q->AddInsert('opportunity_history_opportunity',$obj->opportunity_id);
 			$q->AddInsert('opportunity_history_name',$obj->opportunity_name);
 			$q->AddInsert('opportunity_history_orig',$obj->opportunity_orig);
-			$q->AddInsert('opportunity_history_email',$obj->opportunity_email);
+			$q->AddInsert('opportunity_history_email', '');	// opportunity_email is obsolete (2009)
 			$q->AddInsert('opportunity_history_desc',$obj->opportunity_desc);
 			$q->AddInsert('opportunity_history_priority',$obj->opportunity_priority);
 			$q->AddInsert('opportunity_history_boundaries',$obj->opportunity_boundaries);

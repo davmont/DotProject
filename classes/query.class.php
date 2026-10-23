@@ -786,7 +786,8 @@ class DBQuery
 				if (!$keys) {
 					$keys = array_keys($hash);
 				}
-				$hashlist[$hash[$keys[0]]] = $hash[$keys[1]];
+				// A one-column query maps each value to null, as before.
+				$hashlist[$hash[$keys[0]]] = isset($keys[1]) ? $hash[$keys[1]] : null;
 			}
 		}
 		$this->clear();

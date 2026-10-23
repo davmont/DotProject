@@ -2,13 +2,15 @@
 #
 #   make check         lint + phpstan + raw-input + inline-js + js-test (no sandbox needed)
 #   make audit-smoke   start docker/, reinstall the database, run the security smoke test
+#   make audit-full    start docker/, then docker/tests/run.sh: every add-on installed, used and
+#                      removed with no SQL error or PHP warning, layout in every theme (~1 hour)
 
 PHPSTAN_IMAGE := ghcr.io/phpstan/phpstan:2
 DOCKER_RUN := docker run --rm --user $(shell id -u):$(shell id -g) --security-opt label=disable -v $(CURDIR):/app -w /app
 export DP_UID := $(shell id -u)
 export DP_GID := $(shell id -g)
 
-.PHONY: check lint phpstan phpstan-baseline raw-input inline-js js-test audit-smoke
+.PHONY: check lint phpstan phpstan-baseline raw-input inline-js js-test audit-smoke audit-full
 
 check: lint phpstan raw-input inline-js js-test
 
@@ -45,3 +47,8 @@ audit-smoke:
 	@for i in $$(seq 30); do curl -s -o /dev/null http://127.0.0.1:8089/index.php && break; sleep 1; done
 	docker/reset-db.sh
 	docker/smoke.sh
+
+audit-full:
+	docker/up.sh
+	@for i in $$(seq 30); do curl -s -o /dev/null http://127.0.0.1:8089/index.php && break; sleep 1; done
+	docker/tests/run.sh

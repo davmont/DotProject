@@ -204,8 +204,8 @@ for ($i=($page-1)*$xpg_pagesize, $pmax=$page*$xpg_pagesize; $i<$pmax && $i<$xpg_
 			<font color="<?php 
 			echo (bestColor($row['project_color_identifier'])); ?>">
 			<?php
-			if ($row['project_id'] > 0) {
-				echo ('a href="?m=projects&amp;a=view&amp;project_id=' . $row['link_project'] 
+			if ($row['link_project'] > 0) {
+				echo ('<a href="?m=projects&amp;a=view&amp;project_id=' . (int)$row['link_project'] 
 				      . '">' . dPhtml($row['project_name']) . '</a>');
 			} else {
 				echo (dPhtml($row['project_name']));

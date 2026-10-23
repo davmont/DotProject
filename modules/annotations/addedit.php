@@ -91,7 +91,9 @@ if ($changed_show_date != "") $show_date=$changed_show_date;
 			$q -> addQuery('contact_first_name,contact_last_name');
 			$q -> addWhere('contact_id=( SELECT project_owner FROM ' . dPgetConfig('dbprefix', '') . 'projects WHERE project_id=' . (int)$project_id . ' ) ');
 			$tmp_project_owner_name = $q -> loadList();
-			$project_owner_name = $tmp_project_owner_name[0]['contact_last_name'].", ".substr($tmp_project_owner_name[0]['contact_first_name'],0,1).".";
+			$project_owner_name = !empty($tmp_project_owner_name[0])
+				? $tmp_project_owner_name[0]['contact_last_name'].", ".substr($tmp_project_owner_name[0]['contact_first_name'],0,1)."."
+				: '';
 		}
 
 // Get some SysVals:
@@ -407,12 +409,12 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 		</tr>
 		<tr>
 			<!-- ----------------------------- The Annotations -------------------- -->
-			<td nowrap="nowrap" align="center"><?php echo '<textarea style="font-size:8pt;" name="annotation_previous" cols="70" rows="10" wrap="physical">'.dPFormSafe( $obj->annotation_previous ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
+			<td nowrap="nowrap" align="center"><?php echo '<textarea style="font-size:8pt; width:100%; box-sizing:border-box;" name="annotation_previous" rows="10" wrap="physical">'.dPFormSafe( $obj->annotation_previous ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 										// please remember this! automatic translation by dP is only possible if all strings
 										// are handled like this
 			?>
 			</td>
-			<td nowrap="nowrap" align="center"><?php echo '<textarea style="font-size:8pt;" name="annotation_next" cols="70" rows="10" wrap="physical">'.dPFormSafe( $obj->annotation_next ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
+			<td nowrap="nowrap" align="center"><?php echo '<textarea style="font-size:8pt; width:100%; box-sizing:border-box;" name="annotation_next" rows="10" wrap="physical">'.dPFormSafe( $obj->annotation_next ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 										// please remember this! automatic translation by dP is only possible if all strings
 										// are handled like this
 			?></td>
@@ -466,7 +468,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 			}
 
 		?></td><td>	
-		<?php echo '<textarea style="font-size:8pt;" name="annotation_scope_desc" cols="50%" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_scope_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
+		<?php echo '<textarea style="font-size:8pt; width:100%; box-sizing:border-box;" name="annotation_scope_desc" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_scope_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 									// please remember this! automatic translation by dP is only possible if all strings
 									// are handled like this
 		?>
@@ -480,7 +482,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 						'<div style="color:'.$v.';">'.dPformSafe($v).'<input type="RADIO" name="annotation_resources" value="'.$k.'" style="color:'.$v.';">'."</div>";
 			}
 		?></td><td>
-		<?php echo '<textarea style="font-size:8pt;" name="annotation_resources_desc" cols="50%" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_resources_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
+		<?php echo '<textarea style="font-size:8pt; width:100%; box-sizing:border-box;" name="annotation_resources_desc" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_resources_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 									// please remember this! automatic translation by dP is only possible if all strings
 									// are handled like this
 		?>
@@ -494,7 +496,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 						'<div style="color:'.$v.';">'.dPformSafe($v).'<input type="RADIO" name="annotation_time" value="'.$k.'" style="color:'.$v.';">'."</div>";
 			}
 		?></td><td>
-		<?php echo '<textarea style="font-size:8pt;" name="annotation_time_desc" cols="50%" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_time_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
+		<?php echo '<textarea style="font-size:8pt; width:100%; box-sizing:border-box;" name="annotation_time_desc" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_time_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 									// please remember this! automatic translation by dP is only possible if all strings
 									// are handled like this
 		?>
@@ -527,7 +529,8 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 						$q->addOrder('annotation_date DESC');
 						$preset_values = $q->loadHash();
 						$q->clear();
-					// If something was altered:
+					// If something was altered (and there is an older annotation to take the values from):
+					if ($preset_values) {
 					if (	$obj->annotation_strategy == NULL ||	$obj->annotation_sholders == NULL ||	$obj->annotation_risks == NULL
 						||	$obj->annotation_sizing == NULL ||	$obj->annotation_horizontality == NULL ||	$obj->annotation_costbenefit == NULL)
 						$presets_from = "From <a href='index.php?m=annotations&a=addedit&project_id=".$preset_values['annotation_project']."&show_date=".str_replace("-","",$preset_values['annotation_date'])."'>
@@ -539,6 +542,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 					if ($obj->annotation_sizing == NULL) $obj->annotation_sizing = $preset_values['annotation_sizing'];
 					if ($obj->annotation_horizontality == NULL) $obj->annotation_horizontality = $preset_values['annotation_horizontality'];
 					if ($obj->annotation_costbenefit == NULL) $obj->annotation_costbenefit = $preset_values['annotation_costbenefit'];
+					}
 				}
 			// ********** If there are no Values --> try to get them out of Details   ( Anno -> Details -> Opps ) ***************************************************************************
 					// We need the right detail:   detail_project = annotation_project
@@ -684,10 +688,10 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 			<br><input type="checkbox" name="annotation_must" value="1" <?php echo $checked; ?>><?php echo $AppUI->_('This is a')."<b>&nbsp;".$AppUI->_('Must do')."</b>";?></td>
 		<td align="center" nowrap="nowrap"><?php echo ($presets_from != "") ? "<p style=\"font-size: 10px;\">(".$presets_from.")</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" : ""; echo $AppUI->_('Rationale');?></td>
 	</tr><tr>
-		<td align="center" nowrap="nowrap"><textarea name="annotation_must_rationale" cols="80" <?php echo $box_style; ?>>
+		<td align="center" width="50%"><textarea name="annotation_must_rationale" rows="3" style="width:100%; box-sizing:border-box;">
 											<?php echo ($obj->annotation_must_rationale != "") ? dPformSafe($obj->annotation_must_rationale) : "";?></textarea></td>
-		<td align="center" width="100%">
-			<textarea name="annotation_rationale" cols="80" <?php echo $box_style; ?>><?php echo dPformSafe($obj->annotation_rationale);?></textarea>
+		<td align="center" width="50%">
+			<textarea name="annotation_rationale" rows="3" style="width:100%; box-sizing:border-box;"><?php echo dPformSafe($obj->annotation_rationale);?></textarea>
 		</td>
 	</tr>	
 	

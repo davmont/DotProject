@@ -15,15 +15,19 @@ $companies = $row->getAllowedRecords( $AppUI->user_id, 'company_id,company_name'
 $companies = arrayMerge( array( '0'=>'' ), $companies );
 
 // setup the title block
-$ttl = $project_id > 0 ? "Edit Hosting/Domain" : "New Hosting/Domain";
+$ttl = $domain_id > 0 ? "Edit Hosting/Domain" : "New Hosting/Domain";
 $titleBlock = new CTitleBlock( $ttl, 'applet3-48.png', $m, "$m.$a" );
 $titleBlock->addCrumb( "?m=hosting", "list all" );
-$titleBlock->addCrumbDelete( 'delete domain', true, $msg );
+$titleBlock->addCrumbDelete( 'delete domain', true );
 $titleBlock->show();
 
 $row = new CHosting();
 
-if(isset($domain_id)) $row->load($domain_id);
+if ($domain_id && !$row->load($domain_id)) {
+	$AppUI->setMsg('Hosting/Domain', UI_MSG_ERROR);
+	$AppUI->setMsg('not found', UI_MSG_ERROR, true);
+	$AppUI->redirect('m=hosting');
+}
 ?>
 <table cellspacing="0" cellpadding="4" border="0" width="100%" class="std">
 <form name="editFrm" action="./index.php?m=hosting" method="post">

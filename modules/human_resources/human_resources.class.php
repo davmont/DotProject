@@ -24,11 +24,6 @@ class CHumanResource extends CDpObject
 	{
 
 		parent::__construct('human_resource', 'human_resource_id', 'human_resources');
-		$initial_url = substr($human_resource_lattes_url, 0, 6);
-		$http = 'http://';
-		if (strcmp($initial_url, $http) != 0) {
-			$human_resource_lattes_url = $http . $human_resource_lattes_url;
-		}
 	}
 
 	function canDelete(&$msg, $oid = null, $joins = null)

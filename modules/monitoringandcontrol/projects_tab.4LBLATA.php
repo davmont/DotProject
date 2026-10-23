@@ -7,7 +7,6 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/translations.php");
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ata.class.php");
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 
-$tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
 $project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $controllerAta= new ControllerAta();
 $controllerUtil = new ControllerUtil();

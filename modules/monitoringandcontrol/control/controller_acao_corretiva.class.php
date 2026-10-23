@@ -12,13 +12,16 @@ DB filelds - TABLE: 'monitoring_change_request ' :
 		
 	function insert($index,$task_id,$impact,$status,$description,$cause,$acao_corretiva,$user_id,$date_limit,$id_ata,$project_id){
 			$controllerUtil = new ControllerUtil();
-			$q = new DBQuery(); 		 
-			
-			for($i=0;$i<count($index);$i++){  	
+			// One row per set of fields (impact[], status[], ...); $index is the
+			// form's single row number and was counted as if it were the list
+			// (count() of a string is a fatal error on PHP 8).
+			$rows = is_array($impact) ? count($impact) : 0;
+			for($i=0;$i<$rows;$i++){  	
 				$prazo =  $date_limit[$i];
 				$date_timestamp = $controllerUtil->data_to_timestamp ($prazo);
 				$data_limite = date('Y-m-d',$date_timestamp);
 				
+				$q = new DBQuery();
 				$q-> addTable('monitoring_change_request');
 				$q->addInsert('user_id', $user_id[$i]);
 				$q->addInsert('task_id', $task_id);
@@ -144,6 +147,6 @@ DB filelds - TABLE: 'monitoring_change_request ' :
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		
-		return $list[0];
+		return $list ? $list[0] : null;
 	}		
 }

@@ -59,7 +59,15 @@ $q->addQuery('*');
 $q->addWhere('history_id =' . (int)$history_id);
 $sql = $q->prepare();
 $q->clear();
-db_loadHash($sql, $history);
+$history = array();
+if (!db_loadHash($sql, $history)) {
+	if ($history_id) {
+		$AppUI->setMsg('History', UI_MSG_ERROR);
+		$AppUI->setMsg('not found', UI_MSG_ERROR, true);
+		$AppUI->redirect('m=history');
+	}
+	$history = array('history_project' => 0, 'history_description' => '');
+}
 
 $title = (($history_id) ? 'Edit History' : 'Add History');
 $titleBlock = new CTitleBlock($title, 'stock_book_blue_48.png', $m, "$m.$a");
@@ -104,7 +112,7 @@ echo arraySelect($projects, 'history_project', 'class="text"', $history["history
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Description');?>:</td>
 	<td width="60%">
-		<textarea name="history_description" class="textarea" cols="60" rows="5" wrap="virtual"><?php echo $history["history_description"];?></textarea>
+		<textarea name="history_description" class="textarea" cols="60" rows="5" wrap="virtual"><?php echo dPformSafe($history["history_description"]);?></textarea>
 	</td>
 </tr>	
 		

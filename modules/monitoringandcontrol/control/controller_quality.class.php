@@ -47,6 +47,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 	function  obterQuantidadeTarefaComErro($project_id, $user){
 	
 		$list = array();
+		$arQualidadeBarComErro = array();
 		$q = new DBQuery;
 		$q->addQuery('distinct qt.quality_type_id, qt.quality_type_name');
 		$q->addTable('monitoring_quality_type', 'qt');

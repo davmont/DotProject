@@ -25,14 +25,19 @@ if (!db_loadObject($q->prepare(), $obj) && ($budget_reserve_id > 0)) {
     $AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
     $AppUI->redirect();
 }
+if (!$obj) {
+    // A new record: the form starts empty.
+    $obj = new CBudgetReserve();
+}
 
 $q->clear();
 $q->addQuery('project_start_date,project_end_date');
 $q->addTable('projects');
 $q->addWhere("project_id = '$projectSelected'");
 $datesProject = & $q->exec();
-$dateSP =substr($datesProject->fields['project_start_date'], 0, -9);
-$dateTemp = substr($datesProject->fields['project_end_date'], 0, -9);
+$projectDates = ($datesProject && !$datesProject->EOF) ? $datesProject->fields : array('project_start_date' => '', 'project_end_date' => '');
+$dateSP =substr((string)$projectDates['project_start_date'], 0, -9);
+$dateTemp = substr((string)$projectDates['project_end_date'], 0, -9);
 $dateEP = (string)$dateTemp;
 
 

@@ -174,7 +174,7 @@ if ($do_task_log) {
 					$status_log_id = $hditem->log_status(0,$AppUI->_('Created'),$new_item);
 					// Lets create a task log for the item creation:
 					$obj = new CHDTaskLog();
-					$new_item_log = array('task_log_id' => 0,'task_log_help_desk_id' => $hditem->item_id, 'task_log_creator' => $AppUI->user_id, 'task_log_name' => 'Item Created: '.$_POST['item_title'], 'task_log_date' => $hditem->item_created, 'task_log_description' => $_POST['item_title'], 'task_log_hours' => $_POST['task_log_hours'], 'task_log_costcode' => $_POST['task_log_costcode']);
+					$new_item_log = array('task_log_id' => 0,'task_log_help_desk_id' => $hditem->item_id, 'task_log_creator' => $AppUI->user_id, 'task_log_name' => 'Item Created: '.$_POST['item_title'], 'task_log_date' => $hditem->item_created, 'task_log_description' => $_POST['item_title'], 'task_log_hours' => (float)dPgetParam($_POST, 'task_log_hours', 0), 'task_log_costcode' => (int)dPgetParam($_POST, 'task_log_costcode', 0));
 					if (!$obj->bind( $new_item_log )) {
 						$AppUI->setMsg($obj->getError(), UI_MSG_ERROR);
 						$AppUI->redirect();
@@ -201,7 +201,7 @@ if ($do_task_log) {
  * @param CHelpDeskItem $hditem
  */
 function doWatchers($list, $hditem) {
-	global $AppUI;
+	global $AppUI, $del;
 
 	// Create the watcher list
 	$watcherlist = explode(',', $list);

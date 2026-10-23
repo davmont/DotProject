@@ -97,7 +97,8 @@ if (!defined('DP_BASE_DIR')) {
 				<td colspan="2">
 			<?php
 				echo $AppUI->_('Select').' '.$AppUI->_($selection_string).':<br />';
-				echo arraySelect($company_list, $id_field, ' size="10"', $company_id);
+				// The list takes the window height left by the buttons (themes differ in font size).
+				echo arraySelect($company_list, $id_field, ' size="10" style="height: calc(100vh - 110px); min-height: 4em;"', $company_id);
 			?>
 				</td>
 			</tr>

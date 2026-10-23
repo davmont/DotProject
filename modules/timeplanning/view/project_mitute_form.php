@@ -3,7 +3,7 @@ if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 ?>
-	<?php $actionEstimation=$_GET['action_estimation'];?>
+	<?php $actionEstimation = dPgetCleanParam($_GET, 'action_estimation', '');?>
 	<div id="ata_div" width="100%" style="display:<?php echo $actionEstimation=="read"?'block':'none'; ?>">
 		<!-- TinyMCE -->
 		<script type="text/javascript" src="./modules/timeplanning/js/jsLibraries/tiny_mce/tiny_mce.js"></script>

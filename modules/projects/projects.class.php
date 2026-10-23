@@ -250,7 +250,10 @@ class CProject extends CDpObject
 			$ndkey = $taskXref[$odkey];
 			$odep = explode(',', $od);
 			foreach ($odep as $odt) {
-				$ndt = $ndt . $taskXref[$odt] . ',';
+				// '' when the task has no dependency; others may be outside the copy.
+				if (isset($taskXref[$odt])) {
+					$ndt = $ndt . $taskXref[$odt] . ',';
+				}
 			}
 			$ndt = rtrim($ndt, ',');
 			$newDeps[$ndkey] = $ndt;

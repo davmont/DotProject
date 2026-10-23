@@ -467,6 +467,8 @@ class CAppUI
 	{
 		global $locale_char_set;
 
+		$str = (string)$str;
+
 		if (!$locale_char_set) {
 			$locale_char_set = 'utf-8';
 		}
@@ -1318,6 +1320,13 @@ class CTitleBlock_core
 	var $cells = null;
 	/** @var string The reference for the context help system */
 	var $helpref = '';
+	/** @var array Cells beside the title, cells below it, crumbs and breadcrumbs */
+	var $cells1 = array();
+	var $cells2 = array();
+	var $crumbs = array();
+	var $breadcrumbs = array();
+	/** @var bool Whether the context help icon is shown */
+	var $showhelp = false;
 
 	/**
 	 * The constructor

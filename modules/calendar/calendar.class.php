@@ -432,7 +432,7 @@ class CMonthCalendar
 			$alt = isset($e['alt']) ? str_replace("\n", ' ', $e['alt']) : null;
 
 			$s .= "<div>\n";
-			$s .= '<span style="' . $AppUI->___($e['style']) . '">';
+			$s .= '<span style="' . $AppUI->___(isset($e['style']) ? $e['style'] : '') . '">';
 			$s .= (($href) ? ('<a href="' . $AppUI->___($href) . '" class="event" title="'
 				. $AppUI->___($alt) . '">') : '');
 			$s .= $e['text'];

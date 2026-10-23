@@ -52,6 +52,10 @@ if (!db_loadObject($q->prepare(), $obj) && ($risk_id > 0)) {
     $AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
     $AppUI->redirect();
 }
+if (!$obj) {
+    // A new risk: the form starts empty.
+    $obj = new CRisks();
+}
 
 // collect all the users for the company owner list
 $q = new DBQuery;
@@ -195,7 +199,7 @@ $titleBlock->show();
                             $project = $q->loadHashList();
                             if ($projectSelected == null) {
                                 $projectSelected = @$obj->risk_project;
-                                $projectName = $projects[@$obj->risk_project];
+                                $projectName = isset($projects[$obj->risk_project]) ? $projects[$obj->risk_project] : '';
                                 $project[@$obj->risk_project] = $projectName;
                             }
                             echo arraySelect($project, 'risk_project', 'size="1" class="text"', (@$obj->risk_project ? dPformSafe(@$obj->risk_project) : $projectSelected));
