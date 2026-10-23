@@ -43,48 +43,20 @@ echo "m=$m&a=$a&date=$date"; ?>">
 				?>
 				</select>
 			</td>
-			<td align="right" width="50%"><?php echo $AppUI->_('Show'); ?>:</td>
+			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Show'); ?>:</td>
 			<td>
-				<input type="checkbox" name="show_pinned" id="show_pinned"
-					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showPinned) ? 'checked="checked"' : ''); ?> />
-			</td>
-			<td nowrap="nowrap">
-				<label for="show_pinned"><?php echo $AppUI->_('Pinned Only'); ?></label>
-			</td>
-			<td>
-				<input type="checkbox" name="show_arc_proj" id="show_arc_proj"
-					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showArcProjs) ? 'checked="checked"' : ''); ?> />
-			</td>
-			<td nowrap="nowrap">
-				<label for="show_arc_proj"><?php echo $AppUI->_('Archived Projects'); ?></label>
-			</td>
-			<td>
-				<input type="checkbox" name="show_hold_proj" id="show_hold_proj"
-					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showHoldProjs) ? 'checked="checked"' : ''); ?> />
-			</td>
-			<td nowrap="nowrap">
-				<label for="show_hold_proj"><?php echo $AppUI->_('Projects on Hold'); ?></label>
-			</td>
-			<td>
-				<input type="checkbox" name="show_dyn_task" id="show_dyn_task"
-					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showDynTasks) ? 'checked="checked"' : ''); ?> />
-			</td>
-			<td nowrap="nowrap">
-				<label for="show_dyn_task"><?php echo $AppUI->_('Dynamic Tasks'); ?></label>
-			</td>
-			<td>
-				<input type="checkbox" name="show_low_task" id="show_low_task"
-					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showLowTasks) ? 'checked="checked"' : ''); ?> />
-			</td>
-			<td nowrap="nowrap">
-				<label for="show_low_task"><?php echo $AppUI->_('Low Priority Tasks'); ?></label>
-			</td>
-			<td>
-				<input type="checkbox" name="show_empty_date" id="show_empty_date"
-					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showEmptyDate) ? 'checked="checked"' : ''); ?> />
-			</td>
-			<td nowrap="nowrap">
-				<label for="show_empty_date"><?php echo $AppUI->_('Empty Dates'); ?></label>
+				<span style="white-space: nowrap;"><input type="checkbox" name="show_pinned" id="show_pinned"
+					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showPinned) ? 'checked="checked"' : ''); ?> /> <label for="show_pinned"><?php echo $AppUI->_('Pinned Only'); ?></label></span>
+				<span style="white-space: nowrap;"><input type="checkbox" name="show_arc_proj" id="show_arc_proj"
+					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showArcProjs) ? 'checked="checked"' : ''); ?> /> <label for="show_arc_proj"><?php echo $AppUI->_('Archived Projects'); ?></label></span>
+				<span style="white-space: nowrap;"><input type="checkbox" name="show_hold_proj" id="show_hold_proj"
+					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showHoldProjs) ? 'checked="checked"' : ''); ?> /> <label for="show_hold_proj"><?php echo $AppUI->_('Projects on Hold'); ?></label></span>
+				<span style="white-space: nowrap;"><input type="checkbox" name="show_dyn_task" id="show_dyn_task"
+					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showDynTasks) ? 'checked="checked"' : ''); ?> /> <label for="show_dyn_task"><?php echo $AppUI->_('Dynamic Tasks'); ?></label></span>
+				<span style="white-space: nowrap;"><input type="checkbox" name="show_low_task" id="show_low_task"
+					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showLowTasks) ? 'checked="checked"' : ''); ?> /> <label for="show_low_task"><?php echo $AppUI->_('Low Priority Tasks'); ?></label></span>
+				<span style="white-space: nowrap;"><input type="checkbox" name="show_empty_date" id="show_empty_date"
+					<?php echo dPaction(null, array(), 'change', array('submit' => 'form_buttons')); ?> <?php echo (($showEmptyDate) ? 'checked="checked"' : ''); ?> /> <label for="show_empty_date"><?php echo $AppUI->_('Empty Dates'); ?></label></span>
 			</td>
 		</tr>
 	</table>
