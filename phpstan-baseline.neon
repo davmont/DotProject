@@ -1309,36 +1309,6 @@ parameters:
 			path: modules/dotproject_plus/do_save_activity_estimations.php
 
 		-
-			message: '#^File ends with a trailing whitespace\. This may cause problems when running the code in the web browser\. Remove the closing \?\> mark or remove the whitespace\.$#'
-			identifier: whitespace.fileEnd
-			count: 1
-			path: modules/dotproject_plus/feedback/feedback.php
-
-		-
-			message: '#^Binary operation "\-" between ''01''\|''02''\|''03''\|''04''\|''05''\|''06''\|''07''\|''08''\|''09''\|''10''\|''11''\|''12'' and ''01''\|''02''\|''03''\|''04''\|''05''\|''06''\|''07''\|''08''\|''09''\|''10''\|''11''\|''12'' results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: modules/dotproject_plus/feedback/feedback_controller.php
-
-		-
-			message: '#^Call to an undefined static method CInitiating\:\:findByProjectId\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 8
-			path: modules/dotproject_plus/feedback/feedback_controller.php
-
-		-
-			message: '#^Constant initiating_obj not found\.$#'
-			identifier: constant.notFound
-			count: 1
-			path: modules/dotproject_plus/feedback/feedback_controller.php
-
-		-
-			message: '#^Method CFeedbackEvaluation\:\:store\(\) should return string\|null but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: modules/dotproject_plus/feedback/user_feedback_evaluation/feedback_evaluation.class.php
-
-		-
 			message: '#^Path in include\(\) "gantt_pdf\.php" is not a file or it does not exist\.$#'
 			identifier: include.fileNotFound
 			count: 1
