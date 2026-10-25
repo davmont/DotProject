@@ -109,12 +109,16 @@ Two test suites live alongside the application:
   ```
   php tests/cli_runner.php
   ```
-- **JavaScript — Jest** for client-side helpers (jscalendar `%T` / `%R` / `%X` /
-  `%r` format specifiers, etc.). Run with:
+- **JavaScript — Jest** in [tools/jest/](tools/jest/) for the scripts in `js/`
+  (`dp-actions.js`, `base.js`, the context menu, Gantt and UI helpers). Run with
+  `make js-test` (in the `node:22` image), or:
   ```
-  npm install
-  npm test
+  cd tools/jest && npm ci && npm test
   ```
+
+Node.js is only used by these development tools ([tools/](tools/)); a server
+does not need it. The browser checks of the docker audit suite are described in
+[docker/README.md](docker/README.md).
 
 ---
 

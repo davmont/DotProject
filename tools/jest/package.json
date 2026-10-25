@@ -1,0 +1,17 @@
+{
+  "name": "dotproject-jest",
+  "private": true,
+  "description": "Jest tests for js/ (make js-test). Development only: not needed on a server.",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/tests"
+    ]
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0"
+  }
+}

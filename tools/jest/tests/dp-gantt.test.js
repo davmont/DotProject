@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const load = (file) => window.eval(fs.readFileSync(path.resolve(__dirname, '..', file), 'utf8'));
+const load = (file) => window.eval(fs.readFileSync(path.resolve(__dirname, '../../../js', file), 'utf8'));
 
 describe('dp-gantt.js', () => {
 	test('draws each data block once, with the server-escaped rows untouched', () => {

@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const source = fs.readFileSync(path.resolve(__dirname, '../dp-actions.js'), 'utf8');
+const source = fs.readFileSync(path.resolve(__dirname, '../../../js/dp-actions.js'), 'utf8');
 
 beforeAll(() => {
 	window.eval(source);

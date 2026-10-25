@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Read the file content
-const baseJsPath = path.resolve(__dirname, '../base.js');
+const baseJsPath = path.resolve(__dirname, '../../../js/base.js');
 const baseJsContent = fs.readFileSync(baseJsPath, 'utf8');
 
 describe('Comparable', () => {

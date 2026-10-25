@@ -2,7 +2,6 @@
 /.buildpath
 /.project
 /error_log
-node_modules/
 output.txt
 test_out.txt
 existing_labels_es.txt
@@ -21,7 +20,7 @@ includes/config.php
 # PHPStan result cache
 .phpstan-cache/
 
-# npm dependencies (Jest for js/tests)
+# npm dependencies (tools/jest, tools/browser)
 node_modules/
 
 # docker/tests output (make audit-full)
