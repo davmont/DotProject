@@ -394,3 +394,5 @@ See `docker/README.md`. Quick start:
     # http://127.0.0.1:8089  admin/passwd (administrator), worker/worker (Project worker role)
 
 The repo is mounted read-only; code changes are live immediately. `docker/config.php` replaces `includes/config.php` inside the container.
+
+Development tools (2026-10-25): the Node.js tooling lives in `tools/` (`tools/jest` for `make js-test`, `tools/browser` for the audit suite's browser checks); release archives leave out `tools/`, `docker/`, `tests/` and `.github/` (`.gitattributes`). `make rehearse DUMP=prod.sql.gz ADMIN=<user>` upgrades a copy of a production database in the sandbox and crawls it (`docker/README.md`). Its first runs found two bugs, now fixed: fresh installs recorded an old `last_db_update`, so the next upgrade failed with "Duplicate column name 'user_reset_token'"; and Tasks per User logged `CTask::__toString()` warnings.
