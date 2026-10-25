@@ -5,13 +5,15 @@
 #   make sample-data   start docker/, reinstall the database, load the sample data (db/sample/)
 #   make audit-full    start docker/, then docker/tests/run.sh: every add-on installed, used and
 #                      removed with no SQL error or PHP warning, layout in every theme (~1 hour)
+#   make rehearse DUMP=prod.sql.gz [ADMIN=user]
+#                      upgrade a copy of a production database in docker/ (docker/rehearse.sh)
 
 PHPSTAN_IMAGE := ghcr.io/phpstan/phpstan:2
 DOCKER_RUN := docker run --rm --user $(shell id -u):$(shell id -g) --security-opt label=disable -v $(CURDIR):/app -w /app
 export DP_UID := $(shell id -u)
 export DP_GID := $(shell id -g)
 
-.PHONY: check lint phpstan phpstan-baseline raw-input inline-js js-test audit-smoke audit-full sample-data
+.PHONY: check lint phpstan phpstan-baseline raw-input inline-js js-test audit-smoke audit-full sample-data rehearse
 
 check: lint phpstan raw-input inline-js js-test
 
@@ -59,3 +61,9 @@ sample-data:
 	@for i in $$(seq 30); do curl -s -o /dev/null http://127.0.0.1:8089/index.php && break; sleep 1; done
 	docker/reset-db.sh
 	docker compose -f docker/compose.yml exec -T web php db/sample/sample-data.php
+
+rehearse:
+	@test -n "$(DUMP)" || { echo "usage: make rehearse DUMP=/path/to/dump.sql[.gz] [ADMIN=user]"; exit 2; }
+	docker/up.sh
+	@for i in $$(seq 30); do curl -s -o /dev/null http://127.0.0.1:8089/index.php && break; sleep 1; done
+	docker/rehearse.sh "$(DUMP)" $(ADMIN)
