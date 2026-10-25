@@ -75,7 +75,7 @@ function popCalendar( field ){
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = document.getElementById('task_' + calendarField.name);
+	fld_date = document.getElementById('unittest_' + calendarField.name);
 	calendarField.value = fdate;
 	fld_date.value = idate;
 

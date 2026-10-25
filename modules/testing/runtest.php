@@ -22,12 +22,9 @@ if (!$canEdit) {
 // use the object oriented design of dP for loading the quote that should be edited
 // therefore create a new instance of the Einstein Class
 $obj = new CTesting();
-$obj->unittest_lasttested = '2005-07-07';
 
 // format dates
 $df = $AppUI->getPref('SHDATEFORMAT');
-
-$lasttested = intval( $obj->unittest_lasttested ) ? new CDate( $obj->unittest_lasttested ) : new CDate();
 
 // load the record data in case of that this script is used to edit the quote qith unittest_id (transmitted via GET)
 if (!$obj->load( $unittest_id, false ) && $unittest_id > 0) {
@@ -38,6 +35,8 @@ if (!$obj->load( $unittest_id, false ) && $unittest_id > 0) {
 	$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
 	$AppUI->redirect();					// go back to the calling location
 }
+// The date of the loaded test (today for a new one).
+$lasttested = intval( $obj->unittest_lasttested ) ? new CDate( $obj->unittest_lasttested ) : new CDate();
 
 // check if this record has dependancies to prevent deletion
 $msg = '';
