@@ -33,12 +33,10 @@ if ( isset( $_GET["earning_id"] ) ) {
 	$dbprefix = dPgetConfig('dbprefix', '');
 	$sql = "SELECT i1.earning_id, i1.earning_user_id, i1.earning_date, i1.earning_num, i1.earning_submit_company_id, i1.earning_submit_contact, 
 	i1.earning_submit_email, i1.earning_submit_phone, i1.earning_submit_address1, i1.earning_submit_address2, i1.earning_submit_city, i1.earning_submit_state, 
-	i1.earning_submit_zip, i1.earning_terms, i1.earning_comments, 
+	i1.earning_submit_zip, i1.earning_terms, i1.earning_comments, i1.earning_title, 
 	i1.earning_total, i1.earning_submitted, i1.earning_submitted_comment, i1.earning_approved, 
-	i1.earning_approved_comment, i1.earning_paid, i1.earning_paid_comment, i2.earning_items_id, i2.earning_parent_id, 
-	i2.earning_tasklog_id, i2.earning_item_date, i2.earning_item_description, i2.earning_item_hours, 
-	i2.earning_item_costcode, i2.earning_item_rate, c.company_name, u.user_username 
-	FROM {$dbprefix}earnings i1, {$dbprefix}earnings_items i2, {$dbprefix}companies c, {$dbprefix}users u
+	i1.earning_approved_comment, i1.earning_paid, i1.earning_paid_comment, c.company_name, u.user_username 
+	FROM {$dbprefix}earnings i1, {$dbprefix}companies c, {$dbprefix}users u
 	WHERE c.company_id = i1.earning_submit_company_id AND u.user_id = i1.earning_user_id AND i1.earning_id = $earning_id
 	GROUP BY i1.earning_id";
 	//echo $sql;
@@ -47,7 +45,8 @@ if ( isset( $_GET["earning_id"] ) ) {
 	if (!db_loadObject( $sql, $obj )) {
 		$AppUI->setMsg( 'earning' );
 		$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
-		$AppUI->redirect();
+		// Not back to the saved place: that can be this page, which loops.
+		$AppUI->redirect('m=earnings');
 	} else {
 		$AppUI->savePlace();
 	}
@@ -74,13 +73,14 @@ if ( isset( $_GET["earning_id"] ) ) {
 $earning_date = intval( $obj->earning_date ) ? new CDate( $obj->earning_date ) : new CDate();
 
 // setup the title block
+$msg = '';
 // customize by user-type
 if ( $AppUI->user_type != 7 ) {
 	if ($form_mode == 1 ) {
 		$titleBlock = new CTitleBlock( 'Edit Invoice', 'earnings.gif', $m, "$m.$a" );
 		$titleBlock->addCrumb( "?m=earnings", "invoices list" );
 		if ($canEdit) {
-			if ($canEdit and $obj->submitted_date == Null) {
+			if ($canEdit and !intval($obj->earning_submitted)) {
 				$titleBlock->addCrumbDelete( 'delete invoice', $canDelete, $msg );
 			}
 		}
@@ -93,7 +93,7 @@ if ( $AppUI->user_type != 7 ) {
 		$titleBlock = new CTitleBlock( 'Edit Timecard', 'earnings.gif', $m, "$m.$a" );
 		$titleBlock->addCrumb( "?m=earnings", "timecards list" );
 		if ($canEdit) {
-			if ($canEdit and $obj->submitted_date == Null) {
+			if ($canEdit and !intval($obj->earning_submitted)) {
 				$titleBlock->addCrumbDelete( 'delete timecard', $canDelete, $msg );
 			}
 		}
@@ -183,15 +183,27 @@ function selectCompany(companyID) {
 	document.editFrm.earning_submit_zip.value="";
 	document.editFrm.earning_submit_phone.value="";
 }
+
+// The title block's delete link.
+function delIt() {
+	if (confirm( "Are you sure you want to delete this form? All history will be lost and all line items within it will be released for use on other forms." )) {
+		document.frmDelete.submit();
+	}
+}
 </script>
+<?php if ( $form_mode == 1 ) { ?>
+<form name="frmDelete" action="?m=earnings&a=inv_aed&earning_id=<?php echo (int)$earning_id; ?>" method="post">
+	<input type="hidden" name="inv_dosql" value="killearning" />
+</form>
+<?php } ?>
 <table border="1" cellpadding="4" cellspacing="0" width="100%" class="std">
 <?php if ( $form_mode == 1 ) { ?>
 	<form name="editFrm" action="?m=earnings&a=inv_aed&earning_id=<?php echo $earning_id;?>" method="post">
 	<input type="hidden" name="inv_dosql" value="editinv"/>
-<? } else { ?>
+<?php } else { ?>
 	<form name="editFrm" action="?m=earnings&a=inv_aed&earning_id=0" method="post">
 	<input type="hidden" name="inv_dosql" value="addinv"/>
-<? } ?>
+<?php } ?>
 <tr>
 	<td width="50%" valign="top">
 		<strong><?php echo $AppUI->_('Form Details');?></strong>
@@ -296,7 +308,7 @@ function selectCompany(companyID) {
 				<input type="hidden" name="earning_submit_state" value="">
 				<input type="hidden" name="earning_submit_zip" value="">
 				<input type="hidden" name="earning_submit_phone" value="">
-			<? } ?>
+			<?php } ?>
 		</tr>
 		</table>
 	</td>
