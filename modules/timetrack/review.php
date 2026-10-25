@@ -62,7 +62,7 @@ $crumbs["?m=timetrack&timesheet_id=$timesheet_id&f=$f"] = "timesheets list";
 ?>
 <table width="98%" border="0" cellpadding="0" cellspacing="2"> 
 <tr> 
-	<td><img src="./images/icons/projects.gif" alt="" border="0" width=42 height=42></td> 
+	<td><img src="./modules/timetrack/images/applet3-48.png" alt="" border="0" width=42 height=42></td> 
 	<td nowrap>
 		<span class="title"><?php echo $AppUI->_( 'Review Timesheet' ); ?></span>
 	</td> 

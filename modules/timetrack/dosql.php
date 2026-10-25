@@ -11,7 +11,9 @@ if (($msg = $timedata->bind( $_POST ))) {
 	$AppUI->redirect();
 }
 // convert dates to SQL format first
-$timedata->tt_data_date = db_unix2DateTime( $timedata->tt_data_date );
+// (the form sends YYYYMMDD, as the public calendar returns it)
+$tt_date = new CDate(preg_match('/^\d{8}$/', (string)$timedata->tt_data_date) ? $timedata->tt_data_date : null);
+$timedata->tt_data_date = $tt_date->format(FMT_DATETIME_MYSQL);
 
 if ($del) {
 	if (($msg = $timedata->delete())) {
@@ -21,16 +23,6 @@ if ($del) {
 		$AppUI->setMsg( "Timesheet entry deleted", UI_MSG_ALERT );
 		$AppUI->redirect( "m=timesheets" );
 	}
-} elseif ($sendin) {
-	// I know it's not OO, but I need it working NOW
-	$sql = "UPDATE timetrack_idx SET tt_active = '0' WHERE tt_id = $timesheet_id";
-	$result = db_exec ($sql);
-	if (!$result) {
-		$AppUI->setMsg( $result, UI_MSG_ERROR );
-	} else {
-		$AppUI->setMsg( "Timesheet $timesheet_id sent in", UI_MSG_OK);
-	}
-	$AppUI->redirect();
 } else {
 	$isNotNew = @$_POST['tt_data_id'];
 	if (($msg = $timedata->store())) {

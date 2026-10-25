@@ -82,14 +82,18 @@ var calendarField = '';
 
 function popCalendar( field ){
 	calendarField = field;
-	uts = document.AddEdit['tt_data_' + field].value;
-	window.open( './calendar.php?callback=setCalendar&uts=' + uts, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
+	var idate = document.AddEdit['tt_data_' + field].value;
+	window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=280, height=250, scrollbars=no, status=no');
 }
 
-function setCalendar( uts, fdate ) {
-	fld_uts = document.AddEdit['tt_data_' + calendarField];
-	fld_fdate = document.AddEdit[calendarField];
-	fld_uts.value = uts;
+/**
+*	@param string Input date in the format YYYYMMDD
+*	@param string Formatted date
+*/
+function setCalendar( idate, fdate ) {
+	var fld_date = document.AddEdit['tt_data_' + calendarField];
+	var fld_fdate = document.AddEdit[calendarField];
+	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
 
@@ -186,7 +190,7 @@ function changeListFrom( select, listName, sourceName ) {
 <input type="hidden" name="tt_data_id" value="<?php echo (($tid > 0) ? $tid : "0"); ?>">
 
 <tr>
-	<td><img src="./images/icons/projects.gif" alt="" border="0"></td>
+	<td><img src="./modules/timetrack/images/applet3-48.png" alt="" border="0" width=42 height=42></td>
 	<td nowrap>
 		<span class="title">
 		<?php echo (($tid > 0) ? "Editing Row $tid - TimeSheet $timesheet_id" : "Adding New Row" ); ?>
@@ -237,7 +241,7 @@ function changeListFrom( select, listName, sourceName ) {
 <tr>
 	<td align="right" nowrap="nowrap">Date:</td>
 	<td>
-		<input type="hidden" name="tt_data_date" value="<?php echo $date->getTime();?>">
+		<input type="hidden" name="tt_data_date" value="<?php echo $date->format(FMT_TIMESTAMP_DATE);?>">
 		<input type="text" name="date" value="<?php echo $date->format($df);?>" class="text" disabled="disabled">
 		<a href="#"<?php echo dPaction('popCalendar', array('date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0">
