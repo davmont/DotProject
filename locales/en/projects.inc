@@ -1,6 +1,7 @@
 ##
 ## DO NOT MODIFY THIS FILE BY HAND!
 ##
+"Calculated from the task costs",
 "Collapse All",
 "% of work done (based on duration)",
 "(no end date)",

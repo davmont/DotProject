@@ -839,4 +839,23 @@ function updateProjectPercentComplete()
 		$q->clear();
 	}
 }
+
+/**
+ * Project fields that a module calculates itself (unitcost: the actual budget): the
+ * project form shows them read-only and saving it leaves them alone. Modules with
+ * project tabs declare them in projects_addedit.calculated.php, which adds the field
+ * names to $calculated_fields.
+ */
+function projectCalculatedFields()
+{
+	global $AppUI;
+	$calculated_fields = array();
+	foreach (findTabModules('projects') as $mod) {
+		$fname = DP_BASE_DIR . '/modules/' . $AppUI->checkFileName($mod) . '/projects_addedit.calculated.php';
+		if (file_exists($fname)) {
+			include $fname;
+		}
+	}
+	return $calculated_fields;
+}
 ?>
