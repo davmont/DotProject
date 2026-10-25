@@ -509,7 +509,8 @@ if ($do_report) {
 					</td>
 				</tr></table>
 <?php 
-			$orphTasks = array_diff(array_map("getOrphanedTasks",$task_list), array(NULL));
+			// array_diff() would compare the tasks as strings (CTask::__toString()).
+			$orphTasks = array_filter(array_map("getOrphanedTasks",$task_list), function ($t) { return $t !== null; });
 			
 			$tmptasks='';
 			$actual_date = $start_date;
