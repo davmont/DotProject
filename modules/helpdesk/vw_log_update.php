@@ -67,60 +67,8 @@ for ($x=0; $x < $nums; $x++) {
 	}
 ?>
 
-<!-- TIMER RELATED SCRIPTS -->
+<!-- CALENDAR SCRIPTS -->
 <script language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
-	// please keep these lines on when you copy the source
-	// made by: Nicolas - http://www.javascript-page.com
-	// adapted by: Juan Carlos Gonzalez jcgonz@users.sourceforge.net
-	
-	var timerID       = 0;
-	var tStart        = null;
-    var total_minutes = -1;
-	
-	function UpdateTimer() {
-	   if(timerID) {
-	      clearTimeout(timerID);
-	      clockID  = 0;
-	   }
-	
-     // One minute has passed
-     total_minutes = total_minutes+1;
-	   
-	   document.getElementById("timerStatus").innerHTML = "( "+total_minutes+" <?php echo $AppUI->_('minutes elapsed'); ?> )";
-
-	   // Lets round hours to two decimals
-	   var total_hours   = Math.round( (total_minutes / 60) * 100) / 100;
-	   document.editFrm.task_log_hours.value = total_hours;
-	   
-	   timerID = setTimeout(UpdateTimer, 60000);
-	}
-	
-	function timerStart() {
-		if(!timerID){ // this means that it needs to be started
-			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Stop'); ?>";
-      total_minutes = Math.round(document.editFrm.task_log_hours.value*60) - 1;
-      UpdateTimer();
-		} else { // timer must be stoped
-			document.editFrm.timerStartStopButton.value = "<?php echo $AppUI->_('Start'); ?>";
-			document.getElementById("timerStatus").innerHTML = "";
-			timerStop();
-		}
-	}
-
-	
-	function timerStop() {
-	   if(timerID) {
-	      clearTimeout(timerID);
-	      timerID  = 0;
-        total_minutes = total_minutes-1;
-	   }
-	}
-	
-	function timerReset() {
-		document.editFrm.task_log_hours.value = "0.00";
-    total_minutes = -1;
-	}
-	
   function popCalendar( field ){
     calendarField = field;
     idate = document.editFrm.elements['task_' + field].value;
@@ -146,7 +94,7 @@ for ($x=0; $x < $nums; $x++) {
 
 </script>
 
-<!-- END OF TIMER RELATED SCRIPTS -->
+<!-- END OF CALENDAR SCRIPTS -->
 
 
 <table cellspacing="1" cellpadding="2" border="0" width="100%">

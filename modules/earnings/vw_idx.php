@@ -16,7 +16,7 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 					nowrap="nowrap"><?php echo $AppUI->_('Date'); ?></a>
 			</th>
 			<th valign="bottom" nowrap="nowrap" width="70">
-				<?
+				<?php
 				// Critical Column Label
 				// If tab above #3 title should read "Request Number"
 				// If not, then check user type:
@@ -25,31 +25,31 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 				if ($tab > 3) { ?>
 					<a href="?m=earnings&orderby=earning_num" class="hdr"
 						nowrap="nowrap"><?php echo $AppUI->_('Request Number'); ?></a>
-				<? } else {
+				<?php } else {
 					if ($AppUI->user_type != 7) { ?>
 						<a href="?m=earnings&orderby=earning_num" class="hdr"
 							nowrap="nowrap"><?php echo $AppUI->_('Invoice Number'); ?></a>
-					<? } else { ?>
+					<?php } else { ?>
 						<a href="?m=earnings&orderby=earning_num" class="hdr"
 							nowrap="nowrap"><?php echo $AppUI->_('Timecard Number'); ?></a>
-					<? }
+					<?php }
 				} ?>
 			</th>
 			<th valign="bottom" nowrap="nowrap">
-				<? if ($tab > 3) { ?>
+				<?php if ($tab > 3) { ?>
 					<a href="?m=earnings&orderby=user_id" class="hdr" nowrap="nowrap"><?php echo $AppUI->_('From'); ?></a>
-				<? } else { ?>
+				<?php } else { ?>
 					<a href="?m=earnings&orderby=company_name" class="hdr"
 						nowrap="nowrap"><?php echo $AppUI->_('To Company'); ?></a>
-				<? } ?>
+				<?php } ?>
 			</th>
 			<th valign="bottom" nowrap="nowrap">
-				<? if ($tab > 3) { ?>
+				<?php if ($tab > 3) { ?>
 					<?php echo $AppUI->_('Request'); ?>
-				<? } else { ?>
+				<?php } else { ?>
 					<a href="?m=earnings&orderby=earning_submit_contact" class="hdr"
 						nowrap="nowrap"><?php echo $AppUI->_('Contact'); ?></a>
-				<? } ?>
+				<?php } ?>
 			</th>
 			<?php if ($AppUI->user_type != 7) { ?>
 				<th valign="bottom" nowrap="nowrap">

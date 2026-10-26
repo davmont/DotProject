@@ -17,10 +17,8 @@ $sql = "SELECT i1.earning_id, i1.earning_user_id, i1.earning_date, i1.earning_nu
 i1.earning_submit_email, i1.earning_submit_phone, i1.earning_submit_address1, i1.earning_submit_address2, i1.earning_submit_city, i1.earning_submit_state, 
 i1.earning_submit_zip, i1.earning_terms, i1.earning_comments, i1.earning_title, 
 i1.earning_total, i1.earning_submitted, i1.earning_submitted_comment, i1.earning_approved, i1.earning_approved_by,
-i1.earning_approved_comment, i1.earning_paid, i1.earning_paid_comment, i2.earning_items_id, i2.earning_parent_id, 
-i2.earning_tasklog_id, i2.earning_item_date, i2.earning_item_description, i2.earning_item_hours, 
-i2.earning_item_costcode, i2.earning_item_rate, c.company_name, u.user_username, ct.contact_first_name AS user_first_name, ct.contact_last_name AS user_last_name, u.user_type, ct.contact_email AS user_email
-FROM {$dbprefix}earnings i1, {$dbprefix}earnings_items i2, {$dbprefix}companies c, {$dbprefix}users u, {$dbprefix}contacts ct
+i1.earning_approved_comment, i1.earning_paid, i1.earning_paid_comment, c.company_name, u.user_username, ct.contact_first_name AS user_first_name, ct.contact_last_name AS user_last_name, u.user_type, ct.contact_email AS user_email
+FROM {$dbprefix}earnings i1, {$dbprefix}companies c, {$dbprefix}users u, {$dbprefix}contacts ct
 WHERE c.company_id = i1.earning_submit_company_id AND u.user_id = i1.earning_user_id AND ct.contact_id = u.user_contact AND i1.earning_id = $earning_id
 GROUP BY i1.earning_id";
 
@@ -52,6 +50,7 @@ $paid_date = intval( $obj->earning_paid ) ? new CDate( $obj->earning_paid ) : nu
 $changeLock = strcmp($obj->earning_submitted, '0000-00-00 00:00:00');
 
 // setup the title block
+$msg = '';
 // customize to user-type
 if ( $AppUI->user_type != 7 && !$timecard) {
 	$titleBlock = new CTitleBlock( 'View Invoice', 'earnings.gif', $m, "$m.$a" );
@@ -264,7 +263,7 @@ function delIt() {
 		&nbsp;&nbsp;Step 2: Approved By Manager (becomes printable)<br/>
 		<?php if ( $AppUI->user_type != 7 && !$timecard) { ?>
 			&nbsp;&nbsp;Step 3: Mark Paid When You Receive Payment
-		<? } ?>
+		<?php } ?>
 		&nbsp;<p/>
 		<table cellspacing="0" cellpadding="0" border="0" width="100%">
 		<?php if ( strcmp($obj->earning_submitted, '0000-00-00 00:00:00') == 0 ) { ?>
@@ -331,21 +330,21 @@ function delIt() {
 				if ( strcmp($obj->earning_approved_comment, '' ) != 0 ) {
 					// But was declined. ?>
 					Approval Declined.<br/> Comments&nbsp;From&nbsp;Manager:<i>&nbsp;<?php echo dPhtml(stripslashes($obj->earning_approved_comment)); ?></i>
-				<? 
+				<?php 
 					} else { 
 						// Either not yet submitted OR waiting for approval
 						if ( strcmp($obj->earning_submitted, '0000-00-00 00:00:00') == 0 ) { ?>
 							<i>Not Yet Submitted.</i>
-						<? } else { ?>
+						<?php } else { ?>
 							<i>Awaiting Approval. <?php echo dPhtml(stripslashes($obj->earning_approved_comment)); ?></i>
-						<? } ?>
-				<? } ?>
-			<? } else {
+						<?php } ?>
+				<?php } ?>
+			<?php } else {
 				echo $approved_date->format( $df );
 				echo "<br/>";
 			?>
 				<i><?php echo dPhtml(stripslashes($obj->earning_approved_comment)); ?></i>
-			<? } ?>
+			<?php } ?>
 			</td>
 		</tr>
 		<?php } ?>
@@ -367,18 +366,18 @@ function delIt() {
 				<?php 
 				if ( strcmp($obj->earning_paid, '0000-00-00 00:00:00' ) == 0 ) { ?>
 					<i>Not Approved. <?php echo dPhtml(stripslashes($obj->earning_paid_comment)); ?></i>
-				<? } else { 
+				<?php } else { 
 					echo $paid_date->format( $df );
 					echo "<br/>";
 				?>
 					<i><?php echo dPhtml(stripslashes($obj->earning_paid_comment)); ?></i>
-				<? } ?>
+				<?php } ?>
 				</td>
 			</tr>
 			<?php } ?>
-		<? } else { ?>
+		<?php } else { ?>
 			<tr><td>&nbsp;</td><td></td></tr>
-		<? } ?>
+		<?php } ?>
 		</table>
 	</td>
 	</tr>
@@ -404,9 +403,9 @@ if ($tab == 1) {
 $query_string = "?m=earnings&a=view&earning_id=$earning_id";
 // tabbed information boxes
 $tabBox = new CTabBox( "?m=earnings&a=view&earning_id=$earning_id", "", $tab );
-$tabBox->add( "{$AppUI->cfg['root_dir']}/modules/earnings/items", 'This Form' );
+$tabBox->add( DP_BASE_DIR . '/modules/earnings/items', 'This Form' );
 if ( !$changeLock ) { 
-	$tabBox->add( "{$AppUI->cfg['root_dir']}/modules/earnings/items", 'Unused Log Entries' );
+	$tabBox->add( DP_BASE_DIR . '/modules/earnings/items', 'Unused Log Entries' );
 }
 
 // settings for earning_items

@@ -3,7 +3,7 @@ if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 /* earnings $Id: items.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
-GLOBAL $m, $a, $earning_id, $f, $query_string, $changeLock, $timecard;
+GLOBAL $m, $a, $earning_id, $f, $query_string, $changeLock, $timecard, $earning_date;
 // get the prefered date format
 $df = $AppUI->getPref('SHDATEFORMAT');
 
@@ -105,7 +105,7 @@ if ( $tab ) {
 	</tr>
 	<form name="frmAddInv" action="?m=earnings&a=inv_aed&earning_id=<?php echo $earning_id; ?>" method="post">
 	<input type="hidden" name="inv_dosql" value="additem">
-	<?
+	<?php
 	if ( count($earning_items) < 1 ) {
 		echo "<tr><td colspan='7'>No log entries available. Did you log all of your work?.</td></tr>";
 	} else { 
@@ -120,7 +120,7 @@ if ( $tab ) {
 					<?php } ?>
 				</td>
 			</tr>
-		<? } 
+		<?php } 
 		foreach($earning_items as $x) {
 	?>
 	<tr>
@@ -155,10 +155,9 @@ if ( $tab ) {
 			<?php echo dPhtml($x["task_log_description"]); ?>
 		</td>
 	</tr>
-	<?
+	<?php
 			// End TaskLog Line Item Loop
 			}
-			if ( strcmp($x,"") != 0) {
 	?>
 	<tr>
 		<td colspan="7" align="right">
@@ -170,14 +169,13 @@ if ( $tab ) {
 			<?php } ?>
 		</td>
 	</tr>
-	<?
-			}
+	<?php
 		// End "No Items" Condition
 		}
 	?>
 	<tr></tr><tr></tr>
 </table>
-<?
+<?php
 } else {
 // START TASKLOG ITEMS ASSOCIATED WITH THIS earning
 ?>
@@ -205,7 +203,7 @@ if ( $tab ) {
 	</tr>
 	<form name="frmRemInv" action="?m=earnings&a=inv_aed&earning_id=<?php echo $earning_id; ?>" method="post">
 	<input type="hidden" name="inv_dosql" value="remitem">
-	<?
+	<?php
 	if ( count($earning_items) < 1) {
 		echo "<tr><td colspan='7'>No line items assigned.</td></tr>";
 	} else {
@@ -259,7 +257,7 @@ if ( $tab ) {
 			<?php echo dPhtml($x["task_log_description"]); ?>
 		</td>
 	</tr>
-	<?
+	<?php
 		}
 		// End Line Item Loop, Now Total The Bottom
 	// End No earning Items Condition
@@ -308,7 +306,7 @@ if ( $tab ) {
 			?>
 		</th>
 	</tr>
-	<?
+	<?php
 		// Add Ad Hoc earning Items Grabbed From earnings_items Table
 		$sql="SELECT earnings_items.* FROM {$dbprefix}earnings_items AS earnings_items WHERE earning_tasklog_id='0' AND earning_parent_id = " . $earning_id;
 		$sql.=" ORDER BY earning_item_date DESC;";
@@ -363,7 +361,7 @@ if ( $tab ) {
 			<?php } ?>
 		</td>
 	</tr>
-	<?
+	<?php
 			// End Ad Hoc Section
 			}
 		// End Ad Hoc Conditional
@@ -415,9 +413,9 @@ if ( $tab ) {
 		</td>
 	</tr>
 </table>
-<?
+<?php
 	// Begin Ad Hoc Data Entry Form
-	$adhoc_date = intval( $earning_date ) ? new CDate( $earning_date ) : new CDate();
+	$adhoc_date = $earning_date ? new CDate( $earning_date ) : new CDate();
 ?>
 &nbsp;</p>
 &nbsp;</p>
@@ -433,7 +431,7 @@ if ( $tab ) {
 				<th nowrap="nowrap"><?php echo $AppUI->_('Rate');?>&nbsp;&nbsp;</th>
 			<?php } else { ?>
 				<th width="2"></th>
-			<? } ?>
+			<?php } ?>
 			<th width="10" nowrap="nowrap"></th>
 		</tr>
 		<tr> 

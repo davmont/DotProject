@@ -10,6 +10,10 @@ if (!$obj->bind($_POST)) {
 	$AppUI->setMsg($obj->getError(), UI_MSG_ERROR);
 	$AppUI->redirect();
 }
+// Fields a module calculates are not taken from the form (store() skips null fields).
+foreach (projectCalculatedFields() as $field) {
+	$obj->$field = null;
+}
 
 require_once($AppUI->getSystemClass('CustomFields'));
 // convert dates to SQL format first

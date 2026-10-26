@@ -90,6 +90,9 @@ if($project_id && $actual_end_date)//we add project_actual_end_date in db
 */
 $style = (($actual_end_date > $end_date) && !empty($end_date)) ? 'style="color:red; font-weight:bold"' : '';
 
+// Fields a module calculates (read-only below).
+$calculated_fields = projectCalculatedFields();
+
 // setup the title block
 $ttl = $project_id > 0 ? "Edit Project" : "New Project";
 $titleBlock = new CTitleBlock($ttl, 'applet3-48.png', $m, "$m.$a");
@@ -371,7 +374,11 @@ function setDepartment(department_id_string) {
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Actual Budget');?> <?php echo $dPconfig['currency_symbol'] ?></td>
 			<td>
-				<input type="text" name="project_actual_budget" value="<?php echo @$row->project_actual_budget;?>" size="10" maxlength="10" class="text" />
+				<?php if (in_array('project_actual_budget', $calculated_fields)) { ?>
+				<input type="text" value="<?php echo dPformSafe(@$row->project_actual_budget);?>" size="10" class="text" disabled="disabled" title="<?php echo $AppUI->_('Calculated from the task costs'); ?>" />
+				<?php } else { ?>
+				<input type="text" name="project_actual_budget" value="<?php echo dPformSafe(@$row->project_actual_budget);?>" size="10" maxlength="10" class="text" />
+				<?php } ?>
 			</td>
 		</tr>
 		<tr>

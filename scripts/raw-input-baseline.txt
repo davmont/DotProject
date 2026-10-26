@@ -189,7 +189,6 @@ modules/system/syskeys/do_syskey_aed.php:2
 modules/system/syskeys/do_sysval_aed.php:2
 modules/system/syskeys/index.php:1
 modules/system/syskeys/keys.php:1
-modules/system/systemconfig_help.php:1
 modules/system/systemconfig.php:2
 modules/tasks/addedit.php:2
 modules/tasks/do_task_aed.php:11

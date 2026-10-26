@@ -125,7 +125,7 @@ $titleBlock->show();
  TODO : Fix the code to show the droplist
 <table width="98%" border="0" cellpadding="0" cellspacing="1">
 <tr>
-	<td><img src="./images/icons/projects.gif" alt="" border="0" width=42 height=42></td>
+	<td><img src="./modules/timetrack/images/applet3-48.png" alt="" border="0" width=42 height=42></td>
 	<td nowrap><span class="title"><?PHP echo $AppUI->getState( 'TtrackIdxFilter' ) !== NULL ? $filters[$AppUI->getState( 'TtrackIdxFilter' )] : 'My TimeSheets' . ' Overview'?></span></td>
 	<td align="right" width="100%">
 	<?php

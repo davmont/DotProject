@@ -39,6 +39,8 @@ echo '<br />&nbsp;<br />';
 $output = null;
 $last_group = '';
 foreach ($rs as $c) {
+	// Names come from the database: escape them wherever they reach the markup.
+	$cfgName = htmlspecialchars($c['config_name'], ENT_QUOTES);
 
 	$tooltip = 'title="' . $AppUI->_($c['config_name'] . '_tooltip') . '"';
 	// extraparse the checkboxes and the select lists
@@ -47,7 +49,7 @@ foreach ($rs as $c) {
 	switch ($c['config_type']) {
 		case 'select':
 			// Build the select list.
-			$entry = '<select class="text" name="dPcfg[' . $c['config_name'] . ']">' . "\n";
+			$entry = '<select class="text" name="dPcfg[' . $cfgName . ']">' . "\n";
 			// Find the detail relating to this entry.
 			$children = $dPcfg->getChildren($c['config_id']);
 			foreach ($children as $child) {
@@ -69,7 +71,7 @@ foreach ($rs as $c) {
 			$input_class = in_array($c['config_type'], array('text', 'password')) ? 'text' : 'button';
 			if ($c['config_type'] == 'checkbox')
 				$input_class = '';
-			$entry = '<input class="' . $input_class . '" type="' . $c['config_type'] . '" name="dPcfg[' . $c['config_name'] . ']" value="' . htmlspecialchars((string)$value, ENT_QUOTES) . '" ' . $tooltip . ' ' . $extra . '/>';
+			$entry = '<input class="' . $input_class . '" type="' . $c['config_type'] . '" name="dPcfg[' . $cfgName . ']" value="' . htmlspecialchars((string)$value, ENT_QUOTES) . '" ' . $tooltip . ' ' . $extra . '/>';
 			break;
 	}
 
@@ -81,11 +83,11 @@ foreach ($rs as $c) {
 			<td class="item" width="20%">' . $AppUI->_($c['config_name'] . '_title') . '</td>
 					<td align="left">' . $entry . "\n\t" .
 		'<a href="#"' . dPaction('window.open', array(
-			'?m=system&a=systemconfig_help&dialog=1&cn=' . $c['config_name'], 'contexthelp',
+			'?m=system&a=systemconfig_help&dialog=1&cn=' . rawurlencode($c['config_name']), 'contexthelp',
 			'width=400, height=200, left=50, top=50, scrollbars=yes, resizable=yes')) . ' '
 		. $tooltip . '>(?)</a>
-				<input class="button" type="hidden"  name="dPcfgId[' . $c['config_name'] . ']" value="'
-		. $c['config_id'] . '" />
+				<input class="button" type="hidden"  name="dPcfgId[' . $cfgName . ']" value="'
+		. (int)$c['config_id'] . '" />
 			</td>
         </tr>
 	';
