@@ -182,6 +182,35 @@ function dPcontextHelp($title, $link = '')
 		. '>' . $AppUI->_($title) . '</a>');
 }
 
+/**
+ * Items that active modules add to the header's user bar, next to Help and My Info:
+ * modules/<module>/header_widget.php returns the item's HTML ('' for none). Each
+ * item is followed by $separator, the bar's own (' | ', ' &bull; ').
+ */
+function dPheaderWidgets($separator)
+{
+	global $AppUI;
+	$html = '';
+	$files = glob(DP_BASE_DIR . '/modules/*/header_widget.php');
+	if (!$files) {
+		return $html;
+	}
+	$active = $AppUI->getActiveModules();
+	// Each file runs in its own scope, so its variables cannot overwrite these.
+	$run = function ($file) {
+		return include $file;
+	};
+	foreach ($files as $file) {
+		if (isset($active[basename(dirname($file))])) {
+			$widget = $run($file);
+			if (is_string($widget) && $widget !== '') {
+				$html .= $widget . $separator;
+			}
+		}
+	}
+	return $html;
+}
+
 
 /**
  * Retrieves a configuration setting.

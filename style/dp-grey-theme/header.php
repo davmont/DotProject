@@ -126,7 +126,7 @@ echo $uistyle;?>/images/dp_icon.gif" border="0" /></a></th>
 	echo ($AppUI->_('Welcome') . ' ' . htmlspecialchars($AppUI->user_first_name, ENT_QUOTES) . ' ' . htmlspecialchars($AppUI->user_last_name, ENT_QUOTES)); 
 ?></td>
 			<td nowrap="nowrap">
-				<?php echo dPcontextHelp('Help'); ?> | 
+				<?php echo dPheaderWidgets(' | '); ?><?php echo dPcontextHelp('Help'); ?> | 
 				<a href="./index.php?m=admin&amp;a=viewuser&amp;user_id=<?php 
 echo $AppUI->user_id; ?>"><?php echo $AppUI->_('My Info');?></a> | <?php
 	if (getPermission('tasks', 'access')) {

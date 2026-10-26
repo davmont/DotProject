@@ -45,11 +45,8 @@ modules/dotproject_plus/do_new_activity_log.php:1
 modules/dotproject_plus/do_new_wbs_item.php:1
 modules/dotproject_plus/do_save_activity_estimations.php:17
 modules/dotproject_plus/do_save_activity_order.php:5
-modules/dotproject_plus/do_save_feedback_preferences.php:5
 modules/dotproject_plus/do_save_wbs_order.php:4
 modules/dotproject_plus/do_save_wbs.php:9
-modules/dotproject_plus/do_show_feedback.php:2
-modules/dotproject_plus/feedback/feedback_controller.php:2
 modules/dotproject_plus/projects_tab.execution.php:2
 modules/dotproject_plus/projects_tab.performance_domains.php:1
 modules/dotproject_plus/projects_tab.planning_and_monitoring.php:11
