@@ -70,7 +70,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: cd docker/tests/browser && npm ci --no-audit --no-fund
+      - run: cd tools/browser && npm ci --no-audit --no-fund
       - run: make audit-full
       - name: Reports and web server log
         if: failure()

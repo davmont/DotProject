@@ -28,7 +28,7 @@ reset_prefs() { db -e "DELETE FROM dotp_user_preferences WHERE pref_user<>0;
 	UPDATE dotp_user_preferences SET pref_value='en' WHERE pref_user=0 AND pref_name IN ('LOCALE','CURRENCYFORM');
 	UPDATE dotp_user_preferences SET pref_value='0' WHERE pref_user=0 AND pref_name='TABVIEW'"; }
 has() { case " $STEPS " in *" $1 "*) return 0 ;; esac; return 1; }
-BROWSER="$TESTS_DIR/browser"
+BROWSER="$TESTS_DIR/../../tools/browser"
 [ -d "$BROWSER/node_modules" ] || (cd "$BROWSER" && npm ci --no-audit --no-fund --silent)
 
 # Add/edit pages: every addedit*.php and *_ae*.php of each module (also with a project).

@@ -197,6 +197,11 @@ if ($dbc && ($do_db || $do_db_cfg)) {
     // After all the updates, find the new version information.
     $new_version = InstallGetVersion($mode, $db);
     $lastDBUpdate = $new_version['last_db_update'];
+    // The fresh schema already has every change in upgrade_latest.sql: record its newest
+    // entry, or the next upgrade applies them again ("Duplicate column").
+    if (preg_match_all('/^#\s*(\d{8})\b/m', (string)@file_get_contents(DP_BASE_DIR . '/db/upgrade_latest.sql'), $stamps)) {
+      $lastDBUpdate = max($lastDBUpdate, max($stamps[1]));
+    }
     $code_updated = $new_version['last_code_update'];
   }
 

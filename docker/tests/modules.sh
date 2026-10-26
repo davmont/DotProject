@@ -4,13 +4,14 @@
 #   docker/tests/modules.sh install|toggle|remove|upgrade [module ...]
 #
 # Without module names: every add-on (modules/*/setup.php not set up by the installer).
+# Logs in as admin (ADMIN_USER sets another user, password "passwd").
 # Fails if the command does not take effect or logs an SQL error or PHP problem.
 . "$(dirname "$0")/lib.sh"
 cmd=$1; shift
 case "$cmd" in install|toggle|remove|upgrade) ;; *) echo "usage: $0 install|toggle|remove|upgrade [module ...]"; exit 2 ;; esac
 mods=${*:-$(addon_modules)}
 J=$(mktemp); trap 'rm -f "$J"' EXIT
-login admin passwd "$J"
+login "${ADMIN_USER:-admin}" passwd "$J"
 fail=0
 for m in $mods; do
 	T=$(csrf_token "$J")
