@@ -38,9 +38,9 @@ if (!($rows = $q->loadList())) {
 	$s .= '<tr><td>'.$AppUI->_('No data available').'<br />'.$AppUI->getMsg().'</td></tr>';
 } else {
 	$s .= '<tr>';
-	$s .= '<th><a style="color:white" href="?m=companies&amp;a=view&amp;company_id='.$company_id.'&amp;sort=project_priority">'
+	$s .= '<th><a class="hdr" href="?m=companies&amp;a=view&amp;company_id='.$company_id.'&amp;sort=project_priority">'
 			.$AppUI->_('P').'</a></th>'
-			.'<th><a style="color:white" href="?m=companies&amp;a=view&amp;company_id='.$company_id.'&amp;sort=project_name">'
+			.'<th><a class="hdr" href="?m=companies&amp;a=view&amp;company_id='.$company_id.'&amp;sort=project_name">'
 			.$AppUI->_('Name').'</a></th>'
 		.'<th>'.$AppUI->_('Owner').'</th>'
 		.'<th>'.$AppUI->_('Started').'</th>'
