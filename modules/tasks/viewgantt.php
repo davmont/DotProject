@@ -347,7 +347,7 @@ if (!@$min_view) {
 			</tr>
 
 			<tr align="left">
-				<th colspan="4" align="left"><em><a style="color: white" href="#"<?php echo dPaction('doMenu', array('ganttoptions')); ?>
+				<th colspan="4" align="left"><em><a class="hdr" href="#"<?php echo dPaction('doMenu', array('ganttoptions')); ?>
 							id="xganttoptions">Show Additional Gantt Options</a></em></th>
 			</tr>
 			<tr align="left">
