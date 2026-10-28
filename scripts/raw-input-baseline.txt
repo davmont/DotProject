@@ -73,7 +73,7 @@ modules/gallery2/configure.php:3
 modules/helpdesk/configure.php:6
 modules/helpdesk/do_item_aed.php:2
 modules/helpdesk/index.php:4
-modules/helpdesk/list.php:54
+modules/helpdesk/list.php:30
 modules/helpdesk/view.php:4
 modules/helpdesk/vw_history.php:2
 modules/history/addedit.php:1
@@ -83,10 +83,6 @@ modules/holiday/holiday_options.php:3
 modules/holiday/index.php:2
 modules/hosting/do_hosting_aed.php:1
 modules/hosting/index.php:9
-modules/hosting/vw_all.php:1
-modules/hosting/vw_domains.php:1
-modules/hosting/vw_expiring.php:1
-modules/hosting/vw_hosting.php:1
 modules/human_resources/do_allocation_aed.php:1
 modules/human_resources/do_hr_aed.php:1
 modules/human_resources/do_policies_aed.php:1
@@ -212,7 +208,6 @@ modules/timecard/vw_weekly_by_project.php:12
 modules/timecard/vw_weekly_by_user.php:4
 modules/timeplanning/do_company_aed.php:1
 modules/timeplanning/do_projects_estimations_aed.php:21
-modules/timeplanning/view/project_mitute_form.php:1
 modules/timesheet/dosql.php:18
 modules/timesheet/index.php:5
 modules/timetrack/dosql.php:2
