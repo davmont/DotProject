@@ -10,8 +10,10 @@ if (!defined('DP_BASE_DIR')){
    * mine = 2
    */
 function vw_idx_handler ($type) {
+  // The list helpers read the global; the To-do page's "My Open Requests" tab
+  // loads this file without helpdesk.class.php, which sets it elsewhere.
+  global $m, $ipr, $ist, $AppUI, $HELPDESK_CONFIG;
   include ("./modules/helpdesk/config.php");
-  global $m, $ipr, $ist, $AppUI;
 
   $where = $date_field_name = $date_field_title = "";
 
