@@ -6,7 +6,7 @@ if (!defined('DP_BASE_DIR')) {
 /**
  *  Name: Initiating
  *  Directory: initiating
- *  Version 1.0
+ *  Version 1.2
  *  Type: user
  *  UI Name: Initiating
  *  UI Icon: ?
@@ -14,7 +14,7 @@ if (!defined('DP_BASE_DIR')) {
 
 $config = array();
 $config['mod_name'] = 'Initiating'; // name the module
-$config['mod_version'] = '1.1'; // add a version number
+$config['mod_version'] = '1.2'; // add a version number
 $config['mod_directory'] = 'initiating'; // tell dotProject where to find this module
 $config['mod_setup_class'] = 'CSetupInitiating'; // the name of the PHP setup class (used below)
 $config['mod_type'] = 'user'; //'core' for standard dP modules, 'user' for additional modules from dotmods
@@ -53,9 +53,13 @@ class CSetupInitiating
 
   function upgrade($old_version)
   {
-    // Place to put upgrade logic, based on the previously installed version.
-    // Usually handled via a switch statement. 
-    // Since this is the first version of this module, we have nothing to update.
+    // 1.2: charters belong to a project (0: none).
+    $table = dPgetConfig('dbprefix', '') . 'initiating';
+    if (!db_loadResult("SHOW COLUMNS FROM `" . $table . "` LIKE 'initiating_project'")) {
+      if (!db_exec('ALTER TABLE `' . $table . '` ADD `initiating_project` int(11) NOT NULL DEFAULT 0 AFTER `initiating_id`, ADD KEY `initiating_project` (`initiating_project`)')) {
+        return false;
+      }
+    }
     return true;
   }
 
@@ -65,6 +69,7 @@ class CSetupInitiating
     $q->createTable('initiating');
     $q->createDefinition("(
   `initiating_id` int(11) NOT NULL AUTO_INCREMENT ,
+  `initiating_project` int(11) NOT NULL DEFAULT 0,
   `initiating_title` varchar(255) NOT NULL,
   `initiating_manager` int(11) NOT NULL,
   `initiating_create_by` int(11) NOT NULL,
@@ -84,7 +89,8 @@ class CSetupInitiating
   `initiating_completed` int(1) NOT NULL DEFAULT '0',
   `initiating_approved_comments` text DEFAULT NULL,
   `initiating_authorized_comments` text DEFAULT NULL,
-PRIMARY KEY (`initiating_id`) 
+PRIMARY KEY (`initiating_id`),
+KEY `initiating_project` (`initiating_project`)
 ) ");
 
     $q->exec();

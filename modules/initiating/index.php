@@ -4,11 +4,8 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 global $m, $a;
-$search = dPgetParam($_REQUEST, 'search', '');
-
 $AppUI->savePlace();
 
-global $m, $a;
 $search = dPgetCleanParam($_REQUEST, 'search', '');
 
 // retrieve any state parameters
@@ -55,9 +52,9 @@ $titleBlock->addCell(
 );
 //if ($canEdit) {
 $titleBlock->addCell(
-	'<input type="submit" class="button" value="' . $AppUI->_('novo termo de abertura') . '">',
+	'<input type="submit" class="button" value="' . $AppUI->_('New project charter') . '">',
 	'',
-	'<form action="?m=initiating&a=addedit" method="post">',
+	'<form action="?m=initiating&amp;a=addedit&amp;project_id=' . (int)$project_id . '" method="post">',
 	'</form>'
 );
 //}

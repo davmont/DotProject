@@ -2,29 +2,16 @@
 if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
-$q = new DBQuery();
-$q->addQuery('*');
-$q->addTable('initiating', 'i');
-$q->addOrder('i.initiating_id');
-$q->setLimit(100);
-$list = $q->loadList();
-?>
-
-<table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
-<tr>
-	<th nowrap="nowrap"><?php echo $AppUI->_('Title');?></th>
-	<th nowrap="nowrap"><?php echo $AppUI->_('Project Manager');?></th>
-	<th nowrap="nowrap"><?php echo $AppUI->_('Created By');?></th>
-	<th nowrap="nowrap"><?php echo $AppUI->_('Creation Date');?></th>
-	<th nowrap="nowrap"> </th>
-</tr>
-<?php foreach ($list as $row) { ?>
-<tr>
-	<td><?php echo $row['initiating_title'] ?></td>
-	<td><?php echo $row['initiating_manager'] ?></td>
-	<td><?php echo $row['initiating_create_by'] ?></td>
-	<td><?php echo $row['initiating_date_create'] ?></td>
-	<td><a href="index.php?m=initiating&a=addedit&id=<?php echo $row['initiating_id'] ?>">edit</a></td>
-</tr>
-<?php } ?>
-</table>
+// All charters (Initiating module) or, as a tab of the project view, the project's.
+global $AppUI, $m, $project_id, $search;
+require_once DP_BASE_DIR . '/modules/initiating/initiating.class.php';
+if ($m == 'projects') {
+	CInitiating::loadTranslations();
+	if (getPermission('initiating', 'add')) {
+		echo '<p><a href="?m=initiating&amp;a=addedit&amp;project_id=' . (int)$project_id . '">'
+			. $AppUI->_('New project charter') . '</a></p>';
+	}
+	CInitiating::showList('', (int)$project_id);
+} else {
+	CInitiating::showList('', (int)$project_id, $search);
+}

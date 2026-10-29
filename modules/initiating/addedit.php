@@ -29,9 +29,21 @@ if (!db_loadObject($q->prepare(), $obj) && $initiating_id > 0) {
 	$AppUI->redirect();
 }
 if (!$obj) {
-	// A new term of opening: the form starts empty.
+	// A new term of opening: the form starts empty, on the project it was opened from.
 	$obj = new CInitiating();
+	$obj->initiating_project = dPgetIntParam($_GET, 'project_id', 0);
 }
+if (!CInitiating::projectAllowed((int)$obj->initiating_project)) {
+	if ($initiating_id) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	$obj->initiating_project = 0;
+}
+
+require_once $AppUI->getModuleClass('projects');
+$project = new CProject();
+$projects = arrayMerge(array(0 => $AppUI->_('None')),
+	$project->getAllowedRecords($AppUI->user_id, 'project_id, project_name', 'project_name'));
 
 $initiating_completed = 0;
 // se for update verifica se ja esta concluido o preenchimento do termo de abertura do projeto
@@ -70,9 +82,12 @@ $end_date = new CDate($obj->initiating_end_date);
 // setup the title block
 $ttl = $initiating_id ? "Edit" : "Add";
 $titleBlock = new CTitleBlock($ttl, 'applet3-48.png', $m, "$m.$a");
-$titleBlock->addCrumb("?m=$m", "lista de termo de abertura");
+$titleBlock->addCrumb("?m=$m", "project charters");
+if ($obj->initiating_project) {
+	$titleBlock->addCrumb('?m=projects&a=view&project_id=' . (int)$obj->initiating_project, 'view project');
+}
 if ($canDelete && $initiating_id) {
-	$titleBlock->addCrumbDelete('apagar termo de abertura', $canDelete, $msg);
+	$titleBlock->addCrumbDelete('delete project charter', $canDelete, $msg);
 }
 $titleBlock->show();
 
@@ -176,6 +191,10 @@ function notauthorizedIt() {
 		<tr>
 			<td align="right" nowrap="nowrap" ><?php echo $AppUI->_('Project Title');?>:</td>
 			<td align="left"><input type="text" class="text" name="initiating_title" size="55" maxlength="255" style="width: 100%; max-width: 40em; box-sizing: border-box;" value="<?php echo dPformSafe(@$obj->initiating_title);?>"></td>
+		</tr>
+		<tr>
+			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project'); ?>:</td>
+			<td align="left"><?php echo arraySelect($projects, 'initiating_project', 'size="1" class="text"', (int)$obj->initiating_project); ?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project Manager'); ?>:</td>
@@ -305,7 +324,7 @@ if ($initiating_id) { ?>
 	</td>
 	<td align="right" nowrap="nowrap">
 		<?php 
-		print("<a href='?m=initiating&amp;a=pdf&amp;id=$initiating_id&amp;suppressHeaders=1'>" . $AppUI->_('Gerar PDF') . "</a>\n");
+		print("<a href='?m=initiating&amp;a=pdf&amp;id=$initiating_id&amp;suppressHeaders=1'>" . $AppUI->_('PDF') . "</a>\n");
 		?>
 		<?php 
 if ($initiating_id && !$initiating_completed) { ?>

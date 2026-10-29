@@ -116,6 +116,7 @@
 "in progress"=>"en curso",
 "Incomplete Tasks"=>"Tareas incompletas",
 "Incomplete Tasks Only"=>"Solo Tareas Incompletas",
+"Initiating"=>"Inicio",
 "inserted"=>"insertado",
 "Intangible"=>"Intangible",
 "Internal Company"=>"Compañía interna",
