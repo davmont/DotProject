@@ -18,6 +18,9 @@ class CProjectFeedback
 	static function rules()
 	{
 		return array(
+			1 => array('Integration', array('initiating'), 'noCharter'),
+			2 => array('Integration', array('initiating'), 'charterNotAuthorized'),
+			3 => array('Integration', array('initiating'), 'endsAfterCharter'),
 			4 => array('Scope', array('timeplanning'), 'wbsSmall'),
 			5 => array('Scope', array('timeplanning'), 'wbsLarge'),
 			6 => array('Scope', array('timeplanning'), 'wbsUnsized'),
@@ -42,6 +45,12 @@ class CProjectFeedback
 	static function texts()
 	{
 		return array(
+			1 => array('The project has no charter.',
+				'No project charter is linked to this project. The charter states why the project exists, its objectives, high-level budget, milestones and success criteria, and it is what authorizes the project manager to use the organization\'s resources. Write one in the Initiating module and link it to the project.'),
+			2 => array('The project charter is not authorized yet.',
+				'The project has a charter, but it has not been authorized. Until the sponsor authorizes it, the project is not formally started and the project manager has no authority to commit resources. Complete the charter and have it approved and authorized.'),
+			3 => array('The project ends after the date in its charter.',
+				'The project\'s end date is later than the end date of its authorized charter. Either the schedule no longer meets what was agreed with the sponsor, or the charter is out of date: agree a new date and record the change, rather than letting the two drift apart.'),
 			4 => array('The WBS has only a few items.',
 				'The work breakdown structure has three items or fewer. A WBS this small rarely covers all of the deliverables and the project management work. Break the main deliverables down until each work package can be estimated, assigned and checked on its own.'),
 			5 => array('The WBS has many items: check how it is broken down.',
@@ -334,6 +343,48 @@ class CProjectFeedback
 			. ' AND t1.task_start_date < t2.task_end_date AND t2.task_start_date < t1.task_end_date');
 		$q->setLimit(1);
 		return self::count($q) > 0;
+	}
+
+	/** The project's charters (Initiating module). */
+	private static function charters($project_id, $where = '1 = 1')
+	{
+		$q = new DBQuery();
+		$q->addTable('initiating');
+		$q->addQuery('initiating_id, initiating_end_date');
+		$q->addWhere('initiating_project = ' . (int)$project_id . ' AND ' . $where);
+		$rows = $q->loadList();
+		return $rows ? $rows : array();
+	}
+
+	static function noCharter($project_id)
+	{
+		return count(self::charters($project_id)) == 0;
+	}
+
+	static function charterNotAuthorized($project_id)
+	{
+		return count(self::charters($project_id)) > 0
+			&& count(self::charters($project_id, 'initiating_authorized = 1')) == 0;
+	}
+
+	static function endsAfterCharter($project_id)
+	{
+		$q = new DBQuery();
+		$q->addTable('projects');
+		$q->addQuery('project_end_date');
+		$q->addWhere('project_id = ' . (int)$project_id);
+		$end = $q->loadResult();
+		if (!$end || substr($end, 0, 10) == '0000-00-00') {
+			return false;
+		}
+		$latest = '';
+		foreach (self::charters($project_id, 'initiating_authorized = 1') as $row) {
+			$date = substr((string)$row['initiating_end_date'], 0, 10);
+			if ($date && $date != '0000-00-00' && $date > $latest) {
+				$latest = $date;
+			}
+		}
+		return $latest !== '' && substr($end, 0, 10) > $latest;
 	}
 
 	// risk_strategy: 0 accept, 1 eliminate, 2 mitigate, 3 transfer; risk_priority: 0 low (sysvals).
