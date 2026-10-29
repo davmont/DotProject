@@ -29,6 +29,7 @@
 	display: inline-block; padding: 0 5px; border-radius: 3px; margin-right: 4px;
 	font-size: 10px; text-transform: uppercase; letter-spacing: 0.03em; color: #fff; background: #607d8b;
 }
+.dp-feedback-area-integration { background: #00695c; }
 .dp-feedback-area-scope { background: #2e7d32; }
 .dp-feedback-area-schedule { background: #1565c0; }
 .dp-feedback-area-cost { background: #8d6e00; }

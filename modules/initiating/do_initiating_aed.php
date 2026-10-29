@@ -15,6 +15,13 @@ $not = dPgetParam($_POST, 'notify', '0');
 if ($not!='0') $not='1';
 
 $obj = new CInitiating();
+// A charter of a project the user cannot see is neither changed nor deleted.
+if ($initiating_id) {
+	$current = new CInitiating();
+	if (!$current->load($initiating_id) || !CInitiating::projectAllowed((int)$current->initiating_project)) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+}
 // convert dates to SQL format first
 if ($obj->initiating_start_date) {
 	$date = new CDate($obj->initiating_start_date);

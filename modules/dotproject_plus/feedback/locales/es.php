@@ -10,11 +10,22 @@ return array(
 	'No tips for this project.' => 'No hay consejos para este proyecto.',
 	'Mark as read' => 'Marcar como leído',
 	'Mark as unread' => 'Marcar como no leído',
+	'Integration' => 'Integración',
 	'Scope' => 'Alcance',
 	'Schedule' => 'Cronograma',
 	'Cost' => 'Costes',
 	'Resources' => 'Recursos',
 	'Risk' => 'Riesgos',
+
+	'The project has no charter.' => 'El proyecto no tiene acta de constitución.',
+	'No project charter is linked to this project. The charter states why the project exists, its objectives, high-level budget, milestones and success criteria, and it is what authorizes the project manager to use the organization\'s resources. Write one in the Initiating module and link it to the project.'
+		=> 'Ningún acta de constitución está vinculada a este proyecto. El acta explica por qué existe el proyecto, sus objetivos, el presupuesto general, los hitos y los criterios de éxito, y es lo que autoriza al director del proyecto a usar los recursos de la organización. Redáctela en el módulo Inicio y vincúlela al proyecto.',
+	'The project charter is not authorized yet.' => 'El acta de constitución aún no está autorizada.',
+	'The project has a charter, but it has not been authorized. Until the sponsor authorizes it, the project is not formally started and the project manager has no authority to commit resources. Complete the charter and have it approved and authorized.'
+		=> 'El proyecto tiene acta de constitución, pero no está autorizada. Hasta que el patrocinador la autorice, el proyecto no ha comenzado formalmente y el director del proyecto no tiene autoridad para comprometer recursos. Complete el acta y haga que la aprueben y autoricen.',
+	'The project ends after the date in its charter.' => 'El proyecto termina después de la fecha de su acta.',
+	'The project\'s end date is later than the end date of its authorized charter. Either the schedule no longer meets what was agreed with the sponsor, or the charter is out of date: agree a new date and record the change, rather than letting the two drift apart.'
+		=> 'La fecha de fin del proyecto es posterior a la del acta autorizada. O el cronograma ya no cumple lo acordado con el patrocinador, o el acta está desactualizada: acuerde una nueva fecha y registre el cambio, en lugar de dejar que ambas se separen.',
 
 	'The WBS has only a few items.' => 'La EDT tiene muy pocos elementos.',
 	'The work breakdown structure has three items or fewer. A WBS this small rarely covers all of the deliverables and the project management work. Break the main deliverables down until each work package can be estimated, assigned and checked on its own.'
