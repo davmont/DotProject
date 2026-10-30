@@ -500,6 +500,35 @@ function dPisTranslationSource($source)
 }
 
 /**
+ * The strings of locales/$locale/<module>.inc for each of $modules, later files
+ * winning, as locales/core.php loads them for a page. For text built outside a page
+ * request, such as mail sent from the event queue in the recipient's language.
+ */
+function dPtranslationsFor($locale, $modules)
+{
+	$locale = preg_replace('/[^A-Za-z_]/', '', (string)$locale);
+	$strings = array();
+	if ($locale === '') {
+		return $strings;
+	}
+	foreach ($modules as $module) {
+		$file = DP_BASE_DIR . '/locales/' . $locale . '/' . preg_replace('/[^A-Za-z0-9_]/', '', $module) . '.inc';
+		$source = is_readable($file) ? file_get_contents($file) : '';
+		if ($source === '' || $source === false || !dPisTranslationSource($source)) {
+			continue;
+		}
+		$file_strings = array();
+		try {
+			eval('$file_strings = array(' . $source . "\n);");
+			$strings = array_merge($strings, $file_strings);
+		} catch (ParseError $e) {
+			error_log('dotProject: translation file skipped, it does not parse: ' . $file);
+		}
+	}
+	return $strings;
+}
+
+/**
  * True when users.user_password is wide enough for password_hash() output.
  */
 function dPpasswordColumnFitsHash()

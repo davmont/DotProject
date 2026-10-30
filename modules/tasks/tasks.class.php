@@ -948,13 +948,17 @@ class CTask extends CDpObject
 		global $AppUI;
 		if ($user_id && $user_id > 0) {
 			$AppUI->user_id = $user_id;
-			// Load user data
-			require_once $AppUI->getModuleClass('admin');
-			$user = new CUser();
-			if ($user->load($user_id)) {
-				$AppUI->user_first_name = $user->user_first_name;
-				$AppUI->user_last_name = $user->user_last_name;
-				$AppUI->user_email = $user->user_email;
+			// The name and address are on the user's contact (CUser has neither).
+			$q = new DBQuery;
+			$q->addTable('users', 'u');
+			$q->addJoin('contacts', 'c', 'c.contact_id = u.user_contact');
+			$q->addQuery('c.contact_first_name, c.contact_last_name, c.contact_email');
+			$q->addWhere('u.user_id = ' . (int)$user_id);
+			$user = $q->loadHash();
+			if ($user) {
+				$AppUI->user_first_name = $user['contact_first_name'];
+				$AppUI->user_last_name = $user['contact_last_name'];
+				$AppUI->user_email = $user['contact_email'];
 				$AppUI->loadPrefs($user_id);
 				$AppUI->setUserLocale();
 			}
@@ -1827,6 +1831,7 @@ class CTask extends CDpObject
 
 		// process assignees
 		$tarr = explode(',', $cslist);
+		$assigned_before = array_keys($this->getAssignedUsers());
 
 		// delete all current entries from $cslist
 		if ($del == true && $rmUsers == true) {
@@ -1879,7 +1884,124 @@ class CTask extends CDpObject
 				// }
 			}
 		}
+		$this->notifyAssigned(array_diff(array_map('intval', $tarr), $assigned_before, array(0)));
 		return $overAssignment;
+	}
+
+	/**
+	 * Queues an email to each user newly assigned to the task, except the user who
+	 * made the change. Users can turn it off (preference TASKASSIGNMAIL).
+	 */
+	function notifyAssigned($user_ids)
+	{
+		global $AppUI;
+		$user_ids = array_values(array_diff(array_unique(array_map('intval', $user_ids)), array(0, (int)$AppUI->user_id)));
+		if (!$user_ids || !$this->task_id) {
+			return;
+		}
+		$args = array('users' => $user_ids);
+		$eq = new EventQueue();
+		$eq->add(array($this, 'processAssignNotify'), $args, 'tasks', false, $this->task_id, 'assignNotify');
+	}
+
+	function processAssignNotify($module, $type, $id, $owner, &$args)
+	{
+		if (!$this->load($id)) {
+			return true; // the task was deleted in the meantime
+		}
+		foreach (isset($args['users']) ? (array)$args['users'] : array() as $user_id) {
+			$this->sendAssignEmail((int)$user_id, (int)$owner);
+		}
+		return true;
+	}
+
+	/**
+	 * Tells $user_id that $by_user_id assigned them to this task, in the recipient's
+	 * language and date format.
+	 */
+	function sendAssignEmail($user_id, $by_user_id)
+	{
+		global $AppUI;
+
+		$q = new DBQuery;
+		$q->addTable('users', 'u');
+		$q->addJoin('contacts', 'c', 'c.contact_id = u.user_contact', 'inner');
+		$q->addQuery('u.user_id, c.contact_first_name, c.contact_last_name, c.contact_email');
+		$q->addWhere('u.user_id IN (' . (int)$user_id . ', ' . (int)$by_user_id . ')');
+		$people = $q->loadHashList('user_id');
+		$q->clear();
+		if (empty($people[$user_id]['contact_email'])) {
+			return false;
+		}
+		$to = $people[$user_id];
+		$by = isset($people[$by_user_id]) ? $people[$by_user_id] : null;
+
+		// The recipient's preferences, over the system defaults (user 0).
+		$q->addTable('user_preferences');
+		$q->addQuery('pref_user, pref_name, pref_value');
+		$q->addWhere('pref_user IN (0, ' . (int)$user_id . ')');
+		$q->addOrder('pref_user');
+		$prefs = array();
+		foreach ($q->loadList() as $row) {
+			$prefs[$row['pref_name']] = $row['pref_value'];
+		}
+		$q->clear();
+		if (isset($prefs['TASKASSIGNMAIL']) && !$prefs['TASKASSIGNMAIL']) {
+			return false;
+		}
+
+		$q->addTable('projects');
+		$q->addQuery('project_name');
+		$q->addWhere('project_id = ' . (int)$this->task_project);
+		$project_name = htmlspecialchars_decode((string)$q->loadResult());
+		$q->clear();
+		$q->addTable('user_tasks');
+		$q->addQuery('perc_assignment');
+		$q->addWhere('task_id = ' . (int)$this->task_id . ' AND user_id = ' . (int)$user_id);
+		$perc = $q->loadResult();
+		$q->clear();
+
+		$locale = isset($prefs['LOCALE']) ? $prefs['LOCALE'] : dPgetConfig('host_locale', 'en');
+		$df = (isset($prefs['SHDATEFORMAT']) ? $prefs['SHDATEFORMAT'] : '%d/%m/%Y');
+		$saved_translate = isset($GLOBALS['translate']) ? $GLOBALS['translate'] : array();
+		$GLOBALS['translate'] = dPtranslationsFor($locale, array('common', 'tasks'));
+		$t = function ($str) use ($AppUI) {
+			return $AppUI->_($str, UI_OUTPUT_RAW);
+		};
+
+		$by_name = $by ? trim($by['contact_first_name'] . ' ' . $by['contact_last_name']) : '';
+		$body = ($by_name !== '' ? $by_name . ' ' . $t('assigned you to a task.') : $t('You have been assigned to a task.')) . "\n\n"
+			. $t('Project') . ': ' . $project_name . "\n"
+			. $t('Task') . ': ' . $this->task_name . "\n";
+		if ($this->task_start_date) {
+			$date = new CDate($this->task_start_date);
+			$body .= $t('Start Date') . ': ' . $date->format($df) . "\n";
+		}
+		if ($this->task_end_date) {
+			$date = new CDate($this->task_end_date);
+			$body .= $t('Finish Date') . ': ' . $date->format($df) . "\n";
+		}
+		if ($perc !== null && $perc !== false) {
+			$body .= $t('Assignment') . ': ' . (int)$perc . "%\n";
+		}
+		$body .= $t('URL') . ': ' . DP_BASE_URL . '/index.php?m=tasks&a=view&task_id=' . (int)$this->task_id . "\n";
+		if (trim((string)$this->task_description) !== '') {
+			$body .= "\n" . $t('Description') . ":\n" . $this->task_description . "\n";
+		}
+		$body .= "\n" . $t('You can turn these emails off in your user preferences.') . "\n";
+		$subject = $project_name . '::' . $this->task_name . ' ' . $t('assigned to you');
+		$GLOBALS['translate'] = $saved_translate;
+
+		$mail = new Mail;
+		$mail->Subject($subject, 'UTF-8');
+		$mail->Body($body, 'UTF-8');
+		if ($by && $by['contact_email']) {
+			$mail->From('"' . $by_name . '" <' . $by['contact_email'] . '>');
+		} else {
+			$mail->From('no-reply@' . dPgetConfig('site_domain', 'localhost'));
+		}
+		$mail->To($to['contact_email'], true);
+		return $mail->Send();
 	}
 
 	function getAssignedUsers()
@@ -2302,7 +2424,7 @@ class CTask extends CDpObject
 			$df = '%Y-%m-%d';
 		}
 		if (!$tf) {
-			$tf = '%H:%m';
+			$tf = '%H:%M';
 		}
 		$df .= ' ' . $tf;
 
