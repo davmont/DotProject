@@ -29,9 +29,10 @@ tables keep working unchanged.
 
 Work happens on the **`devel`** branch; **`master`** only receives stable releases.
 
-- Current stable release: **v2.3.1** (still named dotProject). See [RELEASE_NOTES_v2.3.1.md](RELEASE_NOTES_v2.3.1.md).
-- Next release: **v2.4.0**, the first under the dotPulse name. It brings the security
-  audit described below to `master`.
+- Current release: **dotPulse 3.0.0**, the first under the new name. See
+  [RELEASE_NOTES_v3.0.0.md](RELEASE_NOTES_v3.0.0.md), especially its **Breaking changes**
+  and **Upgrading** sections, before upgrading an existing site.
+- Previous release: v2.3.1, still named dotProject ([RELEASE_NOTES_v2.3.1.md](RELEASE_NOTES_v2.3.1.md)).
 
 ## What's in it
 
@@ -83,6 +84,8 @@ dotPulse upgrades dotProject 2.x databases in place: back up the database, repla
 code, and run the installer, which detects the existing installation and applies the
 database upgrades. Then upgrade the add-on modules from **System Admin > Modules**.
 Customised page titles and e-mail prefixes are kept; the defaults are renamed to dotPulse.
+The full checklist (module upgrades, cron, mail, web server rules) is in
+[RELEASE_NOTES_v3.0.0.md](RELEASE_NOTES_v3.0.0.md#upgrading).
 
 ## Development
 

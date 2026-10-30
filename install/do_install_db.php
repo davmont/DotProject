@@ -175,20 +175,22 @@ if ($dbc && ($do_db || $do_db_cfg)) {
     $last_version = $db_version['code_version'];
     // Convert the code version to a version string.
     if ($last_version != $current_version) {
-      // Check for from and to versions
+      // Per-release scripts (db/upgrade_<from>_to_<to>.sql), for the versions on the path.
       $from_key = array_search($last_version, $versionPath);
       $to_key = array_search($current_version, $versionPath);
-      for ($i = $from_key; $i < $to_key; $i++) {
+      for ($i = $from_key; $from_key !== false && $to_key !== false && $i < $to_key; $i++) {
         $from_version = str_replace(array('.', '-'), '', $versionPath[$i]);
         $to_version = str_replace(array('.', '-'), '', $versionPath[$i + 1]);
-        // Only do updates since last update - this is only necessary if updating via CVS of a previous
-        // version, but well worth doing anyway.
-        InstallLoadSql(DP_BASE_DIR . "/db/upgrade_{$from_version}_to_{$to_version}.sql", $db_version['last_db_update']);
-        $db_version['last_db_update'] = $lastDBUpdate; // Global set by InstallLoadSql.
+        $file = DP_BASE_DIR . "/db/upgrade_{$from_version}_to_{$to_version}.sql";
+        if (file_exists($file)) {
+          InstallLoadSql($file, $db_version['last_db_update']);
+          $db_version['last_db_update'] = $lastDBUpdate; // Global set by InstallLoadSql.
+        }
       }
-    } else if (file_exists(DP_BASE_DIR . '/db/upgrade_latest.sql')) {
-      // Need to get the installed version again, as it should have been
-      // updated by the from/to stuff.
+    }
+    // The date-stamped changes not applied yet, whatever the version jump. This only ran when
+    // the code version was unchanged, so a new version (2.3.1 -> 3.0.0) skipped all of them.
+    if (file_exists(DP_BASE_DIR . '/db/upgrade_latest.sql')) {
       InstallLoadSql(DP_BASE_DIR . '/db/upgrade_latest.sql', $db_version['last_db_update']);
     }
   } else {

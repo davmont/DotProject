@@ -57,6 +57,11 @@ sed 's/<[^>]*>/ /g' "$OUT/rehearse-installer.html" | grep -qE 'Database successf
 	|| { sed 's/<[^>]*>/ /g' "$OUT/rehearse-installer.html" | grep -E 'rror|Security Check' | head -20; fail "installer upgrade"; }
 log_check "installer upgrade" || FAILED+=("installer upgrade (log)")
 echo "   $(before)"
+# Every dated step of db/upgrade_latest.sql applied (a version change once skipped them all).
+NEWEST=$(grep -oE '^#[[:space:]]*[0-9]{8}' "$REPO_DIR/db/upgrade_latest.sql" | grep -oE '[0-9]{8}' | sort | tail -1)
+APPLIED=$(db -e "SELECT DATE_FORMAT(last_db_update, '%Y%m%d') FROM dotp_dpversion")
+[ "$APPLIED" = "$NEWEST" ] && echo "PASS  database updates applied up to $NEWEST" \
+	|| fail "database updates: last applied $APPLIED, newest in db/upgrade_latest.sql is $NEWEST"
 
 echo "== modules"
 gone=()
