@@ -16,6 +16,8 @@ else
 	<link rel="stylesheet" type="text/css" href="./style/<?php echo $uistyle;?>/main.css" media="all" />
 	<style type="text/css" media="all">@import "./style/<?php echo $uistyle;?>/main.css";</style>
 	<link rel="shortcut icon" href="./style/<?php echo $uistyle;?>/images/favicon.ico" type="image/ico" />
+	<link rel="icon" href="./images/brand/favicon.svg" type="image/svg+xml" />
+	<link rel="apple-touch-icon" href="./images/brand/apple-touch-icon.png" />
 	<?php @$AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
 </head>
 
@@ -27,7 +29,7 @@ else
 	<th align="left"><strong><?php
 		echo "<a style='color: white' href='{$dPconfig['base_url']}'>$page_title</a>";
 	?></strong></th>
-	<th align="right" width='95'><a href='http://www.dotproject.net/' <?php if ($dialog) echo "target='_blank'"; ?>><img src="style/<?php echo $uistyle;?>/images/dp_icon.gif" border=0></a></th>
+	<th align="right" width='95'><a href='https://github.com/davmont/dotPulse' <?php if ($dialog) echo "target='_blank'"; ?>><img src="./images/brand/icon.svg" width="24" height="24" border="0" alt="dotPulse" title="dotPulse" /></a></th>
 	</tr></table></td>
 </tr>
 <?php } ?>

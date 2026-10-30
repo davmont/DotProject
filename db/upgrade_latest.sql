@@ -43,3 +43,8 @@ INSERT INTO `%dbprefix%gacl_aro_groups_id_seq` (`id`) SELECT COALESCE(MAX(`id`),
 CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_axo_groups_id_seq` (`id` int(11) NOT NULL);
 DELETE FROM `%dbprefix%gacl_axo_groups_id_seq`;
 INSERT INTO `%dbprefix%gacl_axo_groups_id_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_axo_groups`;
+
+# 20261030
+# The project is now called dotPulse: rename the page title and mail subject prefix if they were never changed
+UPDATE `%dbprefix%config` SET `config_value` = 'dotPulse' WHERE `config_name` = 'page_title' AND `config_value` = 'dotProject';
+UPDATE `%dbprefix%config` SET `config_value` = '[dotPulse]' WHERE `config_name` = 'email_prefix' AND `config_value` = '[dotProject]';

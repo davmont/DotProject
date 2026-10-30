@@ -41,7 +41,7 @@ function dPgetIniSize($val)
 			PHP Version &gt;= 5.0
 		</td>
 		<td align="left">
-			<?php echo version_compare(phpversion(), '5.0', '<') ? '<b class="error">' . $failedImg . ' (' . phpversion() . '): dotProject may not work. Please upgrade!</b>' : '<b class="ok">' . $okImg . '</b><span class="item"> (' . phpversion() . ')</span>'; ?>
+			<?php echo version_compare(phpversion(), '5.0', '<') ? '<b class="error">' . $failedImg . ' (' . phpversion() . '): dotPulse may not work. Please upgrade!</b>' : '<b class="ok">' . $okImg . '</b><span class="item"> (' . phpversion() . ')</span>'; ?>
 		</td>
 	</tr>
 	<tr>
@@ -343,8 +343,8 @@ function dPgetIniSize($val)
 	</tr>
 	<tr>
 		<td class="item" colspan="2">
-			<p>The dotProject team openly recommend Free Open Source software (FOSS). This is not just
-				because dotProject is a FOSS application, but because we believe that the FOSS development
+			<p>The dotPulse project openly recommends Free Open Source software (FOSS). This is not just
+				because dotPulse is a FOSS application, but because we believe that the FOSS development
 				method results in better software, with a lower Total Cost of Ownership (TCO).</p>
 			<p>These recommendations reflect that belief, and the fact that as FOSS developers, we
 				develop on FOSS systems, so they will have better support sooner than other non-FOSS
@@ -354,19 +354,19 @@ function dPgetIniSize($val)
 	<tr>
 		<td class="item">Free Operating System?</td>
 		<td align="left"><?php echo (strtoupper(substr(PHP_OS, 0, 3)) != 'WIN') ? '<b class="ok">' . $okImg . '</b><span class="item"> (' . php_uname() . ')</span>' : '<b class="error">' . $failedImg . '</b><span class="warning">
-	It seems you are using a proprietary operating system.  You might want to consider a Free Open Source operating system such as Linux.  dotProject is usually tested on Linux first and will always have better support for Linux than other operating systems.
+	It seems you are using a proprietary operating system.  You might want to consider a Free Open Source operating system such as Linux.  dotPulse is usually tested on Linux first and will always have better support for Linux than other operating systems.
 	</span>'; ?></td>
 	</tr>
 	<tr>
 		<td class="item">Supported Web Server?</td>
 		<td align="left"><?php echo (stristr($_SERVER['SERVER_SOFTWARE'], 'apache') != false) ? '<b class="ok">' . $okImg . '</b><span class="item"> (' . $_SERVER['SERVER_SOFTWARE'] . ')</span>' : '<b class="error">' . $failedImg . '</b><span class="warning">
-	It seems you are using an unsupported web server.  Only Apache Web server is fully supported by dotProject, and using other web servers may result in unexpected problems.
+	It seems you are using an unsupported web server.  Only Apache Web server is fully supported by dotPulse, and using other web servers may result in unexpected problems.
 	</span>'; ?></td>
 	</tr>
 	<tr>
 		<td class="item">Standards Compliant Browser?</td>
 		<td align="left"><?php echo (stristr($_SERVER['HTTP_USER_AGENT'], 'msie') == false) ? '<b class="ok">' . $okImg . '</b><span class="item"> (' . $_SERVER['HTTP_USER_AGENT'] . ')</span>' : '<b class="error">' . $failedImg . '</b><span class="warning">
-	It seems you are using Internet Explorer.  This browser has many known security risks and is not standards compliant.  Consider using a browser such as Firefox - the dotProject team in the main develops for Firefox first.
+	It seems you are using Internet Explorer.  This browser has many known security risks and is not standards compliant.  Consider using a browser such as Firefox - dotPulse is developed and tested on Firefox first.
 	</span>'; ?></td>
 	</tr>
 </table>

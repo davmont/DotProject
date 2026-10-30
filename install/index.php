@@ -32,8 +32,8 @@ $mode = dPcheckUpgrade();
 ?>
 <html>
 <head>
-	<title>dotProject Installer</title>
-	<meta name="Description" content="dotProject Installer">
+	<title>dotPulse Installer</title>
+	<meta name="Description" content="dotPulse Installer">
  	<link rel="stylesheet" type="text/css" href="../style/material/main.css">
 	<style>
 		body { background-color: #f5f5f6; margin: 0; padding: 0; }
@@ -56,13 +56,13 @@ $mode = dPcheckUpgrade();
 </head>
 <body>
 <div class="installer-header">
-	<h1><img src="dp.png" alt="dotProject Logo"/> dotProject Installer</h1>
+	<h1><img src="../images/brand/icon.svg" width="40" height="40" alt="dotPulse"/> dotPulse Installer</h1>
 </div>
 
 <div class="installer-container">
 	<div class="welcome-card">
 		<h2>Welcome</h2>
-		<p>Welcome to the dotProject Installer! This wizard will guide you through setting up the database and creating the appropriate configuration files. In some cases, a manual installation step may be necessary.</p>
+		<p>Welcome to the dotPulse Installer! This wizard will guide you through setting up the database and creating the appropriate configuration files. In some cases, a manual installation step may be necessary.</p>
 		
 		<div style="background-color: #e3f2fd; border-left: 4px solid #1976d2; padding: 16px; margin: 20px 0; border-radius: 4px;">
 			<p style="margin: 0; font-weight: 500; color: #0d47a1;">Requirements Check</p>

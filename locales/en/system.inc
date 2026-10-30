@@ -141,7 +141,7 @@
 "admin_username_title"=>"Admin Username",
 "admin_username_tooltip"=>"Nominate the login name of the Administrative User.",
 "allow",
-"app_item_title"=>"dotProject Extended Sessions",
+"app_item_title"=>"dotPulse Extended Sessions",
 "auth_group_title"=>"User Authentication Settings",
 "auth_method_title"=>"User Authentication Method",
 "auth_method_tooltip"=>"Select the User authentication method that you wish to use.",
@@ -159,7 +159,7 @@
 "cal_working_days_title"=>"Calendar Working Days",
 "cal_working_days_tooltip"=>"Establish the required working days for your company in a comma separated list where 0 is Sunday.  For example if you work Monday through to Friday your list would be 1,2,3,4,5.  If you work Friday through to Sunday your list would be 5,6,0",
 "check_overallocation_title"=>"Overallocation Checking",
-"check_overallocation_tooltip"=>"The over allocation component of dotProject is an incomplete function which has been developed.  It is the basis of a system that will allow Project Managers to establish the maximum % of time that a resource can be allocated to a particular task for a particular period of time.   ",
+"check_overallocation_tooltip"=>"The over allocation component of dotPulse is an incomplete function which has been developed.  It is the basis of a system that will allow Project Managers to establish the maximum % of time that a resource can be allocated to a particular task for a particular period of time.   ",
 "check_task_dates_title"=>"Check Task Dates",
 "check_task_dates_tooltip"=>"If this option is turned on the start and end dates will be required in all tasks before they can be added.",
 "check_task_empty_dynamic_title"=>"Check Empty Dynamic Tasks",
@@ -189,7 +189,7 @@ Check http://www.w3.org/TR/html401/sgml/entities.html for information about html
 
 
 
-WARNING:  Setting to true, if the debug level is greater than 1, can cause dotProject to fail on messages that are technically only Warnings and therefore can be ignored.
+WARNING:  Setting to true, if the debug level is greater than 1, can cause dotPulse to fail on messages that are technically only Warnings and therefore can be ignored.
 
 
 
@@ -235,7 +235,7 @@ set to track warnings and debug messages if you do not
 have access to the PHP log files.",
 "edit",
 "email_prefix_title"=>"Email Prefix",
-"email_prefix_tooltip"=>"This setting is used to stipulate the subject line prefix for all email that dotProject sends out.",
+"email_prefix_tooltip"=>"This setting is used to stipulate the subject line prefix for all email that dotPulse sends out.",
 "en"=>"English",
 "enable_gantt_charts_title"=>"Enable Gantt Charts",
 "enable_gantt_charts_tooltip"=>"The option to enable or disable Gantt charts allows you to turn on the function or turn off the function, depending upon whether you wish to use Gantt charts on your site. ",
@@ -277,7 +277,7 @@ A negative value defines the absence of a limit (index all files).",
 "it"=>"Italian",
 "ja"=>"Japanese",
 "ldap_allow_login_title"=>"LDAP also allows standard login",
-"ldap_allow_login_tooltip"=>"dotProject database based users will also be allowed to login",
+"ldap_allow_login_tooltip"=>"dotPulse database based users will also be allowed to login",
 "ldap_base_dn_title"=>"LDAP Base DN",
 "ldap_base_dn_tooltip"=>"The Base Distinguished Name (DN) to use for LDAP queries.",
 "ldap_group_title"=>"LDAP Settings",
@@ -336,12 +336,12 @@ wget -O- http://your.domain/dotproject/queuescanner.php",
 "parser_text/html_title"=>"Html File Indexing Parser",
 "parser_text/html_tooltip"=>"Location for the Html File Indexing Parser, e.g. /usr/bin/strings",
 "password_min_len_title"=>"Minimum Password Length",
-"password_min_len_tooltip"=>"Establish the minimum length of any password entry in dotProject.  This can NOT be longer than the length of the column in DB",
+"password_min_len_tooltip"=>"Establish the minimum length of any password entry in dotPulse.  This can NOT be longer than the length of the column in DB",
 "php_item_title"=>"PHP Default",
 "pl"=>"Polish",
 "pn_item_title"=>"PostNuke",
 "postnuke_allow_login_title"=>"Postnuke login also allows Standard Login",
-"postnuke_allow_login_tooltip"=>"If PostNuke authentication is in effect, setting this also allows standard dotProject logins.  If not set all logins must be performed via PostNuke.",
+"postnuke_allow_login_tooltip"=>"If PostNuke authentication is in effect, setting this also allows standard dotPulse logins.  If not set all logins must be performed via PostNuke.",
 "pt"=>"Portugese",
 "pt_br"=>"Portuguese Brazillian",
 "record types",
@@ -366,7 +366,7 @@ If you turn this option off then project creators will be able to access the def
 "session_handling_title"=>"Session Handler",
 "session_handling_tooltip"=>"Which session handling to use, should be either \'php\' for traditional
 
-PHP session management, or \'app\' for the dotProject application to manage its own sessions via the database.
+PHP session management, or \'app\' for the dotPulse application to manage its own sessions via the database.
 
 Session Management: This extends the session handling of PHP to beyond browser-based sessions and stores the session information in the
 
@@ -389,7 +389,7 @@ You can only have 1 character within a string, so 2d4h is NOT valid, but 28h is.
 "site_domain_tooltip"=>"The domain set here is used to generate an email address if an incomplete address has been entered in the user\'s record.",
 "sl"=>"Slovenian",
 "smtp_item_title"=>"SMTP",
-"sql_item_title"=>"Standard dotProject",
+"sql_item_title"=>"Standard dotPulse",
 "submit",
 "sv"=>"Swedish",
 "syscfg_intro"=>"The following configuration variables have a direct impact on how your system functions.
@@ -428,7 +428,7 @@ There are mouseover-tooltips and (?)-information popups with each of the fields 
 "user_contact_inactivate_title"=>"Inactivate contact when user is disabled",
 "user_contact_inactivate_tooltip"=>"When a user is inactivated (by removing all roles), also mark the associated contact private",
 "username_min_len_title"=>"Minimum Username Length",
-"username_min_len_tooltip"=>"Establish the minimum length of any user names for dotProject.  This can NOT be longer than the length of the column in DB",
+"username_min_len_tooltip"=>"Establish the minimum length of any user names for dotPulse.  This can NOT be longer than the length of the column in DB",
 "visible",
 "zh"=>"Chinese",
 "zh_tw"=>"Chinese (Taiwan)",

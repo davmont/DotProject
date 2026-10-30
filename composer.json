@@ -1,6 +1,6 @@
 {
-    "name": "davmont/dotproject",
-    "description": "DotProject – actively maintained PHP 8 fork",
+    "name": "davmont/dotpulse",
+    "description": "dotPulse: an actively maintained PHP 8 fork of the dotProject project-management system",
     "type": "project",
     "license": "GPL-2.0-or-later",
     "authors": [
