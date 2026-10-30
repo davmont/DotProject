@@ -1,0 +1,15 @@
+# Optional Mailpit next to the sandbox, to see the mail dotPulse sends:
+#
+#   docker compose -f compose.yml -f compose.mail.yml up -d mail
+#   ./mail-setup.sh          # points the SMTP settings at Mailpit
+#
+# Messages: http://127.0.0.1:8025 (web UI and API). dotPulse reaches it as
+# mail:1025 inside the compose network.
+services:
+  mail:
+    image: axllent/mailpit:v1.20.0
+    ports:
+      - "127.0.0.1:8025:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "1"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"

@@ -50,7 +50,9 @@ done
 
 ## Event queue (`queuescanner.php`)
 
-`queuescanner.php` sends the queued events, such as task reminder mails. It
+`queuescanner.php` sends the queued events: task notification, assignment and
+reminder mails, and all mail when "Queue Email for later sending" is set. Without
+it those mails are never sent. It
 runs on the command line only: over HTTP it answers 404 (and the web server
 rules above refuse it before PHP runs). Run it from cron as the web server
 user, with the site's public URL so that the links in the mails work:
@@ -69,6 +71,27 @@ user, with the site's public URL so that the links in the mails work:
 
 Sites that fetched `queuescanner.php` over HTTP (`wget`/`curl` in a cron job)
 must switch to the command above.
+
+An event that fails with a PHP error is logged (`dotPulse event queue: dropped
+event ...`) and removed, so it no longer blocks the events behind it. Mail that
+cannot be sent is logged as `dotPulse mail: not sent (...)` and stays queued.
+
+## Mail
+
+Set these under System Admin > System Configuration > Mail:
+
+- **Sender address** (`mail_from`): the address all mail is sent from, for
+  example `notifications@example.com`, on a domain whose SPF/DKIM records allow
+  your SMTP server. The user who caused a message appears as the sender name and
+  replies go to them. When it is empty, mail is sent from each user's own address,
+  which receiving servers often reject or mark as spam (DMARC).
+- **SMTP** with **Enable TLS**: port 587 uses STARTTLS, port 465 uses SMTP over
+  TLS (SMTPS).
+- **Send a test email** (below the settings) sends a message with the saved
+  settings and shows the server's error if it fails.
+
+Users get an email when someone else assigns them to a task; each user can turn
+it off in their preferences ("Email me when I am assigned to a task").
 
 ## Content-Security-Policy
 
