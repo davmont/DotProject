@@ -444,6 +444,7 @@ INSERT INTO %dbprefix%user_preferences VALUES("0", "SHDATEFORMAT", "%d/%m/%Y");
 INSERT INTO %dbprefix%user_preferences VALUES("0", "TIMEFORMAT", "%I:%M %p");
 INSERT INTO %dbprefix%user_preferences VALUES("0", "UISTYLE", "dp-grey-theme");
 INSERT INTO %dbprefix%user_preferences VALUES("0", "TASKASSIGNMAX", "100");
+INSERT INTO %dbprefix%user_preferences VALUES("0", "TASKASSIGNMAIL", "1");
 INSERT INTO %dbprefix%user_preferences VALUES("0", "USERFORMAT", "user");
 
 #
@@ -705,6 +706,7 @@ INSERT INTO %dbprefix%config VALUES (0, 'mail_user', '', 'mail', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'mail_pass', '', 'mail', 'password');
 INSERT INTO %dbprefix%config VALUES (0, 'mail_defer', 'false', 'mail', 'checkbox');
 INSERT INTO %dbprefix%config VALUES (0, 'mail_timeout', '30', 'mail', 'text');
+INSERT INTO %dbprefix%config VALUES (0, 'mail_from', '', 'mail', 'text');
 
 INSERT INTO %dbprefix%config_list (config_id, config_list_name)
   SELECT config_id, 'php'

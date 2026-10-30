@@ -310,6 +310,8 @@ A negative value defines the absence of a limit (index all files).",
 
 wget -O- http://your.domain/dotproject/queuescanner.php",
 "mail_group_title"=>"Email Settings",
+"mail_from_title"=>"Sender address",
+"mail_from_tooltip"=>"Address that all email is sent from, for example notifications@example.com. The name of the user who caused the message is shown as the sender name, and replies go to that user. Leave empty to send from each user's own address, which many mail servers reject (SPF, DMARC).",
 "mail_host_title"=>"SMTP Host",
 "mail_host_tooltip"=>"The fully qualified domain name (FQDN) or the IP address of the SMTP host to use for sending email",
 "mail_pass_title"=>"SMTP Password",

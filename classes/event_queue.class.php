@@ -164,7 +164,17 @@ class EventQueue {
 
 		$this->event_count = 0;
 		for ($rid; ! $rid->EOF; $rid->moveNext()) {
-			if ($this->execute($rid->fields)) {
+			try {
+				$done = $this->execute($rid->fields);
+			} catch (Throwable $e) {
+				// One broken event used to stop the scan for good: every later run died on
+				// it too, so nothing behind it (reminders, mail) was ever processed.
+				error_log('dotPulse event queue: dropped event ' . $rid->fields['queue_id'] . ' ('
+					. $rid->fields['queue_callback'] . '): ' . get_class($e) . ': ' . $e->getMessage());
+				$this->delete_list[] = $rid->fields['queue_id'];
+				continue;
+			}
+			if ($done) {
 				$this->update_event($rid->fields);
 				$this->event_count++;
 			}

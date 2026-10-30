@@ -106,3 +106,17 @@ echo '<form name="cfgFrm" action="?m=system&amp;a=systemconfig" method="post">';
 	</tr>
 </table>
 </form>
+<form name="testMailFrm" action="?m=system&amp;a=systemconfig" method="post">
+<input type="hidden" name="dosql" value="do_testmail" />
+<table cellspacing="0" cellpadding="3" border="0" class="std" width="100%" align="center">
+	<tr>
+		<td class="item" width="20%"><label for="test_mail_to"><?php echo $AppUI->_('Send a test email to'); ?></label></td>
+		<td>
+			<input type="email" class="text" name="test_mail_to" id="test_mail_to" size="40"
+				value="<?php echo dPhtml($AppUI->user_email); ?>" />
+			<input class="button" type="submit" value="<?php echo $AppUI->_('Send'); ?>" />
+			<span class="hint"><?php echo $AppUI->_('Uses the saved settings: save your changes first.'); ?></span>
+		</td>
+	</tr>
+</table>
+</form>

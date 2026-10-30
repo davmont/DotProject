@@ -36,7 +36,7 @@ if (isset($htasks)) {
 }
 
 $sizeof = sizeof($htasks_ar);
-for ($i=0; $i <= $sizeof; $i++) {
+for ($i=0; $i < $sizeof; $i++) {
 	
 	$_POST['task_id'] = $htasks_ar[$i];
 	

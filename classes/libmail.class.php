@@ -36,6 +36,10 @@ class Mail
 	var $actype = array();
 	/** @var array  Dispositions per attachment */
 	var $adispo = array();
+	/** @var array  Attachments built in memory: array(data, file name, MIME type) */
+	var $astrings = array();
+	/** @var string  Sender address from the mail_from setting ('' = the address given to From()) */
+	var $sender = '';
 	/** @var array  Assembled RFC headers (for Get()) */
 	var $xheaders = array();
 	/** @var string  Stringified headers (for Get()) */
@@ -94,6 +98,7 @@ function __construct() {
 	$this->password  = dPgetConfig('mail_pass');
 	$this->defer     = dPgetConfig('mail_defer');
 	$this->timeout   = dPgetConfig('mail_timeout', 0);
+	$this->sender    = trim((string) dPgetConfig('mail_from', ''));
 
 	$this->charset     = isset($GLOBALS['locale_char_set'])
 	                     ? mb_strtolower($GLOBALS['locale_char_set']) : 'us-ascii';
@@ -120,11 +125,23 @@ function ValidEmail($address) {
 function CheckAdresses($aad) {
 	foreach ($aad as $ad) {
 		if (!$this->ValidEmail($ad)) {
-			echo ('Class Mail, method Mail : invalid address ' . $ad);
-			exit;
+			return FALSE;
 		}
 	}
 	return TRUE;
+}
+
+/** The valid addresses of $aad; invalid ones are logged and dropped (this used to stop the whole request). */
+private function _validOnly($aad) {
+	$valid = array();
+	foreach ($aad as $ad) {
+		if ($this->ValidEmail($ad)) {
+			$valid[] = $ad;
+		} else if (trim($ad) !== '') {
+			error_log('dotPulse mail: invalid address skipped: ' . $ad);
+		}
+	}
+	return $valid;
 }
 
 function CheckAddresses($aad) {
@@ -187,7 +204,7 @@ function To($to, $reset = FALSE) {
 		$this->ato[] = $to;
 	}
 	if ($this->checkAddress == TRUE) {
-		$this->CheckAdresses($this->ato);
+		$this->ato = $this->_validOnly($this->ato);
 	}
 }
 
@@ -200,7 +217,7 @@ function Cc($cc) {
 		$this->acc = explode(',', $cc);
 	}
 	if ($this->checkAddress == TRUE) {
-		$this->CheckAdresses($this->acc);
+		$this->acc = $this->_validOnly($this->acc);
 	}
 }
 
@@ -213,7 +230,7 @@ function Bcc($bcc) {
 		$this->abcc = explode(',', $bcc);
 	}
 	if ($this->checkAddress == TRUE) {
-		$this->CheckAdresses($this->abcc);
+		$this->abcc = $this->_validOnly($this->abcc);
 	}
 }
 
@@ -252,6 +269,20 @@ function Attach($filename, $filetype = '', $disposition = 'inline') {
 	$this->aattach[] = $filename;
 	$this->actype[]  = $filetype;
 	$this->adispo[]  = $disposition;
+}
+
+/**
+ *  Attach data built in memory (an iCalendar invitation, a generated report).
+ */
+function AttachString($data, $filename, $filetype = 'application/octet-stream') {
+	$this->astrings[] = array((string) $data, (string) $filename, (string) $filetype);
+}
+
+/**
+ *  Why the last Send() failed, or '' if it did not.
+ */
+function Error() {
+	return (string) $this->last_error;
 }
 
 // ---------------------------------------------------------------------------
@@ -294,6 +325,22 @@ function SendQueuedMail($mod, $type, $originator, $owner, &$args) {
  *  Build and send via PHPMailer (both SMTP and php-mail transports).
  */
 private function _phpmailerSend() {
+	$this->last_error = false;
+	try {
+		return $this->_phpmailerBuildAndSend();
+	} catch (PMException $e) {
+		global $AppUI;
+		$this->last_error = $e->getMessage();
+		// Queued mail is sent from cron, where nobody sees the message below.
+		error_log('dotPulse mail: not sent (' . $this->last_error . '), subject: ' . $this->__rawSubject);
+		if (isset($AppUI)) {
+			$AppUI->setMsg('Failed to send email: ' . $e->getMessage(), UI_MSG_ERROR);
+		}
+		return false;
+	}
+}
+
+private function _phpmailerBuildAndSend() {
 	$pm = new PM(true);
 
 	if ($this->transport === 'smtp') {
@@ -306,7 +353,8 @@ private function _phpmailerSend() {
 			$pm->Password = $this->password;
 		}
 		if ($this->tls) {
-			$pm->SMTPSecure = PM::ENCRYPTION_STARTTLS;
+			// Port 465 is SMTP over TLS from the first byte; the others upgrade with STARTTLS.
+			$pm->SMTPSecure = ((int) $this->port === 465) ? PM::ENCRYPTION_SMTPS : PM::ENCRYPTION_STARTTLS;
 		}
 		if ($this->timeout) {
 			$pm->Timeout = (int) $this->timeout;
@@ -318,14 +366,29 @@ private function _phpmailerSend() {
 	$pm->CharSet = $this->charset && $this->charset !== 'us-ascii'
 	               ? $this->charset : 'UTF-8';
 	$pm->XMailer = isset($GLOBALS['AppUI'])
-	               ? 'dotProject v' . $GLOBALS['AppUI']->getVersion() : 'dotProject';
+	               ? 'dotPulse v' . $GLOBALS['AppUI']->getVersion() : 'dotPulse';
 
-	// From
+	// From. With mail_from set, every message leaves from that address (SPF and DMARC
+	// reject a server sending as its users' own domains); the user's name stays as
+	// the display name and replies go to the user.
 	$rawFrom = $this->__rawFrom ?: ($this->xheaders['From'] ?? '');
+	$fromName = '';
+	$fromAddr = trim($rawFrom);
 	if (preg_match('/^(.*?)\s*<([^>]+)>$/i', $rawFrom, $m)) {
-		$pm->setFrom(trim($m[2]), trim($m[1]));
+		$fromName = trim($m[1], " \t\"'");
+		$fromAddr = trim($m[2]);
+	}
+	$fromValid = $this->ValidEmail($fromAddr);
+	if (!$fromValid) {
+		$fromAddr = 'no-reply@' . dPgetConfig('site_domain', 'localhost');
+	}
+	if ($this->sender !== '' && $this->ValidEmail($this->sender)) {
+		$pm->setFrom($this->sender, $fromName !== '' ? $fromName : (string) dPgetConfig('company_name', ''));
+		if (!$this->__rawReplyTo && $fromValid && strcasecmp($fromAddr, $this->sender)) {
+			$pm->addReplyTo($fromAddr, $fromName);
+		}
 	} else {
-		$pm->setFrom(trim($rawFrom) ?: 'noreply@localhost');
+		$pm->setFrom($fromAddr, $fromName);
 	}
 
 	// Subject
@@ -373,6 +436,10 @@ private function _phpmailerSend() {
 		}
 	}
 
+	foreach ($this->astrings as $att) {
+		$pm->addStringAttachment($att[0], $att[1], 'base64', $att[2]);
+	}
+
 	// Extras
 	if ($this->__rawOrg) {
 		$pm->addCustomHeader('Organization', $this->__rawOrg);
@@ -388,15 +455,10 @@ private function _phpmailerSend() {
 		}
 	}
 
-	try {
-		return $pm->send();
-	} catch (PMException $e) {
-		global $AppUI;
-		if (isset($AppUI)) {
-			$AppUI->setMsg('Failed to send email: ' . $e->getMessage(), UI_MSG_ERROR);
-		}
-		return false;
+	if (!$pm->getToAddresses() && !$pm->getCcAddresses() && !$pm->getBccAddresses()) {
+		throw new PMException('no valid recipient');
 	}
+	return $pm->send();
 }
 
 // ---------------------------------------------------------------------------

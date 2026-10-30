@@ -142,7 +142,7 @@ function submitIt() {
 	<td align="right"><?php echo $AppUI->_('User Interface Style');?>:</td>
 	<td>
 <?php
-        $uis = $prefs['UISTYLE'] ? $prefs['UISTYLE'] : 'default';
+        $uis = !empty($prefs['UISTYLE']) ? $prefs['UISTYLE'] : 'default';
 	$styles = $AppUI->readDirs('style');
 	$temp = $AppUI->setWarning(false);
 	echo arraySelect($styles, 'pref_name[UISTYLE]', 'class="text" size="1"', $uis, true , true);
@@ -184,6 +184,16 @@ function submitIt() {
  
 	echo arraySelect($notify_filter, 'pref_name[MAILALL]', 'class="text" size="1"', @$prefs['MAILALL'], true);
 
+?>
+	</td>
+</tr>
+<tr>
+	<td align="right"><?php echo $AppUI->_('Email me when I am assigned to a task');?>:</td>
+	<td>
+<?php
+	$assign_mail = array('1' => 'Yes', '0' => 'No');
+	echo arraySelect($assign_mail, 'pref_name[TASKASSIGNMAIL]', 'class="text" size="1"',
+		isset($prefs['TASKASSIGNMAIL']) ? $prefs['TASKASSIGNMAIL'] : '1', true);
 ?>
 	</td>
 </tr>
