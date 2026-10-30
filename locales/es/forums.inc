@@ -27,7 +27,7 @@
 "forumEmailBody"=>"Ha habido actividades dentro de un foro que usted monitoriza.",
 "forumEmailFrom"=>"Monitorizar foro",
 "forumEmailSubj"=>"Actividad de foros",
-"forumForceWatch"=>"Forzar Monitorización para todos los usuarios en todos los foros (¡posible problema de seguridad!: depende de su uso de dotProject)",
+"forumForceWatch"=>"Forzar Monitorización para todos los usuarios en todos los foros (¡posible problema de seguridad!: depende de su uso de dotPulse)",
 "forumName"=>"Por favor, introduzca un nombre de foro válido",
 "forums list"=>"listado de foros",
 "forumsDelete"=>"¿Está seguro de querer eliminar este mensaje?",

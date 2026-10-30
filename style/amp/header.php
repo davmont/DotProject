@@ -9,6 +9,8 @@
 @import "./style/<?php echo $uistyle; ?>/main.css";
 </style>
 <link rel="shortcut icon" href="./style/<?php echo $uistyle; ?>/img/favicon.ico" type="image/ico" />
+<link rel="icon" href="./images/brand/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="./images/brand/apple-touch-icon.png" />
 <?php @$AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
 <?php include("./style/".$uistyle."/color.php"); ?>
 </head>

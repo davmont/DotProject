@@ -9,12 +9,14 @@ if (!defined('DP_BASE_DIR')) {
 <head>
 	<title><?php echo @dPgetConfig('page_title');?></title>
 	<meta http-equiv="Content-Type" content="text/html;charset=<?php echo isset($locale_char_set) ? $locale_char_set : 'UTF-8';?>" />
-       	<title><?php echo $dPconfig['company_name'];?> :: dotProject Login</title>
+       	<title><?php echo $dPconfig['company_name'];?> :: dotPulse</title>
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta name="Version" content="<?php echo @$AppUI->getVersion();?>" />
 	<link rel="stylesheet" type="text/css" href="./style/<?php echo $uistyle;?>/main.css" media="all" />
 	<style type="text/css" media="all">@import "./style/<?php echo $uistyle;?>/main.css";</style>
 	<link rel="shortcut icon" href="./style/<?php echo $uistyle;?>/images/favicon.ico" type="image/ico" />
+	<link rel="icon" href="./images/brand/favicon.svg" type="image/svg+xml" />
+	<link rel="apple-touch-icon" href="./images/brand/apple-touch-icon.png" />
 </head>
 
 <body style="background-color: #f0f0f0">
@@ -37,7 +39,7 @@ if (!defined('DP_BASE_DIR')) {
 	<td align="left" nowrap><input type="email" size="25" maxlength="64" name="checkemail" class="text" /></td>
 </tr>
 <tr>
-	<td align="left" nowrap><a href="http://www.dotproject.net/"><img src="./style/default/images/dp_icon.gif" width="120" height="20" border="0" alt="dotProject logo" /></a></td>
+	<td align="left" nowrap><a href="https://github.com/davmont/dotPulse"><img src="./images/brand/logo.svg" height="28" border="0" alt="dotPulse" /></a></td>
 	<td align="right" valign="bottom" nowrap><input type="submit" name="sendpass" value="<?php echo $AppUI->_('send password');?>" class="button" /></td>
 </tr>
 </table>
