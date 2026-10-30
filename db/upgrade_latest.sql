@@ -44,6 +44,11 @@ CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_axo_groups_id_seq` (`id` int(11) NOT 
 DELETE FROM `%dbprefix%gacl_axo_groups_id_seq`;
 INSERT INTO `%dbprefix%gacl_axo_groups_id_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_axo_groups`;
 
+# 20261030
+# The project is now called dotPulse: rename the page title and mail subject prefix if they were never changed
+UPDATE `%dbprefix%config` SET `config_value` = 'dotPulse' WHERE `config_name` = 'page_title' AND `config_value` = 'dotProject';
+UPDATE `%dbprefix%config` SET `config_value` = '[dotPulse]' WHERE `config_name` = 'email_prefix' AND `config_value` = '[dotProject]';
+
 # 20261031
 # Mail: a sender address for all mail, and a preference for task assignment emails (on by default)
 INSERT INTO `%dbprefix%config` (`config_name`, `config_value`, `config_group`, `config_type`)

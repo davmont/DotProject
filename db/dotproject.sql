@@ -603,9 +603,9 @@ INSERT INTO %dbprefix%config VALUES (0, 'check_overallocation', 'false', '', 'ch
 INSERT INTO %dbprefix%config VALUES (0, 'currency_symbol', '$', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'host_style', 'default', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'company_name', 'My Company', '', 'text');
-INSERT INTO %dbprefix%config VALUES (0, 'page_title', 'dotProject', '', 'text');
+INSERT INTO %dbprefix%config VALUES (0, 'page_title', 'dotPulse', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'site_domain', 'example.com', '', 'text');
-INSERT INTO %dbprefix%config VALUES (0, 'email_prefix', '[dotProject]', '', 'text');
+INSERT INTO %dbprefix%config VALUES (0, 'email_prefix', '[dotPulse]', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'admin_username', 'admin', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'username_min_len', '4', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'password_min_len', '4', '', 'text');

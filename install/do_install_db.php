@@ -7,7 +7,7 @@ set_time_limit(0);
 
 include_once 'check_upgrade.php';
 if ($_POST['mode'] == 'install' && dPcheckUpgrade() == 'upgrade') {
-  die('Security Check: dotProject seems to be already configured. Communication broken for Security Reasons!');
+  die('Security Check: dotPulse seems to be already configured. Communication broken for Security Reasons!');
 }
 if (!dPinstallerAuthorised($_POST)) {
   die('Security Check: the database settings do not match includes/config.php. Enter the settings, including the password, from that file.');
@@ -106,8 +106,8 @@ ob_end_clean();
 <html>
 
 <head>
- <title>dotProject Installer</title>
- <meta name="Description" content="dotProject Installer">
+ <title>dotPulse Installer</title>
+ <meta name="Description" content="dotPulse Installer">
  <link rel="stylesheet" type="text/css" href="../style/material/main.css">
  <style>
 		body { background-color: #f5f5f6; margin: 0; padding: 0; }
@@ -127,7 +127,7 @@ ob_end_clean();
 
 <body>
 <div class="installer-header">
-	<h1><img src="dp.png" alt="dotProject Logo"/> dotProject Installer</h1>
+	<h1><img src="../images/brand/icon.svg" width="40" height="40" alt="dotPulse"/> dotPulse Installer</h1>
 </div>
 
 <div class="installer-container">
@@ -322,7 +322,7 @@ if ($do_cfg || $do_db_cfg) {
 			</div>
 		<?php } ?>
 		<div style="margin-top: 10px;">
-			<a href="<?php echo $baseUrl.'/index.php'; ?>" class="button" style="text-decoration: none; padding: 12px 32px;">Proceed to dotProject</a>
+			<a href="<?php echo $baseUrl.'/index.php'; ?>" class="button" style="text-decoration: none; padding: 12px 32px;">Proceed to dotPulse</a>
 		</div>
 	</div>
 	<?php } ?>

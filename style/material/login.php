@@ -4,8 +4,8 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 // Fetch some config values
-$company_name = dPgetConfig('company_name', 'dotProject');
-$page_title = dPgetConfig('page_title', 'dotProject');
+$company_name = dPgetConfig('company_name', 'dotPulse');
+$page_title = dPgetConfig('page_title', 'dotPulse');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,6 +18,8 @@ $page_title = dPgetConfig('page_title', 'dotProject');
 	</title>
 	<link rel="stylesheet" type="text/css" href="./style/<?php echo $uistyle; ?>/main.css" media="all" />
 	<link rel="shortcut icon" href="./style/<?php echo $uistyle; ?>/images/favicon.ico" type="image/ico" />
+	<link rel="icon" href="./images/brand/favicon.svg" type="image/svg+xml" />
+	<link rel="apple-touch-icon" href="./images/brand/apple-touch-icon.png" />
 	<style type="text/css">
 		:root {
 			--primary-color: #1976d2;
@@ -150,8 +152,8 @@ $page_title = dPgetConfig('page_title', 'dotProject');
 
 	<div class="login-card">
 		<div class="logo-area">
-			<a href="http://www.dotproject.net/">
-				<img src="./style/default/images/dp_icon.gif" alt="dotProject Logo">
+			<a href="https://github.com/davmont/dotPulse">
+				<img src="./images/brand/logo.svg" height="44" alt="dotPulse" />
 			</a>
 		</div>
 

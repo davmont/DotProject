@@ -20,8 +20,8 @@ if (!defined('DP_BASE_URL')) {
 ?>
 <html>
 <head>
-	<title>dotProject Installer</title>
-	<meta name="Description" content="dotProject Installer" />
+	<title>dotPulse Installer</title>
+	<meta name="Description" content="dotPulse Installer" />
  	<link rel="stylesheet" type="text/css" href="../style/material/main.css">
 	<style>
 		body { background-color: #f5f5f6; margin: 0; padding: 0; }
@@ -42,7 +42,7 @@ if (!defined('DP_BASE_URL')) {
 </head>
 <body>
 <div class="installer-header">
-	<h1><img src="dp.png" alt="dotProject Logo"/> dotProject Installer</h1>
+	<h1><img src="../images/brand/icon.svg" width="40" height="40" alt="dotPulse"/> dotPulse Installer</h1>
 </div>
 
 <div class="installer-container">
@@ -55,7 +55,7 @@ if ($_POST['mode'] == 'upgrade') {
 	require_once 'check_upgrade.php';
 	@include_once "../includes/config.php";
 	if (dPcheckExistingDB($dPconfig)) {
-		die('<div class="error-box">dotProject appears to already be installed, aborting install.</div>');
+		die('<div class="error-box">dotPulse (or dotProject) appears to already be installed, aborting install.</div>');
 	}
 } else {
 	@include_once "../includes/config-dist.php";
@@ -113,7 +113,7 @@ if ($_POST['mode'] == 'upgrade') {
 	<p style="font-size: 13px; color: #666; margin-bottom: 20px;">We recommend downloading an XML Schema of your existing database before performing an upgrade or a clean install over an existing one.</p>
 	<div style="display: flex; align-items: center; gap: 16px;">
 		<input class="button" style="background-color: #607d8b;" type="submit" name="dobackup" value="Download XML Backup" />
-		<span style="font-size: 12px; color: #999;">Only restorable with the dotProject Backup module.</span>
+		<span style="font-size: 12px; color: #999;">Only restorable with the Backup module.</span>
 	</div>
 </div>
 

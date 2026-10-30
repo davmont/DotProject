@@ -6,8 +6,8 @@ if (!defined('DP_BASE_DIR')) {
 $dialog = (int)dPgetParam($_GET, 'dialog', 0);
 
 $page_title = (($dialog) ? '' 
-               : (($dPconfig['page_title'] == 'dotProject') 
-                  ? ($dPconfig['page_title'] . ' ' . $AppUI->getVersion()) 
+               : (in_array($dPconfig['page_title'], array('dotProject', 'dotPulse')) 
+                  ? ('dotPulse ' . $AppUI->getVersion()) 
 				  : $dPconfig['page_title']));
 
 ?>
@@ -16,7 +16,7 @@ $page_title = (($dialog) ? ''
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-	<meta name="Description" content="dotProject Default Style" />
+	<meta name="Description" content="dotPulse" />
 	<meta name="Version" content="<?php echo @$AppUI->getVersion();?>" />
 	<meta http-equiv="Content-Type" content="text/html;charset=<?php 
 echo isset($locale_char_set) ? $locale_char_set : 'UTF-8';?>" />
@@ -27,6 +27,8 @@ echo $uistyle;?>/main.css" media="all" />
 echo $uistyle;?>/main.css";</style>
 	<link rel="shortcut icon" href="./style/<?php 
 echo $uistyle;?>/images/favicon.ico" type="image/ico" />
+	<link rel="icon" href="./images/brand/favicon.svg" type="image/svg+xml" />
+	<link rel="apple-touch-icon" href="./images/brand/apple-touch-icon.png" />
 	<?php 
 $AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
 	<script type="text/javascript" src="./style/dp-grey-theme/tabs.js"></script>
@@ -50,9 +52,8 @@ echo ('<a href="' . dPformSafe($dPconfig['base_url'], DP_FORM_URI) . '">' . $pag
 	</form>
 	<?php endif; ?>
 	</th>
-	<th align="right" width='50'><a href='http://www.dotproject.net/' <?php 
-	echo (($dialog) ? 'target="_blank"' : ''); ?>><img src="style/<?php 
-echo $uistyle;?>/images/dp_icon.gif" border="0" /></a></th>
+	<th align="right" width='50'><a href='https://github.com/davmont/dotPulse' <?php 
+	echo (($dialog) ? 'target="_blank"' : ''); ?>><img src="./images/brand/icon.svg" width="24" height="24" border="0" alt="dotPulse" title="dotPulse" /></a></th>
 	</tr></table></td>
 </tr>
 <?php } ?>
