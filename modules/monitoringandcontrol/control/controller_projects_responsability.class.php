@@ -14,7 +14,7 @@ class ControllerProjectsResponsability{
 		$q = new DBQuery;
 		$q->addQuery('responsibility_id, responsibility_description, responsibility_user_id_consultation, responsibility_user_id_execut, responsibility_user_id_support, responsibility_user_id_approve,  project_id');
 		$q->addTable('monitoring_responsibility_matriz', 'm');
-		$q -> addWhere('project_id='. $project_id );					
+		$q -> addWhere('project_id=' . (int)$project_id);					
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return $list;		
@@ -27,7 +27,7 @@ class ControllerProjectsResponsability{
 		$q = new DBQuery;
 		$q->addQuery('responsibility_id, responsibility_description, responsibility_user_id_consultation, responsibility_user_id_execut, responsibility_user_id_support, responsibility_user_id_approve,  project_id ');
 		$q->addTable('monitoring_responsibility_matriz', 'm');	
-		$q->addWhere('responsibility_id=' . $id);
+		$q->addWhere('responsibility_id=' . (int)$id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return $list;	

@@ -5,6 +5,9 @@ if (!defined('DP_BASE_DIR')){
 
 include_once( dPgetConfig('root_dir') . '/modules/helpdesk/helpdesk.functions.php' );
 include_once("./modules/helpdesk/config.php");
+// Set when the list is a project or company tab; 0 on the helpdesk's own page.
+$req_project_id = dPgetIntParam($_REQUEST, 'project_id', 0);
+$req_company_id = dPgetIntParam($_REQUEST, 'company_id', 0);
 $allowedCompanies = getAllowedCompanies();
 $ipr = dPgetSysVal( 'HelpDeskPriority' );
 $ist = dPgetSysVal( 'HelpDeskStatus' );
@@ -17,7 +20,9 @@ $format = $df." ".$tf;
 
 // check sort order
 if (isset( $_GET['orderby'] )) {
-	$AppUI->setState( 'HelpDeskIdxOrderBy', $_GET['orderby'] );
+	$AppUI->setState( 'HelpDeskIdxOrderBy', dPvalidateOrder($_GET['orderby'], array('item_id', 'item_created',
+		'item_requestor', 'item_title', 'item_summary', 'item_assigned_to', 'item_status', 'item_priority',
+		'item_updated', 'item_deadline', 'project_name'), 'item_id') );
 }
 $orderby = $AppUI->getState( 'HelpDeskIdxOrderBy' ) ? $AppUI->getState( 'HelpDeskIdxOrderBy' ) : 'item_id';
 
@@ -50,7 +55,7 @@ if($HELPDESK_CONFIG['search_criteria_search']){
     //echo $AppUI->getState( 'HelpDeskSearch' ); 
     /*
     $search =$AppUI->getState( 'HelpDeskSearch' ) !== null ? $AppUI->getState( 'HelpDeskSearch' ) : '';
-    echo "<br>".$search."<br>";
+    echo "<br>".dPhtml($search)."<br>";
     */
 		/*if(strlen(trim($search))>0){
 			$tarr[] = "(lower(hi.item_title) LIKE lower('%$search%')
@@ -61,15 +66,16 @@ if($HELPDESK_CONFIG['search_criteria_search']){
   $search =$AppUI->getState( 'HelpDeskSearch' ) !== null ? $AppUI->getState( 'HelpDeskSearch' ) : '';
   //echo "<br>".$search."<br>";
   if(strlen(trim($search))>0){
-      $tarr[] = "(lower(hi.item_title) LIKE lower('%$search%')
-                    OR lower(hi.item_summary) LIKE lower('%$search%'))";
+      $search_sql = db_escape($search);
+      $tarr[] = "(lower(hi.item_title) LIKE lower('%$search_sql%')
+                    OR lower(hi.item_summary) LIKE lower('%$search_sql%'))";
   }
   
-	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+	if (!$req_project_id && !$req_company_id) {
 		$selectors[] = "<td align=\"right\"><label for=\"search\">"
                . $AppUI->_('Search')
                . ":</label></td><td nowrap=\"nowrap\">"
-               . "<input type=\"text\" name=\"search\" id=\"search\" class=\"text\" value=\"".$search."\" size=\"20\">"
+               . "<input type=\"text\" name=\"search\" id=\"search\" class=\"text\" value=\"".dPhtml($search)."\" size=\"20\">"
                . " <input type=\"submit\" value=\""
                . $AppUI->_('Search')
                . "\" class=\"button\" /></td>";
@@ -82,31 +88,31 @@ if($HELPDESK_CONFIG['search_criteria_company']){
 		$AppUI->setState( 'HelpDeskCompany', $_GET['company'] );
 	}
 	
-	if (empty($_REQUEST['company_id'])) {
-		$company = $AppUI->getState( 'HelpDeskCompany' ) !== null ? $AppUI->getState( 'HelpDeskCompany' ) : -1;
+	if (empty($req_company_id)) {
+		$company = $AppUI->getState( 'HelpDeskCompany' ) !== null ? (int)$AppUI->getState( 'HelpDeskCompany' ) : -1;
 	} else {
-		$company = $_REQUEST['company_id'];
+		$company = $req_company_id;
 	}
 
-	if ( ($_GET['project'] > 0) && ($company == -1) ) {
+	if ( (dPgetIntParam($_GET, 'project', 0) > 0) && ($company == -1) ) {
 		$q = new DBQuery; 
 		$q->addQuery('project_company');
 		$q->addTable('projects');
-		$q->addWhere('project_id='.$_GET['project']);
-		$company = $q->loadResult();
+		$q->addWhere('project_id='.dPgetIntParam($_GET, 'project', 0));
+		$company = (int)$q->loadResult();
 	}
 
 	if ($company >= 0) {
-		$tarr[] = "hi.item_company_id=$company";
+		$tarr[] = "hi.item_company_id=" . (int)$company;
 	}
 	
-	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+	if (!$req_project_id && !$req_company_id) {
 		$selectors[] = "<td align=\"right\"><label for=\"company\">"
                . $AppUI->_('Company')
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $allowedCompanies ),
                               'company',
-							                'size="1" id="company" class="text" onchange="changeList()"',
+							                'size="1" id="company" class="text"' . dPaction('changeList'),
 							                $company )
                . "</td>";
 	}
@@ -118,14 +124,14 @@ if($HELPDESK_CONFIG['search_criteria_project']){
 		$AppUI->setState( 'HelpDeskProject', $_GET['project'] );
 	}
 
-	if (empty($_REQUEST['project_id'])) {
-		$project = $AppUI->getState( 'HelpDeskProject' ) !== null ? $AppUI->getState( 'HelpDeskProject' ) : -1;
+	if (empty($req_project_id)) {
+		$project = $AppUI->getState( 'HelpDeskProject' ) !== null ? (int)$AppUI->getState( 'HelpDeskProject' ) : -1;
 	} else {
-		$project = $_REQUEST['project_id'];
+		$project = $req_project_id;
 	}
 
 	if ($project >= 0) {
-		$tarr[] = "hi.item_project_id=$project";
+		$tarr[] = "hi.item_project_id=" . (int)$project;
 	}
 
 	// retrieve project list
@@ -135,7 +141,7 @@ if($HELPDESK_CONFIG['search_criteria_project']){
 			$project_make_list = new CProject;
 			$active_arr = array('where' => 'project_status!='.$HELPDESK_CONFIG['archived_project_status_id'],
 				'where' => 'project_company='.$company);
-			$project_list = $project_make_list->getAllowedRecords($AppUI->user_id, 'project_id, project_name','project_name',$project_arr,$active_arr);
+			$project_list = $project_make_list->getAllowedRecords($AppUI->user_id, 'project_id, project_name','project_name',null,$active_arr);
 		} else {
 			$q = new DBQuery; 
 			$q->addQuery('project_id, project_name'); 
@@ -150,13 +156,13 @@ if($HELPDESK_CONFIG['search_criteria_project']){
 		$project_list = getAllowedProjects(1,1);
 	}
 
-	if (!$_REQUEST['project_id']) {
+	if (!$req_project_id) {
 		$selectors[] = "<td align=\"right\"><label for=\"project\">"
                . $AppUI->_('Project')
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>'('.$AppUI->_('All').')', '0'=>'('.$AppUI->_('Without Project').')' ), $project_list ),
                               'project',
-							                'size="1" id="project" class="text" onchange="changeList()"',
+							                'size="1" id="project" class="text"' . dPaction('changeList'),
 							                $project )
                . "</td>";
 	}
@@ -171,7 +177,7 @@ if($HELPDESK_CONFIG['search_criteria_assigned_to']){
 	$assigned_to = $AppUI->getState( 'HelpDeskAssignedTo' ) !== null ? $AppUI->getState( 'HelpDeskAssignedTo' ) : -1;
 
 	if ($assigned_to >= 0) {
-		$tarr[] = "hi.item_assigned_to=$assigned_to";
+		$tarr[] = "hi.item_assigned_to=" . (int)$assigned_to;
 	}
 
 	// retrieve assigned to user list
@@ -184,14 +190,14 @@ if($HELPDESK_CONFIG['search_criteria_assigned_to']){
      $q->addOrder('contact_first_name');
      $assigned_to_list = $q->loadHashList();
 
-     if (!$_REQUEST['project_id']) {
+     if (!$req_project_id) {
 
         $selectors[] = "<td align=\"right\" nowrap><label for=\"assigned_to\">"
                . $AppUI->_('Assigned To')
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $assigned_to_list ),
                               'assigned_to',
-						                  'size="1" id="assigned_to" class="text" onchange="changeList()"',
+						                  'size="1" id="assigned_to" class="text"' . dPaction('changeList'),
 						                  $assigned_to )
                . "</td>";
 	}
@@ -206,18 +212,18 @@ if($HELPDESK_CONFIG['search_criteria_status']){
 	$status = $AppUI->getState( 'HelpDeskStatus' ) !== null ? $AppUI->getState( 'HelpDeskStatus' ) : -1;
 
 	if ($status >= 0) {
-		$tarr[] = "hi.item_status=$status";
+		$tarr[] = "hi.item_status=" . (int)$status;
 	} elseif ($status == -2) {
 		$tarr[] = "hi.item_status<>".$HELPDESK_CONFIG['closed_status_id'];
 	}
 
-	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+	if (!$req_project_id && !$req_company_id) {
 		$selectors[] = "<td align=\"right\"><label for=\"status\">"
                . $AppUI->_('Status')
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>'All', '-2'=>'All (not closed)'), $ist ),
                               'item_status',
-						                  'size="1" id="status" class="text" onchange="changeList()"',
+						                  'size="1" id="status" class="text"' . dPaction('changeList'),
 						                  $status, true )
                . "</td>";
   }
@@ -232,16 +238,16 @@ if($HELPDESK_CONFIG['search_criteria_call_type']){
 	$calltype = $AppUI->getState( 'HelpDeskCallType' ) !== null ? $AppUI->getState( 'HelpDeskCallType' ) : -1;
 
 	if ($calltype >= 0) {
-		$tarr[] = "hi.item_calltype=$calltype";
+		$tarr[] = "hi.item_calltype=" . (int)$calltype;
 	}
 	
-	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+	if (!$req_project_id && !$req_company_id) {
 		$selectors[] = "<td align=\"right\" nowrap><label for=\"call_type\">"
                . $AppUI->_('Issue Type')
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>'All' ), $ict ),
                               'item_calltype',
-						                  'size="1" id="call_type" class="text" onchange="changeList()"',
+						                  'size="1" id="call_type" class="text"' . dPaction('changeList'),
 						                  $calltype, true )
                . "</td>";
 	}
@@ -256,16 +262,16 @@ if($HELPDESK_CONFIG['search_criteria_call_source']){
 	$item_source = $AppUI->getState( 'HelpDeskSource' ) !== null ? $AppUI->getState( 'HelpDeskSource' ) : -1;
 
 	if ($item_source >= 0) {
-		$tarr[] = "hi.item_source=$item_source";
+		$tarr[] = "hi.item_source=" . (int)$item_source;
 	}
 
-	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+	if (!$req_project_id && !$req_company_id) {
 		$selectors[] = "<td align=\"right\" nowrap><label for=\"call_source\">"
                . $AppUI->_('Source')
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $ics ), 
                               'item_source',
-						                  'size="1" id="call_source" class="text" onchange="changeList()"',
+						                  'size="1" id="call_source" class="text"' . dPaction('changeList'),
 						                  $item_source, true)
                . "</td>";
 	}
@@ -280,16 +286,16 @@ if($HELPDESK_CONFIG['search_criteria_priority']){
 	$priority = $AppUI->getState( 'HelpDeskPriority' ) !== null ? $AppUI->getState( 'HelpDeskPriority' ) : -1;
 
 	if ($priority >= 0) {
-		$tarr[] = "hi.item_priority=$priority";
+		$tarr[] = "hi.item_priority=" . (int)$priority;
 	}
 
-	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+	if (!$req_project_id && !$req_company_id) {
 		$selectors[] = "<td align=\"right\"><label for=\"priority\">"
                . $AppUI->_('Priority')
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>'All' ), $ipr ),
                               'item_priority',
-							                'size="1" id="priority" class="text" onchange="changeList()"',
+							                'size="1" id="priority" class="text"' . dPaction('changeList'),
 							                $priority, true )
                . "</td>";
 	}
@@ -304,16 +310,16 @@ if($HELPDESK_CONFIG['search_criteria_severity']){
 	$item_severity = $AppUI->getState( 'HelpDeskSeverity' ) !== null ? $AppUI->getState( 'HelpDeskSeverity' ) : -1;
 
 	if ($item_severity >= 0) {
-		$tarr[] = "hi.item_severity=$item_severity";
+		$tarr[] = "hi.item_severity=" . (int)$item_severity;
 	}
 
-	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+	if (!$req_project_id && !$req_company_id) {
 		$selectors[] = "<td align=\"right\"><label for=\"severity\">"
                . $AppUI->_('Severity')
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>'All' ), $isv ),
                               'item_severity',
-						                  'size="1" id="severity" class="text" onchange="changeList()"',
+						                  'size="1" id="severity" class="text"' . dPaction('changeList'),
 						                   $item_severity, true )
                . "</td>";
 	}
@@ -328,16 +334,16 @@ if($HELPDESK_CONFIG['search_criteria_application']){
 	$item_application = $AppUI->getState( 'HelpDeskApplication' ) !== null ? $AppUI->getState( 'HelpDeskApplication' ) : -1;
 
 	if (isset($item_application)  && strlen($item_application)>0 && $item_application!='-1') {
-		$tarr[] = "hi.item_application='$item_application'";
+		$tarr[] = "hi.item_application='" . db_escape($item_application) . "'";
 	}
 
-	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+	if (!$req_project_id && !$req_company_id) {
 		$selectors[] = "<td align=\"right\"><label for=\"application\">"
                . $AppUI->_('Application')
                . "</label>:</td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $iap ),
                               'item_application',
-						                  'size="1" id="application" class="text" onchange="changeList()"',
+						                  'size="1" id="application" class="text"' . dPaction('changeList'),
 						                  $item_application, true)
                . "</td>";
 	}
@@ -352,7 +358,7 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
 	$requestor = $AppUI->getState( 'HelpDeskRequestor' ) !== null ? $AppUI->getState( 'HelpDeskRequestor' ) : -1;
 
 	if (isset($requestor)  && strlen($requestor)>0 && $requestor!='-1') {
-		$tarr[] = "hi.item_requestor='$requestor'";
+		$tarr[] = "hi.item_requestor='" . db_escape($requestor) . "'";
 	}
 
 	// retrieve requestor list
@@ -364,13 +370,13 @@ if($HELPDESK_CONFIG['search_criteria_requestor']){
   $requestor_list = $q->loadHashList();
 
 
-	if (!$_REQUEST['project_id']) {
+	if (!$req_project_id) {
 		$selectors[] = "<td align=\"right\"><label for=\"requestor\">"
                . $AppUI->_('Requestor')
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $requestor_list ),
                               'requestor',
-						                  'size="1" id="requestor" class="text" onchange="changeList()"',
+						                  'size="1" id="requestor" class="text"' . dPaction('changeList'),
 						                  $requestor )
                . "</td>";
 	}
@@ -385,16 +391,16 @@ if($HELPDESK_CONFIG['search_criteria_os']){
 	$item_os = $AppUI->getState( 'HelpDeskOS' ) !== null ? $AppUI->getState( 'HelpDeskOS' ) : -1;
 
 	if (isset($item_os)  && strlen($item_os)>0 && $item_os!='-1') {
-		$tarr[] = "hi.item_os='$item_os'";
+		$tarr[] = "hi.item_os='" . db_escape($item_os) . "'";
 	}
 
-	if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+	if (!$req_project_id && !$req_company_id) {
 		$selectors[] = "<td align=\"right\"><label for=\"os\">"
                . $AppUI->_('Operating System')
                . ":</label></td><td>"
                . arraySelect( arrayMerge( array( '-1'=>$AppUI->_('All') ), $ios ),
                               'item_os',
-						                  'size="1" id="os" class="text" onchange="changeList()"',
+						                  'size="1" id="os" class="text"' . dPaction('changeList'),
 						                  $item_os, true )
                . "</td>";
 	}
@@ -440,12 +446,12 @@ $q->setLimit($items_per_page,$offset);
 $rows = $q->loadList();
 
 // Setup the title block
-if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+if (!$req_project_id && !$req_company_id) {
 $titleBlock = new CTitleBlock( 'Issue Management', 'helpdesk.png', $m, 'ID_HELP_HELPDESK_IDX' );
 
 if (hditemCreate()) {
 	$titleBlock->addCell(
-	'<input type="submit" onclick="newItemFromList()" class="button" value="'.$AppUI->_('New Item').'" />', ''
+	'<input type="submit"' . dPaction('newItemFromList') . ' class="button" value="'.$AppUI->_('New Item').'" />', ''
   );
 }
 
@@ -456,7 +462,7 @@ $titleBlock->show();
 }
 ?>
 
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function changeList() {
 	document.filterFrm.submit();
 }
@@ -466,7 +472,7 @@ function newItemFromList() {
 }
 </script>
 <?php
-  if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+  if (!$req_project_id && !$req_company_id) {
 ?>
 <table border="0" cellpadding="2" cellspacing="1" class="std" width="100%">
   <form name="filterFrm" action="?index.php" method="get">
@@ -552,29 +558,29 @@ foreach ($rows as $row) {
 	
 	$s .= $CR . '<td nowrap align="center">';
 	if ($row['item_requestor_email']) {
-		$s .= $CR . "<a href=\"mailto:".$row['item_requestor_email']."\">"
-              . $row['item_requestor']
+		$s .= $CR . "<a href=\"mailto:".dPhtml($row['item_requestor_email'])."\">"
+              . dPhtml($row['item_requestor'])
               . "</a>";
 	} else {
-		$s .= $CR . $row['item_requestor'];
+		$s .= $CR . dPhtml($row['item_requestor']);
 	}
 	$s .= $CR . "</td>";
 
 	$s .= $CR . '<td width="20%" align="center"><a href="?m=helpdesk&a=view&item_id='
             . $row['item_id']
             . '">'
-            . $row['item_title']
+            . dPhtml($row['item_title'])
             . '</a></td>';
 	$s .= $CR . '<td width="50%">' 
-            . substr($row['item_summary'],0,max(strpos($row['item_summary']."\n","\n"),70))
+            . dPhtml(substr($row['item_summary'],0,max(strpos($row['item_summary']."\n","\n"),70)))
             . ' </td>';
 	$s .= $CR . '<td nowrap align="center">';
 	if ($row['assigned_email']) {
-		$s .= $CR . '<a href="mailto:'.$row['assigned_email'].'">'
-              . $row['assigned_fullname']
+		$s .= $CR . '<a href="mailto:'.dPhtml($row['assigned_email']).'">'
+              . dPhtml($row['assigned_fullname'])
               . "</a>";
 	} else {
-		$s .= $CR . $row['assigned_fullname'];
+		$s .= $CR . dPhtml($row['assigned_fullname']);
 	}
 	$s .= $CR . "</td>";
 	$s .= $CR . '<td align="center" nowrap>' . $AppUI->_($ist[@$row['item_status']]) . '</td>';
@@ -615,12 +621,12 @@ foreach ($rows as $row) {
 	
 	if($row['project_id']){
 		$s .= $CR . '<td width="30%" align="center" style="background-color: #'
-		    . $row['project_color_identifier']
+		    . preg_replace('/[^0-9a-fA-F]/', '', $row['project_color_identifier'])
 		    . ';"><a href="./index.php?m=projects&a=view&project_id='
         . $row['project_id'].'" style="color: '
         . bestColor( @$row['project_color_identifier'] )
         . ';">'
-        . $row['project_name']
+        . dPhtml($row['project_name'])
         .'</a></td>';
 	} else {
 		$s .= $CR . '<td align="center">-</td>';
@@ -707,17 +713,17 @@ if ($total_results > $items_per_page) {
 
 // Returns a header link used to sort results
 function sort_header($field, $name) {
-  global $orderby, $orderdesc;
+  global $orderby, $orderdesc, $req_project_id, $req_company_id;
 
   $arrow = "";
 
-  if (!$_REQUEST['project_id'] && !$_REQUEST['company_id']) {
+  if (!$req_project_id && !$req_company_id) {
   	$link = "<a class=\"hdr\" href=\"?m=helpdesk&a=list&orderby=$field&orderdesc=";
   } else {
-  	if (!$_REQUEST['project_id']) {
-  		$link = "<a class=\"hdr\" href=\"?m=companies&a=view&company_id={$_REQUEST['company_id']}&orderby=$field&orderdesc=";
+  	if (!$req_project_id) {
+  		$link = "<a class=\"hdr\" href=\"?m=companies&a=view&company_id=".(int)$req_company_id."&orderby=$field&orderdesc=";
   	} else {
-  		$link = "<a class=\"hdr\" href=\"?m=projects&a=view&project_id={$_REQUEST['project_id']}&orderby=$field&orderdesc=";
+  		$link = "<a class=\"hdr\" href=\"?m=projects&a=view&project_id=".(int)$req_project_id."&orderby=$field&orderdesc=";
   	}
   }
 

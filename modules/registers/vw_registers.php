@@ -1,9 +1,15 @@
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+?>
 
 <?php
 global $AppUI, $tab, $df, $canEdit, $m;
 
 $filter = intval( dPgetParam( $_GET, 'filter', 0 ) );
-$order_by = dPgetParam( $_GET, 'order_by', 'register_start_date' );
+$order_by = dPvalidateOrder(dPgetParam( $_GET, 'order_by', 'register_start_date' ),
+	array('register_start_date', 'register_code', 'register_client', 'register_project'), 'register_start_date');
 ?>
 
 <table width="100%">
@@ -13,12 +19,12 @@ $order_by = dPgetParam( $_GET, 'order_by', 'register_start_date' );
 <?php
  echo "<td>";
  $register_format=dPgetsysVal('RegisterCode');
- echo $AppUI->_('Filter') ." : " .arraySelect( $register_format, 'filter', 'size="1" class="text" onChange="document.filterView.submit();"',$filter, false );
+ echo $AppUI->_('Filter') ." : " .arraySelect( $register_format, 'filter', 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => '')),$filter, false );
  echo "</td>";
  echo "<td align=\"right\">";
  echo $AppUI->_('Order by') ." : ";
  $list=array("register_start_date"=>"Start Date","register_code"=>"Code","register_client"=>"Client","register_project"=>"Project");
- echo arraySelect ($list,'order_by','size="1" class="text" onChange="document.filterView.submit();"',$order_by, false );
+ echo arraySelect ($list,'order_by','size="1" class="text"' . dPaction(null, array(), null, array('submit' => '')),$order_by, false );
 /* echo "<select name=\"oder_by\" class=\"text\">";
  echo "<option></option>";
  echo "</select>";
@@ -72,14 +78,14 @@ $s = '';
 foreach ($logs as $row) {
 	$s .= '<tr bgcolor="white" valign="top">';
 	$s .= '<td width="100">'.$register_format[$row["register_format"]].'</td>';
-	$s .= '<td nowrap="nowrap">'.$row["register_code"] .'</td>';
-	$s .= '<td width="100">'.@$row["register_start_date"] .'</td>';
-	$s .= '<td width="100">'.@$row["register_end_date"] . '</td>';
-	$s .= '<td width="100">'.@$row["register_description"].'</td>';
-	$s .= '<td width="100">'.($row["register_owner"] ? $users[$row["register_owner"]] : null) .'</td>';
-	$s .= '<td width="100">'.($row["register_client"] ? $contacts[$row["register_client"]] : null).'</td>';
-	$s .= '<td width="100">'.($row["register_project"] ? $projects[$row["register_project"]] : null) .'</td>';
-	$s .= '<td width="100">'.($row["register_ref_id"] ? $row["register_ref_id"] : null).'</td>';
+	$s .= '<td nowrap="nowrap">'.dPhtml($row["register_code"]) .'</td>';
+	$s .= '<td width="100">'.dPhtml(@$row["register_start_date"]) .'</td>';
+	$s .= '<td width="100">'.dPhtml(@$row["register_end_date"]) . '</td>';
+	$s .= '<td width="100">'.dPhtml(@$row["register_description"]).'</td>';
+	$s .= '<td width="100">'.dPhtml(($row["register_owner"] ? $users[$row["register_owner"]] : null)) .'</td>';
+	$s .= '<td width="100">'.dPhtml(($row["register_client"] ? $contacts[$row["register_client"]] : null)).'</td>';
+	$s .= '<td width="100">'.dPhtml(($row["register_project"] ? $projects[$row["register_project"]] : null)) .'</td>';
+	$s .= '<td width="100">'.dPhtml(($row["register_ref_id"] ? $row["register_ref_id"] : null)).'</td>';
 	$s .= '<td width="100">'.($row["register_state"] ? $register_state[$row["register_state"]] : null).'</td>';
 	$s .= '</tr>';
 }

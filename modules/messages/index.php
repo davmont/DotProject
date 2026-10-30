@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 	/**
 	* Ok, here is the deal. There is no need to create a new table for internal messages if we have 
 	* a task table that happens to have all the information we require for this purpose. So I'll
@@ -125,10 +128,13 @@
 			unset($view_message);
 		}
 		
-		if(dpGetParam($_GET, "action", "") != ""){
-			
+		// Marking, resending, deleting and converting change the message: POST
+		// with the CSRF token only (the message id stays in the URL).
+		$message_action = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dPgetCleanParam($_POST, "action", "") : "";
+		if($message_action != "" && isset($view_message)){
+			$AppUI->verifyCsrfToken();
 			$unset_view_message = false;
-			switch($_GET["action"]) {
+			switch($message_action) {
 				case "mark_as_read":
 					if($user_present_in_recipients){
 						$view_message->task_status   = '-1';

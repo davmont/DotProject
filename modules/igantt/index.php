@@ -42,7 +42,7 @@ $projects = arrayMerge( array( '0' => "(".$AppUI->_('Select a project', UI_OUTPU
 $titleBlock = new CTitleBlock('Interactive Gantt chart', 'applet3-48.png', $m, "$m.$a");
 $titleBlock->show();
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var opt = document.projectFrm.project_id;
 	var projectId = opt.options[opt.selectedIndex].value;
@@ -50,7 +50,7 @@ function submitIt() {
 		document.updateTasks.project_id.value=projectId;
 		window.open("index.php?m=igantt&a=vw_igantt&suppressHeaders=1&project_id="+projectId, "Interactive_Gantt_chart", "fullscreen=yes,resizable=yes,scrollbars=yes");
 	} else {
-		alert("<?php echo $AppUI->_("Select a project"); ?>");
+		alert("<?php echo $AppUI->_("Select a project", UI_OUTPUT_JS); ?>");
 	}
 }
 </script>
@@ -66,13 +66,13 @@ You are using : <span id="browserName"></span><br />
 		<?php echo $AppUI->_('Project');?>: <?php echo arraySelect( $projects, 'project_id','class="text" style="width:500px"', 0  );?>
 	</td>
 	<td width="10%" align="right">
-	<input type="button" class="button" value="<?php echo $AppUI->_( 'display Gantt' );?>" onclick="submitIt()" />
+	<input type="button" class="button" value="<?php echo $AppUI->_( 'display Gantt' );?>"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>
 </form>
 </table>
 </div>
-<script language="javascript" >
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 document.getElementById("browserName").innerHTML=navigator.appName;
 if ( navigator.appName == "Microsoft Internet Explorer" ) {
 	document.getElementById("divAlert").style.display="block";

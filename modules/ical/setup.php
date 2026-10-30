@@ -50,19 +50,17 @@ class CSetupICal {
 	function configure() { return true; }
 
 	function remove() {		
-		$success = 1;
-		$q = new DBQuery();
-		$q -> dropTable('tasks_ical');
-		$success = $success & $q->exec();
-		if($success){
-			return null;
-		}
-		return $success;
+		// tasks_ical is part of the core schema (task saving uses it): keep it.
+		return null;
 	}
   
 	function upgrade($old_version) { return true; }
 
 	function install() {
+		// Created by the core schema since 2012: only older installs lack it.
+		if (db_loadResult("SHOW TABLES LIKE '" . db_escape(dPgetConfig('dbprefix', '') . 'tasks_ical') . "'")) {
+			return null;
+		}
 		$success = 1;
 		$q = new DBQuery();
 		$q -> createTable('tasks_ical');

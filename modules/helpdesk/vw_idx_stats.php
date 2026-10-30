@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: vw_idx_stats.php,v 1.13 2011/08/02 06:22:55 hatax Exp $*/
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: vw_idx_stats.php,v 1.13 2011/08/02 06:22:55 hatax Exp $*/
 global $m, $ict, $ist;
 
 $stats = array();

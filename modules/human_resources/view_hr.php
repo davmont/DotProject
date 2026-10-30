@@ -11,7 +11,7 @@ $company_id = intval(dPgetParam($_GET, 'company_id', 0));
 $query = new DBQuery;
 $query->addTable('companies', 'c');
 $query->addQuery('company_name');
-$query->addWhere('c.company_id = ' . $company_id);
+$query->addWhere('c.company_id = ' . (int)$company_id);
 $res =& $query->exec();
 $titleBlock->addCrumb(('?m=companies&amp;a=view&amp;company_id=' . $company_id), $AppUI->_('company').' ' . $res->fields['company_name']);
 $query->clear();
@@ -20,7 +20,7 @@ $contact_id = intval(dPgetParam($_GET, 'contact_id', 0));
 $query = new DBQuery;
 $query->addTable('contacts', 'c');
 $query->addQuery('contact_last_name, contact_first_name');
-$query->addWhere('c.contact_id = ' . $contact_id);
+$query->addWhere('c.contact_id = ' . (int)$contact_id);
 $res =& $query->exec();
 $contact_name = $res->fields['contact_last_name'] . ', ' . $res->fields['contact_first_name'];
 $titleBlock->addCrumb('?m=contacts&amp;a=view&amp;contact_id=' . $contact_id, $AppUI->_('contact').' '. $contact_name);
@@ -30,9 +30,9 @@ $user_id = intval(dPgetParam($_GET, 'user_id', 0));
 $query = new DBQuery;
 $query->addTable('human_resource', 'h');
 $query->addQuery('human_resource_id');
-$query->addWhere('h.human_resource_user_id = ' . $user_id);
+$query->addWhere('h.human_resource_user_id = ' . (int)$user_id);
 $res =& $query->exec();
-$human_resource_id = $res->fields['human_resource_id'];
+$human_resource_id = ($res && !$res->EOF) ? $res->fields['human_resource_id'] : 0;
 $query->clear();
 
 $obj = new CHumanResource;
@@ -65,7 +65,7 @@ if($existsHumanResource) {
 	$query->addTable('human_resource_roles', 'r');
 	$query->addQuery('h.human_resources_role_name, h.human_resources_role_id');
 	$query->innerJoin('human_resources_role', 'h', 'h.human_resources_role_id = r.human_resources_role_id');
-	$query->addWhere('r.human_resource_id = ' . $human_resource_id);
+	$query->addWhere('r.human_resource_id = ' . (int)$human_resource_id);
 	$sql = $query->prepare();
 	$roles = db_loadList($sql);
 	$roles_array = array();
@@ -87,10 +87,12 @@ $cwd[6] = '7';
 $cwd_conv = array_map('cal_work_day_conv', $cwd);
 
 function cal_work_day_conv($val) {
-	global $locale_char_set;
+	global $AppUI, $locale_char_set;
 	setlocale(LC_ALL, 'en_AU'.(($locale_char_set)? ('.' . $locale_char_set) : '.utf8'));
 	$wk = Date_Calc::getCalendarWeek(null, null, null, "%a", LOCALE_FIRST_DAY);
-	setlocale(LC_ALL, $AppUI->user_lang);
+	if (!empty($AppUI->user_lang)) {
+		setlocale(LC_ALL, $AppUI->user_lang);
+	}
 	
 	$day_name = $wk[($val - LOCALE_FIRST_DAY)%7];
 	if ($locale_char_set == "utf-8" && function_exists("utf8_encode")) {
@@ -101,13 +103,13 @@ function cal_work_day_conv($val) {
 
 $query->addTable('users', 'u');
 $query->addQuery('user_username');
-$query->addWhere('u.user_id = ' . $user_id);
+$query->addWhere('u.user_id = ' . (int)$user_id);
 $res =& $query->exec();
 ?>
 <script src="./modules/human_resources/view_hr.js"></script>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	can_delete = true;
-	delete_msg = "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('Human Resource').'?';?>";
+	delete_msg = "<?php echo $AppUI->_('doDelete', UI_OUTPUT_JS).' '.$AppUI->_('Human Resource', UI_OUTPUT_JS).'?';?>";
 </script>
 <form name="frmDelete" action="?m=human_resources" method="post">
   <input type="hidden" name="dosql" value="do_hr_aed" />
@@ -122,20 +124,20 @@ $res =& $query->exec();
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('User contact');?>:</td>
-			<td class="hilite" width="100%"><?php echo $contact_name;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($contact_name);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('User username');?>:</td>
-			<td class="hilite" width="100%"><?php echo $res->fields['user_username'];?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($res->fields['user_username']);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Roles'); ?>:</td>
-			<td class="hilite" width="100%"><?php echo $concat_roles_names;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($concat_roles_names);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Lattes URL');?>:</td>
 			<td width="2%" align="left" >
-			<a href="<?php echo $obj->human_resource_lattes_url;?>"><?php echo $obj->human_resource_lattes_url;?></a>
+			<a href="<?php echo dPhtml(dPsafeUrl($obj->human_resource_lattes_url));?>"><?php echo dPhtml($obj->human_resource_lattes_url);?></a>
 			</td>
 		</tr>
 		<tr>
@@ -143,31 +145,31 @@ $res =& $query->exec();
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[0]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_mon;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_mon);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[1]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_tue;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_tue);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[2]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_wed;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_wed);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_($cwd_conv[3]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_thu;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_thu);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[4]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_fri;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_fri);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[5]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_sat;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_sat);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo  $AppUI->_($cwd_conv[6]);?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resource_sun;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resource_sun);?></td>
 		</tr>
 	</td>
 </tr>
@@ -180,6 +182,6 @@ $query->clear();
 <tr>
   <td>
     <input type="button" value="<?php echo $AppUI->_('back');?>"
-    class="button" onclick="javascript:history.back(-1);" />
+    class="button"<?php echo dPaction('history.back'); ?> />
   </td>
 </tr>

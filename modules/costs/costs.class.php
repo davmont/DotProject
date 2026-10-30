@@ -40,7 +40,7 @@ class CCosts extends CDpObject
 		// delete the main table reference
 		$q = new DBQuery();
 		$q->setDelete('costs');
-		$q->addWhere('cost_id = ' . $this->cost_id);
+		$q->addWhere('cost_id = ' . (int)$this->cost_id);
 		if (!$q->exec()) {
 			return db_error();
 		}
@@ -77,7 +77,7 @@ class CBudgetReserve extends CDpObject
 		// delete the main table reference
 		$q = new DBQuery();
 		$q->setDelete('budget_reserve');
-		$q->addWhere('budget_reserve_id = ' . $this->budget_reserve_id);
+		$q->addWhere('budget_reserve_id = ' . (int)$this->budget_reserve_id);
 		if (!$q->exec()) {
 			return db_error();
 		}
@@ -95,7 +95,7 @@ class CBudget extends CDpObject
 
 	function __construct()
 	{
-		parent::__construct('budget', 'budget_id');
+		parent::__construct('costs_budget', 'budget_id');
 	}
 
 	function check()
@@ -112,8 +112,8 @@ class CBudget extends CDpObject
 
 		// delete the main table reference
 		$q = new DBQuery();
-		$q->setDelete('budget');
-		$q->addWhere('budget_id = ' . $this->budget_id);
+		$q->setDelete('costs_budget');
+		$q->addWhere('budget_id = ' . (int)$this->budget_id);
 		if (!$q->exec()) {
 			return db_error();
 		}

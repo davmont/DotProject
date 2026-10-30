@@ -7,13 +7,19 @@ $show_all = (int) dPgetParam($_REQUEST, 'show_all', 0);
 $company_id = (int) dPgetParam($_REQUEST, 'company_id', 0);
 $contact_id = (int) dPgetParam($_POST, 'contact_id', 0);
 $call_back = dPgetCleanParam($_GET, 'call_back', null);
+// call_back names a JavaScript function in the opener: letters, digits and _ only.
+if (!is_null($call_back)) {
+	$call_back = preg_replace('/[^A-Za-z0-9_]/', '', $call_back);
+}
 $contacts_submited = (int) dPgetParam($_POST, 'contacts_submited', 0);
 $selected_contacts_id = dPgetCleanParam($_GET, 'selected_contacts_id', '');
 if (dPgetParam($_POST, 'selected_contacts_id')) {
 	$selected_contacts_id = dPgetCleanParam($_POST, 'selected_contacts_id');
 }
+// A comma-separated list of contact ids, written into JavaScript and links below.
+$selected_contacts_id = dPintList($selected_contacts_id);
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function setContactIDs(method, querystring) {
 		var URL = 'index.php?m=public&a=contact_selector';
 
@@ -77,11 +83,23 @@ if (dPgetParam($_POST, 'selected_contacts_id')) {
 		}
 	}
 
+	// Company drop-down: show that company's contacts, keeping the ticked ones.
+	function changeContactCompany() {
+		document.frmContactSelect.contacts_submited.value = 0;
+		setContactIDs();
+		document.frmContactSelect.submit();
+	}
+
+	// "View all allowed companies" link.
+	function viewAllContactCompanies(querystring) {
+		window.location.href = setContactIDs('GET', querystring);
+	}
+
 	<?php
 
 	if ($contacts_submited == 1) {
 		$call_back_string = ((!(is_null($call_back)))
-			? "window.opener.$call_back('$selected_contacts_id');" : '');
+			? 'dPopenerCall(' . dPjs($call_back) . ', [' . dPjs($selected_contacts_id) . ']);' : '');
 		echo $call_back_string
 			?>
 		self.close();
@@ -138,7 +156,7 @@ if (mb_strlen($selected_contacts_id) > 0 && !$show_all && !$company_id) {
 	// Contacts for this company only
 	$q->addTable('companies', 'c');
 	$q->addQuery('c.company_name');
-	$q->addWhere('company_id = ' . $company_id);
+	$q->addWhere('company_id = ' . (int)$company_id);
 	$company_name = $q->loadResult();
 	$q->clear();
 	/*
@@ -193,32 +211,31 @@ echo ((!is_null($call_back)) ? '&call_back=' . $call_back : '');
 	echo arraySelect(
 		$companies_names,
 		'company_id',
-		('onchange="document.frmContactSelect.contacts_submited.value=0; '
-			. 'setContactIDs(); document.frmContactSelect.submit();"'),
+		dPaction('changeContactCompany'),
 		0
 	);
 	?>
 
 	<br />
-	<h4><a href="#" onClick="window.location.href=setContactIDs('GET','dialog=1<?php
-	echo ((!is_null($call_back)) ? ('&call_back=' . $call_back) : ''); ?>&show_all=1');">
+	<h4><a href="#"<?php echo dPaction('viewAllContactCompanies', array('dialog=1'
+		. ((!is_null($call_back)) ? ('&call_back=' . $call_back) : '') . '&show_all=1')); ?>>
 			<?php echo $AppUI->_('View all allowed companies'); ?>
 		</a></h4>
 	<hr />
-	<h2><?php echo $AppUI->_('Contacts for'); ?> <?php echo $company_name ?></h2>
+	<h2><?php echo $AppUI->_('Contacts for'); ?> <?php echo dPhtml($company_name) ?></h2>
 	<?php
 	foreach ($contacts as $contact_id => $contact_data) {
 		$contact_company = (($contact_data['company_name'])
 			? $contact_data['company_name'] : $contact_data['contact_company']);
 		if ($contact_company && $contact_company != $pointer_company) {
-			echo '<h4>' . $contact_company . '</h4>';
+			echo '<h4>' . dPhtml($contact_company) . '</h4>';
 			$pointer_company = $contact_company;
 		}
 
 		$contact_department = (($contact_data['dept_name'])
 			? $contact_data['dept_name'] : $contact_data['contact_department']);
 		if ($contact_department && $contact_department != $pointer_department) {
-			echo '<h5>' . $contact_department . '</h5>';
+			echo '<h5>' . dPhtml($contact_department) . '</h5>';
 			$pointer_department = $contact_department;
 		}
 
@@ -226,8 +243,8 @@ echo ((!is_null($call_back)) ? '&call_back=' . $call_back : '');
 
 		echo ('<input type="checkbox" name="contact_id[]" id="contact_' . $contact_id . '" value="'
 			. $contact_id . '" ' . $checked . ' />');
-		echo ('<label for="contact_' . $contact_id . '">' . $contact_data['contact_first_name'] . ' '
-			. $contact_data['contact_last_name']
+		echo ('<label for="contact_' . $contact_id . '">' . dPhtml($contact_data['contact_first_name']) . ' '
+			. dPhtml($contact_data['contact_last_name'])
 			. (isset($contact_data['contact_extra']) ? ($contact_data['contact_extra']) : '')
 			. '</label>');
 		echo ('<br />');
@@ -236,6 +253,9 @@ echo ((!is_null($call_back)) ? '&call_back=' . $call_back : '');
 	<hr />
 	<input name="contacts_submited" type="hidden" value="1" />
 	<input name="selected_contacts_id" type="hidden" value="<?php echo $selected_contacts_id; ?>">
-	<input type="submit" value="<?php
-	echo $AppUI->_('Continue'); ?>" onClick="setContactIDs()" class="button" />
+	<!-- The list scrolls; the button stays at the bottom of the window. -->
+	<div style="position: sticky; bottom: 0; padding: 4px 0; background: #fff;">
+		<input type="submit" value="<?php
+		echo $AppUI->_('Continue'); ?>"<?php echo dPaction('setContactIDs'); ?> class="button" />
+	</div>
 </form>

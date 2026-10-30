@@ -14,7 +14,7 @@ $q = new DBQuery;
 $q->clear();
 $q->addQuery('*');
 $q->addTable('costs');
-$q->addWhere('cost_project_id = ' . $projectSelected);
+$q->addWhere('cost_project_id = ' . (int)$projectSelected);
 
 
 // check if this record has dependancies to prevent deletion
@@ -48,10 +48,9 @@ if ($projectSelected != null) {
 }
 
 
-/* transform date to dd/mm/yyyy */
-$date_begin = intval($obj->cost_date_begin) ? new CDate($obj->cost_date_begin) : null;
-$date_end = intval($obj->cost_date_end) ? new CDate($obj->cost_date_end) : null;
 $df = $AppUI->getPref('SHDATEFORMAT');
+$sumH = 0;
+$sumNH = 0;
 
 
 // Get humans estimatives
@@ -90,7 +89,7 @@ $notHumanCost = getResources("Non-Human", $whereProject);
                     <img src="./modules/costs/images/stock_edit-16.png" border="0" width="12" height="12">
                 </a>
             </td>
-            <td nowrap="nowrap"><?php echo $row['cost_description']; ?></td>
+            <td nowrap="nowrap"><?php echo dPhtml($row['cost_description']); ?></td>
             <td nowrap="nowrap"><?php echo $date_begin ? $date_begin->format($df) : ''; ?></td>
             <td nowrap="nowrap"><?php echo $date_end ? $date_end->format($df) : ''; ?></td>
             <td nowrap="nowrap"><?php echo $row['cost_quantity']; ?></td>
@@ -137,7 +136,7 @@ $notHumanCost = getResources("Non-Human", $whereProject);
                     <img src="./modules/costs/images/stock_edit-16.png" border="0" width="12" height="12">
                 </a>
             </td>
-            <td nowrap="nowrap"><?php echo $row['cost_description']; ?></td>
+            <td nowrap="nowrap"><?php echo dPhtml($row['cost_description']); ?></td>
             <td nowrap="nowrap"><?php echo $date_begin ? $date_begin->format($df) : ''; ?></td>
             <td nowrap="nowrap"><?php echo $date_end ? $date_end->format($df) : ''; ?></td>
             <td nowrap="nowrap"><?php echo $row['cost_quantity']; ?></td>
@@ -157,7 +156,7 @@ $notHumanCost = getResources("Non-Human", $whereProject);
 <tr>
     <td>
         <input type="button" value="<?php echo $AppUI->_('back'); ?>"
-               class="button" onclick="javascript:history.back(-1);" />
+               class="button"<?php echo dPaction('history.back'); ?> />
     </td>
 </tr>
 

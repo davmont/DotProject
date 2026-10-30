@@ -3,22 +3,26 @@ if (!defined('DP_BASE_DIR')) {
   die('You should not access this file directly.');
 }
 
-global $tabbed, $currentTabName, $currentTabId, $AppUI;
+global $tabbed, $currentTabName, $currentTabId, $AppUI, $task_project;
 
 $task_id = intval(dPgetParam($_GET, 'task_id', 0));
 $project_id = intval(dPgetParam($_GET, 'project_id', 0));
+if (!$project_id && !empty($task_project)) {
+	// tasks addedit identifies the project as task_project, not project_id
+	$project_id = (int)$task_project;
+}
 
 $query = new DBQuery;
 $query->addTable('projects', 'p');
 $query->addQuery('project_name');
-$query->addWhere('p.project_id = ' . $project_id);
+$query->addWhere('p.project_id = ' . (int)$project_id);
 $res_project =& $query->exec();
-$project_name = $res_project->fields['project_name'];
+$project_name = $res_project->fields ? $res_project->fields['project_name'] : '';
 
 $query = new DBQuery;
 $query->addTable('tasks', 't');
 $query->addQuery('task_name');
-$query->addWhere('t.task_id = ' . $task_id);
+$query->addWhere('t.task_id = ' . (int)$task_id);
 $res_task =& $query->exec();
 
 $query = new DBQuery;
@@ -27,7 +31,7 @@ $query->addQuery('e.id, e.role_id, r.role_name, h.human_resources_role_responsab
 						h.human_resources_role_authority, h.human_resources_role_competence');
 $query->innerJoin('company_role', 'r', 'r.id = e.role_id');
 $query->addJoin('human_resources_role', 'h', 'h.human_resources_role_company_id = r.id');
-$query->addWhere('e.task_id = ' . $task_id);
+$query->addWhere('e.task_id = ' . (int)$task_id);
 $res =& $query->exec();
 ?>
 <table width='100%' border='0' cellpadding='2' cellspacing='1' class='tbl'>
@@ -48,7 +52,7 @@ if ($res) {
 <tr>
   <td style=<?php echo $style; ?>>
    <a href="index.php?m=human_resources&amp;a=view_allocation&amp;project_tasks_estimated_roles_id=<?php echo $project_tasks_estimated_roles_id; ?>&amp;task_id=<?php echo $task_id; ?>&amp;project_id=<?php echo $project_id; ?>">
-    <?php echo $res->fields['role_name']; ?></a>
+    <?php echo dPhtml($res->fields['role_name']); ?></a>
   </td>
 </tr>
 <?php 

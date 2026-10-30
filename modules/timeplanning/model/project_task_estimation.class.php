@@ -54,16 +54,17 @@ class ProjectTaskEstimation
 		return $roles;
 	}
 
-	function ProjectTaskEstimation()
+	function __construct()
 	{
 	}
 
 	function store($idValue, $durationValue, $effortValue, $effortUnitValue, $rolesIdsValues, $rolesQuantityValues)
 	{
+		$idValue = (int)$idValue; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('t.id');
 		$q->addTable('project_tasks_estimations', 't');
-		$q->addWhere('t.task_id= ' . $idValue);
+		$q->addWhere('t.task_id= ' . (int)$idValue);
 		$sql = $q->prepare();
 		$tasksEstimations = db_loadList($sql);
 		$q = new DBQuery();
@@ -72,7 +73,7 @@ class ProjectTaskEstimation
 			$q->addUpdate('effort', $effortValue);
 			$q->addUpdate('effort_unit', $effortUnitValue);
 			$q->addUpdate('duration', $durationValue);
-			$q->addWhere('task_id =' . $idValue);
+			$q->addWhere('task_id =' . (int)$idValue);
 		} else {
 			$q->addInsert('effort', $effortValue);
 			$q->addInsert('effort_unit', $effortUnitValue);
@@ -83,7 +84,7 @@ class ProjectTaskEstimation
 
 		$q = new DBQuery();
 		$q->setDelete('project_tasks_estimated_roles');
-		$q->addWhere('task_id =' . $idValue);
+		$q->addWhere('task_id =' . (int)$idValue);
 		$q->exec();
 
 		for ($i = 0; $i < sizeof($rolesIdsValues); $i++) {
@@ -102,10 +103,11 @@ class ProjectTaskEstimation
 
 	function load($idValue)
 	{
+		$idValue = (int)$idValue; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('t.task_id,t.effort,t.effort_unit,t.duration');
 		$q->addTable('project_tasks_estimations', 't');
-		$q->addWhere('t.task_id= ' . $idValue);
+		$q->addWhere('t.task_id= ' . (int)$idValue);
 		$sql = $q->prepare();
 		$tasksEstimations = db_loadList($sql);
 		foreach ($tasksEstimations as $tasksEstimation) {
@@ -145,7 +147,7 @@ class EstimatedRole
 		return $this->quantity;
 	}
 
-	function EstimatedRole($roleIdValue, $quantityValue)
+	function __construct($roleIdValue, $quantityValue)
 	{
 		$this->roleId = $roleIdValue;
 		$this->quantity = $quantityValue;

@@ -25,3 +25,9 @@
   	f.submit();
   	return true;
 }
+
+// The submit button is outside the editfrm form.
+function submitHumanResourceForm()
+{
+	return submitHumanResource(document.editfrm);
+}

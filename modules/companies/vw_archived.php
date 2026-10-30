@@ -15,7 +15,7 @@ $q->addQuery('project_id, project_name, project_start_date, project_status, proj
              . ', project_start_date, project_priority, contact_first_name, contact_last_name');
 $q->addJoin('users', 'u', 'u.user_id = prj.project_owner');
 $q->addJoin('contacts', 'con', 'u.user_contact = con.contact_id');
-$q->addWhere('prj.project_company = ' . $company_id);
+$q->addWhere('prj.project_company = ' . (int)$company_id);
 
 include_once ($AppUI->getModuleClass('projects'));
 $projObj = new CProject();

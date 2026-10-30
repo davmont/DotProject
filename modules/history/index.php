@@ -11,7 +11,8 @@ if (!defined('DP_BASE_DIR')) {
 ## 
 
 $AppUI->savePlace();
-$titleBlock = new CTitleBlock('History', 'stock_book_blue_48.png', $m, "$m.$a");
+// (also included by the project History tab, where $a is not set)
+$titleBlock = new CTitleBlock('History', 'stock_book_blue_48.png', $m, $m . '.' . (isset($a) ? $a : 'index'));
 $titleBlock->show();
 
 function show_history($history) {
@@ -27,8 +28,8 @@ function show_history($history) {
 	$module_result = $q->fetchRow();
 	$q->clear();
 	
-	$table_id = $module_result['permissions_item_field'];
-	$module = $module_result['mod_directory'];
+	$table_id = $module_result ? $module_result['permissions_item_field'] : '';
+	$module = $module_result ? $module_result['mod_directory'] : '';
 		  
 	if (!($table_id || $module)) { //valid "modules" w/o item level permissions
 		switch ($table) {
@@ -40,7 +41,7 @@ function show_history($history) {
 	}
 	
 	if ($table == 'login') {
-		return ($AppUI->_('User') . ' \'' . $history['history_description'] . '\' ' 
+		return ($AppUI->_('User') . ' \'' . dPhtml($history['history_description']) . '\' ' 
 		        . $AppUI->_($history['history_action']));
 	}
 	
@@ -49,7 +50,7 @@ function show_history($history) {
 	} else if ($history['history_action'] == 'update') {
 		$msg = $AppUI->_('Modified').' ';
 	} else if ($history['history_action'] == 'delete') {
-		return ($AppUI->_('Deleted').' \'' . $history['history_description'] . '\' ' 
+		return ($AppUI->_('Deleted').' \'' . dPhtml($history['history_description']) . '\' ' 
 		        . $AppUI->_('from').' ' . $AppUI->_($table) . ' ' . $AppUI->_('table'));
 	}
 	
@@ -82,7 +83,7 @@ function show_history($history) {
 				$module = 'tasks';
 				$q->addTable('task_log');
 				$q->addQuery('task_log_task');
-				$q->addWhere('task_log_id = ' . $id);
+				$q->addWhere('task_log_id = ' . (int)$id);
 				$task_log_task = $q->loadResult();
 				$q->clear();
 				$link = '&amp;a=view&amp;task_id=' . $task_log_task . '&amp;tab=1&amp;' . $table_id 
@@ -94,8 +95,8 @@ function show_history($history) {
 	
 	$link = ((!empty($link)) 
 	         ? ('<a href="?m=' . $module . $link . $id . $in_page_anchor . '">' 
-	            . stripslashes($history['history_description']) . '</a>') 
-	         : stripslashes($history['history_description']));
+	            . dPhtml(stripslashes($history['history_description'])) . '</a>') 
+	         : dPhtml(stripslashes($history['history_description'])));
 	
 	$msg .= ($AppUI->_('item') . ' "' . $link . '" ' . $AppUI->_('in') . ' "' 
 	         . $AppUI->_($table) . '" ' . $AppUI->_('table'));
@@ -112,7 +113,7 @@ $offset = ($page-1) * $limit;
 $in_filter = ((!empty($_REQUEST['filter'])) ? $_REQUEST['filter'] : '');
 
 $q->addTable('modules', 'm');
-$q->addQuery('mod_directory, mod_name, permissions_item_table, permissions_item_field');
+$q->addQuery('mod_directory, mod_name, permissions_item_table, permissions_item_field, permissions_item_label');
 $q->addWhere('permissions_item_table is not null');
 $q->addWhere("permissions_item_table <> ''");
 $available_modules = $q->loadHashList('mod_directory');
@@ -131,7 +132,7 @@ foreach ($available_modules as $my_mod => $my_mod_data) {
 	
 	$filter_module_tables[$my_mod] = $my_mod_table;
 	if ($my_mod_table && !(getPermission($my_mod, 'view'))) {
-		$denied_tables .= ((($denied_module_list) ? "','" : '') . $my_mod_table);
+		$denied_tables .= ((($denied_tables) ? "','" : '') . $my_mod_table);
 	}
 }
 
@@ -141,24 +142,24 @@ $q->addTable('history', 'h');
 $q->leftJoin('users', 'u', 'u.user_id = h.history_user');
 $q->addQuery('h.*, u.*');
 if ($in_filter) {
-	$filter .= (($filter) ? ' AND ' : '') . "(h.`history_table` LIKE '" . $in_filter . "%')";
+	$filter .= (($filter) ? ' AND ' : '') . "(h.`history_table` LIKE '" . db_escape($in_filter) . "%')";
 }
 if ($denied_tables) {
 	$filter .= (($filter) ? ' AND ' : '') . "(NOT h.`history_table` IN ('" . $denied_tables . "'))";
 }
 if (!empty($_REQUEST['project_id'])) {
-	$project_id = $_REQUEST['project_id'];
+	$project_id = (int)$_REQUEST['project_id'];
 	$r = new DBQuery;
 	
 	$r->addTable('tasks');
 	$r->addQuery('task_id');
-	$r->addWhere('task_project = ' . $project_id);
+	$r->addWhere('task_project = ' . (int)$project_id);
 	$project_tasks = implode(',', $r->loadColumn());
 	$r->clear();
 	
 	$r->addTable('files');
 	$r->addQuery('file_id');
-	$r->addWhere('file_project = ' . $project_id);
+	$r->addWhere('file_project = ' . (int)$project_id);
 	$project_files = implode(',', $r->loadColumn());
 	$r->clear();
 	
@@ -196,7 +197,7 @@ $last_page = (($pages > $max_pages) ? min(($first_page + $max_pages - 1), $pages
 	<td nowrap align="right">
 	  <form name="filter" action="?m=history" method="post" >
 	  <?php echo $AppUI->_('Changes to'); ?>:
-		<select name="filter" onchange="javascript:document.filter.submit()">
+		<select name="filter"<?php echo dPaction(null, array(), null, array('submit' => 'filter')); ?>>
 		  <option value=""><?php echo $AppUI->_('Show all'); ?></option>
 <?php
 foreach ($filter_options as $mod => $mod_data) {
@@ -221,7 +222,7 @@ if ($pages > 1) {
 		if ($i == $page) {
 			echo '<b>'.$i.'</b>';
 		} else {
-			echo '<a href="?m=history&amp;filter=' . $in_filter . '&amp;pg=' . $i . '">' . $i . '</a>';
+			echo '<a href="?m=history&amp;filter=' . dPhtml(rawurlencode($in_filter)) . '&amp;pg=' . $i . '">' . $i . '</a>';
 		}
 	}
 }
@@ -229,7 +230,7 @@ if ($pages > 1) {
 	  </form>
 	</td>
 	<td align="right"><input class="button" type="button" value="<?php 
-echo $AppUI->_('Add history'); ?>" onclick="window.location='?m=history&amp;a=addedit'"></td>
+echo $AppUI->_('Add history'); ?>"<?php echo dPaction(null, array(), null, array('href' => '?m=history&a=addedit')); ?>></td>
   </tr>
 </table>
 
@@ -244,7 +245,8 @@ echo $AppUI->_('Add history'); ?>" onclick="window.location='?m=history&amp;a=ad
 $perms =& $AppUI->acl();
 foreach ($history as $row) {
 	$mod_table = $row['history_table'];
-	$module = (($mod_table == 'task_log') ? 'tasks' : $filter_module_tables[$mod_table]);
+	// $filter_module_tables maps module => table
+	$module = (($mod_table == 'task_log') ? 'tasks' : array_search($mod_table, $filter_module_tables));
 	
 	$df = $AppUI->getPref('SHDATEFORMAT');
 	$tf = $AppUI->getPref('TIMEFORMAT');
@@ -261,7 +263,7 @@ echo $AppUI->_('Edit History') ?>" border="0" width="12" height="12" />
 	</a></td>
 	<td align="center"><?php echo ($hd->format($df) . ' ' . $hd->format($tf)); ?></td>
 	<td><?php echo show_history($row); ?></td>
-	<td align="center"><?php echo $row['user_username']; ?></td>
+	<td align="center"><?php echo dPhtml($row['user_username']); ?></td>
 </tr>
 <?php
 	}

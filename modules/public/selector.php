@@ -16,8 +16,14 @@ function selPermWhere($obj, $idfld, $namefield, $prefix = '') {
 }
 
 $debug = false;
-$callback = dPgetCleanParam($_GET, 'callback', 0);
-$table = dPgetCleanParam($_GET, 'table', 0);
+// callback is written into a <script> block: accept only a JavaScript function name.
+$callback = preg_replace('/[^A-Za-z0-9_.]/', '', dPgetCleanParam($_GET, 'callback', ''));
+// table selects a class file and a table: accept only the tables handled below.
+$table = dPgetCleanParam($_GET, 'table', '');
+if (!in_array($table, array('companies', 'departments', 'files', 'file_folders', 'forums',
+		'projects', 'tasks', 'users', 'SGD', 'helpdesk_items'), true)) {
+	$table = '';
+}
 $user_id = (int)dPgetParam($_GET, 'user_id', 0);
 
 $ok = $callback & $table;
@@ -164,11 +170,10 @@ if (!$ok) {
 } else {
 	$list = arrayMerge(array(0 => $AppUI->_('[none]')), 
 	                   ((!(empty($query_result))) ? $query_result : $q->loadHashList()));
-	echo db_error();
 ?>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function setClose(key, val) {
-	window.opener.<?php echo $callback;?>(key,val);
+	dPopenerCall(<?php echo dPjs($callback); ?>, [key, val]);
 	window.close();
 }
 
@@ -198,14 +203,13 @@ selector.style.height = (wh - count - 5) + "px";
 <table width="100%">
 <tr>
 	<td>
-		<div style="white-space:normal; overflow:auto; "  id="selector">
+		<div style="white-space:normal; overflow:auto; max-height:calc(100vh - 60px);" id="selector">
 		<ul style="padding-left:0px">
 		<?php
 if (count($list) > 1) {
 	foreach ($list as $key => $val) {
-		echo ('<li>' . $html_disp_offset[$key] . '<a href="' . "javascript:setClose('" 
-		      . $AppUI->___($key, UI_OUTPUT_JS) . "','" 
-		      . $AppUI->___($val, UI_OUTPUT_JS) . "');" . '">' . $AppUI->___($val) 
+		echo ('<li>' . $html_disp_offset[$key] . '<a href="#"'
+		      . dPaction('setClose', array((string)$key, (string)$val)) . '>' . $AppUI->___($val) 
 		      . "</a></li>\n");
 	}
 } else {
@@ -217,7 +221,7 @@ if (count($list) > 1) {
 	</td>
 	<td valign="bottom">
 		<input type="button" class="button" value="<?php 
-echo $AppUI->_('cancel');?>" onclick="window.close()" />
+echo $AppUI->_('cancel');?>"<?php echo dPaction('window.close'); ?> />
 	</td>
 </tr>
 </table>

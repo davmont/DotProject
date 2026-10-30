@@ -243,7 +243,7 @@ class Contact_Vcard_Build {
         // with the latest/most-recent iteration of the selected
         // component.
         if ($iter === null) {
-            $iter = count($this->value[$comp]) - 1;
+            $iter = count($this->value[$comp] ?? array()) - 1;
         }
 
         // massage the text arguments
@@ -1658,7 +1658,7 @@ class Contact_Vcard_Build {
         $postcode, $country)
     {
         $this->autoparam = 'ADR';
-        $iter = count($this->value['ADR']);
+        $iter = count($this->value['ADR'] ?? array());
         $this->setValue('ADR', $iter, VCARD_ADR_POB,       $pob);
         $this->setValue('ADR', $iter, VCARD_ADR_EXTEND,    $extend);
         $this->setValue('ADR', $iter, VCARD_ADR_STREET,    $street);
@@ -1719,7 +1719,7 @@ class Contact_Vcard_Build {
     function addLabel($text)
     {
         $this->autoparam = 'LABEL';
-        $iter = count($this->value['LABEL']);
+        $iter = count($this->value['LABEL'] ?? array());
         $this->setValue('LABEL', $iter, 0, $text);
     }
     
@@ -1766,7 +1766,7 @@ class Contact_Vcard_Build {
     function addTelephone($text)
     {
         $this->autoparam = 'TEL';
-        $iter = count($this->value['TEL']);
+        $iter = count($this->value['TEL'] ?? array());
         $this->setValue('TEL', $iter, 0, $text);
     }
     
@@ -1812,7 +1812,7 @@ class Contact_Vcard_Build {
     function addEmail($text)
     {
         $this->autoparam = 'EMAIL';
-        $iter = count($this->value['EMAIL']);
+        $iter = count($this->value['EMAIL'] ?? array());
         $this->setValue('EMAIL', $iter, 0, $text);
     }
     
@@ -1954,7 +1954,8 @@ class Contact_Vcard_Build {
         
         settype($text, 'array');
         
-        $base = count($this->value['ORG'][0]);
+        // No ORG part yet on the first call: count(null) is a TypeError on PHP 8.
+        $base = isset($this->value['ORG'][0]) ? count($this->value['ORG'][0]) : 0;
         
         // start at the original base point, and add
         // new parts
@@ -1976,7 +1977,7 @@ class Contact_Vcard_Build {
     {
         $text = $this->getMeta('ORG', 0);
         
-        $k = count($this->value['ORG'][0]);
+        $k = isset($this->value['ORG'][0]) ? count($this->value['ORG'][0]) : 0;
         $last = $k - 1;
         
         for ($part = 0; $part < $k; $part++) {

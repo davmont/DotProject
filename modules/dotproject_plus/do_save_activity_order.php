@@ -11,12 +11,18 @@ $task_id= $_POST["activity_id"];
 $task_order= $_POST["task_order"];
 $direction= $_POST["direction"];
 $wbs_item_id= $_POST["wbs_item_id"];//fazer o envio pela tela do projeto
+// Ids are used in SQL below: keep them integers, as checked.
+$project_id = (int)$project_id;
+$task_id = (int)$task_id;
+$wbs_item_id = (int)$wbs_item_id;
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id, array(array('tasks', 'task_id', 'task_project', $task_id), array('project_eap_items', 'id', 'project_id', $wbs_item_id)));
 
 
 $q = new DBQuery();
 $q->addQuery("task_id, activity_order");
 $q->addTable("tasks_workpackages", "t");
-$q->addWhere("eap_item_id=" . $wbs_item_id);
+$q->addWhere("eap_item_id=" . (int)$wbs_item_id);
 $q->addOrder("activity_order");
 $sql = $q->prepare();
 $records = db_loadList($sql);
@@ -44,7 +50,7 @@ if( sizeof($records)>$newIndex && $newIndex>=0){//valid bounderies
         $q = new DBQuery();
         $q->addTable("tasks_workpackages");							
         $q->addUpdate('activity_order', $i);	
-        $q->addWhere('task_id = '.$record[0]);		
+        $q->addWhere('task_id = ' . (int)$record[0]);		
         $q->exec();
         $i++;
     }

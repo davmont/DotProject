@@ -44,7 +44,7 @@
 "Normal",
 "Open",
 "Open Parents",
-"$type Ticket Report",
+'$type Ticket Report',
 "Open Tickets",
 "Original message",
 "Owner",

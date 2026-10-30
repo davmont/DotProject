@@ -26,7 +26,7 @@ CREATE TABLE `earnings` (
   PRIMARY KEY  (`earning_id`),
   UNIQUE KEY `earning_num` (`earning_num`),
   KEY `earning_user_id` (`earning_user_id`)
-) TYPE=MyISAM AUTO_INCREMENT=17 ;
+) ENGINE=MyISAM AUTO_INCREMENT=17 ;
 # --------------------------------------------------------
 
 CREATE TABLE `earnings_items` (
@@ -40,5 +40,5 @@ CREATE TABLE `earnings_items` (
   `earning_item_rate` float NOT NULL default '0',
   PRIMARY KEY  (`earning_items_id`),
   KEY `earning_parent_id` (`earning_parent_id`)
-) TYPE=MyISAM AUTO_INCREMENT=58 ;
+) ENGINE=MyISAM AUTO_INCREMENT=58 ;
 

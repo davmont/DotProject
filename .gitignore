@@ -2,7 +2,6 @@
 /.buildpath
 /.project
 /error_log
-node_modules/
 output.txt
 test_out.txt
 existing_labels_es.txt
@@ -14,3 +13,15 @@ missing_labels_es.txt
 used_labels.txt
 missing_labels.txt
 SECURITY_AUDIT.md
+
+# Local configuration: written by the installer or copied from includes/config-dist.php
+includes/config.php
+
+# PHPStan result cache
+.phpstan-cache/
+
+# npm dependencies (tools/jest, tools/browser)
+node_modules/
+
+# docker/tests output (make audit-full)
+docker/.audit/

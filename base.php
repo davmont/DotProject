@@ -20,7 +20,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 }}} */
 
-ini_set('display_errors', 1);
+// Log PHP errors instead of printing them: a warning printed inside a <script>
+// block breaks the page's JavaScript, and messages can leak paths and SQL.
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
 if (defined('E_DEPRECATED')) {
   error_reporting(E_ALL & ~(E_DEPRECATED | E_NOTICE | E_STRICT));
@@ -42,6 +45,16 @@ $baseDir = dirname(__FILE__);
 //$baseDir .= ((substr_compare($baseDir, DIRECTORY_SEPERATOR, -1 , 1) == 0) ? '' : DIRECTORY_SEPERATOR);
 // Define to deprecate the global baseDir
 define('DP_BASE_DIR', $baseDir);
+// strftime() is deprecated since PHP 8.1 and removed in PHP 9 (includes/strftime.php).
+require_once DP_BASE_DIR . '/includes/strftime.php';
+
+// Security headers for every page (the installer sends the same ones, see
+// install/check_upgrade.php). The Content-Security-Policy comes separately.
+if (PHP_SAPI !== 'cli' && !headers_sent()) {
+  header('X-Content-Type-Options: nosniff');
+  header('X-Frame-Options: SAMEORIGIN');
+  header('Referrer-Policy: strict-origin-when-cross-origin');
+}
 
 require_once($baseDir . '/includes/dP_compat.php');
 
@@ -71,8 +84,11 @@ if (@$pathInfo) {
 
 $baseUrl = preg_replace('#/$#D', '', $baseUrl);
 
-// Define to deprecate the global baseUrl
-define('DP_BASE_URL', $baseUrl);
+// Define to deprecate the global baseUrl. Command-line scripts (queuescanner.php)
+// define it first from their --base-url option, since there is no request to read.
+if (!defined('DP_BASE_URL')) {
+  define('DP_BASE_URL', $baseUrl);
+}
 // And now we need to ensure we have a valid path for included pear libraries.
 // This dependency sucks, but if we don't do it we have no idea what versions we have
 $dpLib = DP_BASE_DIR . DIRECTORY_SEPARATOR . 'lib';

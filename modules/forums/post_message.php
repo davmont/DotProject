@@ -4,20 +4,16 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 // Add / Edit forum
-$message_id = isset($_GET['message_id']) ? $_GET['message_id'] : 0;
-$message_parent = isset($_GET['message_parent']) ? $_GET['message_parent'] : -1;
+$message_id = isset($_GET['message_id']) ? (int)$_GET['message_id'] : 0;
+$message_parent = isset($_GET['message_parent']) ? (int)$_GET['message_parent'] : -1;
 $forum_id = (int) dPgetParam($_REQUEST, 'forum_id', 0);
 
 $canEdit = getPermission('forums', 'edit', $forum_id);
 
 // Build a back-url for when the back button is pressed
-$back_url_params = array();
-foreach ($_GET as $k => $v) {
-	if ($k != 'post_message') {
-		$back_url_params[] = "$k=$v";
-	}
-}
-$back_url = implode('&', $back_url_params);
+$back_url_params = $_GET;
+unset($back_url_params['post_message']);
+$back_url = http_build_query($back_url_params);
 
 //Pull forum information
 $q = new DBQuery;
@@ -28,7 +24,6 @@ $q->addWhere("f.forum_id = $forum_id");
 $res = $q->exec();
 $forum_info = $q->fetchRow();
 $q->clear();
-echo db_error();
 
 //pull message information
 $q = new DBQuery;
@@ -37,7 +32,6 @@ $q->addJoin('users', 'u', 'fm.message_author = u.user_id');
 $q->addQuery('fm.*, u.user_username');
 $q->addWhere('fm.message_id = ' . ($message_id ? $message_id : $message_parent));
 $res = $q->exec();
-echo db_error();
 $message_info = $q->fetchRow();
 $q->clear();
 
@@ -48,7 +42,6 @@ if ($message_parent != -1) {
 	$q->addOrder('fm.message_id DESC'); // fetch last message first
 	$q->setLimit(1);
 	$res = $q->exec();
-	echo db_error();
 	$last_message_info = $q->fetchRow();
 	if (!$last_message_info) { // if it's first response, use original message
 		$last_message_info =& $message_info;
@@ -66,7 +59,7 @@ if ($message_parent > -1) {
 	$crumbs["?m=forums&amp;a=viewer&amp;forum_id=$forum_id&amp;message_id=$message_parent"] = 'this topic';
 }
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	<?php
 	// security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -89,7 +82,7 @@ if ($message_parent > -1) {
 		function delIt() {
 			var form = document.changeforum;
 			if (confirm("<?php echo $AppUI->_('forumDeletePost', UI_OUTPUT_JS); ?>")) {
-				form.del.value = "<?php echo $message_id; ?>";
+				form.del.value = "<?php echo (int)$message_id; ?>";
 				form.submit();
 			}
 		}
@@ -139,7 +132,7 @@ if ($message_parent > -1) {
 
 				<tr>
 					<td align="right"><?php echo $AppUI->_('Author') ?>:</td>
-					<td align="left"><?php echo dPgetUsername($message_info['user_username']) ?>
+					<td align="left"><?php echo dPhtml(dPgetUsername($message_info['user_username'])) ?>
 						(<?php echo $date->format("$df $tf"); ?>)</td>
 				</tr>
 				<tr>
@@ -178,7 +171,7 @@ if ($message_parent > -1) {
 			<tr>
 				<td>
 					<input type="button" value="<?php echo $AppUI->_('back'); ?>" class=button
-						onclick="javascript:window.location='?<?php echo $back_url; ?>';">
+						<?php echo dPaction(null, array(), null, array('href' => '?' . $back_url)); ?>>
 				</td>
 				<td align="right">
 					<?php
@@ -187,12 +180,12 @@ if ($message_parent > -1) {
 							|| $forum_info['forum_moderated'] == $AppUI->user_id
 							|| (getPermission('projects', 'edit', $forum_info['project_id'])
 								&& !($forum_info['project_id']))
-							|| $message_info['message_author'] == $AppUI->user_id
+							|| (is_array($message_info) && $message_info['message_author'] == $AppUI->user_id)
 							|| !($message_id))
 					) {
 						echo '<input type="hidden" name="dosql" value="do_post_aed" />';
 						echo ('<input type="button" value="' . $AppUI->_('submit')
-							. '" class=button onclick="javascript:submitIt()" />');
+							. '" class=button' . dPaction('submitIt') . ' />');
 					}
 					?>
 				</td>

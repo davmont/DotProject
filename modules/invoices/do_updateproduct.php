@@ -1,4 +1,8 @@
-<?php /* PRODUCTS $Id: do_updateproduct.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PRODUCTS $Id: do_updateproduct.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
 
 $del = dPgetParam( $_POST, 'del', 0 );
 

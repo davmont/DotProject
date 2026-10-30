@@ -66,6 +66,16 @@ if (!defined('DP_BASE_DIR')) {
 				}
 			}
 
+			// The PostNuke side must sign the userdata value with HMAC-SHA256 and the secret in
+			// $dPconfig['postnuke_secret']. The old check (md5 of the data itself) could be
+			// computed by anyone, so data without a valid signature is refused.
+			$secret = dPgetConfig('postnuke_secret', '');
+			$check = isset($_REQUEST['check']) ? (string)$_REQUEST['check'] : '';
+			if (mb_strlen($secret) < 16 || !is_string($_REQUEST['userdata'])
+				|| !hash_equals(hash_hmac('sha256', $_REQUEST['userdata'], $secret), $check)) {
+				die($AppUI->_('The credentials supplied were missing or corrupted') . ' (3)');
+			}
+
 			if (! $compressed_data = base64_decode(urldecode($_REQUEST['userdata']))) {
 				die($AppUI->_('The credentials supplied were missing or corrupted') . ' (1)');
 			}
@@ -73,19 +83,10 @@ if (!defined('DP_BASE_DIR')) {
 				die($AppUI->_('The credentials supplied were missing or corrupted') . ' (2)');
 			}
 
-			// We use hash_equals to prevent timing attacks, and md5 for backwards compatibility
-			// since PostNuke generates an md5 checksum. Note: In modern systems a stronger MAC should be used.
-			$expected_checksum = md5($userdata);
-			if (function_exists('hash_equals')) {
-			    if (!hash_equals($expected_checksum, $_REQUEST['check'])) {
-			        die ($AppUI->_('The credentials supplied were issing or corrupted') . ' (3)');
-			    }
-			} else {
-			    if ($_REQUEST['check'] !== $expected_checksum) {
-			        die ($AppUI->_('The credentials supplied were issing or corrupted') . ' (3)');
-			    }
-			}
 			$user_data = unserialize($userdata, ['allowed_classes' => false]);
+			if (!is_array($user_data) || !isset($user_data['login'], $user_data['name'], $user_data['passwd'], $user_data['email'])) {
+				die($AppUI->_('The credentials supplied were missing or corrupted') . ' (4)');
+			}
 
 			// Now we need to check if the user already exists, if so we just
 			// update.  If not we need to create a new user and add a default
@@ -115,7 +116,7 @@ if (!defined('DP_BASE_DIR')) {
 				$this->user_id = $row['user_id'];
 				$q->clear();
 				$q->addTable('users');
-				$q->addUpdate('user_password', password_hash($passwd, PASSWORD_DEFAULT));
+				$q->addUpdate('user_password', dPhashPassword($passwd));
 				$q->addWhere("user_id = {$this->user_id}");
 				if (! $q->exec()) {
 					die($AppUI->_('Could not update user credentials'));
@@ -154,7 +155,7 @@ if (!defined('DP_BASE_DIR')) {
 			$q  = new DBQuery;
 			$q->addTable('users');
 			$q->addInsert('user_username',$username);
-			$q->addInsert('user_password', password_hash($password, PASSWORD_DEFAULT));
+			$q->addInsert('user_password', dPhashPassword($password));
 			$q->addInsert('user_type', '1');
 			$q->addInsert('user_contact', $c->contact_id);
 			if (! $q->exec())
@@ -199,10 +200,14 @@ if (!defined('DP_BASE_DIR')) {
 			if (password_verify($password, $stored)) {
 				return true;
 			}
-			// Backward compat: accept legacy MD5 hash and transparently upgrade it.
+			// Backward compat: accept legacy MD5 hash and transparently upgrade it,
+			// unless the column is still too short to store the new hash.
 			if (strlen($stored) === 32 && md5($password) === $stored) {
+				if (!dPpasswordColumnFitsHash()) {
+					return true;
+				}
 				$q->addTable('users');
-				$q->addUpdate('user_password', password_hash($password, PASSWORD_DEFAULT));
+				$q->addUpdate('user_password', dPhashPassword($password));
 				$q->addWhere('user_id = ' . intval($this->user_id));
 				$q->exec();
 				$q->clear();
@@ -345,7 +350,7 @@ if (!defined('DP_BASE_DIR')) {
 		function createsqluser($username, $password, $ldap_attribs = Array())
 		{
 			GLOBAL $db, $AppUI;
-			$hash_pass = password_hash($password, PASSWORD_DEFAULT);
+			$hash_pass = dPhashPassword($password);
 
 			require_once($AppUI->getModuleClass("contacts"));
 	

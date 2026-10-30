@@ -118,8 +118,8 @@ if ($caller == 'todo') {
 
  	$q->addTable('tasks', 't');
  	$q->innerJoin('projects', 'p', 'p.project_id = t.task_project');
- 	$q->innerJoin('user_tasks', 'ut', 'ut.task_id = t.task_id AND ut.user_id = ' . $user_id);
- 	$q->leftJoin('user_task_pin', 'tp', 'tp.task_id = t.task_id AND tp.user_id = ' . $user_id);
+ 	$q->innerJoin('user_tasks', 'ut', 'ut.task_id = t.task_id AND ut.user_id = ' . (int)$user_id);
+ 	$q->leftJoin('user_task_pin', 'tp', 'tp.task_id = t.task_id AND tp.user_id = ' . (int)$user_id);
 	
  	$q->addQuery('t.*, p.project_name, p.project_id, p.project_color_identifier, tp.task_pinned');
  	$q->addWhere('(t.task_percent_complete < 100 OR t.task_percent_complete IS NULL)');
@@ -161,7 +161,7 @@ if ($caller == 'todo') {
 	}
 	$q->addWhere('project_status != 7');
 	if ($project_id) {
-		$q->addWhere('task_project = ' . $project_id);
+		$q->addWhere('task_project = ' . (int)$project_id);
 	}
 	if ($f != 'myinact') {
 		$q->addWhere('task_status > -1');
@@ -174,18 +174,18 @@ if ($caller == 'todo') {
 		case 'all':
 			break;
 		case 'myproj':
-			$q->addWhere('project_owner = ' . $AppUI->user_id);
+			$q->addWhere('project_owner = ' . (int)$AppUI->user_id);
 			break;
 		case 'mycomp':
-			$q->addWhere('project_company = ' . $AppUI->user_company);
+			$q->addWhere('(project_company = ' . (int)$AppUI->user_company . ' OR project_company_internal = ' . (int)$AppUI->user_company . ')');
 			break;
 		case 'myinact':
 			$q->innerJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
-			$q->addWhere('ut.user_id = '.$AppUI->user_id);
+			$q->addWhere('ut.user_id = ' . (int)$AppUI->user_id);
 			break;
 		default:
 			$q->innerJoin('user_tasks', 'ut', 'ut.task_id = t.task_id');
-			$q->addWhere('ut.user_id = '.$AppUI->user_id);
+			$q->addWhere('ut.user_id = ' . (int)$AppUI->user_id);
 			break;
 	}
 	
@@ -241,11 +241,11 @@ foreach ($proTasks as $row) {
 	}
 	
 	$ted = new CDate($row['task_end_date']);
-	if ($ted->after(new CDate($end_max))) {
+	if ($end_max == '0000-00-00 00:00:00' || $ted->after(new CDate($end_max))) {
 		$end_max = $row['task_end_date'];
 	}
-	if ($ted->after(new CDate($projects[$row['task_project']]['project_end_date']))
-	    || $projects[$row['task_project']]['project_end_date'] == '') {
+	if ($projects[$row['task_project']]['project_end_date'] == ''
+	    || $ted->after(new CDate($projects[$row['task_project']]['project_end_date']))) {
 		$projects[$row['task_project']]['project_end_date'] = $row['task_end_date'];
 	}
 	
@@ -461,7 +461,6 @@ foreach ($projects as $p) {
 	if (isset($p['tasks'])) {
 		$tnums = count($p['tasks']);
 	}
-	$task_id = $t['task_id'];
 
 	for ($i=0; $i < $tnums; $i++) {
 		$t = $p['tasks'][$i];
@@ -558,7 +557,7 @@ for ($i = 0; $i < count(@$gantt_arr); $i ++) {
 		$q->addTable('user_tasks', 'ut');
 		$q->innerJoin('users', 'u', 'u.user_id = ut.user_id');
 		$q->addQuery('ut.task_id, u.user_username, ut.perc_assignment');
-		$q->addWhere('ut.task_id = ' . $a['task_id']);
+		$q->addWhere('ut.task_id = ' . (int)$a['task_id']);
 		$res = $q->loadList();
 		foreach ($res as $rw) {
 			switch ($rw['perc_assignment']) {
@@ -658,7 +657,7 @@ for ($i = 0; $i < count(@$gantt_arr); $i ++) {
 			$q->addJoin('user_tasks', 'u', 't.task_id = u.task_id');
 			$q->addQuery('ROUND(SUM(t.task_duration*u.perc_assignment/100),2) AS wh');
 			$q->addWhere('t.task_duration_type = 24');
-			$q->addWhere('t.task_id = '.$a['task_id']);
+			$q->addWhere('t.task_id = ' . (int)$a['task_id']);
 			
 			$wh = $q->loadResult();
 			$work_hours = $wh * $dPconfig['daily_working_hours'];
@@ -668,7 +667,7 @@ for ($i = 0; $i < count(@$gantt_arr); $i ++) {
 			$q->addJoin('user_tasks', 'u', 't.task_id = u.task_id');
 			$q->addQuery('ROUND(SUM(t.task_duration*u.perc_assignment/100),2) AS wh');
 			$q->addWhere('t.task_duration_type = 1');
-			$q->addWhere('t.task_id = '.$a['task_id']);
+			$q->addWhere('t.task_id = ' . (int)$a['task_id']);
 			
 			$wh2 = $q->loadResult();
 			$work_hours += $wh2;
@@ -766,7 +765,7 @@ for ($i = 0; $i < count(@$gantt_arr); $i ++) {
 	
 	$q->addTable('task_dependencies');
 	$q->addQuery('dependencies_task_id');
-	$q->addWhere('dependencies_req_task_id=' . $a['task_id']);
+	$q->addWhere('dependencies_req_task_id=' . (int)$a['task_id']);
 	$query = $q->loadList();
 	
 	foreach ($query as $dep) {

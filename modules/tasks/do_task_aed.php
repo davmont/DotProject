@@ -7,6 +7,8 @@ if (!defined('DP_BASE_DIR')) {
 $adjustStartDate = dPgetCleanParam($_POST, 'set_task_start_date');
 $del = (int)dPgetParam($_POST, 'del', 0);
 $task_id = (int)dPgetParam($_POST, 'task_id', 0);
+// Permission on this record, as its addedit page checks.
+dPrequireWritePermission('tasks', $task_id, $del);
 $hassign = dPgetCleanParam($_POST, 'hassign');
 $hperc_assign = dPgetCleanParam($_POST, 'hperc_assign');
 $hdependencies = dPgetCleanParam($_POST, 'hdependencies');
@@ -18,200 +20,18 @@ $send_ical_to_user = 0;
 $q = new DBQuery();
 $q->addTable('tasks_ical', 'ti');
 $q->addQuery('ti.UID');
-$q->addWhere('ti.task_id = ' . $task_id);
+$q->addWhere('ti.task_id = ' . (int)$task_id);
 $task_ical = $q->loadResult();
 if($task_ical){ $send_ical_to_user = 1;}
 
-function setIcalEvent($task_id, $only_mail, $lastUpdate)
-{
-	global $send_ical, $send_ical_to_user;
-	$q = new DBQuery();
-	$q->addTable('tasks', 't');
-	$q->addJoin('projects', 'p', 'p.project_id =  t.task_project');
-	$q->addJoin('users', 'u', 'u.user_id =  t.task_creator');
-	$q->addJoin('contacts', 'con', 'con.contact_id =  u.user_contact');
-	$q->addJoin('tasks_ical', 'ti', 'ti.task_id =  t.task_id');
-	$q->addQuery('DISTINCT t.task_name, t.task_end_date, t.task_start_date, t.task_description, con.contact_first_name, con.contact_last_name, con.contact_email, p.project_name, ti.UID, ti.created, ti.sequence');
-	$q->addWhere('t.task_id = ' . $task_id);
-	$rows = $q->loadList();
-	$q->clear();
-	$q = new DBQuery();
-	$q->addTable('config');
-	$q->addQuery('config_value');
-	$q->addWhere('config_name =\'company_name\'');
-	$location = $q->loadResult();
-	$q->clear();
-	
-	foreach($rows as $row){
-		$start_year = substr($row['task_start_date'], 0, 4);
-		$start_month = substr($row['task_start_date'], 5, 2);
-		$start_day = substr($row['task_start_date'], 8, 2);
-		$start_hour = substr($row['task_start_date'], 11, 2);
-		$start_min = substr($row['task_start_date'], 14, 2);
-		$start_sec = substr($row['task_start_date'], 17, 2);
-
-		$end_year = substr($row['task_end_date'], 0, 4);
-		$end_month = substr($row['task_end_date'], 5, 2);
-		$end_day = substr($row['task_end_date'], 8, 2);
-		$end_hour = substr($row['task_end_date'], 11, 2);
-		$end_min = substr($row['task_end_date'], 14, 2);
-		$end_sec = substr($row['task_end_date'], 17, 2);
-
-		$organiser_first_name = $row['contact_first_name'];
-		$organiser_last_name = $row['contact_last_name'];
-		$organiser_email = $row['contact_email'];
-		
-		$UID = $row['UID'] != null ? $row['UID'] : (date('YmdHis').'@dotproject.com');
-		$created = $row['UID'] != null ? $row['created'] : date('Ymd\THis');
-		$sequence = $row['UID'] != null ? ($row['sequence']) : 0;
-		if(($lastUpdate != 2) && ($send_ical == 1)){$method='
-METHOD:REQUEST';}
-		else{$method='
-METHOD:CANCEL';}
-		$ical .=//we prepare the ical.ics text
-'BEGIN:VCALENDAR'. 
-$method.'
-BEGIN:VEVENT
-PRODID:-//Region Poitou-Charentes//NONSGML v1.0//FR
-VERSION:2.0
-DTSTART:'.$start_year .$start_month .$start_day .'T'. $start_hour.$start_min.$start_sec.'
-DTEND:'.$end_year .$end_month .$end_day .'T'. $end_hour.$end_min.$end_sec.'
-DTSTAMP:'.date('Ymd\THis').'
-UID:'.$UID.'
-ORGANIZER;CN='. $organiser_first_name . ' ' . $organiser_last_name .':MAILTO:'.$organiser_email.'
-CREATED:'.$created.'
-DESCRIPTION:'.$row['task_description'].'
-LAST-MODIFIED:'.date('Ymd\THis').'
-LOCATION:'.$location.'
-SEQUENCE:'.$sequence.'
-SUMMARY:'.$row['task_name'].' '.$row['project_name']
-.($lastUpdate != 2 ? '
-STATUS:CONFIRMED' : '
-STATUS:CANCELLED').'
-TRANSP:TRANSPARENT
-ATTENDEE;ROLE=REQ-PARTICIPANT
-END:VEVENT
-END:VCALENDAR'
-;
-	}
-	
-	$ical = str_replace ( 'é' , '�' , $ical);
-	$ical = str_replace ( 'è' , '�' , $ical);
-	$ical = str_replace ( '�' , '�' , $ical);
-	$ical = str_replace ( '°' , '�' , $ical);
-	$ical = str_replace ( '�' , '�' , $ical);
-	$ical = str_replace ( '&eacute;' , '�' , $ical);
-	$ical = str_replace ( '&acirc;' , '�' , $ical);
-	if($only_mail){
-		return $organiser_email;
-	}
-	else{
-		if(($lastUpdate != 2) && ($send_ical == 1)){
-			$q->clear();
-			if($row['UID'] == null){//we save ical information about this task in database
-				$q->addTable('tasks_ical');
-				$q->addInsert('task_id', $task_id);
-				$q->addInsert('UID', $UID);
-				$q->addInsert('created', $created);
-				$q->addInsert('sequence', 0);
-				$q->exec();
-			}
-			else{//we update ical information about this task in database
-				$q->addTable('tasks_ical');
-				$q->addUpdate('task_id', $task_id);
-				$q->addUpdate('UID', $UID);
-				$q->addUpdate('created', $created);
-				$q->addUpdate('sequence', $sequence+1);
-				$q->exec();
-			}
-		}
-		else{
-			$q->clear();
-			$q->setDelete('tasks_ical');
-			$q->addWhere('task_id', $task_id);
-			$q->exec();
-		}
-		return $ical;
-	}
-}
-$addText = $AppUI->_('add');
-$editText = $AppUI->_('edit');
-$delText = $AppUI->_('del');
-$taskText = $AppUI->_('The Task');
-$ofProjectText = $AppUI->_('of Project');
-$hasBeenText = $AppUI->_('has been');
+require_once DP_BASE_DIR . '/modules/tasks/ical.class.php';
+// $lastUpdate: 0 added, 1 edited, 2 deleted. Sends the invitation while the option is
+// ticked, and its cancellation when the task is deleted or the option is unticked.
 function sendIcal($task_id, $lastUpdate)
 {
-	global $addText, $editText, $delText, $taskText, $ofProjectText, $hasBeenText,$send_ical, $send_ical_to_user;
-	$ical = setIcalEvent($task_id, 0, $lastUpdate);
-	
-	//we save the ical file
-	$file = fopen('./modules/ical/ical.ics', 'r+');
-	ftruncate($file,0);
-	fputs($file, $ical);
-	fclose($file);
-	
-	//we prepare the mail with the ical file in attached_file
-	$boundary = "_".md5 (uniqid (rand()));
-	
-	$attached_file = file_get_contents('./modules/ical/ical.ics'); 
-	$attached_file = chunk_split(base64_encode($attached_file));
-
-	$attached = "\n\n". "--" .$boundary . "\nContent-Type: application/ics; name=\"$file\"\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"ical.ics\"\r\n\n".$attached_file . "--" . $boundary . "--";
-	$q = new DBQuery();
-	$q->addTable('config');
-	$q->addQuery('config_value');
-	$q->addWhere('config_name =\'site_domain\'');
-	$site = $q->loadResult();
-	$q->clear();
-	$headers ="From: noreply@".$site." \r\n";
-	$headers .= "MIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary=\"$boundary\"\r\n";
-	
-	if($lastUpdate == 0){
-		$updateMessage = $addText;
-	}
-	else if($lastUpdate == 1){
-		$updateMessage = $editText;
-	}
-	else if($lastUpdate == 2){
-		$updateMessage = $delText;
-	}
-	else{}
-	$q = new DBQuery();
-	$q->addTable('tasks', 't');
-	$q->addJoin('projects', 'p', 'p.project_id =  t.task_project');
-	$q->addQuery('DISTINCT t.task_name, p.project_name');
-	$q->addWhere('t.task_id = ' . $task_id);
-	$rows = $q->loadList();
-	$q->clear();
-	foreach($rows as $row){
-		$message = $taskText.' "'.$row['task_name'].'" '.$ofProjectText.' "'.$row['project_name'].'" '.$hasBeenText.' '.$updateMessage;
-	}
-	$message = str_replace ( 'é' , '�' , $message);
-	$message = str_replace ( 'è' , '�' , $message);
-	$message = str_replace ( '�' , '�' , $message);
-	$message = str_replace ( '°' , '�' , $message);
-	$message = str_replace ( '�' , '�' , $message);
-	$message = str_replace ( '&eacute;' , '�' , $message);
-	$message = str_replace ( '&acirc;' , '�' , $message);
-	$body = "--". $boundary ."\nContent-Type: text/calendar; charset=ISO-8859-1\r\n\n".$ical ."\r\n\n". "--". $boundary ."\nContent-Type: text/plain; charset=ISO-8859-1\r\n\n".$message. $attached;
-	$q = new DBQuery();
-	$q->addTable('user_tasks', 'ut');
-	$q->addJoin('users', 'u', 'u.user_id =  ut.user_id');
-	$q->addJoin('contacts', 'con', 'con.contact_id =  u.user_contact');
-	$q->addQuery('con.contact_email');
-	$q->addWhere('ut.task_id = ' . $task_id);
-	$rows = $q->loadList();
-	$q->clear();
-	if($rows != null){
-		foreach($rows as $row){
-			$assigned_user = $row['contact_email'];
-			while(!mail(((($assigned_user != NULL) ? $assigned_user : setIcalEvent($task_id, 1))),'dotProject synchronisation',$body,$headers));
-		}
-	}
-	else{//if we don't have assigned user we send ical to the creator of this task
-		while(!mail(setIcalEvent($task_id, 1, $lastUpdate),'dotProject synchronisation',$body,$headers));
-	}
+	global $send_ical;
+	$actions = array(0 => 'added', 1 => 'updated', 2 => 'deleted');
+	CTaskIcal::send($task_id, $lastUpdate == 2 || $send_ical != 1, $actions[$lastUpdate]);
 }
 
 if ($sub_form) {
@@ -440,7 +260,7 @@ if ($sub_form) {
 				$q->addTable('tasks', 't');							
 				$q->addUpdate('task_start_date', $obj->task_start_date);	
 				$q->addUpdate('task_end_date', $obj->task_end_date);
-				$q->addWhere('task_id = '.$obj->task_id);
+				$q->addWhere('task_id = ' . (int)$obj->task_id);
 				$q->addWhere('task_dynamic != 1');
 				$q->exec();
 				$q->clear();
@@ -450,7 +270,7 @@ if ($sub_form) {
 		$q = new DBQuery();
 		$q->addTable('task_dependencies');
 		$q->addQuery('dependencies_task_id');
-		$q->addWhere('dependencies_req_task_id ='.$task_id);
+		$q->addWhere('dependencies_req_task_id =' . (int)$task_id);
 		$task_son = $q->loadList();
 		$q->clear();
 		if($task_son != null){
@@ -458,7 +278,7 @@ if ($sub_form) {
 				$q = new DBQuery();
 				$q->addTable('tasks_ical', 'ti');
 				$q->addQuery('ti.UID');
-				$q->addWhere('ti.task_id = ' . $ts['dependencies_task_id']);
+				$q->addWhere('ti.task_id = ' . (int)$ts['dependencies_task_id']);
 				$task_ical = $q->loadResult();
 				if($task_ical){
 					$send_ical = 1;

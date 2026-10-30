@@ -86,20 +86,17 @@ if (is_array($selected) && count($selected)) {
 		$q->addUpdate('task_percent_complete', "'100'");
 		$q->addWhere('task_id IN (' . $in_clause . ')');
 		db_exec($q->prepare(true));
-		echo db_error();
 	} else if ($task_priority == 'd') {
 		// delete task
 		$q->setDelete('tasks');
 		$q->addWhere('task_id IN (' . $in_clause . ')');
 		db_exec($q->prepare(true));
-		echo db_error();
 	} else if ($task_priority > -2 && $task_priority < 2) {
 		// set priority
 		$q->addTable('tasks');
 		$q->addUpdate('task_priority', $task_priority);
 		$q->addWhere('task_id IN (' . $in_clause . ')');
 		db_exec($q->prepare(true));
-		echo db_error();
 	}
 }
 
@@ -117,8 +114,8 @@ $q = new DBQuery;
 
 $q->addTable('tasks', 'ta');
 $q->leftJoin('projects', 'pr', 'pr.project_id = ta.task_project');
-$q->innerJoin('user_tasks', 'ut', 'ut.task_id = ta.task_id AND ut.user_id = ' . $user_id);
-$q->leftJoin('user_task_pin', 'tp', 'tp.task_id = ta.task_id AND tp.user_id = ' . $user_id);
+$q->innerJoin('user_tasks', 'ut', 'ut.task_id = ta.task_id AND ut.user_id = ' . (int)$user_id);
+$q->leftJoin('user_task_pin', 'tp', 'tp.task_id = ta.task_id AND tp.user_id = ' . (int)$user_id);
 
 $q->addQuery('ta.*');
 $q->addQuery('pr.project_name, pr.project_id, pr.project_color_identifier');

@@ -3,27 +3,27 @@ if (!defined('DP_BASE_DIR')) {
     die('You should not access this file directly.');
 }
 
-// add communication frequency
-if (isset($_GET['communication_frequency'])){
-    $add = ($_GET['communication_frequency']);
-    $radd = new DBQuery;
-    $radd->addInsert('communication_frequency', $add);
-    if($_GET['showdate']=='true'){
-        $radd->addInsert('communication_frequency_hasdate', 'Sim');  
-    }
-    $radd->addTable('communication_frequency');
-    $radd->exec();
-    header('location:?m=communication&a=addedit_frequency');
-}
-
-// del communication frequency
-if (isset($_GET['communication_frequency_id'])){
-    $del = ($_GET['communication_frequency_id']);
-    $rdel = new DBQuery;
-    $rdel->setDelete('communication_frequency');
-    $rdel->addWhere('communication_frequency_id=' .$del);
-    $rdel->exec();
-    header('location:?m=communication&a=addedit_frequency');
+// Adding and deleting change data: POST with the CSRF token and edit permission only.
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$AppUI->verifyCsrfToken();
+	if (!getPermission('communication', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	if (dPgetIntParam($_POST, 'del', 0)) {
+		$q = new DBQuery;
+		$q->setDelete('communication_frequency');
+		$q->addWhere('communication_frequency_id = ' . dPgetIntParam($_POST, 'frequency', 0));
+		$q->exec();
+	} else if (trim((string)dPgetParam($_POST, 'communication_frequency', '')) !== '') {
+		$q = new DBQuery;
+		$q->addTable('communication_frequency');
+		$q->addInsert('communication_frequency', dPgetParam($_POST, 'communication_frequency', ''));
+		if (dPgetParam($_POST, 'communication_frequency_showdate', '')) {
+			$q->addInsert('communication_frequency_hasdate', 'Sim');
+		}
+		$q->exec();
+	}
+	$AppUI->redirect('m=communication&a=addedit_frequency');
 }
 
 // list of frequencies
@@ -33,23 +33,20 @@ $frequencies->addTable('communication_frequency', 'f');
 $frequencies = $frequencies->loadList();
 
 ?>
- <script language="javascript"> 
-        var showdate = false;
-        function submitIt(frequency){
-            window.location = ('?m=communication&a=addedit_frequency&communication_frequency='+frequency+'&showdate='+showdate)
+ <script nonce="<?php echo dPcspNonce(); ?>">
+        function submitIt(form){
+            form.del.value = '0';
+            form.submit();
         }
-         function DelFrequency(id_frequency){
-            window.location = ('?m=communication&a=addedit_frequency&communication_frequency_id='+id_frequency)    
-        }
-        function SetShowDate(showdateValue){
-           showdate = showdateValue;     
+        function DelFrequency(form){
+            form.del.value = '1';
+            form.submit();
         }
 </script>
 
 <table width="50%" border="0" cellpadding="3" cellspacing="3" class="std" charset=UTF-8>
-    <form name="uploadFrm" action="?m=communication" method="post">
+    <form name="uploadFrm" action="?m=communication&amp;a=addedit_frequency" method="post">
         <input type="hidden" name="del" value="0" />        
-        <input type="hidden" name="communication_frequency_id" value="<?php echo $communication_frequency_id; ?>" />
         <tr><td style="font-size: 12px; font-weight: bold; color: #006"><?php echo $AppUI->_("LBL_TITLE_FREQUENCIES")?></td></tr>
         <tr>
             <td width="80%" valign="top" align="left">
@@ -61,17 +58,15 @@ $frequencies = $frequencies->loadList();
                         </td>
                         </td>
                         <td>
-                            <input type="button" class="button" value="<?php echo $AppUI->_("LBL_SUBMIT") ?>" onclick="submitIt(communication_frequency.value)" />
+                            <input type="button" class="button" value="<?php echo $AppUI->_("LBL_SUBMIT") ?>"<?php echo dPaction('submitIt', array('$form')); ?> />
                         </td>
                         <td>
-                            <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_("LBL_CANCEL") ?>" 
-                                   onClick="javascript:if (confirm('<?php echo $AppUI->_("LBL_ANSWER_CANCEL", UI_OUTPUT_JS); ?>')) 
-                                   {location.href ='./index.php?m=communication';}" />
+                            <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_("LBL_CANCEL") ?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('LBL_ANSWER_CANCEL', UI_OUTPUT_RAW), 'href' => './index.php?m=communication')); ?> />
                         </td>
                     <tr>
                         <td style="min-width:120px"></td>
                         <td style="min-width:120px">
-                            <input type="checkbox" align="left" name="communication_frequency_showdate" onchange="SetShowDate(this.checked)"><?php echo $AppUI->_("LBL_SHOW_DATE")?></input>
+                            <input type="checkbox" align="left" name="communication_frequency_showdate" value="1"><?php echo $AppUI->_("LBL_SHOW_DATE")?></input>
                         </td>
                     </tr>
                     </tr>
@@ -82,11 +77,11 @@ $frequencies = $frequencies->loadList();
                             <select id="frequency" name="frequency" style="min-width:150px">
                                 <?php
                                 foreach ($frequencies as $registro) {
-                                    echo '<option value="'.$registro['communication_frequency_id'].'">'. $registro['communication_frequency'].'</option>';
+                                    echo '<option value="'.(int)$registro['communication_frequency_id'].'">'. dPhtml($registro['communication_frequency']).'</option>';
                                 }
                                 ?>
                             </select>
-                            <td><input type="button" value="x" style="color: #aa0000; font-weight: bold" onclick="DelFrequency(frequency.value)"/></td>
+                            <td><input type="button" value="x" style="color: #aa0000; font-weight: bold"<?php echo dPaction('DelFrequency', array('$form'), null, array('confirm' => $AppUI->_('doDelete', UI_OUTPUT_RAW) . '?')); ?>/></td>
                         </td>
                     </tr>
                 </table>

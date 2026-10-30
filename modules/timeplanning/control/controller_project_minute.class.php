@@ -2,10 +2,11 @@
 require_once (DP_BASE_DIR . "/modules/timeplanning/model/project_minute.class.php");
 class ControllerProjectMinute {
 	
-	function ControllerProjectMinute()	{
+	function __construct()	{
 	}
 	
 	function getProjectMinutes($projectId){
+		$projectId = (int)$projectId; // used in SQL below
 		$list=array();
 		$q = new DBQuery;
 		$q->addQuery("tm.id");

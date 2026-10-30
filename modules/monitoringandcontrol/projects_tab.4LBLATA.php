@@ -7,8 +7,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/translations.php");
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ata.class.php");
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 
-$tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $controllerAta= new ControllerAta();
 $controllerUtil = new ControllerUtil();
 ?>
@@ -16,7 +15,7 @@ $controllerUtil = new ControllerUtil();
 <!-- ***************** LISTA ATAS ****************************-->	
 	<br/>
     <p align="right" style="width:85%">     		
-           <input type="button" class="button" value="<?php echo $AppUI->_('LBL_NOVA').' '.$AppUI->_('LBL_ATA');?>"  onclick="window.location='?m=monitoringandcontrol&a=addedit_ata&project_id=<?php echo $project_id ; ?>' "/>
+           <input type="button" class="button" value="<?php echo $AppUI->_('LBL_NOVA').' '.$AppUI->_('LBL_ATA');?>" <?php echo dPaction(null, array(), null, array('href' => '?m=monitoringandcontrol&a=addedit_ata&project_id=' . (int)$project_id)); ?>/>
     </p>
 
 	<table class="std"  width="70%" align="center" style="border-radius:6px">	
@@ -39,25 +38,25 @@ $controllerUtil = new ControllerUtil();
 				?>		
 				
 					<tr>
-						<td><?php echo  $controllerUtil -> formatDate($row[dt_meeting_begin]); ?> </td>
-						<td><?php echo $row[meeting_type_name]; ?> </td>
-						<td><?php echo $row[ds_title]; ?> </td>
+						<td><?php echo  $controllerUtil -> formatDate($row['dt_meeting_begin']); ?> </td>
+						<td><?php echo dPhtml($row['meeting_type_name']); ?> </td>
+						<td><?php echo dPhtml($row['ds_title']); ?> </td>
 
                         <td align="center">
  							 <form name="form_update" method="post" action="?m=monitoringandcontrol&a=addedit_update_ata&project_id=<?php echo $project_id ; ?>" enctype="multipart/form-data" >  
                                  <input  type="hidden" name="acao" value="update"  />
 								<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-								<input name="meeting_id" type="hidden" id="meeting_id" value="<?php echo $row[0]; ?>">
-                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar" onclick="updateRow();"  />                                 
+								<input name="meeting_id" type="hidden" id="meeting_id" value="<?php echo (int)$row[0]; ?>">
+                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />                                 
                               </form>
                         </td>	
                         <td align="center">
                               <form name="form_delete" method="post" action="?m=monitoringandcontrol&a=do_ata_aed&project_id=<?php echo $project_id; ?>" enctype="multipart/form-data" >
 								<input name="dosql" type="hidden" value="do_ata_aed" />	                              
                                 <input  type="hidden" name="acao" value="delete"  />
-								<input name="meeting_id" type="hidden" id="meeting_id" value="<?php echo $row[0]; ?>">
+								<input name="meeting_id" type="hidden" id="meeting_id" value="<?php echo (int)$row[0]; ?>">
 								<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar" onclick="deleteRow(excluir);"  />
+								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('doDelete', UI_OUTPUT_RAW) . '?')); ?>  />
                                 </form>                                
                         </td>
                    </tr>						

@@ -5,6 +5,11 @@ $controllerWBSItem= new ControllerWBSItem();
 $ControllerWBSItemActivityRelationship = new ControllerWBSItemActivityRelationship();
 $project_id=dPgetParam($_POST, 'project_id');
 $wbs_item_id=dPgetParam($_POST, 'wbs_item_id');
+// Ids are used in SQL below: keep them integers, as checked.
+$project_id = (int)$project_id;
+$wbs_item_id = (int)$wbs_item_id;
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id, array(array('project_eap_items', 'id', 'project_id', $wbs_item_id)));
 $wbs_item_name=dPgetParam($_POST, 'wbs_item_name');
 
 $wbsItem=$controllerWBSItem->getWBSItemById($wbs_item_id);
@@ -15,11 +20,17 @@ $controllerWBSItem->delete($wbs_item_id);
      $obj->delete();
  }
  //find all child WBS items
-$q = new DBQuery;
-$q->addQuery("eap.id");
-$q->addTable('project_eap_items', 'eap');
-$q->addWhere("project_id =" . $project_id. " and number like '".$wbsItem->getNumber()."%'" );
-$results = db_loadHashList($q->prepare(true), 'id');
+// Children are numbered "<number>.<n>"; without a number there is nothing to match
+// (an empty prefix would match every item of the project).
+$results = array();
+$number = (string)$wbsItem->getNumber();
+if ($number !== '') {
+	$q = new DBQuery;
+	$q->addQuery("eap.id");
+	$q->addTable('project_eap_items', 'eap');
+	$q->addWhere("project_id = " . $project_id . " and number like " . $q->quote(addcslashes($number, '%_\\') . '.%'));
+	$results = db_loadHashList($q->prepare(true), 'id');
+}
 //delete the child WBS items and its activities
 foreach ($results as $id => $data) {
     $id=$data['id'];

@@ -1,9 +1,13 @@
-<?php /* HELPDESK $Id: vw_weekly_by_user.php,v 1.1 2007/08/22 07:47:47 arcoz67 Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: vw_weekly_by_user.php,v 1.1 2007/08/22 07:47:47 arcoz67 Exp $ */
 	global $tab,$TIMECARD_CONFIG;
 	$show_possible_hours_worked = $TIMECARD_CONFIG['show_possible_hours_worked'];
 	//print "<pre>$show_possible_hours_worked</pre>";
 	//grab hours per day from config
-	$min_hours_day = $dPconfig['daily_working_hours'];
+	$min_hours_day = dPgetConfig('daily_working_hours', 8);
 	//compute hours/week from config
 	$min_hours_week =count(explode(",",$dPconfig["cal_working_days"])) * $min_hours_day;
 	// get date format
@@ -18,9 +22,9 @@
 	$start_day = new CDate( $AppUI->getState( 'TimecardWeeklyReportStartDate' ) ? $AppUI->getState( 'TimecardWeeklyReportStartDate' ) : NULL);
 
 	if (isset( $_GET['company_id'] )) {
-		$AppUI->setState( 'TimecardWeeklyReportCompanyId', $_GET['company_id'] );
+		$AppUI->setState( 'TimecardWeeklyReportCompanyId', (int)$_GET['company_id'] );
 	}
-	$company_id = $AppUI->getState( 'TimecardWeeklyReportCompanyId' ) ? $AppUI->getState( 'TimecardWeeklyReportCompanyId' ) : 0;
+	$company_id = (int)$AppUI->getState( 'TimecardWeeklyReportCompanyId' );
   //print $company_id;
 	//set that to just midnight so as to grab the whole day
 	$date = $start_day->format("%Y-%m-%d")." 00:00:00";
@@ -42,6 +46,7 @@
 	$date = $end_day->format("%Y-%m-%d")." 23:59:59";
 	$end_day -> setDate($date, DATE_FORMAT_ISO);
 
+	$dbprefix = dPgetConfig('dbprefix', '');
 	$selects = array();
 	$join = array();
 	
@@ -54,9 +59,9 @@
 			contact_email,
 			company_name
 		FROM 
-			users
-			LEFT JOIN contacts ON users.user_contact=contacts.contact_id
-			LEFT JOIN companies ON companies.company_id=contacts.contact_company
+			{$dbprefix}users AS users
+			LEFT JOIN {$dbprefix}contacts AS contacts ON users.user_contact=contacts.contact_id
+			LEFT JOIN {$dbprefix}companies AS companies ON companies.company_id=contacts.contact_company
 		WHERE 
 		".$where."
 	";
@@ -113,7 +118,7 @@
 				task_log_creator,
 				sum(task_log_hours) as hours
 			FROM
-				task_log
+				{$dbprefix}task_log
 			WHERE
 				task_log_date >= '".$start_day->format( FMT_DATETIME_MYSQL )."' 
 				AND task_log_date <= '".$end_day->format( FMT_DATETIME_MYSQL )."'
@@ -134,7 +139,7 @@
 		$start_day -> addDays(-7);
 	}
 
-	$sql = "SELECT company_id, company_name FROM companies WHERE ".getPermsWhereClause("companies", "company_id")." ORDER BY company_name";
+	$sql = "SELECT company_id, company_name FROM {$dbprefix}companies WHERE ".getPermsWhereClause("companies", "company_id")." ORDER BY company_name";
 		//print "<pre>$sql</pre>";
 	$companies = arrayMerge( array( 0 => $AppUI->_('All Entities') ), db_loadHashList( $sql ) );
 
@@ -148,7 +153,7 @@
 	<input type="hidden" name="tab" value="<?php echo $tab?>">
 	<table cellspacing="1" cellpadding="2" border="0" width="100%">
 	<tr>
-		<td width="95%"><?php echo arraySelect( $companies, 'company_id', 'size="1" class="text" id="medium" onchange="document.frmCompanySelect.submit()"',
+		<td width="95%"><?php echo arraySelect( $companies, 'company_id', 'size="1" class="text" id="medium"' . dPaction(null, array(), null, array('submit' => 'frmCompanySelect')),
                           $company_id )?></td>
                 <?php
                 	$prev_url = "?m=timecard&tab=$tab&report_type=weekly_by_user&start_date=".urlencode($start_day->getDate());
@@ -194,7 +199,7 @@
 <?php
 	for($i=$week_count-1;$i>=0;$i--){
 		 $hours = isset($person[$i])?$person[$i]:0;
-		 $hours = round($hours,2);
+		 $hours = round((float)$hours,2);
 		 if ($i==0 AND $hours == $person['user_id']) {
 		   $hours = 0;
 		 }

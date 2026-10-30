@@ -9,7 +9,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_re
 header("Content-Type:text/html; charset=iso-8859-1",true);
 
 $AppUI->savePlace();
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 $titulo = $AppUI->_('LBL_EDITAR').' '.$AppUI->_('LBL_ATA_SEM_ACENTO');
 $titleBlock = new CTitleBlock($titulo, 'graph-up.png', $m, $m . '.' . $a);
 $titleBlock->show();
@@ -18,8 +18,17 @@ $controllerUtil = new ControllerUtil();
 $controllerAta = new ControllerAta();
 $controllerReport = new ControllerReport();  
 $controllerAcaoCorretiva = new ControllerAcaoCorretiva();
-$meeting_id = $_POST['meeting_id'];	
+$meeting_id = dPgetIntParam($_POST, 'meeting_id');	
 $meetingData = $controllerAta -> getListById($meeting_id);	 
+if (!$meetingData) {
+	$AppUI->setMsg('Invalid ID', UI_MSG_ERROR);
+	$AppUI->redirect($project_id ? 'm=projects&a=view&project_id=' . $project_id : 'm=projects');
+}
+$project_name = $controllerUtil->getProjectName($project_id);
+if (!$project_name) {
+	$project_id = (int)$meetingData['project_id'];
+	$project_name = $controllerUtil->getProjectName($project_id);
+}
 ?>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/ata.js" ></script>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/jquery.js" ></script>
@@ -40,7 +49,7 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 	
 	<input name="dosql" type="hidden" value="do_ata_aed" />
 	<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-	<input type="hidden" name="meeting_id"  id="meeting_id" value="<?php echo $meeting_id; ?>">  
+	<input type="hidden" name="meeting_id"  id="meeting_id" value="<?php echo (int)$meeting_id; ?>">  
 	<input  type="hidden" name="acao" value="updateRow"  />
     <input id="items_ids_to_delete" type="hidden" value="" name="items_ids_to_delete">
 		<br/>
@@ -51,29 +60,26 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 	  <tr>
       		<td align="right"><?php echo $AppUI->_('LBL_PROJETO'); ?>:</td>
              <td>
-             		<?php 
-							$project_name = $controllerUtil->getProjectName($project_id) ; 						
-					 ?>
-                 <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo  $project_name[0][0] ; ?> " />					
+                 <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name[0][0]); ?> " />					
             </td>
              <td colspan="6"></td>
         </tr>
 	  <tr>
       		<td align="right" width="15%"><?php echo $AppUI->_('LBL_DATA'); ?>:</td>
 			 <td nowrap="nowrap" width="15%">                 	  
-			 	  <input type="text" class="text"  name="dt_begin"  id="date_edit"  value="<?php echo  $controllerUtil -> formatDate($meetingData[dt_meeting_begin]); ?>" maxlength="10" onkeyup="formatadata(this,event)"/>
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)" />     
+			 	  <input type="text" class="text"  name="dt_begin"  id="date_edit"  value="<?php echo dPhtml($controllerUtil -> formatDate($meetingData['dt_meeting_begin'])); ?>" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />     
                 </td>   
       		<td align="right" width="5%"><?php echo $AppUI->_('LBL_HORA'); ?>:</td>
             <td width="5%">
 					<select name="hr_begin" size="1" id="hr_begin"> 		
 						 <?php	
-						$time =  $controllerUtil -> getHora($meetingData[dt_meeting_begin]);						 
+						$time =  $controllerUtil -> getHora($meetingData['dt_meeting_begin']);						 
 						$hours = $controllerUtil->setHours();
 							
 						for($i=0;$i<count($hours);$i++){
 								if ($time[0]==$hours[$i]){								 
-							  echo "<option value=' $time[0]' selected>".$time[0]."</option>";			 
+							  echo "<option value=' " . dPhtml($time[0]) . "' selected>".dPhtml($time[0])."</option>";			 
 							 }else {
 								echo " <option value='$hours[$i]'> $hours[$i]</option>";										
 							}
@@ -84,11 +90,11 @@ $meetingData = $controllerAta -> getListById($meeting_id);
             <td width="3%">
 					<select name="min_begin" size="1" id="min_begin"> 		
 						 <?php	
-							$time =  $controllerUtil -> getHora($meetingData[dt_meeting_begin]);		
+							$time =  $controllerUtil -> getHora($meetingData['dt_meeting_begin']);		
 							$minutes = $controllerUtil->setMinutes();
 						for($i=0;$i<count($minutes);$i++){
 								if ($time[1]==$minutes[$i]){								 
-							  echo "<option value='$time[1]' selected>".$time[1]."</option>";			 
+							  echo "<option value='" . dPhtml($time[1]) . "' selected>".dPhtml($time[1])."</option>";			 
 							 }else {
 								 echo " <option value='$minutes[$i]'> $minutes[$i]</option>";										
 							}
@@ -100,12 +106,12 @@ $meetingData = $controllerAta -> getListById($meeting_id);
             <td width="5%">
 					<select name="hr_end" size="1" id="hr_end"> 		
 						 <?php	
-						$time =  $controllerUtil -> getHora($meetingData[dt_meeting_end]);						 
+						$time =  $controllerUtil -> getHora($meetingData['dt_meeting_end']);						 
 						$hours = $controllerUtil->setHours();
 							
 						for($i=0;$i<count($hours);$i++){
 								if ($time[0]==$hours[$i]){								 
-							  echo "<option value=' $time[0]' selected>".$time[0]."</option>";			 
+							  echo "<option value=' " . dPhtml($time[0]) . "' selected>".dPhtml($time[0])."</option>";			 
 							 }else {
 								echo " <option value='$hours[$i]'> $hours[$i]</option>";										
 							}
@@ -116,11 +122,11 @@ $meetingData = $controllerAta -> getListById($meeting_id);
             <td width="5%">
 					<select name="min_end" size="1" id="min_end"> 		
 						 <?php	
-							$time =  $controllerUtil -> getHora($meetingData[dt_meeting_end]);		
+							$time =  $controllerUtil -> getHora($meetingData['dt_meeting_end']);		
 							$minutes = $controllerUtil->setMinutes();
 						for($i=0;$i<count($minutes);$i++){
 								if ($time[1]==$minutes[$i]){								 
-							  echo "<option value=' $time[1] ' selected>".$time[1]."</option>";			 
+							  echo "<option value=' " . dPhtml($time[1]) . " ' selected>".dPhtml($time[1])."</option>";			 
 							 }else {							
 								echo " <option value='$minutes[$i]'> $minutes[$i]</option>";										
 							}
@@ -133,7 +139,7 @@ $meetingData = $controllerAta -> getListById($meeting_id);
       </tr>
 	  <tr>
       		<td align="right"><?php echo $AppUI->_('LBL_TITULO'); ?>:</td>
-			<td colspan="8"><input type="text" name="title" id="title" size="90"  value="<?php echo  $meetingData[ds_title]; ?>" /> </td>
+			<td colspan="8"><input type="text" name="title" id="title" size="90"  value="<?php echo dPhtml($meetingData['ds_title']); ?>" /> </td>
         </tr>
 	  <tr>
             <td>&nbsp;</td>
@@ -149,14 +155,14 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 				$list = array();	
 				$list = $controllerUtil -> getUsers();
 				foreach($list as $row){		
-				    echo "<option value='$row[0]' >$row[1]</option>";						
+				    echo "<option value='" . (int)$row[0] . "' >" . dPhtml($row[1]) . "</option>";						
 			    }
 				?>     
                 </select>
          </td>
                      <td align="center" valign="middle">
-                <input type="button" onClick="move(this.form.participants,this.form.users)" value="<<">
-                <input type="button" onClick="move(this.form.users,this.form.participants)" value=">>">
+                <input type="button"<?php echo dPaction('mcMoveOptions', array('$this', 'participants', 'users')); ?> value="<<">
+                <input type="button"<?php echo dPaction('mcMoveOptions', array('$this', 'users', 'participants')); ?> value=">>">
             </td>
 	        <td colspan="4">            
                 <select name="participants[]" size="4" multiple="multiple" id="participants" style="width:190px">
@@ -164,7 +170,7 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 						 $meeting_users = $controllerAta ->getUsersById($meeting_id);
 						  if(!empty($meeting_users)){
 								foreach ($meeting_users as $m_users){
-								  echo "<option value='$m_users[0]' >".$controllerUtil -> getUsername($m_users[0])."</option>";						
+								  echo "<option value='" . (int)$m_users[0] . "' >".dPhtml($controllerUtil -> getUsername($m_users[0]))."</option>";						
 							  }
 						  }	
 						 ?>     
@@ -174,20 +180,20 @@ $meetingData = $controllerAta -> getListById($meeting_id);
       </tr>
 	   <tr>
 			<td align="right" ><?php echo $AppUI->_('LBL_ASSUNTO'); ?>:</td>
-			<td colspan="8"><textarea  name="subject" cols="106" rows="4" ><?php echo  $meetingData[ds_subject]; ?></textarea></td>
+			<td colspan="8"><textarea  name="subject" cols="106" rows="4" ><?php echo dPhtml($meetingData['ds_subject']); ?></textarea></td>
 			
 	   </tr>
 	  <tr valign="top">
       		<td align="right"><?php echo $AppUI->_('LBL_TIPO'); ?>:</td>  
-             <td colspan="8"><?php echo $meetingData[meeting_type_name]; ?>
-			 <input  type="hidden" name="meeting_type" value="<?php echo $meetingData[meeting_type_id]; ?>"  />
+             <td colspan="8"><?php echo dPhtml($meetingData['meeting_type_name']); ?>
+			 <input  type="hidden" name="meeting_type" value="<?php echo (int)$meetingData['meeting_type_id']; ?>"  />
             </td>
        </tr>    
      
 	  <tr>
       		<td>&nbsp;</td>
              <td colspan="8">
-					<table class="tbl" width="60%" id="p1" style="<?php if ($meetingData[meeting_type_id] != 3 && $meetingData[meeting_type_id] != 5){ echo 'display:none;';}; ?>}">	
+					<table class="tbl" width="60%" id="p1" style="<?php if ($meetingData['meeting_type_id'] != 3 && $meetingData['meeting_type_id'] != 5){ echo 'display:none;';}; ?>}">	
 						 <tr>
 							   <td colspan="2" style="background-color:#D6EBFF" ><?php echo $AppUI->_('LBL_ITEM_MONITORACAO'); ?>:</td>                        
 						</tr>
@@ -197,13 +203,13 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 							foreach($itens as $item){
 								?>
 									<tr>
-										<td width="95%"><?php echo $item[meeting_item_description]; ?>    
-										 <input type="hidden" name="meeting_item_id[]" value="<?php echo $item[meeting_item_id]; ?>"   />                                  
+										<td width="95%"><?php echo dPhtml($item['meeting_item_description']); ?>    
+										 <input type="hidden" name="meeting_item_id[]" value="<?php echo (int)$item['meeting_item_id']; ?>"   />                                  
 										</td>
 										<td width="5%">                                         
 											<select name="item_select_status[]" size="1">
 											<?php													
-												if ($item[status]==0){					
+												if ($item['status']==0){					
 													echo "<option value='0' selected>Sim</option>";
 													echo "<option value='1'>N&atilde;o</option>";				 
 												}else {
@@ -217,7 +223,7 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 									</tr>
 					<?php }	?>
 					</table>     			 
-				<table class="tbl" width="80%" id="p2" style="<?php if ($meetingData[meeting_type_id] != 2){ echo 'display:none;';}; ?>}">	
+				<table class="tbl" width="80%" id="p2" style="<?php if ($meetingData['meeting_type_id'] != 2){ echo 'display:none;';}; ?>}">	
 				<tr>
 					<th align="center"><?php echo $AppUI->_('LBL_TAREFA'); ?></th>
 					<th align="center"><?php echo $AppUI->_('LBL_DATA_INICIO'); ?></th>
@@ -229,15 +235,15 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 					
 					foreach($tasks as $task){?>
 					<tr>
-						<td  align="center"><?php echo $task[task_name]; ?></td>
-						<td  align="center"><?php echo $controllerUtil->formatDateTime($task[task_start_date]); ?></td>
-						<td  align="center"><?php echo $controllerUtil->formatDateTime($task[task_end_date]); ?></td>
-						<td  align="center"><?php echo $task[task_duration]; ?></td>		
+						<td  align="center"><?php echo dPhtml($task['task_name']); ?></td>
+						<td  align="center"><?php echo $controllerUtil->formatDateTime($task['task_start_date']); ?></td>
+						<td  align="center"><?php echo $controllerUtil->formatDateTime($task['task_end_date']); ?></td>
+						<td  align="center"><?php echo dPhtml($task['task_duration']); ?></td>		
 					</tr>				
 				<?php } ?>	
 				</table>                                  
              
-        <table class="std"  width="61%" align="left" border="0"  id="p3" style="<?php if ($meetingData[meeting_type_id] != 4 && $meetingData[meeting_type_id] != 5){ echo 'display:none;';}; ?>}">	
+        <table class="std"  width="61%" align="left" border="0"  id="p3" style="<?php if ($meetingData['meeting_type_id'] != 4 && $meetingData['meeting_type_id'] != 5){ echo 'display:none;';}; ?>}">	
 		<tr>
 			<th align="center">%</th>
 			<th align="center"><?php echo $AppUI->_('LBL_TAMANHO'); ?> (<?php echo $AppUI->_('LBL_HORA'); ?>)</th>
@@ -253,18 +259,18 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 						
 					foreach($reports as $cad){
 					
-					if($cad[meeting_idc] < 0.8){$corIdc="#FF9FA5";}elseif ($cad[meeting_idc] < 1){$corIdc="#FFFFAE";}elseif ($cad[meeting_idc] > 1){$corIdc="#B7FFB7";}
-					if($cad[meeting_idp] < 0.8){$corIdp="#FF9FA5";}elseif ($cad[meeting_idp] < 1){$corIdp="#FFFFAE";}elseif ($cad[meeting_idp] > 1){$corIdp="#B7FFB7";} 						
+					if($cad['meeting_idc'] < 0.8){$corIdc="#FF9FA5";}elseif ($cad['meeting_idc'] < 1){$corIdc="#FFFFAE";}elseif ($cad['meeting_idc'] > 1){$corIdc="#B7FFB7";}
+					if($cad['meeting_idp'] < 0.8){$corIdp="#FF9FA5";}elseif ($cad['meeting_idp'] < 1){$corIdp="#FFFFAE";}elseif ($cad['meeting_idp'] > 1){$corIdp="#B7FFB7";} 						
 				?>										
 					<tr>
-						<td  align="center"><?php echo round($cad[meeting_percentual], 2); ?></td>
-						<td  align="center"><?php echo $cad[meeting_size]; ?> </td>
-						<td bgcolor="<?php echo $corIdc; ?>" align="center" ><?php echo number_format($cad[meeting_idc], 2, ',', '.'); ?> </td>
-						<td bgcolor="<?php echo $corIdp; ?>" align="center" ><?php echo number_format($cad[meeting_idp], 2, ',', '.'); ?> </td>							
-						<td align="center" ><?php echo number_format($cad[meeting_vp], 2, ',', '.'); ?> </td>
-						<td align="center" ><?php echo number_format($cad[meeting_va], 2, ',', '.'); ?> </td>
-						<td align="center" ><?php echo number_format($cad[meeting_cr], 2, ',', '.'); ?> </td>
-						<td align="center"><?php echo $cad[meeting_baseline]; ?> </td>								
+						<td  align="center"><?php echo round($cad['meeting_percentual'], 2); ?></td>
+						<td  align="center"><?php echo dPhtml($cad['meeting_size']); ?> </td>
+						<td bgcolor="<?php echo $corIdc; ?>" align="center" ><?php echo number_format($cad['meeting_idc'], 2, ',', '.'); ?> </td>
+						<td bgcolor="<?php echo $corIdp; ?>" align="center" ><?php echo number_format($cad['meeting_idp'], 2, ',', '.'); ?> </td>							
+						<td align="center" ><?php echo number_format($cad['meeting_vp'], 2, ',', '.'); ?> </td>
+						<td align="center" ><?php echo number_format($cad['meeting_va'], 2, ',', '.'); ?> </td>
+						<td align="center" ><?php echo number_format($cad['meeting_cr'], 2, ',', '.'); ?> </td>
+						<td align="center"><?php echo dPhtml($cad['meeting_baseline']); ?> </td>								
 			        </tr>				
 				<?php } ?>	
 					<tr><td colspan='8'align="center">
@@ -282,8 +288,8 @@ $meetingData = $controllerAta -> getListById($meeting_id);
            </tr>
         </tr>
 		<tr>
-			<td colspan="8"><input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button" onClick="javascript:location.href='?m=projects&a=view&project_id=<?php echo $project_id; ?>' ;" /></td>
-			<td align="right"><input type="button" value="<?php echo $AppUI->_('Gravar');?>" class="button" onclick="validateMeeting();"  /></td>
+			<td colspan="8"><input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button"<?php echo dPaction(null, array(), null, array('href' => '?m=projects&a=view&project_id=' . (int)$project_id)); ?> /></td>
+			<td align="right"><input type="button" value="<?php echo $AppUI->_('Gravar');?>" class="button"<?php echo dPaction('validateMeeting'); ?>  /></td>
 		</tr>
 </table>
 
@@ -296,7 +302,7 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 				<a href="?m=monitoringandcontrol&amp;a=addedit_ata&amp;project_id=<?php echo $project_id; ?>">
 					tabbed
 				</a>
-			      : <a href="javascript:void();">
+			      : <a href="#"<?php echo dPaction(null, array(), 'click'); ?>>
 					flat
 				</a>
 			</td>
@@ -306,7 +312,7 @@ $meetingData = $controllerAta -> getListById($meeting_id);
 <table width="100%" cellspacing="0" cellpadding="0" border="0" summary="tabbed view">  
 	<tbody> 
     	<tr> <!-- tabs-->
-<script>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function alteraTab_0(){	
 	document.getElementById("pendencias_ata").style.display = "block";	
 	document.getElementById('toptab_0').style.background = "url(style/default/images/tabSelectedBg.png)";
@@ -325,7 +331,7 @@ function alteraTab_0(){
 				<img border="0" alt="" id="lefttab_0" src="./style/default/images/tabSelectedLeft.png">
 			</td>
 			<td nowrap="nowrap" valign="middle" style="background: url(style/default/images/tabSelectedBg.png);" id="toptab_0">&nbsp;
-				<a href=" #" onclick="alteraTab_0();" ><?php echo $AppUI->_('LBL_ACAO_CORRETIVA'); ?></a>&nbsp;
+				<a href=" #"<?php echo dPaction('alteraTab_0'); ?> ><?php echo $AppUI->_('LBL_ACAO_CORRETIVA'); ?></a>&nbsp;
 			</td>
 			<td valign="middle">
 				<img border="0" alt="" src="./style/default/images/tabSelectedRight.png" id="righttab_0">
@@ -344,9 +350,9 @@ function alteraTab_0(){
             
 <div id="pendencias_ata" style="display:block">  <!--toptab_0-->
 
-<script>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function popNovaPendencia() {	 															 
-	window.open("?m=monitoringandcontrol&a=nova_pendencia&dialog=1&project_id=<?php echo $project_id;?>", "pendencia", "left=300,top=50,height=790,width=700");
+	window.open("?m=monitoringandcontrol&a=nova_pendencia&dialog=1&project_id=<?php echo (int)$project_id;?>", "pendencia", "left=300,top=50,height=790,width=700");
 }
 function deleteRole(rowId){
 	var id=rowId;
@@ -377,14 +383,14 @@ function deleteRole(rowId){
 		foreach($records as $rec){
 		?>
 		<tr>  
-			<td> <?php echo $rec[change_description] ; ?></td>
-			<td align="center"><?php echo $rec[user_username] ; ?></td>        
-			<td align="center"><?php echo $controllerUtil-> formatDate($rec[change_date_limit]) ; ?> </td> 
+			<td> <?php echo dPhtml($rec['change_description']); ?></td>
+			<td align="center"><?php echo dPhtml($rec['user_username']); ?></td>        
+			<td align="center"><?php echo dPhtml($controllerUtil-> formatDate($rec['change_date_limit'])); ?> </td> 
 			<td align="center">
 					<?php
 						$select = Array(0=>$AppUI->_('LBL_SELECIONE')."...",1=>$AppUI->_('LBL_ABERTO'),2=>$AppUI->_('LBL_FECHADO'),3=>$AppUI->_('LBL_DESENVOLVIMENTO'),4=>$AppUI->_('LBL_CANCELADO'));
 						for($i=0;$i<count($select);$i++){
-							  if($rec[change_status] ==  $i){								 
+							  if($rec['change_status'] ==  $i){								 
 								 echo $select[$i];									 
 							  }						 		 
 						  }

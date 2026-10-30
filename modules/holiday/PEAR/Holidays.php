@@ -102,7 +102,7 @@ class Date_Holidays
     * @return   object  Date_Holidays driver-object on success, otherwise a PEAR_Error object
     * @throws   object PEAR_Error
     */
-    function factory($driverId, $year = null, $locale = null, $external = false)
+    static function factory($driverId, $year = null, $locale = null, $external = false)
     {
         if (! isset($GLOBALS['_DATE_HOLIDAYS']['DIE_ON_MISSING_LOCALE'])) {
             Date_Holidays::staticSetProperty('DIE_ON_MISSING_LOCALE', true);
@@ -223,7 +223,7 @@ class Date_Holidays
     * @param  string      directory, where the drivers are installed
     * @return array
     */
-    function getInstalledDrivers($directory = null)
+    static function getInstalledDrivers($directory = null)
     {
         $drivers = array();
         if ($directory === null) {
@@ -243,7 +243,7 @@ class Date_Holidays
     * @param  string      directory, where the filters are installed
     * @return array
     */
-    function getInstalledFilters($directory = null)
+    static function getInstalledFilters($directory = null)
     {
         $filters = array();
         if ($directory === null) {
@@ -263,7 +263,7 @@ class Date_Holidays
     * @param  string        directory
     * @param  string        prefix for the class names, will be used in recursive calls
     */
-    function _getModulesFromDir($dir, $prefix = '')
+    static function _getModulesFromDir($dir, $prefix = '')
     {
         $modules = array();
         $d = dir($dir);
@@ -290,7 +290,7 @@ class Date_Holidays
     * @access   public
     * @return   object PEAR_ErrorStack  error-stack
     */
-    function &getErrorStack()
+    static function &getErrorStack()
     {
         return PEAR_ErrorStack::singleton('Date_Holidays', false, false, true);
     }
@@ -304,7 +304,7 @@ class Date_Holidays
     * @param    string  $msg    error-message
     * @return   object PEAR_Error
     */
-    function raiseError($code, $msg = null)
+    static function raiseError($code, $msg = null)
     {
         $errorStack = &Date_Holidays::getErrorStack();
         return $errorStack->push($code, 'error', array(), $msg, false, debug_backtrace());
@@ -322,7 +322,7 @@ class Date_Holidays
     *                           $code is an integer and $obj->getCode() == $code
     * @return   boolean true if $subject is an error object
     */
-    function isError($data, $code = null)
+    static function isError($data, $code = null)
     {
         $errorClass = get_class($data);
         switch (strtolower($errorClass)) {
@@ -341,7 +341,7 @@ class Date_Holidays
     * @access   public
     * @return   boolean true if errors occurred
     */
-    function errorsOccurred()
+    static function errorsOccurred()
     {
         $errorStack = &Date_Holidays::getErrorStack();
         return $errorStack->hasErrors();
@@ -355,7 +355,7 @@ class Date_Holidays
     * @param    boolean $purge  true if the stall shall be purged
     * @return   array   errors
     */
-    function getErrors($purge = false)
+    static function getErrors($purge = false)
     {
         $errorStack = &Date_Holidays::getErrorStack();
         return $errorStack->getErrors($purge);
@@ -376,7 +376,7 @@ class Date_Holidays
     * @param    string  $prop   property
     * @param    string  $value  property-value
     */
-    function staticSetProperty($prop, $value)
+    static function staticSetProperty($prop, $value)
     {
         if (! isset($GLOBALS['_DATE_HOLIDAYS'])) {
             $GLOBALS['_DATE_HOLIDAYS'] = array();
@@ -399,7 +399,7 @@ class Date_Holidays
     * @param    string  $prop   property-name
     * @return   mixed   property value on success, otherwise null
     */
-    function staticGetProperty($prop)
+    static function staticGetProperty($prop)
     {
         if (! isset($GLOBALS['_DATE_HOLIDAYS'])) {
             return null;

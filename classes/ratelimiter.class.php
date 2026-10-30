@@ -29,7 +29,7 @@ class RateLimiter {
      */
     public function isAllowed() {
         $attempts = $this->getAttempts();
-        return ($attempts < $this->max_attempts);
+        return (count($attempts) < $this->max_attempts);
     }
 
     /**

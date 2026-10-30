@@ -3,7 +3,7 @@ if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 
-if (($m) and (getDenyRead($m))) {
+if (!empty($m) && getDenyRead($m)) {
 	$AppUI->redirect( "m=public&a=access_denied" );
 }
 
@@ -94,8 +94,8 @@ class CHelpDeskItem extends CDpObject {
   var $item_updated = NULL;
   var $item_deadline = NULL;
   
-function CHelpDeskItem() {
-	$this->CDpObject( 'helpdesk_items', 'item_id' );
+function __construct() {
+	parent::__construct( 'helpdesk_items', 'item_id' );
 }
 
 function check() {
@@ -111,7 +111,7 @@ function check() {
 	return NULL;
 }
 
-function store() {
+function store($updateNulls = false) {
   global $AppUI;
 	// Update the last modified time and user
 	// Pretty much duplicates the item_updated field, will keep for now.
@@ -132,13 +132,13 @@ function store() {
 		$q->addJoin('contacts','c','u.user_contact = c.contact_id');
 		$q->addQuery("c.contact_email as email, c.contact_phone as phone, CONCAT(c.contact_first_name,' ', c.contact_last_name) as name");
 		// KZHAO  8-3-2006
-		$q->addWhere('u.user_id='.$this->item_requestor_id);
+		$q->addWhere('u.user_id=' . (int)$this->item_requestor_id);
         	break;
 	  case '2': //it's only a contact
 		$q = new DBQuery();
 		$q->addTable('contacts','c');
 		$q->addQuery("c.contact_email as email, c.contact_phone as phone, CONCAT(c.contact_first_name,' ', c.contact_last_name) as name");
-		$q->addWhere('contact_id='.$this->item_requestor_id);
+		$q->addWhere('contact_id=' . (int)$this->item_requestor_id);
 		break;
 	  default:
 		break;
@@ -157,13 +157,13 @@ function store() {
 		return $msg;
 	} else {
 		if(!$this->item_id) {  
-			$this->item_id = mysql_insert_id();
+			$this->item_id = db_insert_id();
 		}
 		return $msg;
 	}
 }
 
-  function delete() {
+  function delete($oid = null, $history_desc = '', $history_proj = 0) {
 	  
 		// This section will grant every request to delete an HDitem
 		$k = $this->_tbl_key;
@@ -231,7 +231,7 @@ function notify($type, $log_msg, $email_list=null) {
 			$q->addTable('users','u');
 			$q->addQuery('c.contact_email');
 			$q->addJoin('contacts','c','u.user_contact = c.contact_id');
-			$q->addWhere('u.user_id='.$this->item_assigned_to);
+			$q->addWhere('u.user_id=' . (int)$this->item_assigned_to);
 			$assigned_to_email_list = $q->loadHashList();
 			$q->clear();
 			$assigned_to_email_list = array_keys($assigned_to_email_list);
@@ -259,7 +259,7 @@ function notify($type, $log_msg, $email_list=null) {
 		$q->addQuery('c.contact_email');
 		$q->addJoin('users','u','hdw.user_id = u.user_id');
 		$q->addJoin('contacts','c','u.user_contact = c.contact_id');
-		$q->addWhere('hdw.item_id='.$this->item_id);
+		$q->addWhere('hdw.item_id=' . (int)$this->item_id);
 		$watcher_email_list = $q->loadHashList();
 		$q->clear();
 		$watcher_email_list = array_keys($watcher_email_list);
@@ -276,21 +276,22 @@ function notify($type, $log_msg, $email_list=null) {
 
 	// Build basic subject information
 	$subject = $HELPDESK_CONFIG['email_subject']." - Issue #{$this->item_id} ({$this->item_title})";
+	$body = '';
 
 	// Build notification specific information for top of body
 	// any comments to body string made prior will be retained at the top
 	switch ($type) {
-		case item_notify:
+		case 'item_notify':
 			//Ignore status updates of changing email notification setting on issue
 			return "skipped - ignoring email notification changes";
-		case item_status:
+		case 'item_status':
 		case STATUS_LOG:
 			$subject .= " - " . $AppUI->_('Updated status');
 			if (is_numeric($log_msg)) {
 				$q = new DBQuery();
 				$q->addTable('helpdesk_item_status','hds');
 				$q->addQuery('hds.status_code, hds.status_comment');
-				$q->addWhere('hds.status_id='.$log_msg);
+				$q->addWhere('hds.status_id=' . (int)$log_msg);
 				$log=$q->loadHash();
 				$q->clear();
 				$body .= $AppUI->_('Updated status')."  -  {$isa[$log['status_code']]} {$log['status_comment']}\n\n";
@@ -331,7 +332,7 @@ function notify($type, $log_msg, $email_list=null) {
 				$q = new DBQuery();
 				$q->addTable('task_log','tl');
 				$q->addQuery('tl.task_log_name, tl.task_log_description');
-				$q->addWhere('tl.task_log_id='.$log_msg);
+				$q->addWhere('tl.task_log_id=' . (int)$log_msg);
 				$log=$q->loadHash();
 				$q->clear();
 				$subject .= " - " . $AppUI->_('Updated file log');
@@ -732,7 +733,7 @@ function addReminder() {
 	// Find the deadline date of this task, then subtract the required number of days.
 	$date = new CDate($this->item_deadline);
 	$today = new CDate(date('Y-m-d'));
-	if (CDate::compare($date, $today) < 0) {
+	if ($date->compare($date, $today) < 0) { // compare() is not static
 		$start_day = time();
 	} else {
 		$start_day = $date->getDate(DATE_FORMAT_UNIXTIME);
@@ -835,8 +836,8 @@ class CHDTaskLog extends CDpObject {
   var $task_log_costcode = NULL;
   var $task_log_reference = NULL;	//ANDY added
 
-  function CHDTaskLog() {
-    $this->CDpObject( 'task_log', 'task_log_id' );
+  function __construct() {
+    parent::__construct( 'task_log', 'task_log_id' );
   }
 
   // overload check method
@@ -872,14 +873,14 @@ function issue_list_data($user_id = false) {
 	$q->clear();
 	
 	//display the select list
-	$buffer = '<select name="department" onChange="document.pickCompany.submit()" class="text">';
+	$buffer = '<select name="department"' . dPaction(null, array(), null, array('submit' => 'pickCompany')) . ' class="text">';
 	$buffer .= ('<option value="company_0" style="font-weight:bold;">' . $AppUI->_('All') 
 	            . '</option>'."\n");
 	foreach ($rows as $row) {
 		$buffer .= ('<option value="' . $company_prefix . $row['company_id'] 
 					. '" style="font-weight:bold;"' 
 					. (($company_id == $row['company_id']) ? 'selected="selected"' : '') 
-					. '>' . $row['company_name'] . '</option>' . "\n");
+					. '>' . dPhtml($row['company_name']) . '</option>' . "\n");
 		
 	}
 	$buffer .= '</select>';

@@ -23,12 +23,7 @@ class CHumanResource extends CDpObject
 	function __construct()
 	{
 
-		parent::__construct('human_resource', 'human_resource_id');
-		$initial_url = substr($human_resource_lattes_url, 0, 6);
-		$http = 'http://';
-		if (strcmp($initial_url, $http) != 0) {
-			$human_resource_lattes_url = $http . $human_resource_lattes_url;
-		}
+		parent::__construct('human_resource', 'human_resource_id', 'human_resources');
 	}
 
 	function canDelete(&$msg, $oid = null, $joins = null)
@@ -52,12 +47,13 @@ class CHumanResourceAllocation extends CDpObject
 
 	function __construct()
 	{
-		parent::__construct('human_resource_allocation', 'human_resource_allocation_id');
+		parent::__construct('human_resource_allocation', 'human_resource_allocation_id', 'human_resources');
 	}
 
 	function canDelete(&$msg, $oid = null, $joins = null)
 	{
-		return true;
+		// Permission check (human_resources delete) and dependencies, as for other records.
+		return parent::canDelete($msg, $oid, $joins);
 	}
 
 	function store($updateNulls = false)
@@ -71,7 +67,7 @@ class CHumanResourceAllocation extends CDpObject
 		$q = new DBQuery;
 		$q->addTable('user_tasks');
 		$q->addQuery('user_id');
-		$q->addWhere('task_id = ' . $task_id . ' and user_id = ' . $user_id);
+		$q->addWhere('task_id = ' . $task_id . ' and user_id = ' . (int)$user_id);
 		$sql = $q->prepare();
 		$user = db_loadList($sql);
 		$q->clear();
@@ -96,7 +92,7 @@ class CHumanResourceAllocation extends CDpObject
 	{
 		$q = new DBQuery;
 		$q->setDelete('user_tasks');
-		$q->addWhere('task_id = ' . $task_id . ' AND user_id = ' . $user_id);
+		$q->addWhere('task_id = ' . $task_id . ' AND user_id = ' . (int)$user_id);
 		$q->exec();
 		$q->clear();
 
@@ -114,12 +110,13 @@ class CCompaniesPolicies extends CDpObject
 
 	function __construct()
 	{
-		parent::__construct('company_policies', 'company_policies_id');
+		parent::__construct('company_policies', 'company_policies_id', 'human_resources');
 	}
 
 	function canDelete(&$msg, $oid = null, $joins = null)
 	{
-		return true;
+		// Permission check (human_resources delete) and dependencies, as for other records.
+		return parent::canDelete($msg, $oid, $joins);
 	}
 }
 
@@ -134,12 +131,13 @@ class CHumanResourcesRole extends CDpObject
 
 	function __construct()
 	{
-		parent::__construct('human_resources_role', 'human_resources_role_id');
+		parent::__construct('human_resources_role', 'human_resources_role_id', 'human_resources');
 	}
 
 	function canDelete(&$msg, $oid = null, $joins = null)
 	{
-		return true;
+		// Permission check (human_resources delete) and dependencies, as for other records.
+		return parent::canDelete($msg, $oid, $joins);
 	}
 }
 
@@ -151,14 +149,14 @@ class CHumanResourceRoles extends CDpObject
 
 	function __construct()
 	{
-		parent::__construct('human_resource_roles', 'human_resource_roles_id');
+		parent::__construct('human_resource_roles', 'human_resource_roles_id', 'human_resources');
 	}
 
 	function deleteAll($human_resource_id)
 	{
 		$q = new DBQuery;
 		$q->setDelete('human_resource_roles');
-		$q->addWhere('human_resource_id = ' . $human_resource_id);
+		$q->addWhere('human_resource_id = ' . (int)$human_resource_id);
 		$q->exec();
 		$q->clear();
 	}
@@ -180,7 +178,8 @@ class CHumanResourceRoles extends CDpObject
 
 	function canDelete(&$msg, $oid = null, $joins = null)
 	{
-		return true;
+		// Permission check (human_resources delete) and dependencies, as for other records.
+		return parent::canDelete($msg, $oid, $joins);
 	}
 }
 ?>

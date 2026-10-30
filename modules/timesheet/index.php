@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 $timesheet_id = isset($_GET['timesheet_id']) ? $_GET['timesheet_id'] : 0; 
  
 // check permissions 
@@ -88,7 +92,7 @@ function truncate ($string, $max = 50, $rep = '') {
 } 
 
 ?>
-<script language="JavaScript" type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function sendIt() {
 	if (confirm( "Is all the information and time on this timesheet correct and accurate?\n" )) {
 		var form = document.TIDedit;
@@ -106,7 +110,7 @@ $titleBlock->show();
 
 //get week to be displayed (#weeks ago current week being 0)
 if (isset( $_GET['wk'] ) ) {
-	$AppUI->setState( 'TmsWk', $_GET['wk'] );
+	$AppUI->setState( 'TmsWk', (int) $_GET['wk'] );
 }
 $wk = $AppUI->getState( 'TmsWk') !== NULL && $wk >= 0 ? $AppUI->getState( 'TmsWk' ) : 0;
 
@@ -118,7 +122,7 @@ else
 	$week_text = "$wk " . $AppUI->_("weeks ago");
 
 if (isset( $_GET['tab'] )) {
-	$AppUI->setState( 'TmsVwTab', $_GET['tab'] );
+	$AppUI->setState( 'TmsVwTab', (int) $_GET['tab'] );
 }
 $tab = $AppUI->getState( 'TmsVwTab' ) !== NULL ? $AppUI->getState( 'TmsVwTab' ) : 0;
 
@@ -186,11 +190,11 @@ $logged_hours = 0;
 foreach ($logs as $log_row) {
 	$logged_hours += $log_row["task_log_hours"];
 	$s .= "<tr>";
-	$s .= "\n\t\t<td><a href=\"?m=tasks&a=view&task_id=${log_row['task_log_task']}&tab=1&task_log_id=".@$log_row['task_log_id'].'" style="cursor: hand;" title="edit log">'
+	$s .= "\n\t\t<td><a href=\"?m=tasks&a=view&task_id={$log_row['task_log_task']}&tab=1&task_log_id=".@$log_row['task_log_id'].'" style="cursor: hand;" title="edit log">'
 			. "\n\t\t\t". dPshowImage( './images/icons/stock_edit-16.png', 16, 16, 'edit log' )
 			. "\n\t\t</a></td>";
-	$s .= "<td nowrap=\"nowrap\" align=\"left\"><a href=\"index.php?m=projects&a=view&project_id=${log_row['project_id']}\" title=\"${log_row['project_description']}\">${log_row['project_short_name']}</a> -> ";
-	$s .= "<a href=\"index.php?m=tasks&a=view&task_id=${log_row['task_id']}\" title=\"${log_row['task_description']}\">" . truncate($log_row["task_name"], 30, '...') . "</a> -> " . truncate($log_row["task_log_name"], 30, '...') . "</td>\n\t";
+	$s .= "<td nowrap=\"nowrap\" align=\"left\"><a href=\"index.php?m=projects&a=view&project_id={$log_row['project_id']}\" title=\"" . dPhtml($log_row['project_description']) . "\">" . dPhtml($log_row['project_short_name']) . "</a> -> ";
+	$s .= "<a href=\"index.php?m=tasks&a=view&task_id={$log_row['task_id']}\" title=\"" . dPhtml($log_row['task_description']) . "\">" . dPhtml(truncate($log_row["task_name"], 30, '...')) . "</a> -> " . dPhtml(truncate($log_row["task_log_name"], 30, '...')) . "</td>\n\t";
 	$s .= '<td nowrap="nowrap" class="numerical">' . sprintf("%.2f", $log_row["task_log_hours"]) . "</td>\n";
 	$s .= '</tr>';
 }
@@ -292,7 +296,7 @@ if ($tg_data['tt_active'] > 0 ) {
 ?>
 <tr bgcolor="#FFFFFF">
 	<td colspan="8" bgcolor="#FFFFFF" align="right">
-	<input class="button" type="Button" value="Send In" onClick="sendIt();">
+	<input class="button" type="Button" value="Send In"<?php echo dPaction('sendIt'); ?>>
 	</td>
 </tr>
 <?php } ?>

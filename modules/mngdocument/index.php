@@ -2,14 +2,14 @@
 $AppUI->savePlace();
 
 $ListaAbierta = dPgetParam( $_GET, 'ListaAbierta', '' );
-$open = dPgetParam( $_GET, 'open', '' );
-$close = dPgetParam( $_GET, 'close', '' );
+$open = (int)dPgetParam( $_GET, 'open', '' );
+$close = (int)dPgetParam( $_GET, 'close', '' );
 
 require_once( $AppUI->getModuleClass( 'projects' ) );
 
 
 $project = new CProject();
-$projects = $project->getAllowedRecords( $AppUI->user_id, 'project_id,project_name', 'project_name', null, $extra );
+$projects = $project->getAllowedRecords( $AppUI->user_id, 'project_id,project_name', 'project_name', null, null );
 $projects = arrayMerge( array( '0'=>$AppUI->_('All') ), $projects );
 
 $CanEdit=!getDenyEdit( 'mngdocument' );
@@ -64,16 +64,16 @@ $titleBlock->show();
    {
     $s="<tr><font size=\"1\"><td>$blancos";
     if ($CanRead)
-     $s.="<a href=\"\" onClick=\"window.open('./" .$AppUI->cfg['root_dir'] ."/modules/mngdocument/documentview.php?document_name=$row[1]');return false;\">$row[1]</a>";
+     $s.="<a href=\"?m=mngdocument&amp;a=documentview&amp;suppressHeaders=1&amp;document_id=" .(int)$row[0] ."\">" .dPhtml($row[1]) ."</a>";
     else
-     $s.="$row[1]";
+     $s.=dPhtml($row[1]);
     if ($CanEdit)
-     $s.="&nbsp;<a href=\"?m=mngdocument&a=addedit&accion=deldocument&actual=$row[0]\"><img src=\"." .$AppUI->cfg['root_dir'] ."/modules/mngdocument/images/del.gif\" border=\"0\" width=\"7\"></a>";
+     $s.="&nbsp;<a href=\"?m=mngdocument&a=addedit&accion=deldocument&actual=$row[0]\"><img src=\"./modules/mngdocument/images/del.gif\" border=\"0\" width=\"7\"></a>";
     $s.="</td>";
     echo $s;
     echo "<td>F</td>";
-    echo "<td>$row[3]</td>";
-    echo "<td>$row[4]</td>";
+    echo "<td>" .dPhtml($row[3]) ."</td>";
+    echo "<td>" .dPhtml($row[4]) ."</td>";
     echo "</font></tr>";
    }
    else
@@ -88,16 +88,16 @@ $titleBlock->show();
      array_push($ListaAbierta,$row[0]);
      $s="<tr><font size=\"1\"><td>$blancos";
      if ($CanRead)
-      $s.="<a href=\"?m=mngdocument&ListaAbierta=$ListaAbiertaN&close=$row[0]\"><img src=\"." .$AppUI->cfg['root_dir'] ."/modules/mngdocument/images/open.png\" border=\"0\"></a>$row[1]";
+      $s.="<a href=\"?m=mngdocument&ListaAbierta=$ListaAbiertaN&close=$row[0]\"><img src=\"./modules/mngdocument/images/open.png\" border=\"0\"></a>" .dPhtml($row[1]);
      else
-      $s.=$row[1];
+      $s.=dPhtml($row[1]);
      if ($CanEdit)
-      $s.="&nbsp;<a href=\"?m=mngdocument&a=addedit&accion=deldirectory&actual=$row[0]\"><img src=\"." .$AppUI->cfg['root_dir'] ."/modules/mngdocument/images/del.gif\" border=\"0\" width=\"7\"></a>";
+      $s.="&nbsp;<a href=\"?m=mngdocument&a=addedit&accion=deldirectory&actual=$row[0]\"><img src=\"./modules/mngdocument/images/del.gif\" border=\"0\" width=\"7\"></a>";
      $s="</td>";
      echo $s;
      echo "<td>D</td>";
-     echo "<td>$row[3]</td>";
-     echo "<td>$row[4]</td>";
+     echo "<td>" .dPhtml($row[3]) ."</td>";
+     echo "<td>" .dPhtml($row[4]) ."</td>";
      echo "</font></tr>";
 
      MostrarObjeto($row[0],$Ident+1,$CodigoOpen,$ListaAbierta,$Repositorio);
@@ -108,16 +108,16 @@ $titleBlock->show();
      {
       $s="<tr><font size=\"1\"><td>$blancos";
       if ($CanRead)
-       $s.="<a href=\"?m=mngdocument&ListaAbierta=$ListaAbiertaN&close=$row[0]\"><img src=\"." .$AppUI->cfg['root_dir'] ."/modules/mngdocument/images/open.png\" border=\"0\"></a>$row[1]";
+       $s.="<a href=\"?m=mngdocument&ListaAbierta=$ListaAbiertaN&close=$row[0]\"><img src=\"./modules/mngdocument/images/open.png\" border=\"0\"></a>" .dPhtml($row[1]);
       else
-       $s.="$row[1]";
+       $s.=dPhtml($row[1]);
       if ($CanEdit)
-       $s.="&nbsp;<a href=\"?m=mngdocument&a=addedit&accion=deldirectory&actual=$row[0]\"><img src=\"." .$AppUI->cfg['root_dir'] ."/modules/mngdocument/images/del.gif\" border=\"0\" width=\"7\"></a>";
+       $s.="&nbsp;<a href=\"?m=mngdocument&a=addedit&accion=deldirectory&actual=$row[0]\"><img src=\"./modules/mngdocument/images/del.gif\" border=\"0\" width=\"7\"></a>";
       $s.="</td>";
       echo $s;
       echo "<td>D</td>";
-      echo "<td>$row[3]</td>";
-      echo "<td>$row[4]</td>";
+      echo "<td>" .dPhtml($row[3]) ."</td>";
+      echo "<td>" .dPhtml($row[4]) ."</td>";
       echo "</font></tr>";
 
       MostrarObjeto($row[0],$Ident+1,$CodigoOpen,$ListaAbierta,$Repositorio);
@@ -126,16 +126,16 @@ $titleBlock->show();
      {
       $s="<tr><font size=\"1\"><td>$blancos";
       if ($CanRead)
-       $s.="<a href=\"?m=mngdocument&ListaAbierta=$ListaAbiertaN&open=$row[0]\"><img src=\"." .$AppUI->cfg['root_dir'] ."/modules/mngdocument/images/close.png\" border=\"0\"></a>$row[1]";
+       $s.="<a href=\"?m=mngdocument&ListaAbierta=$ListaAbiertaN&open=$row[0]\"><img src=\"./modules/mngdocument/images/close.png\" border=\"0\"></a>" .dPhtml($row[1]);
       else
-       $s.="$row[1]";
+       $s.=dPhtml($row[1]);
       if ($CanEdit)
-       $s.="&nbsp;<a href=\"?m=mngdocument&a=addedit&accion=deldirectory&actual=$row[0]\"><img src=\"." .$AppUI->cfg['root_dir'] ."/modules/mngdocument/images/del.gif\" border=\"0\" width=\"7\"></a>";
+       $s.="&nbsp;<a href=\"?m=mngdocument&a=addedit&accion=deldirectory&actual=$row[0]\"><img src=\"./modules/mngdocument/images/del.gif\" border=\"0\" width=\"7\"></a>";
       $s.="</td>";
       echo $s;
       echo "<td>D</td>";
-      echo "<td>$row[3]</td>";
-      echo "<td>$row[4]</td>";
+      echo "<td>" .dPhtml($row[3]) ."</td>";
+      echo "<td>" .dPhtml($row[4]) ."</td>";
       echo "</font></tr>";
      }
     }
@@ -154,7 +154,7 @@ $titleBlock->show();
   while (strlen($ListaAbierta)>0)
   {
    $pos=strpos($ListaAbierta,"-");
-   array_push($ListaAbiertaN,substr($ListaAbierta,0,$pos));
+   array_push($ListaAbiertaN,intval(substr($ListaAbierta,0,$pos)));
    $ListaAbierta=substr($ListaAbierta,$pos+1);
   }
   $ListaAbierta=$ListaAbiertaN;
@@ -177,7 +177,7 @@ $titleBlock->show();
  }
 
 
- $ListaAbierta=MostrarObjeto(0,$Ident,0,$ListaAbierta,$AppUI->cfg['base_url']);
+ $ListaAbierta=MostrarObjeto(0,$Ident,0,$ListaAbierta,dPgetConfig('base_url'));
 
 ?>
 </table>

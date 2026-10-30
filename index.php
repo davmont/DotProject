@@ -65,6 +65,7 @@ header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); //Date in the past
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); //always modified
 header('Cache-Control: no-cache, must-revalidate, no-store, post-check=0, pre-check=0'); //HTTP/1.1
 header('Pragma: no-cache');	// HTTP/1.0
+dPsendCspHeader();
 
 // check if session has previously been initialised
 if (!(isset($_SESSION['AppUI'])) || isset($_GET['logout'])) {
@@ -124,6 +125,17 @@ if (dPgetParam($_POST, 'lostpass', 0)) {
 	} else {
 		require(DP_BASE_DIR . '/style/' . $uistyle . '/lostpass.php');
 	}
+	exit();
+}
+
+// Password reset from the emailed link. Reachable while logged out.
+if (dPgetParam($_REQUEST, 'resetpass', 0)) {
+	$uistyle = (($AppUI->getPref('UISTYLE')) ? $AppUI->getPref('UISTYLE') : dPgetConfig('host_style'));
+	$AppUI->setUserLocale();
+	@include_once(DP_BASE_DIR . '/locales/' . $AppUI->user_locale . '/locales.php');
+	@include_once(DP_BASE_DIR . '/locales/core.php');
+	setlocale(LC_TIME, $AppUI->user_lang);
+	require(DP_BASE_DIR . '/modules/public/reset_password.php');
 	exit();
 }
 
@@ -246,6 +258,20 @@ $canEdit = getPermission($m, 'edit');
 $canAuthor = getPermission($m, 'add');
 $canDelete = getPermission($m, 'delete');
 
+// Module access is required before any of the module's write handlers or views run.
+// The public module (login, password change, selectors, access denied) stays open, and
+// every user can view their own account and edit their own preferences.
+$dosql = isset($_REQUEST['dosql']) ? $_REQUEST['dosql'] : '';
+$ownAccount = ($m == 'admin' && $a == 'viewuser' && !$dosql
+		&& (int)dPgetParam($_GET, 'user_id', 0) == $AppUI->user_id)
+	|| ($m == 'system' && $a == 'addeditpref' && !$dosql
+		&& (int)dPgetParam($_GET, 'user_id', 0) == $AppUI->user_id)
+	|| ($m == 'system' && $dosql == 'do_preference_aed'
+		&& (int)dPgetParam($_POST, 'pref_user', 0) == $AppUI->user_id);
+if (!$canAccess && $m != 'public' && !$ownAccount) {
+	$AppUI->redirect('m=public&a=access_denied');
+}
+
 if (!$suppressHeaders) {
 	// output the character set header
 	if (isset($locale_char_set)) {
@@ -264,21 +290,63 @@ if ($u && file_exists(DP_BASE_DIR . '/modules/' . $m . '/' . $u . '/' . $u . '.c
 	include_once(DP_BASE_DIR . '/modules/' . $m . '/' . $u . '/' . $u . '.class.php');
 }
 
+// Every POST from a logged-in session must carry the CSRF token: server-rendered POST
+// forms get it injected (CAppUI::injectCsrfToken), script-built ones from js/dp-ui.js,
+// and AJAX posts send it. This also covers pages that write on POST without being
+// named do_* (they were missed by the checks below).
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	$AppUI->verifyCsrfToken();
+}
+
 // do some db work if dosql is set
 // TODO - MUST MOVE THESE INTO THE MODULE DIRECTORY
 if (isset($_REQUEST['dosql'])) {
+	// Write handlers run only for POST requests that carry the session's CSRF token.
 	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		$AppUI->setMsg('Invalid request method.', UI_MSG_ERROR);
 		$AppUI->redirect('m=public&a=access_denied');
 	}
 	$AppUI->verifyCsrfToken();
+	// Write handlers need write permission on the module: delete for del=1, otherwise add
+	// or edit. Handlers check the individual record themselves.
+	if (!$ownAccount && !(dPgetParam($_POST, 'del', 0) ? $canDelete : ($canEdit || $canAuthor))) {
+		$AppUI->setMsg('Access denied.', UI_MSG_ERROR);
+		$AppUI->redirect('m=public&a=access_denied');
+	}
 	//require('./dosql/' . $_REQUEST['dosql'] . '.php');
 	require(DP_BASE_DIR . '/modules/' . $m . '/' . ($u ? ($u . '/') : '')
 		. $AppUI->checkFileName($_REQUEST['dosql']) . '.php');
 }
 
+// Views named do_*, dosql* or domodsql are write handlers too: same POST, token and
+// write permission rules.
+if (preg_match('/^do(_|sql|modsql)/', $a)) {
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		$AppUI->setMsg('Invalid request method.', UI_MSG_ERROR);
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	$AppUI->verifyCsrfToken();
+	if (!(dPgetParam($_POST, 'del', 0) ? $canDelete : ($canEdit || $canAuthor))) {
+		$AppUI->setMsg('Access denied.', UI_MSG_ERROR);
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+}
+
+// Module configuration pages save settings when posted to (some into PHP files the
+// module includes): system administrators only, and posts need the CSRF token.
+if ($a == 'configure') {
+	if (!getPermission('system', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		$AppUI->verifyCsrfToken();
+	}
+}
+
 // start output proper
 include(DP_BASE_DIR . '/style/' . $uistyle . '/overrides.php');
-ob_start();
+// Every POST form in the page gets the CSRF token checked on dosql requests.
+ob_start(array($AppUI, 'injectCsrfToken'));
 if (!$suppressHeaders) {
 	require(DP_BASE_DIR . '/style/' . $uistyle . '/header.php');
 }

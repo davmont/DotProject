@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 $concat_role_names = "";
 $roles = array();
 if($human_resource_id) {
@@ -6,7 +9,7 @@ if($human_resource_id) {
 	$query->addTable('human_resource_roles', 'r');
 	$query->addQuery('h.human_resources_role_name, h.human_resources_role_id');
 	$query->innerJoin('human_resources_role', 'h', 'h.human_resources_role_id = r.human_resources_role_id');
-	$query->addWhere('r.human_resource_id = ' . $human_resource_id);
+	$query->addWhere('r.human_resource_id = ' . (int)$human_resource_id);
 	$sql = $query->prepare();
 	$roles = db_loadList($sql);
 }
@@ -24,10 +27,10 @@ if($human_resource_id) {
 foreach ($roles as $role) {
 	?>
 	<tr>
-	<td align='left'><input type='text' id="<?php echo $role['human_resources_role_id']; ?>" value="<?php echo $role['human_resources_role_name']; ?>" />
+	<td align='left'><input type='text' id="<?php echo dPhtml($role['human_resources_role_id']); ?>" value="<?php echo dPhtml($role['human_resources_role_name']); ?>" />
 	</td>
 	<td>
-	<a href="javascript:deleteRole('<?php echo $role['human_resources_role_id'];?>', '<?php echo $role['human_resources_role_name'];?>')" title="<?php echo $AppUI->_('delete'); ?>">
+	<a href="#"<?php echo dPaction('deleteRole', array((string)$role['human_resources_role_id'], (string)$role['human_resources_role_name'])); ?> title="<?php echo $AppUI->_('delete'); ?>">
 	<?php echo dPshowImage('./images/icons/stock_delete-16.png', 16, 16, ''); ?></a>
 	</td>
 	</tr>
@@ -37,7 +40,7 @@ foreach ($roles as $role) {
 $query = new DBQuery;
 $query->addTable('human_resources_role', 'r');
 $query->addQuery('r.human_resources_role_name, r.human_resources_role_id');
-$query->addWhere('r.human_resources_role_company_id = ' . $company_id);
+$query->addWhere('r.human_resources_role_company_id = ' . (int)$company_id);
 $sql = $query->prepare();
 $company_roles = db_loadList($sql);
 $different_roles = $company_roles;
@@ -53,7 +56,7 @@ foreach($company_roles as $company_role) {
 }
 ?>
 
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function deleteRole(roleId, roleName) {
 	var option = document.createElement('option');
 	option.name = roleName;
@@ -67,14 +70,27 @@ function deleteRole(roleId, roleName) {
 function addRole() {
 	var roleCombo = document.getElementById('role_combo');
 	var rolesTable = document.getElementById('roles_table');
+	if (roleCombo.selectedIndex < 0) {
+		return; // no role left to add (none defined for the company, or all added)
+	}
 	var lastRowNumber = rolesTable.rows.length;
 	var row = rolesTable.insertRow(lastRowNumber);
+	var roleId = roleCombo.options[roleCombo.selectedIndex].value;
+	var roleName = roleCombo.options[roleCombo.selectedIndex].text;
 	var td1 = row.insertCell(0);
-	td1.innerHTML = "<input readonly='readonly' type='text' id='"+ roleCombo.options[roleCombo.selectedIndex].value +"' value='" + roleCombo.options[roleCombo.selectedIndex].text + "'/>";
+	var input = document.createElement('input');
+	input.readOnly = true;
+	input.type = 'text';
+	input.id = roleId;
+	input.value = roleName;
+	td1.appendChild(input);
 	var td2 = row.insertCell(1);
-	var deleteString = '"javascript:deleteRole(' + roleCombo.options[roleCombo.selectedIndex].value + ', \'' + roleCombo.options[roleCombo.selectedIndex].text + '\')"';
-	td2.innerHTML = '<a href=' + deleteString + ' title="delete">'
-	+ '<?php echo dPshowImage("./images/icons/stock_delete-16.png", 16, 16, ""); ?>' + '</a>';
+	var link = document.createElement('a');
+	link.href = '#';
+	link.title = 'delete';
+	link.onclick = function() { deleteRole(roleId, roleName); return false; };
+	link.innerHTML = <?php echo dPjs(dPshowImage("./images/icons/stock_delete-16.png", 16, 16, "")); ?>;
+	td2.appendChild(link);
 	roleCombo.remove(roleCombo.selectedIndex);
 }
 </script>
@@ -91,8 +107,8 @@ function addRole() {
 	<?php
 	foreach($different_roles as $role) {
 	?>
-	<option name="<?php echo $role['human_resources_role_name'];?>" value="<?php echo $role['human_resources_role_id']; ?>">
-	<?php echo $role['human_resources_role_name'];?>
+	<option name="<?php echo dPhtml($role['human_resources_role_name']);?>" value="<?php echo dPhtml($role['human_resources_role_id']); ?>">
+	<?php echo dPhtml($role['human_resources_role_name']);?>
 	</option>
 	<?php
 	}
@@ -102,7 +118,7 @@ function addRole() {
 </tr>
 <tr>
 	<td align="right">
-		<input type="button" value="<?php echo $AppUI->_('add');?>" class="button" onclick="addRole();">
+		<input type="button" value="<?php echo $AppUI->_('add');?>" class="button"<?php echo dPaction('addRole'); ?>>
 	</td>
 </tr>
 </table>

@@ -19,9 +19,10 @@ if (!defined('DP_BASE_DIR')) {
 global $a, $addPwOiD, $addPwT, $AppUI, $cBuffer, $company_id, $department, $min_view, $m, $priority;
 global $macroprojects, $tab, $user_id, $orderdir, $macroorderby, $dept_ids;
 
-$department = isset($_GET['dept_id']) ? $_GET['dept_id'] : (isset($department) ? $department : 0);
+$department = (int)(isset($_GET['dept_id']) ? $_GET['dept_id'] : (isset($department) ? $department : 0));
 
 $df = $AppUI->getPref('SHDATEFORMAT');
+$macroprojectPriorityColor = dPgetSysVal('MacroProjectPriorityColor');
 
 $mpstatus =  dPgetSysVal('MacroProjectStatus');
 
@@ -81,6 +82,12 @@ require_once($AppUI->getModuleClass('macroprojects'));
 // collect the full macroprojects list data via function in macroprojects.class.php
 macroprojects_list_data($user_id);
 ?>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+// Shown inside another module's page, where macroprojects.module.js is not loaded.
+function macroprojectsTip(html, caption) {
+	return overlib(html, CAPTION, caption, CENTER);
+}
+</script>
 
 <form action="?m=departments<?php echo (isset($a) ? '&amp;a='.$a : ''); ?>&amp;tab=<?php 
 echo $tab; ?>" method="post" name="form_cb">
@@ -92,20 +99,20 @@ echo $tab; ?>" method="post" name="form_cb">
 	</td>
 	<td align="center" width="100%" nowrap="nowrap">&nbsp;</td>
 	<td align="right" nowrap="nowrap">
-		<input type="checkbox" name="add_pwoid" id="add_pwoid" onclick="document.form_cb.submit()" <?php 
+		<input type="checkbox" name="add_pwoid" id="add_pwoid"<?php echo dPaction(null, array(), 'change', array('submit' => 'form_cb')); ?> <?php 
 echo ($addPwOiD ? 'checked="checked"' : ''); ?> />
 		<label for="add_pwoid"><?php 
 echo $AppUI->_('Show MacroProjects whose Owner is Member of the Dep.'); ?></label>
 	</td>
 	<td align="right" nowrap="nowrap">
-		<input type="checkbox" name="add_pwt" id="add_pwt" onclick="document.form_cb.submit()" <?php 
+		<input type="checkbox" name="add_pwt" id="add_pwt"<?php echo dPaction(null, array(), 'change', array('submit' => 'form_cb')); ?> <?php 
 echo $addPwT ? 'checked="checked"' : ''; ?> />
 		<label for="add_pwt"><?php echo $AppUI->_('Show MacroProjects with assigned Tasks'); ?></label>
 	</td>
 	<td align="right" nowrap="nowrap">
 		<?php 
 echo arraySelect($macroprojFilter, 'macroproFilter', 
-                 'size=1 class=text onChange="document.form_cb.submit()"', $macroproFilter, true); 
+                 'size=1 class=text' . dPaction(null, array(), null, array('submit' => 'form_cb')), $macroproFilter, true); 
 ?>
 	</td>
 </tr>
@@ -225,20 +232,20 @@ echo $row['macroproject_company']; ?>" title="<?php echo htmlspecialchars($row['
 	</td>
 	<td width="100%">
 		<a href="?m=macroprojects&amp;a=view&amp;macroproject_id=<?php 
-echo ($row['macroproject_id']); ?>" onmouseover="return overlib('<?php 
-echo htmlspecialchars(('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                addslashes($row['macroproject_description'])) 
-                       . '</p></div>'), ENT_QUOTES); 
-?>', CAPTION, '<?php echo $AppUI->_('Description'); ?>', CENTER);" onmouseout="nd();">
+echo ($row['macroproject_id']); ?>"<?php 
+echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
+                                                dPhtml($row['macroproject_description'])) 
+                       . '</p></div>', $AppUI->_('Description', UI_OUTPUT_RAW)), 'mouseover mouseout', array('call-mouseout' => 'nd')); 
+?>>
 		<?php echo htmlspecialchars($row['macroproject_name'], ENT_QUOTES); ?>
 		</a>
 	</td>
 	<td align="center"><?php 
 echo htmlspecialchars(($start_date ? $start_date->format($df) : '-')); ?></td>
 	<td align="center"><?php 
-echo htmlspecialchars((($row['macroproject_duration'] > 0) 
+echo htmlspecialchars(((($row['macroproject_duration'] ?? 0) > 0) 
                        ? ($row['macroproject_duration'] . $AppUI->_('h')) : '-')); ?></td>
-	<td align="center"nowrap="nowrap" style="background-color:<?php echo ($priority[$row['macroproject_priority']]['color']); ?>"><?php 
+	<td align="center"nowrap="nowrap" style="background-color:<?php echo (($macroprojectPriorityColor[$row['macroproject_priority']] ?? '')); ?>"><?php 
 echo htmlspecialchars(($end_date ? $end_date->format($df) : '-')); ?></td>
 	<td align="center">
 <?php 
@@ -256,7 +263,7 @@ echo ($style); ?>><?php echo htmlspecialchars($actual_end_date->format($df)); ?>
 	</td>
 	<td align="center">
 <?php 
-		if ($row['task_log_problem']) {
+		if (!empty($row['task_log_problem'])) {
 ?>
 		<a href="?m=tasks&amp;a=index&amp;f=all&amp;macroproject_id=<?php echo ($row['macroproject_id']); ?>">
 		<?php dPshowImage('./images/icons/dialog-warning5.png', 16, 16, 'Problem', 'Problem!'); ?>
@@ -277,10 +284,10 @@ echo ($style); ?>><?php echo htmlspecialchars($actual_end_date->format($df)); ?>
 echo htmlspecialchars($row['user_username'], ENT_QUOTES); ?>
 	</td>
 	<td align="center" nowrap="nowrap"><?php 
-echo htmlspecialchars($row['total_tasks'] . ($row['my_tasks'] ? ' ('.$row['my_tasks'].')' : '')); ?>
+echo htmlspecialchars(($row['total_tasks'] ?? '') . (!empty($row['my_tasks']) ? ' ('.$row['my_tasks'].')' : '')); ?>
 	</td>
 	<td align="center" nowrap="nowrap"><?php 
-echo $AppUI->_($mpstatus[$row['macroproject_status']]); ?>
+echo $AppUI->_($mpstatus[$row['macroproject_status']] ?? ''); ?>
 	</td>
 </tr>
 <?php 

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // use the dPFramework to have easy database operations (store, delete etc.) by using its ObjectOrientedDesign
 // therefore we have to create a child class for the module einstein
 
@@ -29,12 +32,12 @@ class CTesting extends CDpObject {
 	var $unittest_actualresult = NULL;
 
 	// the constructor of the CEinstein class, always combined with the table name and the unique key of the table
-	function CTesting() {
-		$this->CDpObject( 'unittest', 'unittest_id' );
+	function __construct() {
+		parent::__construct( 'unittest', 'unittest_id' );
 	}
 
 	// overload the delete method of the parent class for adaptation for einstein's needs
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0) {
 		$q = new DBQuery();
 		$q->setDelete('unittest');
 		$q->addWhere("unittest_id = " . intval($this->unittest_id));

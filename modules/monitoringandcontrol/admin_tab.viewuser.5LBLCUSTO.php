@@ -7,8 +7,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_resources_costs.class.php");
 
 $AppUI->savePlace();
-$tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
-$user_id = dPgetParam( $_GET, 'user_id' );
+$user_id = dPgetIntParam( $_GET, 'user_id' );
 $controllerResourceCost = new ControllerResourcesCosts();  
 $controllerUtil = new ControllerUtil();
 ?>
@@ -38,15 +37,15 @@ $controllerUtil = new ControllerUtil();
 						
 				?>										
 					<tr>
-						<td><?php echo  $controllerUtil -> formatDate($list[4]); ?> </td>
-						<td> <?php echo $controllerUtil -> formatDate($list[5]); ?> </td>
+						<td><?php echo dPhtml($controllerUtil -> formatDate($list[4])); ?> </td>
+						<td> <?php echo dPhtml($controllerUtil -> formatDate($list[5])); ?> </td>
 						<td> <?php echo number_format($list[2], 2, ',', '.'); ?> </td>
                        <td align="center">
  							 <form name="form_update" method="post" action="" enctype="multipart/form-data" >  
                                  <input  type="hidden" name="acao" value="update"  />
 								<input name="user_id" type="hidden" id="user_id" value="<?php echo $user_id; ?>">
-								<input name="cost_id" type="hidden" id="cost_id" value="<?php echo $list[0]; ?>">
-                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar" onclick="updateRow();"  />   
+								<input name="cost_id" type="hidden" id="cost_id" value="<?php echo (int)$list[0]; ?>">
+                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />   
                               </form>
                         </td>                        <td align="center">
                               <form name="form_delete" method="post" action="?m=monitoringandcontrol&a=do_costs_aed&user_id=<?php echo $user_id; ?>" enctype="multipart/form-data" >
@@ -54,8 +53,8 @@ $controllerUtil = new ControllerUtil();
 								<input name="dosql" type="hidden" value="do_costs_aed" />	
                                 <input  type="hidden" name="acao" value="delete"  />
 								<input name="user_id" type="hidden" id="user_id" value="<?php echo $user_id; ?>">
-								<input name="cost_id" type="hidden" id="cost_id" value="<?php echo $id; ?>">
-								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar" onclick="deleteRow(excluir);"  />
+								<input name="cost_id" type="hidden" id="cost_id" value="<?php echo (int)$id; ?>">
+								<input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('doDelete', UI_OUTPUT_RAW) . '?')); ?>  />
                                 </form>
                                 
                         </td>
@@ -69,13 +68,13 @@ $controllerUtil = new ControllerUtil();
 
 <?php
 		if (isset($_POST['acao']) &&  $_POST['acao'] == 'update'){
-		 $id= $_POST['cost_id'];
+		 $id= dPgetIntParam($_POST, 'cost_id');
 	?>		
 
     <form action="?m=monitoringandcontrol&a=do_costs_aed&user_id=<?php echo $user_id; ?>" method="post" name="form_updateRow" id="form_updateRow" enctype="multipart/form-data">
     	<input name="dosql" type="hidden" value="do_costs_aed" />		
 	<input name="user_id" type="hidden" id="user_id" value="<?php echo $user_id; ?>">
-    <input  type="hidden" name="cost_id" value="<?php echo $id; ?>"  />
+    <input  type="hidden" name="cost_id" value="<?php echo (int)$id; ?>"  />
     <input  type="hidden" name="acao" value="updateRow"  />
 	<br/>
 	<table width="70%" align="center">
@@ -84,15 +83,15 @@ $controllerUtil = new ControllerUtil();
 			
     <?php   
 			$lstData = $controllerResourceCost->getListDt($user_id, $id);
-			echo "<script>var globalData = new Array(); 
+			echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>var globalData = new Array(); 
 						  var index = 0; 
 				  </script>";	
 			  
 			foreach($lstData as $lst){
-				echo "<script>
+				echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>
 				          globalData[index] = new Array();
-						  globalData[index][0] = '".$controllerUtil -> formatDate($lst[cost_dt_begin])."'; 
-						  globalData[index][1] = '".$controllerUtil -> formatDate($lst[cost_dt_end])."';
+						  globalData[index][0] = " . dPjs($controllerUtil -> formatDate($lst['cost_dt_begin'])) . "; 
+						  globalData[index][1] = " . dPjs($controllerUtil -> formatDate($lst['cost_dt_end'])) . ";
 						  index++;
 					  </script>";	
 			}
@@ -140,12 +139,12 @@ $controllerUtil = new ControllerUtil();
 					
 			?>
 			    <td>  
-				   <input type="text" class="text"  name="dt_begin"  id="date_edit2" value="<?php echo $dt_ini ; ?>" maxlength="10" onkeyup="formatadata(this,event)"/>
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit2'),'dd/mm/yyyy',this)" />     
+				   <input type="text" class="text"  name="dt_begin"  id="date_edit2" value="<?php echo dPhtml($dt_ini); ?>" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit2', 'dd/mm/yyyy', '$this')); ?> />     
                 </td>                 
                 <td>  
-				   <input type="text" class="text"  name="dt_end"  id="date_edit3"  value="<?php echo $dt_fim ; ?>" maxlength="10" onkeyup="formatadata(this,event)"/>
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit3'),'dd/mm/yyyy',this)" />                 
+				   <input type="text" class="text"  name="dt_end"  id="date_edit3"  value="<?php echo dPhtml($dt_fim); ?>" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit3', 'dd/mm/yyyy', '$this')); ?> />                 
                </td>
           		<td>  
             			<input type="text" name="tx_pad" id="tx_pad" size="30" value="<?php echo number_format($rec[2], 2, ',', '.') ; ?>" />     
@@ -156,7 +155,7 @@ $controllerUtil = new ControllerUtil();
 	<table width="70%" align="center">
 		<tr>
 			<td>				
-				<input type="button" class="button" value="Atualizar"  onclick="return upValidate();"   />
+				<input type="button" class="button" value="Atualizar" <?php echo dPaction('upValidate'); ?>   />
 			</td>
 		</tr>
 	</table>
@@ -178,15 +177,15 @@ $controllerUtil = new ControllerUtil();
 			<td>&nbsp;
     <?php   
 			$lstData = $controllerResourceCost->getListDt($user_id, null);
-			echo "<script>var globalData = new Array(); 
+			echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>var globalData = new Array(); 
 						  var index = 0; 
 				  </script>";	
 			  
 			foreach($lstData as $lst){
-				echo "<script>
+				echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>
 						  globalData[index] = new Array();
-						  globalData[index][0] = '".$controllerUtil -> formatDate($lst[cost_dt_begin])."'; 
-						  globalData[index][1] = '".$controllerUtil -> formatDate($lst[cost_dt_end])."';
+						  globalData[index][0] = " . dPjs($controllerUtil -> formatDate($lst['cost_dt_begin'])) . "; 
+						  globalData[index][1] = " . dPjs($controllerUtil -> formatDate($lst['cost_dt_end'])) . ";
 						  index++;
 					  </script>";	
 			}
@@ -204,13 +203,13 @@ $controllerUtil = new ControllerUtil();
          </tr>		
 		  <tr id="1000">		
 			    <td nowrap="nowrap">                 	  
-				   <input type="text" class="text"  name="dt_begin"  id="date_edit" maxlength="10" onkeyup="formatadata(this,event)"/>
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)" />     
+				   <input type="text" class="text"  name="dt_begin"  id="date_edit" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />     
                 </td>
                 
 			    <td nowrap="nowrap">                 	  
-				   <input type="text" class="text"  name="dt_end"  id="date_edit1" maxlength="10" onkeyup="formatadata(this,event)"/>
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit1'),'dd/mm/yyyy',this)" />                 
+				   <input type="text" class="text"  name="dt_end"  id="date_edit1" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit1', 'dd/mm/yyyy', '$this')); ?> />                 
                </td>
           		<td>  
             			<input type="text" name="tx_pad" id="tx_pad" size="30" />     
@@ -220,7 +219,7 @@ $controllerUtil = new ControllerUtil();
 	<table width="70%" align="center">
 		<tr>
 			<td>				
-				<input type="button" class="button"  onclick="return valida();" value="Save" />
+				<input type="button" class="button" <?php echo dPaction('valida'); ?> value="Save" />
 			</td>
 		</tr>
 	</table>

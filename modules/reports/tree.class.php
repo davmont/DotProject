@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 define ("TREE_ROOT", 0);
 define ("COMPANY", 1);
@@ -14,7 +17,7 @@ class Tree {
 	var $node = null;
 	var $children = array();
 	
-	function Tree( &$new_node ) {
+	function __construct( &$new_node ) {
 		$this->node =& $new_node;
 	}
 	
@@ -44,7 +47,7 @@ class TreeNode {
 	var $text_content = null;
 	var $hours = array();
 	
-	function TreeNode( $level, $content = "" ){
+	function __construct( $level, $content = "" ){
 		$this->level = $level;
 		$this->text_content = $content;
 	}
@@ -63,7 +66,7 @@ class TreeLeaf {
 	var $hours = array();
 	var $level = 6;
 
-	function TreeLeaf( $cost_code = "", $summary = "", &$hours ) {
+	function __construct( $cost_code = "", $summary = "", &$hours ) {
 		$this->cost_code = $cost_code;
 		$this->summary = $summary;
 		$this->hours = $hours;

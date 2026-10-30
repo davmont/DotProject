@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 ##
 ## holiday module - A dotProject module for keeping track of holidays
 ##
@@ -7,8 +10,13 @@
 ##
 
 
-$action = @$_REQUEST["action"];
+// Saving the settings changes data: POST with the CSRF token and edit permission only.
+$action = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dPgetCleanParam($_POST, 'action', '') : '';
 if($action=="update") {
+	$AppUI->verifyCsrfToken();
+	if (!getPermission('holiday', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
 	$holiday_manual = $_POST["holiday_manual"];
 	$holiday_auto = $_POST["holiday_auto"];
 	$holiday_driver = $_POST["holiday_driver"];
@@ -82,7 +90,7 @@ $holiday_driver = intval($settings['holiday_driver']);
 	<td  height="40" width="35%" align="right">
 		<table>
 		<tr><td>
-			<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>" onClick="submit()">
+			<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>"<?php echo dPaction(null, array(), null, array('submit' => '')); ?>>
 		</td></tr>
 		</table>
 	</td>

@@ -47,7 +47,7 @@ class ProjectTemplate {
                         $q->addUpdate('task_project', $targetProjectId);
                         $q->addUpdate('task_start_date', date('Y-m-d H:i:s'));
                         $q->addUpdate('task_end_date', date('Y-m-d H:i:s'));
-                        $q->addWhere("task_id=".$newTask->task_id);
+                        $q->addWhere("task_id=" . (int)$newTask->task_id);
                         $q->exec();
                         $q->clear();
 

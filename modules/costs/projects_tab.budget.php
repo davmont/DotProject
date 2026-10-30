@@ -37,23 +37,21 @@ $notHumanCost = $q->loadList();
 
 $q->clear();
 $q->addQuery('*');
-$q->addTable('budget');
-$q->addWhere('budget_project_id = ' . $projectSelected);
+$q->addTable('costs_budget');
+$q->addWhere('budget_project_id = ' . (int)$projectSelected);
 $q->addOrder('budget_id');
 $v = $q->loadList();
 
 if ($v == null) {
     ?>
     <div align="right">
-        <input class="button" type="button" name="new budget" value="new budget"
-            onclick="location.href = '?m=costs&amp;a=view_budget&amp;project_id=<?php echo $projectSelected ?>';" />
+        <input class="button" type="button" name="new budget" value="new budget"<?php echo dPaction(null, array(), null, array('href' => '?m=costs&a=view_budget&project_id=' . (int)$projectSelected)); ?> />
     </div>
     <?php
 } else {
     ?>
     <div align="right">
-        <input class="button" type="button" name="edit budget" value="edit budget"
-            onclick="location.href = '?m=costs&amp;a=view_budget&amp;project_id=<?php echo $projectSelected ?>&budget_id=<?php echo $projectSelected ?>';" />
+        <input class="button" type="button" name="edit budget" value="edit budget"<?php echo dPaction(null, array(), null, array('href' => '?m=costs&a=view_budget&project_id=' . (int)$projectSelected . '&budget_id=' . (int)$projectSelected)); ?> />
     </div>
     <?php
 }
@@ -70,12 +68,13 @@ if ($v == null) {
     $q->addTable('projects');
     $q->addWhere("project_id = '$projectSelected'");
     $datesProject = &$q->exec();
+    $projectDates = ($datesProject && !$datesProject->EOF) ? $datesProject->fields : array('project_start_date' => '', 'project_end_date' => '');
 
-    $meses = diferencaMeses(substr($datesProject->fields['project_start_date'], 0, -9), substr($datesProject->fields['project_end_date'], 0, -9));
-    $monthStartProject = (int) substr($datesProject->fields['project_start_date'], 5, -12);
-    $monthSProject = (int) substr($datesProject->fields['project_start_date'], 5, -12);
-    $yearStartProject = (int) substr($datesProject->fields['project_start_date'], 0, -15);
-    $yearEndProject = (int) substr($datesProject->fields['project_end_date'], 0, -15);
+    $meses = diferencaMeses(substr($projectDates['project_start_date'], 0, -9), substr($projectDates['project_end_date'], 0, -9));
+    $monthStartProject = (int) substr($projectDates['project_start_date'], 5, -12);
+    $monthSProject = (int) substr($projectDates['project_start_date'], 5, -12);
+    $yearStartProject = (int) substr($projectDates['project_start_date'], 0, -15);
+    $yearEndProject = (int) substr($projectDates['project_end_date'], 0, -15);
 
     $years = $yearEndProject - $yearStartProject;
     $tempYear = $yearStartProject;
@@ -136,7 +135,7 @@ if ($v == null) {
         <tr>
             <td nowrap="nowrap"><?php echo $row['cost_description']; ?></td>
             <?php
-            $mtz = costsBudget($meses, $c, $row, substr($datesProject->fields['project_start_date'], 5, -12), substr($datesProject->fields['project_end_date'], 5, -12), $mtz);
+            $mtz = costsBudget($meses, $c, $row, substr($projectDates['project_start_date'], 5, -12), substr($projectDates['project_end_date'], 5, -12), $mtz);
             $c++;
             ?>
 
@@ -172,7 +171,7 @@ if ($v == null) {
         <tr>
             <td nowrap="nowrap" width="15%"><?php echo $row['cost_description']; ?></td>
             <?php
-            $mtzNH = costsBudget($meses, $c, $row, substr($datesProject->fields['project_start_date'], 5, -12), substr($datesProject->fields['project_end_date'], 5, -12), $mtzNH);
+            $mtzNH = costsBudget($meses, $c, $row, substr($projectDates['project_start_date'], 5, -12), substr($projectDates['project_end_date'], 5, -12), $mtzNH);
             $c++;
             ?>
 
@@ -198,7 +197,7 @@ if ($v == null) {
     $q->clear();
     $q->addQuery('*');
     $q->addTable('budget_reserve', 'b');
-    $q->addWhere("budget_reserve_project_id = " . $projectSelected);
+    $q->addWhere("budget_reserve_project_id = " . (int)$projectSelected);
     $q->addOrder('budget_reserve_risk_id');
     $risks = $q->loadList();
     ?>
@@ -220,7 +219,7 @@ if ($v == null) {
                 <?php echo $row['budget_reserve_description'] ?>
             </td>
             <?php
-            $mtzC = costsContingency($meses, $c, $row, $monthSProject, substr($datesProject->fields['project_end_date'], 5, -12), $mtzC);
+            $mtzC = costsContingency($meses, $c, $row, $monthSProject, substr($projectDates['project_end_date'], 5, -12), $mtzC);
             $c++;
             ?>
 
@@ -270,8 +269,8 @@ if ($v == null) {
 <?php
 $q->clear();
 $q->addQuery('*');
-$q->addTable('budget');
-$q->addWhere('budget_project_id = ' . $projectSelected);
+$q->addTable('costs_budget');
+$q->addWhere('budget_project_id = ' . (int)$projectSelected);
 $q->addOrder('budget_id');
 $v = $q->exec();
 $budget_reserve_management = ($v && isset($v->fields) && isset($v->fields['budget_reserve_management'])) ? $v->fields['budget_reserve_management'] : 0;

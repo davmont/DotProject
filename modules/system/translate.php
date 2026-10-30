@@ -11,6 +11,10 @@ if (!$canEdit || $AppUI->user_type != 1) {
 
 $module = dPgetCleanParam($_REQUEST, 'module', 'admin');
 $lang = dPgetCleanParam($_REQUEST, 'lang', $AppUI->user_locale);
+// lang names a locale directory and is echoed into the form below.
+if (!in_array($lang, $AppUI->readDirs('locales'), true)) {
+	$lang = $AppUI->user_locale;
+}
 
 $AppUI->savePlace('m=system&a=translate&module='.$module.'&lang=' . $lang);
 
@@ -28,7 +32,10 @@ if (file_exists(DP_BASE_DIR.'/modules/'.$modules[$module].'/locales/en.inc')) {
 } else {
 	@readfile(DP_BASE_DIR.'/locales/en/'.$modules[$module].'.inc');
 }
-eval("\$english=array(".ob_get_contents()."\n'0');");
+$english = array();
+if (dPisTranslationSource(ob_get_contents())) {
+	eval("\$english=array(".ob_get_contents()."\n'0');");
+}
 ob_end_clean();
 
 $trans = array();
@@ -50,7 +57,10 @@ if ($lang != 'en') {
 	} else {
 		@readfile(DP_BASE_DIR.'/locales/'.$lang.'/'.$modules[$module].'.inc');
 	}
-	eval("\$locale=array(".ob_get_contents()."\n'0');");
+	$locale = array();
+	if (dPisTranslationSource(ob_get_contents())) {
+		eval("\$locale=array(".ob_get_contents()."\n'0');");
+	}
 	ob_end_clean();
 
 	foreach ($locale as $k => $v) {
@@ -65,12 +75,12 @@ $titleBlock = new CTitleBlock('Translation Management', 'rdf2.png', $m, "$m.$a")
 $titleBlock->addCell($AppUI->_('Module'), '',
                      '<form action="?m=system&amp;a=translate" method="post" name="modlang">', '');
 $titleBlock->addCell(arraySelect($modules, 'module', 
-                                 'size="1" class="text" onchange="javascript:document.modlang.submit();"', 
+                                 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => 'modlang')), 
                                  $module));
 $titleBlock->addCell($AppUI->_('Language'));
 $temp = $AppUI->setWarning(false);
 $titleBlock->addCell(arraySelect($locales, 'lang', 
-                                 'size="1" class="text" onchange="javascript:document.modlang.submit();"', 
+                                 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => 'modlang')), 
                                  $lang, true), 
                      '','', '</form>');
 $AppUI->setWarning($temp);
@@ -126,7 +136,7 @@ if ($lang == 'en') {
 		echo ('<input type="text" name="trans[' . $index . '][english]" value="' 
 		      . $langs['english'] . '" size="40" class="text" />');
 	} else {
-		$rows = round(mb_strlen($langs['english']/35)) +1 ;
+		$rows = round(mb_strlen($langs['english']) / 35) + 1;
 		echo ('<textarea name="trans[' . $index . '][english]" cols="40" class="small" rows="' 
 		      . $rows . '">' . $langs['english'] . '</textarea>');
 	}

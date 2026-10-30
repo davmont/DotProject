@@ -1,8 +1,13 @@
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+?>
 
 <!-- ################################## [ view section ] ################################ -->
 
 <?php 
-$timesheet_id = isset($_GET['timesheet_id']) ? $_GET['timesheet_id'] : 0; 
+$timesheet_id = isset($_GET['timesheet_id']) ? (int)$_GET['timesheet_id'] : 0; 
  
 // check permissions 
 $denyRead = getDenyRead( $m, $timesheet_id ); 
@@ -26,7 +31,7 @@ $q -> addQuery('tt_start_date, tt_end_date, tt_id, tt_active,
 	user_first_name, user_last_name, tt_supervisor_approval, tt_pm_approval, tt_approve_note');
 $q -> addJoin('timetrack_data','data','tt_data_timesheet_id = tt_id');
 $q -> addJoin('users','u','user_id = tt_user_id');
-$q -> addWhere('tt_id = '.$timesheet_id);
+$q -> addWhere('tt_id = ' . (int)$timesheet_id);
 $q -> addGroup('tt_id');
 
 $tg_data = $q -> loadHash();
@@ -34,13 +39,13 @@ $tg_data = $q -> loadHash();
 
 //pull data for this timesheet
 $q = new DBQuery();
-$q -> addTable('timetrack_data'); 
-$q -> addQuery("timetrack_data.*, DATE_FORMAT(tt_data_date,'%m/%d/%Y') AS tid_date,
+$q -> addTable('timetrack_data', 'td'); 
+$q -> addQuery("td.*, DATE_FORMAT(tt_data_date,'%m/%d/%Y') AS tid_date,
 	company_name, project_name, task_name");
 $q -> addJoin('companies','c','company_id = tt_data_client_id');
 $q -> addJoin('projects','p','project_id = tt_data_project_id');
 $q -> addJoin('tasks','t','task_id = tt_data_task_id');
-$q -> addWhere('tt_data_timesheet_id = $timesheet_id');
+$q -> addWhere('tt_data_timesheet_id = ' . (int)$timesheet_id);
 $q -> addOrder('tt_data_date');
 
 $tt_data = $q -> loadList(); 
@@ -57,7 +62,7 @@ $crumbs["?m=timetrack&timesheet_id=$timesheet_id&f=$f"] = "timesheets list";
 ?>
 <table width="98%" border="0" cellpadding="0" cellspacing="2"> 
 <tr> 
-	<td><img src="./images/icons/projects.gif" alt="" border="0" width=42 height=42></td> 
+	<td><img src="./modules/timetrack/images/applet3-48.png" alt="" border="0" width=42 height=42></td> 
 	<td nowrap>
 		<span class="title"><?php echo $AppUI->_( 'Review Timesheet' ); ?></span>
 	</td> 
@@ -78,7 +83,7 @@ $crumbs["?m=timetrack&timesheet_id=$timesheet_id&f=$f"] = "timesheets list";
 		<table cellspacing="0" cellpadding="2" border="0" width="50%" align="right">
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Employee Name');?>:</td>
-			<td class="hilite" width="100%" nowrap><?php echo $tg_data['user_last_name'] . ", " . $tg_data['user_first_name'];?></td>
+			<td class="hilite" width="100%" nowrap><?php echo dPhtml($tg_data['user_last_name'] . ", " . $tg_data['user_first_name']);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Supervisor Approval');?>:</td>
@@ -155,11 +160,11 @@ foreach ($tt_data as $row) {
 		echo $row["tt_data_id"];
 	?>
 	</td> 
-	<td nowrap><?php echo @$row["company_name"]?></td> 
-	<td nowrap><?php echo @$row["project_name"]?></td> 
-	<td nowrap><?php echo @$row["task_name"]?></td> 
+	<td nowrap><?php echo dPhtml(@$row["company_name"])?></td> 
+	<td nowrap><?php echo dPhtml(@$row["project_name"])?></td> 
+	<td nowrap><?php echo dPhtml(@$row["task_name"])?></td> 
 	<td width="100%" nowrap> 
-		<?php echo $row["tt_data_description"]?>
+		<?php echo dPhtml($row["tt_data_description"])?>
     </td> 
 	<td nowrap> 
 		<?php echo $row["tt_data_hours"]?>
@@ -169,7 +174,7 @@ foreach ($tt_data as $row) {
 <tr><td colspan="6">&nbsp;</td></tr>
 <tr>
 	<td></td>
-	<td colspan="4" align="right" valign="top">Comment <input type="text" name="tt_approve_note" size="80" maxlength="75" value="<?php echo $tg_data['tt_approve_note'] ?>"></td>
+	<td colspan="4" align="right" valign="top">Comment <input type="text" name="tt_approve_note" size="80" maxlength="75" value="<?php echo dPhtml($tg_data['tt_approve_note']) ?>"></td>
 	<td align="center" valign="top"><input name="reject" class="button" type="submit" value="Reject"><P><input name="accept" class="button" type="submit" value="Accept"></td>
 </tr>
 </table> 

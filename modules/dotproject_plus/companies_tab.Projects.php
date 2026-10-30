@@ -1,20 +1,9 @@
-<!-- include libraries for right click menu -->
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/milonic_src.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/mmenudom.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/menu_data_projects.js"></script>
-<script type="text/javascript" src="./modules/dotproject_plus/milonic_right_click_menu/contextmenu.js"></script>
-<a href="http://www.milonic.com/" style="display: none">DHTML JavaScript Menu By Milonic.com</a>
-<script>
-    with (milonic = new menuname("contextMenu")) {
-        margin = 3;
-        style = contextStyle;
-        top = "offset=5";
-        aI("image=./images/icons/stock_ok-16.png;text=<?php echo $AppUI->_("LBL_MENU_ADD_PROJECT") ?>;url=javascript:rightClickMenuAddProject();");
-        aI("image=./images/icons/stock_edit-16.png;text=<?php echo $AppUI->_("LBL_MENU_EDIT_PROJECT") ?>;url=javascript:rightClickMenuEditProject();");
-    }
-    drawMenus();
-
-
+<!-- Right-click menu: js/dp-contextmenu.js (replaces the Milonic menu) -->
+<script nonce="<?php echo dPcspNonce(); ?>">
+    dpContextMenu.define('contextMenu', [
+        {image: './images/icons/stock_ok-16.png', text: <?php echo dPjs($AppUI->_("LBL_MENU_ADD_PROJECT", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuAddProject'},
+        {image: './images/icons/stock_edit-16.png', text: <?php echo dPjs($AppUI->_("LBL_MENU_EDIT_PROJECT", UI_OUTPUT_RAW)); ?>, call: 'rightClickMenuEditProject'}
+    ]);
 </script>
 <?php
 if (!defined("DP_BASE_DIR")) {
@@ -29,9 +18,9 @@ global $AppUI, $company_id, $pstatus, $dPconfig;
 $df = $AppUI->getPref('SHDATEFORMAT');
 ?>
 
-<script>
+<script nonce="<?php echo dPcspNonce(); ?>">
     function rightClickMenuAddProject() {
-        window.location = "index.php?m=projects&a=addedit&company_id=<?php echo $company_id; ?>";
+        window.location = "index.php?m=projects&a=addedit&company_id=<?php echo (int) $company_id; ?>";
     }
 
     function rightClickMenuEditProject() {
@@ -52,14 +41,16 @@ $q->addTable('projects', 'prj');
 $q->addQuery('project_id, project_name, project_start_date, project_status, project_target_budget, project_end_date, project_priority, contact_first_name, contact_last_name, project_percent_complete');
 $q->addJoin('users', 'u', 'u.user_id = prj.project_owner');
 $q->addJoin('contacts', 'con', 'u.user_contact = con.contact_id');
-$q->addWhere('prj.project_company = ' . $company_id);
+$q->addWhere('prj.project_company = ' . (int)$company_id);
 $projObj = new CProject();
 $projList = $projObj->getDeniedRecords($AppUI->user_id);
 if (count($projList)) {
     $q->addWhere('NOT (project_id IN (' . implode(',', $projList) . '))');
 }
 $q->addWhere('prj.project_status <> 7');
-$sort = dPgetParam($_GET, 'orderby', 'project_name');
+$sort = dPvalidateOrder(dPgetParam($_GET, 'orderby', 'project_name'), array('project_name',
+	'project_start_date', 'project_end_date', 'project_status', 'project_priority', 'project_percent_complete'),
+	'project_name');
 $q->addOrder($sort);
 
 
@@ -84,8 +75,9 @@ if (!($rows = $q->loadList())) {
         * <?php echo $AppUI->_("LBL_RIGHT_CLICK_CREATE_PROJECT"); ?><br />
     </span>
 
-    <table class="tbl" width="100%" align="center" onmouseover="setContextDisabled(false)"
-        onmouseout="setContextDisabled(true)">
+    <table class="tbl" width="100%" align="center"<?php echo dPaction(null, array(), 'mouseover mouseout', array(
+        'call-mouseover' => 'setContextDisabled', 'args-mouseover' => '[false]',
+        'call-mouseout' => 'setContextDisabled', 'args-mouseout' => '[true]')); ?>>
         <tr>
             <th> % <?php echo $AppUI->_("LBL_COMPLETE"); ?></th>
             <th> <?php echo $AppUI->_("Project"); ?> </th>

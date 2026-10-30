@@ -14,7 +14,7 @@ $initiating_id = intval(dPgetParam($_GET, 'id', 0));
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('initiating');
-$q->addWhere('initiating_id = ' . $initiating_id);
+$q->addWhere('initiating_id = ' . (int)$initiating_id);
 
 // check if this record has dependancies to prevent deletion
 $msg = '';
@@ -28,6 +28,22 @@ if (!db_loadObject($q->prepare(), $obj) && $initiating_id > 0) {
 	$AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
 	$AppUI->redirect();
 }
+if (!$obj) {
+	// A new term of opening: the form starts empty, on the project it was opened from.
+	$obj = new CInitiating();
+	$obj->initiating_project = dPgetIntParam($_GET, 'project_id', 0);
+}
+if (!CInitiating::projectAllowed((int)$obj->initiating_project)) {
+	if ($initiating_id) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	$obj->initiating_project = 0;
+}
+
+require_once $AppUI->getModuleClass('projects');
+$project = new CProject();
+$projects = arrayMerge(array(0 => $AppUI->_('None')),
+	$project->getAllowedRecords($AppUI->user_id, 'project_id, project_name', 'project_name'));
 
 $initiating_completed = 0;
 // se for update verifica se ja esta concluido o preenchimento do termo de abertura do projeto
@@ -66,9 +82,12 @@ $end_date = new CDate($obj->initiating_end_date);
 // setup the title block
 $ttl = $initiating_id ? "Edit" : "Add";
 $titleBlock = new CTitleBlock($ttl, 'applet3-48.png', $m, "$m.$a");
-$titleBlock->addCrumb("?m=$m", "lista de termo de abertura");
+$titleBlock->addCrumb("?m=$m", "project charters");
+if ($obj->initiating_project) {
+	$titleBlock->addCrumb('?m=projects&a=view&project_id=' . (int)$obj->initiating_project, 'view project');
+}
 if ($canDelete && $initiating_id) {
-	$titleBlock->addCrumbDelete('apagar termo de abertura', $canDelete, $msg);
+	$titleBlock->addCrumbDelete('delete project charter', $canDelete, $msg);
 }
 $titleBlock->show();
 
@@ -80,7 +99,7 @@ $titleBlock->show();
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo DP_BASE_URL;?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 
 var calendarField = '';
 var calWin = null;
@@ -91,7 +110,7 @@ function popCalendar(field) {
 //this bug does not occur if the window open occurs in an onclick event
 //this bug does NOT occur in Internet explorer
 calendarField = field;
-idate = eval('document.uploadFrm.initiating_' + field + '.value');
+idate = document.uploadFrm['initiating_' + field].value;
 window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=280, height=250, scrollbars=no, status=no');
 }
 
@@ -100,8 +119,8 @@ window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' 
 *	@param string Formatted date
 */
 function setCalendar(idate, fdate) {
-	fld_date = eval('document.uploadFrm.initiating_' + calendarField);
-	fld_fdate = eval('document.uploadFrm.' + calendarField);
+	fld_date = document.uploadFrm['initiating_' + calendarField];
+	fld_fdate = document.uploadFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -171,12 +190,16 @@ function notauthorizedIt() {
 	<table cellspacing="1" cellpadding="2" width="60%">
 		<tr>
 			<td align="right" nowrap="nowrap" ><?php echo $AppUI->_('Project Title');?>:</td>
-			<td align="left"><input type="text" class="text" name="initiating_title" size="55" maxlength="255" value="<?php echo $obj->initiating_title;?>"></td>
+			<td align="left"><input type="text" class="text" name="initiating_title" size="55" maxlength="255" style="width: 100%; max-width: 40em; box-sizing: border-box;" value="<?php echo dPformSafe(@$obj->initiating_title);?>"></td>
+		</tr>
+		<tr>
+			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project'); ?>:</td>
+			<td align="left"><?php echo arraySelect($projects, 'initiating_project', 'size="1" class="text"', (int)$obj->initiating_project); ?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project Manager'); ?>:</td>
 			<td align="left"><?php echo arraySelect($owners, 'initiating_manager', 'size="1" class="text"', 
-                 ((@$obj->initiating_manager) ? $obj->initiating_manager : $AppUI->contact_id));?>
+                 ((@$obj->initiating_manager) ? $obj->initiating_manager : $AppUI->user_id));?>
 			</td>
 		</tr>
 	</table>
@@ -189,7 +212,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right"><?php echo $AppUI->_('Justification');?>:</td>
 			<td>
-				<textarea name="initiating_justification" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_justification" rows="10" style="width:100%; min-width:14em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_justification);?>
 				</textarea>
 			</td>
@@ -197,7 +220,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Objectives');?>:</td>
 			<td>
-				<textarea name="initiating_objective" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_objective" rows="10" style="width:100%; min-width:14em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_objective);?>
 				</textarea>
 			</td>
@@ -205,7 +228,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Expected Results');?>:</td>
 			<td>
-				<textarea name="initiating_expected_result" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_expected_result" rows="10" style="width:100%; min-width:14em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_expected_result);?>
 				</textarea>
 			</td>
@@ -213,7 +236,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Premises');?>:</td>
 			<td>
-				<textarea name="initiating_premise" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_premise" rows="10" style="width:100%; min-width:14em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_premise);?>
 				</textarea>
 			</td>
@@ -221,7 +244,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Restrictions');?>:</td>
 			<td>
-				<textarea name="initiating_restrictions" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_restrictions" rows="10" style="width:100%; min-width:14em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_restrictions);?>
 				</textarea>
 			</td>
@@ -229,7 +252,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Budget');?>:</td>
 			<td>
-				<textarea name="initiating_budget" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_budget" rows="10" style="width:100%; min-width:14em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_budget);?>
 				</textarea>
 			</td>
@@ -239,7 +262,7 @@ if ($initiating_id) { ?>
 			<td nowrap="nowrap"><input type="hidden" name="initiating_start_date" value="<?php echo $start_date->format(FMT_TIMESTAMP_DATE);?>" />
 				<input type="text" class="text" name="start_date" id="date1" value="<?php echo $start_date->format($df);?>" class="text" disabled="disabled" />
 	
-				<a href="#" onclick="javascript:popCalendar('start_date', 'start_date');">
+				<a href="#"<?php echo dPaction('popCalendar', array('start_date', 'start_date')); ?>>
 					<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 				</a>
 			</td>
@@ -249,7 +272,7 @@ if ($initiating_id) { ?>
 			<td nowrap="nowrap"><input type="hidden" name="initiating_end_date" value="<?php echo $end_date->format(FMT_TIMESTAMP_DATE);?>" />
 				<input type="text" class="text" name="end_date" id="date1" value="<?php echo $end_date->format($df);?>" class="text" disabled="disabled" />
 	
-				<a href="#" onclick="javascript:popCalendar('end_date', 'end_date');">
+				<a href="#"<?php echo dPaction('popCalendar', array('end_date', 'end_date')); ?>>
 					<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 				</a>
 			</td>
@@ -257,7 +280,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Milestones');?>:</td>
 			<td>
-				<textarea name="initiating_milestone" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_milestone" rows="10" style="width:100%; min-width:14em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_milestone);?>
 				</textarea>
 			</td>
@@ -265,7 +288,7 @@ if ($initiating_id) { ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Criteria for success');?>:</td>
 			<td>
-				<textarea name="initiating_success" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+				<textarea name="initiating_success" rows="10" style="width:100%; min-width:14em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_success);?>
 				</textarea>
 			</td>
@@ -275,17 +298,17 @@ if ($initiating_id) { ?>
 	<td valign="bottom">
 		<table cellspacing="1" cellpadding="2" width="40%" border="0">
 			<tr>
-				<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Approved/Not Approved Comments');?>:</td>
+				<td align="right"><?php echo $AppUI->_('Approved/Not Approved Comments');?>:</td>
 				<td align="left" >
-					<textarea name="initiating_approved_comments" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+					<textarea name="initiating_approved_comments" rows="10" style="width:100%; min-width:14em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_approved_comments);?>
 					</textarea>
 				</td>
 			</tr>
 			<tr>
-				<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Authorized/Not Authorized Comments');?>:</td>
+				<td align="right"><?php echo $AppUI->_('Authorized/Not Authorized Comments');?>:</td>
 				<td>
-					<textarea name="initiating_authorized_comments" cols="50" rows="10" style="wrap:virtual;" class="textarea">
+					<textarea name="initiating_authorized_comments" rows="10" style="width:100%; min-width:14em; box-sizing:border-box;" class="textarea">
 <?php echo dPformSafe(@$obj->initiating_authorized_comments);?>
 					</textarea>
 				</td>
@@ -297,37 +320,26 @@ if ($initiating_id) { ?>
 }?>
 <tr>
 	<td>
-		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" onClick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {location.href = './index.php?m=initiating';}" />
+		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW), 'href' => './index.php?m=initiating')); ?> />
 	</td>
-	<td align="right">
+	<td align="right" nowrap="nowrap">
 		<?php 
-		print("<a href='?m=initiating&amp;a=pdf&amp;id=$initiating_id&amp;suppressHeaders=1'>" . $AppUI->_('Gerar PDF') . "</a>\n");
+		print("<a href='?m=initiating&amp;a=pdf&amp;id=$initiating_id&amp;suppressHeaders=1'>" . $AppUI->_('PDF') . "</a>\n");
 		?>
-	</td><?php 
+		<?php 
 if ($initiating_id && !$initiating_completed) { ?>
-	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('completed');?>" onclick="completedIt()" />
-	</td>
+		<input type="button" class="button" value="<?php echo $AppUI->_('completed');?>"<?php echo dPaction('completedIt'); ?> />
 <?php 
 } if ($initiating_completed && !$initiating_approved) { ?>
-	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('approved');?>" onclick="approvedIt()" />
-	</td>
-	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('not approved');?>" onclick="notapprovedIt()" />
-	</td>
+		<input type="button" class="button" value="<?php echo $AppUI->_('approved');?>"<?php echo dPaction('approvedIt'); ?> />
+		<input type="button" class="button" value="<?php echo $AppUI->_('not approved');?>"<?php echo dPaction('notapprovedIt'); ?> />
 <?php 
 } if ($initiating_approved && !$initiating_authorized) { ?>
-	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('authorized');?>" onclick="authorizedIt()" />
-	</td>
-	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('not authorized');?>" onclick="notauthorizedIt()" />
-	</td>
+		<input type="button" class="button" value="<?php echo $AppUI->_('authorized');?>"<?php echo dPaction('authorizedIt'); ?> />
+		<input type="button" class="button" value="<?php echo $AppUI->_('not authorized');?>"<?php echo dPaction('notauthorizedIt'); ?> />
 <?php 
 }?>
-	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('submit');?>" onclick="submitIt()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>
 </form>

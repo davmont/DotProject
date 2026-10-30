@@ -1,4 +1,8 @@
-<?php /* PROJECTDESIGNER $Id: printproject.php,v 1.2 2007/07/06 11:38:13 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PROJECTDESIGNER $Id: printproject.php,v 1.2 2007/07/06 11:38:13 pedroix Exp $ */
 global $AppUI, $dPconfig;
 // check permissions for this module
 $perms =& $AppUI->acl();
@@ -64,7 +68,7 @@ $tasks = arrayMerge( array( '0'=>$AppUI->_('(None)', UI_OUTPUT_RAW) ), $tasks );
       //check that project has tasks; otherwise run seperate query
       $q->addTable('tasks', 't');
       $q->addQuery("COUNT(distinct t.task_id) AS total_tasks");
-      $q->addWhere('task_project = '.$project_id);
+      $q->addWhere('task_project = ' . (int)$project_id);
       $hasTasks = $q->loadResult();
       $q->clear();
 
@@ -91,7 +95,7 @@ $tasks = arrayMerge( array( '0'=>$AppUI->_('(None)', UI_OUTPUT_RAW) ), $tasks );
           $q->addJoin('companies', 'com', 'company_id = project_company');
           $q->addJoin('users', 'u', 'user_id = project_owner');
           $q->addJoin('contacts', 'con', 'contact_id = user_contact');
-          $q->addWhere('project_id = '.$project_id);
+          $q->addWhere('project_id = ' . (int)$project_id);
           $q->addGroup('project_id');
           $sql = $q->prepare();
       }
@@ -178,7 +182,7 @@ $extra = array(
        3=>'Inactive Task'
 );
 ?>
-<SCRIPT language="JavaScript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 var check_task_dates = <?php
   if (isset($dPconfig['check_task_dates']) && $dPconfig['check_task_dates'])
     echo 'true';
@@ -197,6 +201,12 @@ var working_days = new Array(<?php echo dPgetConfig( 'cal_working_days' );?>);
 var cal_day_start = <?php echo intval(dPgetConfig( 'cal_day_start' ));?>;
 var cal_day_end = <?php echo intval(dPgetConfig( 'cal_day_end' ));?>;
 var daily_working_hours = <?php echo intval(dPgetConfig('daily_working_hours')); ?>;
+
+function pdPrintWindow() {
+	document.getElementById('imghd').style.display = 'none';
+	window.print();
+	window.close();
+}
 </script>
 
 <style type="text/css">
@@ -245,7 +255,7 @@ TABLE.prjprint TR {
             	?>
             	</td>
         <!--	    <td width="22" align="right">
-				<a href="#" onclick="var img=document.getElementById('imghd'); img.style.display='none'; window.print(); window.close();">
+				<a href="#"<?php echo dPaction('pdPrintWindow'); ?>>
       			<img id="imghd" src="./modules/projectdesigner/images/printer.png" border="0" width="22" height="22" alt="print project" title="print project"/>
       			</a>
       			</td>-->  

@@ -11,7 +11,7 @@ if (!defined('DP_BASE_DIR')) {
 	<title><?php echo @dPgetConfig('page_title'); ?></title>
 	<meta http-equiv="Content-Type"
 		content="text/html;charset=<?php echo isset($locale_char_set) ? $locale_char_set : 'UTF-8'; ?>" />
-	<title><?php echo $dPconfig['company_name']; ?> :: dotProject Login</title>
+	<title><?php echo $dPconfig['company_name']; ?> :: dotPulse</title>
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta name="Version" content="<?php echo @$AppUI->getVersion(); ?>" />
 	<link rel="stylesheet" type="text/css" href="./style/<?php echo $uistyle; ?>/main.css" media="all" />
@@ -19,6 +19,8 @@ if (!defined('DP_BASE_DIR')) {
 		@import "./style/<?php echo $uistyle; ?>/main.css";
 	</style>
 	<link rel="shortcut icon" href="./style/<?php echo $uistyle; ?>/images/favicon.ico" type="image/ico" />
+	<link rel="icon" href="./images/brand/favicon.svg" type="image/svg+xml" />
+	<link rel="apple-touch-icon" href="./images/brand/apple-touch-icon.png" />
 </head>
 <style type="text/css">
 	body {
@@ -106,18 +108,18 @@ if (!defined('DP_BASE_DIR')) {
 </style>
 </head>
 
-<body onload="document.lostpassform.checkusername.focus();">
+<body>
 	<div class="login-container">
 		<form method="post" name="lostpassform">
 			<input type="hidden" name="lostpass" value="1" />
-			<input type="hidden" name="redirect" value="<?php echo $redirect; ?>" />
+			<input type="hidden" name="redirect" value="<?php echo htmlspecialchars($redirect, ENT_QUOTES);?>" />
 
 			<table border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<th colspan="2"><em><?php echo $dPconfig['company_name']; ?></em></th>
 				</tr>
 				<tr>
-					<td colspan="2"><input type="text" maxlength="20" name="checkusername" class="text"
+					<td colspan="2"><input type="text" maxlength="20" name="checkusername" autofocus="autofocus" class="text"
 							placeholder="<?php echo $AppUI->_('Username'); ?>" /></td>
 				</tr>
 				<tr>
@@ -125,8 +127,7 @@ if (!defined('DP_BASE_DIR')) {
 							placeholder="<?php echo $AppUI->_('EMail'); ?>" /></td>
 				</tr>
 				<tr>
-					<td align="left" valign="middle" width="50%"><a href="http://www.dotproject.net/"><img
-								src="./style/default/images/dp_icon.gif" border="0" alt="dotProject logo" /></a></td>
+					<td align="left" valign="middle" width="50%"><a href="https://github.com/davmont/dotPulse"><img src="./images/brand/logo.svg" height="28" border="0" alt="dotPulse" /></a></td>
 					<td align="right" valign="middle" width="50%"><input type="submit" name="sendpass"
 							value="<?php echo $AppUI->_('send password'); ?>" class="button" /></td>
 				</tr>

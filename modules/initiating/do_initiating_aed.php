@@ -15,6 +15,13 @@ $not = dPgetParam($_POST, 'notify', '0');
 if ($not!='0') $not='1';
 
 $obj = new CInitiating();
+// A charter of a project the user cannot see is neither changed nor deleted.
+if ($initiating_id) {
+	$current = new CInitiating();
+	if (!$current->load($initiating_id) || !CInitiating::projectAllowed((int)$current->initiating_project)) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+}
 // convert dates to SQL format first
 if ($obj->initiating_start_date) {
 	$date = new CDate($obj->initiating_start_date);
@@ -25,9 +32,7 @@ if ($obj->initiating_end_date) {
 	$obj->initiating_end_date = $date->format(FMT_DATETIME_MYSQL);
 }
 
-if ($initiating_id) { 
-	$obj->_message = 'updated';
-} else {
+if (!$initiating_id) {
 	$obj->initiating_date_create = str_replace("'", '', $db->DBTimeStamp(time()));
 	$obj->initiating_create_by = $AppUI->user_id;
 	if ($completed) {
@@ -39,7 +44,6 @@ if ($initiating_id) {
 	if ($authorized) {
 		$obj->initiating_authorized = 1;
 	}
-	$obj->_message = 'added';
 }
 
 if (!$obj->bind($_POST)) {
@@ -67,7 +71,7 @@ if (($msg = $obj->store())) {
 } else {
         $obj->load($obj->initiating_id);
         if ($not=='1') $obj->notify();
-        $AppUI->setMsg($file_id ? 'updated' : 'added', UI_MSG_OK, true);
+        $AppUI->setMsg($initiating_id ? 'updated' : 'added', UI_MSG_OK, true);
 }
 
 $AppUI->redirect();

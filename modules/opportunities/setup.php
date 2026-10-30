@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /*
  * Name:      Opportunities
  * Directory: opportunities
@@ -42,6 +45,9 @@ class CSetupOpportunity {
 	     $q -> clear();
 		//remove relation table (opportunities related to projects)
 		 $q -> dropTable('opportunities_projects');
+		 $q -> exec();
+		 $q -> clear();
+		 $q -> dropTable('opportunities_histories');
 		 $q -> exec();
 		 		
 		 $q ->clear();
@@ -122,6 +128,9 @@ class CSetupOpportunity {
 		
 		// Creating an history table
 		$q -> clear();
+		// Earlier versions left this table behind on remove.
+		$histories_exist = db_loadResult("SHOW TABLES LIKE '" . db_escape(dPgetConfig('dbprefix', '') . 'opportunities_histories') . "'");
+		if (!$histories_exist) {
 		$q -> createTable('opportunities_histories');
 		$q -> createDefinition(' (
 				  opportunity_history_id int(11) unsigned NOT NULL auto_increment,
@@ -164,6 +173,7 @@ class CSetupOpportunity {
 			) ENGINE=MyISAM DEFAULT CHARSET=latin1;');
 			
 		$q -> exec();
+		}
 		
 		//inserting some extra sysvals
 		//$sql = 'INSERT INTO sysvals ( sysval_key_id, sysval_title, sysval_value ) ' .

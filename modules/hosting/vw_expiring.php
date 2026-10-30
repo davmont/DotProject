@@ -1,9 +1,12 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /* Hosting module -> $Id: vw_expiring.php,v 1.1 2007/04/16 05:36:02 mbelos Exp $ */
 
 global $AppUI;
 
-$sort = $_GET['sort'];
+$sort = dPgetParam($_GET, 'sort', '');
 switch($sort){
 	case "DNA" : $orderBy = "domain_name ASC"; break;
 	case "DND" : $orderBy = "domain_name DESC"; break;
@@ -49,8 +52,8 @@ while($row = db_fetch_assoc($results)){
 	$expiry = mktime(0, 0, 0, $expiry_date[1], $expiry_date[2], $expiry_date[0]);
 	$timePeriod = 60 * 60 * 24 * 60; //30 days in seconds
 	
-	$latest_date = intval(date('Ymd', intval(mktime()) + $timePeriod));
-	$earliest_date = intval(date('Ymd', intval(mktime()) - $timePeriod));
+	$latest_date = intval(date('Ymd', time() + $timePeriod));
+	$earliest_date = intval(date('Ymd', time() - $timePeriod));
 
 	$expiry_date_of_domain = intval($expiry_date[0].$expiry_date[1].$expiry_date[2]);
 
@@ -61,7 +64,7 @@ while($row = db_fetch_assoc($results)){
 		}
 ?>
 				<tr>
-					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $row['domain_id']; ?>"><?php echo $modifier; ?><?php echo $row['domain_name']; ?><?php echo $endModifier; ?></a></td>
+					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $row['domain_id']; ?>"><?php echo $modifier; ?><?php echo dPhtml($row['domain_name']); ?><?php echo $endModifier; ?></a></td>
 					<td align="center"><?php echo $modifier; ?><?php echo $row['domain_expiry_date']; ?><?php echo $endModifier; ?></td>
 				</tr>		
 <?php
@@ -81,8 +84,8 @@ foreach($domains as $domain){
 	$expiry = mktime(0, 0, 0, $expiry_date[1], $expiry_date[2], $expiry_date[0]);
 	$timePeriod = 60 * 60 * 24 * 60; //60 days in seconds
 
-	$latest_date = intval(date('Ymd', intval(mktime()) + $timePeriod));
-	$earliest_date = intval(date('Ymd', intval(mktime()) - $timePeriod));
+	$latest_date = intval(date('Ymd', time() + $timePeriod));
+	$earliest_date = intval(date('Ymd', time() - $timePeriod));
 	
 	$expiry_date_of_hosting = intval($expiry_date[0].$expiry_date[1].$expiry_date[2]);
 	
@@ -93,8 +96,8 @@ foreach($domains as $domain){
 		}
 ?>
 				<tr>
-					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $domain['domain_id']; ?>"><?php echo $modifier; ?><?php echo $domain['domain_name']; ?><?php echo $endModifier; ?></a></td>
-					<td align="center"><?php echo $modifier; ?><?php echo $domain['hosting_package_name']; ?><?php echo $endModifier; ?></td>
+					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $domain['domain_id']; ?>"><?php echo $modifier; ?><?php echo dPhtml($domain['domain_name']); ?><?php echo $endModifier; ?></a></td>
+					<td align="center"><?php echo $modifier; ?><?php echo dPhtml($domain['hosting_package_name']); ?><?php echo $endModifier; ?></td>
 					<td align="center"><?php echo $modifier; ?><?php echo $domain['hosting_expiry_date']; ?><?php echo $endModifier; ?></td>
 				</tr>
 <?php

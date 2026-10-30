@@ -1,4 +1,8 @@
-<?php /* earnings $Id: vw_idx.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* earnings $Id: vw_idx.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
 global $AppUI, $earnings, $company_id, $pstatus, $tab;
 $df = $AppUI->getPref('SHDATEFORMAT');
 ?>
@@ -12,7 +16,7 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 					nowrap="nowrap"><?php echo $AppUI->_('Date'); ?></a>
 			</th>
 			<th valign="bottom" nowrap="nowrap" width="70">
-				<?
+				<?php
 				// Critical Column Label
 				// If tab above #3 title should read "Request Number"
 				// If not, then check user type:
@@ -21,31 +25,31 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 				if ($tab > 3) { ?>
 					<a href="?m=earnings&orderby=earning_num" class="hdr"
 						nowrap="nowrap"><?php echo $AppUI->_('Request Number'); ?></a>
-				<? } else {
+				<?php } else {
 					if ($AppUI->user_type != 7) { ?>
 						<a href="?m=earnings&orderby=earning_num" class="hdr"
 							nowrap="nowrap"><?php echo $AppUI->_('Invoice Number'); ?></a>
-					<? } else { ?>
+					<?php } else { ?>
 						<a href="?m=earnings&orderby=earning_num" class="hdr"
 							nowrap="nowrap"><?php echo $AppUI->_('Timecard Number'); ?></a>
-					<? }
+					<?php }
 				} ?>
 			</th>
 			<th valign="bottom" nowrap="nowrap">
-				<? if ($tab > 3) { ?>
+				<?php if ($tab > 3) { ?>
 					<a href="?m=earnings&orderby=user_id" class="hdr" nowrap="nowrap"><?php echo $AppUI->_('From'); ?></a>
-				<? } else { ?>
+				<?php } else { ?>
 					<a href="?m=earnings&orderby=company_name" class="hdr"
 						nowrap="nowrap"><?php echo $AppUI->_('To Company'); ?></a>
-				<? } ?>
+				<?php } ?>
 			</th>
 			<th valign="bottom" nowrap="nowrap">
-				<? if ($tab > 3) { ?>
+				<?php if ($tab > 3) { ?>
 					<?php echo $AppUI->_('Request'); ?>
-				<? } else { ?>
+				<?php } else { ?>
 					<a href="?m=earnings&orderby=earning_submit_contact" class="hdr"
 						nowrap="nowrap"><?php echo $AppUI->_('Contact'); ?></a>
-				<? } ?>
+				<?php } ?>
 			</th>
 			<?php if ($AppUI->user_type != 7) { ?>
 				<th valign="bottom" nowrap="nowrap">
@@ -79,27 +83,27 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 				$s .= $CT . $inv_date->format($df);
 				$s .= $CR . '</td>';
 				$s .= $CR . '<td nowrap="nowrap">';
-				$s .= $CT . '<a href="?m=earnings&a=view&earning_id=' . $row["earning_id"] . '" title="earning# ' . $row["earning_num"] . '">' . $row["earning_num"] . '</a>';
+				$s .= $CT . '<a href="?m=earnings&a=view&earning_id=' . $row["earning_id"] . '" title="earning# ' . dPhtml($row["earning_num"]) . '">' . dPhtml($row["earning_num"]) . '</a>';
 				$s .= $CR . '</td>';
 				if ($tab > 3) {
-					$s .= $CR . '<td width="100%" nowrap="nowrap">' . $row["user_first_name"] . '&nbsp;' . $row["user_last_name"] . '</td>';
+					$s .= $CR . '<td width="100%" nowrap="nowrap">' . dPhtml($row["user_first_name"]) . '&nbsp;' . dPhtml($row["user_last_name"]) . '</td>';
 				} else {
-					$s .= $CR . '<td width="100%" nowrap="nowrap">' . substr($row["company_name"], 0, 50) . '</td>';
+					$s .= $CR . '<td width="100%" nowrap="nowrap">' . dPhtml(substr($row["company_name"], 0, 50)) . '</td>';
 				}
 				$s .= $CR . '<td width="100%" nowrap="nowrap">';
 				if ($tab > 3) {
-					$s .= $CT . stripslashes($row["earning_title"]);
+					$s .= $CT . dPhtml(stripslashes($row["earning_title"]));
 				} else {
 					if (strcmp($row["earning_submit_email"], "") == 0) {
-						$s .= $CT . substr($row["earning_submit_contact"], 0, 30);
+						$s .= $CT . dPhtml(substr($row["earning_submit_contact"], 0, 30));
 					} else {
-						$s .= $CT . '<a href="mailto:' . $row["earning_submit_email"] . '">' . substr($row["earning_submit_contact"], 0, 30) . '</a>';
+						$s .= $CT . '<a href="mailto:' . dPhtml($row["earning_submit_email"]) . '">' . dPhtml(substr($row["earning_submit_contact"], 0, 30)) . '</a>';
 					}
 				}
 				$s .= $CR . '</td>';
 				if ($AppUI->user_type != 7) {
 					$s .= $CR . '<td align="center" nowrap="nowrap">';
-					$s .= $CT . $row["earning_terms"];
+					$s .= $CT . dPhtml($row["earning_terms"]);
 					$s .= $CR . '</td>';
 					$s .= $CR . '<td align="center" nowrap="nowrap">';
 					$s .= $CT . '$' . number_format($row["earning_total"], 2, '.', ',');

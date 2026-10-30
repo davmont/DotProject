@@ -20,6 +20,7 @@ GLOBAL $AppUI, $macroprojects, $company_id, $mpstatus, $macroproject_types, $cur
 GLOBAL $priority;
 
 $df = $AppUI->getPref('SHDATEFORMAT');
+$macroprojectPriorityColor = dPgetSysVal('MacroProjectPriorityColor');
 
 $editMacroProjectsAllowed = getPermission('macroprojects', 'edit');
 foreach ($macroprojects as $row) {
@@ -32,7 +33,7 @@ $table_cols = $base_table_cols + (($editMacroProjectsAllowed) ? 1 : 0);
 $added_cols = $table_cols - $base_table_cols;
 ?>
 
-<form action='./index.php' method='get'>
+<form action='./index.php?m=macroprojects' method='post'>
 <table width="100%" border="0" cellpadding="3" cellspacing="1" class="tbl">
 <tr>
 	<td colspan="<?php echo ($base_table_cols); ?>" nowrap="nowrap">
@@ -152,11 +153,10 @@ echo htmlspecialchars($row['company_description'], ENT_QUOTES); ?>">
 	<td width="100%">
 		<a href="?m=macroprojects&amp;a=view&amp;macroproject_id=<?php 
 echo htmlspecialchars($row['macroproject_id']); ?>" <?php
-if (!empty($row['macroproject_description'])) { ?>onmouseover="return overlib('<?php 
-echo(htmlspecialchars(('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                addslashes($row['macroproject_description'])) 
-                       . '</p></div>'), ENT_QUOTES)); ?>', CAPTION, '<?php 
-echo($AppUI->_('Description')); ?>', CENTER);" onmouseout="nd();"<?php } ?>>
+if (!empty($row['macroproject_description'])) {
+echo dPaction('macroprojectsTip', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
+                                                dPhtml($row['macroproject_description'])) 
+                       . '</p></div>', $AppUI->_('Description', UI_OUTPUT_RAW)), 'mouseover mouseout', array('call-mouseout' => 'nd')); } ?>>
 		<?php echo (htmlspecialchars($row['macroproject_name'], ENT_QUOTES)); ?>
 		</a>
 	</td>
@@ -164,7 +164,7 @@ echo($AppUI->_('Description')); ?>', CENTER);" onmouseout="nd();"<?php } ?>>
 		<?php echo (htmlspecialchars($start_date ? $start_date->format($df) : '-')); ?>
 	</td>
 	<td align="center" nowrap="nowrap" style="background-color:<?php 
-echo ($priority[$row['macroproject_priority']]['color']); ?>">
+echo (($macroprojectPriorityColor[$row['macroproject_priority']] ?? '')); ?>">
 		<?php echo (htmlspecialchars($end_date ? $end_date->format($df) : '-')); ?>
 	</td>
 	<td align="center">
@@ -187,7 +187,7 @@ echo ($priority[$row['macroproject_priority']]['color']); ?>">
 	</td>
 	<td align="center">
 <?php 
-		if ($row['task_log_problem']) {
+		if (!empty($row['task_log_problem'])) {
 ?>
 		<a href="?m=tasks&amp;a=index&amp;f=all&amp;macroproject_id=<?php echo ($row['macroproject_id']); ?>">
 		<?php 
@@ -210,7 +210,7 @@ echo (dPshowImage('./images/icons/dialog-warning5.png', 16, 16, 'Problem', 'Prob
 	</td>
 	<td align="center" nowrap="nowrap">
 		<?php 
-echo (htmlspecialchars($row['total_tasks'] . ($row['my_tasks'] ? ' ('.$row['my_tasks'].')' : '')));
+echo (htmlspecialchars(($row['total_tasks'] ?? '') . (!empty($row['my_tasks']) ? ' ('.$row['my_tasks'].')' : '')));
 ?>
 	</td>
 <?php 

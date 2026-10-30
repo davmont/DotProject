@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /*
 Unitcost main class file
 Written by Alejandro Imass <ait@p2ee.org>
@@ -71,7 +74,7 @@ class Cunitcost_task_costs extends CDpObject {
     $q->addTable('tasks', 't1');
     $q->addQuery('sum(t2.task_total_cost)');
     $q->addJoin('unitcost_task_costs', 't2', 't1.task_id = t2.task_id', 'inner');
-    $q->addWhere('t1.task_project = ' . $project_id);
+    $q->addWhere('t1.task_project = ' . (int)$project_id);
     $sql = $q->prepareSelect();
     $assigned_res = $q->exec();
     $row = db_fetch_array($assigned_res);
@@ -80,7 +83,7 @@ class Cunitcost_task_costs extends CDpObject {
     
     $q->addTable('projects');
     $q->addUpdate('project_actual_budget', $total_project_cost, true);
-    $q->addWhere('project_id = ' . $project_id);
+    $q->addWhere('project_id = ' . (int)$project_id);
     $q->exec(); 
     $q->clear();
     

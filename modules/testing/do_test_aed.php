@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // this doSQL script is called from the addedit.php script
 // its purpose is to use the CTest class to interoperate with the database (store, edit, delete)
 
@@ -35,6 +38,13 @@ if ($del) {
 } else {
 	// simply store the added/edited quote in database via the store method of the test child class of the CDpObject provided ba the dPFramework
 	// no sql command is necessary here! :-)
+	// The forms name the project and task fields test_project / test_task.
+	if (($test_project = dPgetParam( $_POST, 'test_project', null )) !== null) {
+		$obj->unittest_project_id = (int)$test_project;
+	}
+	if (($test_task = dPgetParam( $_POST, 'test_task', null )) !== null) {
+		$obj->unittest_task_id = (int)$test_task;
+	}
 	if (($msg = $obj->store())) {
 		$AppUI->setMsg( $msg, UI_MSG_ERROR );
 	} else {

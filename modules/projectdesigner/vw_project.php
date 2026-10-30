@@ -1,3 +1,8 @@
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+?>
 	<td width="50%" valign="top">
 		<strong><?php echo $AppUI->_('Details');?></strong>
 		<table cellspacing="1" cellpadding="2" border="0" width="100%">

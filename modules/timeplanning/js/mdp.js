@@ -73,7 +73,10 @@ function addNew(name,id,posX,posY){
 		//div.style.top=container.style.top;
 	}
 	//&nbsp;
-	div.innerHTML="<br>"+name;
+	// The task name is text, never HTML.
+	div.textContent="";
+	div.appendChild(document.createElement("br"));
+	div.appendChild(document.createTextNode(name));
 	div.style.display="block";
 	document.getElementById("graph_panel").appendChild(div);
 	var block = YAHOO.util.Dom.get(div_name);

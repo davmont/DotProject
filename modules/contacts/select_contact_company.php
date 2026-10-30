@@ -4,6 +4,10 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 	$table_name = dPgetCleanParam($_GET, "table_name", "companies");
+	// Only the two tables below: the name goes into SQL and into the form action.
+	if ($table_name != "departments") {
+		$table_name = "companies";
+	}
 
 	switch($table_name) {
 		case "companies":
@@ -58,7 +62,7 @@ if (!defined('DP_BASE_DIR')) {
 				                       "company_phone2"   => "contact_phone2",
 				                       "company_fax"   => "contact_fax");
 			}
-			$data_update_script = "opener.setCompany('" . $posted_id . "', '" . db_escape($r_data[$name_field]) . "');\n";
+			$data_update_script = "opener.setCompany('" . $posted_id . "', " . dPjs($r_data[$name_field]) . ");\n";
 		} else if ($table_name == "departments") {
 			$update_fields = array("dept_id"     => "contact_department");
 			if ($update_address) {
@@ -70,16 +74,16 @@ if (!defined('DP_BASE_DIR')) {
 				                       "dept_phone"   => "contact_phone",
 				                       "dept_fax"   => "contact_fax");
 			}
-			$data_update_script = "opener.setDepartment('" . $posted_id . "', '" . db_escape($r_data[$name_field]) . "');\n";
+			$data_update_script = "opener.setDepartment('" . $posted_id . "', " . dPjs($r_data[$name_field]) . ");\n";
 		}
 	
 		// Let's figure out which fields are going to
 		// be updated
 		foreach ($update_fields as $record_field => $contact_field) {
-			$data_update_script .= "opener.document.changecontact.$contact_field.value = '".$r_data[$record_field]."';\n";
+			$data_update_script .= "opener.document.changecontact.$contact_field.value = " . dPjs($r_data[$record_field]) . ";\n";
 		}
 		?>
-			<script language='javascript' type="text/javascript">
+			<script language='javascript' type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 				<?php echo $data_update_script; ?>
 				self.close();
 			</script>
@@ -93,13 +97,14 @@ if (!defined('DP_BASE_DIR')) {
 				<td colspan="2">
 			<?php
 				echo $AppUI->_('Select').' '.$AppUI->_($selection_string).':<br />';
-				echo arraySelect($company_list, $id_field, ' size="10"', $company_id);
+				// The list takes the window height left by the buttons (themes differ in font size).
+				echo arraySelect($company_list, $id_field, ' size="10" style="height: calc(100vh - 110px); min-height: 4em;"', $company_id);
 			?>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<input type="button" class="button" value="<?php echo $AppUI->_('cancel');?>" onclick="window.close()" />
+					<input type="button" class="button" value="<?php echo $AppUI->_('cancel');?>"<?php echo dPaction('window.close'); ?> />
 				</td>
 				<td align="right">
 					<input type="checkbox" name="overwrite_address" id="overwrite_address" /> <label for="overwrite_address"><?php echo $AppUI->_("Overwrite contact address information"); ?></label>

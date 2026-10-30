@@ -48,9 +48,9 @@ $titleBlock->show();
 
 if ($canDelete) {
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	can_delete = true;
-	delete_msg = "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('Resource').'?';?>";
+	delete_msg = <?php echo dPjs($AppUI->_('doDelete', UI_OUTPUT_RAW) . ' ' . $AppUI->_('Resource', UI_OUTPUT_RAW) . '?');?>;
 </script>
 <form name="frmDelete" action="?m=resources" method="post">
   <input type="hidden" name="dosql" value="do_resource_aed" />
@@ -67,11 +67,11 @@ if ($canDelete) {
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Resource ID');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->resource_key;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->resource_key);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Resource Name');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->resource_name;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->resource_name);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Type');?>:</td>
@@ -91,7 +91,7 @@ if ($canDelete) {
 		<table cellspacing="0" cellpadding="2" border="0" width="100%">
 		<tr>
 			<td class="hilite">
-				<?php echo str_replace(chr(10), "<br />", $obj->resource_note);?>&nbsp;
+				<?php echo nl2br(dPhtml($obj->resource_note));?>&nbsp;
 			</td>
 		</tr>
 		

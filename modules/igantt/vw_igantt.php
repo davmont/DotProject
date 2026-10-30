@@ -8,7 +8,9 @@ $project_id = intval(dPgetParam($_GET, 'project_id', 0));
 
 // Check permissions
 $perms = new dPacl();
-$canView = $perms->checkModule('igantt', 'view') && $perms->checkModule('projects', 'view');
+// Module access is not enough: the chart lists the tasks of one project.
+$canView = $perms->checkModule('igantt', 'view') && $perms->checkModule('projects', 'view')
+	&& $project_id > 0 && $perms->checkModuleItem('projects', 'view', $project_id);
 if (!$canView) {
 	$AppUI->redirect("m=public&a=access_denied");
 }
@@ -25,8 +27,11 @@ $tasks = $q->loadList();
 $q->clear();
 
 // Fetch dependencies
-$q->addTable('task_dependencies');
-$q->addQuery('dependencies_task_id, dependencies_req_task_id');
+// Only this project's dependencies (it used to load every dependency in the system).
+$q->addTable('task_dependencies', 'td');
+$q->addJoin('tasks', 't', 't.task_id = td.dependencies_task_id');
+$q->addQuery('td.dependencies_task_id, td.dependencies_req_task_id');
+$q->addWhere("t.task_project = $project_id");
 $dependencies_list = $q->loadList();
 $dependencies = array();
 foreach ($dependencies_list as $dep) {
@@ -60,7 +65,7 @@ if ($tasks) {
 }
 
 // Convert tasks to JSON
-$json_tasks = json_encode($gantt_tasks);
+$json_tasks = json_encode($gantt_tasks, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
 ?>
 <!DOCTYPE html>
@@ -69,9 +74,10 @@ $json_tasks = json_encode($gantt_tasks);
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<?php echo $AppUI->getCsrfMeta(); ?>
 	<title><?php echo $AppUI->_('Interactive Gantt chart'); ?></title>
 	<!-- Frappe Gantt CSS -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.6.1/frappe-gantt.min.css" />
+	<link rel="stylesheet" href="<?php echo DP_BASE_URL; ?>/lib/frappe-gantt/frappe-gantt.min.css" />
 	<style>
 		body {
 			font-family: Arial, sans-serif;
@@ -115,11 +121,11 @@ $json_tasks = json_encode($gantt_tasks);
 	<div class="header">
 		<h2><?php echo $AppUI->_('Interactive Gantt chart'); ?></h2>
 		<div class="controls">
-			<button onclick="changeViewMode('Quarter Day')">Quarter Day</button>
-			<button onclick="changeViewMode('Half Day')">Half Day</button>
-			<button onclick="changeViewMode('Day')">Day</button>
-			<button onclick="changeViewMode('Week')">Week</button>
-			<button onclick="changeViewMode('Month')">Month</button>
+			<button type="button"<?php echo dPaction('changeViewMode', array('Quarter Day')); ?>>Quarter Day</button>
+			<button type="button"<?php echo dPaction('changeViewMode', array('Half Day')); ?>>Half Day</button>
+			<button type="button"<?php echo dPaction('changeViewMode', array('Day')); ?>>Day</button>
+			<button type="button"<?php echo dPaction('changeViewMode', array('Week')); ?>>Week</button>
+			<button type="button"<?php echo dPaction('changeViewMode', array('Month')); ?>>Month</button>
 		</div>
 	</div>
 
@@ -128,10 +134,17 @@ $json_tasks = json_encode($gantt_tasks);
 	</div>
 
 	<!-- Frappe Gantt JS -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.6.1/frappe-gantt.min.js"></script>
-	<script>
+	<script src="<?php echo DP_BASE_URL; ?>/lib/frappe-gantt/frappe-gantt.min.js"></script>
+	<script src="<?php echo DP_BASE_URL; ?>/js/dp-actions.js"></script>
+	<script nonce="<?php echo dPcspNonce(); ?>">
 		// Inject JSON tasks from PHP
 		var tasks = <?php echo $json_tasks; ?>;
+
+		function escapeHtml(s) {
+			return String(s).replace(/[&<>"']/g, function (c) {
+				return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+			});
+		}
 
 		if (tasks.length === 0) {
 			document.getElementById('gantt').innerHTML = '<text x="20" y="40">No tasks found for this project.</text>';
@@ -153,7 +166,7 @@ $json_tasks = json_encode($gantt_tasks);
 					end_date.setDate(end_date.getDate() - 1); // Display exact day
 					return `
 					<div style="padding: 10px; background: rgba(0,0,0,0.8); color: white; border-radius: 4px;">
-						<strong>${task.name}</strong><br>
+						<strong>${escapeHtml(task.name)}</strong><br>
 						Expected to finish by ${end_date.toISOString().split('T')[0]}<br>
 						${task.progress}% completed!
 					</div>`;
@@ -167,7 +180,12 @@ $json_tasks = json_encode($gantt_tasks);
 					fetch('./index.php?m=igantt&a=update_task_dates&suppressHeaders=1', {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-						body: `task_id=${task.id}&start_date=${start.toISOString().split('T')[0]}&end_date=${endDate.toISOString().split('T')[0]}`
+						body: new URLSearchParams({
+							task_id: task.id,
+							start_date: start.toISOString().split('T')[0],
+							end_date: endDate.toISOString().split('T')[0],
+							csrf_token: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+						}).toString()
 					})
 						.then(response => response.json())
 						.then(data => {

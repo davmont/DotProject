@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // We don't really need a class, more a collection of functions.
 
 class CDataImport extends CDpObject {
@@ -10,9 +13,9 @@ class CDataImport extends CDpObject {
   var $diconfig_quote_char = null;
   var $diconfig_default = null;
 
-  function CDataImport() 
+  function __construct() 
   {
-    $this->CDpObject('dataimport_config', 'diconfig_id');
+    parent::__construct('dataimport_config', 'diconfig_id');
   }
 
   function check()
@@ -54,7 +57,7 @@ class CDataImport extends CDpObject {
   {
     $q = new DBQuery;
     $q->addTable('dataimport_map');
-    $q->addWhere('dimap_config_id = ' . $this->diconfig_id);
+    $q->addWhere('dimap_config_id = ' . (int)$this->diconfig_id);
     if ($index)
       return $q->loadHashList('dimap_source_field');
     else
@@ -66,7 +69,7 @@ class CDataImport extends CDpObject {
     $msg = '';
     $q = new DBQuery;
     $q->setDelete('dataimport_map');
-    $q->addWhere('dimap_config_id = \'' . $id . '\'');
+    $q->addWhere('dimap_config_id = ' . (int)$id);
     if ( ! $q->exec()) {
       $msg = $GLOBALS['db']->ErrorMsg();
     }
@@ -80,7 +83,8 @@ class CDataImport extends CDpObject {
     $this->deleteDataMap($id);
     $q = new DBQuery;
     foreach ($array['dimap_source_field'] as $key => $val) {
-      if ($val && @$array['dimap_target_table'][$key] && @$array['dimap_target_field'][$key]) {
+      if ($val && @$array['dimap_target_table'][$key] && @$array['dimap_target_field'][$key]
+        && diAllowedTarget($array['dimap_target_table'][$key], $array['dimap_target_field'][$key])) {
 	$q->addTable('dataimport_map');
 	$q->addInsert('dimap_config_id', $id);
 	$q->addInsert('dimap_source_field', $val);
@@ -94,6 +98,28 @@ class CDataImport extends CDpObject {
 
 } // End of class
 
+// Tables an import may write into. config.php offers only these, and the map is
+// checked against them when it is saved and again when it is used.
+function diAllowedTables()
+{
+  return array('projects', 'tasks');
+}
+
+function diAllowedTarget($table, $field)
+{
+  static $columns = array();
+  if (!in_array($table, diAllowedTables(), true)) {
+    return false;
+  }
+  if (!isset($columns[$table])) {
+    $columns[$table] = array();
+    foreach ($GLOBALS['db']->MetaColumns(dPgetConfig('dbprefix', '') . $table) as $col) {
+      $columns[$table][] = $col->name;
+    }
+  }
+  return in_array($field, $columns[$table], true);
+}
+
 
 function diBuildSelect($name, $id, &$data, $default = '', $addSelect = false, $onChange = '')
 {
@@ -101,7 +127,8 @@ function diBuildSelect($name, $id, &$data, $default = '', $addSelect = false, $o
 
   $result = '<select class="text" name="'.$name.'['.$id.']" id="'.$name.'^'.$id.'"';
   if ($onChange) {
-    $result .= ' onchange="'. $onChange . '"';
+    // $onChange is the name of a global function; it gets the change event.
+    $result .= dPaction($onChange, array('$event'));
   }
   $result .= '>';
   if ($addSelect) {

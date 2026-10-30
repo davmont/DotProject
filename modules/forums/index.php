@@ -69,7 +69,7 @@ switch ($f) {
 		$q->addWhere("project_status <> 7 AND project_owner = $AppUI->user_id");
 		break;
 	case 4:
-		$q->addWhere("project_status <> 7 AND project_company = $AppUI->user_company");
+		$q->addWhere("project_status <> 7 AND project_company = " . (int)$AppUI->user_company);
 		break;
 	case 5:
 		$q->addWhere("project_status = 7");
@@ -86,7 +86,7 @@ $forums = $q->loadList();
 // setup the title block
 $titleBlock = new CTitleBlock('Forums', 'support.png', $m, "$m.$a");
 $titleBlock->addCell(
-	arraySelect($filters, 'f', 'size="1" class="text" onchange="javascript:document.forum_filter.submit();"', $f , true), '',
+	arraySelect($filters, 'f', 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => 'forum_filter')), $f , true), '',
 	'<form name="forum_filter" action="?m=forums" method="post">', '</form>'
 );
 
@@ -151,7 +151,7 @@ foreach ($forums as $row) {
 		<span style="font-size:10pt;font-weight:bold">
 			<a href="?m=forums&amp;a=viewer&amp;forum_id=<?php echo $row["forum_id"];?>"><?php echo $AppUI->___($row["forum_name"]);?></a>
 		</span>
-		<br /><?php echo $row["forum_description"];?>
+		<br /><?php echo dPhtml($row["forum_description"]);?>
 		<br /><font color="#777777"><?php echo $AppUI->_('Owner').' '.$AppUI->___($row["user_username"]);?>,
 		<?php echo $AppUI->_('Started').' '.$create_date->format($df);?>
 		</font>

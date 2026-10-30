@@ -37,7 +37,7 @@ foreach ($riskPriority as $key => $value) {
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('risks');
-$q->addWhere('risk_id = ' . $risk_id);
+$q->addWhere('risk_id = ' . (int)$risk_id);
 
 // check if this record has dependancies to prevent deletion
 $msg = '';
@@ -46,7 +46,8 @@ $canDelete = $obj->canDelete($msg, $risk_id);
 
 // load the record data
 $obj = null;
-if ((!db_loadObject($q->prepare(), $obj)) && ($risk_id > 0)) {
+// Nothing to view without an existing risk.
+if (!db_loadObject($q->prepare(), $obj) || !$obj) {
     $AppUI->setMsg('LBL_RISKS');
     $AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
     $AppUI->redirect();
@@ -70,6 +71,9 @@ $projects = $q->loadHashList();
 $projectSelected = intval(dPgetParam($_GET, 'project_id'));
 $t = intval(dPgetParam($_GET, 'tab'));
 $vw = dPgetParam($_GET, 'vw');
+if (!in_array($vw, array('vw_watchlist', 'vw_near_term_responses_list', 'vw_strategys_list', 'vw_lessons_learned_list'), true)) {
+    $vw = null;
+}
 
 // setup the title block
 $titleBlock = new CTitleBlock("LBL_VIEW", 'risks.png', $m, "$m.$a");
@@ -85,7 +89,7 @@ if ($projectSelected == null) {
 }
 $titleBlock->show();
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
     function submitIt() {
         var f = document.uploadFrm;
         f.submit();
@@ -111,7 +115,7 @@ $titleBlock->show();
                 <table cellspacing="1" cellpadding="2" width="60%">
                     <tr>
                         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('LBL_NAME'); ?>:</td>
-                        <td nowrap="nowrap"><?php echo $obj->risk_name; ?></td>
+                        <td nowrap="nowrap"><?php echo dPhtml($obj->risk_name); ?></td>
                     </tr>
                     <tr>
                         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('LBL_DESCRIPTION'); ?>:</td>
@@ -183,7 +187,7 @@ $titleBlock->show();
                     </tr>
                     <tr>
                         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('LBL_POTENTIAL'); ?>:</td>
-                        <td nowrap="nowrap"><?php echo $riskPotential[@$obj->risk_potential] ?></td>
+                        <td nowrap="nowrap"><?php echo isset($riskPotential[$obj->risk_potential_other_projects]) ? $riskPotential[$obj->risk_potential_other_projects] : ''; ?></td>
                     </tr>
                     <tr>
                         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('LBL_LESSONS'); ?>:</td>
@@ -209,7 +213,7 @@ $titleBlock->show();
         </tr>
         <tr>
             <td align="center">
-                <input type="button" class="button" value="<?php echo $AppUI->_('LBL_RETURN'); ?>" onclick="{location.href = '<?php echo $href; ?>';}"/>
+                <input type="button" class="button" value="<?php echo $AppUI->_('LBL_RETURN'); ?>"<?php echo dPaction(null, array(), null, array('href' => $href)); ?>/>
             </td>
         </tr>
     </form>

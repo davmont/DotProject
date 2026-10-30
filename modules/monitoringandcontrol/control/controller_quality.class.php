@@ -24,7 +24,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 	function deleteRow($id){
 		$q = new DBQuery();
 		$q->setDelete('monitoring_quality');
-		$q->addWhere('quality_id=' . $id);
+		$q->addWhere('quality_id=' . (int)$id);
 		$q->exec();
 		$q->clear();	
 	}	
@@ -40,13 +40,14 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q->addUpdate('quality_status_id', $status);
 		$q->addUpdate('quality_date_end', $date_end);
 		$q->addUpdate('task_id', $task_id);
-		$q->addWhere('quality_id = ' . $id);
+		$q->addWhere('quality_id = ' . (int)$id);
 		$q->exec();	
 	}
 	
 	function  obterQuantidadeTarefaComErro($project_id, $user){
 	
 		$list = array();
+		$arQualidadeBarComErro = array();
 		$q = new DBQuery;
 		$q->addQuery('distinct qt.quality_type_id, qt.quality_type_name');
 		$q->addTable('monitoring_quality_type', 'qt');
@@ -60,21 +61,21 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 			$qAux->addTable('monitoring_quality', 'q');
 			$qAux->innerJoin('tasks', 't', 't.task_id = q.task_id');
 			
-			$qAux->addWhere('t.task_project ='.$project_id);
+			$qAux->addWhere('t.task_project =' . (int)$project_id);
 			$qAux->addWhere('q.quality_status_id <> 3');//Cancelado
-			$qAux->addWhere('q.quality_type_id='.$row[quality_type_id]);
+			$qAux->addWhere('q.quality_type_id=' . (int)$row['quality_type_id']);
 			
 			if(isset($user) && $user > 0) {
 				$qAux->innerJoin('user_tasks', 'ut', 't.task_id = ut.task_id');
-				$qAux->addWhere('ut.user_id='.$user);
+				$qAux->addWhere('ut.user_id=' . (int)$user);
 			}
 			
 			$sql = $qAux->prepare();
 			$listAux = db_loadList($sql);
 		
 			if (count($listAux) > 0) {
-				$arQualidadeBarComErro[$indice][quantity] = count($listAux);
-				$arQualidadeBarComErro[$indice][name] = $row[quality_type_name];
+				$arQualidadeBarComErro[$indice]['quantity'] = count($listAux);
+				$arQualidadeBarComErro[$indice]['name'] = $row['quality_type_name'];
 				$indice += 1;			
 			}	
 		}	
@@ -96,12 +97,12 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		
 		if(isset($user) && $user > 0) {
 			$q->innerJoin('user_tasks', 'ut', 't.task_id = ut.task_id');
-			$q->addWhere('ut.user_id='.$user);
+			$q->addWhere('ut.user_id=' . (int)$user);
 		}		
 		
-		$q->addWhere('t.task_project ='.$project_id);
+		$q->addWhere('t.task_project =' . (int)$project_id);
 		$q->addWhere('q.quality_status_id <> 3');//Cancelado
-		$q->addWhere('q.quality_type_id ='.$idTipoErro);
+		$q->addWhere('q.quality_type_id =' . (int)$idTipoErro);
 		
 		$q->addGroup('qt.quality_type_name');
 		$q->addGroup('year(t.task_start_date)');
@@ -121,11 +122,11 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q = new DBQuery;
 		$q->addQuery('COUNT(t.task_id) as quantity');
 		$q->addTable('tasks', 't');
-		$q->addWhere('t.task_project ='.$project_id);
+		$q->addWhere('t.task_project =' . (int)$project_id);
 
 		if(isset($user) && $user > 0) {
 			$q->innerJoin('user_tasks', 'ut', 't.task_id = ut.task_id');
-			$q->addWhere('ut.user_id='.$user);
+			$q->addWhere('ut.user_id=' . (int)$user);
 		}
 
 		$qSub = new DBQuery;
@@ -156,7 +157,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q->addTable('tasks', 't');
 		$q->innerJoin('user_tasks', 'ut', 't.task_id = ut.task_id');
 		$q->innerJoin('users', 'u', 'u.user_id = ut.user_id');
-		$q->addWhere('t.task_project ='.$project_id);
+		$q->addWhere('t.task_project =' . (int)$project_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		 
@@ -170,7 +171,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q->addQuery('         month(t.task_start_date) as month');
 		$q->addQuery('         year(t.task_start_date) as year');
 		$q->addTable('tasks', 't');
-		$q->addWhere('t.task_project ='.$project_id);
+		$q->addWhere('t.task_project =' . (int)$project_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		 
@@ -188,7 +189,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 			$arQualidadePie = array_merge($arQualidadePie, $arQualidadePieSemErro);		
 		}
 
-	    $arQualidadePieComErro = $qualityControl->obterQuantidadeTarefaComErro($project_id, $user);
+	    $arQualidadePieComErro = (array)$qualityControl->obterQuantidadeTarefaComErro($project_id, $user);
 		if (count($arQualidadePieComErro) > 0){
 			$arQualidadePie = array_merge($arQualidadePie, $arQualidadePieComErro);
 		}			
@@ -212,9 +213,9 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$qualityControl = new ControllerQuality();
 		$indice = 0;
 		foreach($list as $row){
-			$arQualidadeBarComErro[$indice][name] = $row[quality_type_name];
-			$arQualidadeBarComErro[$indice][index] = $row[quality_type_id];
-			$arQualidadeBarComErro[$indice][quantity] = $qualityControl->obterQuantidadeTarefaComErroPorTipo($project_id, $row[quality_type_id], $user);	
+			$arQualidadeBarComErro[$indice]['name'] = $row['quality_type_name'];
+			$arQualidadeBarComErro[$indice]['index'] = $row['quality_type_id'];
+			$arQualidadeBarComErro[$indice]['quantity'] = $qualityControl->obterQuantidadeTarefaComErroPorTipo($project_id, $row['quality_type_id'], $user);	
 			$indice += 1; 	
 		}			 
 		$arQualidadeBarSemErro = $qualityControl->obterQuantidadeTarefaSemErro($project_id, $user,  true);
@@ -224,7 +225,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 			$dataSemErro[$i] = $qualityControl->buscaValorRefencia($arQualidadeBarSemErro, $date);
 			
 			for($j=0; $j < $indice; ++$j) {
-				$dataComErro[$j][$i] = $qualityControl->buscaValorRefencia($arQualidadeBarComErro[$j][quantity], $date);	
+				$dataComErro[$j][$i] = $qualityControl->buscaValorRefencia($arQualidadeBarComErro[$j]['quantity'], $date);	
 			}				
 		}
 	
@@ -234,7 +235,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$arQualidadeBar[0]['quantity'] = $dataSemErro;		
 		for($j=0; $j < $indice; ++$j) {
 		
-			$arQualidadeBar[$j+1]['name'] = $arQualidadeBarComErro[$j][name];
+			$arQualidadeBar[$j+1]['name'] = $arQualidadeBarComErro[$j]['name'];
 			$arQualidadeBar[$j+1]['quantity'] = $dataComErro[$j];	
 
 		}
@@ -263,7 +264,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q = new DBQuery;
 		$q->addQuery( ' quality_id, quality_type_id, quality_description, user_id ,quality_status_id, quality_date_end, task_id  ');
 		$q->addTable('monitoring_quality', 'q');	
-		$q->addWhere('task_id='.$task_id);
+		$q->addWhere('task_id=' . (int)$task_id);
 		$q-> addOrder('quality_id');
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
@@ -316,12 +317,12 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q = new DBQuery;
 		$q->addQuery('quality_status_name');
 		$q->addTable('monitoring_quality_status','s');	
-		$q-> addWhere('quality_status_id='. $num);					
+		$q-> addWhere('quality_status_id=' . (int)$num);					
 		$sql = $q->prepare();
 		$list = db_loadList($sql);	
 		$statusname='';
 			if(!empty($list)){
-				$statusname = $list[0][quality_status_name];
+				$statusname = $list[0]['quality_status_name'];
 			}					
 		return $statusname;	
 	}	
@@ -333,12 +334,12 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q = new DBQuery;
 		$q->addQuery('quality_type_name');
 		$q->addTable('monitoring_quality_type','t');	
-		$q-> addWhere('quality_type_id='. $num);					
+		$q-> addWhere('quality_type_id=' . (int)$num);					
 		$sql = $q->prepare();
 		$list = db_loadList($sql);	
 		$typename='';
 			if(!empty($list)){
-				$typename = $list[0][quality_type_name];
+				$typename = $list[0]['quality_type_name'];
 			}					
 		return $typename;	
 	}	
@@ -349,7 +350,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ut
 		$q = new DBQuery;
 		$q->addQuery( ' quality_id, quality_type_id, quality_description, user_id ,quality_status_id, quality_date_end, task_id  ');
 		$q->addTable('monitoring_quality', 'q');	
-		$q->addWhere('quality_id='.$id);
+		$q->addWhere('quality_id=' . (int)$id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return $list;	

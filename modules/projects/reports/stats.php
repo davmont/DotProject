@@ -36,6 +36,9 @@ if (!empty($project_id))
 $q->addGroup('t.task_id, u.user_id');
 $users_all = $q->loadList();
 
+// Filled per row below; a project without assignees left them undefined (count(null) on PHP 8).
+$users = array();
+$users_per_task = array();
 foreach ($users_all as $user)
 {
 	$users_per_task[$user['task_id']][] = $user['user_id'];
@@ -69,7 +72,7 @@ foreach ($all_tasks as $task)
 
 	if (isset($users_per_task[$task['task_id']]))
 	{
-		foreach ($users_per_task[$task['task_id']] as $user)
+		foreach ($users_per_task[$task['task_id']] ?? array() as $user)
 		{
 			if ($task['task_percent_complete'] == 100)
 				$users[$user]['completed'][] = & $task;
@@ -96,7 +99,9 @@ $q->addWhere('file_project = ' . (int)$project_id);
 $q->addGroup('file_project');
 $files = $q->loadResult();
 
-$ontime = round(100 * (1 - (count($tasks['overdue']) / count($all_tasks)) - (count($tasks['completed']) / count($all_tasks))));
+// A project without tasks divided by zero (DivisionByZeroError on PHP 8).
+$task_total = max(1, count($all_tasks));
+$ontime = count($all_tasks) ? round(100 * (1 - (count($tasks['overdue']) / $task_total) - (count($tasks['completed']) / $task_total))) : 0;
 ?>
 
 <table width="100%" border="1" cellpadding="0" cellspacing="0" class="tbl">
@@ -104,9 +109,9 @@ $ontime = round(100 * (1 - (count($tasks['overdue']) / count($all_tasks)) - (cou
 	<th colspan="3"><?php echo $AppUI->_('Progress Chart (completed/in progress/pending)'); ?></th>
 </tr>
 <tr height="30">
-	<td width="<?php echo round(count($tasks['completed']) / count($all_tasks) * 100); ?>%" style="background: springgreen; text-align: center;"><?php echo $AppUI->_('completed'); ?></td>
-	<td width="<?php echo round(count($tasks['inprogress']) / count($all_tasks) * 100); ?>%" style="background: aquamarine; text-align: center;"><?php echo $AppUI->_('in progress'); ?></td>
-	<td width="<?php echo round(count($tasks['pending']) / count($all_tasks) * 100); ?>%" style="background: gold; text-align: center;"><?php echo $AppUI->_('pending'); ?></td>
+	<td width="<?php echo round(count($tasks['completed']) / $task_total * 100); ?>%" style="background: springgreen; text-align: center;"><?php echo $AppUI->_('completed'); ?></td>
+	<td width="<?php echo round(count($tasks['inprogress']) / $task_total * 100); ?>%" style="background: aquamarine; text-align: center;"><?php echo $AppUI->_('in progress'); ?></td>
+	<td width="<?php echo round(count($tasks['pending']) / $task_total * 100); ?>%" style="background: gold; text-align: center;"><?php echo $AppUI->_('pending'); ?></td>
 </tr>
 </table>
 <br />
@@ -116,9 +121,9 @@ $ontime = round(100 * (1 - (count($tasks['overdue']) / count($all_tasks)) - (cou
 	<th colspan="3"><?php echo $AppUI->_('Time Chart (completed/on time/overdue)'); ?></td>
 </tr>
 <tr height="30">
-	<td width="<?php echo round(count($tasks['completed']) / count($all_tasks) * 100); ?>%" style="background: springgreen; text-align: center;"><?php echo $AppUI->_('completed'); ?></td>
+	<td width="<?php echo round(count($tasks['completed']) / $task_total * 100); ?>%" style="background: springgreen; text-align: center;"><?php echo $AppUI->_('completed'); ?></td>
 	<td width="<?php echo $ontime; ?>%" style="background: aquamarine; text-align: center;"><?php echo $AppUI->_('on time'); ?></td>
-	<td width="<?php echo round(count($tasks['overdue']) / count($all_tasks) * 100); ?>%" style="background: tomato; text-align: center;"><?php echo $AppUI->_('overdue'); ?></td>
+	<td width="<?php echo round(count($tasks['overdue']) / $task_total * 100); ?>%" style="background: tomato; text-align: center;"><?php echo $AppUI->_('overdue'); ?></td>
 </tr>
 </table>
 <br />
@@ -138,22 +143,22 @@ $ontime = round(100 * (1 - (count($tasks['overdue']) / count($all_tasks)) - (cou
 <tr>
 	<td nowrap><?php echo $AppUI->_('Complete'); ?>:</td>
 	<td><?php echo count($tasks['completed']); ?></td>
-	<td><?php echo round(count($tasks['completed']) / count($all_tasks) * 100); ?>%</td>
+	<td><?php echo round(count($tasks['completed']) / $task_total * 100); ?>%</td>
 </tr>
 <tr>
 	<td nowrap><?php echo $AppUI->_('In Progress'); ?>:</td>
 	<td><?php echo count($tasks['inprogress']); ?></td>
-	<td><?php echo round(count($tasks['inprogress']) / count($all_tasks) * 100); ?>%</td>
+	<td><?php echo round(count($tasks['inprogress']) / $task_total * 100); ?>%</td>
 </tr>
 <tr>
 	<td nowrap><?php echo $AppUI->_('Not Started'); ?>:</td>
 	<td><?php echo count($tasks['pending']); ?></td>
-	<td><?php echo round(count($tasks['pending']) / count($all_tasks) * 100); ?>%</td>
+	<td><?php echo round(count($tasks['pending']) / $task_total * 100); ?>%</td>
 </tr>
 <tr>
 	<td nowrap><?php echo $AppUI->_('Past Due'); ?>:</td>
 	<td><?php echo count($tasks['overdue']); ?></td>
-	<td><?php echo round(count($tasks['overdue']) / count($all_tasks) * 100); ?>%</td>
+	<td><?php echo round(count($tasks['overdue']) / $task_total * 100); ?>%</td>
 </tr>
 <tr>
 	<td><?php echo $AppUI->_('Total'); ?>:</td>

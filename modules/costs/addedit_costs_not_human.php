@@ -17,7 +17,7 @@ if (!(($canEdit && $cost_id) || ($canAuthor && !($cost_id)))) {
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('costs');
-$q->addWhere('cost_id = ' . $cost_id);
+$q->addWhere('cost_id = ' . (int)$cost_id);
 
 // check if this record has dependancies to prevent deletion
 $msg = '';
@@ -31,6 +31,10 @@ if (!db_loadObject($q->prepare(), $obj) && ($cost_id > 0)) {
     $AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
     $AppUI->redirect();
 }
+if (!$obj) {
+    // A new record: the form starts empty.
+    $obj = new CCosts();
+}
 
 /* transform date to dd/mm/yyyy */
 $date_begin = intval($obj->cost_date_begin) ? new CDate($obj->cost_date_begin) : null;
@@ -43,7 +47,8 @@ $q->addQuery('project_start_date,project_end_date');
 $q->addTable('projects');
 $q->addWhere("project_id = '$project_id'");
 $datesProject = & $q->exec();
-$dateTemp = substr($datesProject->fields['project_end_date'], 0, -9);
+$projectDates = ($datesProject && !$datesProject->EOF) ? $datesProject->fields : array('project_start_date' => '', 'project_end_date' => '');
+$dateTemp = substr((string)$projectDates['project_end_date'], 0, -9);
 $dateEP = (string)$dateTemp;
 
 
@@ -63,13 +68,13 @@ $titleBlock->show();
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo DP_BASE_URL; ?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
     function submitIt() {
         
         var f = document.uploadFrm;
         //f.submit();
         
-        var trans = "<?php echo $dateEP; ?>";
+        var trans = <?php echo dPjs($dateEP); ?>;
         var str1 = String(trans);
         var str2 = document.getElementById("cost_date_end").value;
         
@@ -97,7 +102,7 @@ $titleBlock->show();
         if (f.cost_value_unitary.value == 0 || f.cost_value_unitary.value < 0) {
             msg += "\nPlease enter a valid value to unitary value(Greater than 0)";
             if ((foc==false) && (navigator.userAgent.indexOf('MSIE')== -1)) {
-                f.budget_reserve_financial_impact.focus();
+                f.cost_value_unitary.focus();
                 foc=true;
             }
         }
@@ -120,7 +125,7 @@ $titleBlock->show();
     
     function sumTotalValueNH() 
     { 
-        var qtd= <?php echo dPformSafe($obj->cost_quantity) ?>;
+        var qtd= <?php echo (float)$obj->cost_quantity; ?>;
         var uniValue = document.getElementById('cost_value_unitary').value;
         
         var total = qtd * uniValue;
@@ -185,7 +190,7 @@ $titleBlock->show();
                             <!-- format(FMT_TIMESTAMP_DATE) -->
                             <input type="text" class="text" name="date_begin" id="date0" value="<?php echo (($date_begin) ? $date_begin->format($df) : ''); ?>" disabled="disabled" />
 
-                            <a href="#" onclick="popCalendar( 'date_begin', 'date_begin');">
+                            <a href="#"<?php echo dPaction('popCalendar', array('date_begin', 'date_begin')); ?>>
                                 <img src="./images/calendar.gif" width="24" height="12" alt="{dPtranslate word='Calendar'}" border="0" />
                             </a>
                         </td>
@@ -197,7 +202,7 @@ $titleBlock->show();
                             <!-- format(FMT_TIMESTAMP_DATE) -->
                             <input type="text" class="text" name="date_end" id="date1" value="<?php echo (($date_end) ? $date_end->format($df) : ''); ?>" disabled="disabled" />
 
-                            <a href="#" onclick="popCalendar( 'date_end', 'date_end');">
+                            <a href="#"<?php echo dPaction('popCalendar', array('date_end', 'date_end')); ?>>
                                 <img src="./images/calendar.gif" width="24" height="12" alt="{dPtranslate word='Calendar'}" border="0" />
                             </a>
                         </td>
@@ -205,7 +210,7 @@ $titleBlock->show();
                     <tr>
                         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('Unitary Value'); ?>*:</td>
                         <td>
-                            <input name="cost_value_unitary" id="cost_value_unitary"  onchange="sumTotalValueNH()" value="<?php echo dPformSafe($obj->cost_value_unitary); ?>" /> 
+                            <input name="cost_value_unitary" id="cost_value_unitary"<?php echo dPaction('sumTotalValueNH', array(), 'change'); ?> value="<?php echo dPformSafe($obj->cost_value_unitary); ?>" /> 
                         </td>
                     </tr>
                     <tr>
@@ -222,10 +227,10 @@ $titleBlock->show();
         </tr>
         <tr>
             <td>
-                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('Cancel'); ?>" onClick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {history.back(-1);}"/>
+                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('Cancel'); ?>"<?php echo dPaction('history.back', array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW))); ?>/>
             </td>
             <td align="right">
-                <input type="button" class="button" value="<?php echo $AppUI->_('Submit'); ?>" onclick="submitIt()" />
+                <input type="button" class="button" value="<?php echo $AppUI->_('Submit'); ?>"<?php echo dPaction('submitIt'); ?> />
             </td>
         </tr>
     </form>

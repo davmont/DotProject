@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 
 $diconfig_id = dPgetParam($_REQUEST, 'diconfig_id', 0);
@@ -46,7 +49,8 @@ $head_offsets = array_flip($headers);
 // table.
 $tables = array();
 foreach ($headers as $src) {
-  if (isset($datamap[$src])) {
+  if (isset($datamap[$src])
+      && diAllowedTarget($datamap[$src]['dimap_target_table'], $datamap[$src]['dimap_target_field'])) {
     $table = $datamap[$src]['dimap_target_table'];
     if (! isset($tables[$table]))
       $tables[$table] = array();

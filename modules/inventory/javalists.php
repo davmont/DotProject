@@ -1,28 +1,17 @@
-<?php /* INVENTORY $ld: utility.php, v1.00 2003/11/05 13:53 dylan_cuthbert Exp $ */ ?>
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* INVENTORY $ld: utility.php, v1.00 2003/11/05 13:53 dylan_cuthbert Exp $ */ ?>
 
 
-<SCRIPT LANGUAGE="JavaScript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 <!--
 
 
 function getElementById( _id )
 {
-	isIE=document.all?true:false;
-	isDOM=document.getElementById?true:false;
-	isNS4=document.layers?true:false;
-
-	if (isDOM)
-	{
-	  return document.getElementById(_id);
-	}
-	else if (isIE)
-	{
-	  eval( "return document.all."+_id+" ;" );
-	}
-	else if(isNS4)
-	{
-	  eval("return document.layers['"+_id+" ;" );
-	}
+	return document.getElementById(_id);
 }
 
 function emptyList( box )
@@ -74,7 +63,7 @@ function fillList( box, arr, _selected, _optionzero ) {
 	{
 		if ( _optionzero == "" )
 		{
-			option = new Option( <?php echo '"'.$AppUI->_( "Non Applicable" ).'"'; ?>, 0 );
+			option = new Option( <?php echo dPjs($AppUI->_( "Non Applicable", UI_OUTPUT_RAW )); ?>, 0 );
 			box.options[ box.length ] = option;
 		}
 	}
@@ -160,7 +149,7 @@ function generateJSarray( $prefix, $table, $specify_company = 0, $namefield = "n
 	$sql -> addQuery($prefix.'_id AS id, '.$prefix.'_'.$namefield.' AS name, '.$prefix.'_company AS company');
 	$sql -> addTable($table);
 
-	if ( $specify_company ) $sql -> addWhere($prefix.'_company = '.$specify_company);
+	if ( $specify_company ) $sql -> addWhere($prefix.'_company = '.(int)$specify_company);
 
 	if (($sql_list = $sql -> loadList()))
 	{
@@ -188,7 +177,7 @@ function generateJSarray( $prefix, $table, $specify_company = 0, $namefield = "n
 		{
 			if ( !isset($company_list[ $key ] ) ) continue;
 
-			echo $prefix."_lists[ ".$key." ] = new Array( ";
+			echo $prefix."_lists[ ".(int)$key." ] = new Array( ";
 
 			$nametext  = "new Array( ";
 			$valuetext = "new Array( ";
@@ -200,8 +189,8 @@ function generateJSarray( $prefix, $table, $specify_company = 0, $namefield = "n
 
 			foreach( $company as $id )
 			{
-				$nametext .= '"'.$elem_list[ $id ][ "name" ].'"';
-				$valuetext .= '"'.$id.'"';
+				$nametext .= dPjs($elem_list[ $id ][ "name" ]);
+				$valuetext .= '"'.(int)$id.'"';
 				if ( $lastval != $id )
 				{
 					$nametext .= ", ";
@@ -227,4 +216,4 @@ generateJSarray( "project", "projects", $specify_company );
 ?>
 
 -->
-</SCRIPT>
+</script>

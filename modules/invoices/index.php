@@ -1,4 +1,8 @@
-<?php  /* INVOICES $Id: index.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* INVOICES $Id: index.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
 $AppUI->savePlace();
 
 // load the companies class to retrieved denied companies
@@ -12,7 +16,8 @@ $tab = $AppUI->getState('InvIdxTab') !== NULL ? $AppUI->getState('InvIdxTab') : 
 $active = intval(!$AppUI->getState('InvIdxTab'));
 
 if (isset($_GET['orderby'])) {
-	$AppUI->setState('InvIdxOrderBy', $_GET['orderby']);
+	$AppUI->setState('InvIdxOrderBy', dPvalidateOrder($_GET['orderby'], array('invoice_id', 'invoice_date',
+		'invoice_due', 'invoice_company', 'invoice_grand_total', 'invoice_status'), 'invoice_id desc'));
 }
 $orderby = $AppUI->getState('InvIdxOrderBy') ? $AppUI->getState('InvIdxOrderBy') : 'invoice_id desc';
 
@@ -56,7 +61,7 @@ $companies = arrayMerge(array('0' => $AppUI->_('All')), $companies);
 $titleBlock = new CTitleBlock('Invoices', 'applet3-48.png', $m, "$m.$a");
 $titleBlock->addCell($AppUI->_('Company') . ':');
 $titleBlock->addCell(
-	arraySelect($companies, 'company_id', 'onChange="document.pickCompany.submit()" class="text"', $company_id),
+	arraySelect($companies, 'company_id', 'class="text"' . dPaction(null, array(), null, array('submit' => 'pickCompany')), $company_id),
 	'',
 	'<form action="?m=invoices" method="post" name="pickCompany">',
 	'</form>'

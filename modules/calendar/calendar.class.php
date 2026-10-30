@@ -342,8 +342,7 @@ class CMonthCalendar
 				list($y, $m, $d, $dow) = explode(':', $week[0]);
 				$firstday = sprintf("%04d%02d%02d", $y, $m, $d);
 				$html .= ("\n\t" . '<td class="week">');
-				$html .= (($this->dayFunc) ? ('<a href="javascript:' . $this->weekFunc . "('"
-					. $firstday . "')" . '">')
+				$html .= (($this->dayFunc) ? ('<a href="#"' . dPaction($this->weekFunc, array($firstday)) . '>')
 					: '');
 				$html .= dPshowImage(dPfindImage('view.week.gif'), 16, 15, $AppUI->_('Week View'));
 				$html .= (($this->dayFunc) ? ('</a>') : '');
@@ -369,13 +368,12 @@ class CMonthCalendar
 				if ($this->showHighlightedDays && isset($this->highlightedDays[$day])) {
 					$html .= ' style="border: 1px solid ' . $this->highlightedDays[$day] . '"';
 				}
-				$html .= (' onclick="' . $this->dayFunc . "('" . $day . "','"
-					. $this_day->format($df) . "')" . '">');
+				$html .= (dPaction($this->dayFunc, array($day, $this_day->format($df))) . '>');
 				if ($m == $this_month) {
 					if ($this->dayFunc) {
-						$html .= ('<a href="javascript:'
-							. $this->dayFunc . "('" . $day . "','" . $this_day->format($df)
-							. "')" . '" class="' . $class . '">');
+						$html .= ('<a href="#"'
+							. dPaction($this->dayFunc, array($day, $this_day->format($df)))
+							. ' class="' . $class . '">');
 					}
 					$html .= $d . (($this->dayFunc) ? '</a>' : '');
 
@@ -406,8 +404,7 @@ class CMonthCalendar
 
 		$w = ("\t\t" . '<td class="week">');
 		if ($this->dayFunc) {
-			$w .= ('<a href="javascript:' . $this->weekFunc . "(" . $dateObj->getTimestamp() . ",'"
-				. $dateObj->toString() . "')" . '">');
+			$w .= ('<a href="#"' . dPaction($this->weekFunc, array((int)$dateObj->getTimestamp(), $dateObj->toString())) . '>');
 		}
 		$w .= dPshowImage(dPfindImage('view.week.gif'), 16, 15, $AppUI->_('Week View'));
 		$w .= (($this->dayFunc) ? '</a>' : '');
@@ -435,7 +432,7 @@ class CMonthCalendar
 			$alt = isset($e['alt']) ? str_replace("\n", ' ', $e['alt']) : null;
 
 			$s .= "<div>\n";
-			$s .= '<span style="' . $AppUI->___($e['style']) . '">';
+			$s .= '<span style="' . $AppUI->___(isset($e['style']) ? $e['style'] : '') . '">';
 			$s .= (($href) ? ('<a href="' . $AppUI->___($href) . '" class="event" title="'
 				. $AppUI->___($alt) . '">') : '');
 			$s .= $e['text'];
@@ -693,7 +690,9 @@ class CEvent extends CDpObject
 
 			$$query_set->addJoin('projects', 'p', 'p.project_id =  e.event_project');
 			if (($AppUI->getState('CalIdxCompany'))) {
-				$$query_set->addWhere('p.project_company = ' . $AppUI->getState('CalIdxCompany'));
+				$cal_company = (int)$AppUI->getState('CalIdxCompany');
+				// Projects of the company and those it runs for clients (internal company).
+				$$query_set->addWhere('(p.project_company = ' . $cal_company . ' OR p.project_company_internal = ' . $cal_company . ')');
 			}
 
 			if (count($allowedProjects)) {
@@ -921,7 +920,7 @@ class CEvent extends CDpObject
 			$q = new DBQuery;
 			$q->addTable('projects', 'p');
 			$q->addQuery('project_name');
-			$q->addWhere('p.project_id =' . $this->event_project);
+			$q->addWhere('p.project_id =' . (int)$this->event_project);
 			$sql = $q->prepare();
 			$q->clear();
 			if (db_loadHash($sql, $prj)) {

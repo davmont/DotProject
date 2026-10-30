@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /*
 Unitcost setup file
 Written by Alejandro Imass <ait@p2ee.org>
@@ -105,20 +108,19 @@ class setup_unitcost {
     */
 
     // projects table: project target budget is now 15,2
-    $sql = "alter table projects modify column project_target_budget decimal(15,2)";
+    $sql = "alter table " . dPgetConfig('dbprefix', '') . "projects modify column project_target_budget decimal(15,2)";
     $ok = $ok && db_exec( $sql );
 
     // projects table: project actual budget is now 15,2
-    $sql = "alter table projects modify column project_actual_budget decimal(15,2)";
+    $sql = "alter table " . dPgetConfig('dbprefix', '') . "projects modify column project_actual_budget decimal(15,2)";
     $ok = $ok && db_exec( $sql );
 
     // tasks table: task target budget is now 15,2
-    $sql = "alter table tasks modify column task_target_budget decimal(15,2)";
+    $sql = "alter table " . dPgetConfig('dbprefix', '') . "tasks modify column task_target_budget decimal(15,2)";
     $ok = $ok && db_exec( $sql );
 
-    // tasks table: task percent complete is now decimal 4,2 !!!
-    $sql = "alter table tasks modify column task_percent_complete decimal(4,2)";
-    $ok = $ok && db_exec( $sql );
+    // task_percent_complete is already decimal(5,2) in the core schema; the old
+    // decimal(4,2) here could not hold 100 (see db/upgrade_latest.sql).
 
 
     if (!$ok)

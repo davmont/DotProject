@@ -3,7 +3,7 @@
     <p><?php echo $AppUI->_("LBL_COPY_FROM_TEMPLATE_HELP") ?></p>
     <form id="copy_project_form" method="post"  action="?m=dotproject_plus">
         <input name="dosql" type="hidden" value="do_copy_project" />
-        <input name="target_project_id" type="hidden" value="<?php echo $project_id ?>" />
+        <input name="target_project_id" type="hidden" value="<?php echo (int)$project_id ?>" />
         <label for="project_to_copy"><?php echo $AppUI->_("LBL_PROJECT") ?></label>:
         <?php
             $copyProjectViewHelper = new CopyProjectViewHelper();
@@ -11,7 +11,7 @@
         ?>
     </form>
 </div>
-<script>
+<script nonce="<?php echo dPcspNonce(); ?>">
     function copyProject(){
         $("#copy_project_form").submit();
     }
@@ -21,7 +21,7 @@
         width: 500,
         modal: true,
         buttons: {
-            "<?php echo $AppUI->_("LBL_COPY") ?>": copyProject,
+            "<?php echo $AppUI->_("LBL_COPY", UI_OUTPUT_JS) ?>": copyProject,
             Cancel: function () {
                 dialogCopyProject.dialog("close");
             }

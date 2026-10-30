@@ -4,7 +4,10 @@
 	if (file_exists(DP_BASE_DIR.'/modules/monitoringandcontrol/locales/'.$AppUI->user_prefs['LOCALE'].'.inc')) {
 		@readfile(DP_BASE_DIR.'/modules/monitoringandcontrol/locales/'. $AppUI->user_prefs['LOCALE'] .'.inc');
 	} 
-	eval("\$locale=array(".ob_get_contents()."\n'0');");
+	$locale = array();
+	if (dPisTranslationSource(ob_get_contents())) {
+		eval("\$locale=array(".ob_get_contents()."\n'0');");
+	}
 	ob_end_clean();
 	$trans=array();
 	foreach ($locale as $k => $v) {

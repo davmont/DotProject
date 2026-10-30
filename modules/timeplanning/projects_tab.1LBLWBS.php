@@ -9,7 +9,7 @@ $controllerWBSItem= new ControllerWBSItem();
 ?>
 <script src="./modules/timeplanning/js/eap.js"></script>
 <br>
-<?php $project_id = dPgetParam( $_GET, 'project_id', 0 );?>
+<?php $project_id = dPgetIntParam( $_GET, 'project_id', 0 );?>
 <form action="?m=timeplanning&a=view&project_id=<?php echo $project_id; ?>" method="post" name="form_eap" id="form_eap">
 	<input name="dosql" type="hidden" value="do_project_eap_aed" />
 	<input name="eap_items_ids" id="eap_items_ids" type="hidden">
@@ -20,7 +20,7 @@ $controllerWBSItem= new ControllerWBSItem();
 	<table width="70%" align="center">
 		<tr>
 			<td>
-				<input type="button" class="button" value="<?php echo $AppUI->__('LBL_ADD'); ?>" onclick=addItem('','','','');>
+				<input type="button" class="button" value="<?php echo $AppUI->__('LBL_ADD'); ?>"<?php echo dPaction('addItem', array('', '', '', '')); ?>>
 			</td>
 		</tr>
 	</table>
@@ -39,7 +39,7 @@ $controllerWBSItem= new ControllerWBSItem();
 	<table width="70%" align="center">
 		<tr>
 			<td>
-				<input type="button" class="button" onclick=saveEAP() value="<?php echo $AppUI->_('LBL_SAVE'); ?>" />
+				<input type="button" class="button"<?php echo dPaction('saveEAP'); ?> value="<?php echo $AppUI->_('LBL_SAVE'); ?>" />
 			</td>
 		</tr>
 	</table>
@@ -48,6 +48,6 @@ $controllerWBSItem= new ControllerWBSItem();
 <?php 
 	$items = $controllerWBSItem->getWBSItems($project_id);
     foreach ($items as $item) {
-		echo '<script>addItem('.$item->getId().',"'. $item->getName() .'",0,"'.$item->getIdentation().'");</script>';
+		echo '<script type="text/javascript" nonce="' . dPcspNonce() . '">addItem(' . (int)$item->getId() . ',' . dPjs($item->getName()) . ',0,' . dPjs($item->getIdentation()) . ');</script>';
     }
  ?>

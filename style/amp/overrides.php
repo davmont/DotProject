@@ -17,11 +17,9 @@ class CTitleBlock extends CTitleBlock_core {
 		}
 		if ($this->showhelp) {
 			$s .= '<td nowrap="nowrap" width="20" align="right">';
-			$s .= ("\n\t" . '<a href="#' . $this->helpref 
-			       . '" onClick="javascript:window.open(\'?m=help&amp;dialog=1&amp;hid=' 
-				   . $this->helpref 
-				   . "', 'contexthelp', 'width=400,height=400,left=50,top=50,scrollbars=yes," 
-			       . 'resizable=yes\')" title="' . $AppUI->_('Help') . '">');
+			$s .= ("\n\t" . '<a href="#' . $this->helpref . '"'
+			       . dPaction('window.open', array('?m=help&dialog=1&hid=' . $this->helpref, 'contexthelp', 'width=400,height=400,left=50,top=50,scrollbars=yes,resizable=yes'))
+			       . ' title="' . $AppUI->_('Help') . '">');
 			$s .= "\n\t\t" . dPshowImage('./images/icons/stock_help-16.png', '16', '16', 
 			                             $AppUI->_('Help'));
 			$s .= "\n\t" . '</a>';
@@ -91,29 +89,30 @@ class CTabBox extends CTabBox_core {
 			echo "</table>\n";
 		} else {
 			$s = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
-			$s .= '<tr><td><table border="0" cellpadding="0" cellspacing="0">';
+			$s .= '<tr><td><div class="tabrow">';
 			if ( count($this->tabs)-1 < $this->active ) {
 				$this->active = 0;
 			}
 			foreach( $this->tabs as $k => $v ) {
 				$class = ($k == $this->active) ? 'tabon' : 'taboff';
 				$sel = ($k == $this->active) ? 'Selected' : '';
+				$s .= '<table class="tabitem" border="0" cellpadding="0" cellspacing="0"><tr>';
 				$s .= '<td id="toptab_'.$k.'" valign="middle" nowrap="nowrap"';
 				$s .= " class=\"$class\"";
 				$s .= '>&nbsp;<a href="';
 				if ($this->javascript)
-					$s .= "javascript:" . $this->javascript . "({$this->active}, $k)";
+					$s .= '#" data-dp-call="' . htmlspecialchars($this->javascript, ENT_QUOTES) . '" data-dp-args="[' . (int)$this->active . ',' . (int)$k . ']';
 				else if  ($js_tabs)
-					$s .= 'javascript:show_tab(' . $k . ')';
+					$s .= '#" data-dp-call="show_tab" data-dp-args="[' . (int)$k . ']';
 				else
 					$s .= $this->baseHRef.'tab='.$k;
 				$s .='">'.($v[2] ? $v[1] : $AppUI->_($v[1])).'</a>&nbsp;</td>';
-				$s .= '<td width="1" class="tabsp"><img src="./images/shim.gif" height="1" width="1" /></td>';
+				$s .= '<td width="1" class="tabsp"><img src="./images/shim.gif" height="1" width="1" /></td></tr></table>';
 			}
-			$s .= '</table></td></tr>';
+			$s .= '</div></td></tr>';
 			$s .= '<tr><td width="100%" colspan="'.(count($this->tabs)*4 + 1).'" class="tabox">';
 			echo $s;
-			if ( $this->tabs[$this->active][0] != "" ) {
+			if (isset($this->tabs[$this->active]) && $this->tabs[$this->active][0] != "") {
 				$currentTabId = $this->active;
 				$currentTabName = $this->tabs[$this->active][1];
 				if (!$js_tabs)
@@ -121,16 +120,11 @@ class CTabBox extends CTabBox_core {
 			}
 			if ($js_tabs) {
 				foreach( $this->tabs as $k => $v ) {
-					echo '<div class="tab" id="tab_'.$k.'">';
+					echo '<div class="tab" id="tab_' . $k . '"' . ($k == $this->active ? '' : ' style="display:none"') . '>';
 					$currentTabId = $k;
 					$currentTabName = $v[1];
 					require $this->baseInc.$v[0].'.php';
 					echo '</div>';
-					echo '<script language="JavaScript" type="text/javascript">
-<!--
-show_tab('.$this->active.');
-//-->
-</script>';
 
 				}
 			}

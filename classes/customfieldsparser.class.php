@@ -73,7 +73,7 @@ class CustomFieldsParser{
 		$previous_data = $q->loadResult();
 		
 		if ($previous_data != '') {
-			$previous_data = unserialize($previous_data);
+			$previous_data = unserialize($previous_data, array('allowed_classes' => false));
 			$previous_data = !is_array($previous_data) ? array() : $previous_data;
 		} else {
 			$previous_data = array();
@@ -96,7 +96,7 @@ class CustomFieldsParser{
 	}
 	
 	function parseEditField($key) {
-		$field_config = unserialize($this->fields_array[$key]);
+		$field_config = unserialize($this->fields_array[$key], array('allowed_classes' => false));
 		$parsed   = '<tr id="custom_tr_' . $key . '">';
 		
 		$parsed .= $this->_getLabelHTML($field_config);
@@ -147,7 +147,7 @@ class CustomFieldsParser{
 	}
 	
 	function parseViewField($key) {
-		$field_config = unserialize($this->fields_array[$key]);
+		$field_config = unserialize($this->fields_array[$key], array('allowed_classes' => false));
 		$parsed  = ('<tr id="custom_tr_' . $key . '">');
 		$parsed .= $this->_getLabelHTML($field_config);
 		switch ($field_config['type']) {
@@ -207,7 +207,7 @@ class CustomFieldsParser{
 		}
 		
 		foreach ($this->fields_array as $key => $field) {
-			$field_config = unserialize($field);
+			$field_config = unserialize($field, array('allowed_classes' => false));
 			$fnc_name = (($edit) ? 'parseEditField' : 'parseViewField');
 			
 			if (in_array($key, $visible_keys)) {
@@ -232,7 +232,7 @@ class CustomFieldsParser{
 		}
 		
 		foreach ($this->fields_array as $key => $field) {
-			$field_config = unserialize($field);
+			$field_config = unserialize($field, array('allowed_classes' => false));
 			if ($field_config['record_type'] == $record_type 
 			    || $field_config['record_type'] == '') {
 				$this->visible_keys[$record_type][] = $key;
@@ -267,7 +267,7 @@ class CustomFieldsParser{
 	function showHideAllRowsFunction() {
 		$parsed = "function hideAllRows() {\n";
 		foreach ($this->fields_array as $key => $field_config) {
-			$field_config = unserialize($field_config);
+			$field_config = unserialize($field_config, array('allowed_classes' => false));
 			if ($field_config['record_type'] != '') {
 				$parsed .= "document.getElementById('custom_tr_$key').style.display='none';\n";
 			}

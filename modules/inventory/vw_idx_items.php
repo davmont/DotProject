@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 global $m,$df,$item_list,$sorted_item_list,$AppUI, $dPconfig;
 global $user_list, $project_list, $company_list, $department_list;
@@ -167,29 +170,25 @@ load_all_items();
 		}
 		else
 		{
-			echo $company_list[ $filter_company ][ 'company_name' ];
+			echo dPhtml( $company_list[ $filter_company ][ 'company_name' ] );
 		}
 
 	}
 	
 	if ( $filter_search )
 	{
-		echo " (search: $filter_search)";
+		echo " (search: ".dPhtml( $filter_search ).")";
 	}
 	
 	if ( $filter_search || $filter_company )
 	{
 		reset( $_GET );
 		
-		$url = "?";
-		foreach ( $_GET as $key => $value )
-		{
-			if ( $key != "clearfilter" )
-			{
-				$url .= $key."=".$value."&";
-			}
-		}
-		echo " - <a href='".$url."clearfilter=yes&'>";
+		$params = $_GET;
+		unset( $params[ "clearfilter" ] );
+		$url = "?".http_build_query( $params );
+		if ( $params ) $url .= "&";
+		echo " - <a href='".dPhtml( $url."clearfilter=yes&" )."'>";
 		echo $AppUI->_("clear filter");
 		echo "</a>";
 	}

@@ -38,14 +38,14 @@ class CLink extends CDpObject {
 		return NULL; // object is ok
 	}
 
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0) {
 		global $dPconfig;
 		$this->_message = "deleted";
 
 	// delete the main table reference
 		$q = new DBQuery();
 		$q->setDelete('links');
-		$q->addWhere('link_id = ' . $this->link_id);
+		$q->addWhere('link_id = ' . (int)$this->link_id);
 		if (!$q->exec()) {
 			return db_error();
 		}

@@ -15,10 +15,12 @@ $start_date = intval( $log_start_date ) ? new CDate( $log_start_date ) : new CDa
 $end_date = intval( $log_end_date ) ? new CDate( $log_end_date ) : new CDate();
 
 $df = $AppUI->getPref('SHDATEFORMAT');
+$dbprefix = dPgetConfig('dbprefix', '');
 if (isset( $_GET['user_id'] )) {
-	$sql = "SELECT user_contact FROM users WHERE user_id = ".$_GET['user_id'] ;
+	$_GET['user_id'] = (int)$_GET['user_id'];
+	$sql = "SELECT user_contact FROM {$dbprefix}users WHERE user_id = ".$_GET['user_id'] ;
   $user_contact = db_loadresult( $sql );
-	$sql = "SELECT contact_company FROM contacts WHERE contact_id = ".$user_contact ;
+	$sql = "SELECT contact_company FROM {$dbprefix}contacts WHERE contact_id = ".$user_contact ;
 	//print "<pre>$sql</pre>";
 
 	$company_id = db_loadResult( $sql );
@@ -27,7 +29,7 @@ if (isset( $_GET['user_id'] )) {
 	}
 	$AppUI->setState( 'TimecardSelectedUser', $_GET['user_id'] );
 }
-$user_id = $AppUI->getState( 'TimecardSelectedUser' ) ? $AppUI->getState( 'TimecardSelectedUser' ) : $AppUI->user_id;
+$user_id = (int)($AppUI->getState( 'TimecardSelectedUser' ) ? $AppUI->getState( 'TimecardSelectedUser' ) : $AppUI->user_id);
 
 $AppUI->savePlace();
 
@@ -39,13 +41,13 @@ if (!$log_start_date) {
 $end_date->setTime( 23, 59, 59 );
 
 ?>
-<script language="javascript" type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <!--
 var calendarField = '';
 
 function popCalendar( field ){
 	calendarField = field;
-	idate = eval( 'document.editFrm.log_' + field + '.value' );
+	idate = document.editFrm['log_' + field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
@@ -54,8 +56,8 @@ function popCalendar( field ){
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.editFrm.log_' + calendarField );
-	fld_fdate = eval( 'document.editFrm.' + calendarField );
+	fld_date = document.editFrm['log_' + calendarField];
+	fld_fdate = document.editFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -71,7 +73,7 @@ function setCalendar( idate, fdate ) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="log_start_date" value="<?php echo $start_date->format( FMT_TIMESTAMP_DATE );?>" />
 		<input type="text" name="start_date" value="<?php echo $end_date->format( $df );?>" class="text" disabled="disabled" style="width: 80px" />
-		<a href="#" onClick="popCalendar('start_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
@@ -79,7 +81,7 @@ function setCalendar( idate, fdate ) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="log_end_date" value="<?php echo $end_date ? $end_date->format( FMT_TIMESTAMP_DATE ) : '';?>" />
 		<input type="text" name="end_date" value="<?php echo $end_date ? $end_date->format( $df ) : '';?>" class="text" disabled="disabled" style="width: 80px"/>
-		<a href="#" onClick="popCalendar('end_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
@@ -100,7 +102,7 @@ if ($do_report) {
 
 	$sql = "SELECT task_log.*, tasks.task_id,tasks.task_name, projects.project_name
 		FROM
-			task_log, tasks, projects
+			{$dbprefix}task_log AS task_log, {$dbprefix}tasks AS tasks, {$dbprefix}projects AS projects
 		WHERE
 			task_log.task_log_task = tasks.task_id AND
 			task_log.task_log_creator =".$user_id." AND
@@ -162,13 +164,13 @@ if ($do_report) {
 				<?php echo $date->format( $df );?>
 				</td>
 				<td nowrap="nowrap" valign="top">
-				<?php echo $log['project_name'];?>
+				<?php echo dPhtml($log['project_name']);?>
 				</td>
 				<td valign="top">
-				<?php echo $taskTitle;?>
+				<?php echo dPhtml($taskTitle);?>
 				</td>
 				<td valign="top">
-				<?php echo $log['task_log_description'];?>
+				<?php echo dPhtml($log['task_log_description']);?>
 				</td>
 				<td nowrap="nowrap" valign="top">
 				<?php echo sprintf( "%.2f", $log['task_log_hours']);?>
@@ -197,20 +199,20 @@ if ($do_report) {
 <?php
 	if ($log_pdf) {
 	// make the PDF file
-		$sql = "SELECT user_contact FROM users WHERE user_id = ".$user_id ;
+		$sql = "SELECT user_contact FROM {$dbprefix}users WHERE user_id = ".$user_id ;
     $user_contact = db_loadresult( $sql );
-	  $sql = "SELECT contacts.contact_first_name FROM contacts WHERE contact_id = ".$user_contact ;
+	  $sql = "SELECT contacts.contact_first_name FROM {$dbprefix}contacts AS contacts WHERE contact_id = ".$user_contact ;
     $firstName = db_loadresult( $sql );
-	  $sql = "SELECT contacts.contact_last_name FROM contacts WHERE contact_id = ".$user_contact ;
+	  $sql = "SELECT contacts.contact_last_name FROM {$dbprefix}contacts AS contacts WHERE contact_id = ".$user_contact ;
     $lastName = db_loadresult( $sql );
 		$pname = "For user: ".$firstName." ".$lastName;
 
 		$font_dir = $dPconfig['root_dir']."/lib/ezpdf/fonts";
 		$temp_dir = $dPconfig['root_dir']."/files/temp";
 		$base_url  = $dPconfig['base_url'];
-		require( $AppUI->getLibraryClass( 'ezpdf/class.ezpdf' ) );
+		require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
-		$pdf = new Cezpdf();
+		$pdf = new DotPdf();
 		$pdf->ezSetCmMargins( 1, 1.5, 1.0, 1.0 );
 		$pdf->selectFont( "$font_dir/Helvetica.afm" );
 
@@ -243,7 +245,7 @@ if ($do_report) {
 		if ($fp = fopen( "$temp_dir/temp$AppUI->user_id.pdf", 'wb' )) {
 			fwrite( $fp, $pdf->ezOutput() );
 			fclose( $fp );
-			echo "<a href=\"$base_url/files/temp/temp$AppUI->user_id.pdf\" target=\"pdf\">";
+			echo "<a href=\"$base_url/fileviewer.php?report=pdf\" target=\"pdf\">";
 			echo $AppUI->_( "View PDF File" );
 			echo "</a>";
 		} else {

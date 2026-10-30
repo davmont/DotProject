@@ -8,7 +8,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_qu
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 header("Content-Type:text/html; charset=iso-8859-1",true);
 $AppUI->savePlace();
-$task_id = dPgetParam( $_GET, 'task_id', 0 );
+$task_id = dPgetIntParam( $_GET, 'task_id', 0 );
 $controllerQuality = new ControllerQuality();
 $controllerUtil = new ControllerUtil();
 
@@ -42,26 +42,26 @@ $lstUser  = $controllerUtil-> getUsers();
 					//   ' quality_id, quality_type_id, quality_description, quality_status_id, quality_date_end, task_id, user_id  '	
 				?>										
 					<tr>
-						<td><?php  echo  $controllerQuality -> getTypeName($q_rec[quality_type_id]); ?> </td>
-						<td> <?php  echo $q_rec[quality_description]; ?> </td>
+						<td><?php  echo  dPhtml($controllerQuality -> getTypeName($q_rec['quality_type_id'])); ?> </td>
+						<td> <?php  echo dPhtml($q_rec['quality_description']); ?> </td>
 						
-						<td> <?php  echo  $controllerQuality -> getStatusName( $q_rec[quality_status_id]); ?> </td>
-						<td> <?php  echo  $controllerUtil -> formatDate($q_rec[quality_date_end]); ?> </td>
+						<td> <?php  echo  dPhtml($controllerQuality -> getStatusName( $q_rec['quality_status_id'])); ?> </td>
+						<td> <?php  echo  dPhtml($controllerUtil -> formatDate($q_rec['quality_date_end'])); ?> </td>
                         <td align="center">
                                 <form name="form_update" method="post" action="" enctype="multipart/form-data" >
 								     <?php  $id =  $q_rec[0];  ?>                          
                                  <input  type="hidden" name="acao" value="update"  />
-                                <input  type="hidden" name="quality_id" value="<?php echo $id ;?>"  />
-								<input name="task_id" type="hidden" id="task_id" value="<?php echo $task_id; ?>">
-                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar" onclick="updateRow();"  />   
+                                <input  type="hidden" name="quality_id" value="<?php echo (int)$id ;?>"  />
+								<input name="task_id" type="hidden" id="task_id" value="<?php echo (int)$task_id; ?>">
+                                <input  type="image" alt="./images/icons/pencil.gif" src="./images/icons/pencil.gif" title="Editar" name="editar" value="editar"<?php echo dPaction('updateRow'); ?>  />   
                               </form>
                         </td>                       <td align="center">
-                              <form name="form_delete" method="post" action="?m=monitoringandcontrol&a=do_quality_aed&task_id=<?php echo $task_id; ?>" enctype="multipart/form-data" >
+                              <form name="form_delete" method="post" action="?m=monitoringandcontrol&a=do_quality_aed&task_id=<?php echo (int)$task_id; ?>" enctype="multipart/form-data" >
 								<input name="dosql" type="hidden" value="do_quality_aed" />	                              
                                 <input  type="hidden" name="acao" value="delete"  />
-                                <input  type="hidden" name="quality_id" value="<?php echo $q_rec[0] ;?>"  />
-								<input name="task_id" type="hidden" id="task_id" value="<?php echo $task_id; ?>">
-                                <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar" onclick="deleteRow();"  />
+                                <input  type="hidden" name="quality_id" value="<?php echo (int)$q_rec[0] ;?>"  />
+								<input name="task_id" type="hidden" id="task_id" value="<?php echo (int)$task_id; ?>">
+                                <input  type="image" alt="./images/icons/stock_delete-16.png" src="./images/icons/stock_delete-16.png" title="Deletar" name="deletar" value="deletar"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('doDelete', UI_OUTPUT_RAW) . '?')); ?>  />
                                 </form>                                
                         </td>
 				        </tr>						
@@ -71,12 +71,12 @@ $lstUser  = $controllerUtil-> getUsers();
 <!-- ***************** UPDATE  ****************************-->		
 <?php
 		if (isset($_POST['acao']) &&  $_POST['acao'] == 'update'){
-		 $id= $_POST['quality_id'];
+		 $id= dPgetIntParam($_POST, 'quality_id');
 	?>	
-    <form action="?m=monitoringandcontrol&a=do_quality_aed&task_id=<?php echo $task_id; ?>" method="post" name="form_updateRow" id="form_updateRow" enctype="multipart/form-data">
+    <form action="?m=monitoringandcontrol&a=do_quality_aed&task_id=<?php echo (int)$task_id; ?>" method="post" name="form_updateRow" id="form_updateRow" enctype="multipart/form-data">
     	<input name="dosql" type="hidden" value="do_quality_aed" />		
-	<input name="task_id" type="hidden" id="task_id" value="<?php echo $task_id; ?>">
-    <input  type="hidden" name="quality_id" value="<?php echo $id; ?>"  />
+	<input name="task_id" type="hidden" id="task_id" value="<?php echo (int)$task_id; ?>">
+    <input  type="hidden" name="quality_id" value="<?php echo (int)$id; ?>"  />
     <input  type="hidden" name="acao" value="updateRow"  />
 	<br/>
 	<table width="70%" align="center">
@@ -112,9 +112,9 @@ $lstUser  = $controllerUtil-> getUsers();
 						
 					     foreach($lstType as $t_list){
 							  if ($q_row[1]==$t_list[0]){								 
-							  echo "<option value=' $q_row[1] ' selected>".$controllerQuality -> getTypeName($q_row[1])."</option>";			 
+							  echo "<option value=' " . (int)$q_row[1] . " ' selected>".dPhtml($controllerQuality -> getTypeName($q_row[1]))."</option>";			 
 							 }else {
-							  echo "<option value=' $t_list[0]'>$t_list[1]</option>";	
+							  echo "<option value=' " . (int)$t_list[0] . "'>" . dPhtml($t_list[1]) . "</option>";	
 							}					 
 						}
 			    ?>  
@@ -123,7 +123,7 @@ $lstUser  = $controllerUtil-> getUsers();
                     </td>
                 
 			    <td>               
-            			<input type="text" name="description" id="description" size="50"  value=" <?php echo $q_row[2];  ?>" />
+            			<input type="text" name="description" id="description" size="50"  value=" <?php echo dPhtml($q_row[2]);  ?>" />
                 </td>
        
           		<td>  
@@ -132,9 +132,9 @@ $lstUser  = $controllerUtil-> getUsers();
                 <?php
 					     foreach($lstStatus as $s_row){
 							  if ($q_row[4]==$s_row[0]){								 
-							  echo "<option value=' $q_row[4] ' selected>".$controllerQuality -> getStatusName($q_row[4])."</option>";			 
+							  echo "<option value=' " . (int)$q_row[4] . " ' selected>".dPhtml($controllerQuality -> getStatusName($q_row[4]))."</option>";			 
 							 }else {
-							  echo "<option value=' $s_row[0]'>$s_row[1]</option>";	
+							  echo "<option value=' " . (int)$s_row[0] . "'>" . dPhtml($s_row[1]) . "</option>";	
 							}					 
 						}
 			    ?>  
@@ -142,15 +142,15 @@ $lstUser  = $controllerUtil-> getUsers();
 			    
                </td>      
           		<td>  
-				   <input type="text" class="text"  name="date_end"  id="date_edit" maxlength="10" value="<?php echo $dt_end; ?>" onkeyup="formatadata(this,event)"/>
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)"  />     
+				   <input type="text" class="text"  name="date_end"  id="date_edit" maxlength="10" value="<?php echo dPhtml($dt_end); ?>" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?>/>
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?>  />     
                </td>  
 		</tr>        
 	</table>
 	<table width="70%" align="center">
 		<tr>
 			<td>				
-				<input type="submit" class="button"  onclick="return validateUpdateFields();" value="Atualizar"   />
+				<input type="submit" class="button" <?php echo dPaction('validateUpdateFields'); ?> value="Atualizar"   />
 			</td>
 		</tr>
 	</table>
@@ -158,9 +158,9 @@ $lstUser  = $controllerUtil-> getUsers();
     	
 <?php		}else{ 	?>
 <!-- ***************** ADD  ****************************-->	
-    <form action="?m=monitoringandcontrol&a=do_quality_aed&task_id=<?php echo $task_id; ?>" method="post" name="form_resp" id="form_resp" enctype="multipart/form-data">
+    <form action="?m=monitoringandcontrol&a=do_quality_aed&task_id=<?php echo (int)$task_id; ?>" method="post" name="form_resp" id="form_resp" enctype="multipart/form-data">
 	<input name="dosql" type="hidden" value="do_quality_aed" />		
-	<input name="task_id" type="hidden" id="task_id" value="<?php echo $task_id; ?>">
+	<input name="task_id" type="hidden" id="task_id" value="<?php echo (int)$task_id; ?>">
     <input  type="hidden" name="acao" value="insert"  />
 	<br/>
     <?php    // TESTES //
@@ -188,7 +188,7 @@ $lstUser  = $controllerUtil-> getUsers();
 						<option value="0" ><?php echo $AppUI->_('LBL_SELECIONE');?>...</option>       
                 <?php
 					     foreach($lstType as $list){
-							echo  "<option value='$list[quality_type_id]' >$list[quality_type_name]</option>";		
+							echo  "<option value='" . (int)$list['quality_type_id'] . "' >" . dPhtml($list['quality_type_name']) . "</option>";		
 						}
 			    ?>  
                  </select>  
@@ -204,22 +204,22 @@ $lstUser  = $controllerUtil-> getUsers();
                     <?php
 						
 					     foreach($lstStatus as $status){
-							echo  "<option value='$status[quality_status_id]' >$status[quality_status_name]</option>";		
+							echo  "<option value='" . (int)$status['quality_status_id'] . "' >" . dPhtml($status['quality_status_name']) . "</option>";		
 						}
 					?>
                     </select>
 			    
                </td>      
           		<td>  
-				   <input type="text" class="text"  name="date_end"  id="date_edit" maxlength="10" onkeyup="formatadata(this,event)" />
-				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)" />     
+				   <input type="text" class="text"  name="date_end"  id="date_edit" maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup'); ?> />
+				   <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />     
                </td>  
 		</tr>        
 	</table>
 	<table width="70%" align="center">
 		<tr>
 			<td>				
-				<input type="submit" class="button" onClick=" return validateQualityFields();" value="Save" />
+				<input type="submit" class="button"<?php echo dPaction('validateQualityFields'); ?> value="Save" />
 			</td>
 		</tr>
 	</table>

@@ -8,7 +8,7 @@ if (!defined('DP_BASE_DIR')) {
 ##
 global $AppUI, $company_id, $pstatus, $dPconfig;
 
-$sort = dPgetCleanParam($_GET, 'sort', 'project_name');
+$sort = dPvalidateOrder(dPgetCleanParam($_GET, 'sort', 'project_name'), array('project_name', 'project_priority'), 'project_name');
 if ($sort == 'project_priority') {
         $sort .= ' DESC';
 }
@@ -21,7 +21,7 @@ $q->addQuery('project_id, project_name, project_start_date, project_status, proj
 			 . ', project_start_date, project_priority, contact_first_name, contact_last_name');
 $q->addJoin('users', 'u', 'u.user_id = prj.project_owner');
 $q->addJoin('contacts', 'con', 'u.user_contact = con.contact_id');
-$q->addWhere('prj.project_company = ' . $company_id);
+$q->addWhere('prj.project_company = ' . (int)$company_id);
 
 include_once ($AppUI->getModuleClass('projects'));
 $projObj = new CProject();
@@ -38,9 +38,9 @@ if (!($rows = $q->loadList())) {
 	$s .= '<tr><td>'.$AppUI->_('No data available').'<br />'.$AppUI->getMsg().'</td></tr>';
 } else {
 	$s .= '<tr>';
-	$s .= '<th><a style="color:white" href="?m=companies&amp;a=view&amp;company_id='.$company_id.'&amp;sort=project_priority">'
+	$s .= '<th><a class="hdr" href="?m=companies&amp;a=view&amp;company_id='.$company_id.'&amp;sort=project_priority">'
 			.$AppUI->_('P').'</a></th>'
-			.'<th><a style="color:white" href="?m=companies&amp;a=view&amp;company_id='.$company_id.'&amp;sort=project_name">'
+			.'<th><a class="hdr" href="?m=companies&amp;a=view&amp;company_id='.$company_id.'&amp;sort=project_name">'
 			.$AppUI->_('Name').'</a></th>'
 		.'<th>'.$AppUI->_('Owner').'</th>'
 		.'<th>'.$AppUI->_('Started').'</th>'

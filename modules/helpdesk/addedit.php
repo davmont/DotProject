@@ -5,7 +5,7 @@ if (!defined('DP_BASE_DIR')){
 
 global $HELPDESK_CONFIG;
 
-$item_id = dPgetParam($_GET, 'item_id', 0);
+$item_id = dPgetIntParam($_GET, 'item_id', 0);
 
 $allowedCompanies = arrayMerge( array( 0 => '' ), getAllowedCompanies() );
 
@@ -14,7 +14,7 @@ $projects = getAllowedProjectsForJavascript(1);
 // by ig.moon 2/16/2010
  if($projects=="") { 
       ?>
-        <script language='javascript'>
+        <script language='javascript' nonce="<?php echo dPcspNonce(); ?>">
             alert('Can not find the list for allowed projects!');
         </script>
       <?php
@@ -29,7 +29,6 @@ $q->addWhere('billingcode_status=0');
 
 $task_log_costcodes[0]=$AppUI->_('None');
 $ptrc = $q->exec();
-echo db_error();
 $nums = 0;
 if ($ptrc)
 	$nums=db_num_rows($ptrc);
@@ -38,6 +37,12 @@ for ($x=0; $x < $nums; $x++) {
         $task_log_costcodes[$row["billingcode_id"]] = $row["billingcode_name"];
 }
 */
+// Values a new item may be preset with (from the query string, see below).
+$hditem = array();
+$item_calltype = $item_status = $item_priority = $item_severity = $item_source = 0;
+$item_os = $item_application = $item_requestor = 0;
+$project_id = $company_id = $assigned_to = 0;
+
 // Pull data if editing an existing item
 if ($item_id) {
 	$q = new DBQuery;
@@ -46,6 +51,11 @@ if ($item_id) {
 	$q->addWhere('item_id = \''.$item_id."'");
 	$hditem = $q->loadHash();
 	$q->clear();
+	if (!$hditem) {
+		$AppUI->setMsg('Help Desk Item', UI_MSG_ERROR);
+		$AppUI->setMsg('not found', UI_MSG_ERROR, true);
+		$AppUI->redirect('m=helpdesk');
+	}
 }
 //echo "\n<br />HDITEM: ";
 //var_dump($hditem);
@@ -59,10 +69,10 @@ if ( (!$hditem) && (count($_GET) > 3) && (!$item_id) ) {
 	$item_source = dPgetParam($_GET, 'item_source', 0);
 	$item_os = dPgetParam($_GET, 'item_os', 0);
 	$item_application = dPgetParam($_GET, 'item_application', 0);
-	$project_id = dPgetParam($_GET, 'project', 0);
-	$company_id = dPgetParam($_GET, 'company', 0);
-	$assigned_to = dPgetParam($_GET, 'assigned_to', 0);
-	$requestor = dPgetParam($_GET, 'requestor', 0);
+	$project_id = dPgetIntParam($_GET, 'project', 0);
+	$company_id = dPgetIntParam($_GET, 'company', 0);
+	$assigned_to = dPgetIntParam($_GET, 'assigned_to', 0);
+	$item_requestor = dPgetParam($_GET, 'requestor', 0);
 }
 
 // Check permissions for this record
@@ -260,13 +270,13 @@ function getRequestorInfo($requser, $usertype, $datatype) {
 		$q->addQuery('u.user_id as id');
 		$q->addJoin('contacts','c','u.user_contact = c.contact_id');
 		$q->addQuery("c.contact_email as email, c.contact_phone as phone, CONCAT(c.contact_first_name,' ', c.contact_last_name) as name");
-		$q->addWhere('u.user_id='.$requser);
+		$q->addWhere('u.user_id=' . (int)$requser);
         	break;
 	  case 2:
 		$q = new DBQuery();
 		$q->addTable('contacts','c');
 		$q->addQuery("c.contact_email as email, c.contact_phone as phone, CONCAT(c.contact_first_name,' ', c.contact_last_name) as name");
-		$q->addWhere('contact_id='.$requser);
+		$q->addWhere('contact_id=' . (int)$requser);
 		break;
 	  default:
 		break;
@@ -282,7 +292,7 @@ function getRequestorInfo($requser, $usertype, $datatype) {
 ?>
 <html>
 
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function checkRequestorType() {
 	var f = document.frmHelpDeskItem;
 	if ( f.item_requestor_type.value != 0 ) {
@@ -292,6 +302,24 @@ function checkRequestorType() {
 	    document.getElementById("ire").disabled=false;
 	    document.getElementById("irp").disabled=false;
 	}
+}
+
+// The requestor was typed in by hand: it no longer refers to a user or contact.
+function requestorChanged(field) {
+  if (field.value != oldRequestor) {
+    document.frmHelpDeskItem.item_requestor_id.value = 0;
+    document.frmHelpDeskItem.item_requestor_type.value = 0;
+    checkRequestorType();
+  }
+}
+
+function companyChanged(list) {
+  changeList('item_project_id', projects, list.options[list.selectedIndex].value);
+}
+
+function clearDeadline() {
+  document.frmHelpDeskItem.deadline.value = "N/A";
+  document.frmHelpDeskItem.item_deadline.value = "N/A";
 }
 
 function submitIt() {
@@ -335,7 +363,7 @@ function submitIt() {
 function popUserDialog() {
 //	var target='./index.php?m=helpdesk&a=selector&callback=setUserRequestor&table=users&dialog=1';
 //TODO: FIX UPDATE - FIXED?  Test with a null company
-	var target='./index.php?m=helpdesk&a=selector&callback=setUserRequestor&table=users&dialog=1&comp=<?php echo $compId; ?>';
+	var target='./index.php?m=helpdesk&a=selector&callback=setUserRequestor&table=users&dialog=1&comp=<?php echo (int)$compId; ?>';
 	window.open(target, 'selector', 'left=50,top=50,height=400,width=400,resizable,scrollbars=yes');
 }
 
@@ -345,7 +373,7 @@ function popContactDialog() {
 }
 
 function popClientContactDialog() {
-	var target='./index.php?m=helpdesk&a=selector&callback=setContactRequestor&table=contacts&dialog=1&comp=<?php echo $compId; ?>';
+	var target='./index.php?m=helpdesk&a=selector&callback=setContactRequestor&table=contacts&dialog=1&comp=<?php echo (int)$compId; ?>';
 	window.open(target, 'selector', 'left=50,top=50,height=300,width=400,resizable,scrollbars=yes');
 }
 
@@ -376,8 +404,6 @@ function setUserRequestor( key, val ) {
     document.getElementById("ire").disabled=true;
     document.getElementById("irp").disabled=true;
 // Always pulls the values when page was loaded		TODO: Fix it & remove workaround below
-//    document.getElementById("ire").value = "<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 1); ?>";
-//    document.getElementById("irp").value = "<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 2); ?>";
     document.getElementById("ire").value = "Filled upon submission"
     document.getElementById("irp").value = "Filled upon submission"
   }
@@ -392,8 +418,6 @@ function setContactRequestor( key, val ) {
     document.getElementById("ire").disabled=true;
     document.getElementById("irp").disabled=true;
 // Always pulls the values when page was loaded		TODO: Fix it & remove workaround below
-//    document.getElementById("ire").value = "<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 1); ?>";
-//    document.getElementById("irp").value = "<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 2); ?>";
     document.getElementById("ire").value = "Filled upon submission"
     document.getElementById("irp").value = "Filled upon submission"
   }
@@ -403,8 +427,8 @@ function updateStatus(obj){
   var f = document.frmHelpDeskItem;
   
   if(obj.options[obj.selectedIndex].value>0){
-    if(f.item_status.selectedIndex <= <?php echo $HELPDESK_CONFIG['assigned_status_id']?>){
-    	f.item_status.selectedIndex = <?php echo $HELPDESK_CONFIG['assigned_status_id']?>;
+    if(f.item_status.selectedIndex <= <?php echo (int)$HELPDESK_CONFIG['assigned_status_id']?>){
+    	f.item_status.selectedIndex = <?php echo (int)$HELPDESK_CONFIG['assigned_status_id']?>;
     }
   } else {
     f.item_status.selectedIndex=0;
@@ -453,7 +477,7 @@ function addToList( list, text, value ) {
 
 function changeList( listName, source, target ) {
   var f = document.frmHelpDeskItem;
-  var list = eval( "f."+listName );
+  var list = f.elements[listName];
   // Clear the options
   emptyList( list );
   // Refill the list based on the target
@@ -470,7 +494,7 @@ function changeList( listName, source, target ) {
 // Select an item in the list by target value
 function selectList( listName, target ) {
   var f = document.frmHelpDeskItem;
-  var list = eval( 'f.'+listName );
+  var list = f.elements[listName];
 
   for (var i=0, n = list.options.length; i < n; i++) {
     if( list.options[i].value == target ) {
@@ -483,69 +507,20 @@ function selectList( listName, target ) {
 				  
 </script>
 
-<!-- TIMER RELATED SCRIPTS -->
-<script language="JavaScript">
-	// please keep these lines on when you copy the source
-	// made by: Nicolas - http://www.javascript-page.com
-	// adapted by: Juan Carlos Gonzalez jcgonz@users.sourceforge.net
-	
-	var timerID       = 0;
-	var tStart        = null;
-	var total_minutes = -1;
-	
-	function UpdateTimer() {
-		if(timerID) {
-			clearTimeout(timerID);
-			clockID  = 0;
-		}
-		// One minute has passed
-		total_minutes = total_minutes+1;
-	   
-		document.getElementById("timerStatus").innerHTML = "( "+total_minutes+" <?php echo $AppUI->_('minutes elapsed'); ?> )";
-
-		// Lets round hours to two decimals
-		var total_hours   = Math.round( (total_minutes / 60) * 100) / 100;
-		document.frmHelpDeskItem.task_log_hours.value = total_hours;
-	   	timerID = setTimeout("UpdateTimer()", 60000);
-	}
-	
-	function timerStart() {
-		if(!timerID) { // this means that it needs to be started
-			document.frmHelpDeskItem.timerStartStopButton.value = "<?php echo $AppUI->_('Stop');?>";
-			total_minutes = Math.round(document.frmHelpDeskItem.task_log_hours.value*60) - 1;
-			UpdateTimer();
-		} else { // timer must be stoped
-			document.frmHelpDeskItem.timerStartStopButton.value = "<?php echo $AppUI->_('Start');?>";
-			document.getElementById("timerStatus").innerHTML = "";
-			timerStop();
-		}
-	}
-	
-	function timerStop() {
-		if(timerID) {
-			clearTimeout(timerID);
-			timerID  = 0;
-			total_minutes = total_minutes-1;
-		}
-	}
-	
-	function timerReset() {
-		document.frmHelpDeskItem.task_log_hours.value = "0.00";
-		total_minutes = -1;
-	}
-	
+<!-- CALENDAR SCRIPTS -->
+<script language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
 	function popCalendar(now, field, cdate ){
 		calendarField = field;
 		if(now==0)// if the deadline is already specified
-			idate = eval( 'document.frmHelpDeskItem.item_' + field + '.value' );
+			idate = document.frmHelpDeskItem.elements['item_' + field].value;
 		else  // if there is no deadline
 			idate = cdate;
 		window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=270,height=250,scollbars=false' );
 	}
      
 	function setCalendar( idate, fdate ) {
-		fld_date = eval( 'document.frmHelpDeskItem.item_' + calendarField );
-		fld_fdate = eval( 'document.frmHelpDeskItem.' + calendarField );
+		fld_date = document.frmHelpDeskItem.elements['item_' + calendarField];
+		fld_fdate = document.frmHelpDeskItem.elements[calendarField];
 		if (idate=="") {
 			fld_date.value = "N/A"; 
 			fld_fdate.value = "N/A";
@@ -556,7 +531,7 @@ function selectList( listName, target ) {
 	}
      
 </script>
-<!-- END OF TIMER RELATED SCRIPTS -->
+<!-- END OF CALENDAR SCRIPTS -->
 <table cellspacing="1" cellpadding="1" border="0" width="100%" class="std">
   <form name="frmHelpDeskItem" action="?m=helpdesk" method="post">
   <input type="hidden" name="dosql" value="do_item_aed" />
@@ -582,45 +557,35 @@ function selectList( listName, target ) {
 
       <td align="right"><font color="red"><label for="it">* <?php echo $AppUI->_('Title'); ?>:</label></font></td>
       <td valign="top"><input type="text" class="text" id="it" name="item_title"
-                              value="<?php echo @$hditem["item_title"]; ?>" maxlength="64" /></td>
+                              value="<?php echo dPhtml(@$hditem["item_title"]); ?>" maxlength="64" /></td>
     </tr>
 
     <tr>
       <td align="right" nowrap="nowrap"><font color="red"><label for="ir">* <?php echo $AppUI->_('Requestor'); ?>:</label></font></td>
       <td valign="top" nowrap="nowrap">
         <input type="text" class="text" id="ir" name="item_requestor"
-        value="<?php echo @$hditem["item_requestor"]; ?>" maxlength="64"
-	onClick="checkRequestorType();"
-        onChange="if (this.value!=oldRequestor) {
-                    document.frmHelpDeskItem.item_requestor_id.value = 0;
-                    document.frmHelpDeskItem.item_requestor_type.value = 0;
-                    checkRequestorType();
-                  }" />
+        value="<?php echo dPhtml(@$hditem["item_requestor"]); ?>" maxlength="64"
+	<?php echo dPaction(null, array(), 'click change', array('call-click' => 'checkRequestorType',
+		'call-change' => 'requestorChanged', 'args-change' => json_encode(array('$this')))); ?> />
 <?php if ($is_client==0) { ?>
       <input type="button" class="button" 
-      		value="<?php echo $AppUI->_('Users'); ?>" onclick="popUserDialog();" />
+      		value="<?php echo $AppUI->_('Users'); ?>"<?php echo dPaction('popUserDialog'); ?> />
 <?php } ?>
       <input type="button" class="button" alt="Choose from Contacts"
-		value="<?php
-			echo $AppUI->_('Contacts').'" ';
-			if ($is_client==1) {
-				echo 'onclick="popClientContactDialog()';
-			} else {
-				echo 'onclick="popContactDialog()';
-			}
-			?>;" />
+		value="<?php echo $AppUI->_('Contacts'); ?>"<?php
+			echo dPaction($is_client == 1 ? 'popClientContactDialog' : 'popContactDialog'); ?> />
       </td>
     </tr>
 
     <tr>
       <td align="right" nowrap="nowrap"><label for="ire">&dagger; <?php echo $AppUI->_('Requestor E-mail'); ?>:</label></td>
       <td valign="top"><input type="text" class="text" id="ire"
-	                      onClick="checkRequestorType();"
-      <?php if ($hditem["item_requestor_type"]!=0): ?>
+	                      <?php echo dPaction('checkRequestorType'); ?>
+      <?php if (!empty($hditem["item_requestor_type"])): ?>
                               disabled="disabled"
-                              value="<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 1); ?>"
+                              value="<?php echo dPhtml(getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 1)); ?>"
       <?php else: ?>
-                              value="<?php echo @$hditem["item_requestor_email"]; ?>"
+                              value="<?php echo dPhtml(@$hditem["item_requestor_email"]); ?>"
       <?php endif; ?>
                               name="item_requestor_email"
                               maxlength="64" /></td>
@@ -629,19 +594,19 @@ function selectList( listName, target ) {
     <tr>
       <td align="right" nowrap="nowrap"><label for="irp">&dagger; <?php echo $AppUI->_('Requestor Phone'); ?>:</label></td>
       <td valign="top"><input type="text" class="text" id="irp"
-                              onClick="checkRequestorType();"
-      <?php if ($hditem["item_requestor_type"]!=0): ?>
+                              <?php echo dPaction('checkRequestorType'); ?>
+      <?php if (!empty($hditem["item_requestor_type"])): ?>
                               disabled="disabled"
-                              value="<?php echo getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 2); ?>"
+                              value="<?php echo dPhtml(getRequestorInfo($hditem["item_requestor_id"], $hditem["item_requestor_type"], 2)); ?>"
       <?php endif; ?>
                               name="item_requestor_phone"
-                              value="<?php echo @$hditem["item_requestor_phone"]; ?>"
+                              value="<?php echo dPhtml(@$hditem["item_requestor_phone"]); ?>"
                               maxlength="30" /></td>
     </tr>
 
     <tr>
       <td align="right"><label for="c"><?php echo $AppUI->_('Company'); ?>:</label></td>
-      <td><?php echo arraySelect( $allowedCompanies, 'item_company_id', 'size="1" class="text" id="c" onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value)"',
+      <td><?php echo arraySelect( $allowedCompanies, 'item_company_id', 'size="1" class="text" id="c"' . dPaction('companyChanged', array('$this')),
                           @$hditem["item_company_id"] ); ?></td>
     </tr>
 
@@ -654,9 +619,9 @@ function selectList( listName, target ) {
       <td align="right" valign="top"><label for="iat"><?php echo $AppUI->_('Assigned To'); ?>:</label></td>
       <td><?php 
           if($is_client)
-            echo arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" disabled onchange="updateStatus(this)"', @$hditem["item_assigned_to"] ); 
+            echo arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" disabled' . dPaction('updateStatus', array('$this')), @$hditem["item_assigned_to"] ); 
           else
-            echo arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat" onchange="updateStatus(this)"', @$hditem["item_assigned_to"] );
+            echo arraySelect( arrayMerge( array( 0 => '' ), $users), 'item_assigned_to', 'size="1" class="text" id="iat"' . dPaction('updateStatus', array('$this')), @$hditem["item_assigned_to"] );
           ?>
         <!--
 	<br />Send email notification to:<br />  
@@ -777,13 +742,13 @@ function selectList( listName, target ) {
      	    <a href="#"<?php
 		if($item_id && $hditem['item_deadline']!=NULL && !strcmp($hditem['item_deadline'],"0000-00-00 00:00:00")==0
 								&& !strcmp($hditem['item_deadline'],"N/A")==0) {
-			 echo "onClick=\"popCalendar(0,'deadline','".$deadline_date->format( FMT_DATETIME_MYSQL)."')\"";
+			 echo dPaction('popCalendar', array(0, 'deadline', $deadline_date->format(FMT_DATETIME_MYSQL)));
 		 } else {
-			 echo "onClick=\"popCalendar(1,'deadline','')\"";
+			 echo dPaction('popCalendar', array(1, 'deadline', ''));
 		 }
 		?>
             ><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar'); ?>" border="0" /></a>
-     	    &nbsp;&nbsp;&nbsp;<a href="#" title="<?php echo $AppUI->_('Clear Deadline'); ?>" onClick='document.frmHelpDeskItem.deadline.value = "N/A"; document.frmHelpDeskItem.item_deadline.value = "N/A";' ><font color="red"><?php echo $AppUI->_('Clear'); ?></font></a>
+     	    &nbsp;&nbsp;&nbsp;<a href="#" title="<?php echo $AppUI->_('Clear Deadline'); ?>"<?php echo dPaction('clearDeadline'); ?>><font color="red"><?php echo $AppUI->_('Clear'); ?></font></a>
       </td>
 																      
     </tr>
@@ -803,7 +768,7 @@ function selectList( listName, target ) {
 <tr>
   <td valign="top">
     <textarea id="summary" cols="75" rows="12" class="textarea"
-              name="item_summary"><?php echo @$hditem["item_summary"]; ?></textarea>
+              name="item_summary"><?php echo dPhtml(@$hditem["item_summary"]); ?></textarea>
   </td>
   <td>&nbsp;&nbsp;</td>
       <td>
@@ -814,13 +779,13 @@ function selectList( listName, target ) {
       >
       <?php
 	      foreach($users as $id => $name){
-		echo "<option value=\"{$id}\"";
+		echo "<option value=\"".dPhtml($id)."\"";
     // Two situations -- KZHAO
 		if($item_id && array_key_exists($id,$watchers))
 			echo " selected";
     elseif(!$item_id && $watchers && in_array($id, $watchers))
       echo " selected";
-		echo ">{$name}</option>";
+		echo ">".dPhtml($name)."</option>";
 	      }
       ?></select>
       <input type="hidden" name="watchers" value="" /></td>
@@ -843,9 +808,9 @@ function selectList( listName, target ) {
 </tr>
 
 <tr>
-  <td><input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button" onClick="javascript:history.back(-1);" />
+  <td><input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button"<?php echo dPaction('history.back'); ?> />
   </td>
-  <td align="right"><input type="button" value="<?php echo $AppUI->_('submit'); ?>" class="button" onClick='submitIt()' >
+  <td align="right"><input type="button" value="<?php echo $AppUI->_('submit'); ?>" class="button"<?php echo dPaction('submitIt'); ?> />
   </td>
 </tr>
 
@@ -870,9 +835,9 @@ function selectList( listName, target ) {
   $select = @$hditem['item_project_id'] ? $hditem['item_project_id'] : 0;
 ?>
 
-<script language="javascript">
-selectList('item_company_id',<?php echo $target?>);
-changeList('item_project_id', projects, <?php echo $target?>);
-selectList('item_project_id',<?php echo $select?>);
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
+selectList('item_company_id',<?php echo (int)$target?>);
+changeList('item_project_id', projects, <?php echo (int)$target?>);
+selectList('item_project_id',<?php echo (int)$select?>);
 </script>
 </html>

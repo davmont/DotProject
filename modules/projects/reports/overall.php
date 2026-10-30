@@ -9,8 +9,9 @@ if (!defined('DP_BASE_DIR')) {
 $do_report = dPgetParam($_POST, "do_report", 0);
 $log_pdf = (int)dPgetParam($_POST, 'log_pdf', 0);
 
-$log_start_date = dPgetCleanParam($_POST, "log_start_date", 0);
-$log_end_date = dPgetCleanParam($_POST, "log_end_date", 0);
+// Dates are YYYYMMDD numbers compared in SQL.
+$log_start_date = dPgetIntParam($_POST, "log_start_date", 0);
+$log_end_date = dPgetIntParam($_POST, "log_end_date", 0);
 $log_all = (int)dPgetParam($_POST, 'log_all', 0);
 
 // create Date objects from the datetime fields
@@ -24,12 +25,12 @@ $end_date->setTime(23, 59, 59);
 
 $fullaccess = ($AppUI->user_type == 1);
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 
 function popCalendar(field) {
 	calendarField = field;
-	idate = eval('document.editFrm.log_' + field + '.value');
+	idate = document.editFrm['log_' + field].value;
 	window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=250, height=220, scrollbars=no, status=no');
 }
 
@@ -38,8 +39,8 @@ function popCalendar(field) {
  *	@param string Formatted date
  */
 function setCalendar(idate, fdate) {
-	fld_date = eval('document.editFrm.log_' + calendarField);
-	fld_fdate = eval('document.editFrm.' + calendarField);
+	fld_date = document.editFrm['log_' + calendarField];
+	fld_fdate = document.editFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -49,14 +50,14 @@ function setCalendar(idate, fdate) {
 
 <form name="editFrm" action="index.php?m=projects&a=reports" method="post">
 <input type="hidden" name="project_id" value="<?php echo $project_id;?>" />
-<input type="hidden" name="report_type" value="<?php echo $report_type;?>" />
+<input type="hidden" name="report_type" value="<?php echo htmlspecialchars((string)$report_type, ENT_QUOTES); ?>" />
 
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('For period');?>:</td>
 	<td nowrap="nowrap">
 		<input type="hidden" name="log_start_date" value="<?php echo $start_date->format(FMT_TIMESTAMP_DATE);?>" />
 		<input type="text" name="start_date" value="<?php echo $start_date->format($df);?>" class="text" disabled="disabled" style="width: 80px" />
-		<a href="#" onclick="javascript:popCalendar('start_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
@@ -64,7 +65,7 @@ function setCalendar(idate, fdate) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="log_end_date" value="<?php echo $end_date ? $end_date->format(FMT_TIMESTAMP_DATE) : '';?>" />
 		<input type="text" name="end_date" value="<?php echo $end_date ? $end_date->format($df) : '';?>" class="text" disabled="disabled" style="width: 80px"/>
-		<a href="#" onclick="javascript:popCalendar('end_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
@@ -103,7 +104,6 @@ function showcompany($company, $restricted = false)
         $company_billingcodes=NULL;
         $ptrc=db_exec($sql);
         $nums=db_num_rows($ptrc);
-        echo db_error();
                                                                                                                          
         for ($x=0; $x < $nums; $x++) {
                 $row=db_fetch_assoc($ptrc);
@@ -113,13 +113,13 @@ function showcompany($company, $restricted = false)
 	$q = new DBQuery;
 	$q->addTable('projects');
 	$q->addQuery('project_id, project_name');
-	$q->addWhere('project_company = ' . $company);
+	$q->addWhere('project_company = ' . (int)$company);
 
 	$projects = $q->loadHashList();
   
 	$q->addTable('companies');
 	$q->addQuery('company_name');
-	$q->addWhere('company_id = ' . $company);
+	$q->addWhere('company_id = ' . (int)$company);
 	$company_name = $q->loadResult();                                                                                                                       
         $table = '<h2>Company: ' . $company_name . '</h2>
         <table cellspacing="1" cellpadding="4" border="0" class="tbl">';
@@ -247,9 +247,9 @@ if ($log_pdf) {
 		$font_dir = DP_BASE_DIR.'/lib/ezpdf/fonts';
 		$temp_dir = DP_BASE_DIR.'/files/temp';
 		
-		require($AppUI->getLibraryClass('ezpdf/class.ezpdf'));
+		require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
-		$pdf = new Cezpdf();
+		$pdf = new DotPdf();
 		$pdf->ezSetCmMargins(1, 2, 1.5, 1.5);
 		$pdf->selectFont("$font_dir/Helvetica.afm");
 
@@ -290,7 +290,7 @@ if ($log_pdf) {
 		if ($fp = fopen($temp_dir.'/temp'.$AppUI->user_id.'.pdf', 'wb')) {
 			fwrite($fp, $pdf->ezOutput());
 			fclose($fp);
-			echo '<a href="'.DP_BASE_URL.'/files/temp/temp'.$AppUI->user_id.'.pdf" target="pdf">';
+			echo '<a href="' . DP_BASE_URL . '/fileviewer.php?report=pdf" target="pdf">';
 			echo $AppUI->_("View PDF File");
 			echo "</a>";
 		} else {

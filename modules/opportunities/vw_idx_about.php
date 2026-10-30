@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // this is an easy example showing how to use some of the UserInterface methods provided by the dPframework
 // we will not have any database connection here
 

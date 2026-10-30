@@ -34,7 +34,7 @@ for ($res; ! $res->EOF; $res->MoveNext()) {
 <tr>
   <td style=<?php echo $style;?>>
 	<a href="index.php?m=human_resources&amp;a=vw_policies&amp;company_id=<?php echo $res->fields['company_id'];?>">
-		<?php echo $res->fields['company_name']; ?>
+		<?php echo dPhtml($res->fields['company_name']); ?>
     </a>
   </td>
 </tr>

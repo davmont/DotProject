@@ -26,7 +26,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		$q = new DBQuery;
 		$q->addTable('projects', 'p');
 		$q->addQuery('p.project_name');
-		$q->addWhere('p.project_id = '.$project_id);	
+		$q->addWhere('p.project_id = ' . (int)$project_id);	
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return $list;			
@@ -42,7 +42,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		
 		$q->addTable('tasks', 't');
 		$q->innerJoin('projects', 'p', 'p.project_id = t.task_project');
-		$q->addWhere('t.task_id = '.$task_id);	
+		$q->addWhere('t.task_id = ' . (int)$task_id);	
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return $list;			
@@ -126,10 +126,10 @@ DB filelds - TABLE: 'monitoring_quality_type'
 	}		
 
 	function getHora($date){
-		$convdate = explode(' ',$date);
-		$horas= explode(":",$convdate[1]);		
-		$hr= $horas[0];
-		$min= $horas[1];
+		$convdate = explode(' ', (string)$date);
+		$horas = explode(':', isset($convdate[1]) ? $convdate[1] : '00:00');
+		$hr = $horas[0];
+		$min = isset($horas[1]) ? $horas[1] : '00';
 		$getHora = array(0=>$hr,1=>$min);
 		return $getHora ;
 	}
@@ -152,12 +152,12 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		$q = new DBQuery;
 		$q->addQuery('user_username');
 		$q->addTable('users');	
-		$q-> addWhere('user_id='. $num);					
+		$q-> addWhere('user_id=' . (int)$num);					
 		$sql = $q->prepare();
 		$list = db_loadList($sql);	
 		$username='';
 			if(!empty($list)){
-				$username = $list[0][user_username];
+				$username = $list[0]['user_username'];
 			}					
 		return $username;	
 	}

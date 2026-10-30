@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 global $HELPDESK_CONFIG, $hditem, $isa, $m, $item_id;
 
 // User's specified format for date and time
@@ -21,7 +24,7 @@ $q->addQuery('*,TRIM(CONCAT(co.contact_first_name,\' \',co.contact_last_name)) m
 $q->addTable('helpdesk_item_status','h');
 $q->addJoin('users','u','u.user_id = h.status_modified_by');
 $q->addJoin('contacts','co','u.user_contact = co.contact_id');
-$q->addWhere('h.status_item_id='.$hditem['item_id']);
+$q->addWhere('h.status_item_id=' . (int)$hditem['item_id']);
 $q->addOrder('h.status_date');
 
 // Pagination
@@ -99,7 +102,7 @@ if (is_array($status_log)) {
     ?>
     <tr>
       <td class="hilite" nowrap="nowrap" width="1%"><?php echo $time?></td>
-      <td class="hilite" nowrap="nowrap" width="1%"><?php echo ($log['email']?"<a href=\"mailto: {$log['email']}\">{$log['modified_by']}</a>":$log['modified_by'])?></td>
+      <td class="hilite" nowrap="nowrap" width="1%"><?php echo ($log['email']?"<a href=\"mailto: ".dPhtml($log['email'])."\">".dPhtml($log['modified_by'])."</a>":dPhtml($log['modified_by']))?></td>
       <td class="hilite" width="98%"><?php
 
         if($log['status_code']==0 || $log['status_code']==18){	//ANDY 17 -> 18
@@ -107,9 +110,7 @@ if (is_array($status_log)) {
           print $AppUI->_($isa[$log['status_code']]);
         } else if ($log['status_code'] == 16) {
           // Comment
-          print "<a href=\"javascript:void(0);\"
-                    onClick=\"toggle_comment('{$log['status_id']}_short');
-                              toggle_comment('{$log['status_id']}_long');\">"
+          print '<a href="#"' . dPaction('toggle_comment_pair', array((string)$log['status_id'])) . '>'
               . dPshowImage (dPfindImage( 'toggle.png', $m ), 16, 16, '')
               . "</a>";
 
@@ -122,7 +123,7 @@ if (is_array($status_log)) {
               . "</span>";
         } else {
           // Everything else
-          print $AppUI->_($isa[$log['status_code']])." ".$log['status_comment'];
+          print $AppUI->_($isa[$log['status_code']])." ".dPhtml($log['status_comment']);
         }
       ?></td>
     </tr>

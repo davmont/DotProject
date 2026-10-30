@@ -75,7 +75,7 @@ function popCalendar( field ){
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = document.getElementById('task_' + calendarField.name);
+	fld_date = document.getElementById('unittest_' + calendarField.name);
 	calendarField.value = fdate;
 	fld_date.value = idate;
 
@@ -88,6 +88,14 @@ function setCalendar( idate, fdate ) {
 			e_fdate.value = fdate;
 		}
 	}
+}
+
+/**
+ * popCalendar() for the named field of the named form (data-dp-call cannot
+ * pass an element other than its own).
+ */
+function popCalendarField(formName, fieldName) {
+	popCalendar(document.forms[formName].elements[fieldName]);
 }
 
 function setContacts(contact_id_string){
@@ -464,7 +472,10 @@ function changeRecordType(value){
 	// if the record type is changed, then hide everything
 	hideAllRows();
 	// and how only those fields needed for the current type
-	eval("show"+task_types[value]+"();");
+	var show = window["show" + task_types[value]];
+	if (typeof show === "function") {
+		show();
+	}
 }
 
 var subForm = new Array();

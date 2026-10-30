@@ -1,4 +1,8 @@
-<?php /* informer $Id: index.php 2007/04/11 14:07 weboholic */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* informer $Id: index.php 2007/04/11 14:07 weboholic */
 
 // check permissions
 $denyRead = getDenyRead($m);

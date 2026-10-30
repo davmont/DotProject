@@ -1,4 +1,8 @@
-<?php /* $Id: timesheet.class.php,v 1.1.1.1 2003/12/04 17:53:45 iexposure Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* $Id: timesheet.class.php,v 1.1.1.1 2003/12/04 17:53:45 iexposure Exp $ */
 ##
 ## Timesheet Class
 ##
@@ -21,7 +25,7 @@ class Timesheet {
 		$q = new DBQuery();
 		$q -> addTable('timesheet');
 		$q -> addQuery('*');
-		$q -> addWhere('timesheet_id = '.$oid);
+		$q -> addWhere('timesheet_id = ' . (int)$oid);
 		return $q->loadObject($this);
 	}
 
@@ -62,7 +66,7 @@ class Timesheet {
 	function delete() {
 		$q = new DBQuery();
 		$q -> setDelete('timesheet');
-		$q -> addWhere('timesheet_id = '.$this->timesheet_id);
+		$q -> addWhere('timesheet_id = ' . (int)$this->timesheet_id);
 		
 		if (!$q->exec()) {
 			return db_error();

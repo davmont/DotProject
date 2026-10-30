@@ -12,12 +12,21 @@ $titleBlock = new CTitleBlock("$titulo", 'graph-up.png', $m, $m . '.' . $a);
 $titleBlock->show();
 
 $AppUI->savePlace();
-$idBaseline = dPgetParam( $_GET, 'idBaseline', 0 );
-$project_id = dPgetParam( $_GET, 'project_id', 0 );
+$idBaseline = dPgetIntParam( $_GET, 'idBaseline', 0 );
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 );
 
 $controllerBaseline = new ControllerBaseline();
 $controllerUtil = new ControllerUtil();
 $record = $controllerBaseline->getBaselineRequestById($idBaseline);
+if (!$record) {
+	$AppUI->setMsg('Invalid ID', UI_MSG_ERROR);
+	$AppUI->redirect($project_id ? 'm=projects&a=view&project_id=' . $project_id : 'm=projects');
+}
+$project_name = $controllerUtil->getProjectName($project_id);
+if (!$project_name) {
+	$project_id = (int)$record[0]['project_id'];
+	$project_name = $controllerUtil->getProjectName($project_id);
+}
 ?>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/ata.js"   ></script>
 <!--  calendar  -->
@@ -35,7 +44,7 @@ $record = $controllerBaseline->getBaselineRequestById($idBaseline);
 	 
 	<input name="dosql" type="hidden" value="do_baseline_aed" />
 	<input name="project_id" type="hidden" id="project_id" value="<?php echo $project_id; ?>">
-    <input type="hidden" name="idBaseline"  id="idBaseline" value="<?php echo $idBaseline; ?>">  
+    <input type="hidden" name="idBaseline"  id="idBaseline" value="<?php echo (int)$idBaseline; ?>">  
 	<input  type="hidden" name="acao" value="update"  />
  
 		<br/>
@@ -46,33 +55,33 @@ $record = $controllerBaseline->getBaselineRequestById($idBaseline);
 		</tr>
 	  <tr>
 			<td align="right"><?php echo $AppUI->_('LBL_PROJETO'); ?>:</td>
-			 <td><?php $project_name = $controllerUtil->getProjectName($project_id) ; ?>
-				 <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo  $project_name[0][0] ; ?> " />					
+			 <td>
+				 <input type="text" name="projeto" size="25" id="projeto" readonly="readonly" value="<?php echo dPhtml($project_name[0][0]); ?> " />					
 			</td>
 		</tr>
 	  <tr>
 	  <tr>
 			<td align="right"><?php echo $AppUI->_('LBL_NOME'); ?>:</td>
 			 <td>
-				 <input type="text" name="nmBaseline" size="25" id="nmBaseline" value='<?php echo  $record[0]['baseline_name'] ; ?>'  />					
+				 <input type="text" name="nmBaseline" size="25" id="nmBaseline" value='<?php echo dPhtml($record[0]['baseline_name']); ?>'  />					
 			</td>
 		</tr>
 	  <tr>
 	  <tr>
 			<td align="right"><?php echo $AppUI->_('LBL_VERSAO'); ?>:</td>
 			 <td>
-				 <input type="text" name="nmVersao" size="25" id="nmVersao" value='<?php echo  $record[0]['baseline_version'] ; ?>' />					
+				 <input type="text" name="nmVersao" size="25" id="nmVersao" value='<?php echo dPhtml($record[0]['baseline_version']); ?>' />					
 			</td>
 		</tr>
 	  <tr>
 			<td align="right"><?php echo $AppUI->_('LBL_OBSERVACAO'); ?>:</td>
 			 <td>
-				 <textarea  name="dsObservacao" cols="106" rows="4"><?php echo  $record[0]['baseline_observation'] ; ?></textarea>					
+				 <textarea  name="dsObservacao" rows="4" style="width:100%; box-sizing:border-box;"><?php echo dPhtml($record[0]['baseline_observation']); ?></textarea>					
 			</td>
 		</tr>		
 	  <tr>	  
 		<tr>
-			<td colspan="8"><input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button" onClick="javascript:location.href='?m=projects&a=view&project_id=<?php echo $project_id; ?>' ;" /></td>
+			<td colspan="8"><input type="button" value="<?php echo $AppUI->_('Voltar');?>" class="button"<?php echo dPaction(null, array(), null, array('href' => '?m=projects&a=view&project_id=' . (int)$project_id)); ?> /></td>
 			<td align="right"><input type="submit" value="<?php echo $AppUI->_('Gravar');?>" class="button"  /></td>
 			
 		</tr>

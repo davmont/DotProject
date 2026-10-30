@@ -118,9 +118,10 @@ class UITest extends TestCase {
         $this->assertEquals('', $ui->makeFileNameSafe(''));
         $this->assertEquals('', $ui->makeFileNameSafe('../'));
 
-        // Tricky cases (documenting current behavior)
-        // '....//' -> '../' because str_replace is not recursive
-        $this->assertEquals('../', $ui->makeFileNameSafe('....//'));
+        // Nested sequences are removed until none is left
+        $this->assertEquals('', $ui->makeFileNameSafe('....//'));
+        $this->assertEquals('file.txt', $ui->makeFileNameSafe('....//....//file.txt'));
+        $this->assertEquals('file.txt', $ui->makeFileNameSafe('....\\\\file.txt'));
     }
 
     function testSetMsg() {

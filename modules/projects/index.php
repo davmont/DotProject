@@ -11,19 +11,22 @@ $q = new DBQuery();
 // load the companies class to retrieved denied companies
 require_once($AppUI->getModuleClass('companies'));
 
-// Let's update project status!
+// Let's update project status! (POST with the CSRF token only)
 if (
-	isset($_GET['update_project_status']) && isset($_GET['project_status'])
-	&& isset($_GET['project_id'])
+	$_SERVER['REQUEST_METHOD'] === 'POST'
+	&& dPgetParam($_POST, 'update_project_status') !== null
+	&& dPgetParam($_POST, 'project_status') !== null
+	&& is_array(dPgetParam($_POST, 'project_id'))
 ) {
-	$projects_id = $_GET['project_id']; // This must be an array
+	$AppUI->verifyCsrfToken();
+	$projects_id = dPgetParam($_POST, 'project_id'); // This must be an array
 
 	foreach ($projects_id as $project_id) {
 		if (!getPermission('projects', 'edit', (int) $project_id)) {
 			continue; /* Cannot update the status of a project we can't edit */
 		}
 		$q->addTable('projects');
-		$q->addUpdate('project_status', $_GET['project_status']);
+		$q->addUpdate('project_status', (int) dPgetParam($_POST, 'project_status'));
 		$q->addWhere('project_id = ' . (int) $project_id);
 		$q->exec();
 		$q->clear();
@@ -64,9 +67,11 @@ $department = (($AppUI->getState('ProjIdxDepartment') !== NULL)
 //if $department contains the $company_prefix string that it's requesting a company
 // and not a department.  So, clear the $department variable, and populate the $company_id variable.
 if (!(mb_strpos($department, $company_prefix) === false)) {
-	$company_id = mb_substr($department, mb_strlen($company_prefix));
+	$company_id = (int)mb_substr($department, mb_strlen($company_prefix));
 	$AppUI->setState('ProjIdxCompany', $company_id);
 	unset($department);
+} else {
+	$department = (int)$department;
 }
 
 $valid_ordering = array(
@@ -113,7 +118,7 @@ $userRows = array(0 => $AppUI->_('All Users', UI_OUTPUT_RAW)) + $q->loadHashList
 $bufferUser = arraySelect(
 	$userRows,
 	'show_owner',
-	'class="text" onchange="javascript:document.pickUser.submit()""',
+	'class="text"' . dPaction(null, array(), null, array('submit' => 'pickUser')),
 	$owner
 );
 
@@ -167,7 +172,7 @@ $q->addTable('projects', 'p');
 $q->addQuery('p.project_status, COUNT(p.project_id) as count');
 $obj_project->setAllowedSQL($AppUI->user_id, $q, null, 'p');
 if ($owner > 0) {
-	$q->addWhere('p.project_owner = ' . $owner);
+	$q->addWhere('p.project_owner = ' . (int)$owner);
 }
 if (isset($department)) {
 	$q->addJoin('project_departments', 'pd', 'pd.project_id = p.project_id');
@@ -175,7 +180,8 @@ if (isset($department)) {
 		$q->addWhere('pd.department_id = ' . (int) $department);
 	}
 } else if ($company_id && !$addPwOiD) {
-	$q->addWhere('p.project_company = ' . $company_id);
+	// The company's own projects and those it runs for clients (internal company).
+	$q->addWhere('(p.project_company = ' . (int)$company_id . ' OR p.project_company_internal = ' . (int)$company_id . ')');
 }
 $q->addGroup('project_status');
 $statuses = $q->loadHashList('project_status');

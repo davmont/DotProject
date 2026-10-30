@@ -63,8 +63,9 @@ if ($is_clash) {
 	unset($_SESSION['add_event_clash']);
 	unset($_SESSION['event_is_clash']);
 }
-if ($_GET['event_project']) {
-	$obj->event_project = $_GET['event_project'];
+$event_project = dPgetIntParam($_GET, 'event_project', 0);
+if ($event_project) {
+	$obj->event_project = $event_project;
 }
 
 // setup the title block
@@ -109,6 +110,8 @@ if ($event_id || $is_clash) {
 $inc = intval(dPgetConfig('cal_day_increment')) ? intval(dPgetConfig('cal_day_increment')) : 30;
 if (!$event_id && !$is_clash) {
 	$seldate = new CDate($date);
+	$h = 0;
+	$min = 0;
 	// If date is today, set start time to now + inc
 	if ($date == date('Ymd')) {
 		$h = date('H');
@@ -167,7 +170,7 @@ for ($minutes=0; $minutes < $check; $minutes++) {
 }
 ?>
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var form = document.editFrm;
 	if (form.event_title.value.length < 1) {
@@ -283,12 +286,12 @@ function removeUser() {
 	<td width="20%" align="right" nowrap="nowrap"><?php echo $AppUI->_('Event Title');?>:</td>
 	<td width="20%">
 		<input type="text" class="text" size="25" name="event_title" value="<?php 
-echo @$obj->event_title;?>" maxlength="255" />
+echo htmlspecialchars((string)@$obj->event_title, ENT_QUOTES);?>" maxlength="255" />
 	</td>
 	<td align="left" rowspan=4 valign="top" colspan="2" width="40%">
 	<?php echo $AppUI->_('Description'); ?> :<br/>
 		<textarea class="textarea" name="event_description" rows="5" cols="45"><?php 
-echo $obj->event_description;?></textarea></td>
+echo htmlspecialchars((string)$obj->event_description, ENT_QUOTES);?></textarea></td>
 	</td>
 </tr>
 
@@ -326,7 +329,7 @@ echo (@$obj->event_private ? 'checked="checked"' : '');?> />
 echo (($start_date) ? $start_date->format(FMT_TIMESTAMP_DATE) : ''); ?>" />
 		<input type="text" name="start_date" value="<?php 
 echo (($start_date) ? $start_date->format($df) : ''); ?>" class="text" disabled="disabled" />
-		<a href="#" onclick="javascript:popCalendar('start_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 echo $AppUI->_('Calendar'); ?>" border="0" />
 		</a>
@@ -344,7 +347,7 @@ echo arraySelect($times, 'start_time', 'size="1" class="text"', $start_date->for
 echo (($end_date) ? $end_date->format(FMT_TIMESTAMP_DATE) : ''); ?>" />
 		<input type="text" name="end_date" value="<?php 
 echo (($end_date) ? $end_date->format($df) : ''); ?>" class="text" disabled="disabled" />
-		<a href="#" onclick="javascript:popCalendar('end_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php 
 echo $AppUI->_('Calendar'); ?>" border="0" />
 		</a>
@@ -396,9 +399,9 @@ echo arraySelect($assigned, 'assigned',
 		<table>
 			<tr>
 				<td align="left"><input type="button" class="button" value="&gt;"
-				onclick="javascript:addUser()" /></td>
+				<?php echo dPaction('addUser'); ?> /></td>
 				<td align="right"><input type="button" class="button" value="&lt;"
-				onclick="javascript:removeUser()" /></td>
+				<?php echo dPaction('removeUser'); ?> /></td>
 			</tr>
 		</table>
 	</td>
@@ -426,11 +429,11 @@ $custom_fields->printHTML();
 <tr>
 	<td colspan="2">
 		<input type="button" value="<?php 
-echo $AppUI->_('back'); ?>" class="button" onclick="javascript:history.back();" />
+echo $AppUI->_('back'); ?>" class="button"<?php echo dPaction('history.back'); ?> />
 	</td>
 	<td align="right" colspan="2">
 		<input type="button" value="<?php 
-echo $AppUI->_('submit'); ?>" class="button" onClick="javascript:submitIt()" />
+echo $AppUI->_('submit'); ?>" class="button"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>
 </table>

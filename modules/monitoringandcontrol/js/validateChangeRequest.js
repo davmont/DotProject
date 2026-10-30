@@ -1,39 +1,28 @@
-function validateChangeRequest(){	
+// Checks the change request form (new: fields named "x[]", edit: "x") before saving.
+// Called by dp-actions with the save button as "this".
+function validateChangeRequest(){
 
-	if(document.form_ata.impact.value==""){
-		document.form_ata.impact.focus();
-		alert('Fill the field');
-		return false;	
+	var f = (this && this.form) ? this.form : document.form_ata;
+	var field = function (name) {
+		return f.elements[name] || f.elements[name + '[]'];
+	};
+	var required = ['impact', 'status', 'description', 'cause', 'acao_corretiva', 'user', 'date_limit'];
+	for (var i = 0; i < required.length; i++) {
+		var el = field(required[i]);
+		if (!el) {
+			continue;
+		}
+		var value = el.value;
+		var empty = value == '' || (el.tagName == 'SELECT' && (value == '0' || value == 'Selecione...'));
+		if (empty) {
+			el.focus();
+			alert('Fill the field');
+			return false;
+		}
 	}
-	if(document.form_ata.status.value==0){
-		document.form_ata.status.focus();	
-		alert('Fill the field');
-		return false;	
-	}		
-	if(document.form_ata.description.value==""){
-		document.form_ata.description.focus();
-		alert('Fill the field');
-		return false;	
+	if (this && this.type == 'submit') {
+		return true;
 	}
-	if(document.form_ata.cause.value==""){
-		document.form_ata.cause.focus();
-		alert('Fill the field');
-		return false;	
-	}
-	if(document.form_ata.acao_corretiva.value==""){
-		document.form_ata.acao_corretiva.focus();
-		alert('Fill the field');
-		return false;	
-	}	
-	if(document.form_ata.user.value=="Selecione..."){
-		document.form_ata.user.focus();
-		alert('Fill the field');
-		return false;	
-	}
-	if(document.form_ata.date_limit.value==""){
-		document.form_ata.date_limit.focus();
-		alert('Fill the field');
-		return false;	
-	}
-	document.form_ata.submit();
-} 
+	f.submit();
+	return false;
+}

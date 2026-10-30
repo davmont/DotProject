@@ -398,8 +398,8 @@ class CSetup_MonitoringAndControl{
 	private function updateTranslationFiles(){
 		//update translations
 		//1. Define translations values
-		$projectsEn="\n".'"1LBL_BASELINE"=>"Baseline",'."\n".'"2LBLRESPONSABILIDADE"=>"Responsability",'."\n".'"3LBLACAOCORRETIVA"=>"Change Request",'."\n".'"4LBLATA"=>"Meeting",'."\n".'"5LBLCUSTO"=>"Cost",'."\n".'"6LBLCRONOGRAMA"=>"Schedule",'."\n".'"7LBLQUALIDADE"=>"Quality",';
-		$projectsBr="\n".'"1LBL_BASELINE"=>"Linha de Base",'."\n".'"2LBLRESPONSABILIDADE"=>"Responsabilidade",'."\n".'"3LBLACAOCORRETIVA"=>"Acao Corretiva",'."\n".'"4LBLATA"=>"Ata",'."\n".'"5LBLCUSTO"=>"Custo",'."\n".'"6LBLCRONOGRAMA"=>"Cronograma",'."\n".'"7LBLQUALIDADE"=>"Qualidade",';
+		$projectsEn="\n".'"1LBLBASELINE"=>"Baseline",'."\n".'"2LBLRESPONSABILIDADE"=>"Responsability",'."\n".'"3LBLACAOCORRETIVA"=>"Change Request",'."\n".'"4LBLATA"=>"Meeting",'."\n".'"5LBLCUSTO"=>"Cost",'."\n".'"6LBLCRONOGRAMA"=>"Schedule",'."\n".'"7LBLQUALIDADE"=>"Quality",';
+		$projectsBr="\n".'"1LBLBASELINE"=>"Linha de Base",'."\n".'"2LBLRESPONSABILIDADE"=>"Responsabilidade",'."\n".'"3LBLACAOCORRETIVA"=>"Acao Corretiva",'."\n".'"4LBLATA"=>"Ata",'."\n".'"5LBLCUSTO"=>"Custo",'."\n".'"6LBLCRONOGRAMA"=>"Cronograma",'."\n".'"7LBLQUALIDADE"=>"Qualidade",';
 					
 		$companiesEn="\n".'"1LBLMONITORAMENTO"=>"Monitoring",';
 		$companiesBr="\n".'"1LBLMONITORAMENTO"=>"Monitoramento",';
@@ -437,13 +437,29 @@ class CSetup_MonitoringAndControl{
 		$this->updateFile($fileAdminBr,$adminBr);		
 	}	
 	
+	// Appends the strings whose keys the file lacks (dotProject ships them, and
+	// installing again used to append them again); an unwritable file is left
+	// as it is (it was a fatal error on PHP 8).
 	private function updateFile($fileName,$content){
 		if(!file_exists($fileName)){
 			$fileName=str_replace("\\","/",$fileName);
 		}
-		$fp = fopen($fileName, 'a');
-		fwrite($fp, $content);
-		fclose($fp);
+		$current = is_readable($fileName) ? file_get_contents($fileName) : false;
+		if ($current === false) {
+			return;
+		}
+		$add = '';
+		foreach (explode("\n", $content) as $line) {
+			if (preg_match('/^("[^"]+")\s*=>/', $line, $m) && !preg_match('/^\s*' . preg_quote($m[1], '/') . '\s*=>/m', $current)) {
+				$add .= "\n" . $line;
+			}
+		}
+		if ($add === '') {
+			return;
+		}
+		if (!is_writable($fileName) || file_put_contents($fileName, $add, FILE_APPEND) === false) {
+			error_log('dotProject: could not add translations to ' . $fileName);
+		}
 	}	
 
 	function remove() {

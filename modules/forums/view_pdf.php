@@ -4,9 +4,9 @@ if (!defined('DP_BASE_DIR')){
 }
 
 $AppUI->savePlace();
-$sort = dPgetParam($_REQUEST, 'sort', 'asc');
-$forum_id = dPgetParam($_REQUEST, 'forum_id', 0);
-$message_id = dPgetParam($_REQUEST, 'message_id', 0);
+$sort = dPvalidateOrder(mb_strtolower(dPgetParam($_REQUEST, 'sort', 'asc')), array('asc', 'desc'), 'asc');
+$forum_id = dPgetIntParam($_REQUEST, 'forum_id', 0);
+$message_id = dPgetIntParam($_REQUEST, 'message_id', 0);
 $perms =& $AppUI->acl();
 
 if ( ! $perms->checkModuleItem('forums', 'view', $message_id))
@@ -14,7 +14,7 @@ if ( ! $perms->checkModuleItem('forums', 'view', $message_id))
 
 $q  = new DBQuery;
 $q->addTable('forums');
-$q->addTable('forum_messages');
+$q->addTable('forum_messages', 'forum_messages');
 $q->addQuery('forum_messages.*,	contact_first_name, contact_last_name, contact_email, user_username,
 		forum_moderated, visit_user');
 $q->addJoin('forum_visits', 'v', "visit_user = {$AppUI->user_id} AND visit_forum = $forum_id AND visit_message = 				forum_messages.message_id");
@@ -42,10 +42,10 @@ foreach ($messages as $row) {
 		
 	$q  = new DBQuery;
 	$q->addTable('forum_messages');
-	$q->addTable('users');
+	$q->addTable('users', 'users');
 	$q->addQuery('DISTINCT contact_email, contact_first_name, contact_last_name, user_username');
 	$q->addJoin('contacts', 'con', 'contact_id = user_contact');
-	$q->addWhere('users.user_id = '.$row["message_editor"]);
+	$q->addWhere('users.user_id = ' . (int)$row["message_editor"]);
 	$editor = $q->loadList();
 
 	$date = intval( $row["message_date"] ) ? new CDate( $row["message_date"] ) : null;
@@ -58,10 +58,10 @@ foreach ($messages as $row) {
 
 $font_dir = DP_BASE_DIR . '/lib/ezpdf/fonts';
 $temp_dir = DP_BASE_DIR . '/files/temp';
-$base_url  = DB_BASE_URL;
-require( $AppUI->getLibraryClass( 'ezpdf/class.ezpdf' ) );
+$base_url  = DP_BASE_URL;
+require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
-$pdf = &new Cezpdf($paper='A4', $orientation='portrait');
+$pdf = new DotPdf($paper='A4', $orientation='portrait');
 $pdf->ezSetCmMargins(1, 2, 1.5, 1.5);
 $pdf->selectFont($font_dir . '/Helvetica.afm');
 $pdf->ezText('Project: ' . $forum['project_name']. '   Forum: '.$forum['forum_name'] );

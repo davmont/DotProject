@@ -11,7 +11,7 @@ $company_id = intval(dPgetParam($_GET, 'company_id', 0));
 $query = new DBQuery;
 $query->addTable('companies', 'c');
 $query->addQuery('company_name');
-$query->addWhere('c.company_id = ' . $company_id);
+$query->addWhere('c.company_id = ' . (int)$company_id);
 $res =& $query->exec();
 $titleBlock->addCrumb(('?m=companies&amp;a=view&amp;company_id=' . $company_id),  $AppUI->_('company') .' '. $res->fields['company_name']);
 $query->clear();
@@ -52,11 +52,11 @@ if($edit || !$human_resources_role_id) {
 <tr>
   <td>
     <input type="button" value="<?php echo $AppUI->_('back');?>" 
-    class="button" onclick="javascript:history.back(-1);" />
+    class="button"<?php echo dPaction('history.back'); ?> />
   </td>
   <td align="right">
     <input type="button" value="<?php echo $AppUI->_('submit');?>" 
-    class="button" onclick="submitRole(document.editfrm);" />
+    class="button"<?php echo dPaction('submitRole', array('$form')); ?> />
   </td>
 </tr>
 </table>
@@ -72,19 +72,19 @@ else {
 		<table cellspacing="1" cellpadding="2" width="100%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Role name');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resources_role_name;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resources_role_name);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Role responsability');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resources_role_responsability;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resources_role_responsability);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Role authority');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resources_role_authority;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resources_role_authority);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Role competence');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->human_resources_role_competence;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->human_resources_role_competence);?></td>
 		</tr>
 		</table>
 	</td>
@@ -92,7 +92,7 @@ else {
 <tr>
   <td>
     <input type="button" value="<?php echo $AppUI->_('back');?>"
-    class="button" onclick="javascript:history.back(-1);" />
+    class="button"<?php echo dPaction('history.back'); ?> />
   </td>
 </tr>
 <?php

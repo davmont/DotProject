@@ -29,15 +29,13 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 if ($humanCost == null && $notHumanCost == null) {
     ?>
     <div align="right">
-        <input class="button" type="button" name="new cost estimative" value="new cost estimative"
-            onclick="location.href = '?m=costs&amp;a=view_costs&amp;project_id=<?php echo $projectSelected ?>';" />
+        <input class="button" type="button" name="new cost estimative" value="new cost estimative"<?php echo dPaction(null, array(), null, array('href' => '?m=costs&a=view_costs&project_id=' . (int)$projectSelected)); ?> />
     </div>
     <?php
 } else {
     ?>
     <div align="right">
-        <input class="button" type="button" name="edit cost estimative" value="edit cost estimative"
-            onclick="location.href = '?m=costs&amp;a=view_costs&amp;project_id=<?php echo $projectSelected ?>';" />
+        <input class="button" type="button" name="edit cost estimative" value="edit cost estimative"<?php echo dPaction(null, array(), null, array('href' => '?m=costs&a=view_costs&project_id=' . (int)$projectSelected)); ?> />
     </div>
     <?php
 }

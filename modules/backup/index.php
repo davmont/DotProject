@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // backup database module for dotProject
 // (c)2003 Daniel Vijge
 // This program is free software; you can redistribute it and/or modify
@@ -15,14 +18,15 @@
 //   Added localisation code so that it can be translated.
 
 $perms =& $AppUI->acl();
-if (!$perms->checkModule('backup', 'view'))	// Should we have an exec permission?
+// A backup holds every table, user password hashes included: system administrators only.
+if (!$perms->checkModule('backup', 'view') || !$perms->checkModule('system', 'edit'))
 	$AppUI->redirect("m=public&a=access_denied");
 
 $title = new CTitleBlock('Backup Database', 'companies.gif', $m, $m . '.' . $a);
 $title->addCrumb('index.php?m=backup&a=restore', 'restore xml file');
 $title->show();
 ?>
-<script>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function check_backup_options() {
 		var f = document.frmBackup;
 		if (f.export_what.options[f.export_what.selectedIndex].value == 'data') {
@@ -36,7 +40,7 @@ $title->show();
 </script>
 
 <table cellspacing="0" cellpadding="4" border="0" width="100%" class="std">
-	<form onclick="check_backup_options()" name="frmBackup"
+	<form<?php echo dPaction('check_backup_options'); ?> name="frmBackup"
 		action="<?php echo "$baseUrl/index.php?m=backup&a=do_backup&suppressHeaders=1"; ?>" method="post">
 		<tr>
 			<td align="right" valign="top" nowrap="nowrap">

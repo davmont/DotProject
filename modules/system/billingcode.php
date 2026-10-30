@@ -19,7 +19,7 @@ $q = new DBQuery;
 $q->addTable('billingcode','bc');
 $q->addQuery('*');
 $q->addOrder('billingcode_name ASC');
-$q->addWhere('company_id = ' . $company_id);
+$q->addWhere('company_id = ' . (int)$company_id);
 $billingcodes = $q->loadList();
 $q->clear();
 
@@ -36,7 +36,7 @@ $titleBlock = new CTitleBlock('Edit Billing Codes', 'myevo-weather.png', $m, "$m
 $titleBlock->addCrumb('?m=system', 'System Admin');
 $titleBlock->show();
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 <!--
 function submitIt() {
 	var form = document.changecode;
@@ -58,7 +58,7 @@ function delIt2(id) {
 </script>
 
 <form name="changeMe" action="?m=system&amp;a=billingcode" method="post">
-	<?php echo arraySelect($company_list, 'company_id', 'size="1" class="text" onchange="javascript:changeIt();"', $company_id, false);?>
+	<?php echo arraySelect($company_list, 'company_id', 'size="1" class="text"' . dPaction('changeIt'), $company_id, false);?>
 </form>
 
 <form name="frmDel" action="?m=system" method="post">
@@ -109,7 +109,7 @@ foreach ($billingcodes as $code) {
 	<?php		
 		if ($code['billingcode_status'] == 0) {
 ?>
-	<a href="javascript:delIt2(<?php echo $code_id; ?>);" title="<?php echo $AppUI->_('delete'); 
+	<a href="#"<?php echo dPaction('delIt2', array((int)$code_id)); ?> title="<?php echo $AppUI->_('delete'); 
 ?>">
 	<img src="./images/icons/stock_delete-16.png" border="0" alt="Delete" />
 	</a>
@@ -140,11 +140,11 @@ if (!(isset($_GET['billingcode_id']))) {
 <tr>
   <td align="left" colspan="2">
 	<input class="button"  type="button" value="<?php 
-echo $AppUI->_('back');?>" onclick="javascript:history.back(-1);" />
+echo $AppUI->_('back');?>"<?php echo dPaction('history.back'); ?> />
   </td>
   <td align="right" colspan="4">
 	<input class="button" type="button" value="<?php 
-echo $AppUI->_('submit');?>" onclick="submitIt()" />
+echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> />
   </td>
 </tr>
 </table>

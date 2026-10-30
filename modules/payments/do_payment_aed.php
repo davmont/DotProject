@@ -1,4 +1,8 @@
-<?php /* PAYMENTS $Id: do_payment_aed.php,v 1.1.1.1 2004/04/01 16:20:41 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PAYMENTS $Id: do_payment_aed.php,v 1.1.1.1 2004/04/01 16:20:41 aardvarkads Exp $ */
 $del = dPgetParam( $_POST, 'del', 0 );
 $obj = new CPayment();
 $msg = '';
@@ -28,7 +32,9 @@ if ($del) {
 	} else {
 		$AppUI->setMsg( @$_POST['payment_id'] ? 'updated' : 'added', UI_MSG_OK, true );
 	}
-	$obj->updatePaymentsInvoices( $invoice_list );
+	// The invoices ticked on the form (read from the request: register_globals is long gone).
+	$invoice_list = dPgetParam( $_POST, 'invoice_list', array() );
+	$obj->updatePaymentsInvoices( is_array($invoice_list) ? $invoice_list : array() );
 	$AppUI->redirect();
 }
 ?>

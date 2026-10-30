@@ -276,8 +276,11 @@ class CAppUI
 	 */
 	function makeFileNameSafe($file)
 	{
-		$file = str_replace('../', '', $file);
-		$file = str_replace('..\\', '', $file);
+		// Repeat until nothing changes: a single pass turns '....//' into '../'.
+		do {
+			$before = $file;
+			$file = str_replace(array('../', '..\\'), '', $file);
+		} while ($file !== $before);
 		return $file;
 	}
 
@@ -464,6 +467,8 @@ class CAppUI
 	{
 		global $locale_char_set;
 
+		$str = (string)$str;
+
 		if (!$locale_char_set) {
 			$locale_char_set = 'utf-8';
 		}
@@ -496,7 +501,8 @@ class CAppUI
 				$str = str_replace(' ', '%20', $str);
 				break;
 			case UI_OUTPUT_HTML:
-				$str = htmlentities(stripslashes($str), ENT_COMPAT, $locale_char_set);
+				// ENT_QUOTES: single quotes too, so values are safe in attributes quoted either way.
+				$str = htmlentities(stripslashes($str), ENT_QUOTES, $locale_char_set);
 				$str = str_replace('&#039;', '&apos;', $str);
 				break;
 			case UI_OUTPUT_JS:
@@ -528,27 +534,35 @@ class CAppUI
 	}
 
 	/**
-	 * Output a <meta> tag carrying the CSRF token plus a small inline script
-	 * that automatically appends the token to every POST form on submit.
+	 * Output a <meta> tag carrying the CSRF token. js/dp-ui.js reads it and adds
+	 * the token to POST forms built by JavaScript or sent with form.submit().
 	 * Call once from each theme's header.php, just before </head>.
 	 */
 	function getCsrfMeta()
 	{
 		$token = htmlspecialchars($this->getCsrfToken(), ENT_QUOTES, 'UTF-8');
-		return '<meta name="csrf-token" content="' . $token . '" />' . "\n"
-			. '<script type="text/javascript">'
-			. '(function(){'
-			.   'var t=document.querySelector(\'meta[name="csrf-token"]\').getAttribute(\'content\');'
-			.   'document.addEventListener(\'submit\',function(e){'
-			.     'var f=e.target;'
-			.     'if(f.method&&f.method.toLowerCase()==="post"&&!f.querySelector(\'[name="csrf_token"]\")){'
-			.       'var i=document.createElement(\'input\');'
-			.       'i.type="hidden";i.name="csrf_token";i.value=t;'
-			.       'f.appendChild(i);'
-			.     '}'
-			.   '},true);'
-			. '})();'
-			. '</script>';
+		return '<meta name="csrf-token" content="' . $token . '" />' . "\n";
+	}
+
+	/**
+	 * Output buffer callback (see index.php): add the CSRF token as a hidden
+	 * field to every POST form in an HTML page.
+	 */
+	function injectCsrfToken($html)
+	{
+		foreach (headers_list() as $header) {
+			if (stripos($header, 'Content-Type:') === 0 && stripos($header, 'text/html') === false) {
+				return $html;
+			}
+		}
+		$field = $this->getCsrfInput();
+		$out = preg_replace_callback('/<form\b[^>]*>/i', function ($m) use ($field) {
+			if (!preg_match('/\bmethod\s*=\s*["\']?\s*post\b/i', $m[0])) {
+				return $m[0];
+			}
+			return $m[0] . $field;
+		}, $html);
+		return ($out === null) ? $html : $out;
 	}
 
 	function verifyCsrfToken()
@@ -1030,8 +1044,12 @@ class CAppUI
 				. $this->___($js_file_name) . '"></script>' . "\n");
 		}
 
-		// additionally load overlib
-		echo ('<script type="text/javascript" src="' . $base . 'lib/overlib/overlib.js"></script>'
+		// Flatpickr date-picker (replaces the abandoned jscalendar)
+		echo ('<link rel="stylesheet" type="text/css" href="' . $base . 'lib/flatpickr/flatpickr.min.css" />' . "\n");
+		echo ('<script type="text/javascript" src="' . $base . 'lib/flatpickr/flatpickr.min.js"></script>' . "\n");
+
+		// load overlib shim (replaces the abandoned overLIB library)
+		echo ('<script type="text/javascript" src="' . $base . 'lib/overlib/overlib-shim.js"></script>'
 			. "\n");
 
 		$this->getModuleJS($m, $a, true);
@@ -1191,9 +1209,9 @@ class CTabBox_core
 				$s .= '>';
 				$s .= "\n\t\t" . '<a href="';
 				if ($this->javascript) {
-					$s .= 'javascript:' . $this->javascript . '(' . $this->active . ', ' . $k . ')';
+					$s .= '#" data-dp-call="' . htmlspecialchars($this->javascript, ENT_QUOTES) . '" data-dp-args="[' . (int)$this->active . ',' . (int)$k . ']';
 				} else if ($js_tabs) {
-					$s .= 'javascript:show_tab(' . $k . ')';
+					$s .= '#" data-dp-call="show_tab" data-dp-args="[' . (int)$k . ']';
 				} else {
 					$s .= $this->baseHRef . 'tab=' . $k;
 				}
@@ -1217,7 +1235,7 @@ class CTabBox_core
 			}
 			if ($js_tabs) {
 				foreach ($this->tabs as $k => $v) {
-					echo '<div class="tab" id="tab_' . $k . '">';
+					echo '<div class="tab" id="tab_' . $k . '"' . ($k == $this->active ? '' : ' style="display:none"') . '>';
 					require $this->baseInc . $v[0] . '.php';
 					echo '</div>';
 				}
@@ -1302,6 +1320,13 @@ class CTitleBlock_core
 	var $cells = null;
 	/** @var string The reference for the context help system */
 	var $helpref = '';
+	/** @var array Cells beside the title, cells below it, crumbs and breadcrumbs */
+	var $cells1 = array();
+	var $cells2 = array();
+	var $crumbs = array();
+	var $breadcrumbs = array();
+	/** @var bool Whether the context help icon is shown */
+	var $showhelp = false;
 
 	/**
 	 * The constructor
@@ -1368,13 +1393,13 @@ class CTitleBlock_core
 	{
 		global $AppUI;
 		$this->addCrumbRight('<table cellspacing="0" cellpadding="0" border="0"><tr><td>'
-			. '<a href="javascript:delIt()" title="'
+			. '<a href="#"' . dPaction('delIt') . ' title="'
 			. $AppUI->_($canDelete ? '' : $msg) . '">'
 			. dPshowImage('./images/icons/'
 				. (($canDelete) ? 'stock_delete-16.png'
 					: 'stock_trash_full-16.png'), '16', '16', '')
 			. '</a></td><td>&nbsp;'
-			. '<a href="javascript:delIt()" title="'
+			. '<a href="#"' . dPaction('delIt') . ' title="'
 			. $AppUI->_(($canDelete) ? '' : $msg)
 			. '">' . $AppUI->_($title) . '</a></td></tr></table>');
 	}
@@ -1410,11 +1435,9 @@ class CTitleBlock_core
 									. 'border="0" alt="'.$AppUI->_('Help').'" />'), 
 								   $this->helpref));
 			*/
-			$s .= ("\n\t" . '<a href="#' . $this->helpref
-				. '" onClick="javascript:window.open(\'?m=help&dialog=1&hid='
-				. $this->helpref
-				. "', 'contexthelp', 'width=400,height=400,left=50,top=50,scrollbars=yes,"
-				. 'resizable=yes\')" title="' . $AppUI->_('Help') . '">');
+			$s .= ("\n\t" . '<a href="#' . $this->helpref . '"'
+				. dPaction('window.open', array('?m=help&dialog=1&hid=' . $this->helpref, 'contexthelp', 'width=400,height=400,left=50,top=50,scrollbars=yes,resizable=yes'))
+				. ' title="' . $AppUI->_('Help') . '">');
 			$s .= "\n\t\t" . dPshowImage(
 				'./images/icons/stock_help-16.png',
 				'16',
@@ -1433,14 +1456,15 @@ class CTitleBlock_core
 				$t = (($v[1]) ? ('<img src="' . dPfindImage($v[1], $this->module)
 					. '" border="" alt="" />&nbsp;') : '');
 				$t .= $AppUI->_($v[0]);
-				$crumbs[] = ('<a href="' . $k . '">' . $t . '</a>');
+				// Links may carry request values; keep entities already written as &amp;.
+				$crumbs[] = ('<a href="' . htmlspecialchars($k, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '">' . $t . '</a>');
 			}
 			$breadcrumbs = array();
 			foreach ($this->breadcrumbs as $k => $v) {
 				$t = (($v[1]) ? ('<img src="' . dPfindImage($v[1], $this->module)
 					. '" border="" alt="" width="16" height="16"/>&nbsp;') : '');
 				$t .= $AppUI->_($v[0]);
-				$breadcrumbs[] = ($k != '') ? ('<a href="' . $k . '">' . $t . '</a>') : ('<span>' . $t . '</span>');
+				$breadcrumbs[] = ($k != '') ? ('<a href="' . htmlspecialchars($k, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '">' . $t . '</a>') : ('<span>' . $t . '</span>');
 			}
 			$s .= "\n" . '<table border="0" cellpadding="4" cellspacing="0" width="100%">';
 			$s .= "\n<tr>";

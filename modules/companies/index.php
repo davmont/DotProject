@@ -52,7 +52,7 @@ $perms =& $AppUI->acl();
 $owner_list = array(-1 => $AppUI->_('All', UI_OUTPUT_RAW)) + $perms->getPermittedUsers('companies');
 //db_loadHashList($sql);
 $owner_combo = arraySelect($owner_list, 'owner_filter_id', 
-                           'class="text" onchange="javascript:document.searchform.submit()"', 
+                           'class="text"' . dPaction(null, array(), null, array('submit' => 'searchform')), 
                            $owner_filter_id, false);
 
 // setup the title block

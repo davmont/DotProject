@@ -1,4 +1,8 @@
-<?php /* journal $Id: index.php,v 1.1 2004/03/30 23:21:40 jcgonz Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* journal $Id: index.php,v 1.1 2004/03/30 23:21:40 jcgonz Exp $ */
 ##
 ## journal module - a quick hack of the history module by HGS 3/16/2004
 
@@ -24,7 +28,7 @@ $q->addJoin('projects', 'p', 'j.journal_project=p.project_id');
 $q->addOrder('journal_date DESC');
 // check for project filter
 if ($project_id) {
-	$q->addWhere('p.project_id = ' . $project_id);
+	$q->addWhere('p.project_id = ' . (int)$project_id);
 }
 
 $prc = $q->exec();
@@ -49,13 +53,13 @@ $journal = array();
 				$q->addQuery('project_id,project_name');
 				$q->addOrder('project_name');
 				$projects = arrayMerge(array(0 => '(' . $AppUI->_('All') . ')'), $q->loadHashList());
-				echo arraySelect($projects, 'project_id', ' onChange=document.pickCompany.submit() class=text', $project_id);
+				echo arraySelect($projects, 'project_id', 'class=text' . dPaction(null, array(), null, array('submit' => 'pickCompany')), $project_id);
 				echo "</form></td>";
 			}
 			?>
 
 			<td align="right"><input class="button" type="button" value="<?php echo $AppUI->_('Add note'); ?>"
-					onclick="window.location='?m=journal&a=addedit&project_id=<?php echo $project_id ?>'"></td>
+					<?php echo dPaction(null, array(), null, array('href' => '?m=journal&a=addedit&project_id=' . (int)$project_id)); ?>></td>
 </table>
 
 <table width="100%" border="0" cellpadding="3" cellspacing="1" class="tbl">
@@ -75,9 +79,9 @@ $journal = array();
 							src="./images/icons/pencil.gif" alt="<?php echo $AppUI->_('Edit journal') ?>" border="0"
 							width="12" height="12"></a></td>
 				<td><?php echo $row["journal_date"] ?></td>
-				<td><?php echo $row["project_name"] ?></td>
-				<td><?php echo $row["journal_description"] ?></td>
-				<td><?php echo $row["user_username"] ?></td>
+				<td><?php echo dPhtml($row["project_name"]) ?></td>
+				<td><?php echo dPhtml($row["journal_description"]) ?></td>
+				<td><?php echo dPhtml($row["user_username"]) ?></td>
 			</tr>
 			<?php
 		}

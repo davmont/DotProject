@@ -136,7 +136,7 @@ class CSetupMacroProjects {
 		  `macroproject_son` int(10) NOT NULL
 		) ENGINE=MyISAM DEFAULT CHARSET=latin1;";
 		$bulk_sql[5] = "
-                  INSERT INTO `sysvals` (`sysval_id`, `sysval_key_id`, `sysval_title`, `sysval_value`) VALUES
+                  INSERT INTO `{$dbprefix}sysvals` (`sysval_id`, `sysval_key_id`, `sysval_title`, `sysval_value`) VALUES
 				(46, 1, 'MacroProjectStatus', '0|Not Defined\r\n1|Proposed\r\n2|In Planning\r\n3|In Progress\r\n4|On Hold\r\n5|Complete\r\n6|Template\r\n7|Archived'),
 				(47, 1, 'MacroProjectType', '0|Unknown\r\n1|Administrative\r\n2|Operative'),
 				(48, 3, 'MacroProjectColors', 'Web|FFE0AE\r\nEngineering|AEFFB2\r\nHelpDesk|FFFCAE\r\nSystem Administration|FFAEAE'),
@@ -144,7 +144,7 @@ class CSetupMacroProjects {
 				(50, 1, 'MacroProjectPriorityColor', '-1|#E5F7FF\r\n0|\r\n1|#FFDCB3'),
 				(51, 1, 'MacroProjectRequiredFields', 'f.macroproject_name.value.length|<3\r\nf.macroproject_color_identifier.value.length|<3\r\nf.macroproject_company.options[f.macroproject_company.selectedIndex].value|<1');";
         $bulk_sql[6] = "
-				  ALTER TABLE `forums` ADD `forum_macroproject` INT( 11 ) NOT NULL DEFAULT '0' AFTER `forum_project`;";
+				  ALTER TABLE `{$dbprefix}forums` ADD `forum_macroproject` INT( 11 ) NOT NULL DEFAULT '0' AFTER `forum_project`;";
 			foreach ($bulk_sql as $s) {
                   db_exec($s);
                   

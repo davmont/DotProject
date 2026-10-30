@@ -13,11 +13,6 @@ if ($not!='0') {
     $not='1';
 }
 $obj = new CCosts();
-if ($cost_id) { 
-	$obj->_message = 'updated';
-} else {
-	$obj->_message = 'added';
-}
 
 if (!$obj->bind($_POST)) {
 	$AppUI->setMsg($obj->getError(), UI_MSG_ERROR);

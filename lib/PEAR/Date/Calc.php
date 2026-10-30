@@ -258,7 +258,7 @@ class Date_Calc
      */
     public static function dateNow($format = DATE_CALC_FORMAT)
     {
-        return strftime($format, time());
+        return dp_strftime($format, time());
     }
 
 
@@ -1239,7 +1239,7 @@ class Date_Calc
     {
         $ret = array();
         foreach (Date_Calc::getMonths(2001) as $i) {
-            $ret[$i] = strftime($pb_abbreviated ? '%b' : '%B',
+            $ret[$i] = dp_strftime($pb_abbreviated ? '%b' : '%B',
                                 mktime(0, 0, 0, $i, 1, 2001));
         }
         return $ret;
@@ -2378,7 +2378,7 @@ class Date_Calc
     public static function getWeekDays($pb_abbreviated = false)
     {
         for ($i = 0; $i < 7; $i++) {
-            $weekdays[$i] = strftime($pb_abbreviated ? '%a' : '%A',
+            $weekdays[$i] = dp_strftime($pb_abbreviated ? '%a' : '%A',
                                      mktime(0, 0, 0, 1, $i, 2001));
         }
         return $weekdays;

@@ -1,9 +1,12 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /* Hosting module -> $Id: vw_domains.php,v 1.1 2007/04/16 05:36:02 mbelos Exp $ */
 
 global $AppUI;
 
-$sort = $_GET['sort'];
+$sort = dPgetParam($_GET, 'sort', '');
 switch($sort){
 	case "DNA" : $orderBy = "domain_name ASC"; break;
 	case "DND" : $orderBy = "domain_name DESC"; break;
@@ -43,7 +46,7 @@ while($row = db_fetch_assoc($results)){
 	$domains[] = $row;
 ?>
 				<tr>
-					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $row['domain_id']; ?>"><?php echo $row['domain_name']; ?></a></td>
+					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $row['domain_id']; ?>"><?php echo dPhtml($row['domain_name']); ?></a></td>
 					<td align="center"><?php echo $row['domain_expiry_date']; ?></td>
 				</tr>
 <?php

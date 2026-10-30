@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /*
  * Name:      History
  * Directory: history
@@ -45,20 +48,20 @@ class CSetupRegisters {
 			"register_state tinyint(4) default NULL," .
 			"PRIMARY KEY  (register_id)" .
 			")");
-		$ok = $ok & $q -> exec();
+		$ok = $ok && $q -> exec();
 		$q -> clear();
 		$q -> addTable('sysvals');
 		$q -> addInsert('sysval_key_id',1);
 		$q -> addInsert('sysval_title','RegisterCode');
 		$q -> addInsert('sysval_value','0|\r\n1|PMM-S02/R2\r\n2|PMM-S03/R2\r\n3|PMM-S04/R2\r\n4|PMM-S08/R1\r\n5|PMM-N07/R3\r\n6|PMM-N08/R1');
-		$ok = $ok & $q -> exec();
+		$ok = $ok && $q -> exec();
 
 		$q -> clear();
 		$q -> addTable('sysvals');
 		$q -> addInsert('sysval_key_id',1);
 		$q -> addInsert('sysval_title','RegisterState');
 		$q -> addInsert('sysval_value','1|Open\r\n2|In Progress\r\n3|Close');
-		$ok = $ok & $q -> exec();
+		$ok = $ok && $q -> exec();
 		if(!$ok){
                   return false;
 		}

@@ -11,9 +11,9 @@ $user_id = $AppUI->user_id;
 if (getPermission('admin', 'view')) { // Only sysadmins are able to change users
 	if ((int)dPgetParam($_POST, 'user_id', 0) != 0) { // this means that 
 		$user_id = (int)dPgetParam($_POST, 'user_id', 0);
-		$AppUI->setState('user_id', $_POST['user_id']);
+		$AppUI->setState('user_id', $user_id);
 	} else if ($AppUI->getState('user_id')) {
-		$user_id = $AppUI->getState('user_id');
+		$user_id = (int)$AppUI->getState('user_id');
 	} else {
 		$AppUI->setState('user_id', $user_id);
 	}
@@ -30,9 +30,9 @@ if (isset($_POST['f2'])) {
 $f2 = $AppUI->getState('CompanyIdxFilter') ? $AppUI->getState('CompanyIdxFilter') : 'all';
 
 if (isset($_GET['project_id'])) {
-	$AppUI->setState('TaskIdxProject', $_GET['project_id']);
+	$AppUI->setState('TaskIdxProject', (int)$_GET['project_id']);
 }
-$project_id = $AppUI->getState('TaskIdxProject') ? $AppUI->getState('TaskIdxProject') : 0;
+$project_id = (int)$AppUI->getState('TaskIdxProject');
 
 // get CCompany() to filter tasks by company
 require_once($AppUI->getModuleClass('companies'));
@@ -54,7 +54,7 @@ $search_text = dPformSafe($search_text);
 
 $titleBlock->addCell('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $AppUI->_('Search') . ':');
 $titleBlock->addCell(('<input type="text" class="text" size="20" name="searchtext"' 
-                      . ' onchange="javascript:document.searchfilter.submit();" value="' . $search_text 
+                      . dPaction(null, array(), 'change', array('submit' => '')) . ' value="' . $search_text 
                       . '"title="' . $AppUI->_('Search in name and description fields') 
                       . '"/><!--<input type="submit" class="button" value=">" title="' 
                       . $AppUI->_('Search in name and description fields') . '"/>-->'), '',
@@ -68,7 +68,7 @@ if (getPermission('admin', 'view')) {
 	$user_list = $perms->getPermittedUsers('tasks');
 	$titleBlock->addCell(arraySelect($user_list, 'user_id', 
 	                                 ('size="1" class="text"' 
-	                                  . ' onchange="javascript:document.userIdForm.submit();"'), 
+	                                  . dPaction(null, array(), null, array('submit' => 'userIdForm'))), 
 	                                 $user_id, false), '',
 	                     '<form action="?m=tasks" method="post" name="userIdForm">','</form>');
 }
@@ -76,7 +76,7 @@ if (getPermission('admin', 'view')) {
 $titleBlock->addCell();
 $titleBlock->addCell($AppUI->_('Company') . ':');
 $titleBlock->addCell(arraySelect($filters2, 'f2', 
-                                 'size=1 class=text onchange="javascript:document.companyFilter.submit();"', 
+                                 'size=1 class=text' . dPaction(null, array(), null, array('submit' => 'companyFilter')), 
                                  $f2, false), '', 
                      '<form action="?m=tasks" method="post" name="companyFilter">', '</form>'
 );
@@ -102,7 +102,7 @@ $titleBlock = new CTitleBlock('', 'shim.gif');
 $titleBlock->showhelp = false;
 $titleBlock->addCell('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $AppUI->_('Task Filter') . ':');
 $titleBlock->addCell(arraySelect($filters, 'f', 
-                                 'size=1 class=text onchange="javascript:document.taskFilter.submit();"', 
+                                 'size=1 class=text' . dPaction(null, array(), null, array('submit' => 'taskFilter')), 
                                  $f, true), '',
                      '<form action="?m=tasks" method="post" name="taskFilter">', '</form>');
 $titleBlock->addCell();

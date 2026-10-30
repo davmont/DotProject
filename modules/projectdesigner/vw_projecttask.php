@@ -1,4 +1,8 @@
-<?php      // create Date objects from the datetime fields
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+// create Date objects from the datetime fields
       $df = $AppUI->getPref( 'SHDATEFORMAT' );
       $start_date = intval( $obj->project_start_date ) ? new CDate( $obj->project_start_date ) : null;
       $end_date = intval( $obj->project_end_date ) ? new CDate( $obj->project_end_date ) : null;
@@ -72,7 +76,7 @@ if(!$tasks_opened){
 $q = new DBQuery();
 $q->addQuery('task_id');
 $q->addTable('tasks');
-$q->addWhere('task_project='.$project_id);
+$q->addWhere('task_project=' . (int)$project_id);
 $all_tasks = $q->loadList();
 foreach ($all_tasks as $key => $open_task) {
         $tasks_opened[] = $open_task['task_id'];
@@ -93,8 +97,8 @@ if (isset($_GET['pin'])) {
     } 
     else {
         $q->setDelete('user_task_pin');
-        $q->addWhere('user_id = ' . $AppUI->user_id);
-        $q->addWhere('task_id = ' . $task_id);
+        $q->addWhere('user_id = ' . (int)$AppUI->user_id);
+        $q->addWhere('task_id = ' . (int)$task_id);
     }
     
     if ( !$q->exec() ) {
@@ -157,7 +161,7 @@ $q->addTable('projects', 'pr');
 $q->leftJoin('tasks', 't1', 'pr.project_id = t1.task_project');
 $q->leftJoin('companies', 'c', 'company_id = project_company');
 $q->addWhere('t1.task_id = t1.task_parent');
-$q->addWhere('project_id='.$project_id);
+$q->addWhere('project_id=' . (int)$project_id);
 if ( count($allowedProjects)) {
   $q->addWhere($allowedProjects);
 }
@@ -172,13 +176,11 @@ $perms =& $AppUI->acl();
 $projects = array();
 if ($canViewTasks) {
     $prc = db_exec( $psql );
-    echo db_error();
     while ($row = db_fetch_assoc( $prc )) {
         $projects[$row['project_id']] = $row;
     }
     
     $prc2 = db_exec( $psql2 );
-    echo db_error();
     while ($row2 = db_fetch_assoc( $prc2 )) {
         $projects[$row2["project_id"]] = ((!($projects[$row2["project_id"]]))?array():$projects[$row2["project_id"]]);
         array_push($projects[$row2["project_id"]], $row2);
@@ -216,7 +218,7 @@ $q->leftJoin('users', 'assignees', 'assignees.user_id = ut.user_id');
 $q->leftJoin('contacts', 'co', 'co.contact_id = usernames.user_contact');
 $q->leftJoin('task_log', 'tlog', 'tlog.task_log_task = t.task_id AND tlog.task_log_problem > 0');
 $q->leftJoin('files', 'f', 't.task_id = f.file_task');
-$q->leftJoin('user_task_pin', 'pin', 't.task_id = pin.task_id AND pin.user_id = ' . $AppUI->user_id);
+$q->leftJoin('user_task_pin', 'pin', 't.task_id = pin.task_id AND pin.user_id = ' . (int)$AppUI->user_id);
 //$user_id = $user_id ? $user_id : $AppUI->user_id;
 $q->leftJoin('event_queue', 'evtq', 't.task_id = evtq.queue_origin_id AND evtq.queue_module = "tasks"');
 
@@ -225,7 +227,7 @@ $q->leftJoin('event_queue', 'evtq', 't.task_id = evtq.queue_origin_id AND evtq.q
 //}
 
 //if ($project_id) {
-	$q->addWhere('task_project = ' . $project_id);
+	$q->addWhere('task_project = ' . (int)$project_id);
 //}
 $allowedProjects = $project->getAllowedSQL($AppUI->user_id, 'task_project');
 if (count($allowedProjects)) {
@@ -251,7 +253,7 @@ foreach ($tasks as $row) {
 	$q->addTable('user_tasks', 'ut');
 	$q->leftJoin('users', 'u', 'u.user_id = ut.user_id');
 	$q->leftJoin('contacts', 'c', 'u.user_contact = c.contact_id');
-	$q->addWhere('ut.task_id = ' . $row['task_id']);
+	$q->addWhere('ut.task_id = ' . (int)$row['task_id']);
 	$q->addGroup('ut.user_id');
 	$q->addOrder('perc_assignment desc, user_username');
 	
@@ -259,7 +261,7 @@ foreach ($tasks as $row) {
 	$row['task_assigned_users'] = $q->loadList();
 	$q->addQuery('count(*) as children');
 	$q->addTable('tasks');
-	$q->addWhere('task_parent = ' . $row['task_id']);
+	$q->addWhere('task_parent = ' . (int)$row['task_id']);
 	$q->addWhere('task_id <> task_parent');
 	$row['children'] = $q->loadResult();
 	$row['style'] = taskstyle_pd($row);
@@ -401,8 +403,9 @@ $projectStatus = dPgetSysVal( 'ProjectStatus' );
 <tr>
     <td align="center" colspan="20">
 <?php
-      $src = "?m=projectdesigner&a=gantt&suppressHeaders=1&showLabels=1&proFilter=&showInactive=1showAllGantt=1&project_id=$project_id&width=' + ((navigator.appName=='Netscape'?window.innerWidth:document.body.offsetWidth)*0.90) + '";      
-      echo "<script>document.write('<img src=\"$src\">')</script>";
+      $src = "?m=projectdesigner&a=gantt&suppressHeaders=1&showLabels=1&proFilter=&showInactive=1showAllGantt=1&project_id=" . (int)$project_id . "&width=";
+      echo '<script nonce="' . dPcspNonce() . '">document.write(\'<img src="\' + ' . dPjs($src)
+            . ' + ((navigator.appName==\'Netscape\'?window.innerWidth:document.body.offsetWidth)*0.90) + \'">\');</script>';
 ?>
 </td>
 </table>

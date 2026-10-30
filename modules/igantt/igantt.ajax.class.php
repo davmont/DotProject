@@ -194,7 +194,7 @@ var $_canMove = true;
 
 /******************************************* CLASS PUBLIC METHODS **************************************/
 
-function iGanttResponse( $start, $end, $width = 800, $working_days = true ) {
+function __construct( $start, $end, $width = 800, $working_days = true ) {
 /**
 * 	Class constructor
 *		@param	=> scale start date
@@ -890,8 +890,8 @@ function _createActivityBar( $trId, $row, $bar ) {
 	$type = $bar['type'];
 	$level = $bar['level'];
 	if ( $type == GANTT_DYNAMIC ) {
-		$bar['label'][0] = "<img id=\"collapse_$id\" src=\"./images/icons/collapse.gif\" height=\"11\" width=\"11\" style=\"display:inline;\" onClick=\"collapse({$bar['bar_id']});\">&nbsp;" . $bar['label'][0];
-		$bar['label'][0] = "<img id=\"expand_$id\" src=\"./images/icons/expand.gif\" height=\"11\" width=\"11\" style=\"display:none;\" onClick=\"expand({$bar['bar_id']});\">" . $bar['label'][0];
+		$bar['label'][0] = "<img id=\"collapse_$id\" src=\"./images/icons/collapse.gif\" height=\"11\" width=\"11\" style=\"display:inline;\"" . dPaction('collapse', array((int)$bar['bar_id'])) . ">&nbsp;" . $bar['label'][0];
+		$bar['label'][0] = "<img id=\"expand_$id\" src=\"./images/icons/expand.gif\" height=\"11\" width=\"11\" style=\"display:none;\"" . dPaction('expand', array((int)$bar['bar_id'])) . ">" . $bar['label'][0];
 	}
 	if ( $bar['level'] > 0 ) {
 		$bar['label'][0] = "<img src=\"./images/corner-dots.gif\" height=\"12\" width=\"16\">" . $bar['label'][0];

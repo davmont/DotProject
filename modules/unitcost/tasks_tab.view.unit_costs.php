@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /*
 Unitcost tab view file
 Written by Alejandro Imass <ait@p2ee.org>
@@ -65,7 +68,7 @@ $AppUI->getModuleJS('unitcost', 'tabs');
                 </tr>
                 <tr>
                   <td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Unit of Measure' );?></td>
-                  <td class="hilite" width="100" ><?php echo $unit_of_measure ?></td>
+                  <td class="hilite" width="100" ><?php echo dPhtml($unit_of_measure) ?></td>
                 </tr>
                 <tr>
                   <td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Total Units' );?></td>
@@ -82,12 +85,12 @@ $AppUI->getModuleJS('unitcost', 'tabs');
               <table width="100%">
                 <tr>
                   <td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Normative Reference' );?></td>
-                  <td class="hilite" width="250" ><?php echo $norm_ref ?></td>
+                  <td class="hilite" width="250" ><?php echo dPhtml($norm_ref) ?></td>
                 </tr>
                 <tr>
                 <tr>
                   <td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Normative Description' );?></td>
-                  <td class="hilite" width="250" height="100"><?php echo $norm_dsc ?></td>
+                  <td class="hilite" width="250" height="100"><?php echo dPhtml($norm_dsc) ?></td>
                 </tr>
               </table>
             </td>
@@ -97,6 +100,6 @@ $AppUI->getModuleJS('unitcost', 'tabs');
     </tr>
   </table>
 </form>
-<script language="javascript">
-  subForm.push(new FormDefinition(<?php echo $tab; ?>, document.otherFrm, checkOther, saveOther));
+<script nonce="<?php echo dPcspNonce(); ?>">
+  subForm.push(new FormDefinition(<?php echo (int)$tab; ?>, document.otherFrm, checkOther, saveOther));
 </script>

@@ -320,7 +320,7 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 					default:
 						break;
 				}
-				fwrite($handle, "\$HELPDESK_CONFIG['".$key."'] = '".$val."';\n");
+				fwrite($handle, "\$HELPDESK_CONFIG[" . var_export($key, true) . "] = " . var_export((string)$val, true) . ";\n");
 			}
 			fwrite($handle, "?>\n");
 			$AppUI->setMsg( $CONFIG_FILE." ".$AppUI->_('has been successfully updated'), UI_MSG_OK );
@@ -378,7 +378,7 @@ if (!$HELPDESK_CONFIG['notity_email_address']['value']) {
 }
 
 ?>
-<script language = 'javascript' type='text/javascript'>
+<script language = 'javascript' type='text/javascript' nonce="<?php echo dPcspNonce(); ?>">
   function enableWatcherList(show){
       var useDefWatcher=document.getElementById('default_watcher');
       var WatcherList=document.getElementById('default_watcher_list[]');
@@ -415,7 +415,7 @@ foreach ($config_options as $key=>$value){
           <?php
           break;
         case 'text': ?>
-          <input type="text" name="<?php echo $key?>" value="<?php echo $value['value']?>" size=32>
+          <input type="text" name="<?php echo $key?>" value="<?php echo dPhtml($value['value'])?>" size=32>
           <?php
           break;
         case 'select': 
@@ -435,7 +435,7 @@ foreach ($config_options as $key=>$value){
             // organize string '118,72,2,68' into array 
             $selected=explode(',',$value['value']);
             foreach ( $value["list"] as $k => $v ) {
-                echo "\n\t<option value=\"".$k."\"".(in_array($k, $selected) ? " selected=\"selected\"" : '').">" .  $v  . "</option>";
+                echo "\n\t<option value=\"".dPhtml($k)."\"".(in_array($k, $selected) ? " selected=\"selected\"" : '').">" .  dPhtml($v)  . "</option>";
                 //echo "\n\t<option value=\"".$k."\"".($k == $selected ? " selected=\"selected\"" : '').">" .  $v  . "</option>";
             }
           ?>
@@ -452,7 +452,7 @@ foreach ($config_options as $key=>$value){
                                     /*if($v) $useDefWatcher=1;
                                     else $useDefWatcher=0;*/
                                ?> 
-                        <?php echo (($value['value'] == $v)?"checked":""); ?> <?php echo $value['events']; ?> onClick=enableWatcherList(<?php echo $v; ?>)> <?php echo $n;?></label> 
+                        <?php echo (($value['value'] == $v)?"checked":""); ?> <?php echo $value['events']; ?><?php echo dPaction('enableWatcherList', array((int)$v)); ?>> <?php echo $n;?></label> 
             <?php }
             else {?>
                 <label><input type="radio" name="<?php echo $key; ?>" id="<?php echo $key; ?>" value=<?php echo $v; ?> <?php echo (($value['value'] == $v)?"checked":""); ?> <?php echo $value['events']; ?>> <?php echo $n;?></label>

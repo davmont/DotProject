@@ -91,13 +91,13 @@ if ($category_filter) {
 	$q->addWhere($category_filter);
 }
 if ($company_id) {
-	$q->addWhere('p.project_company = ' . $company_id);
+	$q->addWhere('p.project_company = ' . (int)$company_id);
 }
 if ($project_id) {
-	$q->addWhere('f.file_project = ' . $project_id);
+	$q->addWhere('f.file_project = ' . (int)$project_id);
 }
 if ($task_id) {
-	$q->addWhere('f.file_task = ' . $task_id);
+	$q->addWhere('f.file_task = ' . (int)$task_id);
 }
 
 
@@ -122,7 +122,7 @@ if (count($allowedFolders)) {
 }
 if ($company_id) {
 	$r->innerJoin('companies', 'co', 'co.company_id = p.project_company');
-	$r->addWhere('co.company_id = ' . $company_id);
+	$r->addWhere('co.company_id = ' . (int)$company_id);
 	$r->addWhere($allowedCompanies);
 }
 
@@ -160,13 +160,13 @@ if ($category_filter) {
 	$q2->addWhere($category_filter);
 }
 if ($company_id) {
-	$q2->addWhere('p.project_company = ' . $company_id);
+	$q2->addWhere('p.project_company = ' . (int)$company_id);
 }
 if ($project_id) {
-	$q2->addWhere('f.file_project = ' . $project_id);
+	$q2->addWhere('f.file_project = ' . (int)$project_id);
 }
 if ($task_id) {
-	$q2->addWhere('f.file_task = ' . $task_id);
+	$q2->addWhere('f.file_task = ' . (int)$task_id);
 }
 $q2->setLimit($xpg_pagesize, $xpg_min);
 // Adding an Order by that is different to a group by can cause
@@ -206,13 +206,13 @@ if ($category_filter) {
 	$q3->addWhere($category_filter);
 }
 if ($company_id) {
-	$q3->addWhere('p.project_company = ' . $company_id);
+	$q3->addWhere('p.project_company = ' . (int)$company_id);
 }
 if ($project_id) {
-	$q3->addWhere('f.file_project = ' . $project_id);
+	$q3->addWhere('f.file_project = ' . (int)$project_id);
 }
 if ($task_id) {
-	$q3->addWhere('f.file_task = ' . $task_id);
+	$q3->addWhere('f.file_task = ' . (int)$task_id);
 }
 
 $files = array();
@@ -234,7 +234,7 @@ $xpg_total_pages = ($xpg_totalrecs > $xpg_pagesize) ? ceil($xpg_totalrecs / $xpg
 shownavbar($xpg_totalrecs, $xpg_pagesize, $xpg_total_pages, $page);
 
 ?>
-<script type="text/JavaScript">
+<script type="text/JavaScript" nonce="<?php echo dPcspNonce(); ?>">
 function expand(id) {
   var element = document.getElementById(id);
   element.style.display = (element.style.display == '' || element.style.display == "none") ? "block" : "none";
@@ -278,7 +278,7 @@ function expand(id) {
 				<tr>
 					<td colspan="20" style="border: outset 2px #eeeeee;<?php echo $style; ?>">
 						<a href="?m=projects&amp;a=view&amp;project_id=<?php echo $latest_file['file_project']; ?>">
-							<span style="<?php echo $style; ?>"><?php echo $latest_file['project_name']; ?></span>
+							<span style="<?php echo $style; ?>"><?php echo dPhtml($latest_file['project_name']); ?></span>
 						</a>
 					</td>
 				</tr>
@@ -348,7 +348,7 @@ function expand(id) {
 				?>
 			</td>
 			<td width="10%">
-				<?php echo ($latest_file['file_co_reason']); ?>
+				<?php echo (dPhtml($latest_file['file_co_reason'])); ?>
 				<?php
 				if (
 					!(empty($latest_file['file_checkout']))
@@ -382,20 +382,20 @@ function expand(id) {
 				$file_icon = getIcon($file_row['file_type']);
 				?>
 				<a href="./fileviewer.php?file_id=<?php
-				echo $latest_file['file_id']; ?>" title="<?php echo $latest_file['file_description']; ?>">
+				echo $latest_file['file_id']; ?>" title="<?php echo dPhtml($latest_file['file_description']); ?>">
 					<?php
 					echo (dPshowImage((DP_BASE_URL . '/modules/files/images/' . $file_icon), '16', '16') . "\n"
-						. '&nbsp;' . $filename);
+						. '&nbsp;' . dPhtml($filename));
 					?>
 				</a>
 			</td>
-			<td width="20%"><?php echo $latest_file['file_description']; ?></td>
+			<td width="20%"><?php echo dPhtml($latest_file['file_description']); ?></td>
 			<td width="5%" nowrap="nowrap" align="center">
 				<?php
 				echo $file_row['file_lastversion'];
 				if ($file_row['file_versions'] > 1) {
 					?>
-					<a href="#" onclick="javascript:expand('versions_<?php echo $latest_file['file_id']; ?>');">
+					<a href="#"<?php echo dPaction('expand', array('versions_' . $latest_file['file_id'])); ?>>
 						(<?php echo $file_row['file_versions']; ?>)
 					</a>
 				<?php
@@ -421,7 +421,7 @@ function expand(id) {
 							'show only this folder'
 						);
 						?>
-						<?php echo $file_row['file_folder_name']; ?>
+						<?php echo dPhtml($file_row['file_folder_name']); ?>
 					</a>
 					<?php
 				} else {
@@ -432,12 +432,12 @@ function expand(id) {
 			<td width="5%" align="center">
 				<a href="./index.php?m=tasks&amp;a=view&amp;task_id=<?php
 				echo $latest_file['file_task']; ?>">
-					<?php echo $latest_file["task_name"]; ?>
+					<?php echo dPhtml($latest_file["task_name"]); ?>
 				</a>
 			</td>
 			<td width="15%" nowrap="nowrap">
 				<?php
-				echo ($latest_file["contact_first_name"] . ' ' . $latest_file["contact_last_name"]);
+				echo (dPhtml($latest_file["contact_first_name"] . ' ' . $latest_file["contact_last_name"]));
 				?>
 			</td>
 			<td width="5%" nowrap="nowrap" align="right">
@@ -504,14 +504,14 @@ function expand(id) {
 									</td>
 									<td nowrap="8%">
 										<a href="./fileviewer.php?file_id=<?php echo $file['file_id']; ?>" title="<?php
-										   echo $file['file_description']; ?>">
+										   echo dPhtml($file['file_description']); ?>">
 											<?php
 											echo dPshowImage((DP_BASE_URL . '/modules/files/images/' . $file_icon), '16', '16');
 											?>
-											<?php echo $file['file_name']; ?>
+											<?php echo dPhtml($file['file_name']); ?>
 										</a>
 									</td>
-									<td width="20%"><?php echo $file['file_description']; ?></td>
+									<td width="20%"><?php echo dPhtml($file['file_description']); ?></td>
 									<td width="5%" nowrap="nowrap" align="center"><?php echo $file['file_version']; ?></td>
 									<td width="10%" nowrap="nowrap" align="center">
 										<?php echo $file_types[$file['file_category']]; ?>
@@ -533,7 +533,7 @@ function expand(id) {
 													'show only this folder'
 												);
 												?>
-												<?php echo $file['file_folder_name']; ?>
+												<?php echo dPhtml($file['file_folder_name']); ?>
 											</a>
 											<?php
 										} else {
@@ -543,11 +543,11 @@ function expand(id) {
 									</td>
 									<td width="5%" align="center">
 										<a href="./index.php?m=tasks&amp;a=view&amp;task_id=<?php echo $file['file_task']; ?>">
-											<?php echo $file['task_name']; ?>
+											<?php echo dPhtml($file['task_name']); ?>
 										</a>
 									</td>
 									<td width="15%" nowrap="nowrap">
-										<?php echo ($file["contact_first_name"] . ' ' . $file["contact_last_name"]); ?>
+										<?php echo (dPhtml($file["contact_first_name"] . ' ' . $file["contact_last_name"])); ?>
 									</td>
 									<td width="5%" nowrap="nowrap" align="right">
 										<?php echo file_size(intval($file['file_size'])); ?>

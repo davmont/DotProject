@@ -3,7 +3,7 @@ if (!defined('DP_BASE_DIR')) {
   die('You should not access this file directly.');
 }
 
-$history_id = defVal(@$_GET["history_id"], 0);
+$history_id = (int)defVal(@$_GET["history_id"], 0);
 
 /*
 // check permissions
@@ -11,9 +11,15 @@ if (!$canEdit) {
 	$AppUI->redirect("m=public&a=access_denied");
 }
 */
-$action = @$_REQUEST["action"];
+// Adding, updating and deleting change data: POST with the CSRF token and edit
+// permission only.
+$action = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dPgetCleanParam($_POST, 'action', '') : '';
 $q = new DBQuery;
 if ($action) {
+	$AppUI->verifyCsrfToken();
+	if (!getPermission('history', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
 	$history_description = dPgetCleanParam($_POST, 'history_description', '');
 	$history_project = dPgetCleanParam($_POST, 'history_project', '');
 	$userid = $AppUI->user_id;
@@ -31,11 +37,11 @@ if ($action) {
 		$q->addTable('history');
 		$q->addUpdate('history_description', $history_description);
 		$q->addUpdate('history_project', $history_project);
-		$q->addWhere('history_id ='.$history_id);
+		$q->addWhere('history_id =' . (int)$history_id);
 		$okMsg = 'History updated';
 	} else if ($action == 'del') {
 		$q->setDelete('history');
-		$q->addWhere('history_id ='.$history_id);
+		$q->addWhere('history_id =' . (int)$history_id);
 		$okMsg = 'History deleted';				
 	}
 	if (!$q->exec()) {
@@ -50,10 +56,18 @@ if ($action) {
 // pull the history
 $q->addTable('history');
 $q->addQuery('*');
-$q->addWhere('history_id ='.$history_id);
+$q->addWhere('history_id =' . (int)$history_id);
 $sql = $q->prepare();
 $q->clear();
-db_loadHash($sql, $history);
+$history = array();
+if (!db_loadHash($sql, $history)) {
+	if ($history_id) {
+		$AppUI->setMsg('History', UI_MSG_ERROR);
+		$AppUI->setMsg('not found', UI_MSG_ERROR, true);
+		$AppUI->redirect('m=history');
+	}
+	$history = array('history_project' => 0, 'history_description' => '');
+}
 
 $title = (($history_id) ? 'Edit History' : 'Add History');
 $titleBlock = new CTitleBlock($title, 'stock_book_blue_48.png', $m, "$m.$a");
@@ -67,14 +81,14 @@ $titleBlock->show();
 <table border="0" cellpadding="4" cellspacing="0" width="98%">
 <tr>
 	<td width="50%" align="right">
-		<a href="javascript:delIt()"><img align="middle" src="./images/icons/trash.gif" width="16" height="16" alt="" border="0" alt="" /><?php echo $AppUI->_('delete history');?></a>
+		<a href="#"<?php echo dPaction('delIt'); ?>><img align="middle" src="./images/icons/trash.gif" width="16" height="16" alt="" border="0" alt="" /><?php echo $AppUI->_('delete history');?></a>
 	</td>
 </tr>
 </table>
 
 <table border="1" cellpadding="4" cellspacing="0" width="98%" class="std" summary="project history">
 	
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function delIt() {
 		document.AddEdit.action.value = "del";
 		document.AddEdit.submit();
@@ -98,7 +112,7 @@ echo arraySelect($projects, 'history_project', 'class="text"', $history["history
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Description');?>:</td>
 	<td width="60%">
-		<textarea name="history_description" class="textarea" cols="60" rows="5" wrap="virtual"><?php echo $history["history_description"];?></textarea>
+		<textarea name="history_description" class="textarea" cols="60" rows="5" wrap="virtual"><?php echo dPformSafe($history["history_description"]);?></textarea>
 	</td>
 </tr>	
 		
@@ -109,10 +123,10 @@ echo arraySelect($projects, 'history_project', 'class="text"', $history["history
 		<table>
 		<tr>
 			<td>
-				<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel'); ?>" onclick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {location.href = '?<?php echo $AppUI->getPlace();?>';}">
+				<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel'); ?>" <?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW), 'href' => '?' . $AppUI->getPlace())); ?>>
 			</td>
 			<td>
-				<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>" onclick="javascript:submit()">
+				<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>"<?php echo dPaction(null, array(), null, array('submit' => '')); ?>>
 			</td>
 		</tr>
 		</table>

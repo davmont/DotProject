@@ -1,6 +1,13 @@
 ##
 ## DO NOT MODIFY THIS FILE BY HAND!
 ##
+"LBL_BEGIN"=>"Inicio",
+"LBL_COMPLETE"=>"Completado",
+"LBL_END"=>"Fin",
+"LBL_MENU_ADD_PROJECT"=>"Agregar proyecto",
+"LBL_MENU_EDIT_PROJECT"=>"Editar proyecto",
+"LBL_OWNER"=>"Propietario",
+"LBL_RIGHT_CLICK_CREATE_PROJECT"=>"Crear proyecto",
 "1LBLMONITORAMENTO"=>"Monitorización",
 "1LBLORGONOGRAM"=>"Organigrama",
 "Active Projects"=>"Proyectos activos",

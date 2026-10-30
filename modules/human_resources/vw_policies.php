@@ -10,7 +10,7 @@ $company_id = intval(dPgetParam($_GET, 'company_id', null));
 $query = new DBQuery;
 $query->addTable('companies', 'c');
 $query->addQuery('company_name');
-$query->addWhere('c.company_id = ' . $company_id);
+$query->addWhere('c.company_id = ' . (int)$company_id);
 $res =& $query->exec();
 $company_name = ($res && $res->fields) ? $res->fields['company_name'] : '';
 
@@ -20,7 +20,7 @@ $titleBlock->addCrumb(('?m=companies&amp;a=view&amp;company_id=' . $company_id),
 $query = new DBQuery;
 $query->addTable('company_policies', 'p');
 $query->addQuery('company_policies_id');
-$query->addWhere('p.company_policies_company_id = ' . $company_id);
+$query->addWhere('p.company_policies_company_id = ' . (int)$company_id);
 $res =& $query->exec();
 $company_policies_id = ($res && $res->fields) ? $res->fields['company_policies_id'] : null;
 $query->clear();
@@ -66,7 +66,7 @@ if ($edit || !$company_policies_id) {
 			<tr>
 				<td align="right">
 					<input type="button" value="<?php echo $AppUI->_('submit'); ?>" class="button"
-						onclick="submitPolicies(document.editfrm);" />
+						<?php echo dPaction('submitPolicies', array('$form')); ?> />
 				</td>
 			</tr>
 		</table>
@@ -81,16 +81,16 @@ if ($edit || !$company_policies_id) {
 				<table cellspacing="1" cellpadding="2" width="100%">
 					<tr>
 						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Rewards and recognition'); ?>:</td>
-						<td class="hilite" width="100%"><?php echo $policies->company_policies_recognition; ?></td>
+						<td class="hilite" width="100%"><?php echo dPhtml($policies->company_policies_recognition); ?></td>
 					</tr>
 					<tr>
 						<td align="right" nowrap="nowrap">
 							<?php echo $AppUI->_('Regulations, standards, and policy compliance'); ?>:</td>
-						<td class="hilite" width="100%"><?php echo $policies->company_policies_policy; ?></td>
+						<td class="hilite" width="100%"><?php echo dPhtml($policies->company_policies_policy); ?></td>
 					</tr>
 					<tr>
 						<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Safety'); ?>:</td>
-						<td class="hilite" width="100%"><?php echo $policies->company_policies_safety; ?></td>
+						<td class="hilite" width="100%"><?php echo dPhtml($policies->company_policies_safety); ?></td>
 					</tr>
 				</table>
 			</td>
@@ -101,6 +101,6 @@ if ($edit || !$company_policies_id) {
 <tr>
 	<td>
 		<input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button"
-			onclick="javascript:history.back(-1);" />
+			<?php echo dPaction('history.back'); ?> />
 	</td>
 </tr>

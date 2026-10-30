@@ -9,13 +9,13 @@ $project_id = intval(dPgetParam($_GET, 'project_id', 0));
 $query = new DBQuery;
 $query->addTable('projects', 'p');
 $query->addQuery('project_name');
-$query->addWhere('p.project_id = ' . $project_id);
+$query->addWhere('p.project_id = ' . (int)$project_id);
 $res =& $query->exec();
 $query->clear();
 
 $query->addTable('tasks', 't');
 $query->addQuery('task_id, task_name');
-$query->addWhere('t.task_project = ' . $project_id);
+$query->addWhere('t.task_project = ' . (int)$project_id);
 $res =& $query->exec();
 ?>
 
@@ -35,7 +35,7 @@ for ($res; ! $res->EOF; $res->MoveNext()) {
 <tr>
   <td style=<?php echo $style; ?>>
     <a href="index.php?m=human_resources&amp;a=view_task_roles&amp;project_id=<?php echo $project_id;?>&amp;task_id=<?php echo $res->fields['task_id'];?>">
-    <?php echo $res->fields['task_name']; ?>
+    <?php echo dPhtml($res->fields['task_name']); ?>
     </a>
   </td>
 </tr>

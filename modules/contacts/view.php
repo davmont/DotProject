@@ -64,11 +64,11 @@ $titleBlock->show();
 	<input type="hidden" name="contact_owner"
 		value="<?php echo $row->contact_owner ? $row->contact_owner : $AppUI->user_id; ?>" />
 </form>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function delIt() {
 		var form = document.changecontact;
 		if (confirm("<?php echo $AppUI->_('contactsDelete', UI_OUTPUT_JS); ?>")) {
-			form.del.value = "<?php echo $contact_id; ?>";
+			form.del.value = "<?php echo (int)$contact_id; ?>";
 			form.submit();
 		}
 	}
@@ -104,7 +104,7 @@ $titleBlock->show();
 					<td align="right" width="100"><?php echo $AppUI->_('Company'); ?>:</td>
 					<?php if (getPermission('companies', 'view', $row->contact_company)) { ?>
 						<td class="hilite" nowrap="nowrap">
-							<?php echo "<a href='?m=companies&amp;a=view&amp;company_id=" . @$row->contact_company . "'>" . $AppUI->___($company_detail['company_name']) . '</a>'; ?>
+							<?php echo "<a href='?m=companies&amp;a=view&amp;company_id=" . (int)@$row->contact_company . "'>" . $AppUI->___($company_detail['company_name']) . '</a>'; ?>
 						</td>
 					<?php } else { ?>
 						<td class="hilite" nowrap="nowrap"><?php echo $AppUI->___($company_detail['company_name']); ?></td>
@@ -139,10 +139,10 @@ $titleBlock->show();
 				<tr>
 					<td align="right" width="100"><?php echo $AppUI->_('Map Address'); ?>:</td>
 					<td class="hilite"><input type="image" src="./images/googlemaps.gif" style="width:55px;height:22px;"
-							alt="Find It on Google" onclick="window.open('http://maps.google.com/maps?q=<?php
-							echo $AppUI->___(@$row->contact_address1); ?>+<?php echo $AppUI->___(@$row->contact_address2); ?>+<?php
-							   echo $AppUI->___(@$row->contact_city); ?>+<?php echo $AppUI->___(@$row->contact_state); ?>+<?php
-								  echo $AppUI->___(@$row->contact_zip); ?>+<?php echo $AppUI->___(@$row->contact_country); ?>')" />
+							alt="Find It on Google"<?php echo dPaction('window.open', array('http://maps.google.com/maps?q='
+							. rawurlencode(@$row->contact_address1) . '+' . rawurlencode(@$row->contact_address2) . '+'
+							. rawurlencode(@$row->contact_city) . '+' . rawurlencode(@$row->contact_state) . '+'
+							. rawurlencode(@$row->contact_zip) . '+' . rawurlencode(@$row->contact_country))); ?> />
 					</td>
 				</tr>
 				<tr>
@@ -174,7 +174,7 @@ $titleBlock->show();
 				</tr>
 				<tr>
 					<td align="right"><?php echo $AppUI->_('URL'); ?>:</td>
-					<td class="hilite" nowrap="nowrap"><a href="<?php echo $AppUI->___(@$row->contact_url); ?>"><?php
+					<td class="hilite" nowrap="nowrap"><a href="<?php echo dPhtml(dPsafeUrl(@$row->contact_url)); ?>"><?php
 					  echo $AppUI->___(@$row->contact_url); ?></a></td>
 				</tr>
 				<tr>
@@ -217,7 +217,7 @@ $titleBlock->show();
 	<tr>
 		<td>
 			<input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button"
-				onclick="javascript:window.location='./index.php?m=contacts';" />
+				<?php echo dPaction(null, array(), null, array('href' => './index.php?m=contacts')); ?> />
 		</td>
 	</tr>
 </table>

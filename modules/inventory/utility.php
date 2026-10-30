@@ -1,4 +1,8 @@
-<?php	/* INVENTORY $ld: utility.php, v1.00 2003/11/05 13:53 dylan_cuthbert Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+	/* INVENTORY $ld: utility.php, v1.00 2003/11/05 13:53 dylan_cuthbert Exp $ */
 
 // common functions and variables used by the inventory module
 
@@ -12,13 +16,11 @@ $sql->addTable('inventory_categories');
 $sql->addQuery('*');
 
 $category_list =$sql->loadList();
-echo db_error();
 
 $sql->clear();
 $sql -> addTable('inventory_brands');
 $sql->addQuery('*');
 $brand_list = $sql->loadList();
-echo db_error();
 
 function get_category_name( &$category_list, $catind )
 {
@@ -86,6 +88,11 @@ function load_all_items()
 	$filter_company = $AppUI->getState( 'InventoryIdxFilterCompany' ) ? $AppUI->getState( 'InventoryIdxFilterCompany' ) : 0;
 	$filter_type    = $AppUI->getState( 'InventoryIdxFilterType' ) ? $AppUI->getState( 'InventoryIdxFilterType' ) : 0;
 	$filter_index   = $AppUI->getState( 'InventoryIdxFilterIndex' ) ? $AppUI->getState( 'InventoryIdxFilterIndex' ) : 0;
+	// The filters come from the request (session state) and go into SQL below: ids are
+	// integers and the type must name one of the inventory columns.
+	$filter_company = (int)$filter_company;
+	$filter_index = (int)$filter_index;
+	$filter_type = dPvalidateOrder($filter_type, array('user', 'company', 'department', 'project'), 'choose');
         $query=new DBQuery();
         $query->addTable('inventory','inventory');
         $query->addQuery('inventory.*, cat.inventory_category_name, brand.inventory_brand_name'.
@@ -108,7 +115,7 @@ function load_all_items()
 	if ( $filter_company ){
 		if ( $filter_index && $filter_type != "choose" )
 		{
-			$where .= "AND inventory_${filter_type} = $filter_index \n";
+			$where .= "AND inventory_{$filter_type} = $filter_index \n";
 		}
 		else
 		{
@@ -236,7 +243,7 @@ function display_item( &$item, $indent, $children = 0 )
 	echo "</TD><TD>";
 	if ( isset( $item['inventory_asset_no']) && $item['inventory_asset_no'])
 	{
-		echo $item['inventory_asset_no'];
+		echo dPhtml( $item['inventory_asset_no'] );
 	}
 	else printf( "%06d", $item['inventory_id'] );
 
@@ -249,7 +256,7 @@ function display_item( &$item, $indent, $children = 0 )
 		}
 	}
 	echo "<A HREF='?m=inventory&a=view&inventory_id={$item['inventory_id']}' ".(($children && !$item[ 'inventory_parent' ] )?" style='font-weight: bold'":"").">";
-	echo $item['inventory_name'];
+	echo dPhtml( $item['inventory_name'] );
 	if ( !$children && isset( $item_list_parents[ $item[ 'inventory_id' ] ] ) )
 	{
 		$num = count( $item_list_parents[ $item[ 'inventory_id' ] ] );
@@ -258,20 +265,20 @@ function display_item( &$item, $indent, $children = 0 )
 	echo "</A>";
 
 	echo "</TD><TD NOWRAP>";
-	echo dPgetParam( $item, 'inventory_brand_name', $AppUI->_( "Unknown" ) );
+	echo dPhtml( dPgetParam( $item, 'inventory_brand_name', $AppUI->_( "Unknown" ) ) );
 
 	echo "</TD><TD NOWRAP>";
-	echo dPgetParam( $item, 'inventory_category_name', $AppUI->_( "Unknown" ) );
+	echo dPhtml( dPgetParam( $item, 'inventory_category_name', $AppUI->_( "Unknown" ) ) );
 
 /* lookup of company-name */
 
 	echo "</TD><TD NOWRAP>";
-	echo dPgetParam( $item, 'inventory_company_name', $AppUI->_( "Unknown" ) );
+	echo dPhtml( dPgetParam( $item, 'inventory_company_name', $AppUI->_( "Unknown" ) ) );
 
 /* lookup of department name */
 
 	echo "</TD><TD NOWRAP>";
-	echo dPgetParam( $item, 'inventory_department_name', $AppUI->_( "Unknown" ) );
+	echo dPhtml( dPgetParam( $item, 'inventory_department_name', $AppUI->_( "Unknown" ) ) );
 
 /* lookup of user-name */
 
@@ -281,7 +288,7 @@ function display_item( &$item, $indent, $children = 0 )
 	{
 		echo '<A HREF="?m=inventory&';
 		echo 'quick_filter=user&quick_filter_id='.$item[ 'inventory_user' ].'" />';
-		echo $username;
+		echo dPhtml( $username );
 		echo '</A>';
 	}
 	else
@@ -297,7 +304,7 @@ function display_item( &$item, $indent, $children = 0 )
 	{
 		echo '<A HREF="?m=inventory&';
 		echo 'quick_filter=project&quick_filter_id='.$item[ 'inventory_project' ].'" />';
-		echo $projname;
+		echo dPhtml( $projname );
 		echo '</A>';
 	}
 	else

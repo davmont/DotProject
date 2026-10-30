@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // Copyright 2005, Adam Donnison <adam@saki.com.au>
 // Released under GPL version 2 or later.
 
@@ -6,7 +9,8 @@
 // all the data in the database.
 
 $perms =& $AppUI->acl();
-if (! $perms->checkModule('backup', 'edit'))
+// A restore runs the SQL in the uploaded file: system administrators only.
+if (! $perms->checkModule('backup', 'edit') || ! $perms->checkModule('system', 'edit'))
   $AppUI->redirect('m=public&a=access_denied');
 $AppUI->savePlace();
 

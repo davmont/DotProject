@@ -1,5 +1,8 @@
 <?php
 /*
+ * (dotProject: patched for PHP 8 - no reference assignment of function results,
+ * no null passed to trim(), arrays joined in a debug message.)
+ *
  * phpGACL - Generic Access Control List
  * Copyright (C) 2002,2003 Mike Benoit
  *
@@ -198,7 +201,7 @@ class gacl_api extends gacl {
 
 			foreach ($current_acl_ids as $current_acl_id) {
 				//Check to make sure these ACLs only have a single ACO mapped to them.
-				$current_acl_array = &$this->get_acl($current_acl_id);
+				$current_acl_array = $this->get_acl($current_acl_id);
 
 				//showarray($current_acl_array);
 				$this->debug_text("add_consolidated_acl(): Current Count: ".$this->count_all($current_acl_array['aco'])."");
@@ -249,7 +252,7 @@ class gacl_api extends gacl {
 
 			foreach ($new_acl_ids as $new_acl_id) {
 				//Check to make sure these ACLs only have a single ACO mapped to them.
-				$new_acl_array = &$this->get_acl($new_acl_id);
+				$new_acl_array = $this->get_acl($new_acl_id);
 				//showarray($new_acl_array);
 				$this->debug_text("add_consolidated_acl(): New Count: ".$this->count_all($new_acl_array['aco'])."");
 				if ( $this->count_all($new_acl_array['aco']) == 1) {
@@ -407,13 +410,13 @@ class gacl_api extends gacl {
 		}
 
 		//Grab ACL data.
-		$acl_array = &$this->get_acl($acl_id);
+		$acl_array = $this->get_acl($acl_id);
 
 		//Append each object type seperately.
 		if (is_array($aro_array) AND count($aro_array) > 0) {
 			$this->debug_text("append_acl(): Appending ARO's");
 
-			while (list($aro_section_value,$aro_value_array) = @each($aro_array)) {
+			foreach ((array)$aro_array as $aro_section_value => $aro_value_array) {
 				foreach ($aro_value_array as $aro_value) {
 
 					if (!in_array($aro_value, $acl_array['aro'][$aro_section_value])) {
@@ -431,7 +434,7 @@ class gacl_api extends gacl {
 		if (is_array($aro_group_ids) AND count($aro_group_ids) > 0) {
 			$this->debug_text("append_acl(): Appending ARO_GROUP_ID's");
 
-			while (list(,$aro_group_id) = @each($aro_group_ids)) {
+			foreach ((array)$aro_group_ids as $aro_group_id) {
 				if (!is_array($acl_array['aro_groups']) OR !in_array($aro_group_id, $acl_array['aro_groups'])) {
 					$this->debug_text("append_acl(): ARO Group ID: $aro_group_id");
 					$acl_array['aro_groups'][] = $aro_group_id;
@@ -445,7 +448,7 @@ class gacl_api extends gacl {
 		if (is_array($axo_array) AND count($axo_array) > 0) {
 			$this->debug_text("append_acl(): Appending AXO's");
 
-			while (list($axo_section_value,$axo_value_array) = @each($axo_array)) {
+			foreach ((array)$axo_array as $axo_section_value => $axo_value_array) {
 				foreach ($axo_value_array as $axo_value) {
 					if (!in_array($axo_value, $acl_array['axo'][$axo_section_value])) {
 						$this->debug_text("append_acl(): AXO Section Value: $axo_section_value AXO VALUE: $axo_value");
@@ -461,7 +464,7 @@ class gacl_api extends gacl {
 
 		if (is_array($axo_group_ids) AND count($axo_group_ids) > 0) {
 			$this->debug_text("append_acl(): Appending AXO_GROUP_ID's");
-			while (list(,$axo_group_id) = @each($axo_group_ids)) {
+			foreach ((array)$axo_group_ids as $axo_group_id) {
 				if (!is_array($acl_array['axo_groups']) OR !in_array($axo_group_id, $acl_array['axo_groups'])) {
 					$this->debug_text("append_acl(): AXO Group ID: $axo_group_id");
 					$acl_array['axo_groups'][] = $axo_group_id;
@@ -475,7 +478,7 @@ class gacl_api extends gacl {
 		if (is_array($aco_array) AND count($aco_array) > 0) {
 			$this->debug_text("append_acl(): Appending ACO's");
 
-			while (list($aco_section_value,$aco_value_array) = @each($aco_array)) {
+			foreach ((array)$aco_array as $aco_section_value => $aco_value_array) {
 				foreach ($aco_value_array as $aco_value) {
 					if (!in_array($aco_value, $acl_array['aco'][$aco_section_value])) {
 						$this->debug_text("append_acl(): ACO Section Value: $aco_section_value ACO VALUE: $aco_value");
@@ -512,14 +515,14 @@ class gacl_api extends gacl {
 		}
 
 		//Grab ACL data.
-		$acl_array = &$this->get_acl($acl_id);
+		$acl_array = $this->get_acl($acl_id);
 
 		//showarray($acl_array);
 		//Remove each object type seperately.
 		if (is_array($aro_array) AND count($aro_array) > 0) {
 			$this->debug_text("shift_acl(): Removing ARO's");
 
-			while (list($aro_section_value,$aro_value_array) = @each($aro_array)) {
+			foreach ((array)$aro_array as $aro_section_value => $aro_value_array) {
 				foreach ($aro_value_array as $aro_value) {
 					$this->debug_text("shift_acl(): ARO Section Value: $aro_section_value ARO VALUE: $aro_value");
 					$aro_key = array_search($aro_value, $acl_array['aro'][$aro_section_value]);
@@ -539,7 +542,7 @@ class gacl_api extends gacl {
 		if (is_array($aro_group_ids) AND count($aro_group_ids) > 0) {
 			$this->debug_text("shift_acl(): Removing ARO_GROUP_ID's");
 
-			while (list(,$aro_group_id) = @each($aro_group_ids)) {
+			foreach ((array)$aro_group_ids as $aro_group_id) {
 				$this->debug_text("shift_acl(): ARO Group ID: $aro_group_id");
 				$aro_group_key = array_search($aro_group_id, $acl_array['aro_groups']);
 
@@ -556,7 +559,7 @@ class gacl_api extends gacl {
 		if (is_array($axo_array) AND count($axo_array) > 0) {
 			$this->debug_text("shift_acl(): Removing AXO's");
 
-			while (list($axo_section_value,$axo_value_array) = @each($axo_array)) {
+			foreach ((array)$axo_array as $axo_section_value => $axo_value_array) {
 				foreach ($axo_value_array as $axo_value) {
 					$this->debug_text("shift_acl(): AXO Section Value: $axo_section_value AXO VALUE: $axo_value");
 					$axo_key = array_search($axo_value, $acl_array['axo'][$axo_section_value]);
@@ -575,7 +578,7 @@ class gacl_api extends gacl {
 		if (is_array($axo_group_ids) AND count($axo_group_ids) > 0) {
 			$this->debug_text("shift_acl(): Removing AXO_GROUP_ID's");
 
-			while (list(,$axo_group_id) = @each($axo_group_ids)) {
+			foreach ((array)$axo_group_ids as $axo_group_id) {
 				$this->debug_text("shift_acl(): AXO Group ID: $axo_group_id");
 				$axo_group_key = array_search($axo_group_id, $acl_array['axo_groups']);
 
@@ -592,7 +595,7 @@ class gacl_api extends gacl {
 		if (is_array($aco_array) AND count($aco_array) > 0) {
 			$this->debug_text("shift_acl(): Removing ACO's");
 
-			while (list($aco_section_value,$aco_value_array) = @each($aco_array)) {
+			foreach ((array)$aco_array as $aco_section_value => $aco_value_array) {
 				foreach ($aco_value_array as $aco_value) {
 					$this->debug_text("shift_acl(): ACO Section Value: $aco_section_value ACO VALUE: $aco_value");
 					$aco_key = array_search($aco_value, $acl_array['aco'][$aco_section_value]);
@@ -658,7 +661,7 @@ class gacl_api extends gacl {
 		$rs = $this->db->Execute($query);
 		$rows = $rs->GetRows();
 
-		while (list(,$row) = @each($rows)) {
+		foreach ((array)$rows as $row) {
 			list($section_value, $value, $section, $aco) = $row;
 			$this->debug_text("Section Value: $section_value Value: $value Section: $section ACO: $aco");
 
@@ -673,7 +676,7 @@ class gacl_api extends gacl {
 		$rs = $this->db->Execute($query);
 		$rows = $rs->GetRows();
 
-		while (list(,$row) = @each($rows)) {
+		foreach ((array)$rows as $row) {
 			list($section_value, $value, $section, $aro) = $row;
 			$this->debug_text("Section Value: $section_value Value: $value Section: $section ARO: $aro");
 
@@ -688,7 +691,7 @@ class gacl_api extends gacl {
 		$rs = $this->db->Execute($query);
 		$rows = $rs->GetRows();
 
-		while (list(,$row) = @each($rows)) {
+		foreach ((array)$rows as $row) {
 			list($section_value, $value, $section, $axo) = $row;
 			$this->debug_text("Section Value: $section_value Value: $value Section: $section AXO: $axo");
 
@@ -841,12 +844,12 @@ class gacl_api extends gacl {
 
 		$this->debug_text("add_acl():");
 
-		if (count($aco_array) == 0) {
+		if (!is_array($aco_array) || count($aco_array) == 0) {
 			$this->debug_text("Must select at least one Access Control Object");
 			return false;
 		}
 
-		if (count($aro_array) == 0 AND count($aro_group_ids) == 0) {
+		if ((!is_array($aro_array) || count($aro_array) == 0) AND (!is_array($aro_group_ids) || count($aro_group_ids) == 0)) {
 			$this->debug_text("Must select at least one Access Request Object or Group");
 			return false;
 		}
@@ -864,7 +867,7 @@ class gacl_api extends gacl {
 		}
 
 		//Use section_values instead of IDs to be consistent.
-		$section_id = &$this->get_object_section_section_id(NULL, $section_value, 'ACL');
+		$section_id = $this->get_object_section_section_id(NULL, $section_value, 'ACL');
 		if (empty($section_id)) {
 			$this->debug_text("add_acl(): Section Value: $section_value DOES NOT exist in the database.");
 			return false;
@@ -951,7 +954,7 @@ class gacl_api extends gacl {
 			}
 
 			foreach ($map_array as $section_value => $value_array) {
-				$this->debug_text ('Insert: '. strtoupper($map) .' Section Value: '. $section_value .' '. strtoupper($map) .' VALUE: '. $value_array);
+				$this->debug_text ('Insert: '. strtoupper($map) .' Section Value: '. $section_value .' '. strtoupper($map) .' VALUE: '. (is_array($value_array) ? implode(', ', $value_array) : $value_array));
 				// $this->showarray ($aco_value_array);
 
 				if (!is_array($value_array)) {
@@ -963,7 +966,7 @@ class gacl_api extends gacl {
 				$value_array = array_unique($value_array);
 
 				foreach ($value_array as $value) {
-					$object_id = &$this->get_object_id($section_value, $value, $map);
+					$object_id = $this->get_object_id($section_value, $value, $map);
 
 					if (empty($object_id))
 					{
@@ -996,7 +999,7 @@ class gacl_api extends gacl {
 			foreach ($map_group_ids as $group_id) {
 				$this->debug_text ('Insert: '. strtoupper($map) .' GROUP ID: '. $group_id);
 
-				$group_data = &$this->get_group_data($group_id, $map);
+				$group_data = $this->get_group_data($group_id, $map);
 
 				if (empty($group_data)) {
 					$this->debug_text('add_acl(): '. strtoupper($map) . " Group: $group_id DOES NOT exist in the database. Skipping...");
@@ -1043,7 +1046,7 @@ class gacl_api extends gacl {
 			return false;
 		}
 
-		if (count($aro_array) == 0 AND count($aro_group_ids) == 0) {
+		if ((!is_array($aro_array) || count($aro_array) == 0) AND (!is_array($aro_group_ids) || count($aro_group_ids) == 0)) {
 			$this->debug_text("edit_acl(): Must select at least one Access Request Object or Group");
 			return false;
 		}
@@ -3026,8 +3029,8 @@ class gacl_api extends gacl {
 				return FALSE;
 		}
 
-		$name = trim($name);
-		$value = trim($value);
+		$name = trim((string)$name);
+		$value = trim((string)$value);
 
 		if (empty($name) AND empty($value) ) {
 			$this->debug_text('get_object_section_section_id(): Both Name ('. $name .') and Value ('. $value .') are empty, you must specify at least one.');

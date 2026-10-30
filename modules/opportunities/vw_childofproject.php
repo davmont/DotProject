@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 /*
 if (!defined($baseDir)){
@@ -16,6 +19,17 @@ if (!defined($baseDir)){
 	
 //get the save status
 	$save= (isset( $_GET['save'] )) ?  intval( dPgetParam( $_GET, "save", "-1" ) ) : intval( dPgetParam( $_POST, "save", "-1" ) );
+	// Saving replaces the related projects: POST with the CSRF token and edit permission only.
+	if ($save == 1) {
+		if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+			$save = -1;
+		} else {
+			$AppUI->verifyCsrfToken();
+			if (!getPermission('opportunities', 'edit')) {
+				$AppUI->redirect('m=public&a=access_denied');
+			}
+		}
+	}
 
 // format dates
 	$df = $AppUI->getPref('SHDATEFORMAT');            //this is the way dates should be handled! 
@@ -69,9 +83,9 @@ if ($save=="1") {
 				$q->addInsert('opportunity_project_projects',$i);
 				$q->addInsert('opportunity_project_opportunities',$opportunity_id);
 				$q->addInsert('opportunity_project_description',$description);
-				$sql = $q->prepareInsert();
+				// exec() binds the values (prepareInsert() leaves '?' placeholders).
+				$q->exec();
 				$q->clear();
-				if ( $sql != "" ) $Result = db_loadResult( $sql );
 				$projs="";
 				$strTmp = "opportunity_id=".$opportunity_id;
 			}				
@@ -85,13 +99,13 @@ if ($save=="1") {
 			$q->addTable('opportunities');
 			$q->addUpdate('opportunity_status',$k);
 			$q->addWhere($strTmp);
-			$sql = $q->prepareUpdate();
+			$q->exec();
 			$q->clear();
-			$Result = db_loadResult( $sql );
 			
 			$tmpName = db_loadResult('SELECT opportunity_name FROM '.dPgetConfig('dbprefix', '').'opportunities WHERE opportunity_id='.$opportunity_id);
-			$txtChange = $AppUI->_("Please note that the status for Opportunity ").'"'.$tmpName.'"'.$AppUI->_(' will be changed to ').' '.$v;
-			echo "<script langauge=\"javascript\">alert(\"".$txtChange."\");</script>";
+			$txtChange = $AppUI->_("Please note that the status for Opportunity ", UI_OUTPUT_RAW).'"'.$tmpName.'"'.$AppUI->_(' will be changed to ', UI_OUTPUT_RAW).' '.$v;
+			// setMsg() escapes the text; the redirect below meant the old alert() never showed.
+			$AppUI->setMsg($txtChange, UI_MSG_OK);
 		}
 		$save="0";
 		$AppUI->redirect('m=opportunities&a=addedit&opportunity_id='.$opportunity_id);
@@ -122,7 +136,7 @@ if ($save=="1") {
 	//$opportunity_id = intval( dPgetParam( $_GET, "opportunity_id", 0 ) );
 	$q->addTable('opportunities');
 	$q->addQuery('opportunity_name');
-	$q->addWhere('opportunity_id = '.$opportunity_id);
+	$q->addWhere('opportunity_id = ' . (int)$opportunity_id);
 	$sql = $q->prepareSelect();
 	$OpportunityName = db_LoadResult( $sql );
 	
@@ -185,7 +199,7 @@ if ($save=="1") {
 </form>
 <form name="pickUser" action="./index.php?m=opportunities&a=vw_childofproject&show_owner_id=<?php echo $show_owner_id; ?>&save=0&opportunity_id=<?php echo $opportunity_id; ?>" method="POST" name="frmpickUser">
 <?php 	echo $AppUI->_('Show Projects of ').':';
-		echo arraySelect( $users, 'showuser', 'size=1 onchange="document.pickUser.submit();"', $showuser); ?>
+		echo arraySelect( $users, 'showuser', 'size=1' . dPaction(null, array(), null, array('submit' => '')), $showuser); ?>
 </form>
 <!--   Main Table -->
 <form action="./index.php?m=opportunities&a=vw_childofproject&show_owner_id=<?php echo $show_owner_id; ?>&save=1&opportunity_id=<?php echo $opportunity_id; ?>" method="POST" name="frmEditChilds">
@@ -204,7 +218,7 @@ if ($save=="1") {
 	</colgroup>
 	
 	<tr>
-		<th colspan="10"> <?php echo $OpportunityName.' <br>'.$AppUI->_(' is Child of Project(s):'); ?> </th>
+		<th colspan="10"> <?php echo dPhtml($OpportunityName).' <br>'.$AppUI->_(' is Child of Project(s):'); ?> </th>
 	</tr>
 	
 	<tr>
@@ -222,7 +236,7 @@ if ($save=="1") {
 		<tr>
 			<td border="0">
 				<div align="center">
-					<input  class="button" type="button" onclick="document.frmCancel.submit();" value="<?php echo $AppUI->_(' Cancel '); ?>">
+					<input  class="button" type="button"<?php echo dPaction(null, array(), null, array('submit' => 'frmCancel')); ?> value="<?php echo $AppUI->_(' Cancel '); ?>">
 				</div>
 			</td>
 		<td colspan="7" >&nbsp;</td>
@@ -246,7 +260,7 @@ if ($save=="1") {
 				
 				echo '<tr>';
 				// Project Color and Progress
-					echo '<td style="border: outset #eeeeee 2px;background-color:#'.$p['project_color_identifier'].';"><center>';
+					echo '<td style="border: outset #eeeeee 2px;background-color:#'.dPhtml($p['project_color_identifier']).';"><center>';
 					$inserted=0;
 					foreach ($aComplete as $c) {
 						if ($c['task_project'] == $p['project_id']) {
@@ -259,25 +273,23 @@ if ($save=="1") {
 					echo '</center></td>';
 				// END Project Color and Progress
 
-					echo '<td>'.$p['company_name'].'</td>';		// Show Company Name
+					echo '<td>'.dPhtml($p['company_name']).'</td>';		// Show Company Name
 					//echo '<td>'.$p['project_name'].'</td>';		// Show Project Name
 
-					echo '<td><a href="?m=projects&a=view&project_id='.$p['project_id'].'"'
-					   . 'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes($p['project_description'])) 
-					   . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
-					   . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"'
+					echo '<td><a href="?m=projects&a=view&project_id='.(int)$p['project_id'].'"'
+					   . dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($p['project_description'])) . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 'mouseover mouseout', array('call-mouseout' => 'nd'))
 					   . '>'.dPFormSafe( $p['project_name'] ).'</a></td>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 
 					echo ($p['opportunity_project_description']) ? 	//Description of relation available ??
-						'<td><textarea name="description'.$p['project_id'].'" style="width:99%" rows="1" wrap="physical">' . 
+						'<td><textarea name="description'.(int)$p['project_id'].'" style="width:99%" rows="1" wrap="physical">' . 
 														dPFormSafe($p['opportunity_project_description']).'</textarea></td>' 
 								: 
-						'<td><textarea name="description'.$p['project_id'].'" style="width:99%" rows="1" wrap="physical">&nbsp;</textarea></td>' ;
+						'<td><textarea name="description'.(int)$p['project_id'].'" style="width:99%" rows="1" wrap="physical">&nbsp;</textarea></td>' ;
 					echo ($p['project_start_date']) ? '<td>'.$start_date->format( $df ).'</td>' : '<td>&nbsp;</td>' ;	//Start Date
 					echo ($p['project_end_date'])   ? '<td>'.$end_date->format( $df ).'</td>'   : '<td>&nbsp;</td>' ;	// End Date
-					echo '<td>'.$p['contact_last_name'].', '.substr($p['contact_first_name'],0,1).'.'.'</td>';	//Usernames
-					echo '<td>'.$ProjectStatus[$p['project_status']].'</td>';	//The Project States
-					echo '<td><center><input type="CHECKBOX" name="Proj'.$p['project_id'].'" value="1" '.$checked.'></center></td>';	//Related ??
+					echo '<td>'.dPhtml($p['contact_last_name']).', '.dPhtml(substr($p['contact_first_name'],0,1)).'.'.'</td>';	//Usernames
+					echo '<td>'.dPhtml(@$ProjectStatus[$p['project_status']]).'</td>';	//The Project States
+					echo '<td><center><input type="CHECKBOX" name="Proj'.(int)$p['project_id'].'" value="1" '.$checked.'></center></td>';	//Related ??
 				echo '</tr>';
 			}
 		?>
@@ -291,7 +303,7 @@ if ($save=="1") {
 		<td colspan="7" >&nbsp;</td>
 			<td border="0">
 				<div align="center">
-					<input  class="button" type="button" onclick="document.frmCancel.submit();" value="<?php echo $AppUI->_(' Cancel '); ?>">
+					<input  class="button" type="button"<?php echo dPaction(null, array(), null, array('submit' => 'frmCancel')); ?> value="<?php echo $AppUI->_(' Cancel '); ?>">
 				</div>
 			</td>
 		</tr>

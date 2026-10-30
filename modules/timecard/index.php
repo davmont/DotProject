@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: index.php,v 1.8 2007/08/22 07:17:43 arcoz67 Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: index.php,v 1.8 2007/08/22 07:17:43 arcoz67 Exp $ */
 
 // Register position of New Task Log tab so we can call it correctly from the vw_timecard report
 // If you change the tab order you'll need to modify this global in two places below
@@ -24,7 +28,7 @@ $titleBlock = new CTitleBlock('Time Card', 'TimeCard.png', $m, "$m.$a");
 $titleBlock->show();
 
 if (isset( $_GET['tab'] )) {
-	$AppUI->setState('TimecardVwTab', $_GET['tab']);
+	$AppUI->setState('TimecardVwTab', (int) $_GET['tab']);
 }
 $tab = $AppUI->getState('TimecardVwTab') ? $AppUI->getState('TimecardVwTab') : 0;
 

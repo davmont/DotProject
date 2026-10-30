@@ -1,0 +1,85 @@
+# Security regression checks. The same commands run locally through the Makefile.
+name: CI
+
+on:
+  push:
+    branches: [devel, master]
+  # Every PR, including PRs stacked on another feature branch.
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: PHP 8.3 syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make lint
+
+  phpstan:
+    name: PHPStan (level 2, baseline)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make phpstan
+
+  raw-input:
+    name: No new raw $_GET/$_POST reads
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make raw-input
+
+  inline-js:
+    name: No new inline JavaScript (CSP)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make inline-js
+
+  js-test:
+    name: JavaScript tests (Jest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make js-test
+
+  audit-smoke:
+    name: Security smoke test (docker/)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make audit-smoke
+      - name: Web server log
+        if: failure()
+        run: docker compose -f docker/compose.yml logs web | tail -200
+
+  audit-full:
+    name: Module install/use/remove, SQL errors, PHP warnings, layout (docker/tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    env:
+      # Ubuntu runners ship Google Chrome; playwright-core drives it.
+      CHROME: /usr/bin/google-chrome
+      # Pull requests check the layout in two themes; pushes to devel/master in all five.
+      THEMES: ${{ github.event_name == 'pull_request' && 'dp-grey-theme material' || 'default amp dp-grey-theme material wps-redmond' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: cd tools/browser && npm ci --no-audit --no-fund
+      - run: make audit-full
+      - name: Reports and web server log
+        if: failure()
+        run: |
+          ls docker/.audit
+          docker compose -f docker/compose.yml logs web | tail -300
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: audit-reports
+          path: docker/.audit/
+          retention-days: 7

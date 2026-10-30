@@ -7,8 +7,7 @@ require_once(DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ear
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_baseline.class.php");
 require_once(DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_util.class.php");
 $AppUI->savePlace();
-$tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
-$project_id = dPgetParam( $_GET, 'project_id', 0 ); 
+$project_id = dPgetIntParam( $_GET, 'project_id', 0 ); 
 
  ini_set('max_execution_time', 180);
  ini_set('memory_limit', $dPconfig['reset_memory_limit']);
@@ -20,13 +19,24 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 
    // se a data não estiver setada pega atual senão usa a passada
 	if (isset($_POST['date_edit']) &&
-		eregi("^[0-9]{2}/[0-9]{2}/[0-9]{4}$", $_POST['date_edit']) &&
+		preg_match('#^[0-9]{2}/[0-9]{2}/[0-9]{4}$#', (string)$_POST['date_edit']) &&
 		checkdate(substr($_POST['date_edit'], 3, 2),  substr($_POST['date_edit'], 0, 2),  substr($_POST['date_edit'], 7, 4)) ) {		 
 	    $dtAtual = $_POST['date_edit'];
 	}else { 
 		$dtAtual = date('d/m/Y');
 	}
-	$cmbBaseline = dPgetParam($_POST,'cmbBaseline');
+	$cmbBaseline = dPgetIntParam($_POST, 'cmbBaseline', 0);
+	// Only a baseline of this project; anything else means the current plan.
+	if ($cmbBaseline) {
+		$q = new DBQuery();
+		$q->addTable('monitoring_baseline');
+		$q->addQuery('COUNT(*)');
+		$q->addWhere('baseline_id = ' . $cmbBaseline . ' AND project_id = ' . (int)$project_id);
+		if (!$q->loadResult()) {
+			$cmbBaseline = 0;
+		}
+		$q->clear();
+	}
 ?>
 <script type="text/javascript" src="./modules/monitoringandcontrol/js/util.js"> </script>
 <!--  calendar  -->
@@ -105,17 +115,17 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 		<tr>			  
 			<td align="right"><?php echo $AppUI->_('LBL_BASELINE');?></td> 
 			<td nowrap="nowrap">   
-					<select name="cmbBaseline" size="1" id="cmbBaseline" onchange="submit();"> 		
+					<select name="cmbBaseline" size="1" id="cmbBaseline" <?php echo dPaction(null, array(), null, array('submit' => '')); ?>> 		
 						 <?php	
 						 $controllerBaseline= new ControllerBaseline();
 						 $lstBaseline = $controllerBaseline->listBaseline($project_id);
 						echo "<option value='0'>".$AppUI->_('LBL_POSICAO_ATUAL')."</option>";	
 						for($i=0;$i<count($lstBaseline);$i++){
-							  if($cmbBaseline ==  $lstBaseline[$i][baseline_id]){								 
-								echo "<option value='".$lstBaseline[$i][baseline_id]."' selected>".$lstBaseline[$i][baseline_version]."</option>";
+							  if($cmbBaseline ==  $lstBaseline[$i]['baseline_id']){								 
+								echo "<option value='".(int)$lstBaseline[$i]['baseline_id']."' selected>".dPhtml($lstBaseline[$i]['baseline_version'])."</option>";
 								 			 
 							  }else {
-							   	echo "<option value='".$lstBaseline[$i][baseline_id]."' >".$lstBaseline[$i][baseline_version]."</option>";
+							   	echo "<option value='".(int)$lstBaseline[$i]['baseline_id']."' >".dPhtml($lstBaseline[$i]['baseline_version'])."</option>";
 							  }						
 						}
 						 ?>          
@@ -126,8 +136,8 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
 		<tr>			  
             <td align="right"><?php echo $AppUI->_('LBL_DATA');?></td> 
             <td nowrap="nowrap">   
-				 <input type="text" class="text"  name="date_edit"  id="date_edit"  size="15" value="<?php echo  $dtAtual; ?>"  onchange="submit();" maxlength="10" onkeyup="formatadata(this,event)"/>
-				 <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" onclick="displayCalendar(document.getElementById('date_edit'),'dd/mm/yyyy',this)" />   
+				 <input type="text" class="text"  name="date_edit"  id="date_edit"  size="15" value="<?php echo dPhtml($dtAtual); ?>"  maxlength="10" <?php echo dPaction('formatadata', array('$this', '$event'), 'keyup change', array('call-change' => 'mcSubmitForm', 'args-change' => json_encode(array('$this')))); ?>/>
+				 <img src="./modules/monitoringandcontrol/images/img.gif" id="calendar_trigger" style="cursor:pointer" <?php echo dPaction('mcDisplayCalendar', array('date_edit', 'dd/mm/yyyy', '$this')); ?> />   
             </td>
         </tr>
         </form>					
@@ -145,7 +155,7 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
         </tr>		        
 		<tr>
 			<td align="right"><?php echo $AppUI->_('LBL_INDICE_PRAZO');?> (<?php echo $AppUI->_('LBL_IDP');?>)</td>
-            <td><input type="text" class="text" name="idp" size="15" readonly="readonly" value="<?php echo round($vlIndiceDesempenho, 2) ;?>"></td>
+            <td><input type="text" class="text" name="idp" size="15" readonly="readonly" value="<?php echo round((float)$vlIndiceDesempenho, 2) ;?>"></td>
         </tr>	
 		<tr>
 			<td colspan="2">&nbsp;</td>
@@ -158,16 +168,43 @@ $titVA = $AppUI->_('LBL_VALOR_AGREGADO');
   			</td>
        </tr>
   </table>	
-	<table  width="60%" align="left" >	    
+	<table width="60%" align="left">
 		<tr>
 			<td colspan="2">
-            <?php 
-               if ((!empty($vlPlanejado) || !isset($vlPlanejado)) || (!empty($vlAgregado) || !isset($vlAgregado)) ){
-			$url = './modules/monitoringandcontrol/grafico/line_Graph_Schedule.php?titGrafico='.urlencode(serialize($titGrafico)).'&titVP='.urlencode(serialize($titVP)).'&titVA='.urlencode(serialize($titVA)).'&dtConsultaArray=' .urlencode(serialize( $dtConsultaArray)). '&vlPlanejado=' . urlencode(serialize($vlPlanejado)) . '&vlAgregado=' . urlencode(serialize($vlAgregado));             
-            	}else                        
-             $url = './modules/monitoringandcontrol/grafico/line_Graph_Schedule.php' ; ?>
-               		<img  src="<?php echo $url; ?>" >         
-            </td> 						
-		
-       </tr>  
-  </table>	
+<?php if ((!empty($vlPlanejado) && is_array($vlPlanejado)) || (!empty($vlAgregado) && is_array($vlAgregado))): ?>
+<script src="<?php echo DP_BASE_URL; ?>/lib/chartjs/chart.umd.min.js"></script>
+<canvas id="dp-schedule-chart" width="650" height="280" style="max-width:100%;"></canvas>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+(function(){
+  var ctx = document.getElementById('dp-schedule-chart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: <?php echo json_encode(array_values((array)$dtConsultaArray), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+      datasets: [
+        {
+          label: <?php echo json_encode((string)$titVP, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+          data: <?php echo json_encode(array_values((array)$vlPlanejado), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+          borderColor: '#55bbdd', backgroundColor: 'rgba(85,187,221,0.1)',
+          pointStyle: 'circle', tension: 0.1
+        },
+        {
+          label: <?php echo json_encode((string)$titVA, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+          data: <?php echo json_encode(array_values((array)$vlAgregado), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+          borderColor: '#aaaaaa', backgroundColor: 'rgba(170,170,170,0.1)',
+          pointStyle: 'triangle', tension: 0.1
+        }
+      ]
+    },
+    options: {
+      responsive: false,
+      plugins: { title: { display: true, text: <?php echo json_encode((string)$titGrafico, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?> } },
+      scales: { x: { ticks: { maxRotation: 55 } } }
+    }
+  });
+}());
+</script>
+<?php endif; ?>
+			</td>
+		</tr>
+  </table>

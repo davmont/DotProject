@@ -91,7 +91,6 @@ $q->clear();
 $rn = 0;
 $disp_arr = array();
 if (!($res = db_exec($sql))) {
-	echo db_error();
 } else {
 	while ($row = db_fetch_assoc($res)) {
 		if (!($row['user_id']) || $perms->checkLogin($row['user_id'])) {
@@ -176,7 +175,7 @@ if ($canAuthor) {
 $titleBlock->show();
 
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	// Callback function for the generic selector
 	function goProject(key, val) {
 		var f = document.modProjects;
@@ -213,26 +212,25 @@ $titleBlock->show();
 					href="?m=contacts&amp;a=view&amp;contact_id=<?php echo $contactid; ?>"><strong><?php echo $contact_name; ?></strong></a>
 			</td>
 			<td>
-				<?php echo (!is_numeric($row['contact_company']) ? $row['contact_company'] : $row['company_name']); ?>
+				<?php echo dPhtml((!is_numeric($row['contact_company']) ? $row['contact_company'] : $row['company_name'])); ?>
 			</td>
 			<td>
 				<?php if ($row['contact_email']) { ?>
-					<a href="mailto:<?php echo $row['contact_email']; ?>"
-						class="mailto"><?php echo $row['contact_email']; ?></a>
+					<a href="mailto:<?php echo dPhtml($row['contact_email']); ?>"
+						class="mailto"><?php echo dPhtml($row['contact_email']); ?></a>
 				<?php } ?>
 			</td>
 			<td>
-				<?php echo $row['contact_phone']; ?>
+				<?php echo dPhtml($row['contact_phone']); ?>
 			</td>
 			<td>
 				<?php
 				$projects_contact = isset($project_counts[$contactid]) ? $project_counts[$contactid] : 0;
 				if ($projects_contact > 0) {
-					echo ('<a href="" onclick="javascript:window.open('
-						. "'?m=public&amp;a=selector&amp;dialog=1&amp;callback=goProject&amp;table=projects"
-						. '&user_id=' . $contactid
-						. "', 'selector', 'left=50,top=50,height=250,width=400,resizable');"
-						. 'return false;">' . $AppUI->_('Projects') . '</a>');
+					echo ('<a href="#"' . dPaction('window.open', array(
+						'?m=public&a=selector&dialog=1&callback=goProject&table=projects&user_id=' . (int)$contactid,
+						'selector', 'left=50,top=50,height=250,width=400,resizable'))
+						. '>' . $AppUI->_('Projects') . '</a>');
 				}
 				?>
 			</td>

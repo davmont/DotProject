@@ -401,6 +401,8 @@ CREATE TABLE %dbprefix%users (
   user_department int(11) default '0',
   user_owner int(11) NOT NULL default '0',
   user_signature TEXT,
+  user_reset_token varchar(255) default NULL,
+  user_reset_expiry datetime default NULL,
   PRIMARY KEY  (user_id),
   KEY idx_uid (user_username),
   KEY idx_pwd (user_password),
@@ -429,7 +431,8 @@ CREATE TABLE %dbprefix%user_preferences (
 #   New admin email -> replace {admin@localhost}
 #
 
-INSERT INTO %dbprefix%users VALUES (1,1,'admin',MD5('passwd'),0,1,0,0,0,'');
+INSERT INTO %dbprefix%users (user_id, user_contact, user_username, user_password, user_parent, user_type, user_company, user_department, user_owner, user_signature)
+  VALUES (1,1,'admin',MD5('passwd'),0,1,0,0,0,'');
 INSERT INTO %dbprefix%contacts (contact_id, contact_first_name, contact_last_name, contact_email) 
   VALUES (1,'Admin','Person','admin@example.com');
 
@@ -441,6 +444,7 @@ INSERT INTO %dbprefix%user_preferences VALUES("0", "SHDATEFORMAT", "%d/%m/%Y");
 INSERT INTO %dbprefix%user_preferences VALUES("0", "TIMEFORMAT", "%I:%M %p");
 INSERT INTO %dbprefix%user_preferences VALUES("0", "UISTYLE", "dp-grey-theme");
 INSERT INTO %dbprefix%user_preferences VALUES("0", "TASKASSIGNMAX", "100");
+INSERT INTO %dbprefix%user_preferences VALUES("0", "TASKASSIGNMAIL", "1");
 INSERT INTO %dbprefix%user_preferences VALUES("0", "USERFORMAT", "user");
 
 #
@@ -599,9 +603,9 @@ INSERT INTO %dbprefix%config VALUES (0, 'check_overallocation', 'false', '', 'ch
 INSERT INTO %dbprefix%config VALUES (0, 'currency_symbol', '$', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'host_style', 'default', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'company_name', 'My Company', '', 'text');
-INSERT INTO %dbprefix%config VALUES (0, 'page_title', 'dotProject', '', 'text');
+INSERT INTO %dbprefix%config VALUES (0, 'page_title', 'dotPulse', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'site_domain', 'example.com', '', 'text');
-INSERT INTO %dbprefix%config VALUES (0, 'email_prefix', '[dotProject]', '', 'text');
+INSERT INTO %dbprefix%config VALUES (0, 'email_prefix', '[dotPulse]', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'admin_username', 'admin', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'username_min_len', '4', '', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'password_min_len', '4', '', 'text');
@@ -702,6 +706,7 @@ INSERT INTO %dbprefix%config VALUES (0, 'mail_user', '', 'mail', 'text');
 INSERT INTO %dbprefix%config VALUES (0, 'mail_pass', '', 'mail', 'password');
 INSERT INTO %dbprefix%config VALUES (0, 'mail_defer', 'false', 'mail', 'checkbox');
 INSERT INTO %dbprefix%config VALUES (0, 'mail_timeout', '30', 'mail', 'text');
+INSERT INTO %dbprefix%config VALUES (0, 'mail_from', '', 'mail', 'text');
 
 INSERT INTO %dbprefix%config_list (config_id, config_list_name)
   SELECT config_id, 'php'
@@ -1373,6 +1378,36 @@ SELECT 2, id FROM `%dbprefix%gacl_aro` WHERE `section_value` = 'user' AND `value
 # 11. phpGACL metadata
 INSERT IGNORE INTO `%dbprefix%gacl_phpgacl` (`name`, `value`) VALUES
     ('version', '3.3.2'), ('schema_version', '2.1');
+
+# 11b. phpGACL id sequences: start after the seeded ids, so objects added later
+#      (installer, module installs, new users) do not collide with them
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_acl_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_acl_seq`;
+INSERT INTO `%dbprefix%gacl_acl_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_acl`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_aco_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_aco_seq`;
+INSERT INTO `%dbprefix%gacl_aco_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_aco`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_aro_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_aro_seq`;
+INSERT INTO `%dbprefix%gacl_aro_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_aro`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_axo_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_axo_seq`;
+INSERT INTO `%dbprefix%gacl_axo_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_axo`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_aco_sections_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_aco_sections_seq`;
+INSERT INTO `%dbprefix%gacl_aco_sections_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_aco_sections`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_aro_sections_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_aro_sections_seq`;
+INSERT INTO `%dbprefix%gacl_aro_sections_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_aro_sections`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_axo_sections_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_axo_sections_seq`;
+INSERT INTO `%dbprefix%gacl_axo_sections_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_axo_sections`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_aro_groups_id_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_aro_groups_id_seq`;
+INSERT INTO `%dbprefix%gacl_aro_groups_id_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_aro_groups`;
+CREATE TABLE IF NOT EXISTS `%dbprefix%gacl_axo_groups_id_seq` (`id` int(11) NOT NULL);
+DELETE FROM `%dbprefix%gacl_axo_groups_id_seq`;
+INSERT INTO `%dbprefix%gacl_axo_groups_id_seq` (`id`) SELECT COALESCE(MAX(`id`), 0) FROM `%dbprefix%gacl_axo_groups`;
 
 # 12. Build dotpermissions lookup table
 

@@ -1,4 +1,8 @@
-<?php /* INVOICES $Id: vw_idx_open.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* INVOICES $Id: vw_idx_open.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
 global $AppUI, $invoices, $company_id;
 $df = $AppUI->getPref('SHDATEFORMAT');
 ?>

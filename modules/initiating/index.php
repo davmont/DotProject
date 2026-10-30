@@ -4,11 +4,8 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 global $m, $a;
-$search = dPgetParam($_REQUEST, 'search', '');
-
 $AppUI->savePlace();
 
-global $m, $a;
 $search = dPgetCleanParam($_REQUEST, 'search', '');
 
 // retrieve any state parameters
@@ -40,7 +37,7 @@ $projects = arrayMerge(array('0' => $AppUI->_('All', UI_OUTPUT_JS)), $projects);
 $titleBlock = new CTitleBlock('Initiating', 'applet3-48.png', $m, "$m.$a");
 $titleBlock->addCell($AppUI->_('Search') . ':');
 $titleBlock->addCell(
-	'<input type="text" class="text" SIZE="10" name="search" onChange="document.searchfilter.submit();" value=' . "'$search'" . 'title="' . $AppUI->_('Search in text', UI_OUTPUT_JS) . '"/>'
+	'<input type="text" class="text" SIZE="10" name="search"' . dPaction(null, array(), 'change', array('submit' => 'searchfilter')) . ' value=' . "'" . dPhtml($search) . "'" . 'title="' . $AppUI->_('Search in text', UI_OUTPUT_JS) . '"/>'
 	,
 	'',
 	'<form action="?m=initiating" method="post" id="searchfilter">',
@@ -48,16 +45,16 @@ $titleBlock->addCell(
 );
 $titleBlock->addCell($AppUI->_('Filter') . ':');
 $titleBlock->addCell(
-	arraySelect($projects, 'project_id', 'onChange="document.pickProject.submit()" size="1" class="text"', $project_id),
+	arraySelect($projects, 'project_id', 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => 'pickProject')), $project_id),
 	'',
 	'<form name="pickProject" action="?m=initiating" method="post">',
 	'</form>'
 );
 //if ($canEdit) {
 $titleBlock->addCell(
-	'<input type="submit" class="button" value="' . $AppUI->_('novo termo de abertura') . '">',
+	'<input type="submit" class="button" value="' . $AppUI->_('New project charter') . '">',
 	'',
-	'<form action="?m=initiating&a=addedit" method="post">',
+	'<form action="?m=initiating&amp;a=addedit&amp;project_id=' . (int)$project_id . '" method="post">',
 	'</form>'
 );
 //}

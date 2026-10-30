@@ -26,9 +26,9 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		global $AppUI;	
 		$list = array();
 		$q = new DBQuery;
-		$q->addQuery('b.baseline_id, b.baseline_name, b.baseline_version, b.baseline_observation');
+		$q->addQuery('b.baseline_id, b.baseline_name, b.baseline_version, b.baseline_observation, b.project_id');
 		$q->addTable('monitoring_baseline', 'b');	
-		$q->addWhere('b.baseline_id='.$baseline_id);
+		$q->addWhere('b.baseline_id=' . (int)$baseline_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return $list;	
@@ -40,7 +40,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		$q = new DBQuery;
 		$q->addQuery('b.baseline_id');
 		$q->addTable('monitoring_baseline', 'b');	
-		$q->addWhere('b.project_id='.$project_id);
+		$q->addWhere('b.project_id=' . (int)$project_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
 		return count($list);	
@@ -52,7 +52,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		$q = new DBQuery;
 		$q->addQuery('b.baseline_id, b.baseline_name, b.baseline_version, b.baseline_date');
 		$q->addTable('monitoring_baseline', 'b');	
-		$q->addWhere('b.project_id='.$project_id);
+		$q->addWhere('b.project_id=' . (int)$project_id);
 		$q->addOrder('baseline_date DESC');
 		$sql = $q->prepare();
 		$list = db_loadList($sql);		
@@ -78,7 +78,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		$q = new DBQuery;
 		$q->addQuery('max(baseline_id)');
 		$q->addTable('monitoring_baseline', 'b');
-		$q->addWhere('b.project_id ='.$project);
+		$q->addWhere('b.project_id =' . (int)$project);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		$baselineId = $list[0][0];		
@@ -92,7 +92,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		$q = new DBQuery;
 		$q->addQuery('t.task_id, t.task_start_date, t.task_duration, t.task_duration_type, t.task_hours_worked, t.task_end_date, t.task_percent_complete');
 		$q->addTable('tasks', 't');
-		$q->addWhere('t.task_project ='.$project);
+		$q->addWhere('t.task_project =' . (int)$project);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 	
@@ -128,7 +128,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		$q = new DBQuery;
 		$q->addQuery('max(l.baseline_task_id)');
 		$q->addTable('monitoring_baseline_task', 'l');
-		$q->addWhere('l.baseline_id ='.$baseline_id);
+		$q->addWhere('l.baseline_id =' . (int)$baseline_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		$baselineTaskId = $list[0][0];	
@@ -140,7 +140,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 		$q = new DBQuery;
 		$q->addQuery('l.task_log_id, l.task_log_creator, l.task_log_hours, l.task_log_date');
 		$q->addTable('task_log', 'l');
-		$q->addWhere('l.task_log_task ='.$task_id);
+		$q->addWhere('l.task_log_task =' . (int)$task_id);
 		$sql = $q->prepare();
 		$list = db_loadList($sql);
 		
@@ -197,7 +197,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 			//Apagar Baseline User Cost
 			$q = new DBQuery();
 			$q->setDelete('monitoring_baseline_user_cost');
-			$q->addWhere('baseline_id=' . $id);
+			$q->addWhere('baseline_id=' . (int)$id);
 			$q->exec();
 			$q->clear();	
 
@@ -205,7 +205,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 			$qSub = new DBQuery;
 			$qSub->addQuery('l.baseline_task_id');
 			$qSub->addTable('monitoring_baseline_task', 'l');
-			$qSub->addWhere('l.baseline_id=' . $id);
+			$qSub->addWhere('l.baseline_id=' . (int)$id);
 			$sql = $qSub->prepare();
 
 			$q = new DBQuery();
@@ -217,14 +217,14 @@ DB filelds - TABLE: 'monitoring_quality_type'
 			//Apagar Baseline Task
 			$q = new DBQuery();
 			$q->setDelete('monitoring_baseline_task');
-			$q->addWhere('baseline_id=' . $id);
+			$q->addWhere('baseline_id=' . (int)$id);
 			$q->exec();
 			$q->clear();				
 	
 			//Apagar Baseline
 			$q = new DBQuery();
 			$q->setDelete('monitoring_baseline');
-			$q->addWhere('baseline_id=' . $id);
+			$q->addWhere('baseline_id=' . (int)$id);
 			$q->exec();
 			$q->clear();	
 	}	
@@ -235,7 +235,7 @@ DB filelds - TABLE: 'monitoring_quality_type'
 			$q->addUpdate('baseline_name', $baseline_name);
 			$q->addUpdate('baseline_version', $baseline_version);
 			$q->addUpdate('baseline_observation', $baseline_observation);
-			$q->addWhere('baseline_id = '. $baseline_id);
+			$q->addWhere('baseline_id = ' . (int)$baseline_id);
 			$q->exec();	
 			$q->clear();	
 	}	

@@ -19,15 +19,12 @@ $orderdir = $AppUI->getState('ForumVwOrderDir') ? $AppUI->getState('ForumVwOrder
 //Pull All Messages
 $q = new DBQuery;
 $q->addTable('forum_messages', 'fm1');
-$q->addJoin('forum_watch', 'fw', 'fw.watch_topic = fm1.message_id AND fw.watch_user = ' 
-            . $AppUI->user_id);
+$q->addJoin('forum_watch', 'fw', 'fw.watch_topic = fm1.message_id AND fw.watch_user = ' . (int)$AppUI->user_id);
 $q->addJoin('users', 'u', 'u.user_id = fm1.message_author');
 $q->addJoin('contacts', 'con', 'con.contact_id = u.user_contact');
 $q->addJoin('forum_messages', 'fm2', 'fm2.message_parent = fm1.message_id');
-$q->addJoin('forum_visits', 'v1', 'v1.visit_message = fm1.message_id AND v1.visit_user = ' 
-            . $AppUI->user_id);
-$q->addJoin('forum_visits', 'v2', 'v2.visit_message = fm2.message_id AND v2.visit_user = ' 
-            . $AppUI->user_id);
+$q->addJoin('forum_visits', 'v1', 'v1.visit_message = fm1.message_id AND v1.visit_user = ' . (int)$AppUI->user_id);
+$q->addJoin('forum_visits', 'v2', 'v2.visit_message = fm2.message_id AND v2.visit_user = ' . (int)$AppUI->user_id);
 $q->addQuery('fm1.*');
 $q->addQuery('COUNT(DISTINCT fm2.message_id) AS replies');
 $q->addQuery('MAX(fm2.message_date) AS latest_reply');
@@ -63,8 +60,8 @@ if ($canEdit) {
 ?>
 		<input type="button" class=button style="width:120;" value="<?php 
 echo $AppUI->_('start a new topic'); 
-?>" onclick="javascript:window.location='?m=forums&amp;a=viewer&amp;forum_id=<?php 
-echo $forum_id; ?>&amp;post_message=1';" />
+?>"<?php 
+echo dPaction(null, array(), null, array('href' => '?m=forums&a=viewer&forum_id=' . (int)$forum_id . '&post_message=1')); ?> />
 	<?php 
 }
 ?>

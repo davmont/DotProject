@@ -28,7 +28,8 @@ class CompanyRole {
 	}
 	
 	public function getIdentation(){
-		return $this->identation;
+		// Only the &nbsp; runs the pages add: the value is written into the page as HTML.
+		return str_repeat('&nbsp;', substr_count((string)$this->identation, '&nbsp;'));
 	}
 	
 	public function setIdentation($identation){
@@ -43,14 +44,16 @@ class CompanyRole {
 		$this->companyId=$companyId;
 	}
 	
-	function CompanyRole()	{
+	function __construct()	{
 	}
 	
 	function store($company_id,$description,$identation,$id,$sort_order) {
+		$identation = str_repeat('&nbsp;', substr_count(is_string($identation) ? $identation : '', '&nbsp;')); // written into pages as HTML
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('id');
 		$q->addTable('company_role');
-		$q->addWhere('id =' . $id);
+		$q->addWhere('id =' . (int)$id);
 		$record = $q->loadResult();
 		$q->clear();
 		$q->addTable('company_role');
@@ -63,7 +66,7 @@ class CompanyRole {
 			$q->addUpdate('identation', $identation);
 			$q->addUpdate('role_name', $description);
 			$q->addUpdate('sort_order',$sort_order);
-			$q->addWhere('id = ' . $id);
+			$q->addWhere('id = ' . (int)$id);
 			
 		}
 		$q->exec();
@@ -78,9 +81,10 @@ class CompanyRole {
 	}
 
 	function delete($id){
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('company_role');
-		$q->addWhere('id =' . $id);
+		$q->addWhere('id =' . (int)$id);
 		$q->exec();
 	}
 	

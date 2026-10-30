@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // Configure the import file format for data imports.
 
 if (! $canEdit)
@@ -6,10 +9,10 @@ if (! $canEdit)
 
 // Allowed tables is a list of tables that we allow updates into.
 // At the moment we limit this to projects and tasks.
-$allowedTables = array('projects', 'tasks');
+$allowedTables = diAllowedTables();
 
 $firstTime = dPgetParam($_REQUEST, 'first', 0);
-$diconfig_id = dPgetParam($_REQUEST, 'diconfig_id', 0);
+$diconfig_id = dPgetIntParam($_REQUEST, 'diconfig_id', 0);
 $obj = new CDataImport;
 if ($diconfig_id) {
   $obj->load($diconfig_id, false);
@@ -43,11 +46,11 @@ if ($firstTime) {
 $titleBlock->show();
 
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
   var diconfig_target_tables = new Comparable;
   <?php
     foreach ($allowedTables as $table) {
-      $res = 'diconfig_target_tables.add(\'' . $table . '\', new Array(';
+      $res = 'diconfig_target_tables.add(' . dPjs($table) . ', new Array(';
 	// need to find the field names and supply them
 	$first = true;
 	foreach ($colList[$table] as $col) {
@@ -55,7 +58,7 @@ $titleBlock->show();
 	    $first = false;
 	  else
 	    $res .= ",\n";
-	  $res .= '\''.$col.'\'';
+	  $res .= dPjs($col);
 	}
       $res .= '));';
       echo $res . "\n";
@@ -84,11 +87,11 @@ $titleBlock->show();
 <table border="0" cellpadding="4" cellspacing="0" width="100%" class="std">
   <tr>
     <td align="right"><?php echo $AppUI->_('Format Name'); ?></td>
-    <td><input type="text" class="text" name="diconfig_name" value="<?php echo $obj->diconfig_name; ?>" /></td>
+    <td><input type="text" class="text" name="diconfig_name" value="<?php echo dPhtml($obj->diconfig_name); ?>" /></td>
   </tr>
   <tr>
     <td align="right"><?php echo $AppUI->_('Field Separator'); ?></td>
-    <td><input type="text" class="text" name="diconfig_field_sep" value="<?php echo $obj->diconfig_field_sep; ?>" /></td>
+    <td><input type="text" class="text" name="diconfig_field_sep" value="<?php echo dPhtml($obj->diconfig_field_sep); ?>" /></td>
   </tr>
   <tr>
     <td align="right"><?php echo $AppUI->_('Strip Quotes'); ?></td>
@@ -98,7 +101,7 @@ $titleBlock->show();
   </tr>
   <tr>
     <td align="right"><?php echo $AppUI->_('Quote Escape'); ?></td>
-    <td><input type="text" class="text" name="diconfig_quote_char" value="<?php echo $obj->diconfig_quote_char; ?>" /></td>
+    <td><input type="text" class="text" name="diconfig_quote_char" value="<?php echo dPhtml($obj->diconfig_quote_char); ?>" /></td>
   </tr>
   <tr>
     <td align="right"><?php echo $AppUI->_('Make Default'); ?></td>
@@ -123,9 +126,9 @@ $titleBlock->show();
     foreach ($field_list as $field) {
       $id++;
       $row = '<tr id="field_row^' . $id . '"><td><input type="text" class="text" name="dimap_source_field[';
-      $row .= $id . ']" id="dimap_source_field^' . $id . '"  value="' . $field['dimap_source_field'];
+      $row .= $id . ']" id="dimap_source_field^' . $id . '"  value="' . dPhtml($field['dimap_source_field']);
       $row .= '" /></td><td>';
-      $row .= diBuildSelect('dimap_target_table', $id, $allowedTables, $field['dimap_target_table'], true, 'diconfig_set_target(this)');
+      $row .= diBuildSelect('dimap_target_table', $id, $allowedTables, $field['dimap_target_table'], true, 'diconfig_set_target');
       $row .= '</td><td>';
       $row .= diBuildSelect('dimap_target_field', $id, $colList[$field['dimap_target_table']], $field['dimap_target_field']);
       $row .= '</td><td><input type="checkbox" class="button" name="del_field['.$id . ']" id="del_field^' . $id . '" />';
@@ -139,10 +142,10 @@ $titleBlock->show();
 <table border="0" cellpadding="4" cellspacing="0" width="100%" class="std">
   <tr>
     <td align="left">
-      <input type="button" class="button" name="add" onclick='diconfig_add_row();' value="<?php echo $AppUI->_('add field'); ?>" ?>
+      <input type="button" class="button" name="add"<?php echo dPaction('diconfig_add_row'); ?> value="<?php echo $AppUI->_('add field'); ?>" />
     </td>
     <td align="center">
-      <input type="button" class="button" name="add" onclick='diconfig_del_row();' value="<?php echo $AppUI->_('delete fields'); ?>" ?>
+      <input type="button" class="button" name="add"<?php echo dPaction('diconfig_del_row'); ?> value="<?php echo $AppUI->_('delete fields'); ?>" />
     </td>
     <td align="right">
       <input type="submit" class="button" name="save" value="<?php echo $AppUI->_('save'); ?>" ?>

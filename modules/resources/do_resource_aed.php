@@ -4,6 +4,8 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 $del = (int)dPgetParam($_POST, 'del', 0);
+// Permission on this record, as its addedit page checks.
+dPrequireWritePermission('resources', dPgetParam($_POST, 'resource_id', 0), $del);
 $obj = new CResource;
 $msg = '';
 

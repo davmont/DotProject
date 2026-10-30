@@ -1,0 +1,42 @@
+/* Project tips bell in the header's user bar (modules/dotproject_plus/header_widget.php). */
+.dp-feedback { display: inline-block; position: relative; vertical-align: middle; white-space: normal; }
+.dp-feedback > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 2px; }
+.dp-feedback > summary::-webkit-details-marker { display: none; }
+.dp-feedback-bell { vertical-align: middle; }
+.dp-feedback-count {
+	display: inline-block; min-width: 16px; padding: 0 4px; border-radius: 8px;
+	background: #c62828; color: #fff; font-size: 10px; font-weight: bold; line-height: 16px; text-align: center;
+}
+.dp-feedback-panel {
+	position: absolute; right: 0; top: 100%; z-index: 1000; margin-top: 4px;
+	width: 380px; max-width: calc(100vw - 32px); max-height: 70vh; overflow-y: auto;
+	background: #fff; color: #222; border: 1px solid #aaa; border-radius: 4px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); text-align: left; font-weight: normal;
+}
+/* Some themes (amp) colour every div, span and td directly, so inheriting is not enough. */
+.dp-feedback-panel, .dp-feedback-panel div, .dp-feedback-panel li, .dp-feedback-panel summary,
+.dp-feedback-panel span:not(.dp-feedback-area) { color: #222; }
+.dp-feedback-title { padding: 8px 10px; font-weight: bold; border-bottom: 1px solid #ddd; }
+.dp-feedback-panel .dp-feedback-empty { margin: 0; padding: 10px; color: #555; }
+.dp-feedback-panel ul { list-style: none; margin: 0; padding: 0; }
+.dp-feedback-item { border-bottom: 1px solid #eee; }
+.dp-feedback-item:last-child { border-bottom: none; }
+.dp-feedback-item summary { cursor: pointer; padding: 8px 10px; line-height: 1.4; }
+.dp-feedback-panel .dp-feedback-item p { margin: 0; padding: 0 10px 6px 10px; line-height: 1.4; color: #333; }
+.dp-feedback-item form { margin: 0; padding: 0 10px 8px 10px; text-align: right; }
+.dp-feedback-panel .dp-feedback-read summary { color: #777; }
+.dp-feedback-area {
+	display: inline-block; padding: 0 5px; border-radius: 3px; margin-right: 4px;
+	font-size: 10px; text-transform: uppercase; letter-spacing: 0.03em; color: #fff; background: #607d8b;
+}
+.dp-feedback-area-integration { background: #00695c; }
+.dp-feedback-area-scope { background: #2e7d32; }
+.dp-feedback-area-schedule { background: #1565c0; }
+.dp-feedback-area-cost { background: #8d6e00; }
+.dp-feedback-area-resources { background: #6a1b9a; }
+.dp-feedback-area-risk { background: #c62828; }
+.dp-feedback-read .dp-feedback-area { opacity: 0.6; }
+/* Narrow windows: the bell may sit anywhere in the bar, so the panel spans the window. */
+@media (max-width: 600px) {
+	.dp-feedback-panel { position: fixed; left: 16px; right: 16px; top: 56px; width: auto; max-width: none; max-height: calc(100vh - 72px); }
+}

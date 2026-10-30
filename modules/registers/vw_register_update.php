@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 GLOBAL $AppUI;
 
 $register_id = intval( dPgetParam( $_GET, 'register_id', 0 ) );
@@ -9,7 +12,7 @@ if ($register_id) {
 }
 ?>
 
-<script>
+<script nonce="<?php echo dPcspNonce(); ?>">
  function ViewField()
  {
   with (document.editFrm)
@@ -116,7 +119,7 @@ if ($register_id) {
 	<td>
 <?php
  $register_format=dPgetsysVal('RegisterCode');
- echo arraySelect( $register_format, 'register_format', 'size="1" class="text" onChange="ViewField();"',0, false );
+ echo arraySelect( $register_format, 'register_format', 'size="1" class="text"' . dPaction('ViewField'),0, false );
 ?>
 	</td>
 </tr>
@@ -130,7 +133,7 @@ if ($register_id) {
 
 	<td rowspan="3" align="right" valign="top"><?php echo $AppUI->_('Description');?>:</td>
 	<td rowspan="3">
-		<textarea name="register_description" class="textarea" cols="50" rows="6"><?php echo $register->register_description;?></textarea>
+		<textarea name="register_description" class="textarea" cols="50" rows="6"><?php echo dPhtml($register->register_description);?></textarea>
 	</td>
 </tr>
 <tr>
@@ -175,7 +178,7 @@ if ($register_id) {
 ?>
 	</td>
 	<td colspan="4" valign="bottom" align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('Insert Register');?>" onClick="document.editFrm.submit();return false;"/>
+		<input type="button" class="button" value="<?php echo $AppUI->_('Insert Register');?>" <?php echo dPaction(null, array(), null, array('submit' => 'editFrm')); ?>/>
 	</td>
 
 </tr>

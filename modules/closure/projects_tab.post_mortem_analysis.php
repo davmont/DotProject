@@ -9,8 +9,9 @@ require_once($AppUI->getModuleClass('files'));
 
 $pstatus = dPgetSysVal( 'ProjectStatus' );
 
-$project_id = $_GET['project_id'];
-$sort = dPgetParam($_GET, 'orderby', 'pma_id');
+$project_id = dPgetIntParam($_GET, 'project_id', 0);
+$sort = dPvalidateOrder(dPgetParam($_GET, 'orderby', 'pma_id'),
+	array('pma_id', 'project_name', 'project_meeting_date', 'participants'), 'pma_id');
 if ($sort == 'pma_id') {
   $sort .= ' DESC';
 }
@@ -22,19 +23,19 @@ $q  = new DBQuery;
 $q->addTable('post_mortem_analysis', 'pma');
 $q->addQuery('pma_id, pma.project_name, project_meeting_date, participants');
 $q->addJoin('projects', 'p','p.project_name = pma.project_name');
-$q->addWhere('p.project_id = '.$project_id);
+$q->addWhere('p.project_id = ' . (int)$project_id);
 $q->addOrder($sort);
 $rows = $q->loadList();
 
 $q->addTable('projects');
 $q->addQuery('count(*)');
-$q->addWhere('project_id = '.$project_id);
+$q->addWhere('project_id = ' . (int)$project_id);
 $count_rows = $q->loadResult();
 
 $q  = new DBQuery;
 $q->addTable('projects');
 $q->addQuery('project_name');
-$q->addWhere('project_id = '.$project_id);
+$q->addWhere('project_id = ' . (int)$project_id);
 $res =& $q->exec();
 
 $project_name = $res->fields['project_name'];
@@ -57,7 +58,7 @@ $df = $AppUI->getPref('SHDATEFORMAT');
  	<td> <a href="?m=closure&amp;a=view&amp;pma_id=<?php echo $p['pma_id'];?>">
    <?php echo $meeting_date ? $meeting_date->format($df) : ''; ?> </a></td>
 
-	<td> <?php echo $p['participants']; ?></td>
+	<td> <?php echo dPhtml($p['participants']); ?></td>
 
   </tr>
 <?php } ?>
@@ -69,5 +70,5 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 </td></tr>
 </table>
 <div align="right">
-<input class="button" type="button" name="new post mortem" value="<?php echo 'new post mortem'; ?>" onclick="location.href = '?m=closure&amp;a=addedit&amp;project_name=<?php echo $project_name;?>';" />
+<input class="button" type="button" name="new post mortem" value="<?php echo 'new post mortem'; ?>"<?php echo dPaction(null, array(), null, array('href' => '?m=closure&a=addedit&project_name=' . urlencode($project_name))); ?> />
 </div>

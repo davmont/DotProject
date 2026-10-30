@@ -110,3 +110,16 @@ function getExpanded() {
 	}
 	return list;
 }
+
+/* Show one of the three column sets of the budget table (the "Display" radios):
+** 0 detail (.budget), 1 sub totals (.subTotal), 2 totals (.total).
+** @param	int	mode
+*/
+function financesShowDisplay(mode) {
+	var sets = ['.budget', '.subTotal', '.total'];
+	for (var i = 0; i < sets.length; i++) {
+		if (i != mode)
+			$(sets[i]).hide();
+	}
+	$(sets[mode]).show();
+}

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /* This file will write a php config file to be included during execution of
  * all Project designer files which require the configuration options. */
 global $m;
@@ -70,7 +73,7 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 						break;
 				}
 				
-				fwrite($handle, "\$PROJDESIGN_CONFIG['".$key."'] = '".$val."';\n");
+				fwrite($handle, "\$PROJDESIGN_CONFIG[" . var_export($key, true) . "] = " . var_export((string)$val, true) . ";\n");
 			}
 
 			fwrite($handle, "?>\n");

@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: setup.php,v 1.48 2011/08/02 06:22:55 hatax Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: setup.php,v 1.48 2011/08/02 06:22:55 hatax Exp $ */
 
 /* Issue module definitions */
 $config = array();
@@ -27,6 +31,13 @@ if (@$a == 'setup') {
 }
 
 require_once( $dPconfig['root_dir'].'/modules/system/syskeys/syskeys.class.php');
+
+if (!function_exists('helpdeskColumnExists')) {
+	function helpdeskColumnExists($table, $column) {
+		$table = dPgetConfig('dbprefix', '') . $table;
+		return (bool)db_loadResult("SHOW COLUMNS FROM `" . $table . "` LIKE '" . db_escape($column) . "'");
+	}
+}
 
 class CSetupHelpDesk {
 	function install() {
@@ -69,10 +80,12 @@ class CSetupHelpDesk {
 				);";
 		}
 
-		$bulk_sql[] = "
+		if (!helpdeskColumnExists('task_log', 'task_log_help_desk_id')) {
+			$bulk_sql[] = "
 			ALTER TABLE `{$dbprefix}task_log`
 			  ADD `task_log_help_desk_id` int(11) NOT NULL default '0' AFTER `task_log_task`
-		";
+			";
+		}
 
 		if (!in_array("{$dbprefix}helpdesk_item_status", $tables)) {
 			$bulk_sql[] = "
@@ -96,21 +109,30 @@ class CSetupHelpDesk {
 				);";
 		}
 
-		$bulk_sql[] = "
-		  ALTER TABLE `{$dbprefix}files`
-		  ADD `file_helpdesk_item` int(11) NOT NULL default '0' AFTER `file_task`
-		";
-		$bulk_sql[] = "CREATE INDEX idx2 ON files (file_helpdesk_item);";
-		$bulk_sql[] = "CREATE INDEX idx2 ON task_log (task_log_help_desk_id);";
-		$bulk_sql[] = "CREATE INDEX idx2 ON projects (project_company);";
-		$bulk_sql[] = "CREATE INDEX idx2 ON tasks (task_owner, task_status);";
-		$bulk_sql[] = "CREATE INDEX idx2 ON helpdesk_items (item_company_id, item_status);";
-		$bulk_sql[] = "CREATE INDEX idx3 ON helpdesk_items (item_project_id);";
+		if (!helpdeskColumnExists('files', 'file_helpdesk_item')) {
+			$bulk_sql[] = "
+			  ALTER TABLE `{$dbprefix}files`
+			  ADD `file_helpdesk_item` int(11) NOT NULL default '0' AFTER `file_task`
+			";
+		}
 
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
 			if (db_error()) {
 				$success = 0;
+			}
+		}
+		// Indexes for the helpdesk lookups. They named the tables without the
+		// prefix (so they always failed) and also indexed core tables.
+		$indexes = array(
+			array('files', 'idx_file_helpdesk_item', 'file_helpdesk_item'),
+			array('task_log', 'idx_task_log_help_desk_id', 'task_log_help_desk_id'),
+			array('helpdesk_items', 'idx_item_company_status', 'item_company_id, item_status'),
+			array('helpdesk_items', 'idx_item_project', 'item_project_id'),
+		);
+		foreach ($indexes as $index) {
+			if (!db_loadResult("SHOW INDEX FROM `{$dbprefix}{$index[0]}` WHERE Key_name = '{$index[1]}'")) {
+				db_exec("CREATE INDEX `{$index[1]}` ON `{$dbprefix}{$index[0]}` ({$index[2]})");
 			}
 		}
 
@@ -141,8 +163,8 @@ class CSetupHelpDesk {
 		$sv = new CSysVal( $sk->syskey_id, 'HelpDeskAuditTrail', "0|Created\n1|Title\n2|Requestor Name\n3|Requestor E-mail\n4|Requestor Phone\n5|Assigned To\n6|Notify by e-mail\n7|Company\n8|Project\n9|Call Type\n10|Call Source\n11|Status\n12|Priority\n13|Severity\n14|Operating System\n15|Application\n16|Summary\n17|Deadline\n18|Deleted\n99|File Event" );
 		$sv->store();
 
-		if (!file_exists($CONFIG_FILE)) {
-			if (!(file_put_contents('./modules/helpdesk/config.php', 'CONFIGURE_ME')))
+		if (!file_exists(DP_BASE_DIR . '/modules/helpdesk/config.php')) {
+			if (!(@file_put_contents(DP_BASE_DIR . '/modules/helpdesk/config.php', 'CONFIGURE_ME')))
 				$success = 0;
 		}
 		
@@ -156,7 +178,7 @@ class CSetupHelpDesk {
 		$bulk_sql[] = "DROP TABLE `{$dbprefix}helpdesk_items`";
 		$bulk_sql[] = "DROP TABLE `{$dbprefix}helpdesk_item_status`";
 		$bulk_sql[] = "DROP TABLE `{$dbprefix}helpdesk_item_watchers`";
-		$bulk_sql[] = "ALTER TABLE `{$dbprefix}files' DROP COLUMN `file_helpdesk_item`";
+		$bulk_sql[] = "ALTER TABLE `{$dbprefix}files` DROP COLUMN `file_helpdesk_item`";
 		$bulk_sql[] = "ALTER TABLE `{$dbprefix}task_log` DROP COLUMN `task_log_help_desk_id`";
 
 		foreach ($bulk_sql as $s) {
@@ -190,8 +212,8 @@ class CSetupHelpDesk {
 		$dbprefix = dPgetConfig('dbprefix', '');
 		$success = 1;
 		$tables = $db->MetaTables('TABLES');
-		if (!file_exists($CONFIG_FILE)) {
-			if (!(file_put_contents('./modules/helpdesk/config.php', 'CONFIGURE_ME')))
+		if (!file_exists(DP_BASE_DIR . '/modules/helpdesk/config.php')) {
+			if (!(@file_put_contents(DP_BASE_DIR . '/modules/helpdesk/config.php', 'CONFIGURE_ME')))
 				$success = 0;
 		}
 
@@ -248,7 +270,7 @@ class CSetupHelpDesk {
 
 	        // Add audit trail to system values
 	        $sql = "SELECT syskey_id
-	                FROM ${dbprefix}syskeys
+	                FROM {$dbprefix}syskeys
 	                WHERE syskey_name = 'HelpDeskList'";
 	        $syskey_id = db_loadResult( $sql );
 
@@ -334,11 +356,11 @@ class CSetupHelpDesk {
 			$rows = db_loadList( $sql );
 			$sql = '';
 			foreach ($rows as $row) {
-		    	$sql = "SELECT MAX(status_date) status_date FROM helpdesk_item_status WHERE status_item_id =".$row['item_id'];
+		    	$sql = "SELECT MAX(status_date) status_date FROM {$dbprefix}helpdesk_item_status WHERE status_item_id =".$row['item_id'];
 				$sdrow = db_loadList( $sql );
 
 			    $sql = '';
-				$sql = "UPDATE `helpdesk_items`
+				$sql = "UPDATE `{$dbprefix}helpdesk_items`
 	    	  	SET `item_updated`='".$sdrow[0]['status_date']."' 
 	    	  	WHERE `item_id`=".$row['item_id'];
 				db_exec($sql);			

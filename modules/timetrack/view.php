@@ -1,8 +1,13 @@
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+?>
 
 <!-- ################################## [ view section ] ################################ -->
 
 <?php
-$timesheet_id = isset($_GET['timesheet_id']) ? $_GET['timesheet_id'] : 0;
+$timesheet_id = isset($_GET['timesheet_id']) ? (int)$_GET['timesheet_id'] : 0;
 
 // check permissions
 $denyRead = getDenyRead( $m, $timesheet_id );
@@ -24,7 +29,7 @@ $q -> addQuery('tt_start_date, tt_end_date, tt_id, tt_active,
         SUM( tt_data_hours ) AS hour_count,
         COUNT( DISTINCT( DAYOFYEAR( tt_data_date ) ) ) AS day_count');
 $q -> addJoin('timetrack_data','timetrack_data','tt_data_timesheet_id = tt_id');
-$q -> addWhere('tt_id = '.$timesheet_id);
+$q -> addWhere('tt_id = ' . (int)$timesheet_id);
 $q -> addGroup('tt_id');
 
 $tg_data = $q -> loadHash();
@@ -37,7 +42,7 @@ $q -> addQuery("data.*, DATE_FORMAT(tt_data_date,'%m/%d/%Y') AS tid_date,
 $q -> addJoin('companies','c','c.company_id = data.tt_data_client_id');
 $q -> addJoin('projects','p','p.project_id = data.tt_data_project_id');
 $q -> addJoin('tasks','t','t.task_id = data.tt_data_task_id');
-$q -> addWhere('data.tt_data_timesheet_id = '.$timesheet_id);
+$q -> addWhere('data.tt_data_timesheet_id = ' . (int)$timesheet_id);
 $q -> addGroup('data.tt_data_date');
 
 
@@ -52,7 +57,7 @@ $crumbs = array();
 $crumbs["?m=timetrack&timesheet_id=$timesheet_id"] = "timesheets list";
 #################################### [ view section UI code ] ########################
 ?>
-<script language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function sendIt() {
 	if (confirm( "Is all the information and time on this timesheet correct and accurate?\n" )) {
 		var form = document.TIDedit;
@@ -139,11 +144,11 @@ foreach ($tt_data as $row) {
 		echo $row["tt_data_id"];
 	}?>
 	</td>
-	<td nowrap><?php echo @$row["company_name"]?></td>
-	<td nowrap><?php echo @$row["project_name"]?></td>
-	<td nowrap><?php echo @$row["task_name"]?></td>
+	<td nowrap><?php echo dPhtml(@$row["company_name"])?></td>
+	<td nowrap><?php echo dPhtml(@$row["project_name"])?></td>
+	<td nowrap><?php echo dPhtml(@$row["task_name"])?></td>
 	<td width="100%" nowrap>
-		<?php echo $row["tt_data_description"]?>
+		<?php echo dPhtml($row["tt_data_description"])?>
     </td>
 	<td nowrap>
 		<?php echo $row["tt_data_hours"]?>
@@ -164,7 +169,7 @@ if ($tg_data['tt_active'] > 0 ) {
 ?>
 <tr bgcolor="#FFFFFF">
 	<td colspan="8" bgcolor="#FFFFFF" align="right">
-	<input class="button" type="Button" value="Send In" onClick="sendIt();">
+	<input class="button" type="Button" value="Send In"<?php echo dPaction('sendIt'); ?>>
 	</td>
 </tr>
 <?php } ?>

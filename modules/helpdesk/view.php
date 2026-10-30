@@ -8,7 +8,7 @@ $df = $AppUI->getPref( 'SHDATEFORMAT' );
 $tf = $AppUI->getPref( 'TIMEFORMAT' );
 $format = $df." ".$tf;
 
-$item_id = dPgetParam( $_GET, 'item_id', 0 );
+$item_id = dPgetIntParam( $_GET, 'item_id', 0 );
 $helpdesk_id = $item_id;
 $task_log_id = intval(dPgetParam($_GET, 'task_log_id', 0)); 
 
@@ -70,12 +70,12 @@ if (!$hditem ) {
   $assigned_email = $hditem['assigned_email'];
 
   $q = new DBQuery; 
-  $q->addQuery('helpdesk_item_watchers.user_id, 
+  $q->addQuery('hiw.user_id, 
                 CONCAT(contact_first_name, \' \', contact_last_name) as name,	contact_email');
-  $q->addTable('helpdesk_item_watchers');
-  $q->addJoin('users','','helpdesk_item_watchers.user_id = users.user_id');
+  $q->addTable('helpdesk_item_watchers', 'hiw');
+  $q->addJoin('users','u','hiw.user_id = u.user_id');
   $q->addJoin('contacts','','user_contact = contact_id');
-  $q->addWhere('item_id = ' . (int)$item_id);
+  $q->addWhere('hiw.item_id = ' . (int)$item_id);
   $q->addOrder('contact_last_name, contact_first_name');
   $watchers = $q->loadList();
 
@@ -105,7 +105,7 @@ if (!$hditem ) {
 
 	$titleBlock->show();
 ?>
-  <script language="JavaScript">
+  <script language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
   function delIt() {
     if (confirm( "<?php print $AppUI->_('doDelete').' '.$AppUI->_('Item').'?';?>" )) {
       document.frmDelete.submit();
@@ -115,6 +115,12 @@ if (!$hditem ) {
   function toggle_comment(id){
      var element = document.getElementById(id)
      element.style.display = (element.style.display == '' || element.style.display == "none") ? "inline" : "none"
+  }
+
+  // Item History: switch a comment between its short and long form.
+  function toggle_comment_pair(id){
+     toggle_comment(id + '_short');
+     toggle_comment(id + '_long');
   }
   </script>
 
@@ -273,11 +279,11 @@ if (!$hditem ) {
         <td><strong><?php echo $AppUI->_('Summary')?></strong></td>
         <td><strong><?php echo $AppUI->_('Watchers')?></strong></td>
       <tr>
-        <td class="hilite" width="50%"><?php echo str_replace( chr(10), "<br />", linkLinks($hditem["item_summary"]))?>&nbsp;</td>
+        <td class="hilite" width="50%"><?php echo str_replace( chr(10), "<br />", linkLinks(dPhtml($hditem["item_summary"])))?>&nbsp;</td>
         <td class="hilite" width="50%"><?php
 		$delimiter = "";
 		foreach($watchers as $watcher){
-			echo "$delimiter <a href=\"mailto: {$watcher['contact_email']}\">".$watcher['name']."</a>";
+			echo "$delimiter <a href=\"mailto: ".dPhtml($watcher['contact_email'])."\">".dPhtml($watcher['name'])."</a>";
 			$delimiter = ",";
 		}
         ?>&nbsp;</td>

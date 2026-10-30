@@ -11,8 +11,9 @@ GLOBAL $baseDir, $AppUI, $project_id;
 // it is automatically appended on the applications main ./index.php by the dPframework
 
 // we check for permissions on this module
-	$canRead = !getDenyRead( $m );			// retrieve module-based readPermission bool flag
-	$canEdit = !getDenyEdit( $m );			// retrieve module-based writePermission bool flag
+	// (included by the project view's tab box: the module is not the current $m)
+	$canRead = !getDenyRead( 'annotations' );			// retrieve module-based readPermission bool flag
+	$canEdit = !getDenyEdit( 'annotations' );			// retrieve module-based writePermission bool flag
 
 //if (!$canRead) {			// lock out users that do not have at least readPermission on this module
 //	$AppUI->redirect( "m=public&a=access_denied" );
@@ -22,7 +23,6 @@ $AppUI->savePlace();	//save the workplace state (have a footprint on this site)
 
 //this is the way dates should be handled! why not here? --> go ahead (as referenz: projects/addedit.php)
 	$df = $AppUI->getPref('SHDATEFORMAT');
-	$show_the_date = new CDate( $show_date );
 	$today = date('Ymd');
 // retrieve any state parameters
 	$project_id = intval( dPgetParam( $_GET, "project_id", -1 ) );
@@ -65,7 +65,7 @@ $AppUI->savePlace();	//save the workplace state (have a footprint on this site)
 	if ($tab=="-1") {$tab="0"; $AppUI->redirect("m=projects&a=view&tab=".$tab."&project_id=".$project_id); }  //cant get the getstate['tab'] --> will be fixed later
 
 // In case that we got the "show all"days value --> annotation_show_date (for the calender) will be today, show_date will stay "all"
-	$annotation_show_date= ($show_date=="all") ? date(Ymd) : $show_date;
+	$annotation_show_date= ($show_date=="all") ? date('Ymd') : $show_date;
 	$tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval for us  ( replaces only the db_query for this Sysval)
 /******************
 ** format the dates **
@@ -89,36 +89,21 @@ $AppUI->savePlace();	//save the workplace state (have a footprint on this site)
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo DP_BASE_URL; ?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 <form name="javascriptdate"><input type="hidden" value="<?php echo date("Ymd"); ?>" name="today"></form>
-<script language="javascript">
-// to popup the calendar for choosing dates
-// copyied and modified from the projects addedit.php
-var calendarField = '';
-var calWin = null;
-var idate = null;
-
-function popCalendar( field ){
-calendarField = field;
-idate = eval( 'document.chooseDate.annotation_show_date.value' );
-if (document.chooseDate.annotation_show_date.value == "19700101") idate = document.javascriptdate.today.value;
-
-window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=280, height=250, scrollbars=no, status=no' );
+<script nonce="<?php echo dPcspNonce(); ?>">
+// to popup the calendar for choosing dates (named for this tab, which is part of the projects view page)
+function annotationsPopCalendar() {
+	var idate = document.chooseDate.annotation_show_date.value;
+	if (idate == "19700101") idate = document.javascriptdate.today.value;
+	window.open('index.php?m=public&a=calendar&dialog=1&callback=annotationsSetCalendar&date=' + encodeURIComponent(idate), 'calwin', 'width=280, height=250, scrollbars=no, status=no');
 }
 
 /**
 *	@param string Input date in the format YYYYMMDD
 *	@param string Formatted date
 */
-function setCalendar( idate, fdate) {
-	var owner = '';
-	fld_date = eval( 'document.chooseDate.annotation_show_date' );
-	fld_fdate = eval( 'document.chooseDate.show_date' );
-	//fld_owner = eval( 'document.pickOwner.show_date' );
-	
-	fld_date.value = idate;
-	fld_fdate.value = fdate;
-    //fld_owner.value = fdate;
-	
-	//owner.value = eval('document.show_owner_id');
+function annotationsSetCalendar(idate, fdate) {
+	document.chooseDate.annotation_show_date.value = idate;
+	document.chooseDate.show_date.value = fdate;
 	document.chooseDate.submit();
 }
 </script>
@@ -134,9 +119,9 @@ $q = new DBQuery;
 	$q->addTable('projects') ;
 	//$q->addQuery('project_id, project_status, project_name, project_description') ;
 	$q->addQuery('*') ;
-	$q->addWhere('project_id = '.$project_id) ;
+	$q->addWhere('project_id = ' . (int)$project_id) ;
 
-	if ($show_date=="all") { $q->leftJoin('annotations','','annotation_project = '.$project_id) ;
+	if ($show_date=="all") { $q->leftJoin('annotations','','annotation_project = ' . (int)$project_id) ;
 	} ELSE { 
 		$q->leftJoin('annotations','','(annotation_project = '.$project_id.' AND annotation_date = '.$show_the_date->format(FMT_TIMESTAMP_DATE).')') ;
 	}
@@ -154,15 +139,16 @@ $q = new DBQuery;
 **********************************************************************************************************************/
 	$q->addTable('annotations') ;
 	$q->addQuery('annotation_date') ;
-	$q->addWhere('annotation_project = '.$project_id) ;
+	$q->addWhere('annotation_project = ' . (int)$project_id) ;
 	//$q->addOrder('annotation_date ASC');
 	$sql = $q->prepareSelect( $q ); 
 	$q->clear();
 	$aResult = db_loadList( $sql );
 	
 	// And here comes the first and the last Entry, named by their date
-		$last_entry = new CDate($aResult[0][0]);	//the date of the last annotation made
-		$first_entry = new CDate( $aResult[count($aResult)-1][0] );  //the date of the first annotation made
+		// (no annotations yet: both are today)
+		$last_entry = new CDate($aResult ? $aResult[0][0] : null);	//the date of the last annotation made
+		$first_entry = new CDate($aResult ? $aResult[count($aResult)-1][0] : null);  //the date of the first annotation made
 		$tmpNextDay = new CDate($show_the_date);
 		$tmpPrevDay = new CDate($show_the_date);
 		$tmpNextDay->addDays("1");	//Who knew?? this helps us jumping one day forwards and backwards
@@ -196,7 +182,7 @@ $q = new DBQuery;
 		<?php
 		// manual array for the boxsize selection array
 		$sizes = array("1"=>"xsmall","3"=>"small","6"=>"mid","10"=>"large","15"=>"xlarge");
-		echo $AppUI->_('Box Size : ').arraySelect($sizes,'rows_to_show','size=1 class=text onChange="document.chooseDate.submit();"', $rows_to_show ) ;
+		echo $AppUI->_('Box Size : ').arraySelect($sizes,'rows_to_show','size=1 class=text' . dPaction(null, array(), null, array('submit' => 'chooseDate')), $rows_to_show ) ;
 		?>
 
 	</th>
@@ -213,11 +199,11 @@ $q = new DBQuery;
 					</a>
 					<?php } ?>
 				<!-- show the calendar to choose a date -->
-					<a href="#" onClick="popCalendar( 'annotation_show_date' , 'show_date' );"> 
+					<a href="#"<?php echo dPaction('annotationsPopCalendar'); ?>> 
 						<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 					</a>
 				<!-- actual entry -->
-					<a href="?m=projects&a=view&rows_to_show=<?php echo $rows_to_show; ?>&project_id=<?php echo $project_id; ?>&tab=<?php echo $tab; ?>&show_date=<?php echo date(Ymd); ?>">
+					<a href="?m=projects&a=view&rows_to_show=<?php echo $rows_to_show; ?>&project_id=<?php echo $project_id; ?>&tab=<?php echo $tab; ?>&show_date=<?php echo date('Ymd'); ?>">
 						<img src="./images/arrow-up.gif" width="16" height="16" alt="<?php echo $AppUI->_('Today'); ?>" border="0" >
 					</a>
 				<!-- all entries -->
@@ -345,7 +331,7 @@ $q = new DBQuery;
 					}
 				// Annotation Previous / Next			
 				echo '<td nowrap="nowrap" align="center" width="49%"><center>';
-					echo ($v[annotation_previous] || $v[annotation_next]) ? 
+					echo ($v['annotation_previous'] || $v['annotation_next']) ? 
 						'<textarea READONLY name="prev" style="width:99%" rows="'.$rows_to_show.'" wrap="physical">'
 							:
 						'<textarea READONLY name="prev" style="width:99%" rows="'.$rows_to_show.'" wrap="physical" style="overflow:hidden; background-Color:'.$unsetColor.';">';
@@ -355,7 +341,7 @@ $q = new DBQuery;
 					echo '</textarea></center>';
 				echo '</td>';
 				echo '<td nowrap="nowrap" align="center" width="49%"><center>';
-					echo ($v[annotation_previous] || $v[annotation_next]) ? 
+					echo ($v['annotation_previous'] || $v['annotation_next']) ? 
 						'<textarea READONLY name="prev" style="width:99%" rows="'.$rows_to_show.'" wrap="physical">'
 							:
 						'<textarea READONLY name="prev" style="width:99%" rows="'.$rows_to_show.'" wrap="physical" style="overflow:hidden; background-Color:'.$unsetColor.';">';

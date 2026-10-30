@@ -1,4 +1,8 @@
 <?php
+// Developer script: run it from the command line only, never through the web server.
+if (PHP_SAPI !== 'cli') {
+	die('You should not access this file directly.');
+}
 // We need to set up DB configuration for the test
 $_SERVER['HTTP_HOST'] = 'localhost';
 require_once 'base.php';

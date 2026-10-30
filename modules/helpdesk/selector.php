@@ -10,7 +10,7 @@ function selPermWhere( $table, $idfld ) {
 	// get any companies denied from viewing
 	$q = new DBQuery;
 	$q->addQuery($table, 'permissions');
-	$q->addWhere('permission_user = '.$AppUI->user_id);
+	$q->addWhere('permission_user = ' . (int)$AppUI->user_id);
 	$q->addWhere('permission_grant_on = '.$table);
 	$q->addWhere('permission_item = '.$idfld);
 	$q->addWhere('permission_value = 0');
@@ -28,9 +28,10 @@ function selPermWhere( $table, $idfld ) {
 }
 
 $debug = false;
-$callback = dPgetParam( $_GET, 'callback', 0 );
+// callback is written into a <script> block: accept only a JavaScript function name.
+$callback = preg_replace('/[^A-Za-z0-9_.]/', '', dPgetParam( $_GET, 'callback', '' ));
 $table = dPgetParam( $_GET, 'table', 0 );
-$comp=dPgetParam($_GET, 'comp', 0);
+$comp=dPgetIntParam($_GET, 'comp', 0);
 
 $ok = $callback & $table;
 
@@ -51,7 +52,7 @@ case 'companies':
 case 'departments':
 // known issue: does not filter out denied companies
 	$title = 'Department';
-	$company_id = dPgetParam( $_GET, 'company_id', 0 );
+	$company_id = dPgetIntParam( $_GET, 'company_id', 0 );
 	//$ok &= $company_id;  // Is it safe to delete this line ??? [kobudo 13 Feb 2003]
 	//$where = selPermWhere( 'companies', 'company_id' );
 	$where = "dept_company = company_id ";
@@ -77,7 +78,7 @@ case 'forums':
 	$order = 'forum_name';
 	break;
 case 'projects':
-	$project_company = dPgetParam( $_GET, 'project_company', 0 );
+	$project_company = dPgetIntParam( $_GET, 'project_company', 0 );
 
 	$title = 'Project';
 	$select = 'project_id,project_name';
@@ -87,7 +88,7 @@ case 'projects':
 	$table .= ", permissions";
 	break;
 case 'tasks':
-	$task_project = dPgetParam( $_GET, 'task_project', 0 );
+	$task_project = dPgetIntParam( $_GET, 'task_project', 0 );
 
 	$title = 'Task';
 	$select = 'task_id,task_name';
@@ -122,7 +123,7 @@ if (!$ok) {
 	echo "Incorrect parameters passed\n";
 	if ($debug) {
 		echo "<br />callback = $callback \n";
-		echo "<br />table = $table \n";
+		echo "<br />table = ".dPhtml($table)." \n";
 		echo "<br />ok = $ok \n";
 	}
 } else {
@@ -142,15 +143,20 @@ if (!$ok) {
  		$list = arrayMerge( array( 0=>''), $q->loadHashList());
 
 	}
-	echo db_error();
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
+	// Calls window.opener.<callback>(key, val); the callback may be a dotted path.
 	function setClose(key, val){
-		window.opener.<?php echo $callback;?>(key,val);
-		window.close();
-	}
-	function setHeight(){
-		window.opener.<?php echo $callback;?>(key,val);
+		var parts = <?php echo dPjs($callback); ?>.split('.');
+		var owner = window.opener;
+		for (var i = 0; owner && i < parts.length - 1; i++) {
+			owner = owner[parts[i]];
+		}
+		var name = parts[parts.length - 1];
+		if (!owner || typeof owner[name] !== 'function') {
+			throw new Error('No callback function in the opener window');
+		}
+		owner[name].call(owner, key, val);
 		window.close();
 	}
 </script>
@@ -162,14 +168,14 @@ if (!$ok) {
 	if (count( $list ) > 1) {
 		echo $AppUI->_( 'Select' ).' '.$AppUI->_( $title ).':<br />';
 		foreach ($list as $key => $val) {
-			echo "<a href=\"javascript:setClose('$key','".addslashes($val)."');\">$val</a><br>\n";
+			echo '<a href="#"' . dPaction('setClose', array((string)$key, (string)$val)) . '>' . dPhtml($val) . "</a><br>\n";
 		}
 ?>
 	</td>
 </tr>
 <tr>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_( 'cancel' );?>" onclick="window.close()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_( 'cancel' );?>"<?php echo dPaction('window.close'); ?> />
 <?php
 	} else {
 		echo $AppUI->_( "no$table" );

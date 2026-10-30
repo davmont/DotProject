@@ -119,7 +119,7 @@ function getAllowedProjectsForJavascript($activeonly=0){
       
   $q = new DBQuery; 
   $q->addQuery('project_id, project_name, company_name, company_id');
-  $q->addTable('projects');
+  $q->addTable('projects', 'projects');
   $q->addJoin('companies','','company_id = projects.project_company');
   $q->addWhere($whereclause);
   $q->addOrder('project_name');
@@ -129,9 +129,9 @@ function getAllowedProjectsForJavascript($activeonly=0){
   /* Build array of company/projects for output to javascript
      Adding slashes in case special characters exist */
   foreach($allowedCompanyProjectList as $row){
-    $projects[] = "[{$row['company_id']},{$row['project_id']},'"
-                . addslashes($row['project_name'])
-                . "']";
+    $projects[] = "[".(int)$row['company_id'].",".(int)$row['project_id'].","
+                . dPjs($row['project_name'])
+                . "]";
     $reverse[$row['project_id']] = $row['company_id'];
   }
   return $projects;
@@ -325,7 +325,7 @@ function dump ($var) {
 if (!function_exists('get_mysql_to_epoch')) {
 function get_mysql_to_epoch( $sqldate )
 {
-    list( $year, $month, $day, $hour, $minute, $second )= split( '([^0-9])', $sqldate );
+    list( $year, $month, $day, $hour, $minute, $second )= array_pad(preg_split('/[^0-9]/', (string)$sqldate), 6, 0);
     //echo $year.",".$month.",".$day;
     return date( 'U', mktime( $hour, $minute, $second, $month, $day, $year) );
 }

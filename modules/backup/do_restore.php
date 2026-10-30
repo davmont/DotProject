@@ -1,16 +1,20 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // Copyright 2005, Adam Donnison <adam@saki.com.au>
 // Released under GPL version 2 or later
 
 // Restores an XML file.
 $perms =& $AppUI->acl();
-if (! $perms->checkModule('backup', 'edit'))
+// A restore runs the SQL in the uploaded file: system administrators only.
+if (! $perms->checkModule('backup', 'edit') || ! $perms->checkModule('system', 'edit'))
   $AppUI->redirect('m=public&a=access_denied');
 
 // Try restoring the XML file.
 
 if (! isset($_FILES['xmlfile'])) {
-  $AppUI->setMsg('No upload file', UI_MSG_ERR);
+  $AppUI->setMsg('No upload file', UI_MSG_ERROR);
   $AppUI->redirect();
 }
 
@@ -22,7 +26,7 @@ $schema = new adoSchema($GLOBALS['db']);
 $schema->setUpgradeMethod('REPLACE');
 $schema->ContinueOnError(true);
 if (($sql = $schema->ParseSchemaFile($upload_tmp_file)) == false) {
-  $AppUI->setMsg('Error in parsing XML file', UI_MSG_ERR);
+  $AppUI->setMsg('Error in parsing XML file', UI_MSG_ERROR);
   $AppUI->redirect();
 }
 

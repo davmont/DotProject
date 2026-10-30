@@ -9,7 +9,7 @@ class ActivityMDP {
     private $y=NULL;
 	private $name=NULL; 
 	private $dependencies=NULL; 
-	function ActivityMDP(){
+	function __construct(){
 	}
 	
 	function updateDependencies($taskId,$dependencies){
@@ -19,10 +19,11 @@ class ActivityMDP {
 	}
 	
 	function updatePosition($task_id,$x,$y){
+		$task_id = (int)$task_id; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('id');
 		$q->addTable('tasks_mdp');
-		$q->addWhere('task_id =' . $task_id);
+		$q->addWhere('task_id =' . (int)$task_id);
 		$record = $q->loadResult();
 		$q->clear();
 		$q->addTable('tasks_mdp');
@@ -33,7 +34,7 @@ class ActivityMDP {
 		}else{
 			$q->addUpdate('pos_x', $x);
 			$q->addUpdate('pos_y', $y);
-			$q->addWhere('task_id =' . $task_id);
+			$q->addWhere('task_id =' . (int)$task_id);
 		}
 		$q->exec();	
 	}

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 $q = new DBQuery();
 $q->clear();
 $q->addQuery('user_id');
@@ -93,7 +96,7 @@ $inactiveList = $q->loadList();
     <?php foreach ($activeList as $row) {
         ?>
         <tr>
-            <td nowrap style="background-color:#<?php echo $bg; ?>" width="30">
+            <td nowrap width="30">
                 <a href="index.php?m=risks&a=addedit&id=<?php
     echo($row['risk_id']);
     if ($projectSelected != null) {
@@ -112,8 +115,8 @@ $inactiveList = $q->loadList();
                 </a>
             </td>
             <td width="25"><?php echo $row['risk_id'] ?></td>
-            <td><?php echo $row['risk_name'] ?></td>
-            <td><?php echo $row['risk_description'] ?></td>
+            <td><?php echo dPhtml($row['risk_name']) ?></td>
+            <td><?php echo dPhtml($row['risk_description']) ?></td>
             <td><?php echo $riskProbability[$row['risk_probability']] ?></td>
             <td><?php echo $riskImpact[$row['risk_impact']] ?></td>
             <td style="background-color:#<?php
@@ -132,7 +135,7 @@ $inactiveList = $q->loadList();
                 }
             }
             ?>
-            <td><?php echo $row['risk_responsible'] ?></td>
+            <td><?php echo dPhtml($row['risk_responsible']) ?></td>
             <?php
             foreach ($projects as $k => $v) {
                 if ($k == $row['risk_project']) {
@@ -143,7 +146,7 @@ $inactiveList = $q->loadList();
                 $row['risk_project'] = $AppUI->_('LBL_NOT_DEFINED');
             }
             ?>
-            <td><?php echo $row['risk_project'] ?></td>
+            <td><?php echo dPhtml($row['risk_project']) ?></td>
             <?php
             foreach ($tasks as $k => $v ) {
         if ($k==$row['risk_task']) {
@@ -158,7 +161,7 @@ $inactiveList = $q->loadList();
         }
     }        
             ?>
-            <td><?php echo $row['risk_task'] ?></td>
+            <td><?php echo dPhtml($row['risk_task']) ?></td>
             <td><?php echo $riskPotential[$row['risk_potential_other_projects']] ?></td>
             <td><?php echo $riskStrategy[$row['risk_strategy']] ?></td>
         </tr>
@@ -184,7 +187,7 @@ $inactiveList = $q->loadList();
     </tr>
     <?php foreach ($inactiveList as $row) { ?>
         <tr>
-            <td nowrap style="background-color:#<?php echo $bg; ?>" width="30">
+            <td nowrap width="30">
                 <a href="index.php?m=risks&a=addedit&id=<?php
     echo($row['risk_id']);
     if ($projectSelected != null) {
@@ -203,8 +206,8 @@ $inactiveList = $q->loadList();
                 </a>
             </td>
             <td width="25"><?php echo $row['risk_id'] ?></td>
-            <td><?php echo $row['risk_name'] ?></td>
-            <td><?php echo $row['risk_description'] ?></td>
+            <td><?php echo dPhtml($row['risk_name']) ?></td>
+            <td><?php echo dPhtml($row['risk_description']) ?></td>
             <td><?php echo $riskProbability[$row['risk_probability']] ?></td>
             <td><?php echo $riskImpact[$row['risk_impact']] ?></td>
             <td style="background-color:#<?php
@@ -223,7 +226,7 @@ $inactiveList = $q->loadList();
                 }
             }
             ?>
-            <td><?php echo $row['risk_responsible'] ?></td>
+            <td><?php echo dPhtml($row['risk_responsible']) ?></td>
             <?php
             foreach ($projects as $k => $v) {
                 if ($k == $row['risk_project']) {
@@ -234,7 +237,7 @@ $inactiveList = $q->loadList();
                 $row['risk_project'] = $AppUI->_('LBL_NOT_DEFINED');
             }
             ?>
-            <td><?php echo $row['risk_project'] ?></td>
+            <td><?php echo dPhtml($row['risk_project']) ?></td>
             <?php
             foreach ($tasks as $k => $v ) {
                 if ($k==$row['risk_task']) {
@@ -249,7 +252,7 @@ $inactiveList = $q->loadList();
                 }
             }        
             ?>
-            <td><?php echo $row['risk_task'] ?></td>
+            <td><?php echo dPhtml($row['risk_task']) ?></td>
             <td><?php echo $riskPotential[$row['risk_potential_other_projects']] ?></td>
             <td><?php echo $riskStrategy[$row['risk_strategy']] ?></td>
         </tr>

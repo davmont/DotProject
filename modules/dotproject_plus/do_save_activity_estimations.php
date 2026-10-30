@@ -12,6 +12,11 @@ set_time_limit(300);
 //save
 $project_id = $_POST['project_id'];
 $task_id=$_POST["activity_id"];
+// Ids are used in SQL below: keep them integers, as checked.
+$project_id = (int)$project_id;
+$task_id = (int)$task_id;
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id, array(array('tasks', 'task_id', 'task_project', $task_id)));
 $description=$_POST["activity_description_id_".$task_id];
 $owner_id=$_POST["task_owner_".$task_id];
 $effort = $_POST["planned_effort_$task_id"];
@@ -40,8 +45,8 @@ $allRolesHR= explode(";", $_POST["estimatedRolesHR_".$task_id]);
 for ($i = 0; $i <= $numRoles; $i++) {
     if (strpos($_POST["estimatedRolesExcluded_$task_id"], $i . "") === false) {
         if($allRolesIds[$i]!=""){
-            $rolesIds[$i] = $allRolesIds[$i];
-            $rolesHRs[$i] = $allRolesHR[$i];
+            $rolesIds[$i] = (int)$allRolesIds[$i];
+            $rolesHRs[$i] = (int)$allRolesHR[$i];
             $rolesQuantity[$i]=1;
         }
     }
@@ -82,7 +87,7 @@ for ($i = 0; $i < sizeof($rolesIds); $i++) {
         $q = new DBQuery();
         $q->addTable("project_tasks_estimated_roles");
         $q->addQuery("id");
-        $q->addWhere("role_id=".$rolesIds[$i]." and task_id=".$task_id);
+        $q->addWhere("role_id=".$rolesIds[$i]." and task_id=" . (int)$task_id);
         $sql = $q->prepare();
         $records = db_loadList($sql);
         $task_estimative_id=$records[$countControl[$rolesIds[$i]]][0];
@@ -158,7 +163,7 @@ function updateActivity($startDateTxt, $endDateTxt, $taskId,$owner,$description,
     if ($task_status > -1) {
         $q->addUpdate("task_status", $task_status);
     }
-    $q->addWhere("task_id = " . $taskId);
+    $q->addWhere("task_id = " . (int)$taskId);
     $q->exec();
     return $duration;
 }

@@ -106,7 +106,7 @@ function chooseSelectedValue($name, $options, $selected)
 {
     foreach ($options as $key => $val) {
         if ($key == $selected) {
-            $output = "$val\n";
+            $output = dPhtml($val) . "\n";
         }
     }
     return ($output);
@@ -118,16 +118,16 @@ function create_selectbox($name, $options, $selected)
 {
 
     $output = "";
-    $output .= '<select name="' . $name . '" onchange="javascript:document.ticketform.submit()" class="text">' . "\n";
+    $output .= '<select name="' . $name . '"' . dPaction(null, array(), null, array('submit' => 'ticketform')) . ' class="text">' . "\n";
 
     foreach ($options as $key => $val) {
-        $output .= "<option value=\"$key\"";
+        $output .= "<option value=\"" . dPhtml($key) . "\"";
 
         if ($key == $selected) {
             $output .= " selected";
         }
 
-        $output .= ">$val\n";
+        $output .= ">" . dPhtml($val) . "\n";
         //$loop++;
     }
 
@@ -142,10 +142,8 @@ function create_selectbox($name, $options, $selected)
 function escape_string($string)
 {
 
-    if (!get_magic_quotes_gpc()) {
-        $string = addslashes($string);
-    }
-    return ($string);
+    // get_magic_quotes_gpc() was removed in PHP 8 (magic quotes are always off).
+    return (db_escape($string));
 
 }
 
@@ -343,7 +341,7 @@ function format_field($value, $type, $ticket = NULL)
     switch ($type) {
         case "user":
             if ($value) {
-                $output = query2result("SELECT CONCAT_WS(' ',contact_first_name,contact_last_name) as name FROM {$dbprefix}users u LEFT JOIN {$dbprefix}contacts ON u.user_contact = contact_id WHERE user_id = '$value'");
+                $output = dPhtml(query2result("SELECT CONCAT_WS(' ',contact_first_name,contact_last_name) as name FROM {$dbprefix}users u LEFT JOIN {$dbprefix}contacts ON u.user_contact = contact_id WHERE user_id = '$value'"));
             } else {
                 $output = "-";
             }
@@ -402,8 +400,11 @@ function format_field($value, $type, $ticket = NULL)
             $output .= "Link</a>";
             break;
         case "doattach":
-            $output = "<a href='?m=ticketsmith&amp;a=attach&amp;newparent=$value&amp;dosql=reattachticket&amp;ticket=$ticket'>";
-            $output .= "Link</a>";
+            $output = "<form method='post' action='?m=ticketsmith&amp;a=attach' style='display:inline'>"
+                . "<input type='hidden' name='dosql' value='reattachticket' />"
+                . "<input type='hidden' name='newparent' value='" . (int)$value . "' />"
+                . "<input type='hidden' name='ticket' value='" . (int)$ticket . "' />"
+                . "<input type='submit' class='button' value='Link' /></form>";
             break;
         case "open_date":
             $output = get_time_ago($value);
@@ -503,18 +504,18 @@ function format_field($value, $type, $ticket = NULL)
             if (!db_loadObject($sql, $obj)) {
                 // it all dies!
             }
-            $output = '<a href="?m=companies&amp;a=view&amp;company_id=' . $value . '">' . $obj->company_name . '</a>';
+            $output = '<a href="?m=companies&amp;a=view&amp;company_id=' . (int)$value . '">' . dPhtml($obj->company_name) . '</a>';
             break;
         case 'ticket_project':
             $q = new DBQuery;
             $q->addTable('projects', 'pr');
             $q->addQuery('pr.*');
-            $q->addWhere('pr.project_id = ' . $value);
+            $q->addWhere('pr.project_id = ' . (int)$value);
             $sql = $q->prepare();
             if (!db_loadObject($sql, $obj)) {
                 // it all dies!
             }
-            $output = '<a href="?m=projects&amp;a=view&amp;project_id=' . $value . '">' . $obj->project_name . '</a>';
+            $output = '<a href="?m=projects&amp;a=view&amp;project_id=' . (int)$value . '">' . dPhtml($obj->project_name) . '</a>';
             break;
         default:
             $output = $value ? htmlspecialchars($value) : "<em>" . $AppUI->_('none') . "</em>";

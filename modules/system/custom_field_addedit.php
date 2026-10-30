@@ -13,7 +13,14 @@ $titleBlock->show();
 
 $field_id = ((dpGetParam($_POST, 'field_id', NULL) != NULL) 
              ? dpGetParam($_POST, 'field_id', NULL) : dpGetParam($_GET, 'field_id', 0));
-$delete_field = dpGetParam($_GET, 'delete', 0);
+// Deleting a field changes data: POST with the CSRF token and system edit permission only.
+$delete_field = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dpGetParam($_POST, 'delete', 0) : 0;
+if ($delete_field) {
+	$AppUI->verifyCsrfToken();
+	if (!getPermission('system', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+}
 $module = ((dpGetParam($_GET, 'module', NULL) == NULL) 
            ? dpGetParam($_POST, 'module', NULL) : dpGetParam($_GET, 'module', NULL));
 
@@ -95,7 +102,7 @@ foreach ($html_types as $k => $ht) {
 	$visible_state['div_'.$k] = 'display: ' . (($k == $field_htmltype) ? 'block' : 'none');
 }
 ?>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function hideAll() {
 	var selobj = document.getElementById('field_htmltype');
 	for (i = 0; i < selobj.options.length; i++) {
@@ -136,13 +143,18 @@ function postCustomField() {
 	sql.name = 'dosql';	
 	frm.submit();
 }
+
+// Field names: letters and digits only.
+function cleanFieldName(el) {
+	el.value = el.value.replace(/[^a-z|^A-Z|^0-9]*/gi,'');
+}
 </script>
 <form method="post" action="?m=system&amp;a=custom_field_editor" id="custform" />
 <table class="std">
 	<th colspan="2">
 		<?php echo $edit_title?> <?php echo $AppUI->_($module)?> <?php echo $AppUI->_('Module') ?>
-		<input type="hidden" name="field_id" value="<?php echo $field_id; ?>" />
-		<input type="hidden" name="module" value="<?php echo $module?>" /> 
+		<input type="hidden" name="field_id" value="<?php echo htmlspecialchars((string)$field_id); ?>" />
+		<input type="hidden" name="module" value="<?php echo htmlspecialchars((string)$module)?>" /> 
 		<input type="hidden" name="dontdosql" id="dosql" value="do_custom_field_aed" />
 	</td></tr>
 	<tr><td>
@@ -151,7 +163,7 @@ function postCustomField() {
 		<?php echo $AppUI->_('(No Spaces)')?>
 		</td><td>
 		<input type="text" name="field_name" maxlength="100" value="<?php 
-echo htmlspecialchars($field_name)?>" onblur="this.value=this.value.replace(/[^a-z|^A-Z|^0-9]*/gi,'');" />
+echo htmlspecialchars($field_name)?>"<?php echo dPaction('cleanFieldName', array('$this'), 'blur'); ?> />
 	</td></tr>
 	<tr><td>
 		<?php echo $AppUI->_('Field Description')?>:
@@ -169,15 +181,16 @@ echo intval($field_order)?>" />
 		<?php echo $AppUI->_('Field Data Type')?>:
 		</td><td>
 		<?php
-echo arraySelect(array('alpha' => $AppUI->_('Text'), 'numeric' => $AppUI->_('Numeric')), 'field_datatype',
-                 'id="field_datatype"', $field_datatype); ?>
+// arraySelect() takes the list by reference, so it must be a variable (PHP 8).
+$datatypes = array('alpha' => $AppUI->_('Text'), 'numeric' => $AppUI->_('Numeric'));
+echo arraySelect($datatypes, 'field_datatype', 'id="field_datatype"', $field_datatype); ?>
 	</td></tr>
 	<tr><td>
 		<?php echo $AppUI->_('Field Display Type')?>:
 		</td><td>
 		<?php 
 echo arraySelect($html_types, 'field_htmltype', 
-                 'id="field_htmltype" onchange="javascript:showAttribs()"', $field_htmltype); ?>
+                 'id="field_htmltype"' . dPaction('showAttribs'), $field_htmltype); ?>
 	</td></tr>
 	<tr><td colspan="2">
 		<hr />
@@ -185,7 +198,7 @@ echo arraySelect($html_types, 'field_htmltype',
 			<?php echo $AppUI->_('HTML Tag Options')?>:
 		</td>
 		<td>
-			<input type="text" name="field_extratags" value="<?php echo $field_extratags?>" />
+			<input type="text" name="field_extratags" value="<?php echo htmlspecialchars((string)$field_extratags)?>" />
 		</td></tr>
 	</td></tr>
 	<tr><td colspan="2">
@@ -204,13 +217,13 @@ foreach ($select_items as $itm) {
 	echo '<li>'.$itmhtml."</li>\n";
 	echo '<input type="hidden" name="select_items[]" value="'.$itmhtml.'" />';
 	echo '</td><td>';
-	echo '<a href="javascript:deleteItem(\''.addslashes($itm).'\')">[Delete]</a>';
+	echo '<a href="#"' . dPaction('deleteItem', array((string)$itm)) . '>[Delete]</a>';
 	echo '</td></tr>';
 }
 ?>
 		<tr>
 			<td><input type="text" name="select_newitem" /></td>
-			<td><input type="button" value="<?php echo $AppUI->_('Add')?>" onclick="javascript:addSelectItem()" /></td>
+			<td><input type="button" value="<?php echo $AppUI->_('Add')?>"<?php echo dPaction('addSelectItem'); ?> /></td>
 		</tr>
 		</table>
 	</td></tr>
@@ -248,8 +261,8 @@ foreach ($select_items as $itm) {
 	</div>
 	</td></tr>
 	<tr><td colspan="2" align="right">
-		<input type="button" value="Cancel" onclick="javascript:location = '?m=system&amp;a=custom_field_editor';" />
-		<input type="button" value="Save" onclick="javascript:postCustomField()" />
+		<input type="button" value="Cancel"<?php echo dPaction(null, array(), null, array('href' => '?m=system&a=custom_field_editor')); ?> />
+		<input type="button" value="Save"<?php echo dPaction('postCustomField'); ?> />
 	</td></tr>
 	</form>
 </table>

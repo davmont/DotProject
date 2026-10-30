@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 
 // this is the edit site for our annotations module
 // it is automatically appended on the applications main ./index.php by the dPframework
@@ -10,101 +14,6 @@
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo DP_BASE_URL;?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script language="javascript">
-// to popup the calendar for choosing dates
-// copyied and modified from the projects addedit.php
-var calendarField = '';
-var calWin = null;
-
-// return the value of the radio button that is checked
-// return an empty string if none are checked, or
-// there are no radio buttons
-function getCheckedValue(radioObj) {
-	if(!radioObj)
-		return "";
-	var radioLength = radioObj.length;
-	if(radioLength == undefined)
-		if(radioObj.checked)
-			return radioObj.value;
-		else
-			return "";
-	for(var i = 0; i < radioLength; i++) {
-		if(radioObj[i].checked) {
-			return radioObj[i].value;
-		}
-	}
-	return "";
-}
-
-function popCalendar( field ){
-	calendarField = field;
-	idate = eval( 'document.chooseProject.annotation_show_date.value' );
-	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=280, height=250, scrollbars=no, status=no' );
-}
-
-/**
-*	@param string Input date in the format YYYYMMDD
-*	@param string Formatted date
-*/
-function setCalendar( idate, fdate) {
-	var owner = '';
-	fld_date = eval( 'document.chooseProject.annotation_show_date' );
-	fld_fdate = eval( 'document.chooseProject.show_date' );
-	
-	fld_date.value = idate;
-	fld_fdate.value = fdate;
-
-	document.chooseProject.submit();
-}
-
-function delIt() {
-	if (confirm("<?php echo $AppUI->_('Do you really want to delete this annotation ?'); ?>")) {
-		document.frmDelete.submit();
-	}
-}
-
-// Check if all the necessary ionformation was entered
-function SubmitIt() {
-	var f = document.editFrm;
-	var str = '';
-	var err = 0;
-	// Check for rationale for must do
-	str = str + document.editFrm.annotation_must_rationale.value;
-	if (f.annotation_must.checked == true && str.replace(/^\s+|\s+$/g, '') == "") {
-		alert('Please enter a rationale for a "Must Do"');
-		err = 1;
-	}
-	// Check for rationale for ratings ( if it's yellow / red )
-	str = '' + f.annotation_scope_desc.value;
-	if ( (getCheckedValue( f.annotation_scope ) == 1 || getCheckedValue( f.annotation_scope ) == 2) && str.replace(/^\s+|\s+$/g, '') == "") {
-		err = 1;
-		alert("<?php echo $AppUI->_('Please enter rational for the scope rating'); ?>");
-	}
-	
-	str = '' + f.annotation_resources_desc.value;
-	if ( (getCheckedValue( f.annotation_resources ) == 1 || getCheckedValue( f.annotation_resources ) == 2) && str.replace(/^\s+|\s+$/g, '') == "") {
-		err = 1;
-		alert("<?php echo $AppUI->_('Please enter rational for the resources rating'); ?>");
-	}
-	str = '' + f.annotation_resources_desc.value;
-	
-	str = '' + f.annotation_time_desc.value;
-	if ( (getCheckedValue( f.annotation_time ) == 1 || getCheckedValue( f.annotation_time ) == 2) && str.replace(/^\s+|\s+$/g, '') == "") {
-		err = 1;
-		alert("<?php echo $AppUI->_('Please enter rational for the time rating'); ?>");
-	}
-	str = '' + document.editFrm.show_time.value;
-	if ( str.substr(1,1) == ":" ) {
-		document.editFrm.show_time.value = "0" + document.editFrm.show_time.value;
-		str = '' + document.editFrm.show_time.value;
-	}
-	if ( str.substr(2,1) != ":" || str.length != 5 ) {
-		err = 1;
-		alert("Please enter valid Time (HH:MM)");
-	}
-	if ( err == 0 ) f.submit();
-}
-</script>
 <?php
 
 // we check for permissions on this module
@@ -134,12 +43,27 @@ $AppUI->savePlace();	//save the workplace state (have a footprint on this site)
 	$project_status= 		intval( dPgetParam( $_REQEUST, "project_status", "-1" ) );
 	$show_owner_id= 		intval( dPgetParam( $_REQUEST, "show_owner_id", "-1" ) );
 	$show_date= 			intval( dPgetParam( $_REQUEST, "show_date", "0" ) );
-	$show_time=				dPgetParam( $_REQUEST, "show_time", date("H:i") );  // Dont add seconds --> they will be  added before the storage in storage loop
+	$show_time=				dPgetParam( $_REQUEST, "show_time", date("H:i") );
+	if (!preg_match('/^\d{1,2}:\d{2}$/', $show_time)) {
+		$show_time = date("H:i");
+	}  // Dont add seconds --> they will be  added before the storage in storage loop
 	$changed_show_date= 	intval( dPgetParam( $_REQUEST, "changed_show_date", "0" ) );
 	$annotation_id = 		intval( dPgetParam( $_REQUEST, "annotation_id", "-1" ) );
-	$save_annotations= 		intval( dPgetParam( $_REQUEST, "save_annotations", "0" ) );
+	// Saving (1) and deleting (-1) change data: POST with the CSRF token and permission only.
+	$save_annotations = 0;
+	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		$save_annotations = intval( dPgetParam( $_POST, "save_annotations", "0" ) );
+		if ($save_annotations == 1 || $save_annotations == -1) {
+			$AppUI->verifyCsrfToken();
+			if (!getPermission('annotations', $save_annotations == -1 ? 'delete' : 'edit')) {
+				$AppUI->redirect( "m=public&a=access_denied" );
+			}
+		}
+	}
 	$tab= 					intval( dPgetParam( $_REQUEST, "tab", "-1") );   //came from projects view?
 	$addnew= 				intval( dPgetParam( $_REQUEST, "addnew", "0") );   //came from projects view?
+	// Presets come from the 'details' table of the Details module when it is installed.
+	$details_installed = (bool)db_loadResult("SHOW TABLES LIKE '" . db_escape(dPgetConfig('dbprefix', '') . 'details') . "'");
 	$annotation_show_date = intval( dPgetParam( $_REQUEST, "annotation_show_date", $show_date ) );  //Dummy for the calendar
 
 // get the date
@@ -159,15 +83,17 @@ if ($changed_show_date != "") $show_date=$changed_show_date;
 			$q = new DBQuery();
 			$q -> addTable('projects');
 			$q -> addQuery('project_name');
-			$q -> addWhere('project_id='.$project_id);
+			$q -> addWhere('project_id=' . (int)$project_id);
 			$project_name=$q -> loadResult();
 			
 			$q -> clear();
 			$q -> addTable('contacts');
 			$q -> addQuery('contact_first_name,contact_last_name');
-			$q -> addWhere('contact_id=( SELECT project_owner FROM projects WHERE project_id='.$project_id.' ) ');
+			$q -> addWhere('contact_id=( SELECT project_owner FROM ' . dPgetConfig('dbprefix', '') . 'projects WHERE project_id=' . (int)$project_id . ' ) ');
 			$tmp_project_owner_name = $q -> loadList();
-			$project_owner_name = $tmp_project_owner_name[0]['contact_last_name'].", ".substr($tmp_project_owner_name[0]['contact_first_name'],0,1).".";
+			$project_owner_name = !empty($tmp_project_owner_name[0])
+				? $tmp_project_owner_name[0]['contact_last_name'].", ".substr($tmp_project_owner_name[0]['contact_first_name'],0,1)."."
+				: '';
 		}
 
 // Get some SysVals:
@@ -216,46 +142,15 @@ $msg="Annotation inserted/altered";	//The OK Message, see line around 129
 		}
 		// show the dropdown filter with dP arraySelect
 ?>
-<script type="text/javascript" language="javascript">
-// popuop for memberselection
-function selectTeam() {
-	var win = window.open("","","width=300, height=600,resizable,scrollbars=no");
-	var atxt = '';
-		win.document.write("<html>");
-        win.document.write("<head>");
-        win.document.write("<title><?php echo $AppUI->_('Contacts'); ?></title>");
-        win.document.write("</head><body style=\"background-color: #ffebcd;\"><center><?php echo $AppUI->_('Click to fill in'); ?></center><form>");
-        win.document.write("</head><body style=\"background-color: #ffebcd;\"><form><center>");
-		var i;
-		for (i=65;i<=90;i++)
-		{	
-			win.document.write("<a href=\"#"+ String.fromCharCode(i) +"\">"+ String.fromCharCode(i) +" </a>");
-		}
-		win.document.write('</center><div style="overflow: auto; height: 430px; width: 290px;">');
-		<?php
-			$last_letter = "";
-			foreach ( $pm as $k => $v ) {
-				if ( $v == "-" ) continue;
-				if ( $last_letter != strtoupper(substr($v,0,1))) {
-					$last_letter = strtoupper(substr($v,0,1));
-					?>
-					win.document.write('<br><center><a name="<?php echo $last_letter; ?>"><?php echo $last_letter; ?></a></center>');<?php
-				}
-				?>
-				atxt = "<?php echo $v; ?>";
-				win.document.write("<center><input name=\"neu\" value=\""+ atxt +"\" type=\"button\" style=\"width: 200px;\"size=\"20\" onClick=\"opener.Hinzufuegen('"+ atxt +"\\n');\"></center>");
-				<?php
+<?php
+		// names for selectTeam() (addedit.js)
+		$team_names = array();
+		foreach ($pm as $k => $v) {
+			if ($v != "-") {
+				$team_names[] = $v;
 			}
-		?>		
-        win.document.write("</div><br><center><a href=\"javascript:window.close();\"><?php echo $AppUI->_('Close Window'); ?></a></center>");
-        win.document.write("</form></body></html>");
-}
-
-function Hinzufuegen(txt)
-{
-	document.editFrm.annotation_team.value += txt;
-}
-</script>
+		}
+?>
 	<?php
 
 if ($save_annotations == "1") {
@@ -301,8 +196,8 @@ if ($save_annotations == "1") {
 			$q->AddInsert('annotation_history_must_rationale',$obj->annotation_must_rationale);
 			$q->AddInsert('annotation_history_flag',$obj->annotation_flag);
 			$q->AddInsert('annotation_history_subject',$obj->annotation_subject);
-			$sql = $q->prepareInsert();
-			$result = db_loadList( $sql );
+			// exec() binds the values (prepareInsert() leaves '?' placeholders).
+			$q->exec();
 			$q->clear();
 
 	// Store the data
@@ -422,8 +317,8 @@ if ($obj->annotation_time == "") $obj->annotation_time=0;
 			$addnew="0"; ?>
 				
 			<!-- --------------- the headlines -------------- -->	
-			<th align="left"><?php echo $AppUI->_('Project'); ?> : <?php echo ($project_name); ?></th>
-			<th align="left"><?php echo $AppUI->_('Project Owner'); ?> : <?php echo $project_owner_name; ?></th>
+			<th align="left"><?php echo $AppUI->_('Project'); ?> : <?php echo dPhtml($project_name); ?></th>
+			<th align="left"><?php echo $AppUI->_('Project Owner'); ?> : <?php echo dPhtml($project_owner_name); ?></th>
 			<th align="left"><?php echo $AppUI->_('Shown Date'); ?> : <?php echo $oDate->format( $df )." ".$show_time; ?></th>
 		<?php
 		} else {	// We are in "Add New" mode, so make the project, owner and date selectable
@@ -438,11 +333,11 @@ if ($obj->annotation_time == "") $obj->annotation_time=0;
 				<input type="HIDDEN" name="annotation_scope" value="<?php echo $obj->annotation_scope; ?>">
 				<input type="HIDDEN" name="annotation_resources" value="<?php echo $obj->annotation_resources; ?>">
 				<input type="HIDDEN" name="annotation_time" value="<?php echo $obj->annotation_time; ?>">
-				<input type="HIDDEN" name="annotation_scope_desc" value="<?php echo $obj->annotation_scope_desc; ?>">
-				<input type="HIDDEN" name="annotation_resources_desc" value="<?php echo $obj->annotation_resources_desc; ?>">
-				<input type="HIDDEN" name="annotation_time_desc" value="<?php echo $obj->annotation_time_desc; ?>">
+				<input type="HIDDEN" name="annotation_scope_desc" value="<?php echo dPhtml($obj->annotation_scope_desc); ?>">
+				<input type="HIDDEN" name="annotation_resources_desc" value="<?php echo dPhtml($obj->annotation_resources_desc); ?>">
+				<input type="HIDDEN" name="annotation_time_desc" value="<?php echo dPhtml($obj->annotation_time_desc); ?>">
 				<input type="HIDDEN" name="addnew" value="1">
-				<th align="left"><?php echo $AppUI->_('Select Project'); ?> : <?php echo arraySelect( $tmpProj,'project_id','size=1 class=text onChange="document.chooseProject.submit();"',$project_id); ?></th>
+				<th align="left"><?php echo $AppUI->_('Select Project'); ?> : <?php echo arraySelect( $tmpProj,'project_id','size=1 class=text' . dPaction(null, array(), null, array('submit' => 'chooseProject')),$project_id); ?></th>
 
 			<!-- Select the Date -->
 
@@ -451,17 +346,17 @@ if ($obj->annotation_time == "") $obj->annotation_time=0;
 				<input type="HIDDEN" name="annotation_scope" value="<?php echo $obj->annotation_scope; ?>">
 				<input type="HIDDEN" name="annotation_resources" value="<?php echo $obj->annotation_resources; ?>">
 				<input type="HIDDEN" name="annotation_time" value="<?php echo $obj->annotation_time; ?>">
-				<input type="HIDDEN" name="annotation_scope_desc" value="<?php echo $obj->annotation_scope_desc; ?>">
-				<input type="HIDDEN" name="annotation_resources_desc" value="<?php echo $obj->annotation_resources_desc; ?>">
-				<input type="HIDDEN" name="annotation_time_desc" value="<?php echo $obj->annotation_time_desc; ?>">
+				<input type="HIDDEN" name="annotation_scope_desc" value="<?php echo dPhtml($obj->annotation_scope_desc); ?>">
+				<input type="HIDDEN" name="annotation_resources_desc" value="<?php echo dPhtml($obj->annotation_resources_desc); ?>">
+				<input type="HIDDEN" name="annotation_time_desc" value="<?php echo dPhtml($obj->annotation_time_desc); ?>">
 -->				<input type="HIDDEN" name="annotation_show_date" value="<?php echo $oDate->format( FMT_TIMESTAMP_DATE );?>" />
 				<input type="HIDDEN" name="addnew" value="1">
 				<input type="text" class="text" name="show_date" id="date1" style="text-align: center;" value="<?php echo $oDate->format( $df );?>" class="text" disabled="disabled" />
-				<a href="#" onClick="popCalendar( 'show_date' , 'show_date' );"> 
+				<a href="#"<?php echo dPaction('popCalendar', array('show_date')); ?>> 
 					<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 				</a>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $AppUI->_('Select Time')." :"; ?>
-					<input type="text" class="text" name="show_time" size="5" style="text-align: center;" onChange="document.chooseProject.submit();" value="<?php echo $show_time; ?>">&nbsp;h
+					<input type="text" class="text" name="show_time" size="5" style="text-align: center;"<?php echo dPaction(null, array(), 'change', array('submit' => 'chooseProject')); ?> value="<?php echo $show_time; ?>">&nbsp;h
 				<!-- Add option to show all entries -->
 				
 				</th>
@@ -507,19 +402,19 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 										// please remember this! automatic translation by dP is only possible if all strings
 										// are handled like this
 			?></td>
-			<td nowrap="nowrap" align="center"><?php echo $AppUI->_( 'Participants' )."&nbsp;&nbsp;".'<input type="button" class="button" value="'.$AppUI->_('select from list').'" name="select_team" onclick="javascript:selectTeam();">';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
+			<td nowrap="nowrap" align="center"><?php echo $AppUI->_( 'Participants' )."&nbsp;&nbsp;".'<input type="button" class="button" value="'.$AppUI->_('select from list').'" name="select_team"' . dPaction('selectTeam', array($team_names, array('title' => $AppUI->_('Contacts', UI_OUTPUT_RAW), 'hint' => $AppUI->_('Click to fill in', UI_OUTPUT_RAW), 'close' => $AppUI->_('Close Window', UI_OUTPUT_RAW)))) . '>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 										// please remember this! automatic translation by dP is only possible if all strings
 										// are handled like this
 			?></td>
 		</tr>
 		<tr>
 			<!-- ----------------------------- The Annotations -------------------- -->
-			<td nowrap="nowrap" align="center"><?php echo '<textarea style="font-size:8pt;" name="annotation_previous" cols="70" rows="10" wrap="physical">'.dPFormSafe( $obj->annotation_previous ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
+			<td nowrap="nowrap" align="center"><?php echo '<textarea style="font-size:8pt; width:100%; box-sizing:border-box;" name="annotation_previous" rows="10" wrap="physical">'.dPFormSafe( $obj->annotation_previous ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 										// please remember this! automatic translation by dP is only possible if all strings
 										// are handled like this
 			?>
 			</td>
-			<td nowrap="nowrap" align="center"><?php echo '<textarea style="font-size:8pt;" name="annotation_next" cols="70" rows="10" wrap="physical">'.dPFormSafe( $obj->annotation_next ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
+			<td nowrap="nowrap" align="center"><?php echo '<textarea style="font-size:8pt; width:100%; box-sizing:border-box;" name="annotation_next" rows="10" wrap="physical">'.dPFormSafe( $obj->annotation_next ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 										// please remember this! automatic translation by dP is only possible if all strings
 										// are handled like this
 			?></td>
@@ -573,7 +468,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 			}
 
 		?></td><td>	
-		<?php echo '<textarea style="font-size:8pt;" name="annotation_scope_desc" cols="50%" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_scope_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
+		<?php echo '<textarea style="font-size:8pt; width:100%; box-sizing:border-box;" name="annotation_scope_desc" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_scope_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 									// please remember this! automatic translation by dP is only possible if all strings
 									// are handled like this
 		?>
@@ -587,7 +482,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 						'<div style="color:'.$v.';">'.dPformSafe($v).'<input type="RADIO" name="annotation_resources" value="'.$k.'" style="color:'.$v.';">'."</div>";
 			}
 		?></td><td>
-		<?php echo '<textarea style="font-size:8pt;" name="annotation_resources_desc" cols="50%" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_resources_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
+		<?php echo '<textarea style="font-size:8pt; width:100%; box-sizing:border-box;" name="annotation_resources_desc" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_resources_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 									// please remember this! automatic translation by dP is only possible if all strings
 									// are handled like this
 		?>
@@ -601,7 +496,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 						'<div style="color:'.$v.';">'.dPformSafe($v).'<input type="RADIO" name="annotation_time" value="'.$k.'" style="color:'.$v.';">'."</div>";
 			}
 		?></td><td>
-		<?php echo '<textarea style="font-size:8pt;" name="annotation_time_desc" cols="50%" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_time_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
+		<?php echo '<textarea style="font-size:8pt; width:100%; box-sizing:border-box;" name="annotation_time_desc" rows="4" wrap="physical">'.dPFormSafe( $obj->annotation_time_desc ).'</textarea>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 									// please remember this! automatic translation by dP is only possible if all strings
 									// are handled like this
 		?>
@@ -634,7 +529,8 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 						$q->addOrder('annotation_date DESC');
 						$preset_values = $q->loadHash();
 						$q->clear();
-					// If something was altered:
+					// If something was altered (and there is an older annotation to take the values from):
+					if ($preset_values) {
 					if (	$obj->annotation_strategy == NULL ||	$obj->annotation_sholders == NULL ||	$obj->annotation_risks == NULL
 						||	$obj->annotation_sizing == NULL ||	$obj->annotation_horizontality == NULL ||	$obj->annotation_costbenefit == NULL)
 						$presets_from = "From <a href='index.php?m=annotations&a=addedit&project_id=".$preset_values['annotation_project']."&show_date=".str_replace("-","",$preset_values['annotation_date'])."'>
@@ -646,10 +542,11 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 					if ($obj->annotation_sizing == NULL) $obj->annotation_sizing = $preset_values['annotation_sizing'];
 					if ($obj->annotation_horizontality == NULL) $obj->annotation_horizontality = $preset_values['annotation_horizontality'];
 					if ($obj->annotation_costbenefit == NULL) $obj->annotation_costbenefit = $preset_values['annotation_costbenefit'];
+					}
 				}
 			// ********** If there are no Values --> try to get them out of Details   ( Anno -> Details -> Opps ) ***************************************************************************
 					// We need the right detail:   detail_project = annotation_project
-					if ( $obj->annotation_project > 0 ) { // if there is an related Project  ( ?? Which one should be taken ??)
+					if ( $obj->annotation_project > 0 && $details_installed ) { // if there is an related Project  ( ?? Which one should be taken ??)
 							$q = new DBQuery();
 							$q->addTable('details');
 							$q->addQuery('detail_id,detail_project,detail_strategy,detail_sholders,detail_risks,detail_sizing,detail_horizontality,detail_costbenefit');
@@ -702,46 +599,45 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 					}
 				//**************************************************************************************************************************************************************/
 		include '6Vexplanation.php';	// file in same directory with array for explanation
+		// overlib(tip, CAPTION, caption, CENTER|LEFT, WIDTH, width) on mouseover, nd() on mouseout;
+		// CAPTION is 1, LEFT 5, CENTER 7 and WIDTH 8 in lib/overlib/overlib-shim.js
+		if (!function_exists('annotationsTip')) {
+			function annotationsTip($text, $position, $width)
+			{
+				global $AppUI;
+				return dPaction('overlib', array('<p>' . str_replace(array("\r\n"), '<br>', $text) . '</p>',
+					1, $AppUI->_('Description', UI_OUTPUT_RAW), $position, 8, $width),
+					'mouseover mouseout', array('call-mouseout' => 'nd'));
+			}
+		}
 	echo '<td align="center" nowrap="nowrap">';
 		echo '<table><tr>';
-			echo '<td align="center" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['strategy'])) 
-					. '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-					. $AppUI->_('Description') . '\', CENTER, WIDTH, 400);" onmouseout="nd();">';
+			echo '<td align="center" nowrap="nowrap"' . annotationsTip($explanation['strategy'], 7, 400) . '>';
 				echo $AppUI->_('Strategy');
 				echo arraySelect( $points, 'annotation_strategy', 'class="text" size="1"', array_search($obj->annotation_strategy, $points) );
 			echo '</td>';
 
-			echo '<td align="center" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['sholders'])) 
-					. '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-					. $AppUI->_('Description') . '\', CENTER, WIDTH, 400);" onmouseout="nd();">';
+			echo '<td align="center" nowrap="nowrap"' . annotationsTip($explanation['sholders'], 7, 400) . '>';
 			echo $AppUI->_('Sholders');
 			echo arraySelect( $points, 'annotation_sholders', 'class="text" size="1"', array_search($obj->annotation_sholders, $points) );
 			echo '</td>';
 			
-			echo '<td align="center" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['risks'])) 
-					. '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-					. $AppUI->_('Description') . '\', CENTER, WIDTH, 350);" onmouseout="nd();">';
+			echo '<td align="center" nowrap="nowrap"' . annotationsTip($explanation['risks'], 7, 350) . '>';
 			echo $AppUI->_('Risks');
 			echo arraySelect( $points, 'annotation_risks', 'class="text" size="1"', array_search($obj->annotation_risks, $points) );
 			echo '</td>';
 			
-			echo '<td align="center" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['sizing'])) 
-					. '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-					. $AppUI->_('Description') . '\', LEFT, WIDTH, 350);" onmouseout="nd();">';
+			echo '<td align="center" nowrap="nowrap"' . annotationsTip($explanation['sizing'], 5, 350) . '>';
 			echo $AppUI->_('Size');
 			echo arraySelect( $points, 'annotation_sizing', 'class="text" size="1"', array_search($obj->annotation_sizing, $points) );
 			echo '</td>';
 		
-			echo '<td align="center" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['horizontality'])) 
-					. '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-					. $AppUI->_('Description') . '\', LEFT, WIDTH, 350);" onmouseout="nd();">';
+			echo '<td align="center" nowrap="nowrap"' . annotationsTip($explanation['horizontality'], 5, 350) . '>';
 			echo $AppUI->_('Horiz');
 			echo arraySelect( $points, 'annotation_horizontality', 'class="text" size="1"', array_search($obj->annotation_horizontality, $points) );
 			echo '</td>';
 			
-			echo '<td align="center" nowrap="nowrap" onMouseOver="return overlib(\'' . htmlspecialchars('<p>' . str_replace(array("\r\n"), '<br>', addslashes($explanation['costbenefit'])) 
-					. '</p>', ENT_QUOTES) . '\', CAPTION, \'' 
-					. $AppUI->_('Description') . '\', LEFT, WIDTH, 350);" onmouseout="nd();">';
+			echo '<td align="center" nowrap="nowrap"' . annotationsTip($explanation['costbenefit'], 5, 350) . '>';
 			echo $AppUI->_('Cost/Bene');
 			echo arraySelect( $points, 'annotation_costbenefit', 'class="text" size="1"', array_search($obj->annotation_costbenefit, $points) );
 			echo '</td>';
@@ -765,7 +661,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 					$q->clear();
 					if (isset($prev_values['annotation_must']) && ($prev_values['annotation_must'] == "1" || $prev_values['annotation_must'] == "0")) {
 					$obj->annotation_must = $prev_values['annotation_must'];
-				} ELSE {
+				} else if ($details_installed) {
 						$q = new DBQuery();
 						$q->addTable('details');
             $q->addQuery('*');
@@ -792,10 +688,10 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 			<br><input type="checkbox" name="annotation_must" value="1" <?php echo $checked; ?>><?php echo $AppUI->_('This is a')."<b>&nbsp;".$AppUI->_('Must do')."</b>";?></td>
 		<td align="center" nowrap="nowrap"><?php echo ($presets_from != "") ? "<p style=\"font-size: 10px;\">(".$presets_from.")</p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" : ""; echo $AppUI->_('Rationale');?></td>
 	</tr><tr>
-		<td align="center" nowrap="nowrap"><textarea name="annotation_must_rationale" cols="80" <?php echo $box_style; ?>>
+		<td align="center" width="50%"><textarea name="annotation_must_rationale" rows="3" style="width:100%; box-sizing:border-box;">
 											<?php echo ($obj->annotation_must_rationale != "") ? dPformSafe($obj->annotation_must_rationale) : "";?></textarea></td>
-		<td align="center" width="100%">
-			<textarea name="annotation_rationale" cols="80" <?php echo $box_style; ?>><?php echo dPformSafe($obj->annotation_rationale);?></textarea>
+		<td align="center" width="50%">
+			<textarea name="annotation_rationale" rows="3" style="width:100%; box-sizing:border-box;"><?php echo dPformSafe($obj->annotation_rationale);?></textarea>
 		</td>
 	</tr>	
 	
@@ -822,7 +718,10 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 			<input type="HIDDEN" name="show_date" value="<?php echo $show_date; ?>">
 			<input type="HIDDEN" name="show_time" value="<?php echo $show_time; ?>">
 			<center>
-			<?php echo ( $addnew=="1" ) ? '<input  class="button" type="button" value=" Add New " onclick="javascript:SubmitIt();">' : '<input  class="button" type="button" value=" Update " onclick="javascript:SubmitIt();">'; ?>
+			<?php echo '<input  class="button" type="button" value="' . (( $addnew=="1" ) ? ' Add New ' : ' Update ') . '"'
+				. dPaction('SubmitIt', array(array('scope' => $AppUI->_('Please enter rational for the scope rating', UI_OUTPUT_RAW),
+					'resources' => $AppUI->_('Please enter rational for the resources rating', UI_OUTPUT_RAW),
+					'time' => $AppUI->_('Please enter rational for the time rating', UI_OUTPUT_RAW)))) . '>'; ?>
 			
 			</center>
 		</th>
@@ -858,7 +757,7 @@ $tmpdigit = dPgetSysVal( 'AnnotationsPoints' );	 //the dP will get the sysval fo
 			</form>
 			<center>
 				<!--    Doesn't need to be in the form tags, because the java onclick will submit document.frmDelete.submit(); !!!  -->
-				<input  class="button" type="SUBMIT" value="<?php echo $AppUI->_('Delete'); ?>" onclick="javascript:delIt();">		
+				<input  class="button" type="SUBMIT" value="<?php echo $AppUI->_('Delete'); ?>"<?php echo dPaction('delIt', array(), null, array('confirm' => $AppUI->_('Do you really want to delete this annotation ?', UI_OUTPUT_RAW))); ?>>		
 			</center>
 		</th>
 	</tr>

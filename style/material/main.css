@@ -1,5 +1,5 @@
 /* dotPROJECT MATERIAL THEME */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+/* Roboto is used when installed locally; no request to Google Fonts (CSP and visitor privacy). */
 
 BODY {
 	background-color: #f5f5f6;
@@ -479,4 +479,61 @@ table.minical td.today:hover,
 table.minical td.weekend:hover {
 	background-color: #f0f8ff;
 	cursor: pointer;
+}
+
+/* tab boxes: the tabs wrap onto more lines instead of widening the page */
+div.tabrow {
+	white-space: normal;
+}
+table.tabitem {
+	display: inline-table;
+	vertical-align: bottom;
+}
+
+/* Narrow windows (laptops, split screens): the spacing above makes wide forms
+   and lists scroll sideways below about 1280px, so tighten it there. */
+@media (max-width: 1279px) {
+	BODY {
+		font-size: 13px;
+	}
+	table.tbl TH,
+	table.tbl td,
+	table.std TH,
+	table.std td {
+		padding: 5px 8px;
+	}
+	td.tabon,
+	td.taboff {
+		padding: 6px 10px;
+	}
+	td.tabox {
+		padding: 8px;
+	}
+	.button,
+	input.button,
+	input[type="submit"],
+	input[type="button"] {
+		padding: 4px 10px;
+		font-size: 12px;
+	}
+	.text,
+	input[type="text"],
+	input[type="password"],
+	select,
+	textarea {
+		padding: 4px 6px;
+	}
+	TH.banner {
+		padding: 8px 12px;
+	}
+	TD.nav {
+		padding: 4px 8px;
+	}
+	TD.nav a {
+		padding: 4px;
+	}
+	table.minical th,
+	table.minical td {
+		padding: 3px;
+	}
 }

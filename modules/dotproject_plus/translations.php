@@ -5,8 +5,7 @@ if (!defined('DP_BASE_DIR')) {
 
 // Try to load from both locales locations if they exist
 $locales_locations = array(
-    DP_BASE_DIR . '/modules/dotproject_plus/locales/',
-    DP_BASE_DIR . '/modules/dotproject_plus/dotproject_plus/locales/'
+    DP_BASE_DIR . '/modules/dotproject_plus/locales/'
 );
 
 $locale_to_load = isset($AppUI->user_prefs['LOCALE']) ? $AppUI->user_prefs['LOCALE'] : 'en_US';
@@ -32,7 +31,9 @@ foreach ($locales_locations as $loc) {
             if ($content) {
                 $content = str_replace(array('<?php', '?>', '<?'), '', $content);
                 $locale = array();
-                @eval ("\$locale=array(" . $content . "\n'0');");
+                if (dPisTranslationSource($content)) {
+                    @eval ("\$locale=array(" . $content . "\n'0');");
+                }
                 if (is_array($locale) && count($locale) > 1) {
                     $trans = array();
                     foreach ($locale as $k => $v) {

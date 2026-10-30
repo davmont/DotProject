@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 
 session_start();
@@ -17,7 +20,7 @@ $communication_id = intval(dPgetParam($_GET, 'communication_id'));
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('communication');
-$q->addWhere('communication_id = ' . $communication_id);
+$q->addWhere('communication_id = ' . (int)$communication_id);
 
 // check if this record has dependancies to prevent deletion
 $msg = '';
@@ -31,11 +34,30 @@ if (!db_loadObject($q->prepare(), $obj) && $communication_id > 0) {
     $AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
     $AppUI->redirect();
 }
+if ($obj === null) {
+    // new record: start from an empty communication so the form can read its fields
+    $obj = new CCommunication();
+}
+
+// Adding or removing receptors and issuers changes data: POST with the CSRF
+// token and edit permission only (the form state stays in the URL).
+$radd_id = $rdel_id = $raddi_id = $rdeli_id = 0;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $AppUI->verifyCsrfToken();
+    if (!getPermission('communication', 'edit')) {
+        $AppUI->redirect('m=public&a=access_denied');
+    }
+    $radd_id = dPgetIntParam($_POST, 'radd');
+    $rdel_id = dPgetIntParam($_POST, 'rdel');
+    $raddi_id = dPgetIntParam($_POST, 'raddi');
+    $rdeli_id = dPgetIntParam($_POST, 'rdeli');
+}
+$get = '';
 
 
 // add receptor in communication
-if ($communication_id != 0 && $_GET['radd'] != 0) {
-        $add = intval($_GET['radd']);
+if ($communication_id != 0 && $radd_id != 0) {
+        $add = $radd_id;
         $radd = new DBQuery;
         $radd->addInsert('communication_id', $communication_id);
         $radd->addInsert('communication_stakeholder_id', $add);
@@ -43,73 +65,73 @@ if ($communication_id != 0 && $_GET['radd'] != 0) {
         $radd->exec();
         
         if (isset($_GET['project'])) {
-            $get += '&project='+$_GET['project'];
+            $get .= '&project=' . urlencode($_GET['project']);
         }
         if (isset($_GET['title'])) {
-            $get += '&title='+$_GET['title'];
+            $get .= '&title=' . urlencode($_GET['title']);
         }
         if (isset($_GET['communication'])) {
-            $get += '&communication='+$_GET['communication'];
+            $get .= '&communication=' . urlencode($_GET['communication']);
         }
         if (isset($_GET['channel'])) {
-            $get += '&channel='+$_GET['channel'];
+            $get .= '&channel=' . urlencode($_GET['channel']);
         }
         if (isset($_GET['frequency'])) {
-            $get += '&frequency='+$_GET['frequency'];
+            $get .= '&frequency=' . urlencode($_GET['frequency']);
         }
         if (isset($_GET['restrictions'])) {
-            $get += '&restrictions='+$_GET['restrictions'];
+            $get .= '&restrictions=' . urlencode($_GET['restrictions']);
         }
         if (isset($_GET['communication_date'])) {
-            $get += '&communication_date='+$_GET['communication_date'];
+            $get .= '&communication_date=' . urlencode($_GET['communication_date']);
         }
-        if (isset($_GET['communication_responsible'])) {
-            $get += '&communication_responsible='+$_GET['communication_responsible'];
+        if (isset($_GET['responsible'])) {
+            $get .= '&responsible=' . urlencode($_GET['responsible']);
         }
-        header('location:?m=communication&a=addedit&communication_id=' . $communication_id+$get);
+        header('location:?m=communication&a=addedit&communication_id=' . $communication_id . $get);
 } else {
-    if ($communication_id == 0 && $_GET['radd'] != 0) {
-        $add = intval($_GET['radd']);
+    if ($communication_id == 0 && $radd_id != 0) {
+        $add = $radd_id;
         $_SESSION['receptors'][] = $add;
     }
 }
 
 // del receptor of communication
-if ($communication_id != 0 && $_GET['rdel'] != 0) {
-        $del = intval($_GET['rdel']);
+if ($communication_id != 0 && $rdel_id != 0) {
+        $del = $rdel_id;
         $rdel = new DBQuery;
         $rdel->setDelete('communication_receptor');
-        $rdel->addWhere('communication_id = ' . $communication_id . ' and communication_stakeholder_id = ' . $del);
+        $rdel->addWhere('communication_id = ' . $communication_id . ' and communication_stakeholder_id = ' . (int)$del);
         $rdel->exec();
         
         if (isset($_GET['project'])) {
-            $get += '&project='+$_GET['project'];
+            $get .= '&project=' . urlencode($_GET['project']);
         }
         if (isset($_GET['title'])) {
-            $get += '&title='+$_GET['title'];
+            $get .= '&title=' . urlencode($_GET['title']);
         }
         if (isset($_GET['communication'])) {
-            $get += '&communication='+$_GET['communication'];
+            $get .= '&communication=' . urlencode($_GET['communication']);
         }
         if (isset($_GET['channel'])) {
-            $get += '&channel='+$_GET['channel'];
+            $get .= '&channel=' . urlencode($_GET['channel']);
         }
         if (isset($_GET['frequency'])) {
-            $get += '&frequency='+$_GET['frequency'];
+            $get .= '&frequency=' . urlencode($_GET['frequency']);
         }
         if (isset($_GET['restrictions'])) {
-            $get += '&restrictions='+$_GET['restrictions'];
+            $get .= '&restrictions=' . urlencode($_GET['restrictions']);
         }
         if (isset($_GET['communication_date'])) {
-            $get += '&communication_date='+$_GET['communication_date'];
+            $get .= '&communication_date=' . urlencode($_GET['communication_date']);
         }
-        if (isset($_GET['communication_responsible'])) {
-            $get += '&communication_responsible='+$_GET['communication_responsible'];
+        if (isset($_GET['responsible'])) {
+            $get .= '&responsible=' . urlencode($_GET['responsible']);
         }
-        header('location:?m=communication&a=addedit&communication_id=' . $communication_id+$get);
+        header('location:?m=communication&a=addedit&communication_id=' . $communication_id . $get);
 } else {
-    if ($communication_id == 0 && $_GET['rdel'] != 0) {
-        $del = $_GET['rdel'];
+    if ($communication_id == 0 && $rdel_id != 0) {
+        $del = $rdel_id;
         foreach ($_SESSION['receptors'] as $registro => $valor) {
             if ($valor == $del) {
                 unset($_SESSION['receptors'][$registro]);
@@ -119,8 +141,8 @@ if ($communication_id != 0 && $_GET['rdel'] != 0) {
 }
 
 // add issuing in communication
-if ($communication_id != 0 && $_GET['raddi'] != 0) {
-        $add = intval($_GET['raddi']);
+if ($communication_id != 0 && $raddi_id != 0) {
+        $add = $raddi_id;
         $radd = new DBQuery;
         $radd->addInsert('communication_id', $communication_id);
         $radd->addInsert('communication_stakeholder_id', $add);
@@ -128,73 +150,73 @@ if ($communication_id != 0 && $_GET['raddi'] != 0) {
         $radd->exec();
         
         if (isset($_GET['project'])) {
-            $get += '&project='+$_GET['project'];
+            $get .= '&project=' . urlencode($_GET['project']);
         }
         if (isset($_GET['title'])) {
-            $get += '&title='+$_GET['title'];
+            $get .= '&title=' . urlencode($_GET['title']);
         }
         if (isset($_GET['communication'])) {
-            $get += '&communication='+$_GET['communication'];
+            $get .= '&communication=' . urlencode($_GET['communication']);
         }
         if (isset($_GET['channel'])) {
-            $get += '&channel='+$_GET['channel'];
+            $get .= '&channel=' . urlencode($_GET['channel']);
         }
         if (isset($_GET['frequency'])) {
-            $get += '&frequency='+$_GET['frequency'];
+            $get .= '&frequency=' . urlencode($_GET['frequency']);
         }
         if (isset($_GET['restrictions'])) {
-            $get += '&restrictions='+$_GET['restrictions'];
+            $get .= '&restrictions=' . urlencode($_GET['restrictions']);
         }
         if (isset($_GET['communication_date'])) {
-            $get += '&communication_date='+$_GET['communication_date'];
+            $get .= '&communication_date=' . urlencode($_GET['communication_date']);
         }
-         if (isset($_GET['communication_responsible'])) {
-            $get += '&communication_responsible='+$_GET['communication_responsible'];
+         if (isset($_GET['responsible'])) {
+            $get .= '&responsible=' . urlencode($_GET['responsible']);
         }
-        header('location:?m=communication&a=addedit&communication_id=' . $communication_id+$get);
+        header('location:?m=communication&a=addedit&communication_id=' . $communication_id . $get);
 } else {
-    if ($communication_id == 0 && $_GET['raddi'] != 0) {
-        $add = intval($_GET['raddi']);
+    if ($communication_id == 0 && $raddi_id != 0) {
+        $add = $raddi_id;
         $_SESSION['emitters'][] = $add;
     }
 }
 
 // del issuing of communication
-if ($communication_id != 0 && $_GET['rdeli'] != 0) {
-        $del = intval($_GET['rdeli']);
+if ($communication_id != 0 && $rdeli_id != 0) {
+        $del = $rdeli_id;
         $rdel = new DBQuery;
         $rdel->setDelete('communication_issuing');
-        $rdel->addWhere('communication_id = ' . $communication_id . ' and communication_stakeholder_id = ' . $del);
+        $rdel->addWhere('communication_id = ' . $communication_id . ' and communication_stakeholder_id = ' . (int)$del);
         $rdel->exec();
       
         if (isset($_GET['project'])) {
-            $get += '&project='+$_GET['project'];
+            $get .= '&project=' . urlencode($_GET['project']);
         }
         if (isset($_GET['title'])) {
-            $get += '&title='+$_GET['title'];
+            $get .= '&title=' . urlencode($_GET['title']);
         }
         if (isset($_GET['communication'])) {
-            $get += '&communication='+$_GET['communication'];
+            $get .= '&communication=' . urlencode($_GET['communication']);
         }
         if (isset($_GET['channel'])) {
-            $get += '&channel='+$_GET['channel'];
+            $get .= '&channel=' . urlencode($_GET['channel']);
         }
         if (isset($_GET['frequency'])) {
-            $get += '&frequency='+$_GET['frequency'];
+            $get .= '&frequency=' . urlencode($_GET['frequency']);
         }
         if (isset($_GET['restrictions'])) {
-            $get += '&restrictions='+$_GET['restrictions'];
+            $get .= '&restrictions=' . urlencode($_GET['restrictions']);
         }
         if (isset($_GET['communication_date'])) {
-            $get += '&communication_date='+$_GET['communication_date'];
+            $get .= '&communication_date=' . urlencode($_GET['communication_date']);
         }
-         if (isset($_GET['communication_responsible'])) {
-            $get += '&communication_responsible='+$_GET['communication_responsible'];
+         if (isset($_GET['responsible'])) {
+            $get .= '&responsible=' . urlencode($_GET['responsible']);
         }
-        header('location:?m=communication&a=addedit&communication_id=' . $communication_id+$get);
+        header('location:?m=communication&a=addedit&communication_id=' . $communication_id . $get);
 } else {
-    if ($communication_id == 0 && $_GET['rdeli'] != 0) {
-        $del = intval($_GET['rdeli']);
+    if ($communication_id == 0 && $rdeli_id != 0) {
+        $del = $rdeli_id;
         foreach ($_SESSION['emitters'] as $registro => $valor) {
             if ($valor == $del) {
                 unset($_SESSION['emitters'][$registro]);
@@ -215,7 +237,7 @@ if($communication_id!=0){
     $qdate->addWhere('communication_frequency_id = ' . (int)@$obj->communication_frequency_id);
 }
   $qdtres = $qdate->loadList();
-   $showdate = $qdtres[0]['communication_frequency_hasdate'] == 'Sim';   
+   $showdate = !empty($qdtres) && $qdtres[0]['communication_frequency_hasdate'] == 'Sim';   
 
 
 // list of contacts
@@ -230,7 +252,7 @@ $qreceptors->addQuery('m.communication_id, c.contact_id ,c.contact_first_name,c.
 $qreceptors->addTable('communication_receptor', 'r');
 $qreceptors->addJoin('contacts', 'c', 'c.contact_id=r.communication_stakeholder_id');
 $qreceptors->addJoin('communication', 'm', 'm.communication_id=r.communication_id');
-$qreceptors->addWhere('m.communication_id = ' . $communication_id);
+$qreceptors->addWhere('m.communication_id = ' . (int)$communication_id);
 $rreceptors = $qreceptors->loadList();
 
 
@@ -240,7 +262,7 @@ $remitters->addQuery('m.communication_id, c.contact_id ,c.contact_first_name,c.c
 $remitters->addTable('communication_issuing', 'i');
 $remitters->addJoin('contacts', 'c', 'c.contact_id=i.communication_stakeholder_id');
 $remitters->addJoin('communication', 'm', 'm.communication_id=i.communication_id');
-$remitters->addWhere('m.communication_id = ' . $communication_id);
+$remitters->addWhere('m.communication_id = ' . (int)$communication_id);
 $remitters = $remitters->loadList();
 
 // list of channels

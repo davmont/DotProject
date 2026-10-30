@@ -15,11 +15,16 @@ if (isset($_POST['company_id'])) {
 $company_id = $AppUI->getState('EarnIdxCompany') !== NULL ? $AppUI->getState('EarnIdxCompany') : $AppUI->user_company;
 
 if (isset($_GET['orderby'])) {
-	$AppUI->setState('EarnIdxOrderBy', $_GET['orderby']);
+	$AppUI->setState('EarnIdxOrderBy', dPvalidateOrder($_GET['orderby'], array('earning_date',
+		'earning_num', 'company_name', 'earning_submit_contact', 'earning_terms', 'user_id'), 'earning_date'));
 }
 $orderby = $AppUI->getState('EarnIdxOrderBy') ? $AppUI->getState('EarnIdxOrderBy') : 'earning_date';
 if ($orderby == "earning_date") {
 	$orderby = "earning_date DESC";
+}
+// Only the "to approve" list joins users; the earnings table has the user as earning_user_id.
+if ($orderby == "user_id") {
+	$orderby = "earning_user_id";
 }
 
 // retrieve list of earnings and their line_items

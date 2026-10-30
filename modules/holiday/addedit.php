@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 ##
 ## holiday module - A dotProject module for keeping track of holidays
 ##
@@ -6,7 +10,7 @@
 ## Vegard Fiksdal (fiksdal@sensorlink.no)
 ##
 
-$holiday_id = defVal( @$_GET["holiday_id"], 0);
+$holiday_id = (int)defVal( @$_GET["holiday_id"], 0);
 $holiday_white = defVal( @$_GET["white"], -1);
 
 // Create date objects
@@ -17,9 +21,15 @@ $end_date   = intval( $log_end_date )   ? new CDate( $log_end_date ) : new CDate
 $holiday_description = dPgetParam( $_POST, "holiday_description", '');
 $holiday_annual = dPgetParam( $_POST, "holiday_annual", 0);
         
-$action = @$_REQUEST["action"];
+// Adding, updating and deleting change data: POST with the CSRF token and edit
+// permission only.
+$action = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dPgetCleanParam($_POST, 'action', '') : '';
 $q = new DBQuery();
 if($action) {
+        $AppUI->verifyCsrfToken();
+        if (!getPermission('holiday', 'edit')) {
+                $AppUI->redirect('m=public&a=access_denied');
+        }
         if( $action == "add" ) {
         		$q -> addTable('holiday');
         		$q -> addInsert('holiday_description',$holiday_description);
@@ -34,12 +44,12 @@ if($action) {
         		$q -> addUpdate('holiday_start_date',$start_date->format(FMT_DATETIME_MYSQL));
         		$q -> addUpdate('holiday_end_date',$end_date->format(FMT_DATETIME_MYSQL));
         		$q -> addUpdate('holiday_annual',$holiday_annual);
-        		$q -> addWhere('holiday_id = '.$holiday_id);              
+        		$q -> addWhere('holiday_id = ' . (int)$holiday_id);              
                 $okMsg = "Holiday updated";
         }
         else if ( $action == "del" ) {
         		$q -> setDelete('holiday');
-        		$q -> addWhere('holiday_id = '.$holiday_id);		
+        		$q -> addWhere('holiday_id = ' . (int)$holiday_id);		
                 $okMsg = "Holiday removed";
 	}
         if(!$q -> exec()) {
@@ -54,8 +64,13 @@ if($action) {
 $q ->clear();
 $q -> addTable('holiday');
 $q -> addQuery('*');
-$q -> addWhere('holiday_id = '.$holiday_id);
+$q -> addWhere('holiday_id = ' . (int)$holiday_id);
 $holiday = $q -> loadHash();
+if (!$holiday) {
+	// A new holiday (or one that no longer exists).
+	$holiday = array('holiday_white' => 0, 'holiday_annual' => 0, 'holiday_description' => '',
+		'holiday_start_date' => null, 'holiday_end_date' => null);
+}
 
 if($holiday_white == -1)
 {
@@ -64,7 +79,7 @@ if($holiday_white == -1)
 
 ?>
 
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 function popCalendar( field ){
         calendarField = field;
@@ -108,7 +123,7 @@ function delIt() {
 <table border="0" cellpadding="4" cellspacing="0" width="98%">
 <tr>
 	<td width="50%" align="right">
-		<a href="javascript:delIt()"><img align="absmiddle" src="./images/icons/stock_delete-16.png" width="16" height="16" alt="" border="0"><?php echo $AppUI->_( $holiday_white ? 'Delete holiday' : 'Delete workday' );?></a>
+		<a href="#"<?php echo dPaction('delIt'); ?>><img align="absmiddle" src="./images/icons/stock_delete-16.png" width="16" height="16" alt="" border="0"><?php echo $AppUI->_( $holiday_white ? 'Delete holiday' : 'Delete workday' );?></a>
 	</td>
 </tr>
 </table>
@@ -118,15 +133,15 @@ function delIt() {
 
         <?php echo $AppUI->_( 'Start date' );?>
         <input type="hidden" name="log_start_date" value="<?php echo $start_date->format( FMT_TIMESTAMP_DATE );?>" />
-        <input type="text" name="start_date" onChange="copyDate()" value="<?php echo $start_date->format( $AppUI->getPref('SHDATEFORMAT') );?>" class="text" disabled="disabled" />
-        <a href="#" onClick="popCalendar('start_date')" >
+        <input type="text" name="start_date" value="<?php echo $start_date->format( $AppUI->getPref('SHDATEFORMAT') );?>" class="text" disabled="disabled" />
+        <a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
         <img src="./images/calendar.gif" width="24" height="12" title="<?php echo $AppUI->_('Calendar');?>" border="0" />
         </a>
 
         <?php echo $AppUI->_( 'End date' );?>
         <input type="hidden" name="log_end_date" value="<?php echo $end_date->format( FMT_TIMESTAMP_DATE );?>" />
         <input type="text" name="end_date" value="<?php echo $end_date->format( $AppUI->getPref('SHDATEFORMAT') );?>" class="text" disabled="disabled" size="20" />
-        <a href="#" onClick="popCalendar('end_date')">
+        <a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
         <img src="./images/calendar.gif" width="24" height="12" title="<?php echo $AppUI->_('Calendar');?>" border="0" />
         </a>
 
@@ -137,7 +152,7 @@ function delIt() {
 
 	<td>
         <?php echo $AppUI->_( 'Description' );?>
-        <input type="text" class="text" SIZE="100%" name="holiday_description" value="<?php echo $holiday["holiday_description"];?>">
+        <input type="text" class="text" SIZE="100%" name="holiday_description" value="<?php echo dPhtml($holiday["holiday_description"]);?>">
 	</td>
 </td></tr>
 
@@ -148,10 +163,10 @@ function delIt() {
 		<table>
 		<tr>
 			<td>
-				<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel'); ?>" onClick="javascript:if(confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')){location.href = '?<?php echo $AppUI->getPlace();?>';}">
+				<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel'); ?>" <?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW), 'href' => '?' . $AppUI->getPlace())); ?>>
 			</td>
 			<td>
-				<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>" onClick="submit()">
+				<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>"<?php echo dPaction(null, array(), null, array('submit' => '')); ?>>
 			</td>
 		</tr>
 		</table>

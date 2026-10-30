@@ -16,19 +16,23 @@ else
 	<link rel="stylesheet" type="text/css" href="./style/<?php echo $uistyle;?>/main.css" media="all" />
 	<style type="text/css" media="all">@import "./style/<?php echo $uistyle;?>/main.css";</style>
 	<link rel="shortcut icon" href="./style/<?php echo $uistyle;?>/images/favicon.ico" type="image/ico" />
+	<link rel="icon" href="./images/brand/favicon.svg" type="image/svg+xml" />
+	<link rel="apple-touch-icon" href="./images/brand/apple-touch-icon.png" />
 	<?php @$AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
 </head>
 
-<body onload="this.focus();">
+<body>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
+<?php if (!$dialog) { // no banner in pop-up windows ?>
 <tr>
 	<td><table class="banner" width='100%' cellpadding="3" cellspacing="0" border="0" background="style/<?php echo $uistyle;?>/images/titlegrad.jpg"><tr>
 	<th align="left"><strong><?php
 		echo "<a style='color: white' href='{$dPconfig['base_url']}'>$page_title</a>";
 	?></strong></th>
-	<th align="right" width='95'><a href='http://www.dotproject.net/' <?php if ($dialog) echo "target='_blank'"; ?>><img src="style/<?php echo $uistyle;?>/images/dp_icon.gif" border=0></a></th>
+	<th align="right" width='95'><a href='https://github.com/davmont/dotPulse' <?php if ($dialog) echo "target='_blank'"; ?>><img src="./images/brand/icon.svg" width="24" height="24" border="0" alt="dotPulse" title="dotPulse" /></a></th>
 	</tr></table></td>
 </tr>
+<?php } ?>
 <?php if (!$dialog) {
 	// top navigation menu
 	$nav = $AppUI->getMenuModules();
@@ -60,7 +64,7 @@ else
 	$newItem["files"] = "File";
 	$newItem["projects"] = "Project";
 
-	echo arraySelect( $newItem, 'm', 'style="font-size:10px" onChange="f=document.frm_new;mod=f.m.options[f.m.selectedIndex].value;if(mod) f.submit();"', '', true);
+	echo arraySelect( $newItem, 'm', 'style="font-size:10px"' . dPaction('dpSubmitIfValue'), '', true);
 
 	echo "</td>\n";
 	echo "        <input type=\"hidden\" name=\"a\" value=\"addedit\" />\n";
@@ -86,9 +90,9 @@ else
 	<td>
 		<table cellspacing="0" cellpadding="3" border="0" width="100%">
 		<tr>
-			<td width="100%"><?php echo $AppUI->_('Welcome')." $AppUI->user_first_name $AppUI->user_last_name"; ?></td>
+			<td width="100%"><?php echo $AppUI->_('Welcome') . ' ' . htmlspecialchars($AppUI->user_first_name, ENT_QUOTES) . ' ' . htmlspecialchars($AppUI->user_last_name, ENT_QUOTES); ?></td>
 			<td nowrap="nowrap">
-				<?php echo dPcontextHelp( 'Help' );?> |
+				<?php echo dPheaderWidgets(' | '); ?><?php echo dPcontextHelp( 'Help' );?> |
 				<a href="./index.php?m=admin&a=viewuser&user_id=<?php echo $AppUI->user_id;?>"><?php echo $AppUI->_('My Info');?></a> |
 <?php
 	if ($perms->checkModule('calendar', 'access')) {

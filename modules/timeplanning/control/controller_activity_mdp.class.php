@@ -2,7 +2,7 @@
 require_once (DP_BASE_DIR . "/modules/timeplanning/model/activities_mdp.class.php");
 class ControllerActivityMDP {
 	
-	function ControllerActivityMDP()	{
+	function __construct()	{
 	}
 	
 	function updateDependencies($taskId,$dependencies) {
@@ -90,6 +90,7 @@ class ControllerActivityMDP {
 
 		foreach($tasks as $task){
 			$taskId = $task[0];
+			$taskName = $task[1];
 			$x = -1;
 			$y = -1;
 			if (isset($posMap[$taskId])) {

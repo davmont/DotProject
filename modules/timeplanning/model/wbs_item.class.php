@@ -34,21 +34,24 @@ class WBSItem {
 	}
 	
 	public function getIdentation(){
-		return $this->identation;
+		// Only the &nbsp; runs the pages add: the value is written into the page as HTML.
+		return str_repeat('&nbsp;', substr_count((string)$this->identation, '&nbsp;'));
 	}
 	
 	public function getSortOrder(){
 		return $this->sortOrder;
 	}
 	
-	function WBSItem(){
+	function __construct(){
 	}
 	
 	function store($projectId,$description,$number,$sortOrder,$isLeaf,$identation,$id) {
+		$identation = str_repeat('&nbsp;', substr_count(is_string($identation) ? $identation : '', '&nbsp;')); // written into pages as HTML
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('id');
 		$q->addTable('project_eap_items');
-		$q->addWhere('id =' . $id);
+		$q->addWhere('id =' . (int)$id);
 		$record = $q->loadResult();
 		$q->clear();
 		$q->addTable('project_eap_items');
@@ -65,7 +68,7 @@ class WBSItem {
 			$q->addUpdate('number',$number);
 			$q->addUpdate('is_leaf',$isLeaf);
 			$q->addUpdate('item_name', $description);
-			$q->addWhere('id = ' . $id);
+			$q->addWhere('id = ' . (int)$id);
 		}
 		$q->exec();
 		$q->clear();
@@ -80,9 +83,10 @@ class WBSItem {
 	}
 	
 	function delete($id){
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('project_eap_items');
-		$q->addWhere('id=' . $id);
+		$q->addWhere('id=' . (int)$id);
 		$q->exec();
 		$q->clear();	
 	}	

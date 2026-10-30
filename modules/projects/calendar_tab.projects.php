@@ -36,7 +36,7 @@ $q->clear();
 $q->createTemp('tasks_summy');
 $q->addQuery('task_project, COUNT(DISTINCT task_id) AS my_tasks');
 $q->addTable('tasks');
-$q->addWhere('task_owner = ' . $AppUI->user_id);
+$q->addWhere('task_owner = ' . (int)$AppUI->user_id);
 $q->addGroup('task_project');
 $q->exec();
 $q->clear();
@@ -57,7 +57,7 @@ if ($allowed_where) {
 	$q->addWhere(implode(' AND ', $allowed_where));
 }
 if ($company_id) {
-	$q->addWhere('pr.project_company = ' . $company_id);
+	$q->addWhere('pr.project_company = ' . (int)$company_id);
 }
 $q->addOrder('project_end_date');
 

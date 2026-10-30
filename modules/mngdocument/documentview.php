@@ -1,85 +1,31 @@
 <?php
- 
-require "../../includes/config.php";
-require "../../classes/ui.class.php";
-
-session_name( 'dotproject' );
-if (get_cfg_var( 'session.auto_start' ) > 0) {
-	session_write_close();
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
 }
-session_start();
+// Sends a stored document: ?m=mngdocument&a=documentview&suppressHeaders=1&document_id=N.
+// Uploads live outside the web root (CFile::filePath()), so this page is the only way to
+// read them, and it checks read permission on the record first.
 
-// check if session has previously been initialised
-// if no ask for logging and do redirect
-if (!isset( $_SESSION['AppUI'] ) || isset($_GET['logout'])) {
-    $_SESSION['AppUI'] = new CAppUI();
-	$AppUI =& $_SESSION['AppUI'];
-	$AppUI->setConfig( $dPconfig );
-	$AppUI->checkStyle();
-	 
-	require_once( $AppUI->getSystemClass( 'dp' ) );
-	require_once( "./includes/db_connect.php" );
-	require_once( "./includes/main_functions.php" );
-	require_once( "./misc/debug.php" );
+require_once DP_BASE_DIR . '/modules/mngdocument/files.class.php';
 
-	if ($AppUI->doLogin()) $AppUI->loadPrefs( 0 );
-	// check if the user is trying to log in
-	if (isset($_POST['login'])) {
-		$username = dPgetParam( $_POST, 'username', '' );
-		$password = dPgetParam( $_POST, 'password', '' );
-		$redirect = dPgetParam( $_REQUEST, 'redirect', '' );
-		$ok = $AppUI->login( $username, $password );
-		if (!$ok) {
-			//display login failed message 
-			$uistyle = $AppUI->getPref( 'UISTYLE' ) ? $AppUI->getPref( 'UISTYLE' ) : $AppUI->cfg['host_style'];
-			$AppUI->setMsg( 'Login Failed' );
-			require "./style/$uistyle/login.php";
-			session_unset();
-			exit;
-		}
-		header ( "Location: documentview.php?$redirect" );
-		exit;
-	}	
-
-	$uistyle = $AppUI->getPref( 'UISTYLE' ) ? $AppUI->getPref( 'UISTYLE' ) : $AppUI->cfg['host_style'];
-	// check if we are logged in
-	if ($AppUI->doLogin()) {
-	    $AppUI->setUserLocale();
-		@include_once( "./locales/$AppUI->user_locale/locales.php" );
-		@include_once( "./locales/core.php" );
-		setlocale( LC_TIME, $AppUI->user_locale );
-		
-		$redirect = @$_SERVER['QUERY_STRING'];
-		if (strpos( $redirect, 'logout' ) !== false) $redirect = '';	
-		if (isset( $locale_char_set )) header("Content-type: text/html;charset=$locale_char_set");
-		require "./style/$uistyle/login.php";
-		session_unset();
-		session_destroy();
-		exit;
-	}	
+$document_id = dPgetIntParam($_GET, 'document_id', 0);
+$obj = new CFile();
+if (!$document_id || !$obj->load($document_id) || $obj->SGD_type != 0
+	|| getDenyRead('mngdocument', $document_id)) {
+	$AppUI->redirect('m=public&a=access_denied');
 }
-$AppUI =& $_SESSION['AppUI'];
+$file = $obj->filePath();
+if (!is_file($file)) {
+	$AppUI->setMsg('fileIdError', UI_MSG_ERROR);
+	$AppUI->redirect('m=mngdocument');
+}
 
-require "../../includes/db_connect.php";
-
-include "../../includes/main_functions.php";
-include "../../includes/permissions.php";
-
-require_once ('files.class.php');
-
-$document_name = dPgetParam( $_GET, 'document_name', '' );
-
-$document_name=str_replace(" ","%20",$document_name);
-
-$log = new CFileLog ();
-$log->_tbl="SGD_Logs";
-$log->_tbl_key="SGD_Log_id";
-$log->SGD_Logs_user_id = $AppUI->user_id;
-$log->SGD_Logs_date = Date("d/m/Y H:i");
-$log->SGD_Logs_action = "documentview";
-$log->SGD_Logs_document_name = $document_name;
-$log->store();
-
-$file = dPgetConfig('base_url')."/SGD/$document_name";
-header ( "Location: $file" );
-?>
+while (ob_get_level()) {
+	ob_end_clean();
+}
+header('Content-Type: application/octet-stream');
+header('X-Content-Type-Options: nosniff');
+header('Content-Length: ' . filesize($file));
+header('Content-Disposition: attachment; filename="' . str_replace(array('"', '\\', "\r", "\n"), '_', $obj->SGD_name) . '"');
+readfile($file);
+exit;

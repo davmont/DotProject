@@ -1,5 +1,9 @@
-<?php /* earnings $Id: items.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
-GLOBAL $m, $a, $earning_id, $f, $query_string, $changeLock, $timecard;
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* earnings $Id: items.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
+GLOBAL $m, $a, $earning_id, $f, $query_string, $changeLock, $timecard, $earning_date;
 // get the prefered date format
 $df = $AppUI->getPref('SHDATEFORMAT');
 
@@ -26,6 +30,7 @@ if (empty($query_string)) {
 }
 
 $earning_id = intval( dPgetParam( $_GET, 'earning_id', null ) );
+$dbprefix = dPgetConfig('dbprefix', '');
 
 if (isset( $_GET['tab'] )) {
 	$AppUI->setState( 'EarnItmsTab', $_GET['tab'] );
@@ -42,18 +47,17 @@ if ( $tab ) {
 	// List All TaskLogs Not Yet Associated With An earning
 
 	// First collect a list of all previously committed log entries (earning_items)
-	$sql="SELECT earning_tasklog_id FROM earnings_items;";
+	$sql="SELECT earning_tasklog_id FROM {$dbprefix}earnings_items;";
 	//echo $sql;
 	$mrc= db_exec( $sql );
-	echo db_error();
 	$mask_array = array();
 	while ($row = db_fetch_assoc($mrc)) {
 		$mask_array[$row["earning_tasklog_id"]] = $row;
 	}
-	mysql_free_result($mrc);
+	db_free_result($mrc);
 
 	// Next use the mask as part of the select statement to find non-committed log entries
-	$sql="SELECT task_log.*, tasks.*, projects.* FROM task_log, tasks, projects WHERE task_id = task_log_task AND project_id = task_project AND task_log_creator=" . $AppUI->user_id;
+	$sql="SELECT task_log.*, tasks.*, projects.* FROM {$dbprefix}task_log AS task_log, {$dbprefix}tasks AS tasks, {$dbprefix}projects AS projects WHERE task_id = task_log_task AND project_id = task_project AND task_log_creator=" . $AppUI->user_id;
 	// if the mask_array is empty, do nothing with it.
 	$mask="";
 	if ( count($mask_array) > 1) {
@@ -75,11 +79,10 @@ if ( $tab ) {
 	$sql .= " ORDER BY task_log_date DESC;";
 } else {
 	// List All earning Items Associated With This earning.
-	$sql="SELECT earnings.*, earnings_items.*, task_log.*, tasks.*, projects.* FROM earnings_items, earnings, task_log, tasks, projects WHERE earning_parent_id = earning_id AND task_log_id = earning_tasklog_id AND task_id = task_log_task AND project_id = task_project AND earning_id=" . $earning_id;
+	$sql="SELECT earnings.*, earnings_items.*, task_log.*, tasks.*, projects.* FROM {$dbprefix}earnings_items AS earnings_items, {$dbprefix}earnings AS earnings, {$dbprefix}task_log AS task_log, {$dbprefix}tasks AS tasks, {$dbprefix}projects AS projects WHERE earning_parent_id = earning_id AND task_log_id = earning_tasklog_id AND task_id = task_log_task AND project_id = task_project AND earning_id=" . $earning_id;
 	$sql .= " ORDER BY task_log_date DESC;";
 }
 $irc=db_exec( $sql );
-echo db_error();
 
 // create an index of earning_items
 $earning_items = array();
@@ -102,7 +105,7 @@ if ( $tab ) {
 	</tr>
 	<form name="frmAddInv" action="?m=earnings&a=inv_aed&earning_id=<?php echo $earning_id; ?>" method="post">
 	<input type="hidden" name="inv_dosql" value="additem">
-	<?
+	<?php
 	if ( count($earning_items) < 1 ) {
 		echo "<tr><td colspan='7'>No log entries available. Did you log all of your work?.</td></tr>";
 	} else { 
@@ -111,13 +114,13 @@ if ( $tab ) {
 				<td colspan="7" align="right">
 					<?php if ( !$changeLock ) { ?>
 						<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Select the items you want to add to this form.</i>&nbsp;
-						<input type="button" name="btnSelAll" value=" sel all " onClick="selAllItems();">&nbsp;
-						<input type="button" name="btnUnSelAll" value=" unsel all " onClick="unselAllItems();">&nbsp;
-						<input type="button" name="btnAdd" value=" add sel " onClick="addInvItems();">&nbsp;
+						<input type="button" name="btnSelAll" value=" sel all " <?php echo dPaction('selAllItems'); ?>>&nbsp;
+						<input type="button" name="btnUnSelAll" value=" unsel all " <?php echo dPaction('unselAllItems'); ?>>&nbsp;
+						<input type="button" name="btnAdd" value=" add sel " <?php echo dPaction('addInvItems'); ?>>&nbsp;
 					<?php } ?>
 				</td>
 			</tr>
-		<? } 
+		<?php } 
 		foreach($earning_items as $x) {
 	?>
 	<tr>
@@ -129,16 +132,16 @@ if ( $tab ) {
 			?>
 		</td>
 		<td>
-			<?php echo $x["project_short_name"]; ?>
+			<?php echo dPhtml($x["project_short_name"]); ?>
 		</td>
 		<td>
-			<?php echo $x["task_name"]; ?>
+			<?php echo dPhtml($x["task_name"]); ?>
 		</td>
 		<td>
 			<?php echo $x["task_log_hours"]; ?>
 		</td>
 		<td>
-			<?php echo $x["task_log_costcode"]; ?>
+			<?php echo dPhtml($x["task_log_costcode"]); ?>
 		</td>
 		<td>
 			<?php if ( !$changeLock ) { ?>
@@ -149,32 +152,30 @@ if ( $tab ) {
 	<tr>
 		<td colspan="2">&nbsp;</td>
 		<td colspan="5">
-			<?php echo $x["task_log_description"]; ?>
+			<?php echo dPhtml($x["task_log_description"]); ?>
 		</td>
 	</tr>
-	<?
+	<?php
 			// End TaskLog Line Item Loop
 			}
-			if ( strcmp($x,"") != 0) {
 	?>
 	<tr>
 		<td colspan="7" align="right">
 			<?php if ( !$changeLock ) { ?>
 				<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Select the items you want to add to this form.</i>&nbsp;
-				<input type="button" name="btnSelAll" value=" sel all " onClick="selAllItems();">&nbsp;
-				<input type="button" name="btnUnSelAll" value=" unsel all " onClick="unselAllItems();">&nbsp;
-				<input type="button" name="btnAdd" value=" add sel " onClick="addInvItems();">&nbsp;
+				<input type="button" name="btnSelAll" value=" sel all " <?php echo dPaction('selAllItems'); ?>>&nbsp;
+				<input type="button" name="btnUnSelAll" value=" unsel all " <?php echo dPaction('unselAllItems'); ?>>&nbsp;
+				<input type="button" name="btnAdd" value=" add sel " <?php echo dPaction('addInvItems'); ?>>&nbsp;
 			<?php } ?>
 		</td>
 	</tr>
-	<?
-			}
+	<?php
 		// End "No Items" Condition
 		}
 	?>
 	<tr></tr><tr></tr>
 </table>
-<?
+<?php
 } else {
 // START TASKLOG ITEMS ASSOCIATED WITH THIS earning
 ?>
@@ -202,7 +203,7 @@ if ( $tab ) {
 	</tr>
 	<form name="frmRemInv" action="?m=earnings&a=inv_aed&earning_id=<?php echo $earning_id; ?>" method="post">
 	<input type="hidden" name="inv_dosql" value="remitem">
-	<?
+	<?php
 	if ( count($earning_items) < 1) {
 		echo "<tr><td colspan='7'>No line items assigned.</td></tr>";
 	} else {
@@ -217,10 +218,10 @@ if ( $tab ) {
 			?>
 		</td>
 		<td>
-			<?php echo $x["project_short_name"]; ?>
+			<?php echo dPhtml($x["project_short_name"]); ?>
 		</td>
 		<td>
-			<?php echo $x["task_name"]; ?>
+			<?php echo dPhtml($x["task_name"]); ?>
 		</td>
 		<td>
 			<?php 
@@ -231,7 +232,7 @@ if ( $tab ) {
 		<?php if ( $AppUI->user_type != 7 && !$timecard) { ?>
 			<td nowrap="nowrap">
 				<?php $tmp_rate = $x["earning_item_rate"]; ?>
-				$&nbsp;<input type="text" size="6" maxlength="10" name="rate:<?php echo $x[earning_items_id];?>" value="<?php echo $x["earning_item_rate"];?>">
+				$&nbsp;<input type="text" size="6" maxlength="10" name="rate:<?php echo $x['earning_items_id'];?>" value="<?php echo $x["earning_item_rate"];?>">
 			</td>
 			<td>
 				<?php 
@@ -241,22 +242,22 @@ if ( $tab ) {
 				?>
 			</td>
 		<?php } else { ?>
-			<td><input type="hidden" name="rate:<?php echo $x[earning_items_id];?>" value="0"></td>
+			<td><input type="hidden" name="rate:<?php echo $x['earning_items_id'];?>" value="0"></td>
 			<td></td>
 		<?php } ?>
 		<td>
 			<?php if ( !$changeLock ) { ?>
-				<center><input type="checkbox" name="remove:<?php echo $x[earning_items_id];?>" value="remove:<?php echo $x[earning_items_id];?>"></center>
+				<center><input type="checkbox" name="remove:<?php echo $x['earning_items_id'];?>" value="remove:<?php echo $x['earning_items_id'];?>"></center>
 			<?php } ?>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="2">&nbsp;</td>
 		<td colspan="5">
-			<?php echo $x["task_log_description"]; ?>
+			<?php echo dPhtml($x["task_log_description"]); ?>
 		</td>
 	</tr>
-	<?
+	<?php
 		}
 		// End Line Item Loop, Now Total The Bottom
 	// End No earning Items Condition
@@ -268,7 +269,7 @@ if ( $tab ) {
 		<?php if ( $AppUI->user_type != 7 && !$timecard) { ?>
 			<td valign="middle">
 				<?php if ( !$changeLock ) { ?>
-					<center><input type="button" name="btnUpd" value=" upd " onClick="updRates();"></center>
+					<center><input type="button" name="btnUpd" value=" upd " <?php echo dPaction('updRates'); ?>></center>
 				<?php } ?>
 			</td>
 			<td>
@@ -279,7 +280,7 @@ if ( $tab ) {
 		<?php } ?>
 		<td valign="middle">
 			<?php if ( !$changeLock ) { ?>
-				<center><input type="button" name="btnRem" value=" rem " onClick="remInvItems();"></center>
+				<center><input type="button" name="btnRem" value=" rem " <?php echo dPaction('remInvItems'); ?>></center>
 			<?php } ?>
 		</td>
 	</tr>
@@ -305,13 +306,12 @@ if ( $tab ) {
 			?>
 		</th>
 	</tr>
-	<?
+	<?php
 		// Add Ad Hoc earning Items Grabbed From earnings_items Table
-		$sql="SELECT earnings_items.* FROM earnings_items WHERE earning_tasklog_id='0' AND earning_parent_id = " . $earning_id;
+		$sql="SELECT earnings_items.* FROM {$dbprefix}earnings_items AS earnings_items WHERE earning_tasklog_id='0' AND earning_parent_id = " . $earning_id;
 		$sql.=" ORDER BY earning_item_date DESC;";
 		//echo $sql;
 		$arc=db_exec( $sql );
-		echo db_error();
 
 		// create an index of ad hoc earning_items
 		$adhoc_items = array();
@@ -332,7 +332,7 @@ if ( $tab ) {
 			?>
 		</td>
 		<td colspan="2">
-			<?php echo $x["earning_item_description"]; ?>
+			<?php echo dPhtml($x["earning_item_description"]); ?>
 		</td>
 		<td>
 			<?php 
@@ -343,7 +343,7 @@ if ( $tab ) {
 		<?php if ( $AppUI->user_type != 7 && !$timecard) { ?>
 			<td nowrap="nowrap">
 				<?php $tmp_rate = $x["earning_item_rate"]; ?>
-				$&nbsp;<input type="text" size="6" maxlength="10" name="rate:<?php echo $x[earning_items_id];?>" value="<?php echo $x["earning_item_rate"];?>">
+				$&nbsp;<input type="text" size="6" maxlength="10" name="rate:<?php echo $x['earning_items_id'];?>" value="<?php echo $x["earning_item_rate"];?>">
 			</td>
 			<td>
 				<?php $tmp_subtotal = $x["earning_item_rate"] * $x["earning_item_hours"];
@@ -352,16 +352,16 @@ if ( $tab ) {
 				?>
 			</td>
 		<?php } else { ?>
-			<td><input type="hidden" name="rate:<?php echo $x[earning_items_id];?>" value="0"></td>
+			<td><input type="hidden" name="rate:<?php echo $x['earning_items_id'];?>" value="0"></td>
 			<td></td>
 		<?php } ?>
 		<td>
 			<?php if ( !$changeLock ) { ?>
-				<center><input type="checkbox" name="remove:<?php echo $x[earning_items_id];?>" value="remove:<?php echo $x[earning_items_id];?>"></center>
+				<center><input type="checkbox" name="remove:<?php echo $x['earning_items_id'];?>" value="remove:<?php echo $x['earning_items_id'];?>"></center>
 			<?php } ?>
 		</td>
 	</tr>
-	<?
+	<?php
 			// End Ad Hoc Section
 			}
 		// End Ad Hoc Conditional
@@ -373,7 +373,7 @@ if ( $tab ) {
 		<?php if ( $AppUI->user_type != 7 && !$timecard) { ?>
 			<td valign="middle">
 				<?php if ( !$changeLock ) { ?>
-					<center><input type="button" name="btnUpd" value=" upd " onClick="updRates();"></center>
+					<center><input type="button" name="btnUpd" value=" upd " <?php echo dPaction('updRates'); ?>></center>
 				<?php } ?>
 			</td>
 			<td>
@@ -384,7 +384,7 @@ if ( $tab ) {
 		<?php } ?>
 		<td valign="middle">
 			<?php if ( !$changeLock ) { ?>
-				<center><input type="button" name="btnRem" value=" rem " onClick="remInvItems();"></center>
+				<center><input type="button" name="btnRem" value=" rem " <?php echo dPaction('remInvItems'); ?>></center>
 			<?php } ?>
 			</form>
 		</td>
@@ -413,9 +413,9 @@ if ( $tab ) {
 		</td>
 	</tr>
 </table>
-<?
+<?php
 	// Begin Ad Hoc Data Entry Form
-	$adhoc_date = intval( $earning_date ) ? new CDate( $earning_date ) : new CDate();
+	$adhoc_date = $earning_date ? new CDate( $earning_date ) : new CDate();
 ?>
 &nbsp;</p>
 &nbsp;</p>
@@ -431,7 +431,7 @@ if ( $tab ) {
 				<th nowrap="nowrap"><?php echo $AppUI->_('Rate');?>&nbsp;&nbsp;</th>
 			<?php } else { ?>
 				<th width="2"></th>
-			<? } ?>
+			<?php } ?>
 			<th width="10" nowrap="nowrap"></th>
 		</tr>
 		<tr> 
@@ -442,7 +442,7 @@ if ( $tab ) {
 				<input type="hidden" name="adhoc_earning_tasklog_id" value="0">
 				<input type="hidden" name="inv_dosql" value="adhoc">
 				<input type="hidden" name="adhoc_earning_item_date" value="<?php echo $adhoc_date->format( FMT_TIMESTAMP_DATE );?>">
-				<input type="text" name="adhoc_earning_item_date_formatted" size="10" value="<?php echo $adhoc_date->format( $df );?>" class="text" disabled="disabled" /><a href="#adhoc" onClick="popCalendar('adhoc_earning_item_date');"><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a></td>
+				<input type="text" name="adhoc_earning_item_date_formatted" size="10" value="<?php echo $adhoc_date->format( $df );?>" class="text" disabled="disabled" /><a href="#"<?php echo dPaction('popCalendar', array('adhoc_earning_item_date')); ?>><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a></td>
 			<td colspan="2" valign="top">
 				<input type="text" size="60" maxlength="200" name="adhoc_earning_item_description" value="">
 			</td>
@@ -457,7 +457,7 @@ if ( $tab ) {
 				<td><input type="hidden" name="adhoc_earning_item_rate" size="6" maxlength="10" value="0.00" /></td>
 			<?php } ?>
 			<td valign="top">
-					<center><input type="button" name="btnAdHoc" value=" add " onClick="addAdHoc();"></center></form>
+					<center><input type="button" name="btnAdHoc" value=" add " <?php echo dPaction('addAdHoc'); ?>></center></form>
 			</td>
 		</tr>
 	</table>

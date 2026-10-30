@@ -89,6 +89,29 @@ if (!isset($_SESSION['AppUI']) || isset($_GET['logout'])) {
 }
 $AppUI =& $_SESSION['AppUI'];
 
+// PDF reports are written to files/temp/temp<user_id>.pdf. files/ is not served
+// directly (the names are predictable), so each user fetches their own report here.
+if (isset($_GET['report'])) {
+	if ($AppUI->doLogin()) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	$fname = DP_BASE_DIR.'/files/temp/temp'.(int)$AppUI->user_id.'.pdf';
+	if (!is_file($fname)) {
+		http_response_code(404);
+		exit;
+	}
+	while (ob_get_level()) {
+		ob_end_clean();
+	}
+	header('Content-Type: application/pdf');
+	header('Content-Length: '.filesize($fname));
+	header('Content-Disposition: inline; filename="report.pdf"');
+	header('Cache-Control: private, no-store');
+	header('X-Content-Type-Options: nosniff');
+	readfile($fname);
+	exit;
+}
+
 require_once DP_BASE_DIR.'/includes/permissions.php';
 
 $perms =& $AppUI->acl();
@@ -141,7 +164,8 @@ if ($file_id) {
 	// END extra headers to resolve IE caching bug
 	*/
 
-	$fname = DP_BASE_DIR.'/files/'.$file['file_project'].'/'.$file['file_real_filename'];
+	// Records saved before do_file_aed.php stopped binding these could hold any path.
+	$fname = DP_BASE_DIR.'/files/'.(int)$file['file_project'].'/'.basename($file['file_real_filename']);
 	if (! file_exists($fname)) {
 		$AppUI->setMsg('fileIdError', UI_MSG_ERROR);
 		$AppUI->redirect();
@@ -166,7 +190,7 @@ if ($file_id) {
 	header('Content-disposition: attachment; filename="'.$file['file_name'].'"');
 
 	// read and output the file in chunks to bypass limiting settings in php.ini
-	$handle = fopen(DP_BASE_DIR . '/files/'.$file['file_project'].'/'.$file['file_real_filename'], 'rb');
+	$handle = fopen($fname, 'rb');
 	if ($handle)
 	{
 		while (!feof($handle)) {

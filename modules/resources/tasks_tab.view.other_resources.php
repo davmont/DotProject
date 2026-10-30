@@ -17,7 +17,7 @@ $q->addQuery('c.resource_type_name');
 $q->addTable('resources', 'a');
 $q->leftJoin('resource_tasks', 'b', 'b.resource_id = a.resource_id');
 $q->leftJoin('resource_types', 'c', 'c.resource_type_id = a.resource_type');
-$q->addWhere('b.task_id = ' . $task_id);
+$q->addWhere('b.task_id = ' . (int)$task_id);
 $resources = $q->loadHashList('resource_id');
 
 // Determine any other clashes.
@@ -40,8 +40,8 @@ if (count($resources)) {
 <tr><th><?php echo $AppUI->_('Type');?></th><th><?php echo $AppUI->_('Resource'); ?></th><th><?php echo $AppUI->_('Allocation');?></th><th>&nbsp;</th></tr>
 <?php
 foreach ($resources as $res) {
-	$output =  "<tr><td class='hilite'>$res[resource_type_name]</td>
-	<td class='hilite'>$res[resource_name]</td>
+	$output =  "<tr><td class='hilite'>" . dPhtml($res['resource_type_name']) . "</td>
+	<td class='hilite'>" . dPhtml($res['resource_name']) . "</td>
 	<td class='hilite'>$res[percent_allocated]%</td><td class='warning'>";
 	if (isset($resource_tasks[$res['resource_id']]) &&
 	  $resource_tasks[$res['resource_id']] > $res['resource_max_allocation']) {

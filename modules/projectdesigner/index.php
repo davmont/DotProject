@@ -59,7 +59,7 @@ $cal_df = str_replace('%','', $cal_df);
 $q  = new DBQuery;
 $q->addTable('project_designer_options','pdo');
 $q->addQuery('pdo.*');
-$q->addWhere('pdo.pd_option_user = '.$AppUI->user_id);
+$q->addWhere('pdo.pd_option_user = ' . (int)$AppUI->user_id);
 $view_options = $q->loadList();
 
 $project_id = intval( dPgetParam( $_REQUEST, "project_id", 0 ) );
@@ -98,7 +98,7 @@ if (!$project_id) {
             $titleBlock->show();
 ?>
 
-            <script language="javascript">
+            <script nonce="<?php echo dPcspNonce(); ?>">
             function submitIt() {
             	var f = document.prjFrm;
             	var msg ='';
@@ -120,7 +120,7 @@ if (!$project_id) {
             <tr>
             	<td nowrap="nowrap" style="border: outset #eeeeee 1px;background-color:#fffff" >
             		<font color="<?php echo bestColor('#ffffff'); ?>">
-            			<strong><?php echo $AppUI->_('Project'); ?>: <?php echo arraySelect( $projects, 'project_id','onchange="submitIt()" class="text" style="width:500px"', 0  );?></strong>
+            			<strong><?php echo $AppUI->_('Project'); ?>: <?php echo arraySelect( $projects, 'project_id', dPaction('submitIt') . ' class="text" style="width:500px"', 0  );?></strong>
             		</font>
             	</td>
             </tr>            
@@ -166,7 +166,7 @@ if (!$project_id) {
       //check that project has tasks; otherwise run seperate query
       $q->addTable('tasks', 't');
       $q->addQuery("COUNT(distinct t.task_id) AS total_tasks");
-      $q->addWhere('task_project = '.$project_id);
+      $q->addWhere('task_project = ' . (int)$project_id);
       $hasTasks = $q->loadResult();
       $q->clear();
 
@@ -193,7 +193,7 @@ if (!$project_id) {
           $q->addJoin('companies', 'com', 'company_id = project_company');
           $q->addJoin('users', 'u', 'user_id = project_owner');
           $q->addJoin('contacts', 'con', 'contact_id = user_contact');
-          $q->addWhere('project_id = '.$project_id);
+          $q->addWhere('project_id = ' . (int)$project_id);
           $q->addGroup('project_id');
           $sql = $q->prepare();
       }
@@ -315,23 +315,23 @@ if (!$project_id) {
       	}
       }
      	$titleBlock->addCell();
-      $titleBlock->addCell("<a href=\"#\" onclick =\"window.open('index.php?m=projectdesigner&a=printproject&dialog=1&suppressHeaders=1&project_id=$project_id', 'printproject','width=1200, height=600, menubar=1, scrollbars=1')\">
+      $titleBlock->addCell("<a href=\"#\"" . dPaction('window.open', array("index.php?m=projectdesigner&a=printproject&dialog=1&suppressHeaders=1&project_id=$project_id", 'printproject', 'width=1200, height=600, menubar=1, scrollbars=1')) . ">
       		<img src=\"./modules/projectdesigner/images/printer.png\" border=\"0\" width=\"22\" height=\"22\" alt=\"print project\" title=\"print project\"/>
       		</a>
       		"
       	);
-//      $titleBlock->addCell("<a href=\"#\" onclick =\"window.open('index.php?m=projectdesigner&a=printproject&dialog=1&suppressHeaders=1&project_id=$project_id', 'printproject','width=1200, height=600, menubar=1, scrollbars=1')\">client report</a>");
-      $titleBlock->addCell("<a href=\"#\" onclick =\"expandAll()\">
+//      $titleBlock->addCell("<a href=\"#\"" . dPaction('window.open', array("index.php?m=projectdesigner&a=printproject&dialog=1&suppressHeaders=1&project_id=$project_id", 'printproject', 'width=1200, height=600, menubar=1, scrollbars=1')) . ">client report</a>");
+      $titleBlock->addCell("<a href=\"#\"" . dPaction('expandAll') . ">
       		<img src=\"./modules/projectdesigner/images/down.png\" border=\"0\" width=\"22\" height=\"22\" alt=\"expand all panels\" title=\"expand all panels\"/>
       		</a>
       		"
       	);
-      $titleBlock->addCell("<a href=\"#\" onclick =\"collapseAll()\">
+      $titleBlock->addCell("<a href=\"#\"" . dPaction('collapseAll') . ">
       		<img src=\"./modules/projectdesigner/images/up.png\" border=\"0\" width=\"22\" height=\"22\" alt=\"collapse all panels\" title=\"collpase all panels\"/>
       		</a>
       		"
       	);
-      $titleBlock->addCell("<a href=\"#\" onclick =\"document.frmWorkspace.submit()\">
+      $titleBlock->addCell("<a href=\"#\"" . dPaction(null, array(), null, array('submit' => 'frmWorkspace')) . ">
       		<img src=\"./modules/projectdesigner/images/filesave.png\" border=\"0\" width=\"22\" height=\"22\" alt=\"save your workspace\" title=\"save your workspace\"/>
       		</a>
       		"
@@ -350,7 +350,7 @@ if (!$project_id) {
       <input type="hidden" name="opt_view_files" value="<?php echo (isset($view_options[0]['pd_option_view_files']) ? $view_options[0]['pd_option_view_files'] : 1);?>" />
 </form>
 
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 <?php
 // security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -365,7 +365,7 @@ function delIt() {
 <?php } ?>
 </script>
 
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 //dP Related
 // ------------------------------------------------------------------
 // parseDate( date_string [, prefer_euro_format] )
@@ -382,7 +382,7 @@ function delIt() {
 // ------------------------------------------------------------------
 function parseDate(val) {
 	var preferEuro=(arguments.length==2)?arguments[1]:false;
-	generalFormats=new Array('yyyyMMddHHmm', '<?php echo $cal_df ?>');
+	generalFormats=new Array('yyyyMMddHHmm', <?php echo dPjs($cal_df); ?>);
 	monthFirst=new Array();
       dateFirst =new Array();
 //	generalFormats=new Array('yyyyMMddHHmm', 'NNN/dd/yyyy h:m a', 'NNN/dd/yyyy H:m', 'NNN/dd/yyyy hh:mm a', 'NNN/dd/yyyy HH:mm a', 'y-M-d','MMM d, y','MMM d,y','y-MMM-d','d-MMM-y','MMM d');
@@ -401,8 +401,8 @@ function parseDate(val) {
 	}
 
 function setDate( frm_name, f_date ) {
-	fld_date = eval( "document." + frm_name + "." + f_date );
-	fld_task_date = eval( "document." + frm_name + "." + "add_task_" + f_date );
+	fld_date = document.forms[frm_name].elements[f_date];
+	fld_task_date = document.forms[frm_name].elements["add_task_" + f_date];
 	if (fld_date.value.length>0) {
 	      if ((parseDate(fld_date.value))==null) {
 	            alert('The Date/Time you typed does not match your prefered format, please retype.');
@@ -410,19 +410,19 @@ function setDate( frm_name, f_date ) {
 	            fld_date.style.backgroundColor = 'red';
             } else {
             	fld_task_date.value = formatDate(parseDate(fld_date.value), "yyyyMMddHHmm");
-            	fld_date.value = formatDate(parseDate(fld_date.value), "<?php echo $cal_df ?>");
+            	fld_date.value = formatDate(parseDate(fld_date.value), <?php echo dPjs($cal_df); ?>);
 	            fld_date.style.backgroundColor = '';
 	            if (frm_name.indexOf('editFrm')>-1) {
 	               if (f_date.indexOf('start_date')>-1) {
 	                  start_date = fld_task_date;
-	                  end_date = eval( "document." + frm_name + "." + "add_task_" + f_date.replace("start_date","end_date") );
-	                  duration_fld = eval( "document." + frm_name + "." + "add_task_" + f_date.replace("start_date","duration") );
-	                  durntype_fld = eval( "document." + frm_name + "." + "add_task_" + f_date.replace("start_date","durntype") );
+	                  end_date = document.forms[frm_name].elements["add_task_" + f_date.replace("start_date","end_date")];
+	                  duration_fld = document.forms[frm_name].elements["add_task_" + f_date.replace("start_date","duration")];
+	                  durntype_fld = document.forms[frm_name].elements["add_task_" + f_date.replace("start_date","durntype")];
                      } else {
 	                  end_date = fld_task_date;
-	                  start_date = eval( "document." + frm_name + "." + "add_task_" + f_date.replace("end_date","start_date") );
-	                  duration_fld = eval( "document." + frm_name + "." + "add_task_" + f_date.replace("end_date","duration") );
-	                  durntype_fld = eval( "document." + frm_name + "." + "add_task_" + f_date.replace("end_date","durntype") );
+	                  start_date = document.forms[frm_name].elements["add_task_" + f_date.replace("end_date","start_date")];
+	                  duration_fld = document.forms[frm_name].elements["add_task_" + f_date.replace("end_date","duration")];
+	                  durntype_fld = document.forms[frm_name].elements["add_task_" + f_date.replace("end_date","durntype")];
                      }
 	               calcDuration(document.editFrm, start_date, end_date, duration_fld, durntype_fld);
                   }
@@ -450,12 +450,14 @@ $sel_access = arraySelect( $task_access, 'add_task_access0', 'style="width:80px"
 $sel_extra = arraySelect( $extra, 'add_task_extra0', 'style="width:80px" class="text"', '' );
 $sel_durntype = arraySelect( $durntype, 'add_task_durntype0', 'style="width:80px" class="text"', '', true );
 ?>
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 var sel_priorities = "<?php echo str_replace(chr(10),'', str_replace('"', "'", $sel_priorities)); ?>";
 var sel_types = "<?php echo str_replace(chr(10),'', str_replace('"', "'", $sel_types)); ?>";
 var sel_access = "<?php echo str_replace(chr(10),'', str_replace('"', "'", $sel_access)); ?>";
 var sel_extra = "<?php echo str_replace(chr(10),'', str_replace('"', "'", $sel_extra)); ?>";
 var sel_durntype = "<?php echo str_replace(chr(10), '', str_replace('"', "'", $sel_durntype)); ?>";
+var pd_cal_format = <?php echo dPjs($cf); ?>;
+var pd_cal_time = <?php echo dPjs(strpos($cf,'%p')!==false ? '12' : '24'); ?>;
 
 function addComponent() {
       var form = document.editFrm;
@@ -476,7 +478,7 @@ function addComponent() {
 	 durntype = sel_durntype.replace('durntype0', 'durntype_'+line_nr);
 	 durntype = durntype.replace('durntype0', 'durntype_'+line_nr);
 
-      eval('oldType_'+line_nr+'=""');
+      window['oldType_'+line_nr] = "";
 
       var trIdName = 'component'+li+'_';
       var newtr = document.createElement('tr');
@@ -486,21 +488,21 @@ function addComponent() {
       oCell.setAttribute ("align","left");
       oCell.setAttribute ("width","5");
       htmltxt = "";
-      htmltxt +="<a href='#bottom' onClick='removeComponent(\"component"+line_nr+"_\")'><img src='./modules/projectdesigner/images/remove.png' width='16' height='16' title='<?php echo $AppUI->_('Remove');?>' alt='<?php echo $AppUI->_('Remove');?>' border='0' /></a>";
+      htmltxt +="<a href='#bottom'" + pd_dp_attrs('removeComponent', ["component"+line_nr+"_"]) + "><img src='./modules/projectdesigner/images/remove.png' width='16' height='16' title='<?php echo $AppUI->_('Remove');?>' alt='<?php echo $AppUI->_('Remove');?>' border='0' /></a>";
 	oCell.innerHTML =htmltxt;
       newtr.appendChild(oCell);
       oCell = document.createElement("td");
       htmltxt = "";
 	htmltxt +="<input type='hidden' id='add_task_line_"+line_nr+"' name='add_task_line_"+line_nr+"' value='"+line_nr+"' />";
 	htmltxt +="<input type='text' class='text' style='width:200px;' name='add_task_name_"+line_nr+"' value='' />";
-	htmltxt +="&nbsp;<a href='#component"+li+"_desc' onClick=\"expand_colapse('component"+li+"_desc', 'tblProjects')\"><img id='component"+li+"_desc_expand' src='./images/icons/expand.gif' title='<?php echo $AppUI->_('Edit Task Description');?>' alt='<?php echo $AppUI->_('Edit Task Description');?>' width='12' height='12' border='0'><img id='component"+li+"_desc_collapse' src='./images/icons/collapse.gif' width='12' height='12' border='0' style='display:none'></a>";
+	htmltxt +="&nbsp;<a href='#component"+li+"_desc'" + pd_dp_attrs('expand_colapse', ["component"+li+"_desc", 'tblProjects']) + "><img id='component"+li+"_desc_expand' src='./images/icons/expand.gif' title='<?php echo $AppUI->_('Edit Task Description');?>' alt='<?php echo $AppUI->_('Edit Task Description');?>' width='12' height='12' border='0'><img id='component"+li+"_desc_collapse' src='./images/icons/collapse.gif' width='12' height='12' border='0' style='display:none'></a>";
 	oCell.innerHTML =htmltxt;
       newtr.appendChild(oCell);
       oCell = document.createElement("td");
       htmltxt = "";
 	htmltxt +="<input type='hidden' id='add_task_start_date_"+line_nr+"' name='add_task_start_date_"+line_nr+"' value='<?php echo $today->format( FMT_TIMESTAMP );?>' />";
-	htmltxt +="<input type='text' onChange=\"setDate('editFrm', 'start_date_"+line_nr+"');\" class='text' style='width:130px;' id='start_date_"+line_nr+"' name='start_date_"+line_nr+"' value='<?php echo $today->format( $cf );?>' />";
-	htmltxt +="<a href='#' onClick=\"return showCalendar('start_date_"+line_nr+"', '<?php echo $cf ?>', 'editFrm', '<?php echo (strpos($cf,'%p')!==false ? '12' : '24') ?>', true)\" >";
+	htmltxt +="<input type='text'" + pd_dp_attrs('setDate', ['editFrm', 'start_date_'+line_nr], 'change') + " class='text' style='width:130px;' id='start_date_"+line_nr+"' name='start_date_"+line_nr+"' value='<?php echo $today->format( $cf );?>' />";
+	htmltxt +="<a href='#'" + pd_dp_attrs('showCalendar', ['start_date_'+line_nr, pd_cal_format, 'editFrm', pd_cal_time, true]) + ">";
 	htmltxt +="&nbsp;<img src='./images/calendar.gif' width='24' height='12' alt='<?php echo $AppUI->_('Calendar');?>' border='0' />";
 	htmltxt +="</a>";
 	oCell.innerHTML =htmltxt;
@@ -509,8 +511,8 @@ function addComponent() {
       htmltxt = "";
 //	htmltxt +="<input type='hidden' id='add_task_duration_"+line_nr+"' name='add_task_duration_"+line_nr+"' value='' />";
 	htmltxt +="<input type='hidden' id='add_task_end_date_"+line_nr+"' name='add_task_end_date_"+line_nr+"' value='<?php $today->setDate( $today->getTime() + 60 * 60, DATE_FORMAT_UNIXTIME); echo $today->format( FMT_TIMESTAMP );?>' />";
-	htmltxt +="<input type='text' onChange=\"setDate('editFrm', 'end_date_"+line_nr+"');\" class='text' style='width:130px;' id='end_date_"+line_nr+"' name='end_date_"+line_nr+"' value='<?php echo $today->format( $cf );?>' />";
-	htmltxt +="<a href='#' onClick=\"return showCalendar('end_date_"+line_nr+"', '<?php echo $cf ?>', 'editFrm', '<?php echo (strpos($cf,'%p')!==false ? '12' : '24') ?>', true)\" >";
+	htmltxt +="<input type='text'" + pd_dp_attrs('setDate', ['editFrm', 'end_date_'+line_nr], 'change') + " class='text' style='width:130px;' id='end_date_"+line_nr+"' name='end_date_"+line_nr+"' value='<?php echo $today->format( $cf );?>' />";
+	htmltxt +="<a href='#'" + pd_dp_attrs('showCalendar', ['end_date_'+line_nr, pd_cal_format, 'editFrm', pd_cal_time, true]) + ">";
 	htmltxt +="&nbsp;<img src='./images/calendar.gif' width='24' height='12' alt='<?php echo $AppUI->_('Calendar');?>' border='0' />";
 	htmltxt +="</a>";
 	oCell.innerHTML =htmltxt;
@@ -561,10 +563,10 @@ function addComponent() {
       newtr.appendChild(oCell);
       ni.appendChild(newtr);
       form.nrcomponents.value = li;
-      end_date = eval( "document.editFrm.add_task_end_date_"+line_nr );
-      start_date = eval( "document.editFrm.add_task_start_date_"+line_nr );
-      duration_fld = eval( "document.editFrm.add_task_duration_"+line_nr );
-      durntype_fld = eval( "document.editFrm.add_task_durntype_"+line_nr );
+      end_date = document.editFrm.elements["add_task_end_date_"+line_nr];
+      start_date = document.editFrm.elements["add_task_start_date_"+line_nr];
+      duration_fld = document.editFrm.elements["add_task_duration_"+line_nr];
+      durntype_fld = document.editFrm.elements["add_task_durntype_"+line_nr];
       calcDuration(document.editFrm, start_date, end_date, duration_fld, durntype_fld);
 }
 
@@ -576,7 +578,7 @@ function removeComponent(tr_id) {
     table.removeChild(table_row_description);
 }
 </script>
-<SCRIPT language="JavaScript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 var check_task_dates = <?php
   if (isset($dPconfig['check_task_dates']) && $dPconfig['check_task_dates'])
     echo 'true';
@@ -595,7 +597,7 @@ var working_days = new Array(<?php echo dPgetConfig( 'cal_working_days' );?>);
 var cal_day_start = <?php echo intval(dPgetConfig( 'cal_day_start' ));?>;
 var cal_day_end = <?php echo intval(dPgetConfig( 'cal_day_end' ));?>;
 var daily_working_hours = <?php echo intval(dPgetConfig('daily_working_hours')); ?>;
-var oldProj = "<?php echo $obj->project_name.':';?>";
+var oldProj = <?php echo dPjs($obj->project_name.':');?>;
 </script>
 
 
@@ -613,11 +615,11 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
             <tr>
             	<td style="background-color:#<?php echo $obj->project_color_identifier;?>" colspan="1">
            	<?php
-                  echo '<a href="#fp" name="fp" style="display:block" onClick="expand_colapse(\'project\', \'tblProjects\')">'
+                  echo '<a href="#fp" name="fp" style="display:block"' . dPaction('expand_colapse', array('project', 'tblProjects')) . '>'
            	?>
             	<?php
             		echo '<font color="' . bestColor( $obj->project_color_identifier ) . '"><strong>'
-            			. $AppUI->_('Project') . ': ' . $obj->project_name .'<strong></font>';
+            			. $AppUI->_('Project') . ': ' . dPhtml($obj->project_name) .'<strong></font>';
             	?>
            	<?php
                   echo '</a>'
@@ -625,7 +627,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
             	</td>
             	<td width="12" style="background-color:#<?php echo $obj->project_color_identifier;?>" align="right" colspan="1">
            	<?php
-                  echo '<a href="#fp" name="fp" style="display:block" onClick="expand_colapse(\'project\', \'tblProjects\')">'
+                  echo '<a href="#fp" name="fp" style="display:block"' . dPaction('expand_colapse', array('project', 'tblProjects')) . '>'
            	?>
             	<?php
                         echo '<img id="project_expand" src="./images/icons/expand.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_project']) ? ($view_options[0]['pd_option_view_project'] ? 'style="display:none"' : 'style="display:"') : 'style="display:none"').'><img id="project_collapse" src="./images/icons/collapse.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_project']) ? ($view_options[0]['pd_option_view_project'] ? 'style="display:"' : 'style="display:none"') : 'style="display:"').'>';
@@ -655,7 +657,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
             <tr>
             	<td colspan="1">
            	<?php
-                  echo '<a href="#fg" name="fg" style="display:block" onClick="expand_colapse(\'gantt\', \'tblProjects\')">'
+                  echo '<a href="#fg" name="fg" style="display:block"' . dPaction('expand_colapse', array('gantt', 'tblProjects')) . '>'
            	?>
             	<?php
             		echo '<strong>'. $AppUI->_('Gantt Chart') .'<strong></font>';
@@ -666,7 +668,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
             	</td>
             	<td width="12" align="right" colspan="1">
            	<?php
-                  echo '<a href="#fg" name="fg" style="display:block" onClick="expand_colapse(\'gantt\', \'tblProjects\')">'
+                  echo '<a href="#fg" name="fg" style="display:block"' . dPaction('expand_colapse', array('gantt', 'tblProjects')) . '>'
            	?>
             	<?php
                         echo '<img id="gantt_expand" src="./images/icons/expand.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_gantt']) ? ($view_options[0]['pd_option_view_gantt'] ? 'style="display:none"' : 'style="display:"') : 'style="display:none"').'><img id="gantt_collapse" src="./images/icons/collapse.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_gantt']) ? ($view_options[0]['pd_option_view_gantt'] ? 'style="display:"' : 'style="display:none"') : 'style="display:"').'></a>';
@@ -699,7 +701,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
             <tr>
             	<td colspan="1">
            	<?php
-                  echo '<a href="#ft" name="ft" style="display:block" onClick="expand_colapse(\'tasks\', \'tblProjects\')">'
+                  echo '<a href="#ft" name="ft" style="display:block"' . dPaction('expand_colapse', array('tasks', 'tblProjects')) . '>'
            	?>
             	<?php
             		echo '<strong>'. $AppUI->_('Tasks') .'<strong></font>';
@@ -710,7 +712,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
            	?>
             	<td width="12" align="right" colspan="1">
            	<?php
-                  echo '<a href="#ft" name="ft" style="display:block" onClick="expand_colapse(\'tasks\', \'tblProjects\')">'
+                  echo '<a href="#ft" name="ft" style="display:block"' . dPaction('expand_colapse', array('tasks', 'tblProjects')) . '>'
            	?>
             	<?php
                         echo '<img id="tasks_expand" src="./images/icons/expand.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_tasks']) ? ($view_options[0]['pd_option_view_tasks'] ? 'style="display:none"' : 'style="display:"') : 'style="display:none"').'><img id="tasks_collapse" src="./images/icons/collapse.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_tasks']) ? ($view_options[0]['pd_option_view_tasks'] ? 'style="display:"' : 'style="display:none"') : 'style="display:"').'></a>';
@@ -743,7 +745,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
             <tr>
             	<td colspan="1">
            	<?php
-                  echo '<a href="#fa" name="fa" style="display:block" onClick="expand_colapse(\'actions\', \'tblProjects\')">'
+                  echo '<a href="#fa" name="fa" style="display:block"' . dPaction('expand_colapse', array('actions', 'tblProjects')) . '>'
            	?>
             	<?php
             		echo '<strong>'. $AppUI->_('Actions') .'<strong></font>';
@@ -754,7 +756,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
             	</td>
             	<td width="12" align="right" colspan="1">
            	<?php
-                  echo '<a href="#fa" name="fa" style="display:block" onClick="expand_colapse(\'actions\', \'tblProjects\')">'
+                  echo '<a href="#fa" name="fa" style="display:block"' . dPaction('expand_colapse', array('actions', 'tblProjects')) . '>'
            	?>
             	<?php
                         echo '<img id="actions_expand" src="./images/icons/expand.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_actions']) ? ($view_options[0]['pd_option_view_actions'] ? 'style="display:none"' : 'style="display:"') : 'style="display:none"').'><img id="actions_collapse" src="./images/icons/collapse.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_actions']) ? ($view_options[0]['pd_option_view_actions'] ? 'style="display:"' : 'style="display:none"') : 'style="display:"').'></a>';
@@ -787,7 +789,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
             <tr>
             	<td colspan="1">
            	<?php
-                  echo '<a href="#fat" name="fat" style="display:block" onClick="expand_colapse(\'addtsks\', \'tblProjects\')">'
+                  echo '<a href="#fat" name="fat" style="display:block"' . dPaction('expand_colapse', array('addtsks', 'tblProjects')) . '>'
            	?>
             	<?php
             		echo '<strong>'. $AppUI->_('Add Tasks') .'<strong></font>';
@@ -798,7 +800,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
             	</td>
             	<td width="12" align="right" colspan="1">
            	<?php
-                  echo '<a href="#fat" name="fat" style="display:block" onClick="expand_colapse(\'addtsks\', \'tblProjects\')">'
+                  echo '<a href="#fat" name="fat" style="display:block"' . dPaction('expand_colapse', array('addtsks', 'tblProjects')) . '>'
            	?>
             	<?php
                         echo '<img id="addtsks_expand" src="./images/icons/expand.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_addtasks']) ? ($view_options[0]['pd_option_view_addtasks'] ? 'style="display:none"' : 'style="display:"') : 'style="display:none"').'><img id="addtsks_collapse" src="./images/icons/collapse.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_addtasks']) ? ($view_options[0]['pd_option_view_addtasks'] ? 'style="display:"' : 'style="display:none"') : 'style="display:"').'></a>';
@@ -831,7 +833,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
             <tr>
             	<td colspan="1">
            	<?php
-                  echo '<a href="#fbt" name="fbt" style="display:block" onClick="expand_colapse(\'files\', \'tblProjects\')">'
+                  echo '<a href="#fbt" name="fbt" style="display:block"' . dPaction('expand_colapse', array('files', 'tblProjects')) . '>'
            	?>
             	<?php
             		echo '<strong>'. $AppUI->_('Files') .'<strong></font>';
@@ -842,7 +844,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
             	</td>
             	<td width="12" align="right" colspan="1">
            	<?php
-                  echo '<a href="#fbt" name="fbt" style="display:block" onClick="expand_colapse(\'files\', \'tblProjects\')">'
+                  echo '<a href="#fbt" name="fbt" style="display:block"' . dPaction('expand_colapse', array('files', 'tblProjects')) . '>'
            	?>
             	<?php
                         echo '<img id="files_expand" src="./images/icons/expand.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_files']) ? ($view_options[0]['pd_option_view_files'] ? 'style="display:none"' : 'style="display:"') : 'style="display:none"').'><img id="files_collapse" src="./images/icons/collapse.gif" width="12" height="12" border="0" '.(isset($view_options[0]['pd_option_view_files']) ? ($view_options[0]['pd_option_view_files'] ? 'style="display:"' : 'style="display:none"') : 'style="display:"').'></a>';
@@ -874,7 +876,7 @@ var oldProj = "<?php echo $obj->project_name.':';?>";
 <tr><td id="td_sample">&nbsp;</td></tr>
 </table>
 </div>
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 var original_bgc = getStyle('td_sample', 'background-color', 'backgroundColor');
 </script>
 <?php

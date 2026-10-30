@@ -1,4 +1,8 @@
-<?php /* $Id: timetrack.class.php,v 1.2 2003/09/04 03:07:12 kripper Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* $Id: timetrack.class.php,v 1.2 2003/09/04 03:07:12 kripper Exp $ */
 ##
 ## TimeTrack Classes
 ##
@@ -18,16 +22,16 @@ class CTimeSheet {
 	var $tt_approve_note = NULL;
 	var $tt_approve_note_date = NULL;
 
-	function CTimeSheet() {
+	function __construct() {
 		// empty constructor
 	}
 
-	function load( $oid ) {
+	function load( $oid = null, $strip = true ) {
                 $obj=null;
                 $q = new DBQuery();
                 $q -> addTable('timetrack_idx');
                 $q -> addQuery('*');
-                $q -> addWhere('tt_id = '.$oid);
+                $q -> addWhere('tt_id = ' . (int)$oid);
                 $q -> loadObject($obj);
 		return $obj;
 	}
@@ -49,7 +53,7 @@ class CTimeSheet {
 		return NULL; // object is ok
 	}
 
-	function store() {
+	function store($updateNulls = false) {
 		$msg = $this->check();
 		if( $msg ) {
 			return get_class( $this )."::store-check failed";
@@ -65,18 +69,18 @@ class CTimeSheet {
 			return NULL;
 		}
 	}
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0) {
                 $q = new DBQuery();
                 $q -> addTable('timetrack_data');
                 $q -> addQuery('tt_data_timesheet_id');
-                $q -> addWhere('tt_data_timesheet_id = '.$this->tt_id);
+                $q -> addWhere('tt_data_timesheet_id = '.(int)$this->tt_id);
                 $q -> exec();
 		if ($q -> foundRows()) {
 			return "You cannot delete a timesheet that has entries associated with it.";
 		} else{
                       $q -> clear();
                       $q -> setDelete('timetrack_data');
-                      $q -> addWhere('tt_id = '.$this->tt_id);
+                      $q -> addWhere('tt_id = ' . (int)$this->tt_id);
 			if (!$q->exec()) {
 				return db_error();
 			} else {
@@ -98,15 +102,15 @@ class CTimeData {
 	var $tt_data_change_date = NULL;
 	var $tt_data_note = NULL;
 
-	function CTimeData() {
+	function __construct() {
 		// empty constructor
 	}
 
-	function load( $oid ) {
+	function load( $oid = null, $strip = true ) {
                 $q = new DBQuery();
                 $q -> addTable('timetrack_data');
                 $q -> addQuery('*');
-                $q -> addWhere('tt_data_id = '.$oid);
+                $q -> addWhere('tt_data_id = '.(int)$oid);
                 $q -> loadObject($this);
 		return $this;
 	}
@@ -128,7 +132,7 @@ class CTimeData {
 		return NULL; // object is ok
 	}
 
-	function store() {
+	function store($updateNulls = false) {
 		$msg = $this->check();
 		if( $msg ) {
 			return get_class( $this )."::store-check failed";
@@ -144,11 +148,11 @@ class CTimeData {
 			return NULL;
 		}
 	}
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0) {
                 $ok=1;
                 $q = new DBQuery();
                 $q -> setDelete('timetrack_data');
-                $q -> addWhere('tt_data_id = '.$this->tt_data_id);
+                $q -> addWhere('tt_data_id = '.(int)$this->tt_data_id);
                 if (!$q->exec()) {
 			return db_error();
 		} else {

@@ -1,4 +1,8 @@
-<?php /* PROJECTDESIGNER $Id: do_task_bulk_aed.php,v 1.2 2007/06/19 11:43:04 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PROJECTDESIGNER $Id: do_task_bulk_aed.php,v 1.2 2007/06/19 11:43:04 pedroix Exp $ */
 global $AppUI;
 $project_id = (int)dPgetParam( $_POST, 'project_id', 0 );
 $selected = dPgetCleanParam( $_POST, 'bulk_selected_task', 0 );
@@ -138,7 +142,7 @@ if (is_array($selected) && count( $selected )) {
 					$upd_task->store();
                               $q = new DBQuery;
                               $q->setDelete('task_dependencies');
-                              $q->addWhere('dependencies_task_id='.$upd_task->task_id);
+                              $q->addWhere('dependencies_task_id=' . (int)$upd_task->task_id);
                               $q->exec();
 				} elseif (!($bulk_task_dependency==$upd_task->task_id)){
 					$upd_task->task_dynamic = 31;
@@ -250,7 +254,6 @@ if (is_array($selected) && count( $selected )) {
 				}
 		    }
 		}
-		echo db_error();
 	}
 }
 $AppUI->redirect('m=projectdesigner&project_id='.$project_id);

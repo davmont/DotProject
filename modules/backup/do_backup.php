@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // backup database module for dotProject
 // (c)2003 Daniel Vijge
 // Licensed under GNU/GPL v2 or later
@@ -10,7 +13,8 @@
 
 $perms =& $AppUI->acl();
 
-if (!$perms->checkModule('backup', 'view'))
+// A backup holds every table, user password hashes included: system administrators only.
+if (!$perms->checkModule('backup', 'view') || !$perms->checkModule('system', 'edit'))
   $AppUI->redirect('m=public&a=access_denied');
 
 $export_what = dPgetParam($_POST, 'export_what');

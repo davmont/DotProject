@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 //This file will write a php config file to be included during execution of all timecard file for configuration.
 
@@ -90,7 +93,7 @@ if(dPgetParam( $_POST, "Save", '' )!=''){
 						break;
 				}
 				
-				fwrite($handle, "\$MILEAGELOG_CONFIG['".$key."'] = '".$val."';\n");
+				fwrite($handle, "\$MILEAGELOG_CONFIG[" . var_export($key, true) . "] = " . var_export((string)$val, true) . ";\n");
 			}
 
 			fwrite($handle, "?>");

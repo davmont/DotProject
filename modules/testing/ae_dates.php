@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // $Id: ae_dates.php,v 1.1.1.1 2005/07/27 02:35:21 lucidlogic Exp $
 
 global $AppUI, $dPconfig, $task_parent_options, $loadFromTab;
@@ -65,7 +68,7 @@ function cal_work_day_conv($val) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="task_start_date" id="task_start_date" value="<?php echo $start_date ? $start_date->format( FMT_TIMESTAMP_DATE ) : "" ;?>" />
 		<input type="text" name="start_date" id="start_date" value="<?php echo $start_date ? $start_date->format( $df ) : "" ;?>" class="text" disabled="disabled" />
-		<a href="#" onClick="popCalendar(document.datesFrm.start_date)">
+		<a href="#"<?php echo dPaction('popCalendarField', array('datesFrm', 'start_date')); ?>>
 						<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0">
 					</a>
 	</td>
@@ -73,7 +76,7 @@ function cal_work_day_conv($val) {
 		<table><tr>
 						
 	<?php
-		echo "<td>" . arraySelect($hours, "start_hour",'size="1" onchange="setAMPM(this)" class="text"', $start_date ? $start_date->getHour() : $start ) . "</td><td>" . " : " . "</td>";
+		echo "<td>" . arraySelect($hours, "start_hour",'size="1" class="text"' . dPaction('setAMPM', array('$this')), $start_date ? $start_date->getHour() : $start ) . "</td><td>" . " : " . "</td>";
 		echo "<td>" . arraySelect($minutes, "start_minute",'size="1" class="text"', $start_date ? $start_date->getMinute() : "0" ) . "</td>";
 		if ( stristr($AppUI->getPref('TIMEFORMAT'), "%p") ) {
 			echo '<td><input type="text" name="start_hour_ampm" id="start_hour_ampm" value="' . ( $start_date ? $start_date->getAMPM() : ( $start > 11 ? "pm" : "am" ) ) . '" disabled="disabled" class="text" size="2" /></td>';
@@ -87,14 +90,14 @@ function cal_work_day_conv($val) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="task_end_date" id="task_end_date" value="<?php echo $end_date ? $end_date->format( FMT_TIMESTAMP_DATE ) : '';?>" />
 		<input type="text" name="end_date" id="end_date" value="<?php echo $end_date ? $end_date->format( $df ) : '';?>" class="text" disabled="disabled" />
-		<a href="#" onClick="popCalendar(document.datesFrm.end_date)">
+		<a href="#"<?php echo dPaction('popCalendarField', array('datesFrm', 'end_date')); ?>>
 						<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0">
 					</a>
 	</td>
         <td>
 <table><tr>
 	<?php
-		echo "<td>" . arraySelect($hours, "end_hour",'size="1" onchange="setAMPM(this)" class="text"', $end_date ? $end_date->getHour() : $end ) . "</td><td>" . " : " . "</td>";
+		echo "<td>" . arraySelect($hours, "end_hour",'size="1" class="text"' . dPaction('setAMPM', array('$this')), $end_date ? $end_date->getHour() : $end ) . "</td><td>" . " : " . "</td>";
 		echo "<td>" .arraySelect($minutes, "end_minute",'size="1" class="text"', $end_date ? $end_date->getMinute() : "00" ) . "</td>";
 		if ( stristr($AppUI->getPref('TIMEFORMAT'), "%p") ) {
 			echo '<td><input type="text" name="end_hour_ampm" id="end_hour_ampm" value="' . ( $end_date ? $end_date->getAMPM() : ( $end > 11 ? "pm" : "am" ) ) . '" disabled="disabled" class="text" size="2" /></td>';
@@ -117,8 +120,8 @@ function cal_work_day_conv($val) {
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Calculate' );?>:</td>
 	<td nowrap="nowrap">
-		<input type="button" value="<?php echo $AppUI->_('Duration');?>" onclick="calcDuration(document.datesFrm)" class="button" />
-		<input type="button" value="<?php echo $AppUI->_('Finish Date');?>" onclick="calcFinish(document.datesFrm)" class="button" />
+		<input type="button" value="<?php echo $AppUI->_('Duration');?>" <?php echo dPaction('calcDuration', array('$form')); ?> class="button" />
+		<input type="button" value="<?php echo $AppUI->_('Finish Date');?>" <?php echo dPaction('calcFinish', array('$form')); ?> class="button" />
 	</td>
 	<td><?php echo $AppUI->_('Working Days').': '.$cwd_hr; ?></td>
 </tr>
@@ -135,6 +138,6 @@ function cal_work_day_conv($val) {
         ?>
 </table>
 </form>
-<script language="javascript">
- subForm.push(new FormDefinition(<?php echo $tab;?>, document.datesFrm, checkDates, saveDates));
+<script nonce="<?php echo dPcspNonce(); ?>">
+ subForm.push(new FormDefinition(<?php echo (int)$tab;?>, document.datesFrm, checkDates, saveDates));
 </script>

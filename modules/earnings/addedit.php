@@ -1,4 +1,8 @@
-<?php /* earnings $Id: addedit.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* earnings $Id: addedit.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
 /**
 * earnings :: Add/Edit earning
 */
@@ -26,14 +30,13 @@ if ( isset( $_GET["earning_id"] ) ) {
 	$earning_id = intval( dPgetParam( $_GET, "earning_id", 0 ) );
 
 	// load the record data
+	$dbprefix = dPgetConfig('dbprefix', '');
 	$sql = "SELECT i1.earning_id, i1.earning_user_id, i1.earning_date, i1.earning_num, i1.earning_submit_company_id, i1.earning_submit_contact, 
 	i1.earning_submit_email, i1.earning_submit_phone, i1.earning_submit_address1, i1.earning_submit_address2, i1.earning_submit_city, i1.earning_submit_state, 
-	i1.earning_submit_zip, i1.earning_terms, i1.earning_comments, 
+	i1.earning_submit_zip, i1.earning_terms, i1.earning_comments, i1.earning_title, 
 	i1.earning_total, i1.earning_submitted, i1.earning_submitted_comment, i1.earning_approved, 
-	i1.earning_approved_comment, i1.earning_paid, i1.earning_paid_comment, i2.earning_items_id, i2.earning_parent_id, 
-	i2.earning_tasklog_id, i2.earning_item_date, i2.earning_item_description, i2.earning_item_hours, 
-	i2.earning_item_costcode, i2.earning_item_rate, c.company_name, u.user_username 
-	FROM earnings i1, earnings_items i2, companies c, users u
+	i1.earning_approved_comment, i1.earning_paid, i1.earning_paid_comment, c.company_name, u.user_username 
+	FROM {$dbprefix}earnings i1, {$dbprefix}companies c, {$dbprefix}users u
 	WHERE c.company_id = i1.earning_submit_company_id AND u.user_id = i1.earning_user_id AND i1.earning_id = $earning_id
 	GROUP BY i1.earning_id";
 	//echo $sql;
@@ -42,7 +45,8 @@ if ( isset( $_GET["earning_id"] ) ) {
 	if (!db_loadObject( $sql, $obj )) {
 		$AppUI->setMsg( 'earning' );
 		$AppUI->setMsg( "invalidID", UI_MSG_ERROR, true );
-		$AppUI->redirect();
+		// Not back to the saved place: that can be this page, which loops.
+		$AppUI->redirect('m=earnings');
 	} else {
 		$AppUI->savePlace();
 	}
@@ -50,9 +54,10 @@ if ( isset( $_GET["earning_id"] ) ) {
 	// Add Mode
 	$form_mode = 0;
 	// Create $obj with blank values
-	$obj = null;
+	$obj = new stdClass();
 	$obj->earning_date=date("Ymd");
 	$obj->earning_num='';
+	$obj->earning_title='';
 	$obj->earning_submit_contact='Manager';
 	$obj->earning_submit_company_id=intval($AppUI->user_company);
 	$obj->earning_submit_address1='';
@@ -68,13 +73,14 @@ if ( isset( $_GET["earning_id"] ) ) {
 $earning_date = intval( $obj->earning_date ) ? new CDate( $obj->earning_date ) : new CDate();
 
 // setup the title block
+$msg = '';
 // customize by user-type
 if ( $AppUI->user_type != 7 ) {
 	if ($form_mode == 1 ) {
 		$titleBlock = new CTitleBlock( 'Edit Invoice', 'earnings.gif', $m, "$m.$a" );
 		$titleBlock->addCrumb( "?m=earnings", "invoices list" );
 		if ($canEdit) {
-			if ($canEdit and $obj->submitted_date == Null) {
+			if ($canEdit and !intval($obj->earning_submitted)) {
 				$titleBlock->addCrumbDelete( 'delete invoice', $canDelete, $msg );
 			}
 		}
@@ -87,7 +93,7 @@ if ( $AppUI->user_type != 7 ) {
 		$titleBlock = new CTitleBlock( 'Edit Timecard', 'earnings.gif', $m, "$m.$a" );
 		$titleBlock->addCrumb( "?m=earnings", "timecards list" );
 		if ($canEdit) {
-			if ($canEdit and $obj->submitted_date == Null) {
+			if ($canEdit and !intval($obj->earning_submitted)) {
 				$titleBlock->addCrumbDelete( 'delete timecard', $canDelete, $msg );
 			}
 		}
@@ -98,13 +104,13 @@ if ( $AppUI->user_type != 7 ) {
 }
 $titleBlock->show();
 ?>
-<SCRIPT language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 var calWin = null;
 
 function popCalendar( field ){
 	calendarField = field;
-	idate = eval( 'document.editFrm.' + field + '.value' );
+	idate = document.editFrm[field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
@@ -113,8 +119,8 @@ function popCalendar( field ){
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.editFrm.' + calendarField );
-	fld_fdate = eval( 'document.editFrm.' + calendarField + '_formatted');
+	fld_date = document.editFrm[calendarField];
+	fld_fdate = document.editFrm[calendarField + '_formatted'];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -164,6 +170,10 @@ function trim(s) {
 	return s;
 }
 
+function suggestNum(num) {
+	document.editFrm.earning_num.value = num;
+}
+
 function selectCompany(companyID) {
 	document.editFrm.earning_submit_company_id.value=companyID;
 	document.editFrm.earning_submit_address1.value="";
@@ -173,15 +183,27 @@ function selectCompany(companyID) {
 	document.editFrm.earning_submit_zip.value="";
 	document.editFrm.earning_submit_phone.value="";
 }
+
+// The title block's delete link.
+function delIt() {
+	if (confirm( "Are you sure you want to delete this form? All history will be lost and all line items within it will be released for use on other forms." )) {
+		document.frmDelete.submit();
+	}
+}
 </script>
+<?php if ( $form_mode == 1 ) { ?>
+<form name="frmDelete" action="?m=earnings&a=inv_aed&earning_id=<?php echo (int)$earning_id; ?>" method="post">
+	<input type="hidden" name="inv_dosql" value="killearning" />
+</form>
+<?php } ?>
 <table border="1" cellpadding="4" cellspacing="0" width="100%" class="std">
 <?php if ( $form_mode == 1 ) { ?>
 	<form name="editFrm" action="?m=earnings&a=inv_aed&earning_id=<?php echo $earning_id;?>" method="post">
 	<input type="hidden" name="inv_dosql" value="editinv"/>
-<? } else { ?>
+<?php } else { ?>
 	<form name="editFrm" action="?m=earnings&a=inv_aed&earning_id=0" method="post">
 	<input type="hidden" name="inv_dosql" value="addinv"/>
-<? } ?>
+<?php } ?>
 <tr>
 	<td width="50%" valign="top">
 		<strong><?php echo $AppUI->_('Form Details');?></strong>
@@ -190,7 +212,7 @@ function selectCompany(companyID) {
 			<td align="right" nowrap><?php echo $AppUI->_('Date');?></td>
 			<td>
 				<input type="hidden" name="earning_date" value="<?php echo $earning_date->format( FMT_TIMESTAMP_DATE );?>">
-				<input type="text" name="earning_date_formatted" size="12" value="<?php echo $earning_date->format( $df );?>" class="text" disabled="disabled" />&nbsp;<a href="#inv_date" onClick="popCalendar('earning_date');"><img align="middle" src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a>&nbsp;<i>Click the button to select a different date.</i>
+				<input type="text" name="earning_date_formatted" size="12" value="<?php echo $earning_date->format( $df );?>" class="text" disabled="disabled" />&nbsp;<a href="#"<?php echo dPaction('popCalendar', array('earning_date')); ?>><img align="middle" src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a>&nbsp;<i>Click the button to select a different date.</i>
 			</td>
 		</tr>
 		<tr>
@@ -200,7 +222,7 @@ function selectCompany(companyID) {
 				<td align="right" nowrap><?php echo $AppUI->_('Timecard Number');?></td>
 			<?php } ?>
 			<td><input type="text" class="text" name="earning_num" value="<?php echo dPformSafe( $obj->earning_num );?>" size="30" maxlength="35" />&nbsp;
-			<input type="button" name="btnSuggNum" value=" suggest " onClick="javascript:document.editFrm.earning_num.value='<?php echo date("YmdHi") . "-" . $AppUI->user_id; ?>';">&nbsp;<i>Number must be unique.  It is highly recommended that you use the suggest button.</i></td>
+			<input type="button" name="btnSuggNum" value=" suggest " <?php echo dPaction('suggestNum', array(date("YmdHi") . "-" . $AppUI->user_id)); ?>>&nbsp;<i>Number must be unique.  It is highly recommended that you use the suggest button.</i></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Title');?></td>
@@ -212,7 +234,7 @@ function selectCompany(companyID) {
 			<td width="100%">
 			<input type="hidden" name="earning_submit_company_id" value="<?php echo $obj->earning_submit_company_id;?>">
 			<?php
-				echo arraySelect( $companies, 'earning_submit_company_select', 'class="text" size="1" onClick="javascript:selectCompany(this.value);"', $obj->earning_submit_company_id );
+				echo arraySelect( $companies, 'earning_submit_company_select', 'class="text" size="1"' . dPaction('selectCompany', array('$value')), $obj->earning_submit_company_id );
 			?>
 			</td>
 			<?php }
@@ -238,7 +260,7 @@ function selectCompany(companyID) {
 			<?php } else { ?>
 			<td align="right" nowrap><?php echo $AppUI->_('Terms');?></td>
 			<td>
-				<input type="text" name="earning_terms" value="<?php echo $obj->earning_terms; ?>">&nbsp;<i>Purely for your notations.</i>
+				<input type="text" name="earning_terms" value="<?php echo dPformSafe($obj->earning_terms); ?>">&nbsp;<i>Purely for your notations.</i>
 			</td>
 			<?php } ?>
 		</tr>
@@ -286,7 +308,7 @@ function selectCompany(companyID) {
 				<input type="hidden" name="earning_submit_state" value="">
 				<input type="hidden" name="earning_submit_zip" value="">
 				<input type="hidden" name="earning_submit_phone" value="">
-			<? } ?>
+			<?php } ?>
 		</tr>
 		</table>
 	</td>
@@ -313,10 +335,10 @@ function selectCompany(companyID) {
 		<table>
 		<tr>
 			<td>
-				<input class="button" type="button" name="btnCancel" value=" cancel " onClick="javascript:location.href='?m=earnings&a=view&earning_id=<?php echo $earning_id; ?>';}" />
+				<input class="button" type="button" name="btnCancel" value=" cancel " <?php echo dPaction(null, array(), null, array('href' => '?m=earnings&a=view&earning_id=' . (isset($earning_id) ? (int)$earning_id : 0))); ?> />
 			</td>
 			<td>
-				<input class="button" type="button" name="btnSave" value=" save " onClick="javascript:submitIt();" />
+				<input class="button" type="button" name="btnSave" value=" save " <?php echo dPaction('submitIt'); ?> />
 			</td>
 		</tr>
 		</table>

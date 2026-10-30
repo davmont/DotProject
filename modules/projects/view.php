@@ -43,7 +43,7 @@ $working_hours = ($dPconfig['daily_working_hours'] ? $dPconfig['daily_working_ho
 //check that project has tasks; otherwise run seperate query
 $q->addTable('tasks', 'tsk');
 $q->addQuery("COUNT(distinct tsk.task_id) AS total_tasks");
-$q->addWhere('task_project = ' . $project_id);
+$q->addWhere('task_project = ' . (int)$project_id);
 $hasTasks = $q->loadResult();
 $q->clear();
 
@@ -71,7 +71,7 @@ if ($hasTasks) {
 		. ", CONCAT_WS(' ',contact_first_name,contact_last_name) user_name, p.*, "
 		. '(0.0) AS project_percent_complete');
 }
-$q->addWhere('project_id = ' . $project_id);
+$q->addWhere('project_id = ' . (int)$project_id);
 $q->addGroup('project_id');
 $sql = $q->prepare();
 $q->clear();
@@ -94,7 +94,7 @@ if ($hasTasks) {
 	$q->addTable('task_log');
 	$q->addTable('tasks');
 	$q->addQuery('ROUND(SUM(task_log_hours),2)');
-	$q->addWhere('task_log_task = task_id AND task_project = ' . $project_id);
+	$q->addWhere('task_log_task = task_id AND task_project = ' . (int)$project_id);
 	$sql = $q->prepare();
 	$q->clear();
 	$worked_hours = db_loadResult($sql);
@@ -104,14 +104,14 @@ if ($hasTasks) {
 	//same milestone comment as above, also applies to dynamic tasks
 	$q->addTable('tasks');
 	$q->addQuery('ROUND(SUM(task_duration),2)');
-	$q->addWhere('task_duration_type = 24 AND task_dynamic != 1 AND task_project = ' . $project_id);
+	$q->addWhere('task_duration_type = 24 AND task_dynamic != 1 AND task_project = ' . (int)$project_id);
 	$sql = $q->prepare();
 	$q->clear();
 	$days = db_loadResult($sql);
 
 	$q->addTable('tasks');
 	$q->addQuery('ROUND(SUM(task_duration),2)');
-	$q->addWhere('task_duration_type = 1 AND task_dynamic != 1 AND task_project = ' . $project_id);
+	$q->addWhere('task_duration_type = 1 AND task_dynamic != 1 AND task_project = ' . (int)$project_id);
 	$sql = $q->prepare();
 	$q->clear();
 	$hours = db_loadResult($sql);
@@ -122,16 +122,14 @@ if ($hasTasks) {
 	$q->addTable('tasks', 't');
 	$q->addQuery('ROUND(SUM(t.task_duration*u.perc_assignment/100),2)');
 	$q->addJoin('user_tasks', 'u', 't.task_id = u.task_id');
-	$q->addWhere('t.task_duration_type = 24 AND t.task_dynamic != 1 AND t.task_project = '
-		. $project_id);
+	$q->addWhere('t.task_duration_type = 24 AND t.task_dynamic != 1 AND t.task_project = ' . (int)$project_id);
 	$total_project_days_sql = $q->prepare();
 	$q->clear();
 
 	$q->addTable('tasks', 't');
 	$q->addQuery('ROUND(SUM(t.task_duration*u.perc_assignment/100),2)');
 	$q->addJoin('user_tasks', 'u', 't.task_id = u.task_id');
-	$q->addWhere('t.task_duration_type = 1 AND t.task_dynamic != 1 AND t.task_project = '
-		. $project_id);
+	$q->addWhere('t.task_duration_type = 1 AND t.task_dynamic != 1 AND t.task_project = ' . (int)$project_id);
 	$total_project_hours_sql = $q->prepare();
 	$q->clear();
 
@@ -166,7 +164,7 @@ $search_text = (($AppUI->getState('searchtext')) ? $AppUI->getState('searchtext'
 $titleBlock->addCell($AppUI->_('Search') . ':');
 $titleBlock->addCell(
 	('<input type="text" class="text" SIZE="10" name="searchtext"'
-		. ' onchange="javascript:document.searchfilter.submit();" value="' . $search_text . '" '
+		. dPaction(null, array(), 'change', array('submit' => 'searchfilter')) . ' value="' . dPhtml($search_text) . '" '
 		. 'title="' . $AppUI->_('Search in name and description fields')
 		. '"/><!--<input type="submit" class="button" value=">" title="'
 		. $AppUI->_('Search in name and description fields') . '"/>-->'),
@@ -208,7 +206,7 @@ $titleBlock->show();
 //update project_percent_complete in db of this project if change have been made
 smartUpdateProjectPercentComplete($project_id);
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	<?php
 	//security improvement:
 //some javascript functions may not appear on client side in case of user not having write permissions
@@ -216,10 +214,11 @@ smartUpdateProjectPercentComplete($project_id);
 	if ($canEdit) {
 		?>
 		function delIt() {
-			var projectName = "<?php echo $obj->project_name; ?>";
-			var wroteName = prompt("<?php
-			echo ($AppUI->_('confirmDelete') . ' \"' . $obj->project_name . '\" \n' . $AppUI->_('writeProjectName')
-				. '\n' . $AppUI->_('canCopyPaste')); ?>", "<?php echo $AppUI->_('projectName') ?>");
+			var projectName = <?php echo dPjs($obj->project_name); ?>;
+			var wroteName = prompt(<?php
+			echo dPjs($AppUI->_('confirmDelete', UI_OUTPUT_RAW) . ' "' . $obj->project_name . '" ' . "\n"
+				. $AppUI->_('writeProjectName', UI_OUTPUT_RAW) . "\n" . $AppUI->_('canCopyPaste', UI_OUTPUT_RAW)); ?>, <?php
+			echo dPjs($AppUI->_('projectName', UI_OUTPUT_RAW)); ?>);
 			if (projectName == wroteName) {
 				document.frmDelete.submit();
 			}
@@ -261,12 +260,12 @@ smartUpdateProjectPercentComplete($project_id);
 					<img src="images/icons/pencil.gif" title="<?php echo $AppUI->_("edit this project"); ?>" />
 				</a>
 			<?php } ?>
-			<a href="javascript:doDetails()">
+			<a href="#"<?php echo dPaction('doDetails'); ?>>
 				<img border="0" align="middle" id="displayImg" alt="" src="images/icons/expand.gif" />
 			</a>
 			<?php
 			echo ('<span style="color:' . bestColor($obj->project_color_identifier) . '; font-weight:bold">'
-				. $obj->project_name . '</span>');
+				. dPhtml($obj->project_name) . '</span>');
 			?>
 		</td>
 	</tr>
@@ -361,7 +360,7 @@ smartUpdateProjectPercentComplete($project_id);
 						<table cellspacing="0" cellpadding="2" border="0" width="100%">
 							<tr>
 								<td class="hilite">
-									<?php echo str_replace(chr(10), "<br>", $obj->project_description); ?>
+									<?php echo str_replace(chr(10), "<br>", dPhtml($obj->project_description)); ?>
 								</td>
 							</tr>
 						</table>
@@ -409,7 +408,7 @@ smartUpdateProjectPercentComplete($project_id);
 				$q->addTable('departments', 'a');
 				$q->addTable('project_departments', 'b');
 				$q->addQuery('a.dept_id, a.dept_name, a.dept_phone');
-				$q->addWhere('a.dept_id = b.department_id AND b.project_id = ' . $project_id);
+				$q->addWhere('a.dept_id = b.department_id AND b.project_id = ' . (int)$project_id);
 				$depts = $q->loadHashList('dept_id');
 				$q->clear();
 				if (count($depts) > 0) {
@@ -510,7 +509,9 @@ $canAccessTask = getPermission('tasks', 'access');
 $canAccessTaskLog = getPermission('task_log', 'access');
 $showEditCheckbox = false;
 
-$tabBox->add(DP_BASE_DIR . '/modules/journal/index', $AppUI->_('Journal'));
+if (isset($AppUI->getActiveModules()['journal'])) {
+	$tabBox->add(DP_BASE_DIR . '/modules/journal/index', $AppUI->_('Journal'));
+}
 if (isset($AppUI->getActiveModules()['initiating'])) {
 	$tabBox->add(DP_BASE_DIR . '/modules/initiating/index_table', $AppUI->_('Initiating'));
 }
@@ -530,11 +531,6 @@ if (getPermission('forums', 'access')) {
 $tabBox->loadExtras($m);
 $f = 'all';
 $min_view = true;
-
-if (isset($AppUI->getActiveModules()['dotproject_plus'])) {
-	$tabBox->add(DP_BASE_DIR . "/modules/dotproject_plus/projects_tab.planning_and_monitoring", $AppUI->_("Planning and monitoring", UI_OUTPUT_HTML));
-	$tabBox->add(DP_BASE_DIR . "/modules/dotproject_plus/projects_tab.execution", $AppUI->_("Execution", UI_OUTPUT_HTML));
-}
 
 $tabBox->show();
 ?>

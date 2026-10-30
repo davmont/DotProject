@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 // this is the index site for our testing module
 // it is automatically appended on the applications main ./index.php
 // by the dPframework
@@ -7,7 +11,7 @@
 $canRead = !getDenyRead( $m );		// retrieve module-based readPermission bool flag
 $canEdit = !getDenyEdit( $m );		// retrieve module-based writePermission bool flag
 if (isset( $_REQUEST['project_id'] )) {
-	$AppUI->setState( 'TestIdxProject', $_REQUEST['project_id'] );
+	$AppUI->setState( 'TestIdxProject', (int)$_REQUEST['project_id'] );
 }
 
 $project_id = $AppUI->getState( 'TestIdxProject', 0 );
@@ -40,7 +44,7 @@ $projects = arrayMerge( array( '0'=>$AppUI->_('All', UI_OUTPUT_RAW) ), $projects
 
 $titleBlock->addCell( $AppUI->_('Filter') . ':' );
 $titleBlock->addCell(
-	arraySelect( $projects, 'project_id', 'onChange="document.pickProject.submit()" size="1" class="text"', $project_id ), '',
+	arraySelect( $projects, 'project_id', 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => '')), $project_id ), '',
 	'<form name="pickProject" action="?m=testing" method="post">', '</form>'
 );
 

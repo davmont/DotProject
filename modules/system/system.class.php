@@ -62,7 +62,7 @@ class CPreferences {
 		$q = new DBQuery;
 		$q->setDelete('user_preferences');
 		$q->addWhere('pref_user = ' . (int)$this->pref_user);
-		$q->addWhere('pref_name = \'' . $this->pref_name . '\'');
+		$q->addWhere('pref_name = ?', array($this->pref_name));
 		return ((!($q->exec())) ? db_error() : null);
 	}
 }
@@ -276,7 +276,7 @@ class CConfig extends CDpObject {
 		$this->_query->clear();
 		$this->_query->addTable('config_list');
 		$this->_query->addOrder('config_list_id');
-		$this->_query->addWhere('config_id = ' . $id);
+		$this->_query->addWhere('config_id = ' . (int)$id);
 		$sql = $this->_query->prepare();
 		$this->_query->clear();
 		return db_loadHashList($sql, 'config_list_id');
@@ -324,8 +324,8 @@ class bcode extends CDpObject {
 		$q = new DBQuery;
 		$q->addQuery('billingcode_id');
 		$q->addTable('billingcode');
-		$q->addWhere("billingcode_name = '" . $this->billingcode_name . "'");
-		$q->addWhere('company_id = ' . $this->company_id);
+		$q->addWhere('billingcode_name = ' . $q->quote($this->billingcode_name));
+		$q->addWhere('company_id = ' . (int)$this->company_id);
 		$found_id = $q->loadResult();
 		
 		if ($found_id && $found_id != $this->_billingcode_id) {
@@ -337,7 +337,7 @@ class bcode extends CDpObject {
 			$q->addUpdate('billingcode_value', $this->billingcode_value);
 			$q->addUpdate('billingcode_status', $this->billingcode_status);
 			$q->addUpdate('company_id', $this->company_id);
-			$q->addWhere('billingcode_id = ' . $this->_billingcode_id);	
+			$q->addWhere('billingcode_id = ' . (int)$this->_billingcode_id);	
 			$q->exec();
 			$q->clear();
 		} else if (!($ret = db_insertObject ('billingcode', $this, 'billingcode_id'))) {

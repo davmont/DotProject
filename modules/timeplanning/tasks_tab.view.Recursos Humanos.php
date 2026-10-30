@@ -27,16 +27,16 @@ foreach ($assigned_perc as $user_id => $data) {
 	$initPercAsignment .= "$user_id={$data['perc_assignment']};";
 }
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 echo "var projTasksWithEndDates=new Array();\n";
-$keys = array_keys($projTasksWithEndDates);
+$keys = array_keys((array)$projTasksWithEndDates);
 for ($i = 1, $xi = sizeof($keys); $i < $xi; $i++) {
 	//array[task_is] = end_date, end_hour, end_minutes
-	echo ('projTasksWithEndDates[' . $keys[$i] . ']=new Array("' 
-	      . $projTasksWithEndDates[$keys[$i]][1] . '", "' 
-	      . $projTasksWithEndDates[$keys[$i]][2] . '", "' 
-	      . $projTasksWithEndDates[$keys[$i]][3] ."\");\n");
+	echo ('projTasksWithEndDates[' . (int)$keys[$i] . ']=new Array('
+	      . dPjs($projTasksWithEndDates[$keys[$i]][1]) . ', '
+	      . dPjs($projTasksWithEndDates[$keys[$i]][2]) . ', '
+	      . dPjs($projTasksWithEndDates[$keys[$i]][3]) . ");\n");
 }
 ?>
 </script>

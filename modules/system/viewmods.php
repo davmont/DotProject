@@ -26,6 +26,14 @@ $modules = db_loadList($q->prepare());
 // get the modules actually installed on the file system
 $modFiles = $AppUI->readDirs('modules');
 
+// Module commands change the installation, so the links post frmModCmd (with the CSRF token)
+// instead of sending a GET request to domodsql.
+function modCmdLink($cmd, $mod_id, $mod_directory = '', $confirm = '')
+{
+	return 'href="#"' . dPaction('modCmd', array($cmd, (int)$mod_id, (string)$mod_directory), null,
+		$confirm ? array('confirm' => $confirm) : array());
+}
+
 $titleBlock = new CTitleBlock('Modules', 'power-management.png', $m, $m . "." . $a);
 $titleBlock->addCrumb('?m=system', 'System Admin');
 $titleBlock->show();
@@ -49,7 +57,6 @@ foreach ($modules as $row) {
 	if (isset($modFiles[$row['mod_directory']])) {
 		$modFiles[$row['mod_directory']] = '';
 	}
-	$query_string = '?m='.$m.'&amp;a=domodsql&amp;mod_id='.$row['mod_id'];
 	$s = '';
 	// arrows
 	$s .= '<td>';
@@ -58,9 +65,9 @@ foreach ($modules as $row) {
 	if ($canEdit) {
 		$s .= '<map id="arrow'.$row['mod_id'].'" name="arrow'.$row['mod_id'].'">'."\n";
 		if ($row['mod_ui_order'] > 0) {
-			$s .= '<area coords="0,0,10,7" href="' . $query_string . '&amp;cmd=moveup" alt="" />'."\n";
+			$s .= '<area coords="0,0,10,7" ' . modCmdLink('moveup', $row['mod_id']) . ' alt="" />'."\n";
 		}
-		$s .= '<area coords="0,8,10,14" href="' . $query_string . '&amp;cmd=movedn" alt="" />'."\n";
+		$s .= '<area coords="0,8,10,14" ' . modCmdLink('movedn', $row['mod_id']) . ' alt="" />'."\n";
 		$s .= '</map>'."\n";
 	}
 	$s .= '</td>'."\n";
@@ -78,16 +85,16 @@ foreach ($modules as $row) {
 	       . ($row['mod_active'] ? $AppUI->_('deactivate') : $AppUI->_('activate')) . '</a>');
 	*/
 	if ($canEdit) {
-		$s .= '<a href="' . $query_string . '&amp;cmd=toggle">';
+		$s .= '<a ' . modCmdLink('toggle', $row['mod_id']) . '>';
 	}
 	$s .= ($row['mod_active'] ? $AppUI->_('active') : $AppUI->_('disabled'));
 	if ($canEdit) {
 		$s .= '</a>';
 	}
 	if ($row['mod_type'] != 'core' && $canEdit) {
-		$s .= (' | <a href="' . $query_string . '&amp;cmd=remove" onclick="javascript:return window.confirm(' 
-		       . "'" . $AppUI->_('This will delete all data associated with the module!') 
-		       . '\n\n' . $AppUI->_('Are you sure?') . '\n' . "'" . ');">' 
+		$s .= (' | <a ' . modCmdLink('remove', $row['mod_id'], '', 
+		       $AppUI->_('This will delete all data associated with the module!', UI_OUTPUT_RAW) 
+		       . "\n\n" . $AppUI->_('Are you sure?', UI_OUTPUT_RAW) . "\n") . '>' 
 		       . $AppUI->_('remove') . '</a>');
 	}
 
@@ -97,13 +104,13 @@ foreach ($modules as $row) {
 		include_once(DP_BASE_DIR . '/modules/' . $row['mod_directory'] . '/setup.php');
 	}
 	if ($ok && $config[ 'mod_version' ] != $row['mod_version'] && $canEdit) {
-		$s .= (' | <a href="' . $query_string . '&amp;cmd=upgrade" onclick="return window.confirm(' 
-		       . "'" . $AppUI->_('Are you sure?') . "'" . ');" >' . $AppUI->_('upgrade') . '</a>');
+		$s .= (' | <a ' . modCmdLink('upgrade', $row['mod_id'], '', $AppUI->_('Are you sure?', UI_OUTPUT_RAW)) 
+		       . ' >' . $AppUI->_('upgrade') . '</a>');
 	}
 
 	// check for configuration
 	if ($ok && isset($config['mod_config']) && $config['mod_config'] == true && $canEdit) {
-		$s .= ' | <a href="' . $query_string . '&amp;cmd=configure">' . $AppUI->_('configure') . '</a>';
+		$s .= ' | <a ' . modCmdLink('configure', $row['mod_id']) . '>' . $AppUI->_('configure') . '</a>';
 	}	
 	
 	$s .= '</td>' . "\n";
@@ -118,7 +125,7 @@ foreach ($modules as $row) {
 	
 	
 	if ($canEdit) {
-		$s .= '<a href="' . $query_string . '&amp;cmd=toggleMenu">';
+		$s .= '<a ' . modCmdLink('toggleMenu', $row['mod_id']) . '>';
 	}
 	$s .= (($row['mod_ui_active']) ? $AppUI->_('visible') : $AppUI->_('hidden'));
 	if ($canEdit) {
@@ -140,7 +147,7 @@ foreach ($modFiles as $v) {
 		$s .= '<td>';
 		$s .= '<img src="./images/obj/dotgrey.gif" width="12" height="12" alt="" />&nbsp;';
 		if ($canEdit) {
-			$s .= '<a href="?m=' . $m . '&amp;a=domodsql&amp;cmd=install&amp;mod_directory=' . $v . '">';
+			$s .= '<a ' . modCmdLink('install', 0, $v) . '>';
 		}
 		$s .= $AppUI->_('install');
 		if ($canEdit) {
@@ -153,3 +160,17 @@ foreach ($modFiles as $v) {
 }
 ?>
 </table>
+<form name="frmModCmd" method="post" action="?m=system&amp;a=domodsql">
+	<input type="hidden" name="cmd" value="" />
+	<input type="hidden" name="mod_id" value="" />
+	<input type="hidden" name="mod_directory" value="" />
+</form>
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+function modCmd(cmd, mod_id, mod_directory) {
+	var f = document.frmModCmd;
+	f.cmd.value = cmd;
+	f.mod_id.value = mod_id;
+	f.mod_directory.value = mod_directory;
+	f.submit();
+}
+</script>

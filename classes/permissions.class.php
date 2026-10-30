@@ -41,6 +41,11 @@ require_once DP_BASE_DIR . '/lib/phpgacl/gacl_api.class.php';
  */
 class dPacl extends gacl_api
 {
+	// Set by gacl::__construct() and below (declared for PHP 8.2).
+	var $db = null;
+	var $Cache_Lite = null;
+	var $_original_db_prefix = '';
+	var $_debug_msg = '';
 
 	function __construct($opts = null)
 	{
@@ -94,6 +99,12 @@ class dPacl extends gacl_api
 		// If the check failed, try to auto-repair for admin user (user_id=1)
 		// This handles cases where the GACL seed data wasn't fully loaded during install
 		$login_int = (int) $login;
+		// Only the built-in administrator is repaired. Any other user without a
+		// role must not log in: removing all roles is how an account is disabled,
+		// and the repair below would put that user in the Administrator group.
+		if ($login_int !== 1) {
+			return 0;
+		}
 		$dbprefix = dPgetConfig('dbprefix', '');
 
 		// Check if the ARO entry exists at all
@@ -122,7 +133,7 @@ class dPacl extends gacl_api
 			$next_row = $q4->loadHash();
 			$next_id = $next_row ? $next_row['next_id'] : 10;
 
-			db_exec("INSERT INTO {$dbprefix}gacl_aro (id, section_value, value, order_value, name, hidden) VALUES ({$next_id}, 'user', '{$login_int}', 1, '{$username}', 0)");
+			db_exec("INSERT INTO {$dbprefix}gacl_aro (id, section_value, value, order_value, name, hidden) VALUES (" . (int) $next_id . ", 'user', '{$login_int}', 1, '" . db_escape($username) . "', 0)");
 			$aro_id = $next_id;
 			error_log("checkLogin: Created missing ARO entry for user_id={$login_int}, aro_id={$aro_id}");
 		} else {
@@ -208,13 +219,14 @@ class dPacl extends gacl_api
 		}
 
 		$q = new DBQuery;
-		$q->addQuery('allow');
+		// acl_id tells an explicit rule for this item from no rule at all (see below).
+		$q->addQuery('allow, acl_id');
 		$q->addTable('dotpermissions');
 		$q->addWhere("permission='$op' AND axo=" . $q->quote($item) . " AND user_id='$userid' and section='$module'");
 		$q->addOrder('priority ASC,acl_id DESC');
 		$q->setLimit(1);
 		$arr = $q->loadHash();
-		$result = $arr ? $arr['allow'] : null;
+		$result = $arr ? $arr : null;
 		// Hack to allow access to item owner or participant. Inheritance of task rights from project rights. 
 		if (isset($item)) {
 			$IsProjectOwner = false;

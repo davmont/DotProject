@@ -1,3 +1,15 @@
+// Calendar icons: <img data-dp-call="mcDisplayCalendar" data-dp-args='["date_edit","dd/mm/yyyy","$this"]'> (js/dp-actions.js).
+function mcDisplayCalendar(fieldId, format, button)
+{
+	displayCalendar(document.getElementById(fieldId), format, button);
+}
+
+// The date fields of the cost and schedule tabs submit their form when changed (js/dp-actions.js).
+function mcSubmitForm(field)
+{
+	field.form.submit();
+}
+
 function formatadata(Campo, teclapres)
 {
 	var tecla = teclapres.keyCode;
@@ -24,7 +36,7 @@ function validarData(pObj) {
 		var dia = pObj.value.substring(0,2);
 		var mes = pObj.value.substring(3,5);
 		var ano = pObj.value.substring(6,10);
-		if (mes == 4 || mes == 6 || mes == 9 || mes == 11 && dia > 30) 
+		if ((mes == 4 || mes == 6 || mes == 9 || mes == 11) && dia > 30) 
 		  aRet = false;
 		else 
 		  if ((ano % 4) != 0 && mes == 2 && dia > 28) 

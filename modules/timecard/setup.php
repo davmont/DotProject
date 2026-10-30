@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: setup.php,v 1.7 2007/08/22 07:17:43 arcoz67 Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: setup.php,v 1.7 2007/08/22 07:17:43 arcoz67 Exp $ */
 /*
 dotProject Module
 

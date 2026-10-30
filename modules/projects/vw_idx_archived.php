@@ -19,7 +19,7 @@ $table_cols = $base_table_cols + (($editProjectsAllowed) ? 1 : 0);
 $added_cols = $table_cols - $base_table_cols;
 ?>
 
-<form action='./index.php' method='get'>
+<form action='./index.php?m=projects' method='post'>
 <table width="100%" border="0" cellpadding="3" cellspacing="1" class="tbl">
 <tr>
 	<td colspan="<?php echo ($base_table_cols); ?>" nowrap="nowrap">
@@ -117,11 +117,13 @@ echo htmlspecialchars($row['company_description'], ENT_QUOTES); ?>">
 	<td width="100%">
 		<a href="?m=projects&amp;a=view&amp;project_id=<?php 
 echo htmlspecialchars($row['project_id']); ?>" <?php
-if (!empty($row['project_description'])) { ?>onmouseover="return overlib('<?php 
-echo(htmlspecialchars(('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
-                                                addslashes($row['project_description'])) 
-                       . '</p></div>'), ENT_QUOTES)); ?>', CAPTION, '<?php 
-echo($AppUI->_('Description')); ?>', CENTER);" onmouseout="nd();"<?php } ?>>
+if (!empty($row['project_description'])) {
+	// overlib(tip, CAPTION, caption, CENTER); CAPTION is 1 and CENTER 7 in lib/overlib/overlib-shim.js
+	echo(dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', 
+	                                                         dPhtml($row['project_description'])) 
+	                                . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 
+	              'mouseover mouseout', array('call-mouseout' => 'nd')));
+} ?>>
 		<?php echo (htmlspecialchars($row['project_name'], ENT_QUOTES)); ?>
 		</a>
 	</td>

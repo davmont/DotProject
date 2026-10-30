@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 // may need so more thought as to which company to pull.  (maybe just search for 'internal' type companies)
 
 $is_special = ($AppUI->user_type > 0 and $AppUI->user_type < 7);
@@ -7,7 +11,7 @@ $q = new DBQuery();
 $q -> addTable('users','u');
 $q -> addJoin('contacts','c','u.user_contact=c.contact_id');
 $q -> addQuery('u.user_id, u.user_username, c.contact_first_name, c.contact_last_name');
-$q -> addWhere("user_company = $AppUI->user_company
+$q -> addWhere("user_company = " . (int)$AppUI->user_company . "
 " . ($is_special ? "" : " and user_id = " . $AppUI->user_id));
 $q -> addOrder('contact_last_name, contact_first_name');
 $result = $q -> loadList();
@@ -17,7 +21,7 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 
 ?>
 
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function setColor(color) {
 	var f = document.editFrm;
 	if (color) {
@@ -54,7 +58,7 @@ var calendarField = '';
 	
 function popCalendar( field ){
 	calendarField = field;
-	idate = eval( 'document.payrollForm.format_' + field + '.value' );
+	idate = document.payrollForm['format_' + field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
@@ -63,15 +67,15 @@ function popCalendar( field ){
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.payrollForm.format_' + calendarField );
-	fld_fdate = eval( 'document.payrollForm.' + calendarField );
+	fld_date = document.payrollForm['format_' + calendarField];
+	fld_fdate = document.payrollForm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
 
 </script>
 
-<form name="payrollForm" action="index.php?m=reports" method="post" onsubmit="return checkPayrollFields()">
+<form name="payrollForm" action="index.php?m=reports" method="post"<?php echo dPaction('checkPayrollFields', array(), 'submit'); ?>>
 
 <table border="0" width="600">
 	<tr>
@@ -86,7 +90,7 @@ function setCalendar( idate, fdate ) {
 			
 			<input type="hidden" name="format_start_date_payroll" value="<?php echo $fmt_start_date->format( FMT_TIMESTAMP_DATE );?>">
 			<input type="text" class="text" name="start_date_payroll" id="date1_payroll" disabled="disabled" value="<?php echo $view_start_date ?>">
-			<a href="#" onClick="return popCalendar('start_date_payroll', 'y-mm-dd');">
+			<a href="#"<?php echo dPaction('popCalendar', array('start_date_payroll', 'y-mm-dd')); ?>>
 				<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 			</a>
 			&nbsp;&nbsp;
@@ -94,7 +98,7 @@ function setCalendar( idate, fdate ) {
 			&nbsp;&nbsp;
 			<input type="hidden" name="format_end_date_payroll" value="<?php echo $fmt_end_date->format( FMT_TIMESTAMP_DATE );?>">
 			<input type="text" class="text" name="end_date_payroll" id="date2_payroll" disabled="disabled" value="<?php echo $view_end_date ?>">
-			<a href="#" onClick="return popCalendar('end_date_payroll', 'y-mm-dd');">
+			<a href="#"<?php echo dPaction('popCalendar', array('end_date_payroll', 'y-mm-dd')); ?>>
 				<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 			</a>
 		</td>
@@ -112,7 +116,7 @@ function setCalendar( idate, fdate ) {
 				
 					foreach ($result as $employee) {
 						$selected = ($employee['user_id'] == $selectMe) ? " selected" : "";
-						echo "\t\t\t\t<option value=\"" . $employee['user_id'] . "\"" . $selected . " />" . $employee['contact_last_name'] . ", " . $employee['contact_first_name'] . "\n";
+						echo "\t\t\t\t<option value=\"" . (int)$employee['user_id'] . "\"" . $selected . " />" . dPhtml($employee['contact_last_name']) . ", " . dPhtml($employee['contact_first_name']) . "\n";
 					}
 				echo "\t\t\t</select>\n";
 			echo "\t\t</td>\n";

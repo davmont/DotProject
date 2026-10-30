@@ -1,4 +1,8 @@
-<?php /* TASKS $Id: vw_tasks.php,v 1.2 2007/06/19 11:43:05 pedroix Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* TASKS $Id: vw_tasks.php,v 1.2 2007/06/19 11:43:05 pedroix Exp $ */
 GLOBAL $m, $a, $project_id, $f, $task_status, $min_view, $query_string, $durnTypes, $tpl;
 GLOBAL $task_sort_item1, $task_sort_type1, $task_sort_order1;
 GLOBAL $task_sort_item2, $task_sort_type2, $task_sort_order2;
@@ -40,7 +44,7 @@ $q = new DBQuery();
 $q->addQuery('task_id');
 $q->addTable('tasks');
 if ($project_id)
-     $q->addWhere('task_project='.$project_id);
+     $q->addWhere('task_project=' . (int)$project_id);
 $q->addWhere('task_dynamic=1');
 $all_tasks = $q->loadList();
 foreach ($all_tasks as $key => $open_task) {
@@ -62,8 +66,8 @@ if (isset($_GET['pin'])) {
     }
     else {
         $q->setDelete('user_task_pin');
-        $q->addWhere('user_id = ' . $AppUI->user_id);
-        $q->addWhere('task_id = ' . $task_id);
+        $q->addWhere('user_id = ' . (int)$AppUI->user_id);
+        $q->addWhere('task_id = ' . (int)$task_id);
     }
 
     if ( !$q->exec() ) {
@@ -126,7 +130,7 @@ $q->addTable('projects','pr');
 $q->leftJoin('tasks', 't1', 'pr.project_id = t1.task_project');
 $q->leftJoin('companies', 'c', 'company_id = project_company');
 $q->addWhere('t1.task_id = t1.task_parent');
-$q->addWhere('project_id='.$project_id);
+$q->addWhere('project_id=' . (int)$project_id);
 if ( count($allowedProjects)) {
   $q->addWhere($allowedProjects);
 }
@@ -141,13 +145,11 @@ $perms =& $AppUI->acl();
 $projects = array();
 if ($canViewTasks) {
     $prc = db_exec( $psql );
-    echo db_error();
     while ($row = db_fetch_assoc( $prc )) {
         $projects[$row['project_id']] = $row;
     }
 
     $prc2 = db_exec( $psql2 );
-    echo db_error();
     while ($row2 = db_fetch_assoc( $prc2 )) {
         $projects[$row2["project_id"]] = ((!($projects[$row2["project_id"]]))?array():$projects[$row2["project_id"]]);
         array_push($projects[$row2["project_id"]], $row2);
@@ -185,7 +187,7 @@ $q->leftJoin('users', 'assignees', 'assignees.user_id = ut.user_id');
 $q->leftJoin('contacts', 'co', 'co.contact_id = usernames.user_contact');
 $q->leftJoin('task_log', 'tlog', 'tlog.task_log_task = t.task_id AND tlog.task_log_problem > 0');
 $q->leftJoin('files', 'f', 't.task_id = f.file_task');
-$q->leftJoin('user_task_pin', 'pin', 't.task_id = pin.task_id AND pin.user_id = ' . $AppUI->user_id);
+$q->leftJoin('user_task_pin', 'pin', 't.task_id = pin.task_id AND pin.user_id = ' . (int)$AppUI->user_id);
 //$user_id = $user_id ? $user_id : $AppUI->user_id;
 $q->leftJoin('event_queue', 'evtq', 't.task_id = evtq.queue_origin_id AND evtq.queue_module = "tasks"');
 
@@ -194,7 +196,7 @@ $q->leftJoin('event_queue', 'evtq', 't.task_id = evtq.queue_origin_id AND evtq.q
 //}
 
 //if ($project_id) {
-	$q->addWhere('task_project = ' . $project_id);
+	$q->addWhere('task_project = ' . (int)$project_id);
 //}
 $allowedProjects = $project->getAllowedSQL($AppUI->user_id, 'task_project');
 if (count($allowedProjects)) {
@@ -220,7 +222,7 @@ foreach ($tasks as $row) {
 	$q->addTable('user_tasks', 'ut');
 	$q->leftJoin('users', 'u', 'u.user_id = ut.user_id');
 	$q->leftJoin('contacts', 'c', 'u.user_contact = c.contact_id');
-	$q->addWhere('ut.task_id = ' . $row['task_id']);
+	$q->addWhere('ut.task_id = ' . (int)$row['task_id']);
 	$q->addGroup('ut.user_id');
 	$q->addOrder('perc_assignment desc, user_username');
 
@@ -228,7 +230,7 @@ foreach ($tasks as $row) {
 	$row['task_assigned_users'] = $q->loadList();
 	$q->addQuery('count(*) as children');
 	$q->addTable('tasks');
-	$q->addWhere('task_parent = ' . $row['task_id']);
+	$q->addWhere('task_parent = ' . (int)$row['task_id']);
 	$q->addWhere('task_id <> task_parent');
 	$row['children'] = $q->loadResult();
 	$row['style'] = taskstyle_pd($row);
@@ -302,7 +304,7 @@ $userAlloc = $tempoTask->getAllocation('user_id');
         <th nowrap="nowrap"><?php echo $AppUI->_('Duration');?>&nbsp;&nbsp;</th>
         <th nowrap="nowrap"><?php echo $AppUI->_('Finish');?></th>
         <th nowrap="nowrap"><?php echo $AppUI->_('Assigned Users')?></th>
-        <?php if ($showEditCheckbox) { echo '<th width="1"><input type="checkbox" onclick="mult_sel(this, \'selected_task_\', \'frm_tasks\')" name="multi_check"/></th>'; }?>
+        <?php if ($showEditCheckbox) { echo '<th width="1"><input type="checkbox"' . dPaction('mult_sel', array('$this', 'selected_task_', 'frm_tasks')) . ' name="multi_check"/></th>'; }?>
 </tr>
 <?php
 reset( $projects );

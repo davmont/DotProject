@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 function getAllTasks() {
 	$query = new DBQuery;
 	$query->addTable('tasks');
@@ -13,7 +16,7 @@ function getEstimativesByTaskId($task_id) {
 	$query->addTable('project_tasks_estimated_roles', 'e');
 	$query->addQuery('e.id, c.role_name');
 	$query->addJoin('company_role', 'c', 'c.id = e.role_id');
-	$query->addWhere('e.task_id = ' . $task_id);
+	$query->addWhere('e.task_id = ' . (int)$task_id);
 	$sql = $query->prepare();
 	$query->clear();
 	return db_loadList($sql);
@@ -23,7 +26,7 @@ function getAllocationByEstimativeId($estimative_id) {
 	$query = new DBQuery;
 	$query->addTable('human_resource_allocation', 'a');
 	$query->addQuery('a.human_resource_id, a.human_resource_allocation_id');
-	$query->addWhere('a.project_tasks_estimated_roles_id = ' . $estimative_id);
+	$query->addWhere('a.project_tasks_estimated_roles_id = ' . (int)$estimative_id);
 	$sql = $query->prepare();
 	$query->clear();
 	return db_loadList($sql);
@@ -88,10 +91,11 @@ function getUserRolesByUserId($user_id) {
 	$query = new DBQuery;
 	$query->addTable('users', 'u');
 	$query->addQuery('h.human_resource_id');
-	$query->innerJoin('human_resource', 'h', 'h.human_resource_user_id = ' . $user_id);
-	$query->addWhere('u.user_id = ' . $user_id);
+	$query->innerJoin('human_resource', 'h', 'h.human_resource_user_id = ' . (int)$user_id);
+	$query->addWhere('u.user_id = ' . (int)$user_id);
 	$res =& $query->exec();
-	$human_resource_id =$res->fields['human_resource_id'];
+	// No row: the user is not a human resource yet.
+	$human_resource_id = ($res && !$res->EOF) ? $res->fields['human_resource_id'] : 0;
 	$roles = null;
 	if($human_resource_id) {
 		$roles = getUserRoles($human_resource_id);
@@ -104,7 +108,7 @@ function getUserRoles($human_resource_id) {
 	$query->addTable('human_resource_roles', 'r');
 	$query->addQuery('h.human_resources_role_name, h.human_resources_role_id');
 	$query->innerJoin('human_resources_role', 'h', 'h.human_resources_role_id = r.human_resources_role_id');
-	$query->addWhere('r.human_resource_id = ' . $human_resource_id);
+	$query->addWhere('r.human_resource_id = ' . (int)$human_resource_id);
 	$sql = $query->prepare();
 	return db_loadList($sql);
 }

@@ -1,4 +1,8 @@
-<?php /* IGANTT setup.php,v 0.1.0 2008/12/10 */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* IGANTT setup.php,v 0.1.0 2008/12/10 */
 /*
 Copyright (c) 2008 -2009 Pierre-Yves SIMONOT Euxenis SAS 
 *

@@ -1,4 +1,14 @@
 var nextId=1000;
+// A button that runs window[call](args...) through js/dp-actions.js (no inline handler).
+function tpActionButton(value, call, args) {
+	var button = document.createElement("input");
+	button.type = "button";
+	button.className = "button";
+	button.value = value;
+	button.setAttribute("data-dp-call", call);
+	button.setAttribute("data-dp-args", JSON.stringify(args));
+	return button;
+}
 function addLine(description,effort,dateBegin,dateEnd,humansResources,othersResurces,id,hour_b,minute_b,hour_e,minute_e,eap_item_id){
 	var htmlOptions="";
 	var index=document.getElementById("id_"+eap_item_id).rowIndex+1;
@@ -76,7 +86,7 @@ function addLine(description,effort,dateBegin,dateEnd,humansResources,othersResu
 	td.noWrap=true;
 	var dateFieldName="dateB_"+id;
 	td.innerHTML="<input type='text' class='text' id='"+dateFieldName+"' name='"+dateFieldName+"' size='11' disabled value='"+dateBegin+"'>";
-	td.innerHTML+="<img src='/dotproject/modules/time_planning_UBPS/images/img.gif' style='cursor:pointer' onclick=displayCalendar(document.getElementById('"+dateFieldName+"'),'dd/mm/yyyy',this)>";
+	td.innerHTML+="<img src='/dotproject/modules/time_planning_UBPS/images/img.gif' style='cursor:pointer' data-dp-call='tpDisplayCalendar' data-dp-args='"+JSON.stringify([dateFieldName, "dd/mm/yyyy", "$this"]).replace(/&/g, "&amp;").replace(/'/g, "&#39;")+"'>";
 	
 	
 	field=createHourField("hour_begin_"+id);
@@ -100,7 +110,7 @@ function addLine(description,effort,dateBegin,dateEnd,humansResources,othersResu
 	td.noWrap=true;
 	var dateFieldName="dateE_"+id;
 	td.innerHTML="<input type='text' class='text' id='"+dateFieldName+"' name='"+dateFieldName+"' size='11' disabled value='"+dateBegin+"'>";
-	td.innerHTML+="<img src='/dotproject/modules/time_planning_UBPS/images/img.gif' style='cursor:pointer' onclick=displayCalendar(document.getElementById('"+dateFieldName+"'),'dd/mm/yyyy',this)>";
+	td.innerHTML+="<img src='/dotproject/modules/time_planning_UBPS/images/img.gif' style='cursor:pointer' data-dp-call='tpDisplayCalendar' data-dp-args='"+JSON.stringify([dateFieldName, "dd/mm/yyyy", "$this"]).replace(/&/g, "&amp;").replace(/'/g, "&#39;")+"'>";
 	
 	field=createHourField("hour_end_"+id);
 	td.appendChild(field);
@@ -159,7 +169,7 @@ function addLine(description,effort,dateBegin,dateEnd,humansResources,othersResu
 	td = row.insertCell(-1);
 	td.noWrap=true;
 	div=field=document.createElement("div");
-	div.innerHTML="<input type='button' class='button' value='X' onclick=deleteActivity('"+row.id+"')>";
+	div.appendChild(tpActionButton("X", "deleteActivity", [row.id]));
 	td.appendChild(div);
 	
 	//add a move button
@@ -168,7 +178,9 @@ function addLine(description,effort,dateBegin,dateEnd,humansResources,othersResu
 	td.noWrap=true;
 	div=document.createElement("div");
 	htmlOptions=document.getElementById("work_packages_combo").innerHTML;
-	div.innerHTML="<select class='text' id='new_workpackage_"+id+"' onchange=moveToSelectedWorkpackage('"+ id +"')>"+htmlOptions+"</select>";
+	div.innerHTML="<select class='text' id='new_workpackage_"+id+"'>"+htmlOptions+"</select>";
+	div.firstChild.setAttribute("data-dp-call", "moveToSelectedWorkpackage");
+	div.firstChild.setAttribute("data-dp-args", JSON.stringify([String(id)]));
 	td.appendChild(div);
 	
 }

@@ -1,4 +1,8 @@
-<?php /* $Id: setup.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* $Id: setup.php,v 1.2 2004/09/13 02:23:00 stradius Exp $ */
 /*
 dotProject Module
 

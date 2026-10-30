@@ -20,9 +20,18 @@ $errors = false;
 $tasks = array();
 $actions = false;
 
-$do = isset($_REQUEST['do']) ? $_REQUEST['do'] : 'conf';
-$set_duration = isset($_REQUEST['set_duration']) ? $_REQUEST['set_duration'] : null;
-$set_dynamic = isset($_REQUEST['set_dynamic']) ? $_REQUEST['set_dynamic'] : null;
+// The steps after 'conf' come from the page's form; 'fixate', set_duration and
+// set_dynamic change tasks: POST with the CSRF token and tasks edit permission only.
+$is_post = ($_SERVER['REQUEST_METHOD'] === 'POST');
+$do = $is_post ? dPgetCleanParam($_POST, 'do', 'conf') : 'conf';
+$set_duration = $is_post ? dPgetParam($_POST, 'set_duration', null) : null;
+$set_dynamic = $is_post ? dPgetParam($_POST, 'set_dynamic', null) : null;
+if ($is_post && ($do == 'fixate' || $set_duration || $set_dynamic)) {
+	$AppUI->verifyCsrfToken();
+	if (!getPermission('tasks', 'edit')) {
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+}
 
 $df = $AppUI->getPref('SHDATEFORMAT');
 
@@ -592,15 +601,15 @@ if ($set_dynamic) {
 			echo '<input type="hidden" name="do" value="' . ($do == "ask" ? "fixate" : "ask") . '" />';
 			if ($do == "ask") {
 				echo '<font size="2"><strong>' . $AppUI->_('Do you want to accept this changes?') . '</strong></font><br />';
-				echo '<input type="button" value="accept" class="button" onclick="javascript:document.form.submit()" />';
+				echo '<input type="button" value="accept" class="button"' . dPaction(null, array(), null, array('submit' => 'form')) . ' />';
 			} else if ($do == "fixate") {
 				echo '<font size="2"><strong>' . $AppUI->_('Tasks has been reorganized') . '</strong></font><br />';
 			} else if ($do == "conf") {
-				echo '<input type="button" value="' . $AppUI->_('start') . '" class="button" onclick="javascript:document.form.submit()" />';
+				echo '<input type="button" value="' . $AppUI->_('start') . '" class="button"' . dPaction(null, array(), null, array('submit' => 'form')) . ' />';
 			}
 		} else {
 			echo '<font size="2"><strong>' . $AppUI->_('Please correct the above errors') . '</strong></font><br />';
-			echo '<input type="button" value="submit" class="button" onclick="javascript:document.form.submit()" />';
+			echo '<input type="button" value="submit" class="button"' . dPaction(null, array(), null, array('submit' => 'form')) . ' />';
 		}
 	}
 	?>

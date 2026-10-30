@@ -21,12 +21,12 @@ if (!$log_start_date) {
 $end_date->setTime( 23, 59, 59 );
 
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 
 function popCalendar( field ){
 	calendarField = field;
-	idate = eval( 'document.editFrm.log_' + field + '.value' );
+	idate = document.editFrm['log_' + field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
@@ -35,8 +35,8 @@ function popCalendar( field ){
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.editFrm.log_' + calendarField );
-	fld_fdate = eval( 'document.editFrm.' + calendarField );
+	fld_date = document.editFrm['log_' + calendarField];
+	fld_fdate = document.editFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -53,7 +53,7 @@ function setCalendar( idate, fdate ) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="log_start_date" value="<?php echo $start_date->format( FMT_TIMESTAMP_DATE );?>" />
 		<input type="text" name="start_date" value="<?php echo $start_date->format( $df );?>" class="text" disabled="disabled" />
-		<a href="#" onClick="popCalendar('start_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
@@ -61,7 +61,7 @@ function setCalendar( idate, fdate ) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="log_end_date" value="<?php echo $end_date ? $end_date->format( FMT_TIMESTAMP_DATE ) : '';?>" />
 		<input type="text" name="end_date" value="<?php echo $end_date ? $end_date->format( $df ) : '';?>" class="text" disabled="disabled" />
-		<a href="#" onClick="popCalendar('end_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
@@ -89,12 +89,16 @@ function setCalendar( idate, fdate ) {
 </table>
 
 <?php
+$pfx = dPgetConfig('dbprefix', '');
 if ($do_report) {
+	$project_id = (int)$project_id;
 
-	$sql = "SELECT t.*, CONCAT_WS(' ',u.user_first_name,u.user_last_name) AS creator"
-		."\nFROM task_log AS t, tasks"
-		."\nLEFT JOIN users AS u ON user_id = task_log_creator"
-		."\nWHERE task_log_task = task_id AND task_project = $project_id";
+	$sql = "SELECT t.*, CONCAT_WS(' ',c.contact_first_name,c.contact_last_name) AS creator"
+		."\nFROM {$pfx}task_log AS t"
+		."\nINNER JOIN {$pfx}tasks ON task_id = task_log_task"
+		."\nLEFT JOIN {$pfx}users AS u ON u.user_id = task_log_creator"
+		."\nLEFT JOIN {$pfx}contacts AS c ON c.contact_id = u.user_contact"
+		."\nWHERE task_project = $project_id";
 	if (!$log_all) {
 		$sql .= "\n	AND task_log_date >= '".$start_date->format( FMT_DATETIME_MYSQL )."'"
 		."\n	AND task_log_date <= '".$end_date->format( FMT_DATETIME_MYSQL )."'";
@@ -107,7 +111,6 @@ if ($do_report) {
 	//echo "<pre>$sql</pre>";
 
 	$logs = db_loadList( $sql );
-	echo db_error();
 ?>
 	<table cellspacing="1" cellpadding="4" border="0" class="tbl">
 	<tr>
@@ -172,16 +175,15 @@ if ($do_report) {
 <?php
 	if ($log_pdf) {
 	// make the PDF file
-		$sql = "SELECT project_name FROM projects WHERE project_id=$project_id";
+		$sql = "SELECT project_name FROM {$pfx}projects WHERE project_id=" . (int)$project_id;
 		$pname = db_loadResult( $sql );
-		echo db_error();
 
 		$font_dir = dPgetConfig( 'root_dir' )."/lib/ezpdf/fonts";
 		$temp_dir = dPgetConfig( 'root_dir' )."/files/temp";
 		$base_url  = dPgetConfig( 'base_url' );
-		require( $AppUI->getLibraryClass( 'ezpdf/class.ezpdf' ) );
+		require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
-		$pdf = new Cezpdf();
+		$pdf = new DotPdf();
 		$pdf->ezSetCmMargins( 1, 2, 1.5, 1.5 );
 		$pdf->selectFont( "$font_dir/Helvetica.afm" );
 
@@ -219,7 +221,7 @@ if ($do_report) {
 		if ($fp = fopen( "$temp_dir/temp$AppUI->user_id.pdf", 'wb' )) {
 			fwrite( $fp, $pdf->ezOutput() );
 			fclose( $fp );
-			echo "<a href=\"$base_url/files/temp/temp$AppUI->user_id.pdf\" target=\"pdf\">";
+			echo "<a href=\"$base_url/fileviewer.php?report=pdf\" target=\"pdf\">";
 			echo $AppUI->_( "View PDF File" );
 			echo "</a>";
 		} else {

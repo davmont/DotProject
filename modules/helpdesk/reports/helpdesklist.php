@@ -54,12 +54,12 @@ if (!$list_start_date) {
 $end_date->setTime( 23, 59, 59 );
 
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 
 function popCalendar( field ){
 	calendarField = field;
-	idate = eval( 'document.editFrm.list_' + field + '.value' );
+	idate = document.editFrm.elements['list_' + field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=270,height=250,scollbars=false' );
 }
 
@@ -68,8 +68,8 @@ function popCalendar( field ){
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.editFrm.list_' + calendarField );
-	fld_fdate = eval( 'document.editFrm.' + calendarField );
+	fld_date = document.editFrm.elements['list_' + calendarField];
+	fld_fdate = document.editFrm.elements[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -100,13 +100,13 @@ function setCalendar( idate, fdate ) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="list_start_date" value="<?php echo $start_date->format( FMT_TIMESTAMP_DATE );?>" />
 		<input type="text" name="start_date" value="<?php echo $start_date->format( $df );?>" class="text" disabled="disabled" />
-		<a href="#" onClick="popCalendar('start_date')"><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" /></a>
+		<a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" /></a>
 	</td>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('to');?></td>
 	<td nowrap="nowrap">
 		<input type="hidden" name="list_end_date" value="<?php echo $end_date ? $end_date->format( FMT_TIMESTAMP_DATE ) : '';?>" />
 		<input type="text" name="end_date" value="<?php echo $end_date ? $end_date->format( $df ) : '';?>" class="text" disabled="disabled" />
-		<a href="#" onClick="popCalendar('end_date')"><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" /></a>
+		<a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" /></a>
 	</td>
 
 	<td nowrap="nowrap">
@@ -143,7 +143,7 @@ if ($do_report) {
 		$q->addWhere("hi.item_created <= '".$end_date->format( FMT_DATETIME_MYSQL )."'");
 	}
 	if (count($allowedTasks)) {
-		$q->addWhere('implode(" AND ", $allowedTasks)');
+		$q->addWhere(implode(' AND ', $allowedTasks));
 	}
 	$q->addOrder('hi.item_id');
 	$Task_List = $q->loadList();
@@ -210,11 +210,11 @@ if ($do_report) {
 			$str =  "<tr valign=\"top\">";
 			$str .= "<td align=\"right\">".$Tasks['item_id']."</td>";
 			$str .= "<td align=\"center\">".$start_date->format( $df )."</td>";
-			$str .= "<td align=\"center\"><b>".$Tasks['item_requestor']."</b></td>";
+			$str .= "<td align=\"center\"><b>".dPhtml($Tasks['item_requestor'])."</b></td>";
 //			$str .= "<td align=\"center\">".$Tasks['requested_by']."</td>";
-			$str .= "<td align=\"center\">".$Tasks['item_title']."</td>";
-			$str .= "<td align=\"center\">".$Tasks['item_summary']."</td>";
-			$str .= "<td align=\"center\">".$Tasks['assigned_to']."</td>";
+			$str .= "<td align=\"center\">".dPhtml($Tasks['item_title'])."</td>";
+			$str .= "<td align=\"center\">".dPhtml($Tasks['item_summary'])."</td>";
+			$str .= "<td align=\"center\">".dPhtml($Tasks['assigned_to'])."</td>";
 			$str .= "<td align=\"center\">".$Log_Status_desc."</td>";
 			$str .= "<td align=\"center\">".$Log_Priority_desc."</td>";
 			$str .= "</tr>";
@@ -274,30 +274,28 @@ if ($log_pdf) {
 			$q5 = new DBQuery;
 			$q5->addQuery("project_name");
 			$q5->addTable('projects');
-			$q5->addWhere('project_id = '.$project_id);
+			$q5->addWhere('project_id = ' . (int)$project_id);
 			$pname = 'Project: '.$q5->loadResult();
 		}
 		else
 			$pname = "All Companies and All Projects";
-		echo db_error();
 
 		if ($company_id){
 			$q6 = new DBQuery;
 			$q6->addQuery("company_name");
 			$q6->addTable('companies');
-			$q6->addWhere('company_id = '.$company_id);
+			$q6->addWhere('company_id = ' . (int)$company_id);
 			$cname = 'Company: '.$q6->loadResult();
 		}
 		else
 			$cname = "All Companies and All Projects";
-		echo db_error();
 
 		$font_dir = dPgetConfig( 'root_dir' )."/lib/ezpdf/fonts";
 		$temp_dir = dPgetConfig( 'root_dir' )."/files/temp";
 		$base_url  = dPgetConfig( 'base_url' );
-		require( $AppUI->getLibraryClass( 'ezpdf/class.ezpdf' ) );
+		require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
-		$pdf = new Cezpdf();
+		$pdf = new DotPdf();
 		$pdf->ezSetCmMargins( 1, 2, 1.5, 1.5 );
 		$pdf->selectFont( "$font_dir/Helvetica.afm" );
 
@@ -361,7 +359,7 @@ if ($log_pdf) {
 		if ($fp = fopen( "$temp_dir/temp$AppUI->user_id.pdf", 'wb' )) {
 			fwrite( $fp, $pdf->ezOutput() );
 			fclose( $fp );
-			echo "<a href=\"$base_url/files/temp/temp$AppUI->user_id.pdf\" target=\"pdf\">";
+			echo "<a href=\"$base_url/fileviewer.php?report=pdf\" target=\"pdf\">";
 			echo $AppUI->_( "View PDF File" );
 			echo "</a>";
 		} else {

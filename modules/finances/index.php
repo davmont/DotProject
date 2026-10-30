@@ -45,18 +45,18 @@ $today = new CDate();
 $q = new DBQuery;
 $q->addTable('users', 'u');
 $q->addQuery('DISTINCT(user_contact)');
-$q->addWhere('user_id = '.$AppUI->user_id);
+$q->addWhere('user_id = ' . (int)$AppUI->user_id);
 
 $contact	= new CContact();
 $contact->load($q->loadResult());
 $company 	= dPgetParam($_POST, 'company_id', 0);//($contact->contact_department != 0) ? $contact->contact_department : $company_prefix.$contact->contact_company );	// Company/Department filter			Default: current user company
 
-$currency 	= dPgetParam($_POST, 'currency', 0);										// 0: *1, 1: *1k, 2: *1M  				Default: *1
-$display 	= dPgetParam($_POST, 'display', 0);											// 0: details, 1: subTotal, 2: total	Default: details
-$tax 		= dPgetParam($_POST, 'tax', 1);												// 0: without, 1: with	 				Default: without
-$hideNull = dPgetParam($_POST, 'hideNull', 2);									// 0:all, 1:Only valued projects and tasks	2:valued projects 3:Only projects with null budget
-$project_status = dPgetParam($_POST, 'project_status', 0);      //
-$project_type = dPgetParam($_POST, 'project_type', 0);
+$currency 	= dPgetIntParam($_POST, 'currency', 0);										// 0: *1, 1: *1k, 2: *1M  				Default: *1
+$display 	= dPgetIntParam($_POST, 'display', 0);											// 0: details, 1: subTotal, 2: total	Default: details
+$tax 		= dPgetIntParam($_POST, 'tax', 1);												// 0: without, 1: with	 				Default: without
+$hideNull = dPgetIntParam($_POST, 'hideNull', 2);									// 0:all, 1:Only valued projects and tasks	2:valued projects 3:Only projects with null budget
+$project_status = dPgetIntParam($_POST, 'project_status', 0);      //
+$project_type = dPgetIntParam($_POST, 'project_type', 0);
 
 $default[0] = $today->getYear();														// Default array for $years
 $years 		= dPgetParam($_POST, 'years', $default);									// (array)Years to display 				Default: this year
@@ -70,6 +70,10 @@ if ($company_id == '') {
 	$department		= 	''.$department_id;
 } else
 	$department_id 	= 	0;
+// Filters below are used in SQL: ids and years are integers.
+$company_id = (int)$company_id;
+$department_id = (int)$department_id;
+$years = array_map('intval', (array)$years);
 
 // Edit the values if necessary
 if(dPgetParam($_POST, 'edit', 0))
@@ -83,7 +87,7 @@ if(dPgetParam($_POST, 'edit', 0))
 <script type="text/javascript" src="./modules/finances/js/jquery.ui.js"></script>
 <script type="text/javascript" src="./modules/finances/js/jquery.treeTable.js"></script>
 <script type="text/javascript" src="./modules/finances/js/finances.js"></script>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	$(document).ready(function() {
 		$(".treeTable").treeTable({
 			initialState: "collapsed"	 	// can be changed for "expanded"
@@ -91,9 +95,10 @@ if(dPgetParam($_POST, 'edit', 0))
 		<?php 
 		// Re-expand <tr> wich were expanded on last page
 		if(isset($_POST['expandedList'])) {
-			$expand = explode(',',$toExpand);
+			$expand = explode(',', (string)$toExpand);
 			foreach ($expand as $id) {
-				if ($id != '')
+				// Row ids are p_<n> / p_<n>_t_<n>; anything else is not one of ours.
+				if (preg_match('/^[A-Za-z0-9_]+$/', $id))
 					echo '$("tr#'.$id.'").expand();';
 			}
 		} ?>
@@ -116,14 +121,14 @@ if(dPgetParam($_POST, 'edit', 0))
 						} ?>
 					</div>
 				</td>
-				<td align="left" rowspan="2" nowrap><input type="button" class="button" value="<?php echo $AppUI->_("Submit"); ?>" onclick="javascript:submitWithExpandList(this);" /></td>
+				<td align="left" rowspan="2" nowrap><input type="button" class="button" value="<?php echo $AppUI->_("Submit"); ?>"<?php echo dPaction('submitWithExpandList', array('$this')); ?> /></td>
 				<td align="right" rowspan="2"  nowrap><?php echo $AppUI->_("Display").': '; ?></td>
-				<td align="left" nowrap><label for="currency0"><input type="radio" name="currency" id="currency0" value="0" onChange="javascript:submitWithExpandList(this);" <?php if($currency == "0") echo 'checked'; ?> /><?php echo $dPconfig['currency_symbol']; ?></label></td>
-				<td align="left" nowrap><label for="currency1"><input type="radio" name="currency" id="currency1" value="1" onChange="javascript:submitWithExpandList(this);" <?php if($currency == "1") echo 'checked'; ?> /><?php echo "k".$dPconfig['currency_symbol']; ?></label></td>
-				<td align="left" nowrap><label for="currency2"><input type="radio" name="currency" id="currency2" value="2" onChange="javascript:submitWithExpandList(this);" <?php if($currency == "2") echo 'checked'; ?> /><?php echo "M".$dPconfig['currency_symbol']; ?></label></td>
+				<td align="left" nowrap><label for="currency0"><input type="radio" name="currency" id="currency0" value="0"<?php echo dPaction('submitWithExpandList', array('$this'), 'change'); ?> <?php if($currency == "0") echo 'checked'; ?> /><?php echo $dPconfig['currency_symbol']; ?></label></td>
+				<td align="left" nowrap><label for="currency1"><input type="radio" name="currency" id="currency1" value="1"<?php echo dPaction('submitWithExpandList', array('$this'), 'change'); ?> <?php if($currency == "1") echo 'checked'; ?> /><?php echo "k".$dPconfig['currency_symbol']; ?></label></td>
+				<td align="left" nowrap><label for="currency2"><input type="radio" name="currency" id="currency2" value="2"<?php echo dPaction('submitWithExpandList', array('$this'), 'change'); ?> <?php if($currency == "2") echo 'checked'; ?> /><?php echo "M".$dPconfig['currency_symbol']; ?></label></td>
 				<td align="right" nowrap><?php echo $AppUI->_("Projects").': '; ?></td>
 				<td align="left" nowrap>
-					<select class="text" name="hideNull" id="hideNull" onChange="javascript:submitWithExpandList(this);">
+					<select class="text" name="hideNull" id="hideNull"<?php echo dPaction('submitWithExpandList', array('$this')); ?>>
 						<option value="0" <?php echo ($hideNull==0)?'selected="selected"':''; ?>><?php echo $AppUI->_("All"); ?></option>
 						<option value="1" <?php echo ($hideNull==1)?'selected="selected"':''; ?>><?php echo $AppUI->_("Only valued projects and tasks"); ?></option>
 						<option value="2" <?php echo ($hideNull==2)?'selected="selected"':''; ?>><?php echo $AppUI->_("Only valued projects"); ?></option>
@@ -131,13 +136,13 @@ if(dPgetParam($_POST, 'edit', 0))
 					</select>
 				</td>
 				<td align="right" nowrap><?php echo $AppUI->_("Amounts").': '; ?></td>	
-				<td align="left" nowrap><label for="tax0"><input type="radio" name="tax" id="tax0" value="0" onChange="javascript:submitWithExpandList(this);" <?php if($tax == "0") echo 'checked'; ?> /><?php echo $AppUI->_("without tax"); ?></label></td>
-				<td align="left" nowrap><label for="tax1"><input type="radio" name="tax" id="tax1" value="1" onChange="javascript:submitWithExpandList(this);" <?php if($tax == "1") echo 'checked'; ?> /><?php echo $AppUI->_("with tax"); ?></label></td>
+				<td align="left" nowrap><label for="tax0"><input type="radio" name="tax" id="tax0" value="0"<?php echo dPaction('submitWithExpandList', array('$this'), 'change'); ?> <?php if($tax == "0") echo 'checked'; ?> /><?php echo $AppUI->_("without tax"); ?></label></td>
+				<td align="left" nowrap><label for="tax1"><input type="radio" name="tax" id="tax1" value="1"<?php echo dPaction('submitWithExpandList', array('$this'), 'change'); ?> <?php if($tax == "1") echo 'checked'; ?> /><?php echo $AppUI->_("with tax"); ?></label></td>
 			</tr>
 			<tr>
-				<td align="left" nowrap><label for="display0"><input type="radio" name="display" id="display0" value="0" onClick="javascript:$('.subTotal').hide();$('.total').hide();$('.budget').show()" /><?php echo $AppUI->_('Detail'); ?></label></td>
-				<td align="left" nowrap><label for="display1"><input type="radio" name="display" id="display1" value="1" onClick="javascript:$('.budget').hide();$('.total').hide();$('.subTotal').show()" /><?php echo $AppUI->_('Sub Total'); ?></label></td>
-				<td align="left" nowrap><label for="display2"><input type="radio" name="display" id="display2" value="2" onClick="javascript:$('.budget').hide();$('.subTotal').hide();$('.total').show()" /><?php echo $AppUI->_('Total'); ?></label></td>
+				<td align="left" nowrap><label for="display0"><input type="radio" name="display" id="display0" value="0"<?php echo dPaction('financesShowDisplay', array(0)); ?> /><?php echo $AppUI->_('Detail'); ?></label></td>
+				<td align="left" nowrap><label for="display1"><input type="radio" name="display" id="display1" value="1"<?php echo dPaction('financesShowDisplay', array(1)); ?> /><?php echo $AppUI->_('Sub Total'); ?></label></td>
+				<td align="left" nowrap><label for="display2"><input type="radio" name="display" id="display2" value="2"<?php echo dPaction('financesShowDisplay', array(2)); ?> /><?php echo $AppUI->_('Total'); ?></label></td>
 				<td align="right" nowrap><?php echo $AppUI->_('Company').'/'.$AppUI->_('Division').':'; ?></td>
 				<td align="left" colspan="4" nowrap>
 					<?php
@@ -160,7 +165,7 @@ if(dPgetParam($_POST, 'edit', 0))
 					$rows = $q->loadList();
 					
 					//display the select list
-					$cBuffer = '<select name="company_id" onChange="javascript:submitWithExpandList(this);" class="text">';
+					$cBuffer = '<select name="company_id"' . dPaction('submitWithExpandList', array('$this')) . ' class="text">';
 					$cBuffer .= ('<option value="0" style="font-weight:bold;">' . $AppUI->_('All') 
 								 . '</option>'."\n");
 					$cBuffer .= ('<option value="-1" style="font-weight:bold;" '
@@ -200,20 +205,20 @@ if(dPgetParam($_POST, 'edit', 0))
 				
 				<td align="right" colspan="6">
 					<?php echo $AppUI->_('Project Type').' : ';?>
-					<?php echo arraySelect($ptype, 'project_type', 'id="project_type" size="1" class="text" onChange="javascript:submitWithExpandList(this);"', $project_type, true);?> 
+					<?php echo arraySelect($ptype, 'project_type', 'id="project_type" size="1" class="text"' . dPaction('submitWithExpandList', array('$this')), $project_type, true);?> 
 				</td>
 				<td align="right" colspan="2">
 					<?php echo $AppUI->_('Project Status').' : ';?> 
 				</td>
 				<td align="left" colspan="3">
-					<?php echo arraySelect($pstatus, 'project_status', 'id="project_status" size="1" class="text" onChange="javascript:submitWithExpandList(this);"', $project_status, true); ?>		
+					<?php echo arraySelect($pstatus, 'project_status', 'id="project_status" size="1" class="text"' . dPaction('submitWithExpandList', array('$this')), $project_status, true); ?>		
 				</td>
 				<td align="left" colspan="1">
 					<?php $yearsGET = '';
 					foreach($years as $y){
 						$yearsGET .= $y.'y';
 					}?>
-					<a href="?m=finances&amp;a=export_excel&amp;projectStatus=<?php echo $project_status;?>&amp;projectType=<?php echo $project_type;?>&amp;departementId=<?php echo $departement_id;?>&amp;companyId=<?php echo $company_id;?>&amp;years=<?php echo $yearsGET;?>&amp;tax=<?php echo $tax;?>&amp;hideNull=<?php echo $hideNull;?>&amp;suppressHeaders=1">
+					<a href="?m=finances&amp;a=export_excel&amp;projectStatus=<?php echo $project_status;?>&amp;projectType=<?php echo $project_type;?>&amp;departmentId=<?php echo (int)$department_id;?>&amp;companyId=<?php echo $company_id;?>&amp;years=<?php echo $yearsGET;?>&amp;tax=<?php echo $tax;?>&amp;hideNull=<?php echo $hideNull;?>&amp;suppressHeaders=1">
 					<?php echo $AppUI->_('Excel export');?></a>
 				</td>
 			</tr>
@@ -221,7 +226,7 @@ if(dPgetParam($_POST, 'edit', 0))
 	</table>
 <div style="text-align: center; padding: 5px; display: none;" id="errorDiv"><?php echo $AppUI->_("Performance of Internet Explorer may cause a very significant slowdown in the case of a large number of projects to load."); ?></div>
 <div style="text-align: center; padding: 5px;">
-	<input type="button" id="saveButton" value="<?php echo $AppUI->_('Save Changes');?>" onclick="javascript:submitWithExpandList(this);" />
+	<input type="button" id="saveButton" value="<?php echo $AppUI->_('Save Changes');?>"<?php echo dPaction('submitWithExpandList', array('$this')); ?> />
 </div>
 <!-- Main table -->
 <table class="treeTable" cellspacing="0" cellpadding="0" border="1">
@@ -391,21 +396,23 @@ if(dPgetParam($_POST, 'edit', 0))
 	</tfoot>
 </table>
 </form>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 // Definition of function that need PHP
 function getCurrency(){
 	var radios = document.getElementsByName("currency");
 	if(radios[2].checked)
-		return "M<?php echo $dPconfig['currency_symbol']; ?>";
+		return "M" + <?php echo dPjs($dPconfig['currency_symbol']); ?>;
 	if(radios[1].checked)
-		return "k<?php echo $dPconfig['currency_symbol']; ?>";
-	return "<?php echo $dPconfig['currency_symbol']; ?>";
+		return "k" + <?php echo dPjs($dPconfig['currency_symbol']); ?>;
+	return <?php echo dPjs($dPconfig['currency_symbol']); ?>;
 }
 
 function tdClick(){
 	$("#saveButton").show();
 	$(this).addClass("edit");
-	$(this).html('<?php echo $dPconfig['currency_symbol']; ?><input name="'+$(this).parent().attr('id')+$(this).attr('rel')+'" style="width: 85%;" type="text" value="'+ $(this).attr('val')+'"/>');
+	// Built with DOM methods: the value and the currency symbol are text, not HTML.
+	var input = $('<input type="text" style="width: 85%;"/>').attr('name', $(this).parent().attr('id')+$(this).attr('rel')).val($(this).attr('val'));
+	$(this).text(<?php echo dPjs($dPconfig['currency_symbol']); ?>).append(input);
 	$(this).children().focus();
 }
 

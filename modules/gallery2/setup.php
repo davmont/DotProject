@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 ##
 ## Gallery2 module - A gallery2 integration for dotProject
 ##
@@ -37,7 +40,7 @@ class CSetupGallery {
                 	"UNIQUE KEY gallery_folder (gallery_folder)," .
                 	"UNIQUE KEY gallery_user (gallery_user)" .
                 	")");
-                $ok = $ok & $q -> exec();                
+                $ok = $ok && $q -> exec();                
 
                 // Set default settings
                 $q -> clear();
@@ -45,7 +48,7 @@ class CSetupGallery {
                 $q -> addInsert('gallery_uri','');
                 $q -> addInsert('gallery_folder','');
                 $q -> addInsert('gallery_user','');                  
-                $ok = $ok & $q -> exec();
+                $ok = $ok && $q -> exec();
                 if(!$ok){
                 	return $ok;
                 }

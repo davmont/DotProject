@@ -58,7 +58,8 @@ $rows = $q->loadList();
 $q->clear();
 
 //display the select list
-$cBuffer = '<select name="department" onchange="javascript:document.pickCompany.submit()" class="text">';
+$cBuffer = ('<select name="department"' . dPaction(null, array(), null, array('submit' => 'pickCompany'))
+	. ' class="text">');
 $cBuffer .= ('<option value="company_0" style="font-weight:bold;">' . $AppUI->_('All')
 	. '</option>' . "\n");
 $company = '';
@@ -107,10 +108,10 @@ if ($company_id) {
 	$titleBlock->addCrumb('?m=companies&amp;a=view&amp;company_id=' . $company_id, 'view this company');
 }
 if ($canEdit && isset($department) && $department > 0) {
-	$titleBlock->addCrumb('?m=departments&;amp;a=addedit&ampdept_id=' . $department, 'edit this department');
+	$titleBlock->addCrumb('?m=departments&amp;a=addedit&amp;dept_id=' . (int)$department, 'edit this department');
 
 	if ($canDelete) {
-		$titleBlock->addCrumbDelete('delete department', $canDelete, $msg);
+		$titleBlock->addCrumbDelete('delete department', $canDelete, '');
 	}
 }
 $titleBlock->show();

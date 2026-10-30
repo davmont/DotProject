@@ -48,8 +48,10 @@ $canDelete = $obj->canDelete($msg, $macroproject_id);
 $criticalTasks = ($macroproject_id > 0) ? $obj->getCriticalTasks($macroproject_id) : NULL;
 
 //get macroprojectPriority from sysvals
-$macroprojectPriority = dPgetSysVal('macroprojectPriority');
-$macroprojectPriorityColor = dPgetSysVal('macroprojectPriorityColor');
+$macroprojectPriority = dPgetSysVal('MacroProjectPriority');
+$macroprojectPriorityColor = dPgetSysVal('MacroProjectPriorityColor');
+$mptype = dPgetSysVal('MacroProjectType');
+$mpstatus = dPgetSysVal('MacroProjectStatus');
 
 $working_hours = ($dPconfig['daily_working_hours']?$dPconfig['daily_working_hours']:8);
 
@@ -87,7 +89,7 @@ if ($hasTasks) {
 				 . ", CONCAT_WS(' ',contact_first_name,contact_last_name) user_name, mp.*, "
                  .'(0.0) AS macroproject_percent_complete');
 }
-$q->addWhere('macroproject_id = ' . $macroproject_id);
+$q->addWhere('macroproject_id = ' . (int)$macroproject_id);
 $q->addGroup('macroproject_id');
 $sql = $q->prepare();
 $q->clear();
@@ -165,7 +167,7 @@ $df = $AppUI->getPref('SHDATEFORMAT');
 //create Date objects from the datetime fields
 $start_date = (intval($obj->macroproject_start_date) ? new CDate($obj->macroproject_start_date) : null);
 $end_date = (intval($obj->macroproject_end_date) ? new CDate($obj->macroproject_end_date) : null);
-$actual_end_date = (intval($criticalTasks[0]['task_end_date']) 
+$actual_end_date = ((!empty($criticalTasks) && intval($criticalTasks[0]['task_end_date'])) 
                     ? new CDate($criticalTasks[0]['task_end_date']) : null);
 $style = ((($actual_end_date > $end_date) && !empty($end_date)) 
           ? 'style="color:red; font-weight:bold"' : '');
@@ -181,7 +183,7 @@ if (isset($_POST['searchtext'])) {
 $search_text = (($AppUI->getState('searchtext')) ? $AppUI->getState('searchtext'):'');
 $titleBlock->addCell($AppUI->_('Search') . ':');
 $titleBlock->addCell(('<input type="text" class="text" SIZE="10" name="searchtext"' 
-                      . ' onchange="javascript:document.searchfilter.submit();" value="' . $search_text . '"' 
+                      . dPaction(null, array(), 'change', array('submit' => 'searchfilter')) . ' value="' . dPformSafe($search_text) . '"' 
                       . 'title="' . $AppUI->_('Search in name and description fields') 
                       . '"/><!--<input type="submit" class="button" value=">" title="' 
                       . $AppUI->_('Search in name and description fields') . '"/>-->'), '',
@@ -219,7 +221,7 @@ $titleBlock->addCrumb('?m=macroprojects&amp;a=reports&amp;macroproject_id=' . $m
 $titleBlock->show();
 updateMacroProjectPercentComplete($macroproject_id);
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 //security improvement:
 //some javascript functions may not appear on client side in case of user not having write permissions
@@ -256,12 +258,12 @@ function doDetails() {
 <tr>
 	<td style="border: outset #d1d1cd 1px;background-color:#<?php 
 echo $obj->macroproject_color_identifier; ?>" colspan="2">
-	<a href="?m=macroprojects&amp;a=addedit&amp;macroproject_id=<?php echo $macroproject_id; ?>"><img src="images/icons/pencil.gif"/></a><a href="javascript:doDetails()">
+	<a href="?m=macroprojects&amp;a=addedit&amp;macroproject_id=<?php echo $macroproject_id; ?>"><img src="images/icons/pencil.gif"/></a><a href="#"<?php echo dPaction('doDetails'); ?>>
 		<img border="0" align="middle" id="displayImg" alt="" src="images/icons/expand.gif" />
 	</a>
 	<?php
 echo ('<span style="color:' . bestColor($obj->macroproject_color_identifier) . '; font-weight:bold">' 
-      . $obj->macroproject_name . '</span>');
+      . dPhtml($obj->macroproject_name) . '</span>');
 	?>
 	</td>
 </tr>
@@ -365,18 +367,18 @@ echo @$obj->macroproject_demo_url; ?></a></td>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Status'); ?>:</td>
 			<td class="hilite" width="100%"><?php 
-echo $AppUI->_($mpstatus[$obj->macroproject_status]); ?></td>
+echo $AppUI->_($mpstatus[$obj->macroproject_status] ?? ''); ?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Priority'); ?>:</td>
 			<td class="hilite" width="100%" style="background-color:<?php 
-echo $macroprojectPriorityColor[$obj->macroproject_priority]?>"><?php 
-echo $AppUI->_($macroprojectPriority[$obj->macroproject_priority]); ?></td>
+echo $macroprojectPriorityColor[$obj->macroproject_priority] ?? ''?>"><?php 
+echo $AppUI->_($macroprojectPriority[$obj->macroproject_priority] ?? ''); ?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Type'); ?>:</td>
 			<td class="hilite" width="100%"><?php 
-echo $AppUI->_($mptype[$obj->macroproject_type]); ?></td>
+echo $AppUI->_($mptype[$obj->macroproject_type] ?? ''); ?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Progress'); ?>:</td>
@@ -399,7 +401,7 @@ printf('%.1f%%', $obj->macroproject_percent_complete); ?></td>
 $q->addTable('departments', 'a');
 $q->addTable('macroproject_departments', 'b');
 $q->addQuery('a.dept_id, a.dept_name, a.dept_phone');
-$q->addWhere('a.dept_id = b.department_id AND b.macroproject_id = ' . $macroproject_id);
+$q->addWhere('a.dept_id = b.department_id AND b.macroproject_id = ' . (int)$macroproject_id);
 $depts = $q->loadHashList('dept_id');
 $q->clear();
 if (count($depts) > 0) {

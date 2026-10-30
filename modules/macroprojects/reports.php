@@ -32,18 +32,17 @@ $ptrc = $obj->getAllowedMacroProjectsInRows($AppUI->user_id);
 
 $nums=db_num_rows($ptrc);
 
-echo db_error();
 for ($x=0; $x < $nums; $x++) {
 	$row = db_fetch_assoc($ptrc);
 	if ($row['macroproject_id'] == $macroproject_id) {
-		$display_macroproject_name='('.$row['macroproject_short_name'].') '.$row['macroproject_name'];
+		$display_macroproject_name='('.dPhtml($row['macroproject_short_name']).') '.dPhtml($row['macroproject_name']);
 	}
 	$macroproject_list[$row['macroproject_id']] = '('.$row['macroproject_short_name'].') '.$row['macroproject_name'];
 }
 
 if (! $suppressHeaders) {
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
                                                                                 
 function changeIt() {
         var f=document.changeMe;
@@ -71,7 +70,7 @@ if (! $suppressHeaders) {
 
 $report_type_var = dPgetParam($_GET, 'report_type', '');
 if (!empty($report_type_var))
-	$report_type_var = '&report_type=' . $report_type;
+	$report_type_var = '&amp;report_type=' . rawurlencode($report_type);
 
 if (!($suppressHeaders)) {
 	if (!isset($display_macroproject_name)) {
@@ -81,7 +80,7 @@ if (!($suppressHeaders)) {
 ?>
 <form name="changeMe" action="./index.php?m=macroprojects&a=reports<?php echo $report_type_var; ?>" method="post">
 <?php echo $AppUI->_('MacroProjects') . ':';?>
-<?php echo arraySelect($macroproject_list, 'macroproject_id', 'size="1" class="text" onchange="changeIt();"', $macroproject_id, false);?>
+<?php echo arraySelect($macroproject_list, 'macroproject_id', 'size="1" class="text"' . dPaction('changeIt'), $macroproject_id, false);?>
 </form>
 
 <?php

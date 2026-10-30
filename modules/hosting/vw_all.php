@@ -1,9 +1,12 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /* Hosting module -> $Id: vw_all.php,v 1.1 2007/04/16 05:36:02 mbelos Exp $ */
 
 global $AppUI;
 
-$sort = $_GET['sort'];
+$sort = dPgetParam($_GET, 'sort', '');
 switch($sort){
 	case "DNA" : $orderBy = "domain_name ASC"; break;
 	case "DND" : $orderBy = "domain_name DESC"; break;
@@ -28,7 +31,7 @@ $q->addJoin('hosting', 'h', 'h.domain_id = dom.domain_id');
 
 if($AppUI->getState('HostIdxCompany') != null){
 	if($AppUI->getState('HostIdxCompany') != "" || $AppUI->getState('HostIdxCompany') != 0 || $AppUI->getState('HostIdxCompany') != "0"){
-		$q->addWhere('dom.company_id = '.$AppUI->getState('HostIdxCompany'));
+		$q->addWhere('dom.company_id = '.(int)$AppUI->getState('HostIdxCompany'));
 	}
 }
 
@@ -55,7 +58,7 @@ while($row = db_fetch_assoc($results)){
 	$domains[] = $row;
 ?>
 				<tr>
-					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $row['domain_id']; ?>"><?php echo $row['domain_name']; ?></a></td>
+					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $row['domain_id']; ?>"><?php echo dPhtml($row['domain_name']); ?></a></td>
 					<td align="center"><?php echo $row['domain_expiry_date']; ?></td>
 				</tr>
 <?php
@@ -72,8 +75,8 @@ while($row = db_fetch_assoc($results)){
 foreach($domains as $domain){
 ?>
 				<tr>
-					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $domain['domain_id']; ?>"><?php echo $domain['domain_name']; ?></a></td>
-					<td align="center"><?php echo $domain['hosting_package_name']; ?></td>
+					<td><a href="index.php?m=hosting&a=addedit&domain_id=<?php echo $domain['domain_id']; ?>"><?php echo dPhtml($domain['domain_name']); ?></a></td>
+					<td align="center"><?php echo dPhtml($domain['hosting_package_name']); ?></td>
 					<td align="center"><?php echo $domain['hosting_expiry_date']; ?></td>
 				</tr>
 <?php

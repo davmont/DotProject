@@ -23,9 +23,8 @@ $forum_id = intval(dPgetParam($_GET, 'forum_id', 0));
 $q = new DBQuery;
 $q->addTable('forums');
 $q->addQuery('*');
-$q->addWhere('forum_id = ' . $forum_id);
+$q->addWhere('forum_id = ' . (int)$forum_id);
 $res = $q->exec();
-echo db_error();
 $forum_info = db_fetch_assoc($res);
 if (!is_array($forum_info)) {
 	$forum_info = array();
@@ -47,7 +46,6 @@ $projObj->setAllowedSQL($AppUI->user_id, $q);
 if (isset($company_id))
 	$q->addWhere("project_company = $company_id");
 $projects = array('0' => '') + $q->loadHashList();
-echo db_error();
 
 if (!in_array($forum_project, array_keys($projects))) {
 	$forum_project = 0;
@@ -62,13 +60,13 @@ $titleBlock = new CTitleBlock($ttl, 'support.png', $m, "$m.$a");
 $titleBlock->addCrumb("?m=forums", "forums list");
 if ($canDelete) {
 	$titleBlock->addCrumbRight(
-		'<a href="javascript:delIt()"><img align="middle" src="' . dPfindImage('stock_delete-16.png', $m) . '" width="16" height="16" alt="" border="0" />&nbsp;' . $AppUI->_('delete forum')
+		'<a href="#"' . dPaction('delIt') . '><img align="middle" src="' . dPfindImage('stock_delete-16.png', $m) . '" width="16" height="16" alt="" border="0" />&nbsp;' . $AppUI->_('delete forum')
 		. '</a>'
 	);
 }
 $titleBlock->show();
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function submitIt() {
 		var form = document.changeforum;
 		if (form.forum_name.value.search(/^\s*$/) >= 0) {
@@ -88,7 +86,7 @@ $titleBlock->show();
 	function delIt() {
 		var form = document.changeforum;
 		if (confirm("<?php echo $AppUI->_('forumDeleteForum', UI_OUTPUT_JS); ?>")) {
-			form.del.value = "<?php echo $forum_id; ?>";
+			form.del.value = "<?php echo (int)$forum_id; ?>";
 			form.submit();
 		}
 	}
@@ -116,7 +114,7 @@ $titleBlock->show();
 						<td align="right" width="100"><?php echo $AppUI->_('Forum Name'); ?>:</td>
 						<td>
 							<input type="text" class="text" size="25" name="forum_name"
-								value="<?php echo @$forum_info["forum_name"]; ?>" maxlength="50" style="width:200px;" />
+								value="<?php echo htmlspecialchars((string)@$forum_info["forum_name"], ENT_QUOTES); ?>" maxlength="50" style="width:200px;" />
 						</td>
 					</tr>
 					<tr>
@@ -162,7 +160,7 @@ $titleBlock->show();
 			<td valign="top" width="50%">
 				<strong><?php echo $AppUI->_('Description'); ?></strong><br />
 				<textarea class="textarea" name="forum_description" style="height:150px;" rows="10"
-					cols="40"><?php echo @$forum_info["forum_description"]; ?></textarea>
+					cols="40"><?php echo htmlspecialchars((string)@$forum_info["forum_description"], ENT_QUOTES); ?></textarea>
 			</td>
 		</tr>
 
@@ -170,11 +168,11 @@ $titleBlock->show();
 		<tr>
 			<td align="left">
 				<input type="button" value="<?php echo $AppUI->_('back'); ?>" class="button"
-					onclick="javascript:window.location='?m=forums';" />
+					<?php echo dPaction(null, array(), null, array('href' => '?m=forums')); ?> />
 			</td>
 			<td align="right" colspan="2"><?php
 			if ($AppUI->user_id == (isset($forum_info["forum_owner"]) ? $forum_info["forum_owner"] : '') || $forum_id == 0) {
-				echo '<input type="button" value="' . $AppUI->_('submit') . '" class="button" onclick="javascript:submitIt()" />';
+				echo '<input type="button" value="' . $AppUI->_('submit') . '" class="button"' . dPaction('submitIt') . ' />';
 			} ?></td>
 		</tr>
 	</table>

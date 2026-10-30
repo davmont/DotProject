@@ -1,4 +1,8 @@
-<?php /* INVOICES $Id: view.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* INVOICES $Id: view.php,v 1.1.1.1 2004/04/01 16:08:45 aardvarkads Exp $ */
 
 $invoice_id = intval( dPgetParam( $_GET, "invoice_id", 0 ) );
 
@@ -26,7 +30,7 @@ $sql -> addTable('invoices','invoices');
 $sql -> addQuery('company_name,invoices.*,SUM(t1.product_price*t1.product_qty) as invoice_grand_total');
 $sql -> addJoin('companies','comp','company_id = invoice_company');
 $sql -> addJoin('invoice_product','t1','invoices.invoice_id = t1.product_invoice');
-$sql -> addWhere('invoice_id = '.$invoice_id);
+$sql -> addWhere('invoice_id = ' . (int)$invoice_id);
 $sql -> addGroup('invoice_id');
 
 $obj = null;
@@ -66,11 +70,11 @@ if ($canEdit) {
 $titleBlock->addCrumb( "?m=invoices&a=reports&invoice_id=$invoice_id", "reports" );
 $titleBlock->show();
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function updateProduct() {
 	var f = document.editFrm;
 	if (f.product_name.value.length < 1) {
-		alert( "<?php echo $AppUI->_('Please Enter a Description');?>" );
+		alert( "<?php echo $AppUI->_('Please Enter a Description', UI_OUTPUT_JS);?>" );
 		f.product_name.focus();
 	} else {
 		f.submit();
@@ -78,7 +82,7 @@ function updateProduct() {
 }
 
 function delIt() {
-	if (confirm( "<?php echo $AppUI->_('doDelete').' '.$AppUI->_('Invoice').'?';?>" )) {
+	if (confirm( "<?php echo $AppUI->_('doDelete', UI_OUTPUT_JS).' '.$AppUI->_('Invoice', UI_OUTPUT_JS).'?';?>" )) {
 		document.frmDelete.submit();
 	}
 }
@@ -106,7 +110,7 @@ function delIt() {
 		<table cellspacing="1" cellpadding="2" border="0" width="100%">
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Company');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->company_name;?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->company_name);?></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Total');?>:</td>
@@ -135,7 +139,7 @@ function delIt() {
 		</tr>
 		<tr>
 			<td align="right" nowrap><?php echo $AppUI->_('Terms');?>:</td>
-			<td class="hilite" width="100%"><?php echo $obj->invoice_terms; ?></td>
+			<td class="hilite" width="100%"><?php echo dPhtml($obj->invoice_terms); ?></td>
 		</tr>
 		</table>
 	</td>

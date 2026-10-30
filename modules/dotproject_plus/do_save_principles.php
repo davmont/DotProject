@@ -4,6 +4,8 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 $project_id = intval(dPgetParam($_POST, 'project_id', 0));
+// The user must be able to edit this project, and the records named must belong to it.
+dPrequireProjectEdit($project_id);
 $ratings = dPgetParam($_POST, 'rating', array());
 $notes = dPgetParam($_POST, 'notes', array());
 $tab = dPgetParam($_POST, 'tab', 0);
@@ -21,7 +23,7 @@ if ($project_id) {
         $q = new DBQuery();
         $q->addTable('project_pmbok_principles');
         $q->addQuery('count(*)');
-        $q->addWhere('project_id = ' . $project_id . ' AND principle_id = ' . $id);
+        $q->addWhere('project_id = ' . $project_id . ' AND principle_id = ' . (int)$id);
         $exists = $q->loadResult();
         $q->clear();
 
@@ -30,7 +32,7 @@ if ($project_id) {
         if ($exists) {
             $q->addUpdate('rating', $rating);
             $q->addUpdate('notes', $note);
-            $q->addWhere('project_id = ' . $project_id . ' AND principle_id = ' . $id);
+            $q->addWhere('project_id = ' . $project_id . ' AND principle_id = ' . (int)$id);
         } else {
             $q->addInsert('project_id', $project_id);
             $q->addInsert('principle_id', $id);

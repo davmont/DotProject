@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /* $Id: zip.lib.php,v 1.1 2003/11/05 15:39:58 jcgonz Exp $ */
 
 

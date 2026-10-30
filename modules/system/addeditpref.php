@@ -30,7 +30,7 @@ if (getPermission('system', 'edit')) {
 }
 $titleBlock->show();
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var form = document.changeuser;
 	// Collate the checked states of the task log stuff
@@ -56,7 +56,7 @@ function submitIt() {
 <tr>
 	<th colspan="2"><?php echo $AppUI->_('User Preferences');?>:
 	<?php
-		echo $user_id ? "$user" : $AppUI->_("Default");
+		echo $user_id ? dPhtml($user) : $AppUI->_("Default");
 	?></th>
 </tr>
 
@@ -142,7 +142,7 @@ function submitIt() {
 	<td align="right"><?php echo $AppUI->_('User Interface Style');?>:</td>
 	<td>
 <?php
-        $uis = $prefs['UISTYLE'] ? $prefs['UISTYLE'] : 'default';
+        $uis = !empty($prefs['UISTYLE']) ? $prefs['UISTYLE'] : 'default';
 	$styles = $AppUI->readDirs('style');
 	$temp = $AppUI->setWarning(false);
 	echo arraySelect($styles, 'pref_name[UISTYLE]', 'class="text" size="1"', $uis, true , true);
@@ -184,6 +184,16 @@ function submitIt() {
  
 	echo arraySelect($notify_filter, 'pref_name[MAILALL]', 'class="text" size="1"', @$prefs['MAILALL'], true);
 
+?>
+	</td>
+</tr>
+<tr>
+	<td align="right"><?php echo $AppUI->_('Email me when I am assigned to a task');?>:</td>
+	<td>
+<?php
+	$assign_mail = array('1' => 'Yes', '0' => 'No');
+	echo arraySelect($assign_mail, 'pref_name[TASKASSIGNMAIL]', 'class="text" size="1"',
+		isset($prefs['TASKASSIGNMAIL']) ? $prefs['TASKASSIGNMAIL'] : '1', true);
 ?>
 	</td>
 </tr>
@@ -234,8 +244,8 @@ function submitIt() {
 </tr>
 
 <tr>
-	<td align="left"><input class="button"  type="button" value="<?php echo $AppUI->_('back');?>" onclick="javascript:history.back(-1);" /></td>
-	<td align="right"><input class="button" type="button" value="<?php echo $AppUI->_('submit');?>" onclick="javascript:submitIt()" /></td>
+	<td align="left"><input class="button"  type="button" value="<?php echo $AppUI->_('back');?>"<?php echo dPaction('history.back'); ?> /></td>
+	<td align="right"><input class="button" type="button" value="<?php echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> /></td>
 </tr>
 </table>
 </form>

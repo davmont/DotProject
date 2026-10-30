@@ -6,8 +6,7 @@ global $AppUI;
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/translations.php");
 require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_report.class.php");
 $AppUI->savePlace();
-$tabBox = new CTabBox('?m=monitoringandcontrol', DP_BASE_DIR . '/modules/monitoringandcontrol/', $tab);
-$company_id = dPgetParam( $_GET, 'company_id', 0 );
+$company_id = dPgetIntParam( $_GET, 'company_id', 0 );
 $controllerReport = new ControllerReport();  
 
 ?>
@@ -33,21 +32,21 @@ $controllerReport = new ControllerReport();
 					$cadastrados = $controllerReport -> obterDadosRelatorioGerenciaSenior($company_id);	
 					foreach($cadastrados as $cad){
 					
-					if($row['idc'] < 0.8){$corIdc="#FF9FA5";}elseif ($row['idc'] < 1){$corIdc="#FFFFAE";}elseif ($row['idc'] > 1){$corIdc="#B7FFB7";}
-					if($row['idp'] < 0.8){$corIdp="#FF9FA5";}elseif ($row['idp'] < 1){$corIdp="#FFFFAE";}elseif ($row['idp'] > 1){$corIdp="#B7FFB7";} 						
+					if($cad['idc'] < 0.8){$corIdc="#FF9FA5";}elseif ($cad['idc'] < 1){$corIdc="#FFFFAE";}elseif ($cad['idc'] > 1){$corIdc="#B7FFB7";}
+					if($cad['idp'] < 0.8){$corIdp="#FF9FA5";}elseif ($cad['idp'] < 1){$corIdp="#FFFFAE";}elseif ($cad['idp'] > 1){$corIdp="#B7FFB7";} 						
 				?>										
 					<tr>
-						<td align="center"><a href="?m=projects&a=view&project_id=<?php echo $cad[id]; ?>">  <?php echo $cad[projeto]; ?> </a></td>
-						<td  align="center"><?php echo $cad[tamanho]; ?> </td>
-						<td  align="center"><?php echo number_format($cad[percentual], 2, ',', '.'); ?></td>
-						<td bgcolor="<?php echo $corIdc; ?>" align="center" ><?php echo number_format($cad[idc], 2, ',', '.'); ?> </td>
-						<td bgcolor="<?php echo $corIdp; ?>" align="center" ><?php echo number_format($cad[idp], 2, ',', '.'); ?> </td>							
+						<td align="center"><a href="?m=projects&a=view&project_id=<?php echo (int)$cad['id']; ?>">  <?php echo dPhtml($cad['projeto']); ?> </a></td>
+						<td  align="center"><?php echo dPhtml($cad['tamanho']); ?> </td>
+						<td  align="center"><?php echo number_format($cad['percentual'], 2, ',', '.'); ?></td>
+						<td bgcolor="<?php echo $corIdc; ?>" align="center" ><?php echo number_format($cad['idc'], 2, ',', '.'); ?> </td>
+						<td bgcolor="<?php echo $corIdp; ?>" align="center" ><?php echo number_format($cad['idp'], 2, ',', '.'); ?> </td>							
 						
-						<td align="center" ><?php echo number_format($cad[vp], 2, ',', '.'); ?> </td>
-						<td align="center" ><?php echo number_format($cad[va], 2, ',', '.'); ?> </td>
-						<td align="center" ><?php echo number_format($cad[cr], 2, ',', '.'); ?> </td>
-						<td align="center"><?php echo $cad[baseline]; ?> </td>	
-						<td align="center"><a href="?m=monitoringandcontrol&a=addedit_ata&project_id=<?php echo $cad[id]; ?>"><?php echo $AppUI->_('LBL_ATA');?></a></td>				
+						<td align="center" ><?php echo number_format($cad['vp'], 2, ',', '.'); ?> </td>
+						<td align="center" ><?php echo number_format($cad['va'], 2, ',', '.'); ?> </td>
+						<td align="center" ><?php echo number_format($cad['cr'], 2, ',', '.'); ?> </td>
+						<td align="center"><?php echo (int)$cad['baseline']; ?> </td>	
+						<td align="center"><a href="?m=monitoringandcontrol&a=addedit_ata&project_id=<?php echo (int)$cad['id']; ?>"><?php echo $AppUI->_('LBL_ATA');?></a></td>				
 			        </tr>				
 				<?php } ?>	
 					<tr><td colspan='10'align="center">

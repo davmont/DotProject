@@ -21,14 +21,15 @@ class WBSItemEstimation {
 		return $this->sizeUnit;
 	}
 	
-	function WBSItemEstimation (){
+	function __construct (){
 	}
 	
 	function store($idValue,$sizeValue,$sizeUnitValue) {
+		$idValue = (int)$idValue; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('t.id');
 		$q->addTable('eap_item_estimations', 't');
-		$q->addWhere('t.eap_item_id= '.$idValue);
+		$q->addWhere('t.eap_item_id= ' . (int)$idValue);
 		$sql = $q->prepare();
 		$eapItemsEstimations = db_loadList($sql);
 		$q = new DBQuery();
@@ -36,7 +37,7 @@ class WBSItemEstimation {
 		if(sizeof($eapItemsEstimations)>0){
 			$q->addUpdate('size', $sizeValue);
 			$q->addUpdate('size_unit', $sizeUnitValue);
-			$q->addWhere('eap_item_id =' . $idValue);
+			$q->addWhere('eap_item_id =' . (int)$idValue);
 		}else{
 			$q->addInsert('size', $sizeValue);
 			$q->addInsert('size_unit', $sizeUnitValue);
@@ -46,10 +47,11 @@ class WBSItemEstimation {
 	}
 	
 	function load($idValue) {
+		$idValue = (int)$idValue; // used in SQL below
 		$q = new DBQuery();
 		$q->addQuery('t.eap_item_id,t.size,t.size_unit');
 		$q->addTable('eap_item_estimations', 't');
-		$q->addWhere('t.eap_item_id= '.$idValue);
+		$q->addWhere('t.eap_item_id= ' . (int)$idValue);
 		$sql = $q->prepare();
 		$records = db_loadList($sql);
 		foreach($records as $record){

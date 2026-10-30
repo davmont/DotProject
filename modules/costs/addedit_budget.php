@@ -14,8 +14,8 @@ if (!(($canEdit && $budget_id) || ($canAuthor && !($budget_id)))) {
 
 $q = new DBQuery();
 $q->addQuery('*');
-$q->addTable('budget');
-$q->addWhere('budget_id = ' . $budget_id);
+$q->addTable('costs_budget');
+$q->addWhere('budget_id = ' . (int)$budget_id);
 //$project_id = $q->loadList();
 // check if this record has dependancies to prevent deletion
 $msg = '';
@@ -28,6 +28,10 @@ if (!db_loadObject($q->prepare(), $obj) && ($budget_id > 0)) {
     $AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
     $AppUI->redirect();
 }
+if (!$obj) {
+    // A new record: the form starts empty.
+    $obj = new CBudget();
+}
 
 
 // setup the title block
@@ -39,7 +43,13 @@ if ($budget_id != 0) {
 }
 $titleBlock->show();
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+    // The Submit button: budgetTotal, then submitIt().
+    function budgetTotalAndSubmit() {
+        budgetTotal();
+        submitIt();
+    }
+
     function submitIt() {
         
         var f = document.uploadFrm;
@@ -73,7 +83,7 @@ $titleBlock->show();
     
     function budgetTotal(){
         var management = document.getElementById('budget_reserve_management').value; 
-        var subtotal = <?php echo $obj->budget_sub_total ?>;
+        var subtotal = <?php echo (float)$obj->budget_sub_total; ?>;
         var total = (management/100) * subtotal;
         total = total + subtotal;
         
@@ -125,10 +135,10 @@ echo dPformSafe($obj->budget_id);
         </tr>
         <tr>
             <td>
-                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('Cancel'); ?>" onClick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {history.back(-1);}"/>
+                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('Cancel'); ?>"<?php echo dPaction('history.back', array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW))); ?>/>
             </td>
             <td align="right">
-                <input type="button" class="button" value="<?php echo $AppUI->_('Submit'); ?>" onclick="budgetTotal();submitIt();" />
+                <input type="button" class="button" value="<?php echo $AppUI->_('Submit'); ?>"<?php echo dPaction('budgetTotalAndSubmit'); ?> />
             </td>
         </tr>
     </form>

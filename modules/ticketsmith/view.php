@@ -65,7 +65,7 @@ $priority = dPgetCleanParam($_POST, 'priority', '');
 $subject = dPgetCleanParam($_POST, 'subject', '');
 
 if (@$type_toggle || @$priority_toggle || @$assignment_toggle) {
-    do_query("UPDATE {$dbprefix}tickets SET type = '$type_toggle', priority = '$priority_toggle', assignment = '$assignment_toggle' WHERE ticket = '$ticket'");
+    do_query("UPDATE {$dbprefix}tickets SET type = '" . db_escape($type_toggle) . "', priority = '$priority_toggle', assignment = '$assignment_toggle' WHERE ticket = '$ticket'");
 
 	//Emailing notifications.
 	$change = ' ';
@@ -218,10 +218,10 @@ if (@$type_toggle || @$priority_toggle || @$assignment_toggle) {
 /* get ticket */
 $ticket_info = query2hash("SELECT * FROM {$dbprefix}tickets WHERE ticket = $ticket");
 
-print("<input type=\"hidden\" name=\"orig_assignment\" value='" . $ticket_info["assignment"] . "' />\n");
-print("<input type=\"hidden\" name=\"author\" value='" . $ticket_info["author"] . "' />\n");
-print("<input type=\"hidden\" name=\"priority\" value='" . $ticket_info["priority"] . "' />\n");
-print("<input type=\"hidden\" name=\"subject\" value='" . $ticket_info["subject"] . "' />\n");
+print("<input type=\"hidden\" name=\"orig_assignment\" value='" . dPhtml($ticket_info["assignment"]) . "' />\n");
+print("<input type=\"hidden\" name=\"author\" value='" . dPhtml($ticket_info["author"]) . "' />\n");
+print("<input type=\"hidden\" name=\"priority\" value='" . dPhtml($ticket_info["priority"]) . "' />\n");
+print("<input type=\"hidden\" name=\"subject\" value='" . dPhtml($ticket_info["subject"]) . "' />\n");
 
 /* output ticket */
 for ($loop = 0; $loop < count($fields["headings"]); $loop++) {
@@ -252,7 +252,7 @@ if ($attach_count == 1) {
       print("<td align=\"left\">");
 		  while ($row = result2hash($result)) {
 			  echo "<a href='fileviewer.php?file_id=" . $row["file_id"] . "'>";
-			  echo $row["file_name"];
+			  echo dPhtml($row["file_name"]);
 			echo "</a><br>\n";
 		}
 		print("</td>\n");

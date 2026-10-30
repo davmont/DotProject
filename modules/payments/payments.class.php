@@ -1,4 +1,8 @@
-<?php /* PAYMENTS $Id: payments.class.php,v 1.1.1.1 2004/04/01 16:20:41 aardvarkads Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PAYMENTS $Id: payments.class.php,v 1.1.1.1 2004/04/01 16:20:41 aardvarkads Exp $ */
 /**
  *	@package dotProject
  *	@subpackage modules
@@ -28,7 +32,7 @@ class CPayment extends CDpObject {
 	// delete all current entries
 		$q = new DBQuery();
 		$q -> setDelete('invoice_payment');
-		$q -> addWhere('payment_id = '.$this->payment_id);		
+		$q -> addWhere('payment_id = ' . (int)$this->payment_id);		
 		$q -> exec();
 
 	// process dependencies
@@ -44,7 +48,7 @@ class CPayment extends CDpObject {
 		      $q -> clear();
 		      $q -> addTable('invoices');
 		      $q -> addUpdate('invoice_status', 1);
-		      $q -> addWhere('invoice_id = '.$invoice_id);
+		      $q -> addWhere('invoice_id = ' . (int)$invoice_id);
 		      $q -> exec();     		      
 		    }
 		  }
@@ -63,7 +67,7 @@ class CPayment extends CDpObject {
 	}
 
 // overload canDelete
-	function canDelete( &$msg, $oid=null ) {
+	function canDelete( &$msg, $oid=null, $joins=null ) {
 		$tables[] = array( 'label' => 'Payment Invoices', 'name' => 'invoice_payment', 'idfield' => 'invoice_id', 'joinfield' => 'payment_id' );
 	// call the parent class method to assign the oid
 		return parent::canDelete( $msg, $oid, $tables );

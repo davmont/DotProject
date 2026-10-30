@@ -174,7 +174,7 @@ if ($do_task_log) {
 					$status_log_id = $hditem->log_status(0,$AppUI->_('Created'),$new_item);
 					// Lets create a task log for the item creation:
 					$obj = new CHDTaskLog();
-					$new_item_log = array('task_log_id' => 0,'task_log_help_desk_id' => $hditem->item_id, 'task_log_creator' => $AppUI->user_id, 'task_log_name' => 'Item Created: '.$_POST['item_title'], 'task_log_date' => $hditem->item_created, 'task_log_description' => $_POST['item_title'], 'task_log_hours' => $_POST['task_log_hours'], 'task_log_costcode' => $_POST['task_log_costcode']);
+					$new_item_log = array('task_log_id' => 0,'task_log_help_desk_id' => $hditem->item_id, 'task_log_creator' => $AppUI->user_id, 'task_log_name' => 'Item Created: '.$_POST['item_title'], 'task_log_date' => $hditem->item_created, 'task_log_description' => $_POST['item_title'], 'task_log_hours' => (float)dPgetParam($_POST, 'task_log_hours', 0), 'task_log_costcode' => (int)dPgetParam($_POST, 'task_log_costcode', 0));
 					if (!$obj->bind( $new_item_log )) {
 						$AppUI->setMsg($obj->getError(), UI_MSG_ERROR);
 						$AppUI->redirect();
@@ -201,7 +201,7 @@ if ($do_task_log) {
  * @param CHelpDeskItem $hditem
  */
 function doWatchers($list, $hditem) {
-	global $AppUI;
+	global $AppUI, $del;
 
 	// Create the watcher list
 	$watcherlist = explode(',', $list);
@@ -209,7 +209,7 @@ function doWatchers($list, $hditem) {
 	$q = new DBQuery;
 	$q->addQuery('user_id');
 	$q->addTable('helpdesk_item_watchers');
-	$q->addWhere('item_id = '.$hditem->item_id);
+	$q->addWhere('item_id = ' . (int)$hditem->item_id);
 	$current_users = $q->loadHashList();
 	$q->clear();
 	$current_users = array_keys($current_users);
@@ -217,7 +217,7 @@ function doWatchers($list, $hditem) {
 	// Delete the existing watchers as the list might have changed
 	$q = new DBQuery;
 	$q->setDelete('helpdesk_item_watchers');
-	$q->addWhere('item_id='.$hditem->item_id);
+	$q->addWhere('item_id=' . (int)$hditem->item_id);
 	$q->exec();
 	$q->clear();
 
@@ -228,7 +228,7 @@ function doWatchers($list, $hditem) {
 				$q->addQuery('user_id, c.contact_email');
 				$q->addTable('users');
 				$q->addJoin('contacts', 'c', 'user_contact = contact_id');
-				$q->addWhere('user_id = '.$watcher);
+				$q->addWhere('user_id = ' . (int)$watcher);
 				$rows = $q->loadList();
 				$q->clear();
 				foreach ($rows as $row) {
@@ -242,7 +242,7 @@ function doWatchers($list, $hditem) {
 				$q->addTable('helpdesk_item_watchers');
 				$q->addInsert('item_id',$hditem->item_id, true);
 				$q->addInsert('user_id', $watcher, true);
-				$q->addWhere('item_id='.$hditem->item_id);
+				$q->addWhere('item_id=' . (int)$hditem->item_id);
 				$q->exec();
 				$q->clear();
 				if ($email_list) {

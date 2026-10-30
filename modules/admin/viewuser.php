@@ -56,7 +56,7 @@ $q->addQuery('con.*, company_id, company_name, dept_name, dept_id');
 $q->addJoin('contacts', 'con', 'user_contact = contact_id');
 $q->addJoin('companies', 'com', 'contact_company = company_id');
 $q->addJoin('departments', 'dep', 'dept_id = contact_department');
-$q->addWhere('u.user_id = ' . $user_id);
+$q->addWhere('u.user_id = ' . (int)$user_id);
 $sql = $q->prepare();
 $q->clear();
 
@@ -79,15 +79,14 @@ else {
 	if ($canEdit || $user_id == $AppUI->user_id) {
 		$titleBlock->addCrumb('?m=system&amp;a=addeditpref&amp;user_id=' . $user_id,
 			'edit preferences');
-		$titleBlock->addCrumbRight('<a href="#" onclick="popChgPwd();return false">'
+		$titleBlock->addCrumbRight('<a href="#"' . dPaction('popChgPwd') . '>'
 			. $AppUI->_('change password') . '</a>');
 		$titleBlock->addCell('<input type="button" class=button value="' . $AppUI->_('add user')
-			. '" onClick="javascript:window.location=\'./index.php'
-			. '?m=admin&amp;a=addedituser\';" />');
+			. '"' . dPaction(null, array(), null, array('href' => './index.php?m=admin&a=addedituser')) . ' />');
 	}
 	$titleBlock->show();
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 	// security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -95,7 +94,7 @@ else {
 	if ($canEdit || $user_id == $AppUI -> user_id) {
 ?>
 			function popChgPwd() {
-				window.open('./index.php?m=public&a=chpwd&dialog=1&user_id=<?php echo $user['user_id']; ?>', 'chpwd', 'top=250,left=250,width=450, height=300, scrollbars=no');
+				window.open('./index.php?m=public&a=chpwd&dialog=1&user_id=<?php echo (int)$user['user_id']; ?>', 'chpwd', 'top=250,left=250,width=450, height=300, scrollbars=no');
 			}
 			<?php
 	}?>
@@ -110,7 +109,7 @@ else {
 						<?php echo $AppUI->_('Login Name'); ?>:
 					</td>
 					<td class="hilite" width="100%">
-						<?php echo $user['user_username']; ?>
+						<?php echo dPhtml($user['user_username']); ?>
 					</td>
 				</tr>
 				<tr>
@@ -126,7 +125,7 @@ else {
 						<?php echo $AppUI->_('Real Name'); ?>:
 					</td>
 					<td class="hilite" width="100%">
-						<?php echo $user['contact_first_name'] . ' ' . $user['contact_last_name']; ?>
+						<?php echo dPhtml($user['contact_first_name'] . ' ' . $user['contact_last_name']); ?>
 					</td>
 				</tr>
 				<tr>
@@ -136,7 +135,7 @@ else {
 					<td class="hilite" width="100%">
 						<?php
 	if (getPermission('companies', 'access', $user['contact_company'])) {
-		echo '<a href="?m=companies&amp;a=view&amp;company_id=' . $user['contact_company'] . '" title="' . htmlspecialchars($user['company_name'], ENT_QUOTES) . '">' . htmlspecialchars($user['company_name'], ENT_QUOTES) . '</a>';
+		echo '<a href="?m=companies&amp;a=view&amp;company_id=' . (int)$user['contact_company'] . '" title="' . htmlspecialchars($user['company_name'], ENT_QUOTES) . '">' . htmlspecialchars($user['company_name'], ENT_QUOTES) . '</a>';
 	}
 	else {
 		echo htmlspecialchars($user['company_name'], ENT_QUOTES);
@@ -149,8 +148,8 @@ else {
 						<?php echo $AppUI->_('Department'); ?>:
 					</td>
 					<td class="hilite" width="100%">
-						<a href="?m=departments&amp;a=view&amp;dept_id=<?php echo @$user['contact_department']; ?>">
-							<?php echo $user['dept_name']; ?>
+						<a href="?m=departments&amp;a=view&amp;dept_id=<?php echo (int)@$user['contact_department']; ?>">
+							<?php echo dPhtml($user['dept_name']); ?>
 						</a>
 					</td>
 				</tr>
@@ -159,7 +158,7 @@ else {
 						<?php echo $AppUI->_('Phone'); ?>:
 					</td>
 					<td class="hilite" width="100%">
-						<?php echo @$user['contact_phone']; ?>
+						<?php echo dPhtml(@$user['contact_phone']); ?>
 					</td>
 				</tr>
 				<tr>
@@ -167,7 +166,7 @@ else {
 						<?php echo $AppUI->_('Home Phone'); ?>:
 					</td>
 					<td class="hilite" width="100%">
-						<?php echo @$user['contact_phone2']; ?>
+						<?php echo dPhtml(@$user['contact_phone2']); ?>
 					</td>
 				</tr>
 				<tr>
@@ -175,7 +174,7 @@ else {
 						<?php echo $AppUI->_('Mobile'); ?>:
 					</td>
 					<td class="hilite" width="100%">
-						<?php echo @$user['contact_mobile']; ?>
+						<?php echo dPhtml(@$user['contact_mobile']); ?>
 					</td>
 				</tr>
 				<tr valign=top>
@@ -184,12 +183,12 @@ else {
 					</td>
 					<td class="hilite" width="100%">
 						<?php
-	echo @$user['contact_address1']
-		. (($user['contact_address2']) ? '<br />' . $user['contact_address2'] : '')
-		. '<br />' . $user['contact_city']
-		. '&nbsp;&nbsp;' . $user['contact_state']
-		. '&nbsp;&nbsp;' . $user['contact_zip']
-		. '<br />' . $user['contact_country']
+	echo dPhtml(@$user['contact_address1'])
+		. (($user['contact_address2']) ? '<br />' . dPhtml($user['contact_address2']) : '')
+		. '<br />' . dPhtml($user['contact_city'])
+		. '&nbsp;&nbsp;' . dPhtml($user['contact_state'])
+		. '&nbsp;&nbsp;' . dPhtml($user['contact_zip'])
+		. '<br />' . dPhtml($user['contact_country'])
 		;
 ?>
 					</td>
@@ -204,19 +203,19 @@ else {
 						<?php echo $AppUI->_('Birthday'); ?>:
 					</td>
 					<td class="hilite" width="100%">
-						<?php echo @$user['contact_birthday']; ?>
+						<?php echo dPhtml(@$user['contact_birthday']); ?>
 					</td>
 				</tr>
 				<tr>
 					<td align="right" nowrap>ICQ#:</td>
 					<td class="hilite" width="100%">
-						<?php echo @$user['contact_icq']; ?>
+						<?php echo dPhtml(@$user['contact_icq']); ?>
 					</td>
 				</tr>
 				<tr>
 					<td align="right" nowrap>AOL Nick:</td>
-					<td class="hilite" width="100%"><a href="aim:<?php echo @$user['contact_aol']; ?>">
-							<?php echo @$user['contact_aol']; ?>
+					<td class="hilite" width="100%"><a href="aim:<?php echo dPhtml(@$user['contact_aol']); ?>">
+							<?php echo dPhtml(@$user['contact_aol']); ?>
 						</a></td>
 				</tr>
 				<tr>
@@ -224,7 +223,7 @@ else {
 						<?php echo $AppUI->_('Email'); ?>:
 					</td>
 					<td class="hilite" width="100%">
-						<?php echo '<a href="mailto:' . @$user['contact_email'] . '">' . @$user['contact_email'] . '</a>'; ?>
+						<?php echo '<a href="mailto:' . dPhtml(@$user['contact_email']) . '">' . dPhtml(@$user['contact_email']) . '</a>'; ?>
 					</td>
 				</tr>
 				<tr>

@@ -1,0 +1,5 @@
+# Development-only paths, left out of release archives (git archive).
+/tools export-ignore
+/docker export-ignore
+/tests export-ignore
+/.github export-ignore

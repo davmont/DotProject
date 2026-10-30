@@ -46,7 +46,7 @@ class CTabBox extends CTabBox_core {
 		} else {
 		// tabbed view
 			$s = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
-			$s .= '<tr><td><table border="0" cellpadding="0" cellspacing="0">';
+			$s .= '<tr><td><div class="tabrow">';
 			
 			if ( count($this->tabs)-1 < $this->active ) {
 				//Last selected tab is not available in this view. eg. Child tasks
@@ -55,6 +55,7 @@ class CTabBox extends CTabBox_core {
 			foreach( $this->tabs as $k => $v ) {
 				$class = ($k == $this->active) ? 'tabon' : 'taboff';
 				$sel = ($k == $this->active) ? 'Selected' : '';
+				$s .= '<table class="tabitem" border="0" cellpadding="0" cellspacing="0"><tr>';
 				$s .= '<td height="28" valign="middle" width="3"><img src="./style/' . $uistyle . '/images/tab'.$sel.'Left.png" width="3" height="28" border="0" alt="" /></td>';
 				$s .= '<td id="toptab_'.$k.'" valign="middle" nowrap="nowrap"';
 				if ($js_tabs)
@@ -63,20 +64,20 @@ class CTabBox extends CTabBox_core {
 					$s .= ' background="./style/'.$uistyle.'/images/tab'.$sel.'Bg.png"';
 				$s .= '>&nbsp;<a href="';
 				if ($this->javascript)
-					$s .= "javascript:" . $this->javascript . "({$this->active}, $k)";
+					$s .= '#" data-dp-call="' . htmlspecialchars($this->javascript, ENT_QUOTES) . '" data-dp-args="[' . (int)$this->active . ',' . (int)$k . ']';
 				else if  ($js_tabs)
-					$s .= 'javascript:show_tab(' . $k . ')';
+					$s .= '#" data-dp-call="show_tab" data-dp-args="[' . (int)$k . ']';
 				else
 					$s .= $this->baseHRef.'tab='.$k;
 				$s .='">'.($v[2] ? $v[1] : $AppUI->_($v[1])).'</a>&nbsp;</td>';
 				$s .= '<td valign="middle" width="3"><img src="./style/' . $uistyle . '/images/tab'.$sel.'Right.png" width="3" height="28" border="0" alt="" /></td>';
-				$s .= '<td width="3" class="tabsp"><img src="./images/shim.gif" height="1" width="3" /></td>';
+				$s .= '<td width="3" class="tabsp"><img src="./images/shim.gif" height="1" width="3" /></td></tr></table>';
 			}
-			$s .= '</table></td></tr>';
+			$s .= '</div></td></tr>';
 			$s .= '<tr><td width="100%" colspan="'.(count($this->tabs)*4 + 1).'" class="tabox">';
 			echo $s;
 			//Will be null if the previous selection tab is not available in the new window eg. Children tasks
-			if ( $this->tabs[$this->active][0] != "" ) {
+			if (isset($this->tabs[$this->active]) && $this->tabs[$this->active][0] != "") {
 				$currentTabId = $this->active;
 				$currentTabName = $this->tabs[$this->active][1];
 				if (!$js_tabs)
@@ -86,16 +87,11 @@ class CTabBox extends CTabBox_core {
 			{
 				foreach( $this->tabs as $k => $v ) 
 				{
-					echo '<div class="tab" id="tab_'.$k.'">';
+					echo '<div class="tab" id="tab_' . $k . '"' . ($k == $this->active ? '' : ' style="display:none"') . '>';
 					$currentTabId = $k;
 					$currentTabName = $v[1];
 					require $this->baseInc.$v[0].'.php';
 					echo '</div>';
-					echo '<script language="JavaScript" type="text/javascript">
-<!--
-show_tab('.$this->active.');
-//-->
-</script>';
 
 				}
 			}

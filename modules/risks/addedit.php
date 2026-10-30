@@ -38,7 +38,7 @@ if (!(($canEdit && $risk_id) || ($canAuthor && !($risk_id)))) {
 $q = new DBQuery();
 $q->addQuery('*');
 $q->addTable('risks');
-$q->addWhere('risk_id = ' . $risk_id);
+$q->addWhere('risk_id = ' . (int)$risk_id);
 
 // check if this record has dependancies to prevent deletion
 $msg = '';
@@ -51,6 +51,10 @@ if (!db_loadObject($q->prepare(), $obj) && ($risk_id > 0)) {
     $AppUI->setMsg('LBL_RISKS');
     $AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
     $AppUI->redirect();
+}
+if (!$obj) {
+    // A new risk: the form starts empty.
+    $obj = new CRisks();
 }
 
 // collect all the users for the company owner list
@@ -71,6 +75,9 @@ $projects = $q->loadHashList();
 $projectSelected = intval(dPgetParam($_GET, 'project_id'));
 $t = intval(dPgetParam($_GET, 'tab'));
 $vw = dPgetParam($_GET, 'vw');
+if (!in_array($vw, array('vw_watchlist', 'vw_near_term_responses_list', 'vw_strategys_list', 'vw_lessons_learned_list'), true)) {
+    $vw = null;
+}
 // setup the title block
 $ttl = $risk_id ? "LBL_EDIT" : "LBL_ADD";
 $titleBlock = new CTitleBlock($ttl, 'risks.png', $m, "$m.$a");
@@ -92,7 +99,7 @@ if ($canDelete && $risk_id > 0) {
 }
 $titleBlock->show();
 ?>
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
     function submitIt() {
         
         //    var f = document.uploadFrm;
@@ -141,7 +148,7 @@ $titleBlock->show();
                     <tr>
                         <td align="right" nowrap="nowrap"><?php echo $AppUI->_('LBL_NAME'); ?>*:</td>
                         <td>
-                            <input type="text" size="64" name="risk_name" value="<?php echo $obj->risk_name; ?>">
+                            <input type="text" size="64" name="risk_name" value="<?php echo dPhtml($obj->risk_name); ?>">
                         </td>
                     </tr>
                     <tr>
@@ -188,11 +195,11 @@ $titleBlock->show();
                             $q = new DBQuery();
                             $q->addQuery('project_id, project_name');
                             $q->addTable('projects');
-                            $q->addWhere('project_id = ' . $projectSelected);
+                            $q->addWhere('project_id = ' . (int)$projectSelected);
                             $project = $q->loadHashList();
                             if ($projectSelected == null) {
                                 $projectSelected = @$obj->risk_project;
-                                $projectName = $projects[@$obj->risk_project];
+                                $projectName = isset($projects[$obj->risk_project]) ? $projects[$obj->risk_project] : '';
                                 $project[@$obj->risk_project] = $projectName;
                             }
                             echo arraySelect($project, 'risk_project', 'size="1" class="text"', (@$obj->risk_project ? dPformSafe(@$obj->risk_project) : $projectSelected));
@@ -277,10 +284,10 @@ $titleBlock->show();
         </tr>
         <tr>
             <td>
-                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('LBL_CANCEL'); ?>" onClick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {location.href = '<?php echo $href; ?>';}"/>
+                <input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('LBL_CANCEL'); ?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_RAW), 'href' => $href)); ?>/>
             </td>
             <td align="right">
-                <input type="button" class="button" value="<?php echo $AppUI->_('LBL_SUBMIT'); ?>" onclick="submitIt()" />
+                <input type="button" class="button" value="<?php echo $AppUI->_('LBL_SUBMIT'); ?>"<?php echo dPaction('submitIt'); ?> />
             </td>
         </tr>
     </form>

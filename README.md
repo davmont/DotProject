@@ -1,182 +1,147 @@
-# dotProject (davmont fork)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="images/brand/logo-dark.svg">
+    <img src="images/brand/logo.svg" alt="dotPulse" height="64">
+  </picture>
+</p>
 
-An actively maintained, modernized fork of the open-source [dotProject](http://www.dotproject.net/)
-project-management system. This branch adapts the legacy LAMP application to PHP 8.x,
-re-skins it with a Material-style theme, integrates third-party "dotmods" modules,
-adds PMBOK 8th Edition features, and is undergoing a structured security and
-performance hardening pass.
+<p align="center"><strong>Open-source project management for PHP 8, continuing dotProject.</strong></p>
 
-Upstream: <http://www.dotproject.net/> · Fork: <https://github.com/davmont/DotProject>
+---
+
+**dotPulse** is an actively maintained continuation of [dotProject](https://github.com/dotproject/dotProject),
+the open-source, web-based project-management system. Upstream development stopped after
+dotProject 2.2.0 (March 2020); this fork carries the code base forward. It runs on
+PHP 8.x, ships a Material-style theme, adds PMBOK-oriented features and a full
+Spanish translation, and has been through a complete security and code-quality audit.
+
+The name keeps the *dot* and the **dP** initials that run through the code (`dPgetParam()`,
+`$dPconfig`, `DP_BASE_DIR`): existing installations, add-on modules and their database
+tables keep working unchanged.
+
+- Repository: <https://github.com/davmont/dotPulse>
+- Issues: <https://github.com/davmont/dotPulse/issues>
+- Original project: see [Origins and credits](#origins-and-credits)
 
 ---
 
 ## Status
 
-> ⚠️ **Work in progress.** This fork is "highly unstable" by design — it is being used
-> as a vehicle to drag the dotProject core and a wide set of optional legacy "dotmods"
-> modules forward into PHP 8.x and a consistent Material UI. Some optional modules may
-> or may not work; see [Module status](#module-status) below.
->
-> 🛡 **Security:** v2.3.1 addressed the most critical findings: password hashing
-> migration, CSRF protection, session hardening, XSS and SQL injection fixes, and
-> file-upload MIME hardening. Some lower-severity findings remain open — see
-> [RELEASE_NOTES_v2.3.1.md](RELEASE_NOTES_v2.3.1.md) for the full list.
+Work happens on the **`devel`** branch; **`master`** only receives stable releases.
 
-Current release: **v2.3.1** — see [RELEASE_NOTES_v2.3.1.md](RELEASE_NOTES_v2.3.1.md).
+- Current release: **dotPulse 3.0.0**, the first under the new name. See
+  [RELEASE_NOTES_v3.0.0.md](RELEASE_NOTES_v3.0.0.md), especially its **Breaking changes**
+  and **Upgrading** sections, before upgrading an existing site.
+- Previous release: v2.3.1, still named dotProject ([RELEASE_NOTES_v2.3.1.md](RELEASE_NOTES_v2.3.1.md)).
 
----
+## What's in it
 
-## What's new in this fork
+### Security
+A module-by-module audit of the whole code base (core and every bundled add-on) is
+documented in [docs/security-audit/](docs/security-audit/), with its roadmap in
+[ROADMAP.md](docs/security-audit/ROADMAP.md). Highlights:
 
-### v2.3.1 (2026-06-15)
-Security patch + devel merge. Highlights: bcrypt password migration, central CSRF
-protection, session hardening (Secure/HttpOnly/SameSite), XSS & SQL injection fixes,
-76 missing i18n keys added across all 25 locales (full Spanish translations), N+1 query
-fixes, PMBOK `task_status` field, Gantt TypeError fix, and iGantt fully translated to
-Spanish. See [RELEASE_NOTES_v2.3.1.md](RELEASE_NOTES_v2.3.1.md).
+- Passwords hashed with `password_hash()` (bcrypt), upgraded transparently on login;
+  token-based password reset; rate-limited login and reset.
+- CSRF protection on every form post; actions that changed data over GET moved to POST.
+- Enforced Content-Security-Policy with no inline scripts ([docs/csp.md](docs/csp.md)).
+- SQL injection, XSS and missing-permission fixes across core and add-on modules.
+- Hardened sessions (`HttpOnly`, `Secure`, `SameSite`, id regenerated on login) and
+  file uploads (server-side MIME detection).
+- Deployment checklist in [docs/deployment-security.md](docs/deployment-security.md).
 
-### UI modernization (v2.3.0)
-- **Material theme as global default.** Cleaner card-based layouts, consistent colour
-  palette, responsive forms.
-- **Redesigned login & password recovery.** Centred CSS cards, smooth dropdowns, no
-  more table-based layouts.
-- **Calendar overhaul.** Month and week views rebuilt on a matrix layout with clean
-  borders, current-day highlighting, and boxed event chips.
-- **Restyled Contacts module** to match the new look-and-feel.
+### PHP 8
+The full audit suite installs every add-on module, crawls every page and saves every
+form as an administrator and as a regular user, and fails on any PHP error, warning,
+notice or SQL error.
 
-### PMBOK 8th Edition
-- New task-level **Status**, **Principles**, and **Domains** fields and views,
-  bringing project tracking in line with the 8th-edition guide.
+### Project management
+- **Project tips bell**: checks each project against PMBOK practice (charter, scope,
+  schedule, cost, risks and more) and suggests the next step.
+- **PMBOK 8th Edition** task fields (status, principles, domains) and project charters
+  linked to their project (Initiating module).
+- Gantt charts, calendar, Helpdesk, Mantis integration, costs and finances, timesheets,
+  risks and the other dotProject modules, updated for PHP 8.
 
-### PHP 8.x compatibility
-- Fixed `"array offset on false"` strict-typing errors in Forums (`addedit.php`,
-  `post_message.php`).
-- Stripped deprecated `mysql_pconnect` checks from the login flow.
-- Ongoing cleanup of `Undefined index` / `Undefined offset` warnings.
-- Refactored `preg_match`-based URL parsing to `parse_url`.
-
-### Localization
-- **Spanish (`es.inc`)** fully translated across the application's locales.
-
-### Permissions & integrations
-- Permission checks re-enabled and validated across the **History** and **Companies**
-  modules.
-- **Eventum** tracker path evaluation hardened.
-- **GACL** self-repair on upgrade: auto-restores missing `gacl_acl_sections` table
-  and reseeds missing user entries.
-
-### Performance
-- N+1 query loops converted to bulk inserts / ADOdb transactions across:
-  Tasks (`tasks.class.php`), Tasks Assigned Users deletion, Resource Manager projects
-  loop, ATA controller, Calendar event assignment, Minute Members insertion, Project
-  Contacts/Departments, Contact↔Company upgrade, Project deletion, Task budget &
-  child-count loading in finance tabs.
-- Benchmark harnesses included: [benchmark_activities.php](benchmark_activities.php),
-  [benchmark_n_plus_1.php](benchmark_n_plus_1.php),
-  [benchmark_prefetch.php](benchmark_prefetch.php).
-
-### Recent security work (v2.3.1)
-- **MD5 → `password_hash()` migration** with transparent bcrypt upgrade on login.
-- **Central CSRF protection** — all `dosql` handlers covered; GET-based bypass closed.
-- **Session hardening** — `session_regenerate_id(true)` on login; `HttpOnly`, `Secure`,
-  `SameSite=Lax` cookie flags; `Secure` flag works correctly behind reverse proxies.
-- **SQL injection fixes** in calendar, mileage log, CTesting, timecard, annotations,
-  and sendpass user lookup.
-- **XSS fixes** in HR allocations, inventory utility, and communication addedit.
-- **File upload**: server-side MIME detection with safe `application/octet-stream` fallback.
-- **File-based rate limiter** ([classes/ratelimiter.class.php](classes/ratelimiter.class.php))
-  on login and password-reset endpoints.
-- **`unserialize()` hardened** in PostNuke authenticator.
-- **`echo db_error()` data-exposure leak** removed.
-
-### Code health
-- Deprecated `checkFlag()` removed from `includes/permissions.php`.
-- HTML-entity hack in Calendar replaced with a proper decoding utility.
-- Misleading TODO prefixes cleaned out of upgrade instructions.
-- Obsolete `/misc` artefacts purged (`mime.types`, `cvs2cl/`, `postnuke/`,
-  `holidays/`).
-
----
-
-## Testing
-
-Two test suites live alongside the application:
-
-- **PHP — PHPUnit** in [tests/](tests/). Covers `CDate`, `CDpObject`, `CEvent`,
-  `CHelpDeskItem`, `CustomFieldsParser`, `DBQuery`, `Filter`, `CAppUI`
-  (`setMsg` / `getMsg` / `check_plain`), `SQLAuthenticator`, and UI helpers
-  (`checkFileName`). Run with:
-  ```
-  php tests/cli_runner.php
-  ```
-- **JavaScript — Jest** for client-side helpers (jscalendar `%T` / `%R` / `%X` /
-  `%r` format specifiers, etc.). Run with:
-  ```
-  npm install
-  npm test
-  ```
-
----
+### Interface and languages
+- Material theme by default; the classic themes are still available.
+- Complete **Spanish** translation; the other upstream languages are kept.
 
 ## Installation
 
-Quick path:
+**Requirements:** PHP 8.x (8.3 is tested), MySQL or MariaDB, Apache (recommended) or nginx.
+Several access rules rely on `.htaccess`; on nginx, port the equivalent `deny` rules
+(see [docs/deployment-security.md](docs/deployment-security.md)).
 
-1. Drop the source into your web root.
-2. Point a browser at the `install/` directory and follow the wizard.
-3. **Post-install:** remove or `Deny from all` the `install/` directory — and
-   in particular delete [install/docs/phpinfo.php](install/docs/phpinfo.php)
-   (audit finding C8).
+1. Put the source in your web root.
+2. Open the `install/` directory in a browser and follow the wizard. It writes
+   `includes/config.php`; to configure by hand, copy
+   [includes/config-dist.php](includes/config-dist.php) to `includes/config.php`.
+3. After installing, remove the `install/` directory or deny access to it.
 
-Full upstream documentation:
-<http://docs.dotproject.net/index.php?title=Installation>
+### Upgrading from dotProject
+dotPulse upgrades dotProject 2.x databases in place: back up the database, replace the
+code, and run the installer, which detects the existing installation and applies the
+database upgrades. Then upgrade the add-on modules from **System Admin > Modules**.
+Customised page titles and e-mail prefixes are kept; the defaults are renamed to dotPulse.
+The full checklist (module upgrades, cron, mail, web server rules) is in
+[RELEASE_NOTES_v3.0.0.md](RELEASE_NOTES_v3.0.0.md#upgrading).
 
-**Requirements**
-- PHP 8.x (PHP 8.3 tested; older 7.x may still work but is no longer the target).
-- MySQL / MariaDB.
-- Apache or nginx. Note: several legacy access controls rely on Apache
-  `.htaccess` semantics — on nginx you must port equivalent `deny` rules
-  (see audit findings C9, H9).
+## Development
 
----
+- `make check` runs the PHP lint, PHPStan, the raw-input and inline-script checks and
+  the JavaScript tests.
+- PHP unit tests: `php tests/cli_runner.php`. JavaScript tests (Jest, in
+  [tools/jest/](tools/jest/)): `make js-test`.
+- A Docker sandbox (PHP 8.3 and MariaDB) and the full audit suite are described in
+  [docker/README.md](docker/README.md) (`make audit-full`).
 
-## Module status
+Node.js is only needed for the development tools in [tools/](tools/); a server does not
+need it.
 
-dotProject ships **60+ functional modules**. The v2.3.0/v2.3.1 sprints focused on the
-core navigational framework, Calendar, Forums, Contacts, Earnings, security hardening,
-and localization. Many legacy modules
-have **not yet been refactored or tested** against PHP 8.x and the Material theme —
-expect `undefined index` warnings and pre-Material styling in:
+## Brand
 
-- **Projects & Tasks** — `/projects`, `/tasks`, `/tasks_template`, `/projectdesigner`
-- **Departments & HR** — `/departments`, `/human_resources`
-- **Finances & Invoicing** — `/finances`, `/invoices`, `/costs`, `/unitcost`, `/payments`
-- **Helpdesk & Ticketing** — `/helpdesk`, `/ticketsmith`, `/bugspray`, `/mantis`
-- **Time & Resources** — `/timeplanning`, `/timecard`, `/timesheet`, `/timetrack`, `/resource_m`
-- **Monitoring, Gantt & Risks** — `/monitoringandcontrol`, `/igantt`, `/risks`
-- **Files & System Admin** — `/files`, `/system`, `/backup`, `/dataimport`
-- **Third-party integrations** — `/tracIntegration`, `/gallery2`
+The logo, palette and favicons are in [images/brand/](images/brand/) and are generated
+by [tools/brand/build.py](tools/brand/build.py). The mark is five dots, one per task,
+drawing the pulse of a project.
 
-Contributors prioritizing v2.4.0 should focus on PHP 8 warnings and Material
-restyling in the above modules.
+| Colour | Hex | Use |
+| --- | --- | --- |
+| dotPulse blue | `#1B4F9C` | Logo, links, buttons |
+| Deep blue | `#123A73` | Hover, pressed |
+| Coral | `#F06449` | The peak in the logo, charts (not small text) |
+| Coral text | `#C93D27` | Coral for text on white |
+| Teal | `#0A8080` | Second data colour, text on white |
+| Graphite | `#23262B` | Body text, wordmark |
+| Mist | `#E8EDF5` | Section backgrounds |
 
----
+The wordmark uses [Space Grotesk](https://github.com/floriankarsten/space-grotesk)
+(SIL Open Font License), converted to outlines.
 
-## Reporting & community
+## Origins and credits
 
-- **This fork's issues:** <https://github.com/davmont/DotProject/issues>
-- Upstream support forums: <http://forums.dotproject.net/index.php>
-- Upstream bug tracker: <http://bugs.dotproject.net/>
-- Upstream SourceForge: <http://sourceforge.net/projects/dotproject>
+dotPulse is built on the work of the dotProject Development Team and its contributors.
+dotProject started in 2000 and was developed by its community for nearly two decades;
+its last upstream release is 2.2.0 (March 2020). This fork began in January 2013 from
+dotProject's Subversion code base and was renamed dotPulse in 2026.
 
----
+Original project sources:
+
+- dotProject on GitHub: <https://github.com/dotproject/dotProject>
+- dotProject website: <http://www.dotproject.net/>
+- dotProject on SourceForge: <https://sourceforge.net/projects/dotproject/>
+- Upstream documentation: <http://docs.dotproject.net/>
+- Upstream forums: <http://forums.dotproject.net/>
+
+The source files keep their original copyright notices and the "This file is part of
+dotProject" GPL headers. Several bundled modules ("dotmods") come from third-party
+authors and keep their own credits.
 
 ## License
 
-As of upstream version 2.0, dotProject is released under the **GPL**.
-Versions 1.0.2 and earlier were released under BSD. See [COPYING](COPYING) and
-[LICENSE](LICENSE).
+dotPulse is free software under the **GNU General Public License**, as dotProject has
+been since version 2.0 (versions 1.0.2 and earlier were BSD licensed). See
+[COPYING](COPYING) and [LICENSE](LICENSE).
 
-Bundled third-party libraries (Smarty, xajax, JpGraph, phpGACL, overLIB, PHPXMLRPC,
-ADOdb, etc.) ship under their original licences. Several of these are end-of-life and
-slated for replacement — see audit findings L1–L5.
+Bundled third-party libraries (ADOdb, phpGACL, PHPMailer, Dompdf, JpGraph, Smarty and
+others) keep their own licences.

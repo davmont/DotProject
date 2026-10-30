@@ -63,7 +63,7 @@ $q->addOrder('u.user_username');
 $users = $q->loadHashList();
 
 ?>
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function checkAllProjects()
 {
 	var sellist = document.getElementById('prjSelectList');
@@ -86,7 +86,7 @@ function checkAllProjects()
 <table width="100%" cellspacing="1" cellpadding="2" border="0" class="std">
 <tr><th><?php echo $AppUI->_('Transfer Projects'); ?></th></tr>
 <tr><td><?php echo arraySelect($projects, 'project[]', 'multiple="multiple" size="8" id="prjSelectList"', false); ?></td></tr>
-<tr><td><input type="button" name="selectAll" value="<?php echo $AppUI->_('Select All'); ?>" onclick="checkAllProjects();" /></td></tr>
+<tr><td><input type="button" name="selectAll" value="<?php echo $AppUI->_('Select All'); ?>"<?php echo dPaction('checkAllProjects'); ?> /></td></tr>
 </table>
 </td>
 <td width="50%" valign="top">

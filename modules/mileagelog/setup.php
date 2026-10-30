@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 /*
 dotProject Module
 
@@ -41,8 +45,9 @@ require_once( $dPconfig['root_dir'].'/modules/system/syskeys/syskeys.class.php' 
 class CSetupMileageLog {
 	function install() {
 		$success = 1;
+		$dbprefix = dPgetConfig('dbprefix', '');
 		$bulk_sql[] = "
-			CREATE TABLE mileage_log (
+			CREATE TABLE {$dbprefix}mileage_log (
 			  `mileage_log_id` int(11) unsigned NOT NULL auto_increment,
 			  `mileage_log_user_id` int(11) NOT NULL default '0',
 			  `mileage_log_date` datetime default NULL,
@@ -50,17 +55,17 @@ class CSetupMileageLog {
 			  `mileage_log_od_end` int(11) NOT NULL default '0',
 			  `mileage_log_miles` int(11) NOT NULL default '0',
 			  PRIMARY KEY (mileage_log_id)
-			) TYPE=MyISAM";
+			) ENGINE=MyISAM";
 
 		$bulk_sql[] = "
-			CREATE TABLE mileage_log_purpose (
+			CREATE TABLE {$dbprefix}mileage_log_purpose (
 			  `mileage_log_purpose_id` int(11) unsigned NOT NULL auto_increment,
 			  `mileage_log_id` int(11) NOT NULL default '0',
 			  `mileage_log_purpose_relation_id` int(11) NOT NULL default '0',
 			  `mileage_log_purpose_relation_type` int(11) NOT NULL default '0',
 			  `mileage_log_purpose_note` varchar(255) NOT NULL default '',
 			  PRIMARY KEY (mileage_log_purpose_id)
-			) TYPE=MyISAM";
+			) ENGINE=MyISAM";
 
     foreach ($bulk_sql as $s) {
       db_exec($s);
@@ -81,9 +86,10 @@ class CSetupMileageLog {
 
 	function remove() {
 		$success = 1;
+		$dbprefix = dPgetConfig('dbprefix', '');
 
-		$bulk_sql[] = "DROP TABLE mileage_log";
-		$bulk_sql[] = "DROP TABLE mileage_log_purpose";
+		$bulk_sql[] = "DROP TABLE {$dbprefix}mileage_log";
+		$bulk_sql[] = "DROP TABLE {$dbprefix}mileage_log_purpose";
 
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
@@ -93,14 +99,17 @@ class CSetupMileageLog {
 
 		$sql = "
 			SELECT syskey_id
-			FROM syskeys
+			FROM {$dbprefix}syskeys
 			WHERE syskey_name = 'MileageLogList'";
 		$id = db_loadResult( $sql );
 
-    	unset($bulk_sql);
+    	$bulk_sql = array();
 
-		$bulk_sql[] = "DELETE FROM syskeys WHERE syskey_id = $id";
-		$bulk_sql[] = "DELETE FROM sysvals WHERE sysval_key_id = $id";
+		$id = (int)$id; // 0 when the list key is not there (nothing to delete)
+		if ($id) {
+			$bulk_sql[] = "DELETE FROM {$dbprefix}syskeys WHERE syskey_id = $id";
+			$bulk_sql[] = "DELETE FROM {$dbprefix}sysvals WHERE sysval_key_id = $id";
+		}
 
 		foreach ($bulk_sql as $s) {
 			db_exec($s);
@@ -114,10 +123,11 @@ class CSetupMileageLog {
 	function upgrade($old_version) {
 		$success = 1;
 		$bulk_sql = array();
+		$dbprefix = dPgetConfig('dbprefix', '');
 		
 	    switch ($old_version) {
 		case '0.1':
-			$bulk_sql[] = "ALTER TABLE mileage_log ADD mileage_log_miles int(11) NOT NULL default 0 AFTER mileage_log_od_end";
+			$bulk_sql[] = "ALTER TABLE {$dbprefix}mileage_log ADD mileage_log_miles int(11) NOT NULL default 0 AFTER mileage_log_od_end";
 		break;
 	    default:
 			$success = 0;

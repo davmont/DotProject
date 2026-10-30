@@ -5,6 +5,8 @@ if (!defined('DP_BASE_DIR')) {
 
 $file_folder_id = intval(dPgetParam($_POST, 'file_folder_id', 0));
 $del = intval(dPgetParam($_POST, 'del', 0));
+// Permission on this record, as its addedit page checks.
+dPrequireWritePermission('file_folders', dPgetParam($_POST, 'file_folder_id', 0), $del);
 $redirect = dPgetCleanParam($_POST, 'redirect', '');
 
 $obj = new CFileFolder();

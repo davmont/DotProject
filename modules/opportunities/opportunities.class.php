@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // use the dPFramework to have easy database operations (store, delete etc.) by using its ObjectOrientedDesign
 // therefore we have to create a child class for the module opportunities
 
@@ -60,10 +63,10 @@ class COpportunities extends CDpObject {
 	}
 
 	// overload the delete method of the parent class for adaptation for opportunities's needs
-	function delete() {
+	function delete($oid = null, $history_desc = '', $history_proj = 0) {
 		$q = new DBQuery();
 		$q -> setDelete('opportunities');
-		$q -> addWhere('opportunity_id = '.$this->opportunity_id);
+		$q -> addWhere('opportunity_id = ' . (int)$this->opportunity_id);
 		
 		if (!$q -> exec()) {
 			return db_error();

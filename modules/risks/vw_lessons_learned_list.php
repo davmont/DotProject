@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 $projectSelected = intval(dPgetParam($_GET, 'project_id'));
 $whereProject ='';
 if ($projectSelected != null) {
@@ -41,7 +44,7 @@ $inactiveList = $q->loadList();
 <?php foreach ($activeList as $row) {
 ?>
 <tr>
-    <td nowrap style="background-color:#<?php echo $bg; ?>" width="30">
+    <td nowrap width="30">
         <a href="index.php?m=risks&a=addedit&id=<?php echo($row['risk_id']); if ($projectSelected!=null) {echo('&project_id=' . $projectSelected . '&tab='. $t.'&vw=vw_lessons_learned_list');}?>">
             <img src="./modules/risks/images/stock_edit-16.png" border="0" width="12" height="12">
         </a>
@@ -50,8 +53,8 @@ $inactiveList = $q->loadList();
         </a>
     </td>
     <td width="25"><?php echo $row['risk_id'];?></td>
-    <td width="25"><?php echo $row['risk_name'];?></td>
-    <td><?php echo $row['risk_lessons_learned'];?></td>
+    <td width="25"><?php echo dPhtml($row['risk_name']);?></td>
+    <td><?php echo dPhtml($row['risk_lessons_learned']);?></td>
 </tr>
 <?php } ?>
 </table>
@@ -67,7 +70,7 @@ $inactiveList = $q->loadList();
 <?php foreach ($inactiveList as $row) {
 ?>
 <tr>
-    <td nowrap style="background-color:#<?php echo $bg; ?>" width="30">
+    <td nowrap width="30">
         <a href="index.php?m=risks&a=addedit&id=<?php echo($row['risk_id']); if ($projectSelected!=null) {echo('&project_id=' . $projectSelected . '&tab='. $t.'&vw=vw_lessons_learned_list');}?>">
             <img src="./modules/risks/images/stock_edit-16.png" border="0" width="12" height="12">
         </a>
@@ -76,8 +79,8 @@ $inactiveList = $q->loadList();
         </a>
     </td>
     <td width="25"><?php echo $row['risk_id'];?></td>
-    <td width="25"><?php echo $row['risk_name'];?></td>
-    <td><?php echo $row['risk_lessons_learned'];?></td>
+    <td width="25"><?php echo dPhtml($row['risk_name']);?></td>
+    <td><?php echo dPhtml($row['risk_lessons_learned']);?></td>
 </tr>
 <?php } ?>
 </table>

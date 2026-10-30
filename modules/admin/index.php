@@ -94,7 +94,7 @@ $titleBlock->addCell($a2z);
 $titleBlock->show();
 
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 // security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -111,7 +111,7 @@ function delMe(x, y) {
 </script>
 
 <?php
-$extra = '<td align="right" width="100%"><input type="button" class=button value="'.$AppUI->_('add user').'" onclick="javascript:window.location=\'./index.php?m=admin&amp;a=addedituser\';" /></td>';
+$extra = '<td align="right" width="100%"><input type="button" class=button value="'.$AppUI->_('add user').'"' . dPaction(null, array(), null, array('href' => './index.php?m=admin&a=addedituser')) . ' /></td>';
 
 // tabbed information boxes
 $tabBox = new CTabBox('?m=admin', (DP_BASE_DIR . '/modules/admin/'), $tab);

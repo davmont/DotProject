@@ -29,7 +29,7 @@ $q->leftJoin('users', 'u', 'link_owner = user_id');
 $q->leftJoin('contacts', 'c', 'user_contact = contact_id');
 $q->leftJoin('projects', 'p', 'project_id = link_project');
 $q->leftJoin('tasks', 't', 'task_id = link_task');
-$q->addWhere('link_id = ' . $link_id);
+$q->addWhere('link_id = ' . (int)$link_id);
 
 // check if this record has dependancies to prevent deletion
 $msg = '';
@@ -42,6 +42,10 @@ if (!db_loadObject($q->prepare(), $obj) && $link_id > 0) {
 	$AppUI->setMsg('Link');
 	$AppUI->setMsg("invalidID", UI_MSG_ERROR, true);
 	$AppUI->redirect();
+}
+if ($obj === null) {
+	// new link: start from an empty record so the form can read its fields
+	$obj = new CLink();
 }
 
 // setup the title block
@@ -64,7 +68,7 @@ if ($obj->link_task) {
 	$q->clear();
 	$q->addQuery('task_name');
 	$q->addTable('tasks');
-	$q->addWhere('task_id = ' . $link_task);
+	$q->addWhere('task_id = ' . (int)$link_task);
 	$task_name = $q->loadResult();
 } else {
 	$task_name = '';
@@ -80,7 +84,7 @@ $projects = arrayMerge(array('0'=>$AppUI->_('All', UI_OUTPUT_JS)), $projects);
 //$sql = "SELECT project_id, project_name  FROM projects ORDER BY project_name";
 //$projects = arrayMerge(array('0'=>'- ALL PROJECTS -'), db_loadHashList($sql));
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 function submitIt() {
 	var f = document.uploadFrm;
 	f.submit();
@@ -126,15 +130,15 @@ function setTask(key, val) {
 		<table cellspacing="1" cellpadding="2" width="60%">
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Link Name');?>:</td>
-			<td align="left"><input type="text" class="text" name="link_name" value="<?php echo $obj->link_name;?>" /></td>
+			<td align="left"><input type="text" class="text" name="link_name" value="<?php echo dPhtml($obj->link_name);?>" /></td>
 	<?php if ($link_id) { ?>
 			<td>
-				<a href="<?php echo $obj->link_url;?>" target="_blank"><?php echo $AppUI->_('go');?></a>
+				<a href="<?php echo dPhtml(dPsafeUrl($obj->link_url));?>" target="_blank"><?php echo $AppUI->_('go');?></a>
 			</td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Uploaded By');?>:</td>
-			<td align="left" class="hilite"><?php echo $obj->contact_first_name . ' '. $obj->contact_last_name;?></td>
+			<td align="left" class="hilite"><?php echo dPhtml($obj->contact_first_name . ' '. $obj->contact_last_name);?></td>
 	<?php } ?>
 		</tr>
                 <tr>
@@ -156,31 +160,31 @@ function setTask(key, val) {
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Task');?>:</td>
 			<td align="left" colspan="2" valign="top">
 				<input type="hidden" name="link_task" value="<?php echo $link_task;?>" />
-				<input type="text" class="text" name="task_name" value="<?php echo $task_name;?>" size="40" disabled="disabled" />
-				<input type="button" class="button" value="<?php echo $AppUI->_('select task');?>..." onclick="javascript:popTask()" />
+				<input type="text" class="text" name="task_name" value="<?php echo dPhtml($task_name);?>" size="40" disabled="disabled" />
+				<input type="button" class="button" value="<?php echo $AppUI->_('select task');?>..." <?php echo dPaction('popTask'); ?> />
 			</td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Description');?>:</td>
 			<td align="left">
-				<textarea name="link_description" class="textarea" rows="4" style="width:270px"><?php echo $obj->link_description;?></textarea>
+				<textarea name="link_description" class="textarea" rows="4" style="width:270px"><?php echo dPhtml($obj->link_description);?></textarea>
 			</td>
 		</tr>
 
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Link URL');?>:</td>
-			<td align="left"><input type="field" name="link_url" style="width:270px" value="<?php echo $obj->link_url ?>" /></td>
+			<td align="left"><input type="field" name="link_url" style="width:270px" value="<?php echo dPhtml($obj->link_url) ?>" /></td>
 		</tr>
 		</table>
 	</td>
 </tr>
 <tr>
 	<td>
-		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" onclick="javascript:if (confirm('<?php echo $AppUI->_('Are you sure you want to cancel?', UI_OUTPUT_JS); ?>')) {location.href = './index.php?m=links';}" />
+		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('Are you sure you want to cancel?'), 'href' => './index.php?m=links')); ?> />
 	</td>
 	<td align="right">
-		<input type="button" class="button" value="<?php echo $AppUI->_('submit');?>" onclick="javascript:submitIt()" />
+		<input type="button" class="button" value="<?php echo $AppUI->_('submit');?>"<?php echo dPaction('submitIt'); ?> />
 	</td>
 </tr>
 </table>

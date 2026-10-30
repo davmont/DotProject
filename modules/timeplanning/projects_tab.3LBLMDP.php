@@ -6,7 +6,7 @@ $AppUI->savePlace();
 require_once (DP_BASE_DIR . "/modules/timeplanning/view/translations.php");
 require_once (DP_BASE_DIR . "/modules/timeplanning/control/controller_activity_mdp.class.php");
 $controllerActivityMDP= new ControllerActivityMDP();
-$projectId = dPgetParam($_GET, 'project_id', 0);
+$projectId = dPgetIntParam($_GET, 'project_id', 0);
 ?>
 <!-- YUI -->
 <link rel="stylesheet" type="text/css" href="./modules/timeplanning/js/jsLibraries/wireit/lib/yui/fonts/fonts-min.css" /> 
@@ -48,14 +48,14 @@ div.blockBox {
 	<input name="tasks_positions" id="tasks_positions" type="hidden" value=""/>
 	<input name="project_id" id="project_id" type="hidden" value="<?php echo $projectId; ?>"/>
 	<!--
-	<input type="button" class="button" value="Zoom (+)" onclick=zoom(1) />
-	<input type="button" class="button" value="Zoom (-)" onclick=zoom(-1) />
+	<input type="button" class="button" value="Zoom (+)"<?php echo dPaction('zoom', array(1)); ?> />
+	<input type="button" class="button" value="Zoom (-)"<?php echo dPaction('zoom', array(-1)); ?> />
 	-->
 	<br>
 	<table align='center' width='90%'>
 		<tr>
 			<td>
-				<input type="button" class="button" value="<?php echo $AppUI->_('LBL_SAVE'); ?>" onclick=save_mdp() />
+				<input type="button" class="button" value="<?php echo $AppUI->_('LBL_SAVE'); ?>"<?php echo dPaction('save_mdp'); ?> />
 			</td>
 		</tr>
 	</table>
@@ -71,13 +71,13 @@ div.blockBox {
 	<?php 
 	$tasks=$controllerActivityMDP->getProjectActivities($projectId);
     foreach ($tasks as $task) {
-		echo "\n<script>addNew('".$task->getName()."','".$task->getId()."',".$task->getX().",".$task->getY().");</script>\n";
+		echo "\n<script type='text/javascript' nonce='" . dPcspNonce() . "'>addNew(" . dPjs($task->getName()) . ",'" . (int)$task->getId() . "'," . (int)$task->getX() . "," . (int)$task->getY() . ");</script>\n";
 	}
 	foreach ($tasks as $task) {
 		foreach ($task->getDependencies()  as $dep_id) {
-			echo "\n<script>addDependency(".$task->getId().",$dep_id);</script>\n";
+			echo "\n<script type='text/javascript' nonce='" . dPcspNonce() . "'>addDependency(" . (int)$task->getId() . "," . (int)$dep_id . ");</script>\n";
 		}
 	}
-	echo "<script>setTimeout('wiresUpdate()',1000);</script>";
+	echo "<script type='text/javascript' nonce='" . dPcspNonce() . "'>setTimeout(wiresUpdate, 1000);</script>";
    ?>
 </form>

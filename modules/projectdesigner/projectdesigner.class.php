@@ -1,4 +1,8 @@
-<?php /* PROJECTDESIGNER $Id: projectdesigner.class.php,v 1.2 2008/10/17 19:12:21 theideaman Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* PROJECTDESIGNER $Id: projectdesigner.class.php,v 1.2 2008/10/17 19:12:21 theideaman Exp $ */
 
 //Lets require the main classes needed
 include_once("./modules/projectdesigner/config.php");
@@ -24,7 +28,7 @@ class CProjectDesignerOptions extends CDpObject {
 		function __construct() {
                 parent::__construct( 'project_designer_options', 'pd_option_id' );
         } 
-        function store() {
+        function store($updateNulls = false) {
                   $q = new DBQuery;
                   $q->addTable('project_designer_options');
                   $q->addReplace('pd_option_user',$this->pd_option_user);
@@ -34,7 +38,7 @@ class CProjectDesignerOptions extends CDpObject {
                   $q->addReplace('pd_option_view_actions',$this->pd_option_view_actions);
                   $q->addReplace('pd_option_view_addtasks',$this->pd_option_view_addtasks);
                   $q->addReplace('pd_option_view_files',$this->pd_option_view_files);
-                  $q->addWhere('pd_option_user = '.$this->pd_option_user);
+                  $q->addWhere('pd_option_user = ' . (int)$this->pd_option_user);
                   $q->exec();
         }                    
 }
@@ -103,7 +107,7 @@ function get_actual_end_date_pd($task_id, $task) {
   else {
       $q->addQuery('MAX(task_log_date) AS actual_end_date');
       $q->addTable('task_log');
-      $q->addWhere('task_log_task = '.$task_id);
+      $q->addWhere('task_log_task = ' . (int)$task_id);
   }
   
   $task_log_end_date = $q->loadResult();
@@ -168,7 +172,11 @@ function showtask_pd( &$a, $level=0, $is_opened = true, $today_view = false) {
                 $days = $now->dateDiff( $end_date ) * $sign;
         }
 
-        $s = "\n<tr id=\"row".$a['task_id']."\" onmouseover=\"highlight_tds(this, true, ".$a['task_id'].")\" onmouseout=\"highlight_tds(this, false, ".$a['task_id'].")\" onclick=\"select_box('selected_task', ".$a['task_id'].",'frm_tasks')\">"; // edit icon
+        $tid = (int)$a['task_id'];
+        $s = "\n<tr id=\"row".$a['task_id']."\"" . dPaction(null, array(), 'mouseover mouseout click', array(
+                'call-mouseover' => 'highlight_tds', 'args-mouseover' => json_encode(array('$this', true, $tid)),
+                'call-mouseout' => 'highlight_tds', 'args-mouseout' => json_encode(array('$this', false, $tid)),
+                'call-click' => 'select_box', 'args-click' => json_encode(array('selected_task', $tid, 'frm_tasks')))) . ">"; // edit icon
         $s .= "\n\t<td>";
         $canEdit = !getDenyEdit( 'tasks', $a["task_id"] );
         $canViewLog = $perms->checkModuleItem('task_log', 'view', $a['task_id']);
@@ -302,7 +310,7 @@ function showtask_pd( &$a, $level=0, $is_opened = true, $today_view = false) {
                         $s .= $assigned_users[0]['contact_first_name'] . ' ' . $assigned_users[0]['contact_last_name'] .' (' . $assigned_users[0]['perc_assignment'] .'%)</a>';
                         if($a['assignee_count']>1){
                         $id = $a['task_id'];
-                        $s .= " <a href=\"javascript: void(0);\"  onClick=\"toggle_users('users_$id');\" title=\"" . join ( ', ', $a_u_tmp_array ) ."\">(+". ($a['assignee_count']-1) .")</a>";
+                        $s .= " <a href=\"#\"" . dPaction('toggle_users', array('users_' . $id)) . " title=\"" . dPhtml(join ( ', ', $a_u_tmp_array )) ."\">(+". ($a['assignee_count']-1) .")</a>";
 
                         $s .= '<span style="display: none" id="users_' . $id . '">';
 
@@ -324,7 +332,12 @@ function showtask_pd( &$a, $level=0, $is_opened = true, $today_view = false) {
 
 // Assignment checkbox
         if ($showEditCheckbox || $perms->checkModule( 'admin', 'view')) {
-                $s .= "\n\t<td align='center'><input type=\"checkbox\" onclick=\"select_box('selected_task', ".$a['task_id'].",'frm_tasks')\" onfocus=\"is_check=true;\" onblur=\"is_check=false;\" id=\"selected_task_{$a['task_id']}\" name=\"selected_task[{$a['task_id']}]\" value=\"{$a['task_id']}\"/></td>";
+                $s .= "\n\t<td align='center'><input type=\"checkbox\"" . dPaction(null, array(), 'click mouseover mouseout focus blur', array(
+                        'call-click' => 'select_box', 'args-click' => json_encode(array('selected_task', $tid, 'frm_tasks')),
+                        'call-mouseover' => 'pd_task_hover', 'args-mouseover' => json_encode(array($tid, true)),
+                        'call-mouseout' => 'pd_task_hover', 'args-mouseout' => json_encode(array($tid, false)),
+                        'call-focus' => 'pd_set_check', 'args-focus' => json_encode(array(true)),
+                        'call-blur' => 'pd_set_check', 'args-blur' => json_encode(array(false)))) . " id=\"selected_task_{$a['task_id']}\" name=\"selected_task[{$a['task_id']}]\" value=\"{$a['task_id']}\"/></td>";
         }
         $s .= '</tr>';
         echo $s;

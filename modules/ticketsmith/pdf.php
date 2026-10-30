@@ -8,11 +8,13 @@ require_once DP_BASE_DIR . '/modules/ticketsmith/config.inc.php';
 require_once $AppUI->getSystemClass('query');
 $font_dir = DP_BASE_DIR.'/lib/ezpdf/fonts';
 $temp_dir = DP_BASE_DIR.'/files/temp';
-require($AppUI->getLibraryClass('ezpdf/class.ezpdf'));
+require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
 $type = dPgetCleanParam($_GET, 'type', '');
 $column = dPgetCleanParam($_GET, 'column', 'timestamp');
 $direction = dPgetCleanParam($_GET, 'direction', 'DESC');
+$column = dPvalidateOrder($column, array("author", "subject", "timestamp", "activity", "type", "priority", "assignment"), 'timestamp');
+$direction = dPvalidateOrder(mb_strtoupper($direction), array('ASC', 'DESC'), 'DESC');
 $q = new DBQuery;
 $q->addQuery(array(
 	'ticket',
@@ -33,7 +35,7 @@ if ($type == 'My') {
 	$q->addWhere("type = 'Open'");
 	$q->addWhere("(assignment = '$AppUI->user_id' OR assignment = '0')");
 } else if ($type != 'All') {
-	$q->addWhere("type = '$type'");
+	$q->addWhere('type = ' . $q->quote($type));
 }
 $q->addWhere("parent = '0'");
 $q->addOrder(urlencode($column) . " " . $direction);
@@ -46,7 +48,7 @@ if ($err = db_error()) {
 
 $df = $AppUI->getPref('SHDATEFORMAT');
 
-$pdf = new Cezpdf($paper='A4',$orientation='landscape');
+$pdf = new DotPdf($paper='A4',$orientation='landscape');
 $pdf->ezSetCmMargins(1, 2, 1.5, 1.5);
 $pdf->selectFont("$font_dir/Helvetica.afm");
 
@@ -59,6 +61,7 @@ $next_week->addSpan(new Date_Span(array(7,0,0,0)));
 
 $pdf->selectFont("$font_dir/Helvetica-Bold.afm");
 $pdf->ezText("\n" . $AppUI->_("$type Ticket Report"), 12);
+$pname = '';
 $pdf->ezText("$pname", 15);
 $pdf->ezText("\n");
 $pdf->selectFont("$font_dir/Helvetica.afm");

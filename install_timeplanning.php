@@ -1,4 +1,8 @@
 <?php
+// Developer script: run it from the command line only, never through the web server.
+if (PHP_SAPI !== 'cli') {
+	die('You should not access this file directly.');
+}
 define('DP_BASE_DIR', dirname(__FILE__));
 require_once 'base.php';
 require_once 'includes/config.php';

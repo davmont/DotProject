@@ -1,4 +1,8 @@
-<?php /* FILES $Id: do_file_aed.php,v 1.1 2004/08/30 19:02:41 jcgonz Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* FILES $Id: do_file_aed.php,v 1.1 2004/08/30 19:02:41 jcgonz Exp $ */
 
 require_once("modules/mngdocument/files.class.php");
 
@@ -8,7 +12,7 @@ $padre = intval( dPgetParam( $_POST, 'padre', 0 ) );
 $descripcion = dPgetParam( $_POST, 'descripcion', '' );
 $dirname = dPgetParam( $_POST, 'dirname', '' );
 $accion = dPgetParam( $_POST, 'accion', '' );
-$actual = dPgetParam( $_POST, 'actual', '' );
+$actual = dPgetIntParam( $_POST, 'actual', 0 );
 $delall = dPgetParam( $_POST, 'delall', '' );
 
 
@@ -57,18 +61,13 @@ switch ($accion)
    }
    else
    {
- // store file with a unique name
+ // the name is only shown; the file is moved under the record id once it is stored
+    $obj->SGD_id = 0;
     $obj->SGD_name = $upload['name'];
     $obj->SGD_type = 0;
     $obj->SGD_date= db_unix2dateTime( time() );
     $obj->SGD_parent = $padre;
     $obj->SGD_description = $descripcion;
-    $res = $obj->moveTemp( $upload );
-    if (!$res)
-    {
-     $AppUI->setMsg( 'File could not be written', UI_MSG_ERROR );
-     $AppUI->redirect();
-    }
    }
   }
  break;
@@ -79,6 +78,7 @@ switch ($accion)
    $AppUI->redirect();
   }
 
+  $obj->SGD_id = 0;
   $obj->SGD_name = $dirname;
   $obj->SGD_type = 1;
   $obj->SGD_date= db_unix2dateTime( time() );
@@ -86,7 +86,7 @@ switch ($accion)
   $obj->SGD_description = $descripcion;
  break;
  case "deldirectory":
-  $sql="select SGD_id,SGD_type,SGD_name from SGD where SGD_parent=$actual";
+  $sql="select SGD_id,SGD_type,SGD_name from " . dPgetConfig('dbprefix', '') . "SGD where SGD_parent=$actual";
   $resultado=db_exec($sql);
   if ($delall<>1 and db_num_rows($resultado)>0)
     $AppUI->setMsg( "El directorio contiene ficheros y/o subdirectorios. Imposible eliminar.", UI_MSG_ERROR );
@@ -97,7 +97,7 @@ switch ($accion)
  case "deldocument":
   if ($delall==1)
   {
-   $sql="select SGD_name from SGD where SGD_id=$actual";
+   $sql="select SGD_name from " . dPgetConfig('dbprefix', '') . "SGD where SGD_id=$actual";
    $resultado=db_exec($sql);
    $row=db_fetch_row($resultado);
    $obj->SGD_name=$row[0];
@@ -113,18 +113,17 @@ switch ($accion)
 
 function BorrarDirectorio($actual,$log)
 {
+ global $AppUI;
 
  $obj = new CFile();
- $obj->_tbl="SGD";
- $obj->_tbl_key="codigo";
 
- $sql="select SGD_id,SGD_type,SGD_name from SGD where SGD_parent=$actual";
+ $sql="select SGD_id,SGD_type,SGD_name from " . dPgetConfig('dbprefix', '') . "SGD where SGD_parent=$actual";
  $resultado=db_exec($sql);
  while ($row=db_fetch_row($resultado))
   BorrarDirectorio($row[0],$log);
  
  $obj->SGD_id=$actual;
- $sql="select SGD_type,SGD_name from SGD where SGD_id=$actual";
+ $sql="select SGD_type,SGD_name from " . dPgetConfig('dbprefix', '') . "SGD where SGD_id=$actual";
  $resultado=db_exec($sql);
  $row=db_fetch_row($resultado);
  $log->SGD_Logs_document_name=$row[1];
@@ -142,7 +141,12 @@ function BorrarDirectorio($actual,$log)
 if (($msg = $obj->store())) {
 	$AppUI->setMsg( $msg, UI_MSG_ERROR );
 } else {
-	$obj->load($obj->file_id);
+	if ($accion == 'newdocument' && $upload && $upload['size'] > 0 && !$obj->moveTemp( $upload )) {
+		$obj->deletefile();
+		$AppUI->setMsg( 'File could not be written', UI_MSG_ERROR );
+		$AppUI->redirect();
+	}
+	$obj->load($obj->SGD_id);
 	$AppUI->setMsg( $file_id ? 'updated' : 'added', UI_MSG_OK, true );
         $log->SGD_Logs_document_name = $obj->SGD_name;
         $log->store();

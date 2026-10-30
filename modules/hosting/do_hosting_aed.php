@@ -1,4 +1,8 @@
-<?php /* Hosting module -> $Id: do_hosting_aed.php,v 1.1 2007/04/16 05:36:02 mbelos Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* Hosting module -> $Id: do_hosting_aed.php,v 1.1 2007/04/16 05:36:02 mbelos Exp $ */
 
 $obj = new CHosting();
 $msg = '';

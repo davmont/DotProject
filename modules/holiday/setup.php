@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 ##
 ## holiday module - A dotProject module for keeping track of holidays
 ##
@@ -40,7 +43,7 @@ class CSetupHoliday {
 		"PRIMARY KEY  (holiday_id)," .
 		"UNIQUE KEY holiday_id (holiday_id)" .
 		")");
-		$ok = $ok & $q -> exec();	
+		$ok = $ok && $q -> exec();	
 
 		// Create settings database
 		$q = new DBQuery();
@@ -54,7 +57,7 @@ class CSetupHoliday {
                 "UNIQUE KEY holiday_driver (holiday_driver)" .
                 ")");                
         
-		$ok = $ok & $q -> exec();
+		$ok = $ok && $q -> exec();
 		
 		// Set default settings
 		$holiday_manual = 1;
@@ -66,7 +69,7 @@ class CSetupHoliday {
 		$q -> addInsert('holiday_manual', $holiday_manual);
 		$q -> addInsert('holiday_auto', $holiday_auto);
 		$q -> addInsert('holiday_driver', $holiday_driver);
-		$ok = $ok & $q->exec();
+		$ok = $ok && $q->exec();
 		if($ok){
 			return null;
 		}
@@ -77,10 +80,10 @@ class CSetupHoliday {
 		$ok = true;
 		$q = new DBQuery();
 		$q -> dropTable('holiday');
-		$ok = $ok & $q -> exec();
+		$ok = $ok && $q -> exec();
 		$q -> clear();
 		$q -> dropTable('holiday_settings');
-		$ok = $ok & $q -> exec();
+		$ok = $ok && $q -> exec();
 		if($ok){
 			return null;
 		}

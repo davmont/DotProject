@@ -24,15 +24,21 @@ $q = new DBQuery();
 // load the companies class to retrieved denied companies
 require_once ($AppUI->getModuleClass('companies'));
 
-// Let's update macroproject status!
-if (isset($_GET['update_macroproject_status']) && isset($_GET['macroproject_status']) 
-   && isset($_GET['macroproject_id'])) {
-	$macroprojects_id = $_GET['macroproject_id']; // This must be an array
-	
+// Let's update macroproject status! (POST with the CSRF token and edit permission only)
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+   && dPgetParam($_POST, 'update_macroproject_status') !== null
+   && dPgetParam($_POST, 'macroproject_status') !== null
+   && is_array(dPgetParam($_POST, 'macroproject_id'))) {
+	$AppUI->verifyCsrfToken();
+	$macroprojects_id = dPgetParam($_POST, 'macroproject_id'); // This must be an array
+
 	foreach ($macroprojects_id as $macroproject_id) {
+		if (!getPermission('macroprojects', 'edit', (int)$macroproject_id)) {
+			continue; /* Cannot update the status of a macroproject we can't edit */
+		}
 		$q->addTable('macroprojects');
-		$q->addUpdate('macroproject_status', $_GET['macroproject_status']);
-		$q->addWhere('macroproject_id = ' . $macroproject_id);
+		$q->addUpdate('macroproject_status', (int)dPgetParam($_POST, 'macroproject_status'));
+		$q->addWhere('macroproject_id = ' . (int)$macroproject_id);
 		$q->exec();
 		$q->clear();
 	}
@@ -72,9 +78,11 @@ $department = (($AppUI->getState('MacroProjIdxDepartment') !== NULL)
 //if $department contains the $company_prefix string that it's requesting a company
 // and not a department.  So, clear the $department variable, and populate the $company_id variable.
 if (!(mb_strpos($department, $company_prefix)===false)) {
-	$company_id = mb_substr($department,mb_strlen($company_prefix));
+	$company_id = (int)mb_substr($department,mb_strlen($company_prefix));
 	$AppUI->setState('MacroProjIdxCompany', $company_id);
 	unset($department);
+} else {
+	$department = (int)$department;
 }
 
 $valid_ordering = array('macroproject_name', 'user_username', 'my_tasks desc', 'total_tasks desc',
@@ -109,7 +117,7 @@ $q->addQuery("CONCAT(contact_last_name, ', ', contact_first_name, ' (', user_use
 $q->addOrder('contact_last_name, contact_first_name, user_username');
 $userRows = array(0 => $AppUI->_('All Users', UI_OUTPUT_RAW)) + $q->loadHashList();
 $bufferUser = arraySelect($userRows, 'show_owner', 
-                          'class="text" onchange="javascript:document.pickUser.submit()""', $owner);
+                          'class="text"' . dPaction(null, array(), null, array('submit' => 'pickUser')), $owner);
 
 /* setting this to filter macroproject_list_data function below
  0 = undefined
@@ -163,7 +171,7 @@ $q->addTable('macroprojects', 'p');
 $q->addQuery('p.macroproject_status, COUNT(p.macroproject_id) as count');
 $obj_macroproject->setAllowedSQL($AppUI->user_id, $q, null, 'p');
 if ($owner > 0) {
-	$q->addWhere('p.macroproject_owner = ' . $owner);
+	$q->addWhere('p.macroproject_owner = ' . (int)$owner);
 }
 if (isset($department)) {
 	$q->addJoin('macroproject_departments', 'pd', 'pd.macroproject_id = p.macroproject_id');
@@ -171,14 +179,14 @@ if (isset($department)) {
 		$q->addWhere('pd.department_id in (' . implode(',',$dept_ids) . ')');
 	}
 } else if ($company_id &&!$addPwOiD) {
-	$q->addWhere('p.macroproject_company = ' . $company_id);
+	$q->addWhere('p.macroproject_company = ' . (int)$company_id);
 }
 $q->addGroup('macroproject_status');
 $statuses = $q->loadHashList('macroproject_status');
 $q->clear();
 $all_macroprojects = 0;
 foreach ($statuses as $k => $v) {
-	$macroproject_status_tabs[$v['macroproject_status']] = ($AppUI->_($macroproject_types[$v['macroproject_status']]) 
+	$macroproject_status_tabs[$v['macroproject_status']] = ($AppUI->_($macroproject_types[$v['macroproject_status']] ?? '') 
 													  . ' (' . $v['count'] . ')');
 	//count all macroprojects
 	$all_macroprojects += $v['count'];
@@ -206,7 +214,7 @@ $tabBox = new CTabBox('?m=macroprojects', DP_BASE_DIR . '/modules/macroprojects/
 $tabBox->add('vw_idx_proposed', $AppUI->_('All') . ' (' . $all_macroprojects . ')' , true,  500);
 foreach ($macroproject_types as $psk => $macroproject_status) {
 		$tabBox->add($macroproject_status_file[$psk], 
-					 (($macroproject_status_tabs[$psk]) ? $macroproject_status_tabs[$psk] : $AppUI->_($macroproject_status)), true, $psk);
+					 ((!empty($macroproject_status_tabs[$psk])) ? $macroproject_status_tabs[$psk] : $AppUI->_($macroproject_status)), true, $psk);
 }
 $min_view = true;
 $tabBox->add('viewgantt', 'Gantt');

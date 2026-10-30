@@ -32,7 +32,8 @@ require_once ($AppUI->getModuleClass('companies'));
 
 // ANDY - get CCompany() to filter tasks by company
 if (isset($_POST['f2'])) {
-	$AppUI->setState('CompanyIdxFilter', $_POST['f2']);
+	// 'all' or a company id, used in SQL below.
+	$AppUI->setState('CompanyIdxFilter', $_POST['f2'] == 'all' ? 'all' : (int)$_POST['f2']);
 }
 $company_id = $AppUI->getState('CompanyIdxFilter') ? $AppUI->getState('CompanyIdxFilter') : 'all';
 
@@ -56,7 +57,7 @@ $titleBlock = new CTitleBlock( 'Issue Management', 'helpdesk.png', $m, 'ID_HELP_
 issue_list_data();
 $titleBlock->addCell($AppUI->_('Company') . ':');
 $titleBlock->addCell(arraySelect($filters2, 'f2', 
-                                 'size=1 class=text onChange="document.companyFilter.submit();"', 
+                                 'size=1 class=text' . dPaction(null, array(), null, array('submit' => '')), 
                                  $company_id, false), '', 
                      '<form action="?m=helpdesk" method="post" name="companyFilter">', '</form>');
 
@@ -78,8 +79,8 @@ $titleBlock->show();
 $item_perms = getItemPerms();
 
 //ANDY - add company filter
-if ($company_id != 0) 
-	$item_perms = $item_perms . ' and item_company_id = ' . $company_id;
+if ($company_id != 'all' && (int)$company_id != 0) 
+	$item_perms = $item_perms . ' and item_company_id = ' . (int)$company_id;
 
 $q = new DBQuery; 
 $q->addQuery('COUNT(item_id)'); 
@@ -108,7 +109,7 @@ $q->clear();
 
 $q = new DBQuery; 
 $q->addQuery('COUNT(DISTINCT(item_id))'); 
-$q->addTable('helpdesk_items');
+$q->addTable('helpdesk_items', 'helpdesk_items');
 $q->addJoin('helpdesk_item_status','his','helpdesk_items.item_id = his.status_item_id');
 $q->addWhere($item_perms);
 $q->addWhere('item_status != '.$HELPDESK_CONFIG['closed_status_id']);
@@ -119,7 +120,7 @@ $q->clear();
 
 $q = new DBQuery; 
 $q->addQuery('COUNT(DISTINCT(item_id))'); 
-$q->addTable('helpdesk_items');
+$q->addTable('helpdesk_items', 'helpdesk_items');
 $q->addJoin('helpdesk_item_status','his','helpdesk_items.item_id = his.status_item_id');
 $q->addWhere($item_perms);
 $q->addWhere('item_status = '.$HELPDESK_CONFIG['closed_status_id']);
@@ -133,9 +134,9 @@ $q->addQuery('COUNT(DISTINCT(hi.item_id))');
 $q->addTable('helpdesk_items','hi');
 $q->innerJoin('helpdesk_item_watchers','hiw','hiw.item_id = hi.item_id');
 $q->leftJoin('users','u2','u2.user_id = hiw.user_id');
-$q->leftJoin('contacts','','u2.user_contact = contacts.contact_id');
+$q->leftJoin('contacts','contacts','u2.user_contact = contacts.contact_id');
 $q->leftJoin('projects','p','p.project_id = hi.item_project_id');
-$q->addWhere('hiw.user_id = '.$AppUI->user_id);
+$q->addWhere('hiw.user_id = ' . (int)$AppUI->user_id);
 $q->addWhere('hi.item_status != '.$HELPDESK_CONFIG['closed_status_id']);
 $numwatching = $q->loadResult();
 

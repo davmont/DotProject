@@ -7,6 +7,8 @@ $obj = new CEvent();
 $msg = '';
 
 $del = (bool)dPgetParam($_POST, 'del', 0);
+// Permission on this record, as its addedit page checks.
+dPrequireWritePermission('events', dPgetParam($_POST, 'event_id', 0), $del);
 
 // bind the POST parameter to the object record
 if (!$obj->bind($_POST)) {

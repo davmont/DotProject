@@ -19,18 +19,17 @@ $ptrc = $obj->getAllowedProjectsInRows($AppUI->user_id);
 
 $nums=db_num_rows($ptrc);
 
-echo db_error();
 for ($x=0; $x < $nums; $x++) {
 	$row = db_fetch_assoc($ptrc);
 	if ($row['project_id'] == $project_id) {
-		$display_project_name='('.$row['project_short_name'].') '.$row['project_name'];
+		$display_project_name = $AppUI->___('('.$row['project_short_name'].') '.$row['project_name']);
 	}
 	$project_list[$row['project_id']] = '('.$row['project_short_name'].') '.$row['project_name'];
 }
 
 if (! $suppressHeaders) {
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
                                                                                 
 function changeIt() {
         var f=document.changeMe;
@@ -47,7 +46,7 @@ $reports = $AppUI->readFiles(DP_BASE_DIR.'/modules/projects/reports', "\.php$");
 
 $report_type_var = dPgetCleanParam($_GET, 'report_type', '');
 if (!empty($report_type_var))
-	$report_type_var = '&report_type=' . $report_type;
+	$report_type_var = '&amp;report_type=' . rawurlencode($report_type);
 
 $report_title = 'Project Reports';
 if ($report_type) {
@@ -79,7 +78,7 @@ if (! $suppressHeaders) {
 ?>
 <form name="changeMe" action="./index.php?m=projects&a=reports<?php echo $report_type_var; ?>" method="post">
 <?php echo $AppUI->_('Projects') . ':';?>
-<?php echo arraySelect($project_list, 'project_id', 'size="1" class="text" onchange="changeIt();"', $project_id, false);?>
+<?php echo arraySelect($project_list, 'project_id', 'size="1" class="text"' . dPaction('changeIt'), $project_id, false);?>
 </form>
 
 <?php

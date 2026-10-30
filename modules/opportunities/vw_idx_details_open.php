@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // this is another example showing how the dPFramework is working
 // additionally we will have an easy database connection here
 
@@ -12,8 +15,9 @@ if (!$canRead) {			// lock out users that do not have at least readPermission on
 //Get POST Data
 	$tab			=	intval( dPgetParam( $_GET, "tab", 0 ) );
 	
-	$order_by = (isset($_GET['order_by'])) ? $_GET['order_by'] : "";
-	$order = (isset($_GET['order'])) ? $_GET['order'] : "";
+	$order_by = dPvalidateOrder(isset($_GET['order_by']) ? $_GET['order_by'] : '', array('opportunity_name',
+		'contact_last_name', 'opportunity_sizing', 'opportunity_status'), '');
+	$order = dPvalidateOrder(isset($_GET['order']) ? mb_strtolower($_GET['order']) : '', array('asc', 'desc'), '');
 
 
 if ($show_owner_id != "-1") $where="WHERE opportunity_pm=".$show_owner_id;
@@ -58,7 +62,7 @@ $q = new DBQuery;
 <table width="100%" border="0" cellpadding="2" cellspacing="1" class="tbl">
 <tr><td colspan="13"><?php
 			echo '<form name="pickOwner" action="?m=opportunities&tab='.$tab.'" method="POST">';
-			echo $AppUI->_('Show Opportunities for').' : '.arraySelect($pm,'show_owner_id','size=1 class=text onChange="document.pickOwner.submit();"', $show_owner_id ) ;
+			echo $AppUI->_('Show Opportunities for').' : '.arraySelect($pm,'show_owner_id','size=1 class=text' . dPaction(null, array(), null, array('submit' => '')), $show_owner_id ) ;
 			echo '</form>';
 ?></td></tr>
 <tr>
@@ -136,21 +140,19 @@ if ( $row['opportunity_status'] != "1" ) continue;  // Status == 1 == Open
 	<?php
 
 			echo '<a href="?m=opportunities&a=addedit&show_owner_id='.$show_owner_id.'&opportunity_id='.$row['opportunity_id'].'"' .
-				'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes($row['opportunity_desc'])) 
-		                        . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
-		       . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"';
+				dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($row['opportunity_desc'])) . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7), 'mouseover mouseout', array('call-mouseout' => 'nd'));
 				echo '>'.dPFormSafe( $row['opportunity_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 
 
 	//echo $row["opportunity_name"];		// finally show the opportunities quote stored in the indexed array
 	?>
 	</td>
-	<td><?php echo $row['opportunity_strategy']; ?></td>
-	<td><?php echo $row['opportunity_sholders']; ?></td>
-	<td><?php echo $row['opportunity_risks']; ?></td>
-	<td><?php echo $row['opportunity_sizing']; ?></td>
-	<td><?php echo $row['opportunity_horizontality']; ?></td>
-	<td><?php echo $row['opportunity_costbenefit']; ?></td>
+	<td><?php echo dPhtml($row['opportunity_strategy']); ?></td>
+	<td><?php echo dPhtml($row['opportunity_sholders']); ?></td>
+	<td><?php echo dPhtml($row['opportunity_risks']); ?></td>
+	<td><?php echo dPhtml($row['opportunity_sizing']); ?></td>
+	<td><?php echo dPhtml($row['opportunity_horizontality']); ?></td>
+	<td><?php echo dPhtml($row['opportunity_costbenefit']); ?></td>
 
 	<td><center>
 	<?php
@@ -159,7 +161,7 @@ if ( $row['opportunity_status'] != "1" ) continue;  // Status == 1 == Open
 	</center></td>
 	<td >
 	<?php
-	echo $row["contact_last_name"].", ".substr($row["contact_first_name"],0,1).".";		// finally show the opportunities quote stored in the indexed array
+	echo dPhtml($row["contact_last_name"].", ".substr($row["contact_first_name"],0,1).".");		// finally show the opportunities quote stored in the indexed array
 	?>
 	</td>
 	<td >

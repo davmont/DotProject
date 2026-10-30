@@ -30,7 +30,18 @@ $type = dPgetCleanParam($_GET, 'type', '');
 $column = dPgetCleanParam($_GET, 'column', $column);
 $direction = dPgetCleanParam($_GET, 'direction', $direction);
 $offset = dPgetCleanParam($_GET, 'offset', $offset);
-$action = dPgetCleanParam($_REQUEST, 'action', null);
+// Sort column, direction and offset go into ORDER BY/LIMIT below: whitelist and cast them.
+$column = dPvalidateOrder($column, array("author", "subject", "timestamp", "activity", "type", "priority", "assignment"), $CONFIG["order_by"]);
+$direction = dPvalidateOrder(mb_strtoupper($direction), array('ASC', 'DESC'), 'ASC');
+$offset = (int)$offset;
+// Expunging deletes tickets: POST with the CSRF token and delete permission only.
+$action = ($_SERVER['REQUEST_METHOD'] === 'POST') ? dPgetCleanParam($_POST, 'action', null) : null;
+if ($action == "expunge") {
+    $AppUI->verifyCsrfToken();
+    if (!getPermission('ticketsmith', 'delete')) {
+        $AppUI->redirect('m=public&a=access_denied');
+    }
+}
 
 if ($type == '') {
 	if ($AppUI->getState("ticket_type")) {
@@ -41,6 +52,8 @@ if ($type == '') {
 } else {
 	$AppUI->setState("ticket_type", $type);
 }
+// $type is echoed into links below: accept only known ticket types.
+$type = dPvalidateOrder((string)$type, array_merge(array_values($CONFIG["type_names"]), array("My", "my", "Open", "Processing", "Closed", "Deleted", "All")), "Open");
 
 
 /* expunge deleted tickets */
@@ -89,7 +102,7 @@ if ($type == "my") {
 /* count tickets */
 $query = "SELECT COUNT(*) FROM {$dbprefix}tickets WHERE parent = '0'";
 if ($type != 'All') {
-    $query .= " AND type = '$type'";
+    $query .= " AND type = '" . db_escape($type) . "'";
 }
 $ticket_count = query2result($query);
 
@@ -139,7 +152,7 @@ if ($type == "My") {
     $query .= "type = 'Open' AND (assignment = '$AppUI->user_id' OR assignment = '0') AND ";
 }
 else if ($type != "All") {
-    $query .= "type = '$type' AND ";
+    $query .= "type = '" . db_escape($type) . "' AND ";
 }
 $query .= "parent = '0' ORDER BY " . urlencode($column) . " $direction LIMIT $offset, $limit";
 
@@ -209,7 +222,7 @@ for ($loop = 0; $loop < count($types); $loop++) {
 print(join(" | ", $toggles));
 print(" ".$AppUI->_('Tickets')."</td>\n");
 if ($type == "Deleted" && $parent_count) {
-    print("<td align='center'><a href='?m=ticketsmith&amp;type=Deleted&amp;action=expunge'>".$AppUI->_('Expunge Deleted')."</a></td>");
+    print("<td align='center'><a href='#'" . dPaction('dpPost', array('?m=ticketsmith&type=Deleted', array('action' => 'expunge'))) . ">".$AppUI->_('Expunge Deleted')."</a></td>");
 }
 print("<td align='right'>
 <a href='?m=ticketsmith&amp;a=pdf&amp;type=$type&suppressHeaders=1'>" . $AppUI->_('Report as PDF') . "</a> |

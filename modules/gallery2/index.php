@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 ##
 ## Gallery2 Integration Module 
 ##
@@ -21,14 +25,18 @@ $q -> clearQuery();
 $q -> addQuery('gallery_folder');
 $gallery_folder= $q-> loadResult();
 
-echo db_error();
 if($gallery_folder && $gallery_uri)
 {
 	// initiate G2
 	$q -> clearQuery();
 	$q -> addQuery('gallery_user');
 	$gallery_user= $q -> loadResult();
-	require_once($gallery_folder."/embed.php");
+	$gallery_embed = dPexternalAppFile($gallery_folder, 'embed.php');
+	if (!$gallery_embed) {
+		$AppUI->setMsg('Gallery2 Local Folder must contain embed.php', UI_MSG_ERROR);
+		$AppUI->redirect('m=public&a=access_denied');
+	}
+	require_once($gallery_embed);
 	$ret = GalleryEmbed::init(array('g2Uri' => $gallery_uri ,
 		'embedUri' => $dPconfig['base_url']."index.php?m=gallery2" ,
 		'activeUserId' => $gallery_user));

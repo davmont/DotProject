@@ -39,6 +39,20 @@ The full text of the GPL is in the COPYING file.
 
 $baseDir = dirname(dirname(__FILE__));
 define('DP_BASE_DIR', $baseDir);
+// Same security headers as base.php sends for the application pages.
+if (!headers_sent()) {
+	header('X-Content-Type-Options: nosniff');
+	header('X-Frame-Options: SAMEORIGIN');
+	header('Referrer-Policy: strict-origin-when-cross-origin');
+}
+// includes/config.php refers to DP_BASE_URL; base.php is not loaded here, so define it
+// the same way do_install_db.php computes the site URL.
+if (!defined('DP_BASE_URL')) {
+	$installerBaseUrl = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 'https://' : 'http://')
+		. (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : getenv('HTTP_HOST'))
+		. dirname(dirname(isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : getenv('SCRIPT_NAME')));
+	define('DP_BASE_URL', $installerBaseUrl);
+}
 
 require_once 'install.inc.php';
 require_once DP_BASE_DIR . '/lib/adodb/adodb.inc.php';
@@ -107,6 +121,30 @@ function dPcheckExistingDB($conf)
 		}
 	}
 
+	return true;
+}
+
+/**
+ * Once includes/config.php holds database settings, the installer only accepts requests
+ * that carry the same settings, password included. Only someone who can read the config
+ * file can then upgrade, back up the database or rewrite the configuration.
+ */
+function dPinstallerAuthorised($request)
+{
+	if (!is_file('../includes/config.php')) {
+		return true;
+	}
+	include '../includes/config.php';
+	if (empty($dPconfig['dbhost'])) {
+		return true;
+	}
+	foreach (array('dbhost', 'dbname', 'dbprefix', 'dbuser', 'dbpass') as $key) {
+		$expected = isset($dPconfig[$key]) ? (string)$dPconfig[$key] : '';
+		$given = isset($request[$key]) ? trim((string)$request[$key]) : '';
+		if (!hash_equals($expected, $given)) {
+			return false;
+		}
+	}
 	return true;
 }
 

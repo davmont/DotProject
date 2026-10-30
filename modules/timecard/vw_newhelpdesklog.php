@@ -1,4 +1,8 @@
-<?php /* HELPDESK $Id: vw_newhelpdesklog.php,v 1.13 2007/08/22 07:17:43 arcoz67 Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* HELPDESK $Id: vw_newhelpdesklog.php,v 1.13 2007/08/22 07:17:43 arcoz67 Exp $ */
 //THIS TAB IS NOT CURRENTLY FUNCTIONAL for current CVS of HelpDesk (as of 1:31 PM 2007-08-22)
 
 //Based largely on the page with the same funtion in the existing TimeTrack module by ajdonnison.  
@@ -13,20 +17,19 @@ if ($denyEdit) {
 require_once $AppUI->getSystemClass('date');
 require_once $AppUI->getModuleClass('helpdesk');
 $df = $AppUI->getPref('SHDATEFORMAT');
+$dbprefix = dPgetConfig('dbprefix', '');
 
-$tid = isset($_GET['tid']) ? $_GET['tid'] : 0;
+$tid = isset($_GET['tid']) ? (int)$_GET['tid'] : 0;
 
 //pull data 
 // if we have a TID, then we editing an existing row
 $sql = " 
 SELECT task_log.*, item_id, item_project_id, item_title, item_company_id 
-FROM task_log
-LEFT JOIN helpdesk_items ON task_log_help_desk_id = item_id
+FROM {$dbprefix}task_log AS task_log
+LEFT JOIN {$dbprefix}helpdesk_items ON task_log_help_desk_id = item_id
 WHERE  task_log_id = $tid 
 AND ".getItemPerms()."
 "; 
-echo "<pre>$sql</pre>";
-echo '<pre>';print_r($sql);echo '</pre>';
 
 db_loadHash( $sql, $helpdeskItemTask );
 
@@ -62,9 +65,9 @@ if (isset( $helpdeskItemTask['task_log_date'] )) {
 // get user -> help desk items
 $sql = "
 SELECT h.*, p.project_name, c.company_name, c.company_id
-FROM helpdesk_items h
-LEFT JOIN projects p ON h.item_project_id = p.project_id 
-LEFT JOIN companies c ON h.item_company_id = c.company_id
+FROM {$dbprefix}helpdesk_items h
+LEFT JOIN {$dbprefix}projects p ON h.item_project_id = p.project_id 
+LEFT JOIN {$dbprefix}companies c ON h.item_company_id = c.company_id
 WHERE ".getItemPerms()."
 ORDER by p.project_name, h.item_title
 ";
@@ -80,9 +83,9 @@ $project = array();
 $companies = array();
 while ($row = db_fetch_assoc( $res )) {
 // collect help desk items in js format
-	$helpdeskItemTasks[$row['item_id']] = "[{$row['item_project_id']},{$row['item_id']},'".addslashes($row['item_title'])."',{$row['item_company_id']}]";
+	$helpdeskItemTasks[$row['item_id']] = "[".(int)$row['item_project_id'].",".(int)$row['item_id'].",".dPjs($row['item_title']).",".(int)$row['item_company_id']."]";
 // collect projects in js format
-	$projects[$row['item_project_id']] = "[{$row['company_id']},{$row['item_project_id']},'".addslashes($row['project_name'])."']";
+	$projects[$row['item_project_id']] = "[".(int)$row['company_id'].",".(int)$row['item_project_id'].",".dPjs($row['project_name'])."]";
 // collect companies in normal format
 	$companies[$row['item_company_id']] = $row['company_name'];
 };
@@ -92,14 +95,14 @@ while ($row = db_fetch_assoc( $res )) {
 if ($helpdeskItemTask_found)
 {
 	// need to add the entry for the helpdesk itself as that was not found
-	$helpdeskItemTasks[$helpdeskItemTask['item_id']] = "[{$helpdeskItemTask['item_project_id']}, {$helpdeskItemTask['item_id']}, '{$helpdeskItemTask['item_title']}', {$helpdeskItemTask['item_company_id']}]";
+	$helpdeskItemTasks[$helpdeskItemTask['item_id']] = "[" . (int)$helpdeskItemTask['item_project_id'] . ", " . (int)$helpdeskItemTask['item_id'] . ", " . dPjs($helpdeskItemTask['item_title']) . ", " . (int)$helpdeskItemTask['item_company_id'] . "]";
 	// get the project name
-	$sql = "SELECT project_name FROM projects WHERE project_id = ".$helpdeskItemTask['item_project_id'];
+	$sql = "SELECT project_name FROM {$dbprefix}projects WHERE project_id = ".$helpdeskItemTask['item_project_id'];
 	$itemCompanyName = db_LoadResult($sql);
 	// collect projects in js format
-	$projects[$helpdeskItemTask['item_project_id']] = "[{$helpdeskItemTask['item_company_id']},{$helpdeskItemTask['item_project_id']}, '{$itemCompanyName}']";
+	$projects[$helpdeskItemTask['item_project_id']] = "[" . (int)$helpdeskItemTask['item_company_id'] . "," . (int)$helpdeskItemTask['item_project_id'] . ", " . dPjs($itemCompanyName) . "]";
 	// get the company name
-	$sql = "SELECT company_name FROM companies WHERE company_id = ".$helpdeskItemTask['item_company_id'];
+	$sql = "SELECT company_name FROM {$dbprefix}companies WHERE company_id = ".$helpdeskItemTask['item_company_id'];
 	// collect companies in normal format
 	$companies[$helpdeskItemTask['item_company_id']] =  db_LoadResult($sql);
 }
@@ -124,22 +127,22 @@ if(isset($projects)){
 $s = "\nvar helpDeskItems = new Array(".implode( ",\n", $helpdeskItemTasks ).")";
 $s .= "\nvar projects = new Array(".implode( ",\n", $projects ).")";
 
-echo "<script language=\"javascript\">$s</script>";
+echo '<script type="text/javascript" nonce="' . dPcspNonce() . '">' . $s . '</script>';
 ?>
 
-<script language="javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 
 var calendarField = '';
 
 function popCalendar( field ){
 	calendarField = field;
-	uts = eval( 'document.AddEdit.task_log_' + field + '.value' );
+	uts = document.AddEdit['task_log_' + field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&uts=' + uts, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
 function setCalendar( uts, fdate ) {
-	fld_uts = eval( 'document.AddEdit.task_log_' + calendarField );
-	fld_fdate = eval( 'document.AddEdit.' + calendarField );
+	fld_uts = document.AddEdit['task_log_' + calendarField];
+	fld_fdate = document.AddEdit[calendarField];
 	fld_uts.value = uts;
 	fld_fdate.value = fdate;
 }
@@ -170,8 +173,8 @@ function addToList( list, text, value ) {
 function changeList( listName, source, target, source_field_index ) {
 	//alert(listName+','+source+','+target);return;
 	var f = document.AddEdit;
-	var list = eval( 'f.'+listName );
-	
+	var list = f[listName];
+
 	// clear the options
 	emptyList( list );
 	
@@ -188,7 +191,7 @@ function changeList( listName, source, target, source_field_index ) {
 // select an item in the list by target value
 function selectList( listName, target ) {
 	var f = document.AddEdit;
-	var list = eval( 'f.'+listName );
+	var list = f[listName];
 
 	for (var i=0, n = list.options.length; i < n; i++) {
 //alert(listName+','+target+','+list.options[i].value);
@@ -231,6 +234,16 @@ function delIt() {
 		form.submit();
 	}
 }
+
+function changeCompany( select ) {
+	var company = select.options[select.selectedIndex].value;
+	changeList( 'item_project_id', projects, company, 0 );
+	changeList( 'task_log_help_desk_id', helpDeskItems, company, 3 );
+}
+
+function changeProject( select ) {
+	changeList( 'task_log_help_desk_id', helpDeskItems, select.options[select.selectedIndex].value, 0 );
+}
 </script>
 
 <form name="AddEdit" action="" method="post">
@@ -258,7 +271,7 @@ function delIt() {
 <table border="0" cellpadding="4" cellspacing="0" width="98%">
 <tr>
 	<td width="50%" align="right">
-		<A href="javascript:delIt()"><img align="absmiddle" src="./images/icons/stock_delete-16.png" width="16" height="16" alt="Delete this project" border="0"><?php echo $AppUI->_('delete task log');?></a>
+		<A href="#"<?php echo dPaction('delIt'); ?>><img align="absmiddle" src="./images/icons/stock_delete-16.png" width="16" height="16" alt="Delete this project" border="0"><?php echo $AppUI->_('delete task log');?></a>
 	</td>
 </tr>
 </table>
@@ -276,7 +289,7 @@ function delIt() {
 ?>
 	<td align="right" nowrap="nowrap">Task Description:</td>
 	<td>
-		<input type="text" name="task_log_name" value="<?php echo @$helpdeskItemTask['task_log_name'] ;?>" class="text"> * The company, project or task that this time was logged against has been deleted.
+		<input type="text" name="task_log_name" value="<?php echo dPhtml(@$helpdeskItemTask['task_log_name']) ;?>" class="text"> * The company, project or task that this time was logged against has been deleted.
 	</td>
 <?php
 	} else {
@@ -287,7 +300,7 @@ function delIt() {
 	<td>
 	<?php
 		$params = 'size="1" class="text" style="width:250px" ';
-		$params .= 'onchange="changeList(\'item_project_id\',projects, this.options[this.selectedIndex].value,0);changeList(\'task_log_help_desk_id\',helpDeskItems, this.options[this.selectedIndex].value,3)"';
+		$params .= dPaction('changeCompany', array('$this'));
 		echo arraySelect( $companies, 'item_company_id', $params, @$helpdeskItemTask['item_company_id'] );
 	?>
 	</td>
@@ -295,7 +308,7 @@ function delIt() {
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project');?>:</td>
 	<td>
-		<select name="item_project_id" class="text" style="width:250px" onchange="changeList('task_log_help_desk_id',helpDeskItems, this.options[this.selectedIndex].value,0)"></select>
+		<select name="item_project_id" class="text" style="width:250px"<?php echo dPaction('changeProject', array('$this')); ?>></select>
 	</td>
 </tr>
 <tr>
@@ -313,7 +326,7 @@ function delIt() {
 	<td>
 		<input type="hidden" name="task_log_date" value="<?php echo $date->getDate();?>">
 		<input type="text" name="date" value="<?php echo $date->format($df);?>" class="text" disabled="disabled">
-		<a href="#" onClick="popCalendar('date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0">
 		</a>
 
@@ -329,25 +342,25 @@ function delIt() {
 <tr>
 	<td align="right" valign="top" nowrap="nowrap"><?php echo $AppUI->_('Description');?>* :</td>
 	<td align="left">
-		<textarea name="task_log_description" cols="60" rows="6" wrap="virtual" class="textarea"><?php echo (($tid > 0) ? $helpdeskItemTask["task_log_description"] : "");?></textarea>
+		<textarea name="task_log_description" cols="60" rows="6" wrap="virtual" class="textarea"><?php echo (($tid > 0) ? dPhtml($helpdeskItemTask["task_log_description"]) : "");?></textarea>
 	</td>
 </tr>
 <tr>
 	<td>
-		<input class="button" type="Button" name="Cancel" value="cancel" onClick="javascript:if(confirm('Are you sure you want to cancel.')){location.href = './index.php?m=timecard&tab=0';}">
+		<input class="button" type="Button" name="Cancel" value="cancel"<?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => './index.php?m=timecard&tab=0')); ?>>
 	</td>
 	<td align="right">
-		<input class="button" type="Button" name="btnFuseAction" value="save" onClick="submitIt();">
+		<input class="button" type="Button" name="btnFuseAction" value="save"<?php echo dPaction('submitIt'); ?>>
 	</td>
 </tr>
 </table>
 </form>
 * indicates required field
-<script language="javascript">
-changeList('item_project_id', projects, <?php echo @$helpdeskItemTask['item_company_id'] ? $helpdeskItemTask['item_company_id'] : 0;?>,0);
-changeList('task_log_help_desk_id', helpDeskItems, <?php echo @$helpdeskItemTask['item_project_id'] ? $helpdeskItemTask['item_project_id'] : 0;?>,3);
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
+changeList('item_project_id', projects, <?php echo (int)@$helpdeskItemTask['item_company_id'];?>,0);
+changeList('task_log_help_desk_id', helpDeskItems, <?php echo (int)@$helpdeskItemTask['item_project_id'];?>,3);
 
-selectList( 'item_company_id', <?php echo @$helpdeskItemTask['item_company_id'] ? $helpdeskItemTask['item_company_id'] : 0;?> );
-selectList( 'item_project_id', <?php echo @$helpdeskItemTask['item_project_id'] ? $helpdeskItemTask['item_project_id'] : 0;?> );
-selectList( 'task_log_help_desk_id', <?php echo @$helpdeskItemTask['task_log_help_desk_id'] ? $helpdeskItemTask['task_log_help_desk_id'] : 0;?> );
+selectList( 'item_company_id', <?php echo (int)@$helpdeskItemTask['item_company_id'];?> );
+selectList( 'item_project_id', <?php echo (int)@$helpdeskItemTask['item_project_id'];?> );
+selectList( 'task_log_help_desk_id', <?php echo (int)@$helpdeskItemTask['task_log_help_desk_id'];?> );
 </script>

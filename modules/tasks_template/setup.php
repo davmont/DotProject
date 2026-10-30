@@ -1,4 +1,8 @@
-<?php /* TIMECARD $Id: setup.php,v 1.1 2004/07/22 05:24:40 jcgonz Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* TIMECARD $Id: setup.php,v 1.1 2004/07/22 05:24:40 jcgonz Exp $ */
 /*
 dotProject Module
 
@@ -51,7 +55,7 @@ class CSetupTasksTemplate {
 	Install routine
 */
 	function install() {
-		$sql = "CREATE TABLE `tasks_template` (
+		$sql = "CREATE TABLE `" . dPgetConfig('dbprefix', '') . "tasks_template` (
 				  `tasks_template_id` int(11) NOT NULL auto_increment,
 				  `tasks_template_name` varchar(30) NOT NULL default '',
 				  `tasks_template_roles` mediumtext,
@@ -60,7 +64,7 @@ class CSetupTasksTemplate {
 				  PRIMARY KEY  (`tasks_template_id`))";
 		db_exec($sql);
 		
-		$sql = "CREATE TABLE `tasks_template_task` (
+		$sql = "CREATE TABLE `" . dPgetConfig('dbprefix', '') . "tasks_template_task` (
 		  `tasks_template_task_id` int(11) NOT NULL auto_increment,
 		  `tasks_template_id` int(11) NOT NULL default '0',
 		  `tasks_template_task_name` varchar(40) NOT NULL default '',
@@ -79,8 +83,8 @@ class CSetupTasksTemplate {
 	Removal routine
 */
 	function remove() {
-		$sql = "drop table tasks_template, tasks_template_task";
-		do_exec($sql);
+		$sql = "drop table " . dPgetConfig('dbprefix', '') . "tasks_template, " . dPgetConfig('dbprefix', '') . "tasks_template_task";
+		db_exec($sql);
 		return true;
 	}
 /*

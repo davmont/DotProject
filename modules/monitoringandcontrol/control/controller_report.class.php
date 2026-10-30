@@ -12,7 +12,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ba
 		$q = new DBQuery;
 		$q->addQuery('p.project_name, p.project_id ');
 		$q->addTable('projects', 'p');
-		$q->addWhere('p.project_company ='.$company);
+		$q->addWhere('p.project_company =' . (int)$company);
 		
 		$sql = $q->prepare();
 		$list = db_loadList($sql);	
@@ -30,17 +30,17 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ba
 		foreach($list as $row){		
 			$linha = array();
 	
-			$linha[percentual] = $controllerEarnValue->obterPercentualTotal($row['project_id']);
-			$linha[tamanho] = $controllerEarnValue->obterTamanhoTotal($row['project_id']);
-			$linha[id] = $row['project_id'];
-			$linha[projeto] = $row['project_name'];
-			$linha[idc] = $controllerEarnValue->obterAtualIndiceDesempenhoCusto($row['project_id'], $dtAtual);
-			$linha[idp] = $controllerEarnValue->obterAtualIndiceDesempenhoPrazo($row['project_id'], $dtAtual);
-			$linha[baseline] = $controllerBaseline->countBaseline($row['project_id']);
+			$linha['percentual'] = $controllerEarnValue->obterPercentualTotal($row['project_id']);
+			$linha['tamanho'] = $controllerEarnValue->obterTamanhoTotal($row['project_id']);
+			$linha['id'] = $row['project_id'];
+			$linha['projeto'] = $row['project_name'];
+			$linha['idc'] = $controllerEarnValue->obterAtualIndiceDesempenhoCusto($row['project_id'], $dtAtual);
+			$linha['idp'] = $controllerEarnValue->obterAtualIndiceDesempenhoPrazo($row['project_id'], $dtAtual);
+			$linha['baseline'] = $controllerBaseline->countBaseline($row['project_id']);
 			
-			$linha[cr] = $controllerEarnValue->obterAtualValorReal($row['project_id'], $dtAtual);
-			$linha[vp] = $controllerEarnValue->obterAtualValorPlanejado($row['project_id'], $dtAtual);
-			$linha[va] = $controllerEarnValue->obterAtualValorAgregado($row['project_id'], $dtAtual);
+			$linha['cr'] = $controllerEarnValue->obterAtualValorReal($row['project_id'], $dtAtual);
+			$linha['vp'] = $controllerEarnValue->obterAtualValorPlanejado($row['project_id'], $dtAtual);
+			$linha['va'] = $controllerEarnValue->obterAtualValorAgregado($row['project_id'], $dtAtual);
 		
 			array_push($result, $linha);
 		}		
@@ -51,7 +51,7 @@ require_once (DP_BASE_DIR . "/modules/monitoringandcontrol/control/controller_ba
 		$q = new DBQuery;
 		$q->addQuery('p.project_company ');
 		$q->addTable('projects', 'p');
-		$q->addWhere('p.project_id ='.$project_id);		
+		$q->addWhere('p.project_id =' . (int)$project_id);		
 		$sql = $q->prepare();
 		$list = db_loadList($sql);	
 		return $list;		

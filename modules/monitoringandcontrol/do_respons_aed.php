@@ -13,6 +13,11 @@
 	$support = dPgetParam($_POST,'support');
 	$approve = dPgetParam($_POST,'approve');
 	$project_id = dPgetParam($_POST,'project_id');	
+	// Ids are used in SQL below: keep them integers, as checked.
+	$project_id = (int)$project_id;
+	$id = (int)$id;
+	// The user must be able to edit this project, and the records named must belong to it.
+	dPrequireProjectEdit($project_id, array(array('monitoring_responsibility_matriz', 'responsibility_id', 'project_id', $id)));
 	
 	
 	if (isset($_POST['acao']) && $_POST['acao']=='insert'){

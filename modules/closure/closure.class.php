@@ -119,7 +119,7 @@ class CClosure extends CDpObject {
 
 		$q = new DBQuery;
 		$q->setDelete('post_mortem_analysis');
-		$q->addWhere('pma_id ='.$this->pma_id);
+		$q->addWhere('pma_id =' . (int)$this->pma_id);
 
 		$result = ((!$q->exec())?db_error():NULL);
 		$q->clear();

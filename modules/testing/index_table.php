@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 // this is another example showing how the dPFramework is working
 // additionally we will have an easy database connection here
 
@@ -28,8 +31,8 @@ if (!$canRead) {			// lock out users that do not have at least readPermission on
 // retrieving some dynamic content using an easy database query
 $tab = $AppUI->getState( 'TestingIdxTab' ) !== NULL ? $AppUI->getState( 'TestingIdxTab' ) : "";
 $sql = "SELECT unittest_id,unittest_name,unittest_passed,unittest_description,unittest_lasttested ,task_name
-				FROM unittest
-				LEFT OUTER JOIN tasks ON unittest_task_id = task_id";	// prepare the sqlQuery command to get all quotes from the einstein table
+				FROM " . dPgetConfig('dbprefix', '') . "unittest
+				LEFT OUTER JOIN " . dPgetConfig('dbprefix', '') . "tasks ON unittest_task_id = task_id";	// prepare the sqlQuery command to get all quotes from the einstein table
 $sql.="	WHERE 1=1";
 if($tab=="0")
 	$sql.= " AND unittest_passed IS NULL";
@@ -38,7 +41,7 @@ if($tab=="1")
 if($tab=="2")
 	$sql.= " AND unittest_passed = 1";
 if($project_id > 0)
-	$sql.= " AND unittest_project_id = ".$project_id;
+	$sql.= " AND unittest_project_id = ".(int)$project_id;
 	
 // pass the query to the database, please consider always using the (still poor) database abstraction layer
 $quotes = db_loadList( $sql );		// retrieve a list (in form of an indexed array) of einstein quotes via an abstract db method
@@ -79,22 +82,22 @@ foreach ($quotes as $row) {		//parse the array of einstein quotes
 	</td>
 	<td >
 	<?php
-	echo $row["unittest_name"];		
+	echo dPhtml($row["unittest_name"]);		
 	?>
 	</td>
 	<td >
 	<?php
-	echo $row["unittest_description"];		
+	echo dPhtml($row["unittest_description"]);		
 	?>
 	</td>
 	<td >
 	<?php
-	echo $row["unittest_result"];		
+	echo dPhtml($row["unittest_result"]);		
 	?>
 	</td>
 	<td >
 	<?php
-	echo $row["task_name"];		
+	echo dPhtml($row["task_name"]);		
 	?>
 	</td>
 </tr>

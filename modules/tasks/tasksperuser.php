@@ -23,11 +23,11 @@ $compFilter = arrayMerge(array('all' => $AppUI->_('All Companies')), $companies)
 $titleBlock = new CTitleBlock('Tasks per User', 'applet-48.png', $m, "$m.$a");
 $titleBlock->addCell($AppUI->_('Company') . ':');
 $titleBlock->addCell(
-	arraySelect($compFilter, 'company_id', 'size="1" class="text" onchange="javascript:document.companyFilter.submit();"', $company_id, false), '',
+	arraySelect($compFilter, 'company_id', 'size="1" class="text"' . dPaction(null, array(), null, array('submit' => 'companyFilter')), $company_id, false), '',
 	'<form action="?m=tasks&a=tasksperuser" method="post" name="companyFilter">', '</form>'
 );
 $titleBlock->addCrumb("?m=tasks", "tasks list");
-$titleBlock->addCrumb("?m=tasks&a=todo&user_id=$user_id", "my todo");
+$titleBlock->addCrumb('?m=tasks&a=todo&user_id=' . (int)$AppUI->user_id, "my todo");
 $titleBlock->show();
 
 // include the re-usable sub view

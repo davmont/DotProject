@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 function getCostValueTotal($id)
 {
@@ -85,7 +88,7 @@ function insertCostValues($project)
       $q->innerJoin('user_tasks', 'dp', 'dp.task_id = t.task_id');
       $q->innerJoin('human_resource', 'h', 'dp.user_id = h.human_resource_user_id');
       $q->innerJoin('users', 'usr', 'usr.user_id = h.human_resource_user_id');
-      $q->addWhere('t.task_project = ' . $project);
+      $q->addWhere('t.task_project = ' . (int)$project);
       $q->addGroup('usr.user_id');
       $q->addOrder('usr.user_id ASC');
       $hoursUser = $q->loadList();
@@ -120,7 +123,7 @@ function insertCostValues($project)
     $q->innerJoin('human_resource_roles', 'hr', 'hr.human_resource_id = h.human_resource_id');
     $q->innerJoin('human_resources_role', 'hs', 'hr.human_resources_role_id = hs.human_resources_role_id');
     $q->innerJoin('monitoring_user_cost', 'mc', 'usr.user_id = mc.user_id');
-    $q->addWhere('t.task_project = ' . $project);
+    $q->addWhere('t.task_project = ' . (int)$project);
     $q->addOrder('usr.user_id ASC');
     $res = $q->loadList();
 
@@ -151,27 +154,26 @@ function insertCostValues($project)
         $db->CompleteTrans();
     } else {
         /* ################### UPDATE VALORES DOS CUSTOS HUMANOS #################### */
-        $i = 0;
+        // Each human cost row is named after its person and role; update it with
+        // that person's rate (rows were paired with the rates by list position,
+        // which gave costs the wrong rate when the lists differed).
+        $rates = array();
         foreach ($res as $row) {
-            $k = 0;
-            $array[$i][$k] = $row['cost_value'];
-            $k = $k + 1;
-            $array[$i][$k] = $row['contact_first_name'] . ' ' . $row['contact_last_name'] . ' - ' . $row['human_resources_role_name'];
-            $i++;
+            $rates[$row['contact_first_name'] . ' ' . $row['contact_last_name'] . ' - ' . $row['human_resources_role_name']] = $row['cost_value'];
         }
-        $j = 0;
         $db->StartTrans();
         foreach ($humanCost as $row) {
-            $l = 0;
-            $value = ($array[$j][$l] * $row['cost_quantity']) * diferencaMeses(substr($row['cost_date_begin'], 0, -9), substr($row['cost_date_end'], 0, -9));
+            if (!isset($rates[$row['cost_description']])) {
+                continue;
+            }
+            $rate = $rates[$row['cost_description']];
+            $value = ($rate * $row['cost_quantity']) * diferencaMeses(substr($row['cost_date_begin'], 0, -9), substr($row['cost_date_end'], 0, -9));
             $q->clear();
             $q->addTable('costs');
-            $q->addUpdate('cost_value_unitary', $array[$j][$l]);
+            $q->addUpdate('cost_value_unitary', $rate);
             $q->addUpdate('cost_value_total', $value);
-            $l = $l + 1;
-            $q->addWhere('cost_description="' . $array[$j][$l] . '" and cost_type_id= 0');
+            $q->addWhere('cost_id = ' . (int)$row['cost_id'] . ' and cost_type_id= 0');
             $q->exec();
-            $j++;
         }
         $db->CompleteTrans();
         $db->StartTrans();
@@ -207,7 +209,7 @@ function insertCostValues($project)
     $q->addTable('tasks', 't');
     $q->innerJoin('resource_tasks', 'rt', 'rt.task_id = t.task_id');
     $q->innerJoin('resources', 'r', 'r.resource_id = rt.resource_id');
-    $q->addWhere('t.task_project = ' . $project);
+    $q->addWhere('t.task_project = ' . (int)$project);
     $q->addWhere('rt.percent_allocated = 100');
     $q->addGroup('r.resource_name');
     $q->addOrder('r.resource_name ASC');
@@ -253,7 +255,7 @@ function insertCostValues($project)
             $q->addUpdate('cost_quantity', $array[$j][$l]);
             $q->addUpdate('cost_value_total', $value);
             $l = $l + 1;
-            $q->addWhere('cost_description="' . $array[$j][$l] . '" and cost_type_id= 1');
+            $q->addWhere('cost_description = ' . $q->quote($array[$j][$l]) . ' and cost_type_id= 1');
             $q->exec();
             $j++;
         }
@@ -301,7 +303,7 @@ function insertReserveBudget($project)
     $q->clear();
     $q->addQuery('*');
     $q->addTable('budget_reserve', 'b');
-    $q->addWhere("budget_reserve_project_id = " . $project);
+    $q->addWhere("budget_reserve_project_id = " . (int)$project);
     $q->addOrder('budget_reserve_risk_id');
     $budgets = $q->loadList();
 
@@ -329,7 +331,7 @@ function insertReserveBudget($project)
             $q->clear();
             $q->addTable('budget_reserve');
             $q->addUpdate('budget_reserve_description', $row['risk_name']);
-            $q->addWhere('budget_reserve_project_id=' . $project . ' and budget_reserve_risk_id=' . $row['risk_id']);
+            $q->addWhere('budget_reserve_project_id=' . $project . ' and budget_reserve_risk_id=' . (int)$row['risk_id']);
             $q->exec();
         }
         $db->CompleteTrans();
@@ -364,15 +366,15 @@ function insertBudget($project, $subTotal)
     $q = new DBQuery();
     $q->clear();
     $q->addQuery('*');
-    $q->addTable('budget');
-    $q->addWhere('budget_project_id = ' . $project);
+    $q->addTable('costs_budget');
+    $q->addWhere('budget_project_id = ' . (int)$project);
     $q->addOrder('budget_id');
     $res = $q->loadList();
     $resul = $q->exec();
 
     if ($res == null) {
 
-        $q->addTable('budget');
+        $q->addTable('costs_budget');
         $q->addInsert('budget_id', $project);
         $q->addInsert('budget_project_id', $project);
         $q->addInsert('budget_reserve_management', 0);
@@ -383,10 +385,10 @@ function insertBudget($project, $subTotal)
         $total = (($res[0]['budget_reserve_management'] / 100) * $subTotal);
         $total += $subTotal;
 
-        $q->addTable('budget');
+        $q->addTable('costs_budget');
         $q->addUpdate('budget_sub_total', $subTotal);
         $q->addUpdate('budget_total', $total);
-        $q->addWhere('budget_id=' . $project);
+        $q->addWhere('budget_id=' . (int)$project);
         $q->exec();
     }
 }

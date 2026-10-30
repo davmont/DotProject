@@ -177,10 +177,38 @@ function breadCrumbs(&$arr)
 function dPcontextHelp($title, $link = '')
 {
 	global $AppUI;
-	return ('<a href="#' . $AppUI->___($link) . '" onClick="'
-		. "javascript:window.open('?m=help&dialog=1&hid=$link', 'contexthelp', "
-		. "'width=400, height=400, left=50, top=50, scrollbars=yes, resizable=yes')" . '">'
-		. $AppUI->_($title) . '</a>');
+	return ('<a href="#' . $AppUI->___($link) . '"'
+		. dPaction('window.open', array('?m=help&dialog=1&hid=' . $link, 'contexthelp', 'width=400,height=400,left=50,top=50,scrollbars=yes,resizable=yes'))
+		. '>' . $AppUI->_($title) . '</a>');
+}
+
+/**
+ * Items that active modules add to the header's user bar, next to Help and My Info:
+ * modules/<module>/header_widget.php returns the item's HTML ('' for none). Each
+ * item is followed by $separator, the bar's own (' | ', ' &bull; ').
+ */
+function dPheaderWidgets($separator)
+{
+	global $AppUI;
+	$html = '';
+	$files = glob(DP_BASE_DIR . '/modules/*/header_widget.php');
+	if (!$files) {
+		return $html;
+	}
+	$active = $AppUI->getActiveModules();
+	// Each file runs in its own scope, so its variables cannot overwrite these.
+	$run = function ($file) {
+		return include $file;
+	};
+	foreach ($files as $file) {
+		if (isset($active[basename(dirname($file))])) {
+			$widget = $run($file);
+			if (is_string($widget) && $widget !== '') {
+				$html .= $widget . $separator;
+			}
+		}
+	}
+	return $html;
 }
 
 
@@ -313,8 +341,213 @@ function dPgetParam(&$arr, $name, $def = null)
 }
 
 /**
+ * Returns a named array value as an integer, or $def when it is not set. Use it for ids
+ * and other numbers that end up in SQL.
+ */
+function dPgetIntParam(&$arr, $name, $def = 0)
+{
+	return isset($arr[$name]) ? (int)$arr[$name] : (int)$def;
+}
+
+/**
+ * Escapes a value for HTML text or a quoted attribute (single or double quotes), in the
+ * install's character set. Use it for every database or request value written into a page.
+ */
+function dPhtml($str)
+{
+	global $AppUI;
+	return $AppUI->___((string)$str);
+}
+
+/**
+ * Converts a string from the page charset ($locale_char_set) to UTF-8. Several
+ * locales use ISO-8859 or Windows code pages, and mbstring does not know all of
+ * them (big5 and WINDOWS-1257 made mb_convert_encoding() throw), so iconv comes
+ * first. Unconvertible input is returned unchanged.
+ */
+function dPtoUtf8($value, $charset = null)
+{
+	global $locale_char_set;
+	$charset = $charset !== null ? $charset : $locale_char_set;
+	$value = (string)$value;
+	if (!$charset || mb_strtolower($charset) == 'utf-8' || $value === '') {
+		return $value;
+	}
+	$converted = function_exists('iconv') ? @iconv($charset, 'UTF-8', $value) : false;
+	if ($converted === false) {
+		try {
+			$converted = mb_convert_encoding($value, 'UTF-8', $charset);
+		} catch (ValueError $e) {
+			$converted = $value;
+		}
+	}
+	return $converted;
+}
+
+/**
+ * Returns a value as a JavaScript string literal (with its quotes) that is safe anywhere in a
+ * <script> block: quotes, <, > and & are \u-escaped. Use dPjsAttr() inside an onclick or
+ * other event attribute.
+ */
+function dPjs($value)
+{
+	$value = dPtoUtf8($value);
+	return json_encode($value, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+		| JSON_INVALID_UTF8_SUBSTITUTE);
+}
+
+/**
+ * dPjs() for event attributes such as onclick="f(<?php echo dPjsAttr($v); ?>)".
+ */
+function dPjsAttr($value)
+{
+	return htmlspecialchars(dPjs($value), ENT_QUOTES);
+}
+
+/**
+ * Returns $url when it is safe to use as a link target: relative, or with an http, https,
+ * mailto or ftp scheme. Anything else (javascript:, data:, vbscript:, ...) returns ''.
+ * The result still needs HTML escaping when written into an attribute.
+ */
+function dPsafeUrl($url)
+{
+	$url = trim((string)$url);
+	if ($url === '') {
+		return '';
+	}
+	// Browsers ignore control characters and whitespace inside the scheme ("java\tscript:").
+	$probe = preg_replace('/[\x00-\x20]+/', '', $url);
+	if (preg_match('/^([a-z][a-z0-9+.-]*):/i', $probe, $m)) {
+		return in_array(mb_strtolower($m[1]), array('http', 'https', 'mailto', 'ftp'), true) ? $url : '';
+	}
+	return $url;
+}
+
+/**
+ * Returns the real path of $name inside $dir, the installation directory of an external
+ * application a module reads or includes (Gallery2, Eventum), or false. The file must
+ * exist on the local file system and must not be under a directory users upload into
+ * (files/, and SGD/ where the document management module used to store uploads).
+ */
+function dPexternalAppFile($dir, $name)
+{
+	$file = realpath(rtrim((string)$dir, '/\\') . DIRECTORY_SEPARATOR . $name);
+	if ($file === false || !is_file($file)) {
+		return false;
+	}
+	foreach (array('/files', '/SGD') as $upload_dir) {
+		$upload_dir = realpath(DP_BASE_DIR . $upload_dir);
+		if ($upload_dir !== false && strpos($file, $upload_dir . DIRECTORY_SEPARATOR) === 0) {
+			return false;
+		}
+	}
+	return $file;
+}
+
+/**
+ * Returns $value when it is one of $allowed, otherwise $default. ORDER BY and GROUP BY
+ * clauses cannot take bound parameters, so sort columns from the request must pass this.
+ */
+function dPvalidateOrder($value, array $allowed, $default)
+{
+	return in_array($value, $allowed, true) ? $value : $default;
+}
+
+/**
  * Alternative to protect from XSS attacks.
  */
+/**
+ * Hash a password for storage in users.user_password.
+ *
+ * Uses password_hash() once the column can hold its output (VARCHAR(255),
+ * added by the 20261009 entry in db/upgrade_latest.sql). On a database that
+ * has not been upgraded yet it keeps the legacy MD5 format, because a bcrypt
+ * hash cut to 32 characters would lock the user out.
+ */
+function dPhashPassword($password)
+{
+	return dPpasswordColumnFitsHash() ? password_hash($password, PASSWORD_DEFAULT) : md5($password);
+}
+
+/**
+ * Cleans a comma-separated list of ids: every entry becomes an integer, '' stays ''.
+ */
+function dPintList($ids)
+{
+	if ((string)$ids === '') {
+		return '';
+	}
+	return implode(',', array_map('intval', explode(',', (string)$ids)));
+}
+
+/**
+ * True when $source (the contents of locale .inc files) holds only string literals,
+ * "=>", commas and comments, so it can be evaluated as the body of array(...) without
+ * running code. Double-quoted strings may contain a plain $name (it only reads a variable)
+ * but not {$...}, ${...}, $name[...] or $name->..., which can call code.
+ */
+function dPisTranslationSource($source)
+{
+	$name = '\$[A-Za-z_\x80-\xff][A-Za-z0-9_\x80-\xff]*+(?!\[|->)';
+	$string = '"(?:[^"\\\\${]++|\\\\.|\{(?!\$)|' . $name . '|\$(?![A-Za-z_\x80-\xff{]))*+"'
+		. '|\'(?:[^\'\\\\]++|\\\\.)*+\'';
+	$comment = '#[^\n]*+|//[^\n]*+|/\*.*?\*/';
+	if (preg_match('~\A(?:\s++|' . $string . '|=>|,|' . $comment . ')*+\z~s', $source) === 1) {
+		return true;
+	}
+	error_log('dotProject: translation file skipped, it contains more than string literals');
+	return false;
+}
+
+/**
+ * The strings of locales/$locale/<module>.inc for each of $modules, later files
+ * winning, as locales/core.php loads them for a page. For text built outside a page
+ * request, such as mail sent from the event queue in the recipient's language.
+ */
+function dPtranslationsFor($locale, $modules)
+{
+	$locale = preg_replace('/[^A-Za-z_]/', '', (string)$locale);
+	$strings = array();
+	if ($locale === '') {
+		return $strings;
+	}
+	foreach ($modules as $module) {
+		$file = DP_BASE_DIR . '/locales/' . $locale . '/' . preg_replace('/[^A-Za-z0-9_]/', '', $module) . '.inc';
+		$source = is_readable($file) ? file_get_contents($file) : '';
+		if ($source === '' || $source === false || !dPisTranslationSource($source)) {
+			continue;
+		}
+		$file_strings = array();
+		try {
+			eval('$file_strings = array(' . $source . "\n);");
+			$strings = array_merge($strings, $file_strings);
+		} catch (ParseError $e) {
+			error_log('dotProject: translation file skipped, it does not parse: ' . $file);
+		}
+	}
+	return $strings;
+}
+
+/**
+ * True when users.user_password is wide enough for password_hash() output.
+ */
+function dPpasswordColumnFitsHash()
+{
+	static $fits = null;
+	if ($fits === null) {
+		$len = db_loadResult('SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS'
+			. ' WHERE TABLE_SCHEMA = DATABASE()'
+			. " AND TABLE_NAME = '" . db_escape(dPgetConfig('dbprefix', '') . 'users') . "'"
+			. " AND COLUMN_NAME = 'user_password'");
+		$fits = ((int)$len >= 60);
+		if (!$fits) {
+			error_log('dotProject: users.user_password is too short for password_hash();'
+				. ' run the database upgrade (db/upgrade_latest.sql). Falling back to MD5.');
+		}
+	}
+	return $fits;
+}
+
 function dPgetCleanParam(&$arr, $name, $def = null)
 {
 	if (isset($arr[$name]) && is_array($arr[$name])) {
@@ -517,7 +750,8 @@ function dPformSafe($txt, $flag_bits = 0)
 		$txt_arr = is_object($txt) ? get_object_vars($txt) : $txt;
 		foreach ($txt_arr as $k => $v) {
 			$value = $deslash ? $AppUI->___($v, UI_OUTPUT_RAW) : $v;
-			$value = $isURI ? $AppUI->___($value, UI_OUTPUT_URI) : $value;
+			// URIs are written into href attributes, so they are HTML-escaped too.
+			$value = $isURI ? htmlspecialchars($AppUI->___($value, UI_OUTPUT_URI), ENT_QUOTES) : $value;
 
 			if (!$isURI) {
 				$value = $isJSVars ? $AppUI->___($value, UI_OUTPUT_JS) : $value;
@@ -533,7 +767,7 @@ function dPformSafe($txt, $flag_bits = 0)
 
 	} else {
 		$txt = $deslash ? $AppUI->___($txt, UI_OUTPUT_RAW) : $txt;
-		$txt = $isURI ? $AppUI->___($txt, UI_OUTPUT_URI) : $txt;
+		$txt = $isURI ? htmlspecialchars($AppUI->___($txt, UI_OUTPUT_URI), ENT_QUOTES) : $txt;
 
 		if (!$isURI) {
 			$txt = $isJSVars ? $AppUI->___($txt, UI_OUTPUT_JS) : $txt;
@@ -1019,5 +1253,103 @@ function dPcheckLoginSystem()
 	global $AppUI;
 	$msg = '<span class="error">' . $AppUI->getMsg() . '</span>';
 	return $msg;
+}
+/**
+ * Per-request nonce for the Content-Security-Policy. Inline <script> blocks
+ * that must stay inline carry it: <script nonce="<?php echo dPcspNonce(); ?>">.
+ */
+function dPcspNonce()
+{
+	static $nonce = null;
+	if ($nonce === null) {
+		$nonce = base64_encode(random_bytes(16));
+	}
+	return $nonce;
+}
+
+/**
+ * The application's Content-Security-Policy (docs/deployment-security.md).
+ * Enforced (see dPsendCspHeader()); violations are reported to csp-report.php.
+ * No 'unsafe-eval': nothing loaded by the active modules needs it.
+ * report-uri only: when report-to is also present Chrome ignores report-uri, and
+ * its Reporting API delivery could not be verified (none arrived in testing).
+ */
+function dPcspPolicy()
+{
+	$base = rtrim(DP_BASE_URL, '/');
+	return implode('; ', array(
+		"default-src 'self'",
+		// 'report-sample' puts the first 40 characters of a blocked script in the report.
+		"script-src 'self' 'nonce-" . dPcspNonce() . "' 'report-sample'",
+		"style-src 'self' 'unsafe-inline'",
+		"img-src 'self' data:",
+		"font-src 'self' data:",
+		"connect-src 'self'",
+		"frame-src 'self'",
+		"frame-ancestors 'self'",
+		"form-action 'self'",
+		"base-uri 'self'",
+		"object-src 'none'",
+		'report-uri ' . $base . '/csp-report.php',
+	));
+}
+
+/**
+ * HTML attributes for js/dp-actions.js, the replacement for inline handlers:
+ *   <a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
+ *   <select<?php echo dPaction('changeView', array('$value'), 'change', array('submit' => '')); ?>>
+ * Values are JSON-encoded and HTML-escaped here, so callers never build the
+ * attribute strings themselves. $extra adds data-dp-<key> attributes
+ * (confirm, href, submit, on).
+ */
+function dPaction($call, $args = array(), $on = null, $extra = array())
+{
+	global $locale_char_set;
+	// Pages are in the locale's charset (several locales are ISO-8859 or Windows
+	// code pages). Arguments become UTF-8 JSON with \u escapes, which is plain ASCII
+	// and so right in any charset; other values are escaped in the page's charset.
+	$page_charset = ($locale_char_set && mb_strtolower($locale_char_set) != 'utf-8') ? $locale_char_set : 'UTF-8';
+	$html_charset = in_array(mb_strtoupper($page_charset), array('UTF-8', 'ISO-8859-1', 'ISO-8859-5',
+		'ISO-8859-15', 'CP866', 'CP1251', 'CP1252', 'WINDOWS-1251', 'WINDOWS-1252', 'KOI8-R', 'BIG5',
+		'GB2312', 'BIG5-HKSCS', 'SHIFT_JIS', 'EUC-JP', 'MACROMAN'), true)
+		? $page_charset : 'ISO-8859-1'; // byte-transparent for other single-byte charsets
+	$to_utf8 = function ($value) use (&$to_utf8, $page_charset) {
+		if (is_array($value)) {
+			return array_map($to_utf8, $value);
+		}
+		return is_string($value) ? dPtoUtf8($value, $page_charset) : $value;
+	};
+	$attrs = array();
+	if ($on !== null) {
+		$attrs['data-dp-on'] = $on;
+	}
+	if ($call !== null && $call !== '') {
+		$attrs['data-dp-call'] = $call;
+		if ($args) {
+			$attrs['data-dp-args'] = json_encode($to_utf8(array_values($args)),
+				JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE);
+		}
+	}
+	foreach ($extra as $key => $value) {
+		$attrs['data-dp-' . preg_replace('/[^a-z-]/', '', mb_strtolower($key))] = $value;
+	}
+	$html = '';
+	foreach ($attrs as $name => $value) {
+		$html .= ' ' . $name . '="' . htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, $html_charset) . '"';
+	}
+	return $html;
+}
+
+/**
+ * Sends the policy, enforced unless $dPconfig['csp_report_only'] is true
+ * (a rollback switch for a page that breaks: violations are then only reported).
+ */
+function dPsendCspHeader()
+{
+	if (headers_sent()) {
+		return;
+	}
+	$name = dPgetConfig('csp_report_only') ? 'Content-Security-Policy-Report-Only' : 'Content-Security-Policy';
+	header($name . ': ' . dPcspPolicy());
 }
 ?>

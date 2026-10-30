@@ -74,7 +74,7 @@ function displayFolders($folder_id = 0, $level = 0)
 	if ($folder_id) {
 		$q->addTable('file_folders', 'ff');
 		$q->addQuery('ff.*');
-		$q->addWhere('ff.file_folder_id = ' . $folder_id);
+		$q->addWhere('ff.file_folder_id = ' . (int)$folder_id);
 		$folders = $q->loadList();
 	} else {
 		$folders[0]['file_folder_name'] = $AppUI->_('Root');
@@ -120,12 +120,12 @@ function displayFolders($folder_id = 0, $level = 0)
 			'folder icon',
 			$AppUI->_('show only this folder')
 		)
-			. $row['file_folder_name'] . "\n");
+			. dPhtml($row['file_folder_name']) . "\n");
 		echo ((($m == 'files') ? '</a>' : '') . "\n");
 
 		if ($file_count > 0) {
-			echo ('<a href="#ff' . $folder_id . '" onclick="javascript:expand(' . "'files_"
-				. $folder_id . "'" . ')" class="has-files">(' . $file_count
+			echo ('<a href="#ff' . $folder_id . '"' . dPaction('expand', array('files_' . $folder_id))
+				. ' class="has-files">(' . $file_count
 				. ' files) +</a>' . "\n");
 		}
 
@@ -133,7 +133,7 @@ function displayFolders($folder_id = 0, $level = 0)
 
 
 		if ($row['file_folder_description'] && !($folder_id && $level)) {
-			echo ('<p>' . $row['file_folder_description'] . '</p>');
+			echo ('<p>' . dPhtml($row['file_folder_description']) . '</p>');
 		} else if ($level) {
 
 			if ($folder_id) {
@@ -144,7 +144,7 @@ function displayFolders($folder_id = 0, $level = 0)
 					. '<input type="hidden" name="del" value="1" />' . "\n"
 					. '<input type="hidden" name="file_folder_id" value="' . $folder_id
 					. '" />' . "\n"
-					. '<input type="hidden" name="redirect" value="' . $current_uri . '" />'
+					. '<input type="hidden" name="redirect" value="' . htmlspecialchars($current_uri, ENT_QUOTES) . '" />'
 					. "</form>\n");
 				echo ('<td align="right" width="64" nowrap="nowrap">' . "\n");
 				//edit folder
@@ -174,8 +174,7 @@ function displayFolders($folder_id = 0, $level = 0)
 				}
 				if ($canDelete_this) {
 					//remove folder
-					echo ('<a href="#" onclick="javascript:delCheck(' . "'" . $folder_id . "'"
-						. ')">' . dPshowImage(
+					echo ('<a href="#"' . dPaction('delCheck', array((string)$folder_id)) . '>' . dPshowImage(
 						DP_BASE_URL . '/modules/files/images/remove.png',
 						'16',
 						'16',
@@ -215,7 +214,7 @@ function displayFolders($folder_id = 0, $level = 0)
 	// retrieve all children of $folder_id
 	$q->addTable('file_folders', 'ff');
 	$q->addQuery('ff.*');
-	$q->addWhere('ff.file_folder_parent = ' . $folder_id);
+	$q->addWhere('ff.file_folder_parent = ' . (int)$folder_id);
 	if (is_array($allowedFolderIDs) && count($allowedFolderIDs)) {
 		$q->addWhere($allowedFolderIDs);
 	}
@@ -256,14 +255,14 @@ function countFiles($folder_id)
 		$q->addWhere('((' . implode(' AND ', $allowedTasks) . ') OR file_task = 0)');
 	}
 	if ($project_id) {
-		$q->addWhere('f.file_project = ' . $project_id);
+		$q->addWhere('f.file_project = ' . (int)$project_id);
 	}
 	if ($task_id) {
-		$q->addWhere('f.file_task = ' . $task_id);
+		$q->addWhere('f.file_task = ' . (int)$task_id);
 	}
 	if ($company_id) {
 		$q->innerJoin('companies', 'co', 'co.company_id = p.project_company');
-		$q->addWhere('co.company_id = ' . $company_id);
+		$q->addWhere('co.company_id = ' . (int)$company_id);
 		if (is_array($allowedCompanies) && count($allowedCompanies)) {
 			$q->addWhere('(' . implode(' AND ', $allowedCompanies) . ')');
 		}
@@ -326,7 +325,7 @@ function displayFiles($folder_id)
 	}
 	if ($company_id) {
 		$q->innerJoin('companies', 'co', 'co.company_id = p.project_company');
-		$q->addWhere('co.company_id = ' . $company_id);
+		$q->addWhere('co.company_id = ' . (int)$company_id);
 		if (is_array($allowedCompanies) && count($allowedCompanies)) {
 			$q->addWhere('(' . implode(' AND ', $allowedCompanies) . ')');
 		}
@@ -373,14 +372,14 @@ function displayFiles($folder_id)
 		$q->addWhere('((' . implode(' AND ', $allowedFolders) . ') OR f.file_folder = 0)');
 	}
 	if ($project_id) {
-		$q->addWhere('f.file_project = ' . $project_id);
+		$q->addWhere('f.file_project = ' . (int)$project_id);
 	}
 	if ($task_id) {
-		$q->addWhere('f.file_task = ' . $task_id);
+		$q->addWhere('f.file_task = ' . (int)$task_id);
 	}
 	if ($company_id) {
 		$q->innerJoin('companies', 'co', 'co.company_id = p.project_company');
-		$q->addWhere('co.company_id = ' . $company_id);
+		$q->addWhere('co.company_id = ' . (int)$company_id);
 		if (is_array($allowedCompanies) && count($allowedCompanies)) {
 			$q->addWhere('(' . implode(' AND ', $allowedCompanies) . ')');
 		}
@@ -415,14 +414,14 @@ function displayFiles($folder_id)
 		$q->addWhere('((' . implode(' AND ', $allowedFolders) . ') OR f.file_folder = 0)');
 	}
 	if ($project_id) {
-		$q->addWhere('f.file_project = ' . $project_id);
+		$q->addWhere('f.file_project = ' . (int)$project_id);
 	}
 	if ($task_id) {
-		$q->addWhere('f.file_task = ' . $task_id);
+		$q->addWhere('f.file_task = ' . (int)$task_id);
 	}
 	if ($company_id) {
 		$q->innerJoin('companies', 'co', 'co.company_id = p.project_company');
-		$q->addWhere('co.company_id = ' . $company_id);
+		$q->addWhere('co.company_id = ' . (int)$company_id);
 		if (is_array($allowedCompanies) && count($allowedCompanies)) {
 			$q->addWhere('(' . implode(' AND ', $allowedCompanies) . ')');
 		}
@@ -482,7 +481,7 @@ function displayFiles($folder_id)
 					<tr>
 						<td colspan="20" style="border: outset 2px #eeeeee;<?php echo $style; ?>">
 							<a href="?m=projects&amp;a=view&amp;project_id=<?php echo $row['file_project']; ?>">
-								<span style="<?php echo $style; ?>"><?php echo $row['project_name']; ?></span></a>
+								<span style="<?php echo $style; ?>"><?php echo dPhtml($row['project_name']); ?></span></a>
 						</td>
 					</tr>
 					<?php
@@ -496,33 +495,33 @@ function displayFiles($folder_id)
 						<input type="hidden" name="dosql" value="do_file_aed" />
 						<input type="hidden" name="del" value="1" />
 						<input type="hidden" name="file_id" value="<?php echo $row['file_id']; ?>" />
-						<input type="hidden" name="redirect" value="<?php echo $current_uri; ?>" />
+						<input type="hidden" name="redirect" value="<?php echo dPhtml($current_uri); ?>" />
 					</form>
 					<form name="frm_duplicate_file_<?php echo $row['file_id']; ?>" action="?m=files" method="post">
 						<input type="hidden" name="dosql" value="do_file_aed" />
 						<input type="hidden" name="duplicate" value="1" />
 						<input type="hidden" name="file_id" value="<?php echo $row['file_id']; ?>" />
-						<input type="hidden" name="redirect" value="<?php echo $current_uri; ?>" />
+						<input type="hidden" name="redirect" value="<?php echo dPhtml($current_uri); ?>" />
 					</form>
 					<?php
 					$file_icon = getIcon($row['file_type']);
 					?>
 					<a href="./fileviewer.php?file_id=<?php echo $row['file_id']; ?>" title="<?php
-					   echo $row['file_description']; ?>">
+					   echo dPhtml($row['file_description']); ?>">
 						<?php
 						echo dPshowImage((DP_BASE_URL . '/modules/files/images/' . $file_icon), '16', '16');
 						?>
-						&nbsp;<?php echo $row['file_name']; ?>
+						&nbsp;<?php echo dPhtml($row['file_name']); ?>
 					</a>
 				</td>
-				<td width="20%"><?php echo $row['file_description']; ?></td>
+				<td width="20%"><?php echo dPhtml($row['file_description']); ?></td>
 				<td width="5%" nowrap="nowrap" align="center">
 					<?php
 					$hidden_table = '';
 					echo $row['file_lastversion'];
 					if ($row['file_versions'] > 1) {
 						?>
-						<a href="#" onclick="javascript:expand('versions_<?php echo $row['file_id']; ?>');">
+						<a href="#"<?php echo dPaction('expand', array('versions_' . $row['file_id'])); ?>>
 							(<?php echo $row['file_versions']; ?>)
 						</a>
 						<?php
@@ -534,11 +533,11 @@ function displayFiles($folder_id)
 				</td>
 				<td width="5%" align="center">
 					<a href="?m=tasks&amp;a=view&amp;task_id=<?php echo $row['file_task']; ?>">
-						<?php echo $row['task_name']; ?>
+						<?php echo dPhtml($row['task_name']); ?>
 					</a>
 				</td>
 				<td width="15%" nowrap="nowrap">
-					<?php echo ($row["contact_first_name"] . ' ' . $row["contact_last_name"]); ?>
+					<?php echo (dPhtml($row["contact_first_name"] . ' ' . $row["contact_last_name"])); ?>
 				</td>
 				<td width="5%" nowrap="nowrap" align="right">
 					<?php echo file_size(intval($row['file_size'])); ?>
@@ -550,7 +549,7 @@ function displayFiles($folder_id)
 					<?php echo $file_date->format($df . ' ' . $tf); ?>
 				</td>
 				<td width="15%">
-					<?php echo $row['file_co_reason']; ?>
+					<?php echo dPhtml($row['file_co_reason']); ?>
 					<?php
 					if (
 						!(empty($row['file_checkout']))
@@ -635,8 +634,8 @@ function displayFiles($folder_id)
 						// Duplicate File
 						if ($canAuthor || $row['project_owner'] == $AppUI->user_id) {
 							?>
-							<a href="#" onclick="javascript:document.frm_duplicate_file_<?php
-							echo $row['file_id']; ?>.submit()">
+							<a href="#"<?php
+							echo dPaction(null, array(), null, array('submit' => 'frm_duplicate_file_' . $row['file_id'])); ?>>
 								<?php
 								echo (dPshowImage(
 									DP_BASE_URL . '/modules/files/images/duplicate.png',
@@ -652,8 +651,9 @@ function displayFiles($folder_id)
 						// Delete File
 						if ($canDelete || $row['project_owner'] == $AppUI->user_id) {
 							?>
-							<a href="#" onclick="if (confirm('Are you sure you want to delete this file?')) {javascript:document.frm_remove_file_<?php
-							echo $row['file_id']; ?>.submit()}">
+							<a href="#"<?php
+							echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to delete this file?',
+							                                         'submit' => 'frm_remove_file_' . $row['file_id'])); ?>>
 								<?php
 								echo (dPshowImage(
 									DP_BASE_URL . '/modules/files/images/remove.png',
@@ -675,8 +675,7 @@ function displayFiles($folder_id)
 						(empty($row['file_checkout']) || $row['file_checkout'] == 'final')
 						&& ($canEdit || $row['project_owner'] == $AppUI->user_id)
 					) {
-						$bulk_op = ('onchange="javascript:(this.checked) ? addBulkComponent(' . $row['file_id']
-							. ') : removeBulkComponent(' . $row['file_id'] . ')"');
+						$bulk_op = dPaction('toggleBulkComponent', array('$this', (int)$row['file_id']), 'change');
 						?>
 						<input type="checkbox" <?php echo $bulk_op; ?> name="chk_sub_sel_file_<?php
 							echo $file_row['file_id']; ?>" />
@@ -718,17 +717,17 @@ function displayFiles($folder_id)
 												<input type="hidden" name="dosql" value="do_file_aed" />
 												<input type="hidden" name="del" value="1" />
 												<input type="hidden" name="file_id" value="<?php echo $file['file_id']; ?>" />
-												<input type="hidden" name="redirect" value="<?php echo $current_uri; ?>" />
+												<input type="hidden" name="redirect" value="<?php echo dPhtml($current_uri); ?>" />
 											</form>
 											<form name="frm_duplicate_sub_file_<?php echo $file['file_id'];
 											?>" action="?m=files" method="post">
 												<input type="hidden" name="dosql" value="do_file_aed" />
 												<input type="hidden" name="duplicate" value="1" />
 												<input type="hidden" name="file_id" value="<?php echo $file['file_id']; ?>" />
-												<input type="hidden" name="redirect" value="<?php echo $current_uri; ?>" />
+												<input type="hidden" name="redirect" value="<?php echo dPhtml($current_uri); ?>" />
 											</form>
 											<a href="./fileviewer.php?file_id=<?php echo $file['file_id'];
-											?>" title="<?php echo $file['file_description']; ?>">
+											?>" title="<?php echo dPhtml($file['file_description']); ?>">
 												<?php
 												echo dPshowImage(
 													(DP_BASE_URL . '/modules/files/images/' . $file_icon),
@@ -736,21 +735,21 @@ function displayFiles($folder_id)
 													'16'
 												);
 												?>
-												<?php echo $file['file_name']; ?>
+												<?php echo dPhtml($file['file_name']); ?>
 											</a>
 										</td>
-										<td width="20%"><?php echo $file['file_description']; ?></td>
+										<td width="20%"><?php echo dPhtml($file['file_description']); ?></td>
 										<td width="5%" nowrap="nowrap" align="center"><?php echo $file['file_version']; ?></td>
 										<td width="10%" nowrap="nowrap" align="center">
 											<?php echo $file_types[$file['file_category']]; ?>
 										</td>
 										<td width="5%" align="center">
 											<a href="?m=tasks&amp;a=view&amp;task_id=<?php echo $file['file_task']; ?>">
-												<?php echo $file['task_name']; ?>
+												<?php echo dPhtml($file['task_name']); ?>
 											</a>
 										</td>
 										<td width="15%" nowrap="nowrap">
-											<?php echo ($file["contact_first_name"] . ' ' . $file["contact_last_name"]); ?>
+											<?php echo (dPhtml($file["contact_first_name"] . ' ' . $file["contact_last_name"])); ?>
 										</td>
 										<td width="5%" nowrap="nowrap" align="right">
 											<?php echo file_size(intval($file['file_size'])); ?>
@@ -788,8 +787,9 @@ function displayFiles($folder_id)
 												// Duplicate File
 												if ($canAuthor) {
 													?>
-													<a href="#" onclick="javascript:document.frm_duplicate_file_<?php echo $row['file_id'];
-													?>.submit()">
+													<a href="#"<?php
+													echo dPaction(null, array(), null, array('submit' => 'frm_duplicate_file_' . $row['file_id']));
+													?>>
 														<?php
 														echo (dPshowImage(
 															DP_BASE_URL . '/modules/files/images/duplicate.png',
@@ -809,9 +809,11 @@ function displayFiles($folder_id)
 														|| $file['file_co_reason'] == '')
 												) {
 													?>
-													<a href="#" onclick="if (confirm('<?php
-													echo $AppUI->_('Are you sure you want to delete this file?');
-													?>')) {javascript:document.frm_remove_file_<?php echo $row['file_id']; ?>.submit()}">
+													<a href="#"<?php
+													echo dPaction(null, array(), null, array(
+														'confirm' => $AppUI->_('Are you sure you want to delete this file?', UI_OUTPUT_RAW),
+														'submit' => 'frm_remove_file_' . $row['file_id']));
+													?>>
 														<?php
 														echo (dPshowImage(
 															DP_BASE_URL . '/modules/files/images/remove.png',
@@ -834,9 +836,7 @@ function displayFiles($folder_id)
 													|| $row['file_checkout'] == 'final')
 												&& ($canEdit || $row['project_owner'] == $AppUI->user_id)
 											) {
-												$bulk_op = ('onchange="javascript:(this.checked) ? addBulkComponent('
-													. $row['file_id'] . ') : removeBulkComponent('
-													. $row['file_id'] . ')"');
+												$bulk_op = dPaction('toggleBulkComponent', array('$this', (int)$row['file_id']), 'change');
 												?>
 												<input type="checkbox" <?php echo $bulk_op; ?> name="chk_sub_sel_file_<?php
 													echo $file_row['file_id']; ?>" />
@@ -882,7 +882,7 @@ if ($folder > 0) {
 ?>
 
 
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function expand(id) {
 		var element = document.getElementById(id);
 		element.style.display = (element.style.display == '' || element.style.display == "none") ? "block" : "none";
@@ -908,7 +908,7 @@ if ($folder > 0) {
 
 	function delCheck(ffid) {
 		<?php
-		$trans_del = $AppUI->_('Are you sure you want to delete this folder?');
+		$trans_del = $AppUI->_('Are you sure you want to delete this folder?', UI_OUTPUT_JS);
 		?>
 		if (confirm('<?php echo $trans_del; ?>')) {
 			var submit_me = document.getElementById('frm_remove_folder_' + ffid);
@@ -918,7 +918,7 @@ if ($folder > 0) {
 
 	function goCheck() {
 		<?php
-		$trans_go = $AppUI->_('Are you sure you wish to apply the options on the selected files?');
+		$trans_go = $AppUI->_('Are you sure you wish to apply the options on the selected files?', UI_OUTPUT_JS);
 		?>
 		if (confirm('<?php echo $trans_go; ?>')) {
 			document.frm_bulk.submit();
@@ -930,6 +930,14 @@ if ($folder > 0) {
 		var t = document.getElementById('tbl_bulk');
 		var old = document.getElementById('bulk_selected_file[' + li + ']');
 		t.removeChild(old);
+	}
+
+	function toggleBulkComponent(box, li) {
+		if (box.checked) {
+			addBulkComponent(li);
+		} else {
+			removeBulkComponent(li);
+		}
 	}
 </script>
 
@@ -1028,7 +1036,7 @@ if ($folder) {
 				if ($canEdit_this_folder) {
 					echo ("\t\t\t" . '<a href="?m=' . $m . '&amp;a=addedit_folder&amp;tab=' . $tab
 						. '&folder=' . $cfObj->file_folder_id . '" title="' . $AppUI->_('edit folder')
-						. ': ' . $cfObj->file_folder_name . '">' . "\n");
+						. ': ' . dPhtml($cfObj->file_folder_name) . '">' . "\n");
 					echo ("\t\t\t" . dPshowImage(
 						DP_BASE_URL . '/modules/files/images/filesaveas.png',
 						'22',
@@ -1107,7 +1115,7 @@ if ($folder) {
 	<tr>
 		<td colspan="50" align="right">
 			<form name='frm_bulk' method='POST' action='?m=files&amp;a=do_files_bulk_aed'>
-				<input type="hidden" name="redirect" value="<?php echo $current_uri; ?>" />
+				<input type="hidden" name="redirect" value="<?php echo dPhtml($current_uri); ?>" />
 				<table id="tbl_bulk" name="tbl_bulk">
 					<tr>
 						<td>
@@ -1132,7 +1140,7 @@ if ($folder) {
 						</td>
 						<td align="right">
 							<input type="button" class="button" value="<?php echo $AppUI->_('Go'); ?>"
-								onclick="javascript:goCheck();" />
+								<?php echo dPaction('goCheck'); ?> />
 						</td>
 					</tr>
 				</table>

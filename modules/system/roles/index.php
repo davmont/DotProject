@@ -38,7 +38,7 @@ $crumbs['?m=system'] = 'System Admin';
 
 ?>
 
-<script type="text/javascript">
+<script type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 // security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -68,9 +68,9 @@ function delIt(id) {
 function showRow($role=null) {
 	global $canEdit, $canDelete, $role_id, $AppUI, $modules;
 	$CR = "\n";
-	$id = $role['id'];
-	$name = $role['value'];
-	$description = $role['name'];
+	$id = isset($role['id']) ? $role['id'] : null;
+	$name = isset($role['value']) ? $role['value'] : '';
+	$description = isset($role['name']) ? $role['name'] : '';
 
 	$s = '<tr>' . $CR;
 	if (($role_id == $id || $id == 0) && $canEdit) {
@@ -97,7 +97,7 @@ function showRow($role=null) {
 			$s .= '</a>';
 		}
 		if ($canDelete) {
-			$s .= '<a href="javascript:delIt(' . $id . ')">';
+			$s .= '<a href="#"' . dPaction('delIt', array((int)$id)) . '>';
 			$s .= dPshowImage('images/icons/stock_delete-16.png');
 			$s .= "</a>";
 		}

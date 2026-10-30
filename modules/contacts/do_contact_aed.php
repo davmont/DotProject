@@ -12,6 +12,8 @@ if (!$obj->bind($_POST)) {
 }
 
 $del = (int)dPgetParam($_POST, 'del', 0);
+// Permission on this record, as its addedit page checks.
+dPrequireWritePermission('contacts', dPgetParam($_POST, 'contact_id', 0), $del);
 
 // prepare (and translate) the module name ready for the suffix
 $AppUI->setMsg('Contact');

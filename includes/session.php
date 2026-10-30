@@ -114,7 +114,7 @@ function dPsessionDestroy($id, $user_access_log_id = 0)
 	$q->addTable('user_access_log');
 	$q->addUpdate('date_time_out', date('Y-m-d H:i:s'));
 	$q->addWhere('user_access_log_id = '
-		. (($user_access_log_id) ? $user_access_log_id
+		. (($user_access_log_id) ? (int)$user_access_log_id
 			: '(' . $sql2 . ')'));
 	$q->exec();
 	$q->clear();

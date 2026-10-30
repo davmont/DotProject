@@ -9,6 +9,7 @@ if (!defined('DP_BASE_DIR')) {
 // Create the roles class container
 require_once DP_BASE_DIR."/modules/system/roles/roles.class.php";
 
+$user_name = '';
 $perms =& $AppUI->acl();
 $user_roles = $perms->getUserRoles($user_id);
 $crole = new CRole;
@@ -21,7 +22,7 @@ foreach ($roles as $role) {
 
 ?>
 
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 <?php
 // security improvement:
 // some javascript functions may not appear on client side in case of user not having write permissions
@@ -59,7 +60,7 @@ foreach ($user_roles as $row) {
 
 	$buf .= '<td nowrap>';
 	if ($canEdit) {
-		$buf .= ('<a href="javascript:delIt(' . $row['id'] . ');" title="' . $AppUI->_('delete') 
+		$buf .= ('<a href="#"' . dPaction('delIt', array((int)$row['id'])) . ' title="' . $AppUI->_('delete') 
 				 . '">'. dPshowImage('./images/icons/stock_delete-16.png', 16, 16, '') . '</a>');
 	}
 	$buf .= '</td>';
@@ -88,7 +89,7 @@ foreach ($user_roles as $row) {
 </tr>
 <tr>
 	<td>
-		<input type="reset" value="<?php echo $AppUI->_('clear');?>" class="button" name="sqlaction" onclick="clearIt();">
+		<input type="reset" value="<?php echo $AppUI->_('clear');?>" class="button" name="sqlaction" />
 	</td>
 	<td align="right">
 		<input type="submit" value="<?php echo $AppUI->_('add');?>" class="button" name="sqlaction2">

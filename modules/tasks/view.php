@@ -33,7 +33,7 @@ $q->addTable('tasks', "tsk");
 $q->leftJoin('users', 'u1', 'u1.user_id = task_owner');
 $q->leftJoin('projects', 'p', 'p.project_id = task_project');
 $q->leftJoin('task_log', 'tl', 'tl.task_log_task = task_id');
-$q->addWhere('task_id = ' . $task_id);
+$q->addWhere('task_id = ' . (int)$task_id);
 $q->addQuery('tsk.*');
 $q->addQuery('project_name, project_color_identifier');
 $q->addQuery('u1.user_username as username');
@@ -80,7 +80,7 @@ $q->addTable('users', 'u');
 $q->addTable('user_tasks', 't');
 $q->leftJoin('contacts', 'c' , 'user_contact = contact_id');
 $q->addQuery('u.user_id, u.user_username, contact_email');
-$q->addWhere('t.task_id = ' . $task_id);
+$q->addWhere('t.task_id = ' . (int)$task_id);
 $q->addWhere('t.user_id = u.user_id');
 $q->addOrder('u.user_username');
 
@@ -126,12 +126,12 @@ $task_types = dPgetSysVal('TaskType');
 smartUpdateProjectPercentComplete($obj->task_project);
 ?>
 
-<script language="JavaScript">
+<script language="JavaScript" nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 
 function popCalendar(field) {
 	calendarField = field;
-	idate = eval('document.editFrm.task_' + field + '.value');
+	idate = document.editFrm['task_' + field].value;
 	window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=250, height=220, scrollbars=no, status=no');
 }
 
@@ -140,8 +140,8 @@ function popCalendar(field) {
  *	@param string Formatted date
  */
 function setCalendar(idate, fdate) {
-	fld_date = eval('document.editFrm.task_' + calendarField);
-	fld_fdate = eval('document.editFrm.' + calendarField);
+	fld_date = document.editFrm['task_' + calendarField];
+	fld_fdate = document.editFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -199,13 +199,13 @@ function delIt() {
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Project');?>:</td>
 			<td style="background-color:#<?php echo $obj->project_color_identifier;?>">
 				<font color="<?php echo bestColor($obj->project_color_identifier); ?>">
-					<?php echo @$obj->project_name;?>
+					<?php echo dPhtml(@$obj->project_name);?>
 				</font>
 			</td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Task');?>:</td>
-			<td class="hilite"><strong><?php echo @$obj->task_name;?></strong></td>
+			<td class="hilite"><strong><?php echo dPhtml(@$obj->task_name);?></strong></td>
 		</tr>
 		<?php if ($obj->task_parent != $obj->task_id) { 
 			$obj_parent = new CTask();
@@ -213,12 +213,12 @@ function delIt() {
 		?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Task Parent');?>:</td>
-			<td class="hilite"><a href="<?php echo './index.php?m=tasks&a=view&task_id=' . @$obj_parent->task_id; ?>"><?php echo @$obj_parent->task_name;?></a></td>
+			<td class="hilite"><a href="<?php echo './index.php?m=tasks&a=view&task_id=' . @$obj_parent->task_id; ?>"><?php echo dPhtml(@$obj_parent->task_name);?></a></td>
 		</tr>
 		<?php } ?>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Owner');?>:</td>
-			<td class="hilite"> <?php echo @$obj->username;?></td>
+			<td class="hilite"> <?php echo dPhtml(@$obj->username);?></td>
 		</tr>				<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Priority');?>:</td>
 			<td class="hilite">
@@ -230,7 +230,7 @@ function delIt() {
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Web Address');?>:</td>
-			<td class="hilite" width="300"><a href="<?php echo @$obj->task_related_url;?>" target="task<?php echo $task_id;?>"><?php echo @$obj->task_related_url;?></a></td>
+			<td class="hilite" width="300"><a href="<?php echo dPhtml(dPsafeUrl(@$obj->task_related_url));?>" target="task<?php echo $task_id;?>"><?php echo dPhtml(@$obj->task_related_url);?></a></td>
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Milestone');?>:</td>
@@ -242,7 +242,7 @@ function delIt() {
 		</tr>
 		<tr>
 			<td align="right" nowrap="nowrap"><?php echo $AppUI->_('Time Worked');?>:</td>
-			<td class="hilite" width="300"><?php echo (@$obj->task_hours_worked + @rtrim($obj->log_hours_worked, '0'));?></td>
+			<td class="hilite" width="300"><?php echo ((float)@$obj->task_hours_worked + (float)@$obj->log_hours_worked);?></td>
 		</tr>
 		<tr>
 			<td nowrap="nowrap" colspan="2"><strong><?php echo $AppUI->_('Dates and Targets');?></strong></td>
@@ -298,7 +298,7 @@ function delIt() {
 			$q->addTable('tasks', 't');
 			$q->addTable('task_dependencies', 'td');
 			$q->addWhere('td.dependencies_req_task_id = t.task_id');
-			$q->addWhere('td.dependencies_task_id = ' . $task_id);
+			$q->addWhere('td.dependencies_task_id = ' . (int)$task_id);
 			
 			$taskDep = $q->loadHashList();
 			$q->clear();
@@ -312,7 +312,7 @@ function delIt() {
 				$s = count($taskDep) == 0 ? '<tr><td>'.$AppUI->_('none').'</td></tr>' : '';
 				foreach ($taskDep as $key => $value) {
 					$s .= '<tr><td class="hilite">';
-					$s .= '<a href="./index.php?m=tasks&a=view&task_id='.$key.'">'.$value.'</a>';
+					$s .= '<a href="./index.php?m=tasks&a=view&task_id='.(int)$key.'">'.dPhtml($value).'</a>';
 					$s .= '</td></tr>';
 				}
 				echo '<table width="100%" cellspacing="1">'.$s.'</table>';
@@ -325,7 +325,7 @@ function delIt() {
 			$q->addTable('tasks', 't');
 			$q->addTable('task_dependencies', 'td');
 			$q->addWhere('td.dependencies_task_id = t.task_id');
-			$q->addWhere('td.dependencies_req_task_id = ' . $task_id);
+			$q->addWhere('td.dependencies_req_task_id = ' . (int)$task_id);
 			$dependingTasks = $q->loadHashList();
 			$q->clear();
 		?>
@@ -338,7 +338,7 @@ function delIt() {
 				$s = count($dependingTasks) == 0 ? '<tr><td>'.$AppUI->_('none').'</td></tr>' : '';
 				foreach ($dependingTasks as $key => $value) {
 					$s .= '<tr><td class="hilite">';
-					$s .= '<a href="./index.php?m=tasks&a=view&task_id='.$key.'">'.$value.'</a>';
+					$s .= '<a href="./index.php?m=tasks&a=view&task_id='.(int)$key.'">'.dPhtml($value).'</a>';
 					$s .= '</td></tr>';
 				}
 				echo '<table width="100%" cellspacing="1">'.$s.'</table>';
@@ -352,14 +352,14 @@ function delIt() {
 		 </tr>
 		 <tr>
 		  <td class='hilite' colspan='3'>
-				<?php $newstr = str_replace(chr(10), '<br />', $obj->task_description);echo $newstr;?>
+				<?php $newstr = str_replace(chr(10), '<br />', dPhtml($obj->task_description));echo $newstr;?>
 		  </td>
 		</tr>
 <?php
 		$q->addTable('departments', 'd');
 		$q->addTable('task_departments', 't');
 		$q->addWhere('t.department_id = d.dept_id');
-		$q->addWhere('t.task_id = ' . $task_id);
+		$q->addWhere('t.task_id = ' . (int)$task_id);
 		$q->addQuery('dept_id, dept_name, dept_phone');
 		$depts = $q->loadHashList('dept_id');
 		$q->clear();
@@ -372,9 +372,9 @@ function delIt() {
 		    	<td colspan='3' class="hilite">
 		    		<?php
 		    			foreach ($depts as $dept_id => $dept_info) {
-		    				echo '<div>'.$dept_info['dept_name'];
+		    				echo '<div>'.dPhtml($dept_info['dept_name']);
 		    				if ($dept_info['dept_phone'] != '') {
-		    					echo '('.$dept_info['dept_phone'].')';
+		    					echo '('.dPhtml($dept_info['dept_phone']).')';
 		    				}
 		    				echo '</div>';
 		    			}
@@ -388,7 +388,7 @@ function delIt() {
 			$q->addTable('contacts', 'c');
 			$q->leftJoin('task_contacts', 'tc', 'tc.contact_id = c.contact_id');
 			$q->leftJoin('departments', 'd', 'dept_id = contact_department');
-			$q->addWhere('tc.task_id = ' . $obj->task_id);
+			$q->addWhere('tc.task_id = ' . (int)$obj->task_id);
 			$q->addQuery('c.contact_id, contact_first_name, contact_last_name, contact_email');
 			$q->addQuery('contact_phone, dept_name');
 			$q->addWhere('(contact_owner = '.$AppUI->user_id.' or contact_private = 0)');
@@ -406,10 +406,10 @@ function delIt() {
 			    			echo '<tr><th>'.$AppUI->_('Name').'</font></th><th>'.$AppUI->_('Email').'</th><th>'.$AppUI->_('Phone').'</th><th>'.$AppUI->_('Department').'</th></tr>';
 			    			foreach ($contacts as $contact_id => $contact_data) {
 			    				echo '<tr>';
-			    				echo '<td class="hilite"><a href="index.php?m=contacts&a=addedit&contact_id=' . $contact_id . '">' . $contact_data['contact_first_name'].' '.$contact_data['contact_last_name'].'</a></td>';
-			    				echo '<td class="hilite"><a href="mailto: '.$contact_data['contact_email'].'">'.$contact_data['contact_email'].'</a></td>';
-			    				echo '<td class="hilite">'.$contact_data['contact_phone'].'</td>';
-			    				echo '<td class="hilite">'.$contact_data['dept_name'].'</td>';
+			    				echo '<td class="hilite"><a href="index.php?m=contacts&a=addedit&contact_id=' . $contact_id . '">' . dPhtml($contact_data['contact_first_name'].' '.$contact_data['contact_last_name']).'</a></td>';
+			    				echo '<td class="hilite"><a href="mailto: '.dPhtml($contact_data['contact_email']).'">'.dPhtml($contact_data['contact_email']).'</a></td>';
+			    				echo '<td class="hilite">'.dPhtml($contact_data['contact_phone']).'</td>';
+			    				echo '<td class="hilite">'.dPhtml($contact_data['dept_name']).'</td>';
 			    				echo '</tr>';
 			    			}
 			    			echo '</table>';
@@ -424,7 +424,7 @@ function delIt() {
 			$q->addTable('contacts', 'c');
 			$q->leftJoin('project_contacts', 'pc', 'pc.contact_id = c.contact_id');
 			$q->leftJoin('departments', 'd', 'd.dept_id = c.contact_department');
-			$q->addWhere('pc.project_id = ' . $obj->task_project);
+			$q->addWhere('pc.project_id = ' . (int)$obj->task_project);
 			$q->addQuery('c.contact_id, contact_first_name, contact_last_name, contact_email');
 			$q->addQuery('contact_phone, dept_name');
 			$q->addWhere('(contact_owner = '.$AppUI->user_id.' or contact_private = 0)');
@@ -442,10 +442,10 @@ function delIt() {
 			    			echo '<tr><th color="white">'.$AppUI->_('Name').'</th><th>'.$AppUI->_('Email').'</th><th>'.$AppUI->_('Phone').'</th><th>'.$AppUI->_('Department').'</th></tr>';
 			    			foreach ($contacts as $contact_id => $contact_data) {
 			    				echo '<tr>';
-			    				echo '<td class="hilite"><a href="index.php?m=contacts&a=addedit&contact_id=' . $contact_id . '">' . $contact_data['contact_first_name'].' '.$contact_data['contact_last_name'].'</a></td>';
-			    				echo '<td class="hilite"><a href="mailto: '.$contact_data['contact_email'].'">'.$contact_data['contact_email'].'</a></td>';
-			    				echo '<td class="hilite">'.$contact_data['contact_phone'].'</td>';
-			    				echo '<td class="hilite">'.$contact_data['dept_name'].'</td>';
+			    				echo '<td class="hilite"><a href="index.php?m=contacts&a=addedit&contact_id=' . $contact_id . '">' . dPhtml($contact_data['contact_first_name'].' '.$contact_data['contact_last_name']).'</a></td>';
+			    				echo '<td class="hilite"><a href="mailto: '.dPhtml($contact_data['contact_email']).'">'.dPhtml($contact_data['contact_email']).'</a></td>';
+			    				echo '<td class="hilite">'.dPhtml($contact_data['contact_phone']).'</td>';
+			    				echo '<td class="hilite">'.dPhtml($contact_data['dept_name']).'</td>';
 			    				echo '</tr>';
 			    			}
 			    			echo '</table>';

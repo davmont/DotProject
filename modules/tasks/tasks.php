@@ -149,13 +149,11 @@ $projects = array();
 $canAccessTask = getPermission('tasks', 'access');
 if ($canAccessTask) {
 	$prc = db_exec($psql);
-	echo db_error();
 	while ($row = db_fetch_assoc($prc)) {
 		$projects[$row['project_id']] = $row;
 	}
 
 	$prc2 = db_exec($psql2);
-	echo db_error();
 	while ($row2 = db_fetch_assoc($prc2)) {
 		if ($projects[$row2['project_id']]) {
 			array_push($projects[$row2['project_id']], $row2);
@@ -236,7 +234,7 @@ switch ($f) {
 		if (!($AppUI->user_company)) {
 			$AppUI->user_company = 0;
 		}
-		$where .= ' AND project_company = ' . $AppUI->user_company;
+		$where .= ' AND (project_company = ' . (int)$AppUI->user_company . ' OR project_company_internal = ' . (int)$AppUI->user_company . ')';
 		break;
 	case 'myunfinished':
 		$from = $dbprefix . 'user_tasks as ut3, ' . $from;
@@ -289,6 +287,7 @@ $where .= ' AND task_status = ' . $task_status;
 
 // patch 2.12.04 text search
 if ($search_text = $AppUI->getState('searchtext')) {
+	$search_text = db_escape($search_text);
 	$where .= (" AND (task_name LIKE ('%{$search_text}%') "
 		. "OR task_description LIKE ('%{$search_text}%'))");
 }
@@ -328,7 +327,6 @@ if ($canAccessTask) {
 	if ($ptrc != false) {
 		$nums = db_num_rows($ptrc);
 	}
-	echo db_error();
 } else {
 	$nums = 0;
 }
@@ -355,7 +353,6 @@ if (!empty($all_task_ids)) {
 
 	$paurc = db_exec($ausql);
 	$nnums = db_num_rows($paurc);
-	echo db_error();
 
 	$task_users_map = array();
 	for ($xx = 0; $xx < $nnums; $xx++) {
@@ -381,7 +378,7 @@ if (!empty($all_task_ids)) {
 
 ?>
 
-<script type="text/javaScript" language="javascript">
+<script type="text/javaScript" language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 function toggle_users(id) {
   var element = document.getElementById(id);
   element.style.display = (element.style.display == '' || element.style.display == "none") ? "inline" : "none";
@@ -394,7 +391,7 @@ function toggle_users(id) {
 if ($showEditCheckbox) {
 	?>
 				function checkAll(project_id) {
-					var f = eval('document.assFrm' + project_id);
+					var f = document['assFrm' + project_id];
 					var cFlag = f.master.checked ? false : true;
 	
 					for (var i=0;i< f.elements.length;i++) {
@@ -408,7 +405,7 @@ if ($showEditCheckbox) {
 				}
 
 				function chAssignment(project_id, rmUser, del) {
-					var f = eval('document.assFrm' + project_id);
+					var f = document['assFrm' + project_id];
 					var fl = f.add_users.length-1;
 					var c = 0;
 					var a = 0;
@@ -489,7 +486,7 @@ if ($showEditCheckbox) {
 							<td><?php echo $AppUI->_('Show'); ?>:</td>
 							<td>
 								<input type="checkbox" name="show_incomplete" id="show_incomplete"
-									onclick="javascript:document.task_list_options.submit();" <?php echo $showIncomplete ? 'checked="checked"' : ''; ?> />
+									<?php echo dPaction(null, array(), 'change', array('submit' => 'task_list_options')); ?> <?php echo $showIncomplete ? 'checked="checked"' : ''; ?> />
 							</td>
 							<td><label for="show_incomplete"><?php echo $AppUI->_('Incomplete Tasks Only'); ?></label></td>
 						</tr>
@@ -547,7 +544,7 @@ if ($showEditCheckbox) {
 
 					<tr>
 						<td>
-							<a href="index.php?m=tasks&amp;f=<?php echo $f; ?>&amp;project_id=<?php echo $project_id ? 0 : $k; ?>">
+							<a href="index.php?m=tasks&amp;f=<?php echo rawurlencode((string)$f); ?>&amp;project_id=<?php echo $project_id ? 0 : $k; ?>">
 								<img src="./images/icons/<?php
 								echo (($project_id) ? 'expand.gif' : 'collapse.gif');
 								?>" width="16" height="16" border="0" alt="<?php
@@ -577,7 +574,7 @@ if ($showEditCheckbox) {
 									<td align="right">
 										<?php
 										$hasEditableTask = ((isset($canEdit) && $canEdit) ? true : false);
-										if (is_array($p['tasks']) && !($hasEditableTask)) {
+										if (isset($p['tasks']) && is_array($p['tasks']) && !($hasEditableTask)) {
 											foreach ($p['tasks'] as $i => $t1) {
 												$hasEditableTask = (getPermission('tasks', 'edit', $t1['task_id'])
 													|| $hasEditableTask);
@@ -592,7 +589,7 @@ if ($showEditCheckbox) {
 											$userAlloc = $tempoTask->getAllocation('user_id');
 											?>
 											<select name="add_users" multiple="multiple" class="multiselect"
-												ondblclick="javascript:chAssignment(<?php echo ($p['project_id']); ?>, 0, false)">
+												<?php echo dPaction('chAssignment', array((int)$p['project_id'], 0, false), 'dblclick'); ?>>
 												<?php
 												foreach ($userAlloc as $v => $u) {
 													echo ('	  <option value="' . $u['user_id'] . '">' . dPformSafe($u['userFC'])
@@ -603,7 +600,7 @@ if ($showEditCheckbox) {
 										</td>
 										<td align="center">
 											<?php
-											echo (' <a href="javascript:chAssignment(' . $p['project_id'] . ', 0, 0);">'
+											echo (' <a href="#"' . dPaction('chAssignment', array((int)$p['project_id'], 0, 0)) . '>'
 												. dPshowImage(
 													dPfindImage('add.png', 'tasks'),
 													16,
@@ -612,7 +609,7 @@ if ($showEditCheckbox) {
 													'Assign selected Users to selected Tasks'
 												) . "</a>\n");
 
-											echo (' <a href="javascript:chAssignment(' . $p['project_id'] . ', 1, 1);">'
+											echo (' <a href="#"' . dPaction('chAssignment', array((int)$p['project_id'], 1, 1)) . '>'
 												. dPshowImage(
 													dPfindImage('remove.png', 'tasks'),
 													16,
@@ -684,7 +681,7 @@ if ($showEditCheckbox) {
 			if (isset($p['tasks']) && is_array($p['tasks'])) {
 				foreach ($p['tasks'] as $i => $t) {
 					$tasks_filtered[] = $t['task_id'];
-					$children_of[$t['task_parent']] = (($children_of[$t['task_parent']])
+					$children_of[$t['task_parent']] = ((!empty($children_of[$t['task_parent']]))
 						? $children_of[$t['task_parent']] :
 						array());
 					if ($t['task_parent'] != $t['task_id']) {
@@ -788,10 +785,10 @@ if ($showEditCheckbox) {
 							&nbsp;(<?php echo $AppUI->_('On Page'); ?>)&nbsp;
 							<!-- removed project-level report buttons per Mantis Report #2374
   <input type="button" class="button" value="<?php echo $AppUI->_('Reports'); ?>" 
-   onclick="javascript:window.location='index.php?m=projects&a=reports&project_id=<?php echo $k; ?>';" />
+  <?php echo dPaction(null, array(), null, array('href' => 'index.php?m=projects&a=reports&project_id=' . (int)$k)); ?> />
 -->
-							<input type="button" class="button" value="<?php echo $AppUI->_('Gantt Chart'); ?>" onclick="javascript:window.location='index.php?m=tasks&amp;a=viewgantt&amp;project_id=<?php
-							   echo $k; ?>';" />
+							<input type="button" class="button" value="<?php echo $AppUI->_('Gantt Chart'); ?>"<?php
+							   echo dPaction(null, array(), null, array('href' => 'index.php?m=tasks&a=viewgantt&project_id=' . (int)$k)); ?> />
 				</form>
 				</td>
 				</tr>

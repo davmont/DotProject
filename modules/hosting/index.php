@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 /* Hosting module -> $Id: index.php,v 1.1 2007/04/16 05:36:02 mbelos Exp $ */
 
 $AppUI->savePlace();
@@ -38,8 +41,8 @@ if(!(strpos($department, $company_prefix)===false)){
 	unset($department);
 }*/
 
-if(!(strpos($company_id, $company_prefix)===false)){
-	$company_id = substr($company_id,strlen($company_prefix));
+if (isset($company_id) && !(strpos($company_id, $company_prefix)===false)){
+	$company_id = (int)substr($company_id,strlen($company_prefix));
 	$AppUI->setState( 'HostIdxCompany', $company_id );
 }
 

@@ -39,6 +39,8 @@ echo '<br />&nbsp;<br />';
 $output = null;
 $last_group = '';
 foreach ($rs as $c) {
+	// Names come from the database: escape them wherever they reach the markup.
+	$cfgName = htmlspecialchars($c['config_name'], ENT_QUOTES);
 
 	$tooltip = 'title="' . $AppUI->_($c['config_name'] . '_tooltip') . '"';
 	// extraparse the checkboxes and the select lists
@@ -47,11 +49,11 @@ foreach ($rs as $c) {
 	switch ($c['config_type']) {
 		case 'select':
 			// Build the select list.
-			$entry = '<select class="text" name="dPcfg[' . $c['config_name'] . ']">' . "\n";
+			$entry = '<select class="text" name="dPcfg[' . $cfgName . ']">' . "\n";
 			// Find the detail relating to this entry.
 			$children = $dPcfg->getChildren($c['config_id']);
 			foreach ($children as $child) {
-				$entry .= '<option value="' . $child['config_list_name'] . '"';
+				$entry .= '<option value="' . htmlspecialchars($child['config_list_name'], ENT_QUOTES) . '"';
 				if ($child['config_list_name'] == $c['config_value'])
 					$entry .= ' selected="selected"';
 				$entry .= '>' . $AppUI->_($child['config_list_name'] . '_item_title') . '</option>' . "\n";
@@ -69,7 +71,7 @@ foreach ($rs as $c) {
 			$input_class = in_array($c['config_type'], array('text', 'password')) ? 'text' : 'button';
 			if ($c['config_type'] == 'checkbox')
 				$input_class = '';
-			$entry = '<input class="' . $input_class . '" type="' . $c['config_type'] . '" name="dPcfg[' . $c['config_name'] . ']" value="' . $value . '" ' . $tooltip . ' ' . $extra . '/>';
+			$entry = '<input class="' . $input_class . '" type="' . $c['config_type'] . '" name="dPcfg[' . $cfgName . ']" value="' . htmlspecialchars((string)$value, ENT_QUOTES) . '" ' . $tooltip . ' ' . $extra . '/>';
 			break;
 	}
 
@@ -80,13 +82,12 @@ foreach ($rs as $c) {
 	$output .= '<tr>
 			<td class="item" width="20%">' . $AppUI->_($c['config_name'] . '_title') . '</td>
 					<td align="left">' . $entry . "\n\t" .
-		'<a href="#" onclick="javascript:window.open(' .
-		'\'?m=system&amp;a=systemconfig_help&amp;dialog=1&amp;cn='
-		. $c['config_name'] . "', 'contexthelp', "
-		. "'width=400, height=200, left=50, top=50, scrollbars=yes, resizable=yes')\" "
+		'<a href="#"' . dPaction('window.open', array(
+			'?m=system&a=systemconfig_help&dialog=1&cn=' . rawurlencode($c['config_name']), 'contexthelp',
+			'width=400, height=200, left=50, top=50, scrollbars=yes, resizable=yes')) . ' '
 		. $tooltip . '>(?)</a>
-				<input class="button" type="hidden"  name="dPcfgId[' . $c['config_name'] . ']" value="'
-		. $c['config_id'] . '" />
+				<input class="button" type="hidden"  name="dPcfgId[' . $cfgName . ']" value="'
+		. (int)$c['config_id'] . '" />
 			</td>
         </tr>
 	';
@@ -102,6 +103,20 @@ echo '<form name="cfgFrm" action="?m=system&amp;a=systemconfig" method="post">';
 	<tr>
 		<td align="right" colspan="2"><input class="button" type="submit" name="do_save_cfg"
 				value="<?php echo $AppUI->_('Save'); ?>" /></td>
+	</tr>
+</table>
+</form>
+<form name="testMailFrm" action="?m=system&amp;a=systemconfig" method="post">
+<input type="hidden" name="dosql" value="do_testmail" />
+<table cellspacing="0" cellpadding="3" border="0" class="std" width="100%" align="center">
+	<tr>
+		<td class="item" width="20%"><label for="test_mail_to"><?php echo $AppUI->_('Send a test email to'); ?></label></td>
+		<td>
+			<input type="email" class="text" name="test_mail_to" id="test_mail_to" size="40"
+				value="<?php echo dPhtml($AppUI->user_email); ?>" />
+			<input class="button" type="submit" value="<?php echo $AppUI->_('Send'); ?>" />
+			<span class="hint"><?php echo $AppUI->_('Uses the saved settings: save your changes first.'); ?></span>
+		</td>
 	</tr>
 </table>
 </form>

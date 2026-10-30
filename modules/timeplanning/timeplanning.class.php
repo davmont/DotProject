@@ -14,15 +14,15 @@ class TimePlanning extends CDpObject {
 	
 	}
 
-	function store() {
-	
+	function store($updateNulls = false) {
+		return null;
 	}
 	
-	function load() {
-
+	function load($oid = null, $strip = true) {
+		return false;
 	}
 
-	function delete(){
-
+	function delete($oid = null, $history_desc = '', $history_proj = 0){
+		return null;
 	}
 }

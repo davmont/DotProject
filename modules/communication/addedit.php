@@ -20,7 +20,7 @@ if ($canDelete && $communication_id) {
 $titleBlock->show();
 ?>
 
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
         
     function submitIt(){
         var f = document.uploadFrm;
@@ -42,19 +42,19 @@ $titleBlock->show();
         
     function AddReceptor(a, b) {
         var get = GetForm();
-        window.location = ('?m=communication&a=addedit&communication_id='+b+'&radd='+a+get)
+        dpPost('?m=communication&a=addedit&communication_id=' + encodeURIComponent(b) + get, { radd: a });
     }
     function DelReceptor(a, b) {            
         var get = GetForm();
-        window.location = ('?m=communication&a=addedit&communication_id='+b+'&rdel='+a+get)
+        dpPost('?m=communication&a=addedit&communication_id=' + encodeURIComponent(b) + get, { rdel: a });
     }
     function AddIssuing(a, b) {            
         var get = GetForm();
-        window.location = ('?m=communication&a=addedit&communication_id='+b+'&raddi='+a+get)
+        dpPost('?m=communication&a=addedit&communication_id=' + encodeURIComponent(b) + get, { raddi: a });
     }
     function DelIssuing(a, b) {
         var get = GetForm();
-        window.location = ('?m=communication&a=addedit&communication_id='+b+'&rdeli='+a+get)
+        dpPost('?m=communication&a=addedit&communication_id=' + encodeURIComponent(b) + get, { rdeli: a });
     }        
         
     function GetForm() {
@@ -68,28 +68,28 @@ $titleBlock->show();
         var communication_date = document.uploadFrm.communication_date.value;
         var responsible = document.uploadFrm.responsible.value;
         if (project != '') {
-            get += '&project='+project;
+            get += '&project=' + encodeURIComponent(project);
         }
         if (title != '') {
-            get += '&title='+title;
+            get += '&title=' + encodeURIComponent(title);
         }
         if (communication != '') {
-            get += '&communication='+communication;
+            get += '&communication=' + encodeURIComponent(communication);
         }
         if (channel != '') {
-            get += '&channel='+channel;
+            get += '&channel=' + encodeURIComponent(channel);
         }
         if (frequency != '') {
-            get += '&frequency='+frequency;
+            get += '&frequency=' + encodeURIComponent(frequency);
         }
         if (restrictions != '') {
-            get += '&restrictions='+restrictions;
+            get += '&restrictions=' + encodeURIComponent(restrictions);
         }
         if (communication_date != '') {
-            get += '&communication_date='+communication_date;
+            get += '&communication_date=' + encodeURIComponent(communication_date);
         }
          if (responsible != '') {
-            get += '&responsible='+responsible;
+            get += '&responsible=' + encodeURIComponent(responsible);
         }
         return get;
     }
@@ -120,7 +120,7 @@ $titleBlock->show();
                                 } else {
                                     $value = @$obj->communication_project_id;
                                 }
-                            echo '<option value="' . $registro['project_id'] . '" ' . ($registro['project_id'] == $value ? 'selected="selected"' : '') . '>'. $registro['project_name'] . '</option>';}
+                            echo '<option value="' . $registro['project_id'] . '" ' . ($registro['project_id'] == $value ? 'selected="selected"' : '') . '>'. dPhtml($registro['project_name']) . '</option>';}
                             ?>
                             </select>
                         </td>
@@ -137,27 +137,27 @@ $titleBlock->show();
                         echo '<tr><td>'; echo $AppUI->_("LBL_ISSUING"); echo ': </td><td> <select id="issuing" name="issuing" style="min-width:150px">';
                             foreach ($rlista as $registro) {
                             echo '<option value="' . $registro['contact_id'] . '" ' . ($registro['contact_id'] == $registros['contact_id'] ? 'selected="selected"' : '') . '>'
-                                  . $registro['contact_first_name'] . ' ' . $registro['contact_last_name'] . '</option>';
+                                  . dPhtml($registro['contact_first_name'] . ' ' . $registro['contact_last_name']) . '</option>';
                             }
-                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold" onclick="DelIssuing(' . $registros['contact_id'] . ',' . $communication_id . ')"/></td></tr>';
+                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold"' . dPaction('DelIssuing', array((int)$registros['contact_id'], (int)$communication_id)) . '/></td></tr>';
                         }
                     } else {
                         foreach ($_SESSION['emitters'] as $registro_session) {
                         echo '<tr><td>'; echo $AppUI->_("LBL_ISSUING"); echo ': </td><td> <select id="issuing" name="issuing" style="min-width:150px">';
                             foreach ($rlista as $registro) {
                             echo '<option value="' . $registro['contact_id'] . '" ' . ($registro_session == $registro['contact_id'] ? 'selected="selected"' : '') . '>'
-                                  . $registro['contact_first_name'] . ' ' . $registro['contact_last_name'] . '</option>';
+                                  . dPhtml($registro['contact_first_name'] . ' ' . $registro['contact_last_name']) . '</option>';
                             }
-                       echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold" onclick="DelIssuing(' . $registro_session . ',' . $communication_id . ')"/></td></tr>';
+                       echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold"' . dPaction('DelIssuing', array((int)$registro_session, (int)$communication_id)) . '/></td></tr>';
                         }
                     }
                     ?>
                     <tr><td><?php echo $AppUI->_("LBL_ISSUING");?>: </td>                        
-                        <td><select id="issuing" name="issuing" style="min-width:150px" onchange="AddIssuing(this.value,<?php echo $communication_id ?>)">
+                        <td><select id="issuing" name="issuing" style="min-width:150px"<?php echo dPaction('AddIssuing', array('$value', (int)$communication_id)); ?>>
                             <option value=""><?php echo $AppUI->_("LBL_ADD")?></option>
                     <?php
                     foreach ($rlista as $registro) {
-                        echo '<option value="' . $registro['contact_id'] . '">' . $registro['contact_first_name'] . ' ' . $registro['contact_last_name'] . '</option>';
+                        echo '<option value="' . $registro['contact_id'] . '">' . dPhtml($registro['contact_first_name'] . ' ' . $registro['contact_last_name']) . '</option>';
                     }
                     ?> </select></td>
                     </tr>
@@ -169,27 +169,27 @@ $titleBlock->show();
                         echo '<tr><td>'; echo $AppUI->_("LBL_RECEPTOR"); echo ': </td><td><select id="receptor" name="receptor" style="min-width:150px">';
                             foreach ($rlista as $registro) {
                             echo '<option value="' . $registro['contact_id'] . '" ' . ($registro['contact_id'] == $registros['contact_id'] ? 'selected="selected"' : '') . '>'
-                                 . $registro['contact_first_name'] . ' ' . $registro['contact_last_name'] . '</option>';
+                                 . dPhtml($registro['contact_first_name'] . ' ' . $registro['contact_last_name']) . '</option>';
                             }
-                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold" onclick="DelReceptor(' . $registros['contact_id'] . ',' . $communication_id . ')"/></td></tr>';
+                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold"' . dPaction('DelReceptor', array((int)$registros['contact_id'], (int)$communication_id)) . '/></td></tr>';
                         }
                    } else {
                         foreach ($_SESSION['receptors'] as $registro_session) {
                         echo '<tr><td>'; echo $AppUI->_("LBL_RECEPTOR"); echo ':</td><td><select id="receptor" name="receptor" style="min-width:150px">';
                             foreach ($rlista as $registro) {
                             echo '<option value="' . $registro['contact_id'] . '" ' . ($registro_session == $registro['contact_id'] ? 'selected="selected"' : '') . '>'
-                                  . $registro['contact_first_name'] . ' ' . $registro['contact_last_name'] . '</option>';
+                                  . dPhtml($registro['contact_first_name'] . ' ' . $registro['contact_last_name']) . '</option>';
                             }
-                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold" onclick="DelReceptor(' . $registro_session . ',' . $communication_id . ')"/></td></tr>';
+                        echo '</select><input type="button" value="x" style="color: #aa0000; font-weight: bold"' . dPaction('DelReceptor', array((int)$registro_session, (int)$communication_id)) . '/></td></tr>';
                         }
                   }
                   ?>
                     <tr><td><?php echo $AppUI->_("LBL_RECEPTOR")?></td>                        
-                        <td><select id="receptor" name="receptor" style="min-width:150px" onchange="AddReceptor(this.value,<?php echo $communication_id ?>)">
+                        <td><select id="receptor" name="receptor" style="min-width:150px"<?php echo dPaction('AddReceptor', array('$value', (int)$communication_id)); ?>>
                             <option value=""><?php echo $AppUI->_("LBL_ADD")?></option>
                   <?php
                   foreach ($rlista as $registro) {
-                  echo '<option value="' . $registro['contact_id'] . '">' . $registro['contact_first_name'] . ' ' . $registro['contact_last_name'] . '</option>';}
+                  echo '<option value="' . $registro['contact_id'] . '">' . dPhtml($registro['contact_first_name'] . ' ' . $registro['contact_last_name']) . '</option>';}
                   ?></select></td></tr>
                     
                   </tr><tr><td></td><td><hr></hr></td></tr>
@@ -205,11 +205,11 @@ $titleBlock->show();
                     } else {
                         $value = $obj->communication_channel_id;
                     }
-                    echo '<option value="' . $registro['communication_channel_id'] . '" ' . ($registro['communication_channel_id'] == $value ? 'selected="selected"' : '') . '>' . $registro['communication_channel'] . '</option>';}
+                    echo '<option value="' . $registro['communication_channel_id'] . '" ' . ($registro['communication_channel_id'] == $value ? 'selected="selected"' : '') . '>' . dPhtml($registro['communication_channel']) . '</option>';}
                   ?></select></td>
                   </tr>
                   <tr><td><?php echo $AppUI->_("LBL_FREQUENCY")?>: </td>
-                      <td><select id="frequency" name="frequency" style="min-width:150px" onchange="setdate(this.value, <?php echo $communication_id ?>)">
+                      <td><select id="frequency" name="frequency" style="min-width:150px"<?php echo dPaction('setdate', array('$value', (int)$communication_id)); ?>>
                           <option value=""><?php echo $AppUI->_("LBL_SELECT")?></option>
                   <?php
                   if (isset($_GET['frequency'])) {
@@ -218,15 +218,15 @@ $titleBlock->show();
                       $value = @$obj->communication_frequency_id;
                   }
                   foreach ($frequency as $registro) {
-                    echo '<option value="' . $registro['communication_frequency_id'] . '" ' . ($registro['communication_frequency_id'] == $value ? 'selected="selected"' : '') . '>' . $registro['communication_frequency'] . '</option>';
+                    echo '<option value="' . $registro['communication_frequency_id'] . '" ' . ($registro['communication_frequency_id'] == $value ? 'selected="selected"' : '') . '>' . dPhtml($registro['communication_frequency']) . '</option>';
                   }
                   ?></select>
                     <span style="margin-left:15px; <?php echo ($showdate ? '' : 'display:none;'); ?>"><?php echo $AppUI->_("LBL_DATE")?>: </span>
-                    <input type="text" style="<?php echo ($showdate ? '' : 'display:none;'); ?> margin-left: 10px;" value="<?php echo ($communication_id == 0 ? htmlspecialchars((string)$_GET['communication_date'], ENT_QUOTES) : htmlspecialchars((string)@$obj->communication_date, ENT_QUOTES));  ?>" name="communication_date">
+                    <input type="text" style="<?php echo ($showdate ? '' : 'display:none;'); ?> margin-left: 10px;" value="<?php echo ($communication_id == 0 ? htmlspecialchars((string)dPgetParam($_GET, 'communication_date', ''), ENT_QUOTES) : htmlspecialchars((string)@$obj->communication_date, ENT_QUOTES));  ?>" name="communication_date">
                     </td>
                  </tr>
                  <tr><td align="left" nowrap="nowrap"><?php echo $AppUI->_("LBL_RESTRICTIONS");?>: </td>
-                     <td align="left"><textarea name="communication_restrictions" cols="100" rows="3" class="textarea"><?php echo ($communication_id == 0 ? htmlspecialchars((string)$_GET['restrictions'], ENT_QUOTES) : htmlspecialchars((string)@$obj->communication_restrictions, ENT_QUOTES)); ?></textarea></td>
+                     <td align="left"><textarea name="communication_restrictions" cols="100" rows="3" class="textarea"><?php echo ($communication_id == 0 ? htmlspecialchars((string)dPgetParam($_GET, 'restrictions', ''), ENT_QUOTES) : htmlspecialchars((string)@$obj->communication_restrictions, ENT_QUOTES)); ?></textarea></td>
                  </tr>
                  <td align="left" nowrap="nowrap"><?php echo $AppUI->_("LBL_RESPONSIBLE");?>: </td> 
                      <td><select id="responsible" name="responsible" style="min-width:150px">
@@ -238,7 +238,7 @@ $titleBlock->show();
                     } else {
                         $value = $obj->communication_responsible_authorization;
                     }
-                    echo '<option value="' . $registro['contact_id'] . '" ' . ($registro['contact_id'] == $value ? 'selected="selected"' : '') . '>' . $registro['contact_first_name'] . ' ' . $registro['contact_last_name'] . '</option>';}
+                    echo '<option value="' . $registro['contact_id'] . '" ' . ($registro['contact_id'] == $value ? 'selected="selected"' : '') . '>' . dPhtml($registro['contact_first_name'] . ' ' . $registro['contact_last_name']) . '</option>';}
                   ?></select></td>
                   <tr><td><span style="margin-left:0px"><?php echo $AppUI->_("LBL_SEND")?></span></td></tr>
                 
@@ -249,15 +249,13 @@ $titleBlock->show();
         <td width="10%">
             <table border="0" width="100%">
             <tr>
-                <td><input class="button" type="button" name="cancel" value="<?php echo $AppUI->_("LBL_CANCEL"); ?>" 
-                           onClick="javascript:if (confirm('<?php echo $AppUI->_('LBL_ANSWER_CANCEL', UI_OUTPUT_JS); ?>')) 
-                           {location.href = './index.php?m=communication';}" />
+                <td><input class="button" type="button" name="cancel" value="<?php echo $AppUI->_("LBL_CANCEL"); ?>"<?php echo dPaction(null, array(), null, array('confirm' => $AppUI->_('LBL_ANSWER_CANCEL', UI_OUTPUT_RAW), 'href' => './index.php?m=communication')); ?> />
                 </td>
             </tr>
             </table>
         </td>
         <td align="right">
-            <input type="button" class="button" value="<?php echo $AppUI->_("LBL_SUBMIT"); ?>" onclick="submitIt()" />
+            <input type="button" class="button" value="<?php echo $AppUI->_("LBL_SUBMIT"); ?>"<?php echo dPaction('submitIt'); ?> />
         </td>
     </tr>
    </form>

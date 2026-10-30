@@ -4,7 +4,7 @@ if (!defined('DP_BASE_DIR')) {
 }
 
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 var calWin = null;
 
@@ -38,6 +38,7 @@ $end_date = intval($date_reg) ? new CDate(dPgetCleanParam($_POST, "log_end_date"
 
 $df = $AppUI->getPref('SHDATEFORMAT');
 global $currentTabId;
+$user_id = 0;
 if ($a = dPgetCleanParam($_REQUEST, "a", "") == "") {
     $a = "&tab={$currentTabId}&amp;showdetails=1";
 } else {
@@ -61,8 +62,8 @@ if ($a = dPgetCleanParam($_REQUEST, "a", "") == "") {
 		<td align="right" width="45%" ><?php echo $AppUI->_('Start Date');?></td>
 			<td width="55%" align="left">
 				<input type="hidden" name="log_start_date" value="<?php echo $start_date ? $start_date->format(FMT_TIMESTAMP_DATE) : "" ;?>" />
-				<input type="text" name="start_date" value="<?php echo $start_date ? $start_date->format($df) : "" ;?>" class="text" readonly="readonly" disabled="disabled" />
-				<a href="#" onclick="javascript:popCalendar('start_date')">
+				<input type="text" name="start_date" value="<?php echo dPhtml($start_date ? $start_date->format($df) : "") ;?>" class="text" readonly="readonly" disabled="disabled" />
+				<a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
 				<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" ></a>
 			</td>
 	</tr>
@@ -70,15 +71,15 @@ if ($a = dPgetCleanParam($_REQUEST, "a", "") == "") {
 		<td align="right" width="45%"><?php echo $AppUI->_('End Date');?></td>
 			<td width="55%" align="left">
 				<input type="hidden" name="log_end_date" value="<?php echo $end_date ? $end_date->format(FMT_TIMESTAMP_DATE) : '';?>" />
-				<input type="text" name="end_date" value="<?php echo $end_date ? $end_date->format($df) : '';?>" class="text" readonly="readonly" disabled="disabled" />
-				<a href="#" onclick="javascript:popCalendar('end_date')">
+				<input type="text" name="end_date" value="<?php echo dPhtml($end_date ? $end_date->format($df) : '');?>" class="text" readonly="readonly" disabled="disabled" />
+				<a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
 				<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a>
 		</td>
 	</tr>
 </table>
 <table align="center">
 	<tr align="center">
-		<td><input type="submit" class="button" value="<?php echo $AppUI->_('Submit');?>" onclick="javascript:return checkDate('start','end')"></td>
+		<td><input type="submit" class="button" value="<?php echo $AppUI->_('Submit');?>"<?php echo dPaction('checkDate', array('start', 'end')); ?>></td>
 	</tr>
 </table>
 </form>
@@ -111,8 +112,8 @@ if (dPgetParam($_REQUEST, "showdetails", 0) == 1) {
 </tr>
 <?php foreach ($logs as $detail) {?>
 	<tr>
-		<td align="center"><?php echo $detail["contact_first_name"];?></td>
-		<td align="center"><?php echo $detail["contact_last_name"];?></td>
+		<td align="center"><?php echo dPhtml($detail["contact_first_name"]);?></td>
+		<td align="center"><?php echo dPhtml($detail["contact_last_name"]);?></td>
 		<td align="center"><?php echo $detail["user_ip"];?></td>
 		<td align="center"><?php echo $detail["date_time_in"];?></td>
 		<td align="center"><?php echo $detail["date_time_out"];?></td>

@@ -25,18 +25,19 @@ $company_id = intval(dPgetParam($_GET, 'company_id', 0));
 $query = new DBQuery;
 $query->addTable('companies', 'c');
 $query->addQuery('company_name');
-$query->addWhere('c.company_id = ' . $company_id);
+$query->addWhere('c.company_id = ' . (int)$company_id);
 $res =& $query->exec();
-$titleBlock->addCrumb(('?m=companies&amp;a=view&amp;company_id=' . $company_id), 'company ' . $res->fields['company_name']);
+$company_name = ($res && !$res->EOF) ? $res->fields['company_name'] : '';
+$titleBlock->addCrumb(('?m=companies&amp;a=view&amp;company_id=' . $company_id), 'company ' . $company_name);
 $query->clear();
 
 $contact_id = intval(dPgetParam($_GET, 'contact_id', 0));
 $query = new DBQuery;
 $query->addTable('contacts', 'c');
 $query->addQuery('contact_last_name, contact_first_name');
-$query->addWhere('c.contact_id = ' . $contact_id);
+$query->addWhere('c.contact_id = ' . (int)$contact_id);
 $res =& $query->exec();
-$contact_name = $res->fields['contact_last_name'] . ', ' . $res->fields['contact_first_name'];
+$contact_name = ($res && !$res->EOF) ? $res->fields['contact_last_name'] . ', ' . $res->fields['contact_first_name'] : '';
 $titleBlock->addCrumb('?m=contacts&amp;a=view&amp;contact_id=' . $contact_id, 'contact ' . $contact_name);
 $query->clear();
 
@@ -55,10 +56,12 @@ $cwd[6] = '7';
 $cwd_conv = array_map('cal_work_day_conv', $cwd);
 
 function cal_work_day_conv($val) {
-	global $locale_char_set;
+	global $AppUI, $locale_char_set;
 	setlocale(LC_ALL, 'en_AU'.(($locale_char_set)? ('.' . $locale_char_set) : '.utf8'));
 	$wk = Date_Calc::getCalendarWeek(null, null, null, "%a", LOCALE_FIRST_DAY);
-	setlocale(LC_ALL, $AppUI->user_lang);
+	if ($AppUI->user_lang) {
+		setlocale(LC_ALL, $AppUI->user_lang);
+	}
 	
 	$day_name = $wk[($val - LOCALE_FIRST_DAY)%7];
 	if ($locale_char_set == "utf-8" && function_exists("utf8_encode")) {
@@ -80,7 +83,7 @@ function cal_work_day_conv($val) {
 <td align='center'>
   <table>  
 	<tr><td align='right'><?php echo $AppUI->_('Lattes URL'); ?></td>
-  <td align='left'><input type='text' size="100" maxlength="500" name="human_resource_lattes_url"
+  <td align='left'><input type='text' size="100" maxlength="500" style="width: 100%; max-width: 60em; box-sizing: border-box;" name="human_resource_lattes_url"
     value="<?php echo dPformSafe($hr->human_resource_lattes_url);?>" />
   </td></tr>
 	<tr>
@@ -129,11 +132,11 @@ require_once DP_BASE_DIR."/modules/human_resources/view_hr_roles.php";
 <tr>
   <td>
     <input type="button" value="<?php echo $AppUI->_('back');?>"
-    class="button" onclick="javascript:history.back(-1);" />
+    class="button"<?php echo dPaction('history.back'); ?> />
   </td>
   <td align="right">
     <input type="button" value="<?php echo $AppUI->_('submit');?>"
-    class="button" onclick="submitHumanResource(document.editfrm);" />
+    class="button"<?php echo dPaction('submitHumanResourceForm'); ?> />
   </td>
 </tr>
 

@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 require_once( $AppUI->getModuleClass( 'projects' ) );
 // one site for both adding and editing einstein's quote items
 // besides the following lines show the possiblities of the dPframework
@@ -47,7 +50,7 @@ $titleBlock->show();
 
 // some javaScript code to submit the form and set the delete object flag for the form processing
 ?>
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 	function submitIt() {
 		var f = document.editFrm;
 		f.submit();
@@ -135,22 +138,22 @@ function setTask( key, val ) {
 		</tr>
 <?php
 $project = new CProject();
-$projects = $project->getAllowedRecords( $AppUI->user_id, 'project_id,project_name', 'project_name', null, $extra );
+$projects = $project->getAllowedRecords( $AppUI->user_id, 'project_id,project_name', 'project_name' );
 $projects = arrayMerge( array( '0'=>$AppUI->_('All', UI_OUTPUT_RAW) ), $projects );
 
-if ($obj->test_task) {
-	$test_task = $obj->unittest_task_id;
-	$task_name = $obj->getTaskName();
-} else if ($test_task) {
+// The form fields test_project / test_task carry unittest_project_id / unittest_task_id
+// (do_test_aed.php maps them back).
+$test_project = (int)$obj->unittest_project_id;
+$test_task = (int)$obj->unittest_task_id;
+$select_disabled = '';
+$task_name = '';
+if ($test_task) {
 	$q  = new DBQuery;
 	$q->addTable('tasks');
 	$q->addQuery('task_name');
-	$q->addWhere("task_id=$test_task");
-	$sql = $q->prepare();
+	$q->addWhere('task_id = ' . $test_task);
+	$task_name = $q->loadResult();
 	$q->clear();
-	$task_name = db_loadResult( $sql );
-} else {
-	$task_name = '';
 }
 
 ?>		
@@ -166,12 +169,12 @@ if ($obj->test_task) {
 		</td>
 		</tr>
 <?php
-$onclick_task=' onclick="popTask()" ';
-$str_out .= "<tr>" .
+$onclick_task = dPaction('popTask');
+$str_out = "<tr>" .
             '<td align="right" nowrap="nowrap">' . $AppUI->_( 'Task' ) . ':</td>'.
 			      '<td align="left" colspan="2" valign="top">' .
 				    '<input type="hidden" name="test_task" value="' .  $test_task . '" />' .
-				    '<input type="text" class="text" name="task_name" value="' . $task_name. '" size="40" disabled />' .
+				    '<input type="text" class="text" name="task_name" value="' . dPformSafe($task_name) . '" size="40" disabled />' .
 				    '<input type="button" class="button" value="' . $AppUI->_('select task') . '..."' .
 				     $onclick_task . '/>' .	'</td></tr>';
 		echo $str_out;
@@ -185,7 +188,7 @@ $str_out .= "<tr>" .
 </tr>
 <tr>
 	<td>
-		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" onClick="javascript:if(confirm('Are you sure you want to cancel.')){location.href = './index.php?m=testing';}" />
+		<input class="button" type="button" name="cancel" value="<?php echo $AppUI->_('cancel');?>" <?php echo dPaction(null, array(), null, array('confirm' => 'Are you sure you want to cancel.', 'href' => './index.php?m=testing')); ?> />
 	</td>
 	<td align="right">
 		<input class="button" type="submit" name="btnFuseAction" value="<?php echo $AppUI->_('submit');?>"/>

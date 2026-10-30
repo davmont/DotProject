@@ -7,11 +7,19 @@
 	$project_id = dPgetParam($_POST, 'project_id');
 	$tasks_dependencies_ids = dPgetParam($_POST, 'tasks_dependencies_ids');
 	$tasks_positions = dPgetParam($_POST, 'tasks_positions');
+	// Ids are used in SQL below: keep them integers, as checked.
+	$project_id = (int)$project_id;
+	// The user must be able to edit this project, and the records named must belong to it.
+	$mdp_task_ids = array();
+	foreach (explode('#', $tasks_dependencies_ids . '#' . $tasks_positions) as $entry) {
+		$mdp_task_ids[] = (int)$entry;
+	}
+	dPrequireProjectEdit($project_id, dPrecordList('tasks', 'task_id', 'task_project', $mdp_task_ids));
 	$tasks_data=explode("#",$tasks_dependencies_ids);
 	for($i=0;$i<sizeof($tasks_data);$i++){
 		if($tasks_data[$i]!=""){
 			$task_data=explode(":",$tasks_data[$i]);
-			$task_id=$task_data[0];
+			$task_id=(int)$task_data[0];
 			$dependencies_ids=$task_data[1];
 			$controllerActivityMDP->updateDependencies($task_id,$dependencies_ids);
 		}
@@ -20,7 +28,7 @@
 	for($i=0;$i<sizeof($tasks_positions_data);$i++){
 		if($tasks_positions_data[$i]!=""){
 			$task_data=explode(":",$tasks_positions_data[$i]);
-			$task_id=$task_data[0];
+			$task_id=(int)$task_data[0];
 			$position_xy=explode(",",$task_data[1]);
 			$controllerActivityMDP->updatePosition($task_id,$position_xy[0],$position_xy[1]);		
 		}

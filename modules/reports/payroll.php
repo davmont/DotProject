@@ -1,3 +1,8 @@
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+?>
 <STYLE>
 	TABLE.tbl TD.hilite {
 		//background-color: #EAF4FF;
@@ -40,7 +45,7 @@ if ($AppUI->getState('show_timesheet_payroll')) {
 	$q->addJoin('contacts', 'c', 'c.contact_id=u.user_contact');
 	$q->addQuery('u.user_id, c.contact_first_name, c.contact_last_name');
 	if ($AppUI->getState('employee_payroll') == 0) {
-		$q->addWhere("u.user_company =  $AppUI->user_company");
+		$q->addWhere("u.user_company = " . (int)$AppUI->user_company);
 		$q->addOrder('contact_last_name, contact_first_name');
 		$result = $q->loadList();
 
@@ -51,7 +56,7 @@ if ($AppUI->getState('show_timesheet_payroll')) {
 
 	} else {
 
-		$q->addWhere("u.user_id = $AppUI->getState('employee_payroll')");
+		$q->addWhere('u.user_id = ' . (int)$AppUI->getState('employee_payroll'));
 		$q->loadObject($row);
 
 		traverse_employees($row->user_id, $row->contact_first_name, $row->contact_last_name);
@@ -68,7 +73,7 @@ if ($AppUI->getState('show_project_payroll')) {
 	$q->addJoin('tasks', 't', 't.task_id = l.task_log_task');
 	$q->addJoin('projects', 'p', 'p.project_id = t.task_project');
 	if ($AppUI->getState('employee_payroll')) {
-		$q->addWhere("l.task_log_creator = " . $AppUI->getState('employee_payroll'));
+		$q->addWhere("l.task_log_creator = " . (int)$AppUI->getState('employee_payroll'));
 	}
 	$q->addWhere("l.task_log_date >= '" . $start_date->format(FMT_DATETIME_MYSQL) . "'");
 	$q->addWhere("l.task_log_date <= '" . $end_date->format(FMT_DATETIME_MYSQL) . "'");
@@ -126,7 +131,7 @@ if ($AppUI->getState('show_work_categories_payroll')) {
 	$q->addQuery('SUM(task_log_hours) as sum_hours, task_log_costcode, task_log_costcode');
 	$q->addJoin('tasks', 't', 't.task_id = l.task_log_task');
 	if ($AppUI->getState('employee_payroll')) {
-		$q->addWhere("task_log_creator = " . $AppUI->getState('employee_payroll'));
+		$q->addWhere("task_log_creator = " . (int)$AppUI->getState('employee_payroll'));
 	}
 	$q->addWhere("task_log_date >= '" . $start_date->format(FMT_DATETIME_MYSQL) . "'");
 	$q->addWhere("task_log_date <= '" . $end_date->format(FMT_DATETIME_MYSQL) . "'");
@@ -212,7 +217,7 @@ function traverse_employees($employee_id, $employee_first_name, $employee_last_n
 	$q->addJoin('tasks', 't', 't.task_id = l.task_log_task');
 	$q->addJoin('projects', 'p', 'p.project_id = t.task_project');
 	$q->addJoin('companies', 'c', 'c.company_id = p.project_company');
-	$q->addWhere('l.task_log_creator = ' . $employee_id);
+	$q->addWhere('l.task_log_creator = ' . (int)$employee_id);
 	$q->addWhere("l.task_log_date >= '" . $start_date->format(FMT_DATETIME_MYSQL) . "'");
 	$q->addWhere("l.task_log_date <= '" . $end_date->format(FMT_DATETIME_MYSQL) . "'");
 	$q->addOrder('task_log_date');

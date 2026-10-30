@@ -1,4 +1,18 @@
-<?php /* informer $Id: vw_weekly.php 2007/04/11 14:07 weboholic */
+<?php
+// Also defined by the other informer view; flat tab view includes both.
+if (!function_exists('printSum')) {
+function printSum( $float ) {
+	$float = str_replace( '.',',',(string) $float );
+	$pos = strpos( $float,',' );
+	if( $pos === false ) return $float .',00';
+	if( strlen( substr( $float,$pos + 1 ) ) == 1 ) return $float.'0';
+	return $float;
+}
+}
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* informer $Id: vw_weekly.php 2007/04/11 14:07 weboholic */
 	global $INFORMER_CONFIG;
 	$perms =& $AppUI->acl();
 	
@@ -69,7 +83,7 @@
 	$weekdate->addDays(-7);
 //echo '<pre>'; print_r($data);echo '</pre>';
 ?>
-<script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript" nonce="<?php echo dPcspNonce(); ?>">
 	function delIt2(id) {
 		if (confirm( "Are you sure you want to delete this Task Log?" )) {
 			document.frmDelete2.task_log_id.value = id;
@@ -137,7 +151,7 @@
 			$cD = $perms->checkModuleItem( 'task_log','delete',$row['task_id'] );
 			if( $cE ) $act = "[<a href=\"./index.php?m=tasks&a=view&tab=1&task_id=".$row['task_id']."&task_log_id=".$row['task_log_id']."\">edit</a>]";
 			else $act = '';
-			if( $cD ) $act .= " [<a href=\"javascript:delIt2(".$row['task_log_id'].");\">delete</a>]";
+			if( $cD ) $act .= " [<a href=\"#\"" . dPaction('delIt2', array((int)$row['task_log_id'])) . ">delete</a>]";
 			if( $act != '' ) $act .= '<br />';
 
 			if( $pp && $op == $row['project_short_name'] ) $row['project_short_name'] = '';
@@ -147,10 +161,10 @@
 			
 			
 			echo "\t<tr>\n";
-				echo "\t\t<td align=\"left\" valign=\"top\"><a href=\"./index.php?m=projects&a=view&project_id=". $row['project_id'] ."\">". $row['project_short_name'] ."</a></td>\n";
-				echo "\t\t<td align=\"left\" valign=\"top\"><a href=\"./index.php?m=tasks&a=view&task_id=". $row['task_id'] ."\">". $row['task_name'] ."</a></td>\n";
-				echo "\t\t<td align=\"left\" valign=\"top\">". $act . $row['task_log_name'] ."</td>\n";
-				echo "\t\t<td style=\"text-align: justify;\" valign=\"top\">". nl2br( $row['task_log_description'] ) ."</td>\n";
+				echo "\t\t<td align=\"left\" valign=\"top\"><a href=\"./index.php?m=projects&a=view&project_id=". $row['project_id'] ."\">". dPhtml($row['project_short_name']) ."</a></td>\n";
+				echo "\t\t<td align=\"left\" valign=\"top\"><a href=\"./index.php?m=tasks&a=view&task_id=". $row['task_id'] ."\">". dPhtml($row['task_name']) ."</a></td>\n";
+				echo "\t\t<td align=\"left\" valign=\"top\">". $act . dPhtml($row['task_log_name']) ."</td>\n";
+				echo "\t\t<td style=\"text-align: justify;\" valign=\"top\">". nl2br( dPhtml($row['task_log_description']) ) ."</td>\n";
 				echo "\t\t<td align=\"right\" valign=\"top\">";
 					echo printSum( $row['task_log_hours'] );
 					if( $show_possible_hours_worked ) echo ' / '. printSum( $day_hours );
@@ -182,11 +196,5 @@
 </table>
 
 <?php
-function printSum( $float ) {
-	$float = str_replace( '.',',',(string) $float );
-	$pos = strpos( $float,',' );
-	if( $pos === false ) return $float .',00';
-	if( strlen( substr( $float,$pos + 1 ) ) == 1 ) return $float.'0';
-	return $float;
-}
+
 ?>

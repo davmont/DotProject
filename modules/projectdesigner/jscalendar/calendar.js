@@ -520,10 +520,11 @@ Calendar.dayMouseDown = function(ev) {
 	}
 	if (el.navtype == -1 || el.navtype == 1) {
 		if (cal.timeout) clearTimeout(cal.timeout);
-		cal.timeout = setTimeout("Calendar.showMonthsCombo()", 250);
+		cal.timeout = setTimeout(function () { Calendar.showMonthsCombo(); }, 250);
 	} else if (el.navtype == -2 || el.navtype == 2) {
 		if (cal.timeout) clearTimeout(cal.timeout);
-		cal.timeout = setTimeout((el.navtype > 0) ? "Calendar.showYearsCombo(true)" : "Calendar.showYearsCombo(false)", 250);
+		var fwd = (el.navtype > 0);
+		cal.timeout = setTimeout(function () { Calendar.showYearsCombo(fwd); }, 250);
 	} else {
 		cal.timeout = null;
 	}
@@ -1439,7 +1440,7 @@ Calendar.prototype.showAtElement = function (el, opts) {
 		self.showAt(p.x, p.y);
 	};
 	if (Calendar.is_khtml)
-		setTimeout("Calendar.continuation_for_the_fucking_khtml_browser()", 10);
+		setTimeout(function () { Calendar.continuation_for_the_fucking_khtml_browser(); }, 10);
 	else
 		Calendar.continuation_for_the_fucking_khtml_browser();
 };

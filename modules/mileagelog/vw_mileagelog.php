@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 	global $MILEAGELOG_CONFIG;
 
@@ -10,14 +13,15 @@
 
 	$can_edit_other_mileagelog = $MILEAGELOG_CONFIG['minimum_edit_level']>=$AppUI->user_type;
 	$show_other_mileagelog = $MILEAGELOG_CONFIG['minimum_see_level']>=$AppUI->user_type;
-	$integrate_with_helpdesk = $MILEAGELOG_CONFIG['integrate_with_helpdesk'];
+	$integrate_with_helpdesk = !empty($MILEAGELOG_CONFIG['integrate_with_helpdesk']);
 	
 	// get date format
 	$df = $AppUI->getPref('SHDATEFORMAT');
 	$tf = $AppUI->getPref('TIMEFORMAT');
+	$dbprefix = dPgetConfig('dbprefix', '');
 
 	if (isset( $_GET['user_id'] )) {
-		$sql = "SELECT user_company FROM users WHERE user_id = " . (int)$_GET['user_id'];
+		$sql = "SELECT user_company FROM {$dbprefix}users WHERE user_id = " . (int)$_GET['user_id'];
 		$company_id = db_loadResult( $sql );
 		if(getDenyRead( "companies", $company_id )){
 			$AppUI->redirect( "m=public&a=access_denied" );
@@ -98,21 +102,27 @@
 	$is_my_mileagelog = ($user_id == $AppUI->user_id);
 	
 	?>
-<script language="javascript">
+<script nonce="<?php echo dPcspNonce(); ?>">
 
 var calendarField = '';
 
 function popCalendar( field ){
 	calendarField = field;
-	uts = eval( 'document.user_select.' + field + '_date.value' );
+	uts = document.user_select[field + '_date'].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&uts=' + uts, 'calwin', 'top=250,left=250,width=250, height=220, scollbars=false' );
 }
 
 function setCalendar( uts, fdate ) {
-	fld_uts = eval( 'document.user_select.' + calendarField + '_date');
-	fld_fdate = eval( 'document.user_select.' + calendarField + '_display_date');
+	fld_uts = document.user_select[calendarField + '_date'];
+	fld_fdate = document.user_select[calendarField + '_display_date'];
 	fld_uts.value = uts;
 	fld_fdate.value = fdate;
+	document.user_select.submit();
+}
+
+// Previous / next week or month.
+function goToDate( start_date ) {
+	document.user_select.start_date.value = start_date;
 	document.user_select.submit();
 }
 </script>
@@ -126,21 +136,21 @@ function setCalendar( uts, fdate ) {
 		<tr>
 			<td>
 <?php
-	echo $AppUI->_('View By') . arraySelect($intervals, 'interval', "onchange='document.user_select.submit();'", $interval);
+	echo $AppUI->_('View By') . arraySelect($intervals, 'interval', dPaction(null, array(), null, array('submit' => '')), $interval);
 ?>
 			</td>
 			<td>
-			<a href="javascript:document.user_select.start_date.value='<?=$prev_date->getDate()?>';document.user_select.submit();" <?=($interval=='r'?' style="visibility:hidden"':'')?>><img src="./images/prev.gif" width="16" height="16" alt="<?php echo $AppUI->_( 'previous' );?>" border="0"></a>
+			<a href="#"<?php echo dPaction('goToDate', array($prev_date->getDate())); ?> <?=($interval=='r'?' style="visibility:hidden"':'')?>><img src="./images/prev.gif" width="16" height="16" alt="<?php echo $AppUI->_( 'previous' );?>" border="0"></a>
 			
 			<input type="text" name="start_display_date" value="<?php echo $start_day->format($df);?>" class="text" disabled="disabled">
-			<a href="#" onClick="popCalendar('start')" <?=($interval!='r'?' style="visibility:hidden"':'')?>><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a>
+			<a href="#"<?php echo dPaction('popCalendar', array('start')); ?> <?=($interval!='r'?' style="visibility:hidden"':'')?>><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a>
 			</td>
 			<td><b><?=$AppUI->_('through'). '&nbsp'?>
 			</b></td>
 			<td>
 			<input type="text" name="end_display_date" value="<?php echo $end_day->format($df);?>" class="text" disabled="disabled">
-			<a href="#" onClick="popCalendar('end')" <?=($interval!='r'?' style="visibility:hidden"':'')?>><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a>
-			<a href="javascript:document.user_select.start_date.value='<?=$next_date->getDate()?>';document.user_select.submit();" <?=($interval=='r'?' style="visibility:hidden"':'')?>><img src="./images/next.gif" width="16" height="16" alt="<?php echo $AppUI->_( 'next' );?>" border="0"></a>			
+			<a href="#"<?php echo dPaction('popCalendar', array('end')); ?> <?=($interval!='r'?' style="visibility:hidden"':'')?>><img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0"></a>
+			<a href="#"<?php echo dPaction('goToDate', array($next_date->getDate())); ?> <?=($interval=='r'?' style="visibility:hidden"':'')?>><img src="./images/next.gif" width="16" height="16" alt="<?php echo $AppUI->_( 'next' );?>" border="0"></a>			
 			</td>
 	<?php
 		if($show_other_mileagelog){
@@ -148,13 +158,13 @@ function setCalendar( uts, fdate ) {
 			<td align="right">
 	<?php
 		// list active users
-		$sql = "SELECT DISTINCT(user_id), CONCAT_WS(', ', contact_last_name, contact_first_name) as full_name FROM users ";
-		$sql.="LEFT JOIN contacts ON user_contact = contact_id ";
+		$sql = "SELECT DISTINCT(user_id), CONCAT_WS(', ', contact_last_name, contact_first_name) as full_name FROM {$dbprefix}users ";
+		$sql.="LEFT JOIN {$dbprefix}contacts ON user_contact = contact_id ";
 //		LEFT JOIN permissions ON user_id = permission_user 
 //		WHERE permission_value IS NOT NULL 
 		$sql.="WHERE (user_id=".$AppUI->user_id." or (".getPermsWhereClause("companies", "user_company").")) ORDER BY full_name";
 		$result = db_loadHashList($sql);
-		echo arraySelect($result, "user_id", "onchange='document.user_select.submit();'", $user_id);
+		echo arraySelect($result, "user_id", dPaction(null, array(), null, array('submit' => '')), $user_id);
 	?>
 			</td>
 			<td align="left" nowrap="nowrap"><a href="?m=mileagelog&tab=0&user_id=<?php echo $AppUI->user_id; ?>">[My Mileage Log]</a></td>
@@ -182,7 +192,7 @@ function setCalendar( uts, fdate ) {
 
 	$sql = "SELECT mileage_log.* 
 		FROM 
-			mileage_log 
+			{$dbprefix}mileage_log AS mileage_log 
 		WHERE "
 		." mileage_log_user_id=".$user_id." AND"
 		." mileage_log_date >= \"".$start_day->format( FMT_DATETIME_MYSQL )."\" AND "
@@ -271,7 +281,7 @@ function setCalendar( uts, fdate ) {
 ?>
 				<tr>
 					<td nowrap="nowrap" valign="top">
-						<input type='button' class='button' onclick='javascript:window.open("./index.php?m=mileagelog&tab=1&mid=<?=$log['mileage_log_id']?>", "_self");' value="<?=$AppUI->_('Edit')?>" />
+						<input type='button' class='button'<?php echo dPaction(null, array(), null, array('href' => './index.php?m=mileagelog&tab=1&mid=' . (int)$log['mileage_log_id'])); ?> value="<?=$AppUI->_('Edit')?>" />
 					</td>
 					<td nowrap="nowrap" valign="middle">
 						<?=$log_date->format($df . ' ' . $tf)?>

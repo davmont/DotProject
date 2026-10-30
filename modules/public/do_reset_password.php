@@ -1,71 +1,65 @@
 <?php
+/**
+ * Processes the password reset form. Included by reset_password.php, which
+ * defines $reset_user_id and $reset_token and reads $reset_error and
+ * $reset_done afterwards.
+ */
 if (!defined('DP_BASE_DIR')) {
 	die('You should not access this file directly.');
 }
 
-$user_id = intval(dPgetParam($_POST, 'user_id', 0));
-$token = dPgetParam($_POST, 'token', '');
-$new_password = dPgetParam($_POST, 'new_password', '');
-$password_confirm = dPgetParam($_POST, 'password_confirm', '');
-
-if (!$user_id || !$token || !$new_password || !$password_confirm) {
-	$AppUI->setMsg('Invalid request. Please try again.', UI_MSG_ERROR);
-	$AppUI->redirect();
+require_once DP_BASE_DIR . '/classes/ratelimiter.class.php';
+$reset_limiter = new RateLimiter('resetpass', 10, 900);
+if (!$reset_limiter->isAllowed()) {
+	$reset_error = 'Too many attempts. Please wait before trying again.';
+	return;
 }
 
-if ($new_password !== $password_confirm) {
-	$AppUI->setMsg('Passwords do not match.', UI_MSG_ERROR);
-	$AppUI->redirect();
+$new_password = (string)dPgetParam($_POST, 'new_password', '');
+$password_confirm = (string)dPgetParam($_POST, 'password_confirm', '');
+
+if ($reset_user_id <= 0 || !preg_match('/^[0-9a-f]{64}$/', $reset_token)) {
+	$reset_limiter->recordAttempt();
+	$reset_error = 'Invalid or expired password reset link.';
+	return;
 }
 
-// Security Mitigation: Use parameterized query to fetch user data.
 $q = new DBQuery();
 $q->addTable('users');
-$q->addQuery('user_custom');
-$q->addWhere('user_id = ?', $user_id);
-$user_custom_json = $q->loadResult();
+$q->addQuery('user_reset_token, user_reset_expiry');
+$q->addWhere('user_id = ?', $reset_user_id);
+$reset_row = $q->loadHash();
 $q->clear();
 
-if (!$user_custom_json) {
-	$AppUI->setMsg('Invalid password reset token.', UI_MSG_ERROR);
-	$AppUI->redirect();
+if (empty($reset_row['user_reset_token']) || empty($reset_row['user_reset_expiry'])
+	|| strtotime($reset_row['user_reset_expiry']) < time()
+	|| !password_verify($reset_token, $reset_row['user_reset_token'])) {
+	$reset_limiter->recordAttempt();
+	$reset_error = 'Invalid or expired password reset link.';
+	return;
 }
 
-$user_custom = json_decode($user_custom_json, true);
-$token_hash = $user_custom['reset_token'] ?? null;
-$expiry_time = $user_custom['reset_expiry'] ?? null;
-
-if (!$token_hash || !$expiry_time) {
-	$AppUI->setMsg('Invalid password reset token.', UI_MSG_ERROR);
-	$AppUI->redirect();
+$min_len = (int)dPgetConfig('password_min_len', 4);
+if ($new_password === '' || $new_password !== $password_confirm) {
+	$reset_error = 'Passwords do not match.';
+	return;
+}
+if (mb_strlen($new_password) < $min_len) {
+	$reset_error = 'The password is too short.';
+	return;
 }
 
-// Security Mitigation: Verify token and expiry time.
-if (strtotime($expiry_time) < time()) {
-	$AppUI->setMsg('Password reset token has expired.', UI_MSG_ERROR);
-	$AppUI->redirect();
-}
-
-if (!password_verify($token, $token_hash)) {
-	$AppUI->setMsg('Invalid password reset token.', UI_MSG_ERROR);
-	$AppUI->redirect();
-}
-
-// Security Mitigation: Use a strong, modern hashing algorithm for the new password.
-$new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
-
-// Update the user's password and clear the reset token.
+// Set the new password and invalidate the token so the link works once.
 $q->addTable('users');
-$q->addUpdate('user_password', $new_password_hash);
-$q->addUpdate('user_custom', ''); // Clear the reset token
-$q->addWhere('user_id = ?', $user_id);
-
+$q->addUpdate('user_password', dPhashPassword($new_password));
+$q->addUpdate('user_reset_token', null);
+$q->addUpdate('user_reset_expiry', null);
+$q->addWhere('user_id = ?', $reset_user_id);
 if ($q->exec()) {
-	$AppUI->setMsg('Your password has been successfully updated. Please log in.', UI_MSG_OK);
-	$AppUI->redirect('m=public&a=login');
+	$reset_done = true;
+	addHistory('users', $reset_user_id, 'password reset',
+		'Password reset by email link from IP ' . $_SERVER['REMOTE_ADDR']);
 } else {
-	$AppUI->setMsg('An error occurred while updating your password.', UI_MSG_ERROR);
-	$AppUI->redirect();
+	$reset_error = 'An error occurred while updating your password.';
 }
 $q->clear();
-?>

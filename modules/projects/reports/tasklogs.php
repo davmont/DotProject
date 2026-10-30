@@ -28,12 +28,12 @@ if (!$log_start_date) {
 $end_date->setTime(23, 59, 59);
 
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 
 function popCalendar(field) {
 	calendarField = field;
-	idate = eval('document.editFrm.log_' + field + '.value');
+	idate = document.editFrm['log_' + field].value;
 	window.open('index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=250, height=220, scrollbars=no, status=no');
 }
 
@@ -42,8 +42,8 @@ function popCalendar(field) {
  *	@param string Formatted date
  */
 function setCalendar(idate, fdate) {
-	fld_date = eval('document.editFrm.log_' + calendarField);
-	fld_fdate = eval('document.editFrm.' + calendarField);
+	fld_date = document.editFrm['log_' + calendarField];
+	fld_fdate = document.editFrm[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -53,7 +53,7 @@ function setCalendar(idate, fdate) {
 <input type="hidden" name="m" value="projects" />
 <input type="hidden" name="a" value="reports" />
 <input type="hidden" name="project_id" value="<?php echo $project_id;?>" />
-<input type="hidden" name="report_type" value="<?php echo $report_type;?>" />
+<input type="hidden" name="report_type" value="<?php echo htmlspecialchars((string)$report_type, ENT_QUOTES); ?>" />
 
 <table cellspacing="0" cellpadding="4" border="0" width="100%" class="std">
 <tr>
@@ -61,7 +61,7 @@ function setCalendar(idate, fdate) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="log_start_date" value="<?php echo $start_date->format(FMT_TIMESTAMP_DATE);?>" />
 		<input type="text" name="start_date" value="<?php echo $start_date->format($df);?>" class="text" disabled="disabled" style="width: 80px" />
-		<a href="#" onclick="javascript:popCalendar('start_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
@@ -69,7 +69,7 @@ function setCalendar(idate, fdate) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="log_end_date" value="<?php echo $end_date ? $end_date->format(FMT_TIMESTAMP_DATE) : '';?>" />
 		<input type="text" name="end_date" value="<?php echo $end_date ? $end_date->format($df) : '';?>" class="text" disabled="disabled" style="width: 80px"/>
-		<a href="#" onclick="popCalendar('end_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
@@ -175,7 +175,6 @@ if ($do_report) {
 	//echo "<pre>$sql</pre>";
 
 	$logs = $q->loadList();
-	echo db_error();
 ?>
 	<table cellspacing="1" cellpadding="4" border="0" class="tbl" summary"project task summary">
 	<tr>
@@ -259,19 +258,18 @@ if ($do_report) {
 			$q = new DBQuery;
 			$q->addTable('projects');
 			$q->addQuery('project_name');
-			$q->addWhere('project_id=' . $project_id);
+			$q->addWhere('project_id=' . (int)$project_id);
 			$pname = $q->loadResult();
 		} else {
 			$pname = "All Projects";
 		}
-		echo db_error();
 
 		$font_dir = DP_BASE_DIR.'/lib/ezpdf/fonts';
 		$temp_dir = DP_BASE_DIR.'/files/temp';
 		
-		require($AppUI->getLibraryClass('ezpdf/class.ezpdf'));
+		require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
-		$pdf = new Cezpdf();
+		$pdf = new DotPdf();
 		$pdf->ezSetCmMargins(1, 2, 1.5, 1.5);
 		$pdf->selectFont("$font_dir/Helvetica.afm");
 
@@ -335,7 +333,7 @@ if ($do_report) {
 		if ($fp = fopen($temp_dir.'/temp'.$AppUI->user_id.'.pdf', 'wb')) {
 			fwrite($fp, $pdf->ezOutput());
 			fclose($fp);
-			echo '<a href="'.DP_BASE_URL.'/files/temp/temp'.$AppUI->user_id.'.pdf" target="pdf">';
+			echo '<a href="' . DP_BASE_URL . '/fileviewer.php?report=pdf" target="pdf">';
 			echo $AppUI->_("View PDF File");
 			echo "</a>";
 		} else {

@@ -10,7 +10,7 @@ $do_report = dPgetParam( $_GET, "do_report", 0 );
 $log_all = dPgetParam( $_GET, 'log_all', 0 );
 $log_pdf = dPgetParam( $_GET, 'log_pdf', 0 );
 $log_ignore = dPgetParam( $_GET, 'log_ignore', 0 );
-$log_userfilter = dPgetParam( $_GET, 'log_userfilter', '0' );
+$log_userfilter = dPgetIntParam( $_GET, 'log_userfilter', 0 );
 
 $log_start_date = dPgetParam( $_GET, "log_start_date", 0 );
 $log_end_date = dPgetParam( $_GET, "log_end_date", 0 );
@@ -31,7 +31,6 @@ $q->addQuery('billingcode_id, billingcode_name');
 
 $task_log_costcodes[0]=$AppUI->_('None');
 $ptrc = $q->exec();
-echo db_error();
 $nums = 0;
 if ($ptrc)
 	$nums=db_num_rows($ptrc);
@@ -41,12 +40,12 @@ for ($x=0; $x < $nums; $x++) {
 }
 
 ?>
-<script language="javascript">
+<script language="javascript" nonce="<?php echo dPcspNonce(); ?>">
 var calendarField = '';
 
 function popCalendar( field ){
 	calendarField = field;
-	idate = eval( 'document.editFrm.log_' + field + '.value' );
+	idate = document.editFrm.elements['log_' + field].value;
 	window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=250, height=220, scollbars=false' );
 }
 
@@ -55,8 +54,8 @@ function popCalendar( field ){
  *	@param string Formatted date
  */
 function setCalendar( idate, fdate ) {
-	fld_date = eval( 'document.editFrm.log_' + calendarField );
-	fld_fdate = eval( 'document.editFrm.' + calendarField );
+	fld_date = document.editFrm.elements['log_' + calendarField];
+	fld_fdate = document.editFrm.elements[calendarField];
 	fld_date.value = idate;
 	fld_fdate.value = fdate;
 }
@@ -76,7 +75,7 @@ function setCalendar( idate, fdate ) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="log_start_date" value="<?php echo $start_date->format( FMT_TIMESTAMP_DATE );?>" />
 		<input type="text" name="start_date" value="<?php echo $start_date->format( $df );?>" class="text" disabled="disabled" style="width: 80px" />
-		<a href="#" onClick="popCalendar('start_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('start_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
@@ -84,7 +83,7 @@ function setCalendar( idate, fdate ) {
 	<td nowrap="nowrap">
 		<input type="hidden" name="log_end_date" value="<?php echo $end_date ? $end_date->format( FMT_TIMESTAMP_DATE ) : '';?>" />
 		<input type="text" name="end_date" value="<?php echo $end_date ? $end_date->format( $df ) : '';?>" class="text" disabled="disabled" style="width: 80px"/>
-		<a href="#" onClick="popCalendar('end_date')">
+		<a href="#"<?php echo dPaction('popCalendar', array('end_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</td>
@@ -142,16 +141,19 @@ function setCalendar( idate, fdate ) {
 </table>
 
 <?php
+$pfx = dPgetConfig('dbprefix', '');
 if ($do_report) {
+	$project_id = (int)$project_id;
+	$company_id = (int)$company_id;
 
 	$sql = "SELECT t.*, item_id, CONCAT_WS(' ',contact_first_name,contact_last_name) AS creator, billingcode_value, ROUND((billingcode_value * t.task_log_hours), 2) AS amount"
-		."\nFROM task_log AS t"
-		."\nLEFT JOIN helpdesk_items AS ts ON ts.item_id = task_log_help_desk_id"
-		."\nLEFT JOIN users AS u ON user_id = task_log_creator"
-                ."\nLEFT JOIN contacts ON user_contact = contact_id"
-		."\nLEFT JOIN projects ON project_id = item_project_id"
-		."\nLEFT JOIN companies AS c ON c.company_id = item_company_id"
-		."\nLEFT JOIN billingcode ON billingcode_id = task_log_costcode"
+		."\nFROM {$pfx}task_log AS t"
+		."\nLEFT JOIN {$pfx}helpdesk_items AS ts ON ts.item_id = task_log_help_desk_id"
+		."\nLEFT JOIN {$pfx}users AS u ON user_id = task_log_creator"
+                ."\nLEFT JOIN {$pfx}contacts ON user_contact = contact_id"
+		."\nLEFT JOIN {$pfx}projects ON project_id = item_project_id"
+		."\nLEFT JOIN {$pfx}companies AS c ON c.company_id = item_company_id"
+		."\nLEFT JOIN {$pfx}billingcode ON billingcode_id = task_log_costcode"
 		."\nWHERE task_log_task = 0 AND task_log_help_desk_id > 0";
 //	if (!$log_allprojects)
 //	{
@@ -182,7 +184,6 @@ if ($do_report) {
 //	echo "<pre>$sql</pre>";
 
 	$logs = db_loadList( $sql );
-	echo db_error();
 ?>
 	<table cellspacing="1" cellpadding="4" border="0" class="tbl">
 	<tr>
@@ -271,27 +272,25 @@ if ($do_report) {
 	if ($log_pdf) {
 	// make the PDF file
 		 if ($project_id){
-			$sql = "SELECT project_name FROM projects WHERE project_id=$project_id";
+			$sql = "SELECT project_name FROM {$pfx}projects WHERE project_id=" . (int)$project_id;
 			$pname = 'Project: '.db_loadResult( $sql );
 		}
 		else
 			$pname = "All Companies and All Projects";
-		echo db_error();
 
 		if ($company_id){
-			$sql = "SELECT company_name FROM companies WHERE company_id=$company_id";
+			$sql = "SELECT company_name FROM {$pfx}companies WHERE company_id=" . (int)$company_id;
 			$cname = 'Company: '.db_loadResult( $sql );
 		}
 		else
 			$cname = "All Companies and All Projects";
-		echo db_error();
 
 		$font_dir = dPgetConfig( 'root_dir' )."/lib/ezpdf/fonts";
 		$temp_dir = dPgetConfig( 'root_dir' )."/files/temp";
 		$base_url  = dPgetConfig( 'base_url' );
-		require( $AppUI->getLibraryClass( 'ezpdf/class.ezpdf' ) );
+		require_once DP_BASE_DIR . '/classes/dpdf.class.php';
 
-		$pdf = new Cezpdf();
+		$pdf = new DotPdf();
 		$pdf->ezSetCmMargins( 1, 2, 1.5, 1.5 );
 		$pdf->selectFont( "$font_dir/Helvetica.afm" );
 
@@ -357,7 +356,7 @@ if ($do_report) {
 		if ($fp = fopen( "$temp_dir/temp$AppUI->user_id.pdf", 'wb' )) {
 			fwrite( $fp, $pdf->ezOutput() );
 			fclose( $fp );
-			echo "<a href=\"$base_url/files/temp/temp$AppUI->user_id.pdf\" target=\"pdf\">";
+			echo "<a href=\"$base_url/fileviewer.php?report=pdf\" target=\"pdf\">";
 			echo $AppUI->_( "View PDF File" );
 			echo "</a>";
 		} else {

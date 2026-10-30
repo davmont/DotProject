@@ -1,3 +1,8 @@
+// Participant list buttons (js/dp-actions.js): move the selected options between two lists of the button's form.
+function mcMoveOptions(button, from, to){
+	move(button.form[from], button.form[to]);
+}
+
 function move(MenuOrigem, MenuDestino){
     var arrMenuOrigem = new Array();
     var arrMenuDestino = new Array();

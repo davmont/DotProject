@@ -13,10 +13,13 @@ $dbprefix = dPgetConfig('dbprefix', '');
 require(DP_BASE_DIR . '/modules/ticketsmith/config.inc.php');
 require(DP_BASE_DIR . '/modules/ticketsmith/common.inc.php');
 $search_pattern = dPgetCleanParam($_POST, 'search_pattern', '');
-$search_field = dPgetCleanParam($_POST, 'search_field', '');
-$search_depth = dPgetCleanParam($_POST, 'search_depth', '');
-$sort_column = dPgetCleanParam($_POST, 'sort_column', '');
-$sort_direction = dPgetCleanParam($_POST, 'sort_direction', 'DESC');
+// These go into the SQL below as column names and keywords: accept only the form's choices.
+$search_field = dPvalidateOrder(dPgetCleanParam($_POST, 'search_field', ''), array('author', 'body', 'subject'), 'subject');
+$search_depth = dPvalidateOrder(dPgetCleanParam($_POST, 'search_depth', ''),
+    array('All', 'Open', 'Closed', 'Deleted', 'Child'), 'All');
+$sort_column = dPvalidateOrder(dPgetCleanParam($_POST, 'sort_column', ''), array('ticket', 'author', 'subject',
+    'timestamp', 'activity', 'type', 'priority', 'assignment'), 'timestamp');
+$sort_direction = dPvalidateOrder(dPgetCleanParam($_POST, 'sort_direction', 'DESC'), array('ASC', 'DESC'), 'DESC');
 /* set title */
 $titleBlock = new CTitleBlock('Search Tickets', 'gconf-app-icon.png', $m, "$m.$a");
 $titleBlock->addCrumb('?m=ticketsmith', 'ticket list');
@@ -45,10 +48,9 @@ print ("</td>\n");
 print ("</tr>\n");
 
 /* pattern select */
-$search_pattern = dPformSafe($search_pattern);
 print ("<tr>\n");
 print ("<td align=\"right\"><strong>" . $AppUI->_('Pattern') . "</strong></td>\n");
-print ("<td><input type=\"text\" class=\"text\" name=\"search_pattern\" value=\"$search_pattern\"></td>\n");
+print ("<td><input type=\"text\" class=\"text\" name=\"search_pattern\" value=\"" . dPhtml($search_pattern) . "\"></td>\n");
 print ("</tr>\n");
 
 /* depth select */
@@ -124,7 +126,8 @@ if ($search_pattern) {
 
     /* form search query */
     $select_columns = join(", ", $fields["columns"]);
-    $search_pattern = "%" . escape_string($search_pattern) . "%";
+    // escape_string() no longer exists in PHP 8; db_escape() quotes for the database.
+    $search_pattern = "%" . db_escape($search_pattern) . "%";
     $query = "SELECT $select_columns FROM {$dbprefix}tickets WHERE $search_field LIKE '$search_pattern'";
     if ($search_depth == "Child") {
         $query .= " AND parent != 0";

@@ -9,6 +9,8 @@
 @import "./style/<?php echo $uistyle; ?>/main.css";
 </style>
 <link rel="shortcut icon" href="./style/<?php echo $uistyle; ?>/img/favicon.ico" type="image/ico" />
+<link rel="icon" href="./images/brand/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="./images/brand/apple-touch-icon.png" />
 <?php @$AppUI->loadJS(); echo $AppUI->getCsrfMeta(); ?>
 <?php include("./style/".$uistyle."/color.php"); ?>
 </head>
@@ -18,7 +20,7 @@
 #container_content { top:160px; min-width:950px; } 
 </style>
 <div id="container_login">
-	<div class="content"> <?php echo $AppUI->_('Welcome'); ?> <strong><?php echo $AppUI->user_first_name."&nbsp;".$AppUI->user_last_name; ?></strong> &bull; <?php echo dPcontextHelp('Help'); ?> &bull; <a href="./index.php?m=admin&a=viewuser&user_id=<?php echo $AppUI->user_id; ?>"><?php echo $AppUI->_('My Info'); ?></a> &bull;
+	<div class="content"> <?php echo $AppUI->_('Welcome'); ?> <strong><?php echo htmlspecialchars($AppUI->user_first_name, ENT_QUOTES)."&nbsp;".htmlspecialchars($AppUI->user_last_name, ENT_QUOTES); ?></strong> &bull; <?php echo dPheaderWidgets(' &bull; '); ?><?php echo dPcontextHelp('Help'); ?> &bull; <a href="./index.php?m=admin&a=viewuser&user_id=<?php echo $AppUI->user_id; ?>"><?php echo $AppUI->_('My Info'); ?></a> &bull;
 		<?php if($perms->checkModule('calendar','access')) { $now = new CDate(); ?>
 		<b><a href="./index.php?m=tasks&a=todo"><?php echo $AppUI->_('Todo'); ?></a></b> &bull; <a href="./index.php?m=calendar&a=day_view&date=<?php echo $now->format(FMT_TIMESTAMP_DATE); ?>"><?php echo $AppUI->_('Today'); ?></a>
 		<?php } ?>
@@ -31,7 +33,7 @@
 			<div class="content"><?php echo $AppUI->_($module['mod_ui_name']); ?></div>
 		</li>
 		<?php } else { ?>
-		<li onclick="javascript:window.open('?m=<?php echo $module['mod_directory']; ?>','_self')">
+		<li<?php echo dPaction(null, array(), null, array('href' => '?m=' . $module['mod_directory'])); ?>>
 			<div class="content"><?php echo $AppUI->_($module['mod_ui_name']); ?></div>
 		</li>
 		<?php } } } ?>
@@ -39,7 +41,7 @@
 </div>
 <div id="container_new_item">
 	<form name="frm_new" method="get" action="./index.php">
-		<?php $newItem = array(""=>'- New Item -'); $newItem["companies"] = "Company"; $newItem["contacts"] = "Contact"; $newItem["calendar"] = "Event"; $newItem["files"] = "File"; $newItem["projects"] = "Project"; echo arraySelect($newItem,'m',' onchange="f=document.frm_new;mod=f.m.options[f.m.selectedIndex].value;if(mod) f.submit();"','',true); ?>
+		<?php $newItem = array(""=>'- New Item -'); $newItem["companies"] = "Company"; $newItem["contacts"] = "Contact"; $newItem["calendar"] = "Event"; $newItem["files"] = "File"; $newItem["projects"] = "Project"; echo arraySelect($newItem,'m',dPaction('dpSubmitIfValue'),'',true); ?>
 		<input type="hidden" name="a" value="addedit" />
 		<?php if(isset($company_id)) { ?>
 		<input type="hidden" name="company_id" value="<?php echo $company_id ?>" />

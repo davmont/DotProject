@@ -13,7 +13,7 @@ $q  = new DBQuery;
 $q->addTable('departments','dept');
 $q->addQuery('dept.*, COUNT(c.contact_department) as dept_users');
 $q->addJoin('contacts', 'c', 'c.contact_department = dept.dept_id');
-$q->addWhere('dept.dept_company = '.$company_id);
+$q->addWhere('dept.dept_company = ' . (int)$company_id);
 $q->addGroup('dept.dept_id');
 $q->addOrder('dept.dept_parent, dept.dept_name');
 $sql = $q->prepare();
@@ -32,7 +32,7 @@ function showchilddept_comp(&$a, $level=0) {
 	}
 
 	$s .= ('<a href="?m=departments&amp;a=view&amp;dept_id=' . $a['dept_id'] . '">' 
-	       . $a['dept_name'] . '</a>');
+	       . dPhtml($a['dept_name']) . '</a>');
 	$s .= '</td>';
 	$s .= '<td align="center">' . (($a['dept_users']) ? $a['dept_users'] : '') . '</td>';
 	
@@ -78,8 +78,8 @@ echo ('<tr><td colspan="3" nowrap="nowrap" rowspan="99" align="right" valign="to
       . ' style="background-color:#ffffff">');
 if ($canEdit) {
 	echo ('<input type="button" class="button" value="' . $AppUI->_('new department') 
-	      . '" onclick="javascript:window.location=' 
-		  . '\'./index.php?m=departments&amp;a=addedit&amp;company_id=' . $company_id . '\';" />');
+	      . '"' . dPaction(null, array(), null, array('href' => './index.php?m=departments&a=addedit&company_id='
+		  . (int)$company_id)) . ' />');
 }
 echo '</td></tr></table>';
 ?>

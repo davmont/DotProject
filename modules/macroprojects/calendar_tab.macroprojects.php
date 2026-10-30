@@ -17,6 +17,7 @@
 global $AppUI, $company_id, $mpstatus, $dPconfig, $macroproject_types, $priority, $company_id;
 
 $df = $AppUI->getPref('SHDATEFORMAT');
+$macroprojectPriorityColor = dPgetSysVal('MacroProjectPriorityColor');
 $macroproject_types = dPgetSysVal('MacroProjectStatus');
 
 require_once($AppUI->getModuleClass('macroprojects'));
@@ -48,7 +49,7 @@ if ($allowed_where) {
 	$q->addWhere(implode(' AND ', $allowed_where));
 }
 if ($company_id) {
-	$q->addWhere('mp.macroproject_company = ' . $company_id);
+	$q->addWhere('mp.macroproject_company = ' . (int)$company_id);
 }
 $q->addOrder('macroproject_end_date');
 
@@ -108,11 +109,11 @@ echo $row['macroproject_id']; ?>" title="<?php
 	echo htmlspecialchars($row['macroproject_name'], ENT_QUOTES); ?>
 		</a>
 	</td>
-	<td align="center"nowrap="nowrap" style="background-color:<?php echo ($priority[$row['macroproject_priority']]['color']); ?>"><?php 
+	<td align="center"nowrap="nowrap" style="background-color:<?php echo (($macroprojectPriorityColor[$row['macroproject_priority']] ?? '')); ?>"><?php 
 echo htmlspecialchars(($end_date ? $end_date->format($df) : '-')); ?></td>
 	<td nowrap="nowrap"><?php echo htmlspecialchars($row['user_username'], ENT_QUOTES); ?></td>
 	<td align="center" nowrap="nowrap">
-		<?php echo ($row['my_tasks'] . ' ('.$row['total_tasks'] . ')'); ?>
+		<?php echo (($row['my_tasks'] ?? '') . ' ('.($row['total_tasks'] ?? '') . ')'); ?>
 	</td>
 	<td align="center" nowrap="nowrap">
 		<?php 

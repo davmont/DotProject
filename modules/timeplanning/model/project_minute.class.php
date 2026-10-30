@@ -46,10 +46,11 @@ class ProjectMinute {
 		return $this->isSize;
 	}
 	
-	function ProjectMinute()	{
+	function __construct()	{
 	}
 	
 	function store($description,$date,$project_id,$id,$isEffort,$isDuration,$isResource,$isSize,$membersIds) {
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->addTable('project_minutes');
 		if ($id!="-1"){
@@ -59,7 +60,7 @@ class ProjectMinute {
 			$q->addUpdate('isDuration', $isDuration);
 			$q->addUpdate('isResource', $isResource);
 			$q->addUpdate('isSize', $isSize);
-			$q->addWhere('id =' . $id);
+			$q->addWhere('id =' . (int)$id);
 		}else{
 			$q->addInsert('description', $description);
 			$q->addInsert('minute_date', $date);
@@ -99,9 +100,10 @@ class ProjectMinute {
 	}
 	
 	function deleteMembersRelations($id){
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('task_minute_members');
-		$q->addWhere('task_minute_id =' . $id);
+		$q->addWhere('task_minute_id =' . (int)$id);
 		$result=true;
 		if (!$q->exec()){
 			$result=false;
@@ -110,12 +112,16 @@ class ProjectMinute {
 	}
 	
 	function load($minute_id) {
+		$minute_id = (int)$minute_id; // used in SQL below
 		$q = new DBQuery;
 		$q->addQuery("tm.description, tm.minute_date,tm.id,tm.isEffort,tm.isSize,tm.isDuration,tm.isResource");
 		$q->addTable('project_minutes', 'tm');
-		$q->addWhere('id ='.$minute_id);
+		$q->addWhere('id =' . (int)$minute_id);
 		$results = db_loadHashList($q->prepare(true), 'id');
 		$hasMinute=false;
+		// Defaults when the minute does not exist (a new one).
+		$id = $description = $date = '';
+		$isEffort = $isSize = $isDuration = $isResource = 0;
 		foreach ($results as $id => $data) {
 			$description=$data[0];
 			$date=$data[1];
@@ -138,7 +144,7 @@ class ProjectMinute {
 		$q = new DBQuery();
 		$q->addTable('task_minute_members','tm');
 		$q->addQuery("tm.user_id");
-		$q->addWhere('task_minute_id ='.$minute_id);
+		$q->addWhere('task_minute_id =' . (int)$minute_id);
 		$results = db_loadHashList($q->prepare(true), 'user_id');
 		$this->members=array();
 		foreach ($results as $user_id => $data) {
@@ -148,9 +154,10 @@ class ProjectMinute {
 	}
 
 	function delete($id){
+		$id = (int)$id; // used in SQL below
 		$q = new DBQuery();
 		$q->setDelete('project_minutes');
-		$q->addWhere('id =' . $id);
+		$q->addWhere('id =' . (int)$id);
 		$result=true;
 		if (!$q->exec()){
 			$result=false;

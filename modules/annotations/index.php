@@ -1,4 +1,8 @@
-<?php 
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+
 // TODO: remove a load of these "unnecessary" comments
 
 // this is the index site for our Annotations module
@@ -25,7 +29,7 @@ $q = new DBQuery;						//a Query Dummy
 	$project_status = (isset($_POST['project_status'])) ? intval( dPgetParam( $_POST, "project_status", "-1" ) ) : intval( dPgetParam( $_GET, "project_status", "-1" ) );
 	$project_id = (isset( $_POST['project_id'])) ? intval( dPgetParam( $_POST, "project_id", "-1" ) ) : intval( dPgetParam( $_GET, "project_id", "-1" ) );
 	$show_owner_id = (isset( $_POST['show_owner_id'])) ? (intval( dPgetParam( $_POST, "show_owner_id", "-1" ) )) : (intval( dPgetParam( $_GET, "show_owner_id", "-1" ) ));
-	$show_date = intval( dPgetParam( $_POST, "show_date", date(Ymd) ) );
+	$show_date = intval( dPgetParam( $_POST, "show_date", date('Ymd') ) );
 	$annotation_show_date = intval( dPgetParam( $_POST, "annotation_show_date", $show_date ) );
 	$show_all= (isset( $_GET['show_all'] )) ? intval( dPgetParam($_GET, "show_all", "0") ) : intval( dPgetParam($_POST, "show_all", "0") );
 	$rows_to_show= (isset( $_GET['rows_to_show'] )) ? intval( dPgetParam($_GET, "rows_to_show", "3") ) : intval( dPgetParam($_POST, "rows_to_show", "3") );
@@ -90,7 +94,7 @@ $icon_show_all_filled_path = "./images/clip.png";	//icon to show only the filled
 				$tmp += array($p['contact_id'] => ($p['contact_last_name'].", ".$p['contact_first_name']));	//Fill an array for dP arraySelect
 			}
 			// show the dropdown filter with dP arraySelect
-			echo arraySelect($tmp,'show_owner_id','size=1 class=text onChange="document.pickOwner.submit();"', $show_owner_id ) ;
+			echo arraySelect($tmp,'show_owner_id','size=1 class=text style="max-width: 14em;"' . dPaction(null, array(), null, array('submit' => 'pickOwner')), $show_owner_id ) ;
 	  ?>		
   </th>
   </form>
@@ -123,7 +127,7 @@ $icon_show_all_filled_path = "./images/clip.png";	//icon to show only the filled
 			}
 
 		// DropDown Project select
-		echo arraySelect($tmp,'project_id','size=1 class=text onChange="document.pickProject.submit();"', $project_id ) ;
+		echo arraySelect($tmp,'project_id','size=1 class=text style="max-width: 14em;"' . dPaction(null, array(), null, array('submit' => 'pickProject')), $project_id ) ;
 
 		?>		
   </th>
@@ -148,7 +152,7 @@ $icon_show_all_filled_path = "./images/clip.png";	//icon to show only the filled
 		<?php
 		// inserting the "Show ALL"-Status:
 		$ProjectStatus=array("-1"=>"All")+$ProjectStatus;	//And once again an array for the dP arraySelect
-		echo arraySelect( $ProjectStatus, 'project_status', 'size=1 class=text onChange="document.pickStatus.submit();"', $project_status ) ;
+		echo arraySelect( $ProjectStatus, 'project_status', 'size=1 class=text style="max-width: 14em;"' . dPaction(null, array(), null, array('submit' => 'pickStatus')), $project_status ) ;
 		?>
   </th>
   </form>
@@ -159,36 +163,6 @@ $icon_show_all_filled_path = "./images/clip.png";	//icon to show only the filled
 <!-- import the language module -->
 <script type="text/javascript" src="<?php echo DP_BASE_URL;?>/lib/calendar/lang/calendar-<?php echo $AppUI->user_locale; ?>.js"></script>
 
-<script language="javascript">
-// to popup the calendar for choosing dates
-// copyied and modified from the projects addedit.php
-var calendarField = '';
-var calWin = null;
-
-function popCalendar( field ){
-calendarField = field;
-idate = eval( 'document.chooseDate.annotation_show_date.value' );
-window.open( 'index.php?m=public&a=calendar&dialog=1&callback=setCalendar&date=' + idate, 'calwin', 'width=280, height=250, scrollbars=no, status=no' );
-}
-
-/**
-*	@param string Input date in the format YYYYMMDD
-*	@param string Formatted date
-*/
-function setCalendar( idate, fdate) {
-	var owner = '';
-	fld_date = eval( 'document.chooseDate.annotation_show_date' );
-	fld_fdate = eval( 'document.chooseDate.show_date' );
-	fld_owner = eval( 'document.pickOwner.show_date' );
-	
-	fld_date.value = idate;
-	fld_fdate.value = fdate;
-    fld_owner.value = fdate;
-	
-	owner.value = eval('document.show_owner_id');
-	document.chooseDate.submit();
-}
-</script>
 <!------------------------------------------------------------------------------------------------------------------------------------------------>
 <!------------------------------------------ And here comes the filters and its icons Form ------------------------------------------->
 <!------------------------------------------------------------------------------------------------------------------------------------------------>
@@ -204,7 +178,7 @@ function setCalendar( idate, fdate) {
 														:
 			'<input type="text" class="text" name="show_date" value="'.$show_the_date->format( $df ).'" class="text" disabled="disabled" />';
 		?>
-		<a href="#" onClick="popCalendar( 'show_date', 'show_date');">
+		<a href="#"<?php echo dPaction('popCalendar', array('show_date')); ?>>
 			<img src="./images/calendar.gif" width="24" height="12" alt="<?php echo $AppUI->_('Calendar');?>" border="0" />
 		</a>
 	</th>
@@ -232,7 +206,7 @@ function setCalendar( idate, fdate) {
 
 	<?php  // this filter selects the size of the boxes
 	$sizes = array("1"=>"xsmall","3"=>"small","6"=>"mid","10"=>"large","15"=>"xlarge");
-	echo $AppUI->_('Box Size : ').arraySelect($sizes,'rows_to_show','size=1 class=text onChange="document.pickRows.submit();"', $rows_to_show ) ;
+	echo $AppUI->_('Box Size : ').arraySelect($sizes,'rows_to_show','size=1 class=text' . dPaction(null, array(), null, array('submit' => 'pickRows')), $rows_to_show ) ;
 	?>
 </form>
 </table>
@@ -296,9 +270,9 @@ function setCalendar( idate, fdate) {
  } else {
 	$q->leftJoin('annotations','','(annotation_project = project_id and annotation_date = '.$show_the_date->format( FMT_TIMESTAMP_DATE ).')');
  }
- if ($project_id!="-1") 	$q->addWhere('project_id = '.$project_id);
+ if ($project_id!="-1") 	$q->addWhere('project_id = ' . (int)$project_id);
  if ($project_status!="-1") $q->addWhere('project_status = '.$project_status);
- if ($show_owner_id!="-1")  $q->addWhere('project_owner = '.$show_owner_id); 
+ if ($show_owner_id!="-1")  $q->addWhere('project_owner = ' . (int)$show_owner_id); 
  
  $sql = $q->prepareSelect( $q );
  $q->clear();
@@ -327,7 +301,7 @@ foreach ($aProject as $v) {
 	
 		echo '<tr>';
 			// Show the Project progress and Project color
-			echo '<td nowrap="nowrap" style="border: outset #eeeeee 2px; background-color:#'.$v['project_color_identifier'].';"><center>'; 
+			echo '<td nowrap="nowrap" style="border: outset #eeeeee 2px; background-color:#'.preg_replace('/[^0-9a-fA-F]/', '', $v['project_color_identifier']).';"><center>'; 
 			$inserted=0;  //tmp state for inserting an empty cell, if the project does not have a progress so far
 			foreach ($aComplete as $c) {
 				if ($c['task_project'] == $v['project_id']) {
@@ -345,10 +319,11 @@ foreach ($aProject as $v) {
 			echo '</center></td>';
 			// the link to the project and a "MouseOver" description
 			echo '<td nowrap="nowrap"><center>'; 
+			// overlib(tip, CAPTION, caption, CENTER); CAPTION is 1 and CENTER 7 in lib/overlib/overlib-shim.js
 			echo '<a href="?m=projects&a=view&project_id='.$v['project_id'].'"' .
-				'onmouseover="return overlib(\'' . htmlspecialchars('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', addslashes($v['project_description'])) 
-		                        . '</p></div>', ENT_QUOTES) . '\', CAPTION, \'' 
-		       . $AppUI->_('Description') . '\', CENTER);" onmouseout="nd();"';
+				dPaction('overlib', array('<div><p>' . str_replace(array("\r\n", "\n", "\r"), '</p><p>', dPhtml($v['project_description']))
+		                        . '</p></div>', 1, $AppUI->_('Description', UI_OUTPUT_RAW), 7),
+				'mouseover mouseout', array('call-mouseout' => 'nd'));
 				echo '>'.dPFormSafe( $v['project_name'] ).'</a>';	// use the method _($param) of the UIclass $AppUI to translate $param automatically
 										// please remember this! automatic translation by dP is only possible if all strings
 										// are handled like this				
@@ -374,13 +349,13 @@ foreach ($aProject as $v) {
 				if (!$v['annotation_previous']) $v['annotation_previous'] = $emptyString ;
 				if (!$v['annotation_next']) $v['annotation_next'] = $emptyString ;
 			
-			echo '<td colspan="2" nowrap="nowrap" align="center"><center>';
+			echo '<td colspan="2" align="center"><center>';
 				echo '<table width="100%" ><tr>';
 					if ( $v['annotation_subject'] != "" ) {
-						echo '<td width="100%" colspan="2" align="Left">'.$AppUI->_('Subject')." : <textarea READONLY style='width: 88%; background-color: #efefef;' rows='1'>".$v['annotation_subject'].'</textarea></td>';
+						echo '<td width="100%" colspan="2" align="Left">'.$AppUI->_('Subject')." : <textarea READONLY style='width: 88%; background-color: #efefef;' rows='1'>".dPhtml($v['annotation_subject']).'</textarea></td>';
 						echo '</tr><tr>';
 					}
-					echo '<td width="49%" nowrap="nowrap" align="center"><center>';
+					echo '<td width="49%" align="center"><center>';
 						echo ($v['annotation_previous'] || $v['annotation_next']) ? 
 								'<textarea READONLY name="prev" style="width:99%; font-size:8pt;" rows="'.$rows_to_show.'" wrap="physical">'
 									:
@@ -390,7 +365,7 @@ foreach ($aProject as $v) {
 							echo dPFormSafe( $v['annotation_previous'] );	// Here should be the right information out of db annotations because it is always a single date choosen!)
 							echo '</textarea></center>';
 					echo '</td>';
-					echo '<td width="49%" nowrap="nowrap" align="center"><center>';
+					echo '<td width="49%" align="center"><center>';
 						echo ($v['annotation_previous'] || $v['annotation_next']) ? 
 								'<textarea READONLY name="next" style="width:99%; font-size:8pt;" rows="'.$rows_to_show.'" wrap="physical">'
 									:

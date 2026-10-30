@@ -1,4 +1,8 @@
-<?php /* $Id: index.php,v 1.6 2003/09/18 06:02:56 ajdonnison Exp $ */
+<?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
+/* $Id: index.php,v 1.6 2003/09/18 06:02:56 ajdonnison Exp $ */
 // check permissions
 $denyRead = getDenyRead( $m );
 $denyEdit = getDenyEdit( $m );
@@ -54,7 +58,7 @@ if ((isset($f)) && ($AppUI->user_type < 7) ) { // keep people from playing aroun
 			$q -> addJoin('timetrack_idx','timetrack_idx','tt_id = tt_data_timesheet_id');
 			$q -> addJoin('projects','projects','project_id = tt_data_project_id');
 			$q -> addJoin('users','users','user_id = tt_user_id');
-			$q -> addWhere('tt_active = 0 AND project_owner = '.$AppUI->user_id);
+			$q -> addWhere('tt_active = 0 AND project_owner = ' . (int)$AppUI->user_id);
 			$q -> addOrder('tt_end_date');
 			$tab = "1";
 			$review = "1";
@@ -90,7 +94,7 @@ $timesheets =  $q ->loadList();
 $q -> clear();
 $q -> addTable('timetrack_idx');
 $q -> addQUery('MAX(tt_end_date) AS end_date');
-$q -> addWhere('tt_user_id = '.$AppUI->user_id);
+$q -> addWhere('tt_user_id = ' . (int)$AppUI->user_id);
 $tsld_data =$q -> loadHash();
 
 if ($tsld_data['end_date']) {
@@ -121,13 +125,13 @@ $titleBlock->show();
  TODO : Fix the code to show the droplist
 <table width="98%" border="0" cellpadding="0" cellspacing="1">
 <tr>
-	<td><img src="./images/icons/projects.gif" alt="" border="0" width=42 height=42></td>
+	<td><img src="./modules/timetrack/images/applet3-48.png" alt="" border="0" width=42 height=42></td>
 	<td nowrap><span class="title"><?PHP echo $AppUI->getState( 'TtrackIdxFilter' ) !== NULL ? $filters[$AppUI->getState( 'TtrackIdxFilter' )] : 'My TimeSheets' . ' Overview'?></span></td>
 	<td align="right" width="100%">
 	<?php
 	if ($AppUI->user_type < 7) { ?>
 		<form action="<?PHP echo $_SERVER['REQUEST_URI'];?>" method="post" name="pickTimeSheet">
-		<?php echo arraySelect( $filters, 'f', 'onChange="document.pickTimeSheet.submit()" class="text"', $f ); ?>
+		<?php echo arraySelect( $filters, 'f', 'class="text"' . dPaction(null, array(), null, array('submit' => '')), $f ); ?>
 		</form>
 	<?php } ?>
 	</td>

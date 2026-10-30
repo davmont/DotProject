@@ -1,4 +1,7 @@
 <?php
+if (!defined('DP_BASE_DIR')) {
+	die('You should not access this file directly.');
+}
 
 /**
  * Description of ProjectSelector
@@ -16,6 +19,7 @@ class ProjectSelector {
         $sql = $q->prepare();
         $projects= db_loadList($sql);
         $i=0;
+        $editProjectsAllowed = false;
         foreach ($projects as $row) {
             $editProjectsAllowed = (($editProjectsAllowed) || getPermission('projects', 'edit', $row['project_id']));
             if ( getPermission('projects', 'view', $row['project_id']) ){

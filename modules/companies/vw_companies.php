@@ -44,7 +44,7 @@ if ($search_string != '') {
 	$q->addWhere("c.company_name LIKE " . $q->quote_sanitised('%' . $search_string . '%') );
 }
 if ($owner_filter_id > 0) {
-	$q->addWhere('c.company_owner = ' . $owner_filter_id);
+	$q->addWhere('c.company_owner = ' . (int)$owner_filter_id);
 }
 $q->addGroup('c.company_id');
 $q->addOrder($orderby . ' ' . $orderdir);

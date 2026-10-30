@@ -1,4 +1,8 @@
 <?php
+// Developer script: run it from the command line only, never through the web server.
+if (PHP_SAPI !== 'cli') {
+	die('You should not access this file directly.');
+}
 $base_dir = '/home/david/public_html/proyectos/locales/';
 $base_dir_local = '/home/david/Documentos/Code/DotProject/locales/';
 
